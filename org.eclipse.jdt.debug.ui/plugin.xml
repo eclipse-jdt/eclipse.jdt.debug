@@ -45,7 +45,7 @@
       <propertyTester
       		namespace="org.eclipse.jdt.debug.ui"
             properties="hasMainType, isApplet"
-            type="org.eclipse.core.resources.IResource"
+            type="org.eclipse.core.runtime.IAdaptable"
             class="org.eclipse.jdt.internal.debug.ui.launcher.ResourceExtender"
             id="org.eclipse.jdt.debug.IResourceExtender">
       </propertyTester>
@@ -1919,17 +1919,12 @@
                  <or>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                   <test property="org.eclipse.debug.ui.instanceof" value="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
                </iterate>
              </with>
            </enablement>
-           <contextLabel
-         	  mode="run"
-         	  label="%ContextualRunJavaApplication.label"/>
-  		   <contextLabel
-  		 	  mode="debug"
-  		 	  label="%ContextualDebugJavaApplication.label"/>
   		 </contextualLaunch>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
@@ -1959,17 +1954,12 @@
                  <or>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+				   <test property="org.eclipse.debug.ui.instanceof" value="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.isApplet"/>
                </iterate>
              </with>
            </enablement>
-           <contextLabel
-         	  mode="run"
-         	  label="%ContextualRunJavaApplet.label"/>
-  		   <contextLabel
-  		 	  mode="debug"
-  		 	  label="%ContextualDebugJavaApplet.label"/>
   		 </contextualLaunch>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
@@ -2431,6 +2421,15 @@
          </factory>
     </extension>
          
+	<!-- Adapters for contextual launch -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.jdt.core.IJavaElement">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>
+    </extension>
+       
    <!-- Adapters for retargettable actions -->
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 

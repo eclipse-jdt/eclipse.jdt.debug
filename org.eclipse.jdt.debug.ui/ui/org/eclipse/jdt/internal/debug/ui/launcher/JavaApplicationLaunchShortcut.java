@@ -26,6 +26,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -104,7 +105,11 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 			if (object instanceof IAdaptable) {
 				IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
 				if (element != null) {
-					list.add(element);
+					if (element instanceof IMember) {
+						list.add(((IMember)element).getDeclaringType());
+					} else {
+						list.add(element);
+					}
 				}
 			}
 		}

@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaCore;
@@ -131,7 +132,7 @@ public class AppletLaunchConfigurationUtils {
 	
 	public static void collectTypes(Object element, IProgressMonitor monitor, Set result) throws JavaModelException/*, InvocationTargetException*/ {
 		element= computeScope(element);
-		while((element instanceof IJavaElement) && !(element instanceof ICompilationUnit) && (element instanceof ISourceReference)) {
+		while(element instanceof IMember) {
 			if(element instanceof IType) {
 				if (isSubclassOfApplet(monitor, (IType)element)) {
 					result.add(element);
@@ -149,13 +150,30 @@ public class AppletLaunchConfigurationUtils {
 					result.add(types[i]);
 				}
 			}
-			monitor.done();
-			return;
+		} else if (element instanceof IClassFile) {
+			IType type = ((IClassFile)element).getType();
+			if (isSubclassOfApplet(monitor, type)) {
+				result.add(type);
+			}
 		} else if (element instanceof IJavaElement) {
+			IJavaElement parent = (IJavaElement) element;
 			List found= searchSubclassesOfApplet(monitor, (IJavaElement)element);
-			result.addAll(found);
-			monitor.done();
+			// filter within the parent element
+			Iterator iterator = found.iterator();
+			while (iterator.hasNext()) {
+				IJavaElement target = (IJavaElement) iterator.next();
+				IJavaElement child = target;
+				while (child != null) {
+					if (child.equals(parent)) {
+						result.add(target);
+						break;
+					} else {
+						child = child.getParent();
+					}
+				}
+			}
 		}
+		monitor.done();
 	}
 
 	private static List searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) {
