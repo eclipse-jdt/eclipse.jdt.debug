@@ -161,7 +161,15 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		boolean def = fDefaultButton.getSelection();
 		if (def) {
 			try {
-				IRuntimeClasspathEntry[] defs = JavaRuntime.computeUnresolvedRuntimeClasspath(getLaunchConfiguration());
+				ILaunchConfiguration config = getLaunchConfiguration();
+				ILaunchConfigurationWorkingCopy wc = null;
+				if (config.isWorkingCopy()) {
+					wc= (ILaunchConfigurationWorkingCopy)config;
+				} else {
+					wc = config.getWorkingCopy();
+				}
+				performApply(wc);
+				IRuntimeClasspathEntry[] defs = JavaRuntime.computeUnresolvedSourceLookupPath(wc);
 				fPathViewer.setEntries(defs);
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
