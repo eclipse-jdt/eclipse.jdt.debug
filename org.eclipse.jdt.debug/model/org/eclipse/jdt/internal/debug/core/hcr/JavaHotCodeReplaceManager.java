@@ -522,7 +522,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						notifyFailedDrop(((JDIThread)threads[i]).computeStackFrames(), replacedClassNames);
 					}
 					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.NOT_SUPPORTED, JDIDebugHCRMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
+						DebugException.NOT_SUPPORTED, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
 				}
 			}
 		}
