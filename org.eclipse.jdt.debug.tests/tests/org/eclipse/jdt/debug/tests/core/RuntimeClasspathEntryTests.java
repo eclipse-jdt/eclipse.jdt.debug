@@ -8,11 +8,19 @@ package org.eclipse.jdt.debug.tests.core;
 /**
  * Tests runtime classpath entry creation/restoration.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -74,5 +82,41 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 		assertEquals("Source root path did not resolve properly", rootPath.toOSString(), entry.getResolvedSourceAttachmentRootPath());
 		
 	}	
+	
+	/**
+	 * Tests that a project can be lanuched if it contains the JRE_CONTAINER variable
+	 * instead of JRE_LIB
+	 */
+//	public void testJREContainerEntry() throws Exception {
+//		ILaunchConfiguration lc = getLaunchConfiguration("Breakpoints");
+//		ILaunchConfigurationWorkingCopy wc = lc.copy("Breakpoints_JRE_CONTAINER");
+//		
+//		IRuntimeClasspathEntry[] cp = JavaRuntime.computeRuntimeClasspath(lc);
+//		IRuntimeClasspathEntry removed = null;
+//		List entries = new ArrayList(cp.length);
+//		// replace JRE_LIB with JRE_CONTAINER
+//		for (int i = 0; i < cp.length; i++) {
+//			if (cp[i].getType() == IRuntimeClasspathEntry.VARIABLE) {
+//				removed = cp[i];
+//				cp[i] = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), getJavaProject().getElementName());	
+//			}
+//			entries.add(cp[i].getMemento());
+//		}
+//		
+//		assertNotNull("Did not replace entry", removed);
+//		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+//		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, entries);
+//		lc = wc.doSave();
+//		
+//		createLineBreakpoint(41, "Breakpoints");
+//		IJavaThread thread= null;
+//		try {
+//			thread = launch(lc);
+//			assertNotNull("Launch failed", thread);
+//		} finally {
+//			terminateAndRemove(thread);
+//			removeAllBreakpoints();
+//		}
+//	}	
 	
 }

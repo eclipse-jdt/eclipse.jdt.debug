@@ -114,17 +114,29 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launch(String mainTypeName) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		return launch(config);
+	}
+
+	/**
+	 * Launches the given configuration in debug mode, and waits for a suspend
+	 * event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param config the configuration to launch
+	 * @return thread in which the first suspend event occurred
+	 */	
+	protected IJavaThread launch(ILaunchConfiguration config) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
-		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
-		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
 		config.launch(getLaunchManager().DEBUG_MODE, null);
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread)suspendee;
+		return (IJavaThread)suspendee;		
 	}
 	
 	/**
