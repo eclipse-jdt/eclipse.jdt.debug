@@ -79,11 +79,11 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testLineVariableDeclarationWithAssigment() throws Exception {
-		testLocation(43, 44, "BreakpointsLocation");
+		testLocation(43, 46, "BreakpointsLocation");
 	}
 	
 	public void testLineFieldDeclarationWithAssigment() throws Exception {
-		testLocation(51, 53, "BreakpointsLocation");
+		testLocation(51, 55, "BreakpointsLocation");
 	}
 	
 	public void testLineExpressionReplacedByConstant1() throws Exception {
