@@ -14,10 +14,12 @@ Java Debug</h1>
 January 22, 2002
 <h3>
 What's new in this drop</h3>
-Java breakpoint creation has changed to not require the use of Java elements.
+<li>Java breakpoint creation has changed to not require the use of Java elements.
 Unfortunately, the resulting changes invalidates breakpoints created previous to this build.
 The out of date breakpoints will be deleted at startup.
-See <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7807">7807</a>: Breakpoint creation API should not use java elements<br>.
+See <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7807">7807</a>: Breakpoint creation API should not use java elements</li>.
+<li>HotSwap enhancement - when performing a hot swap, the debugger only pops frames of methods
+ that have been changed.</li> 
 	
 <h3>
 Problem Reports Fixed</h3>
@@ -49,6 +51,7 @@ Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7619">7619</a>: Walkback while debugging<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=6661">6661</a>: InternalException when exiting on jdk 1.4<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7404">7404</a>: Add filter for step filtering broken<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=1689">1689</a>: Debugger selects incorrect stack frame after HCR (1GIQ56J)<br>
 
 <h3>
 Problem Reports Closed</h3>
