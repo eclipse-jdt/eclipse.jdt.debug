@@ -397,6 +397,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			locations= type.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException e) {
 			return null;
+		} catch (NativeMethodException e) {
+			return null;
 		} catch (InvalidLineNumberException e) {
 			//possible in a nested type, fall through and traverse nested types
 		} catch (VMDisconnectedException e) {
