@@ -456,7 +456,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			return new LibraryInfo("1.1.x", new String[] {classesZip.toOSString()}, new String[0], new String[0]); //$NON-NLS-1$
 		}
 		//locate the launching support jar - it contains the main program to run
-		File file = LaunchingPlugin.getFileInPlugin(new Path("lib\\launchingsupport.jar")); //$NON-NLS-1$
+		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
 		if (file.exists()) {	
 			String javaExecutablePath = javaExecutable.getAbsolutePath();
 			String[] cmdLine = new String[] {javaExecutablePath, "-classpath", file.getAbsolutePath(), "org.eclipse.jdt.internal.launching.support.LibraryDetector"};  //$NON-NLS-1$ //$NON-NLS-2$
