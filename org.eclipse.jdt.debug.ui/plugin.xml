@@ -873,10 +873,10 @@
 		</visibility>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter"
-			label="new detail formatter"
-			tooltip="associate a detail formatter with this type"
+			label="%newDetailFormatter.label"
+			tooltip="%newDetailFormatter.tooltip"
 			menubarPath="emptyNavigationGroup"
-			helpContextId="open_variable_concrete_type_action_context"
+			helpContextId="new_detail_formatter_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.NewDetailFormatterAction"
 			enablesFor="1">
 		</action>
@@ -888,10 +888,10 @@
 		<filter name="DetailFormatterFilter" value="isDefined"/>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter"
-			label="edit detail formatter"
-			tooltip="Edit the detail formatter associated with this type"
+			label="%editDetailFormatter.label"
+			tooltip="%editDetailFormatter.tooltip"
 			menubarPath="emptyNavigationGroup"
-			helpContextId="open_variable_concrete_type_action_context"
+			helpContextId="edit_detail_formatter_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.EditDetailFormatterAction"
 			enablesFor="1">
 		</action>

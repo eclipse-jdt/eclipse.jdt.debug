@@ -242,7 +242,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		String typeName= fTypeNameText.getText().trim();
 		if (typeName.length() == 0) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name_must_not_be_empty._3")); //$NON-NLS-1$
-		} else if (fDefinedTypes.contains(typeName)) {
+		} else if (fDefinedTypes != null && fDefinedTypes.contains(typeName)) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.A_detail_formatter_is_already_defined_for_this_type_2")); //$NON-NLS-1$
 		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Associated_code_must_not_be_empty_3")); //$NON-NLS-1$
