@@ -56,9 +56,6 @@ class JavaModelListener implements IElementChangedListener {
 		IJavaBreakpoint breakpoint= null;
 		for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
 			breakpoint= (IJavaBreakpoint)breakpoints[i];
-			if (!(breakpoint instanceof IJavaBreakpoint)) {
-				continue;
-			}
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
 				IMethod method= null;

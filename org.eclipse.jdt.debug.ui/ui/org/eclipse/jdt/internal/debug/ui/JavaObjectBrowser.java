@@ -95,7 +95,7 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 		
 		// Only consider values whose types are classes.  Contributed content providers are
 		// not supported for arrays and primitives
-		IJavaType javaType = (IJavaType) javaValue.getJavaType();
+		IJavaType javaType = javaValue.getJavaType();
 		if (!(javaType instanceof IJavaClassType)) {
 			return null;
 		}
@@ -153,7 +153,7 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 			}			
 			
 			// Move up 1 level in the class hierarchy and try again
-			javaClassType = (IJavaClassType) javaClassType.getSuperclass();
+			javaClassType = javaClassType.getSuperclass();
 		}
 		return null;
 	}

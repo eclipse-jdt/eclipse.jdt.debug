@@ -221,7 +221,7 @@ public class JDIContentAssistPreference {
 		Object value= options.get(VISIBILITY);
 		if (value instanceof String) {
 			String newValue= restrict ? ENABLED : DISABLED;
-			if (!newValue.equals((String) value)) {
+			if (!newValue.equals(value)) {
 				options.put(VISIBILITY, newValue);
 				JavaCore.setOptions(options);
 			}

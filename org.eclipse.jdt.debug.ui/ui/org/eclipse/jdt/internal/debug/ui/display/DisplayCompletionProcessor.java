@@ -212,7 +212,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		}
 		Object sourceElement= locator.getSourceElement(stackFrame);
 		if (sourceElement instanceof IType) {
-			return (ICompilationUnit)((IType)sourceElement).getCompilationUnit();
+			return ((IType)sourceElement).getCompilationUnit();
 		}
 		if (sourceElement instanceof ICompilationUnit) {
 			return (ICompilationUnit)sourceElement;

@@ -513,7 +513,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * Returns a message for the exception wrapped in an invocation exception
 	 */
 	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
-			InvocationException ie= (InvocationException) exception;
+			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
 			return MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
 	}

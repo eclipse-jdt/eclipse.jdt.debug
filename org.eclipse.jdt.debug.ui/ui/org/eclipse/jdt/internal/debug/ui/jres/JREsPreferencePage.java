@@ -69,7 +69,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		if (realDefault != null) {
 			IVMInstall[] vms= fJREBlock.getJREs();
 			for (int i = 0; i < vms.length; i++) {
-				IVMInstall fakeVM= (IVMInstall)vms[i];
+				IVMInstall fakeVM= vms[i];
 				if (fakeVM.equals(realDefault)) {
 					verifyDefaultVM(fakeVM);
 					break;

@@ -51,7 +51,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 		
 		//the parent will be ThreadWrapper
 		if (parentElement instanceof ThreadWrapper) {
-			IJavaThread thread= (IJavaThread)((ThreadWrapper)parentElement).thread;
+			IJavaThread thread= ((ThreadWrapper)parentElement).thread;
 			
 			//owned monitors
 			IJavaObject[] ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);

@@ -108,7 +108,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 				Map attributes = new HashMap(10);
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
 				String methodName = method.getElementName();
-				if (((IMethod)method).isConstructor()) {
+				if (method.isConstructor()) {
 					methodName = "<init>"; //$NON-NLS-1$
 				}
 				IType type= method.getDeclaringType();

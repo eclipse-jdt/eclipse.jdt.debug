@@ -88,7 +88,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	 * @exception CoreException if unable to retrieve the list
 	 */
 	protected IRuntimeClasspathEntry[] recoverRuntimePath(ILaunchConfiguration configuration, String attribute) throws CoreException {
-		List entries = (List)configuration.getAttribute(attribute, Collections.EMPTY_LIST);
+		List entries = configuration.getAttribute(attribute, Collections.EMPTY_LIST);
 		IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[entries.size()];
 		Iterator iter = entries.iterator();
 		int i = 0;

@@ -50,7 +50,7 @@ public class JavaEvaluationEngineManager implements IDebugEventSetListener {
 		for (int i= 0, numEvents= events.length; i < numEvents; i++) {
 			event= events[i];
 			if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IJavaDebugTarget) {
-				HashMap map = (HashMap)fTargetMap.remove((IJavaDebugTarget)event.getSource());
+				HashMap map = (HashMap)fTargetMap.remove(event.getSource());
 				if (map != null) {
 					Iterator iter = map.values().iterator();
 					while (iter.hasNext()) {

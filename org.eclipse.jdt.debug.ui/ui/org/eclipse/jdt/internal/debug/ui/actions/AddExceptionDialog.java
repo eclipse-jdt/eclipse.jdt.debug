@@ -140,7 +140,7 @@ public class AddExceptionDialog extends StatusDialog {
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(65);
 		int displayHeight = getDisplayHeight();
-		int typeListHeight = Math.round((float)displayHeight * TYPE_LIST_HEIGHT_PERCENT);
+		int typeListHeight = Math.round(displayHeight * TYPE_LIST_HEIGHT_PERCENT);
 		gd.heightHint= typeListHeight;
 		getTypeList().setLayoutData(gd);				
 		

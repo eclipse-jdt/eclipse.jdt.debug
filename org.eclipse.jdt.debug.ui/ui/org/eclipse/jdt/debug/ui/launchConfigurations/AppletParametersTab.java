@@ -345,7 +345,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, Integer.parseInt(fWidthText.getText()));
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, Integer.parseInt(fHeightText.getText()));
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, (String)fNameText.getText());
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, fNameText.getText());
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, getMapFromParametersTable());
 	}
 	

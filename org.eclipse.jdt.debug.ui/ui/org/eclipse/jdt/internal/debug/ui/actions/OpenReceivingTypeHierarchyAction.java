@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
@@ -35,7 +34,7 @@ public class OpenReceivingTypeHierarchyAction extends OpenReceivingTypeAction {
 			try {
 				IType t= findTypeInWorkspace(typeName);
 				if (t != null) {
-					OpenTypeHierarchyUtil.open((IJavaElement)t, fTargetPart.getSite().getWorkbenchWindow());
+					OpenTypeHierarchyUtil.open(t, fTargetPart.getSite().getWorkbenchWindow());
 				}
 			} catch (CoreException x) {
 				JDIDebugUIPlugin.log(x);

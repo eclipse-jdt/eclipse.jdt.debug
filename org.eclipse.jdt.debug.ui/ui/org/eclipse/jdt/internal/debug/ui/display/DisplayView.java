@@ -355,7 +355,7 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 	protected void updateActions() {
 		Iterator iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			IAction action = (IAction) fGlobalActions.get((String)iterator.next());
+			IAction action = (IAction) fGlobalActions.get(iterator.next());
 			if (action instanceof IUpdate) {
 				 ((IUpdate) action).update();
 			}

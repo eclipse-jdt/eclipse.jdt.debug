@@ -80,7 +80,7 @@ public class MainMethodFinder {
 			IJavaElement jelem= (IJavaElement) ((IAdaptable) element).getAdapter(IJavaElement.class);
 			if (jelem != null) {
 				IType parentType= (IType)jelem.getAncestor(IJavaElement.TYPE);
-				if (parentType != null && JavaModelUtil.hasMainMethod((IType) parentType)) {
+				if (parentType != null && JavaModelUtil.hasMainMethod(parentType)) {
 					result.add(parentType);
 					monitor.done();
 					return;

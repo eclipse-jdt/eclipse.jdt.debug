@@ -101,7 +101,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		
 		// See if we already know the info for the requested VM.  If not, generate it.
 		String installPath = javaHome.getAbsolutePath();
-		LibraryInfo info = (LibraryInfo) LaunchingPlugin.getLibraryInfo(installPath);
+		LibraryInfo info = LaunchingPlugin.getLibraryInfo(installPath);
 		if (info == null) {
 			info = generateLibraryInfo(javaHome, javaExecutable);
 			LaunchingPlugin.setLibraryInfo(installPath, info);
