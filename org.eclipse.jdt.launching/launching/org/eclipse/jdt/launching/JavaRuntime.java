@@ -329,6 +329,18 @@ public final class JavaRuntime {
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
 	 * 
+	 * Returns a new runtime classpath entry for the given project.
+	 * 
+	 * @return runtime classpath entrie
+	 */
+	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(IJavaProject project) {
+		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getPath());
+		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.PROJECT, cpe);
+	}
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
 	 * Computes the default runtime claspath for a given project.
 	 * 
 	 * @return runtime classpath entries
