@@ -550,5 +550,21 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected void setClassFilters(String[] filters) {
 		fClassFilters = filters;
 	}
+	
+	/**
+	 * @see JavaBreakpoint#installableReferenceType(ReferenceType, JDIDebugTarget)
+	 */
+	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
+		String installableType= getTypeName();
+		String queriedType= type.name();
+		if (installableType == null || queriedType == null) {
+			return false;
+		}
+		if (installableType.equals(queriedType)) {
+			return queryInstallListeners(target, type);
+		}
+		
+		return false;
+	}
 }
 

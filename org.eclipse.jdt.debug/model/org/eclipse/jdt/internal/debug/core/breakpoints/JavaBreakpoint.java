@@ -416,6 +416,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*"), target);  //$NON-NLS-1$
 		} else {
 			registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
+			//register to ensure we hear about local and anonymous inner classes
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*", referenceTypeName), target);  //$NON-NLS-1$
 		}
 		
