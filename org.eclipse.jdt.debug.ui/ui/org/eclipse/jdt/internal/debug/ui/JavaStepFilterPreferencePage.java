@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -117,6 +116,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		return composite;	
 	}
 
+	/**
+	 * @see IWorkbenchPreferencePage#init(IWorkbench)
+	 */
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -579,6 +581,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fStepFilterContentProvider.removeFilters(selection.toArray());
 	}
 	
+	/**
+	 * @see IPreferencePage#performOk()
+	 */
 	public boolean performOk() {
 		fStepFilterContentProvider.saveFilters();
 		return true;
