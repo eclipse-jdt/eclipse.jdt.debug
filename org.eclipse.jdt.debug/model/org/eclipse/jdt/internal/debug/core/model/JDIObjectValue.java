@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -84,7 +84,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * @see IJavaObject#getField(String)
 	 */
-	public IJavaVariable getField(String name) throws DebugException {
+	public IJavaFieldVariable getField(String name) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
 		try {
 			Field field = ref.fieldByName(name);

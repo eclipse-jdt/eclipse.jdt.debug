@@ -6,7 +6,6 @@ package org.eclipse.jdt.debug.core;
  */
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 
 /**
  * A Java object is a Java value that references
@@ -61,7 +60,7 @@ public interface IJavaObject extends IJavaValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IJavaVariable getField(String name) throws DebugException;
+	public IJavaFieldVariable getField(String name) throws DebugException;
 	
 }
 
