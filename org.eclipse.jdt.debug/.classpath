@@ -10,5 +10,6 @@
     <classpathentry kind="src" path="/org.eclipse.jdt.core"/>
     <classpathentry exported="true" kind="lib" path="jdi.jar" sourcepath="/org.eclipse.jdt.debug/jdisrc.zip"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="src" path="eval"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

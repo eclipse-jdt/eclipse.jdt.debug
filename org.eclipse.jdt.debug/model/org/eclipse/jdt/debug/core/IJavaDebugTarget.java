@@ -153,6 +153,24 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a string from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(String value);			
+	IJavaValue newValue(String value);		
+	
+	/**
+	 * Returns an <code>IJavaValue</code> that represents
+	 * <code>null</code>. This value can be used for setting
+	 * and comparing against a value retrieved from this debug target.
+	 * 
+	 * @return the null <code>IJavaValue</code>
+	 */	
+	IJavaValue nullValue();
+	
+	/**
+	 * Returns an <code>IJavaValue</code> that represents
+	 * <code>void</code>. This value can be used for setting
+	 * and comparing against a value retrieved from this debug target.
+	 * 
+	 * @return the void <code>IJavaValue</code>
+	 */	
+	IJavaValue voidValue();	
 
 }

@@ -79,16 +79,16 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public IValue getValue() throws DebugException {
 		Value currentValue = getCurrentValue();
 		if (fValue == null) {
-			fValue = new JDIValue((JDIDebugTarget)getDebugTarget(), currentValue);
+			fValue = JDIValue.createValue((JDIDebugTarget)getDebugTarget(), currentValue);
 		} else {
 			Value previousValue = fValue.getUnderlyingValue();
 			if (currentValue == previousValue) {
 				return fValue;
 			}
 			if (previousValue == null || currentValue == null) {
-				fValue = new JDIValue((JDIDebugTarget)getDebugTarget(), currentValue);
+				fValue = JDIValue.createValue((JDIDebugTarget)getDebugTarget(), currentValue);
 			} else if (!previousValue.equals(currentValue)) {
-				fValue = new JDIValue((JDIDebugTarget)getDebugTarget(), currentValue);
+				fValue = JDIValue.createValue((JDIDebugTarget)getDebugTarget(), currentValue);
 			}
 		}
 		return fValue;

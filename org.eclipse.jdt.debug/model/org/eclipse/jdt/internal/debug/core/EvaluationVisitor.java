@@ -9,7 +9,9 @@ import java.util.Stack;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -306,7 +308,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 				for (int i= numArgs - 1; i >= 0; i--) {
 					args[i] = (IJavaValue)pop();
 				}
-				IJavaType clazz = (IJavaType)pop();
+				IJavaClassType clazz = (IJavaClassType)pop();
 				String signature = toString(allocationExpression.binding.signature());
 				IJavaValue result = clazz.newInstance(signature, args, getThread());
 				verbose("Invoked constructor: " + signature);
@@ -652,7 +654,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 				for (int i= numArgs - 1; i >= 0; i--) {
 					args[i] = (IJavaValue)pop();
 				}
-				IJavaValue receiver = (IJavaValue)pop();
+				IJavaObject receiver = (IJavaObject)pop();
 				String selector = toString(messageSend.selector);
 				String signature = toString(messageSend.binding.signature());
 				IJavaValue result = receiver.sendMessage(selector, signature, args, getThread(), messageSend.isSuperAccess());

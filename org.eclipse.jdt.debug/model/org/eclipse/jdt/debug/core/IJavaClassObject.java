@@ -5,11 +5,10 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.core.DebugException;
- 
 /**
- * The type of a value on a Java debug target - a primitive
- * data type, class, interface, or array.
+ * A Java class object is a Java object that references
+ * an instance of <code>java.lang.Class</code> on the
+ * target VM.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
@@ -20,16 +19,17 @@ import org.eclipse.debug.core.DebugException;
  * </p>
  * @see IJavaValue
  */
-public interface IJavaType {
+
+public interface IJavaClassObject extends IJavaObject {
+	
 	/**
-	 * Returns the JNI-style signature for this type.
-	 *
-	 * @return signature
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li></ul>
-	 */
-	public String getSignature() throws DebugException;
+	 * Returns the type associated with instances of this
+	 * class.
+	 * 
+	 * @return the type associated with instances of this
+	 * 	class
+	 */ 
+	IJavaType getInstanceType();
+
 }
 

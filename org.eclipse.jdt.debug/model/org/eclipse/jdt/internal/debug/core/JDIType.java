@@ -5,18 +5,13 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.ClassType;
-import com.sun.jdi.Method;
-import com.sun.jdi.Type;
-import com.sun.jdi.Value;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.IJavaValue;
+
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Type;
 
 /**
  * A type of an object or primitive data type in a debug target.
@@ -45,6 +40,17 @@ public class JDIType implements IJavaType {
 		setUnderlyingType(type);
 	}
 
+	/**
+	 * Creates the appropriate kind of type, based on the specialized
+	 * type.
+	 */
+	protected static JDIType createType(JDIDebugTarget target, Type type) {
+		if (type instanceof ClassType) {
+			return new JDIClassType(target, (ClassType)type);
+		}
+		return new JDIType(target, type);
+	}
+	
 	/*
 	 * @see IJavaType#getSignature()
 	 */
@@ -57,64 +63,6 @@ public class JDIType implements IJavaType {
 			// #targetRequestFailed will throw an exception
 			return null;
 		}
-	}
-
-	/*
-	 * @see IJavaType#newInstance(String, IJavaValue[], IJavaThread)
-	 */
-	public IJavaValue newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
-		if (getUnderlyingType() instanceof ClassType) {
-			ClassType clazz = (ClassType)getUnderlyingType();
-			JDIThread javaThread = (JDIThread)thread;
-			List arguments = convertArguments(args);
-			Method method = null;			
-			try {
-				List methods = clazz.methodsByName("<init>", signature);
-				if (methods.isEmpty()) {
-					getDebugTarget().requestFailed(MessageFormat.format("Type does not implement cosntructor with signature {0}", new String[]{signature}), null);
-				} else {
-					method = (Method)methods.get(0);
-				}
-			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for constructor with signature {1}", new String[] {e.toString(), signature}), e);
-			}
-			Value result = javaThread.newInstance(clazz, method, arguments);
-			return new JDIValue(getDebugTarget(), result);
-		} else {
-			getDebugTarget().requestFailed("Type is not a class type.", null);
-		}
-		// execution will not fall through to here,
-		// as #requestFailed will throw an exception
-		return null;
-	}
-
-	/*
-	 * @see IJavaType#sendMessage(String, String, IJavaValue[], IJavaThread)
-	 */
-	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
-		if (getUnderlyingType() instanceof ClassType) {
-			ClassType clazz = (ClassType)getUnderlyingType();
-			JDIThread javaThread = (JDIThread)thread;
-			List arguments = convertArguments(args);
-			Method method = null;			
-			try {
-				List methods = clazz.methodsByName(selector, signature);
-				if (methods.isEmpty()) {
-					getDebugTarget().requestFailed(MessageFormat.format("Type does not implement selector {0} and signature {1}", new String[] {selector, signature}), null);
-				} else {
-					method = (Method)methods.get(0);
-				}
-			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for selector {1} and signature {2}", new String[] {e.toString(), selector, signature}), e);
-			}
-			Value result = javaThread.invokeMethod(clazz, null, method, arguments);
-			return new JDIValue(getDebugTarget(), result);
-		} else {
-			getDebugTarget().requestFailed("Type is not a class type.", null);
-		}
-		// execution will not fall through to here,
-		// as #requestFailed will throw an exception
-		return null;
 	}
 
 	/**
@@ -153,27 +101,6 @@ public class JDIType implements IJavaType {
 	 */
 	public void setUnderlyingType(Type type) {
 		fType = type;
-	}
-
-	/**
-	 * Utility method to convert argument array to an
-	 * argument list.
-	 * 
-	 * @param args array of arguments, as <code>IJavaValue</code>s,
-	 * 	possibly <code>null</code> or empty
-	 * @return a list of underlying <code>Value</code>s
-	 */
-	protected List convertArguments(IJavaValue[] args) {
-		List arguments = null;
-		if (args == null) {
-			arguments = Collections.EMPTY_LIST;
-		} else {
-			arguments= new ArrayList(args.length);
-			for (int i = 0; i < args.length; i++) {
-				arguments.add(((JDIValue)args[i]).getUnderlyingValue());
-			}
-		}
-		return arguments;	
 	}
 	
 	/**

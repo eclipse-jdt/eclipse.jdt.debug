@@ -1047,7 +1047,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				return null;
 			} else {
 				ClassType type = (ClassType)classes.get(0);
-				return new JDIType(this, type);
+				return JDIType.createType(this, type);
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving class for name {1}", new String[]{e.toString(), name}), e); //$NON-NLS-1$
@@ -1062,7 +1062,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(boolean value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 	
 	/**
@@ -1070,7 +1070,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(byte value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 
 	/**
@@ -1078,7 +1078,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(char value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 
 	/**
@@ -1086,7 +1086,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(double value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 	
 	/**
@@ -1094,7 +1094,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(float value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 						
 	/**
@@ -1102,7 +1102,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(int value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 	
 	/**
@@ -1110,7 +1110,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(long value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}	
 	
 	/**
@@ -1118,7 +1118,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(short value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 	
 	/**
@@ -1126,9 +1126,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IJavaValue newValue(String value) {
 		Value v = getVM().mirrorOf(value);
-		return new JDIValue(this, v);
+		return JDIValue.createValue(this, v);
 	}
 		
+	/**
+	 * @see IJavaDebugTarget#nullValue()
+	 */
+	public IJavaValue nullValue() {
+		return JDIValue.createValue(this, null);
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#voidValue()
+	 */
+	public IJavaValue voidValue() {
+		return new JDIVoidValue(this);
+	}
+	
 	/**
 	 * Sets the instance of <code>java.lang.ThreadDeath</code> used
 	 * by this target to terminate threads. The instance is created

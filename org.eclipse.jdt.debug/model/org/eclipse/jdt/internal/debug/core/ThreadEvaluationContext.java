@@ -177,7 +177,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				if (valueField != null) {
 					try {
 						Value v= getResult().getValue(valueField);
-						setValue(new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), v));
+						setValue(JDIValue.createValue((JDIDebugTarget)getModelThread().getDebugTarget(), v));
 					} catch (RuntimeException e) {
 						getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result"), new String[] {e.toString()}), e); //$NON-NLS-1$
 						// execution will not reach this line, as
@@ -187,7 +187,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				}
 			} else {
 				// not a primite type
-				setValue(new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), getResult()));
+				setValue(JDIValue.createValue((JDIDebugTarget)getModelThread().getDebugTarget(), getResult()));
 			}
 		} else {
 			if (getResultType() != null) {
