@@ -198,8 +198,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * @see IVMInstallChangedListener#vmChanged(PropertyChangeEvent)
 	 */
-	public void vmChanged(
-		org.eclipse.jdt.launching.PropertyChangeEvent event) {
+	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 	}
 
 	/**
@@ -222,7 +221,5 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	public void resourceChanged(IResourceChangeEvent event) {
 		ArchiveSourceLocation.closeArchives();
 	}
-
-
 }
 
