@@ -14,6 +14,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
+import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
@@ -203,15 +204,20 @@ public class BinaryBasedSourceGenerator {
 				if (superClass != null) {
 					source.append("extends ").append(getDotName(superClass.name())).append(' '); //$NON-NLS-1$
 				}
-				
-				List interfaces= classType.interfaces();
+
+				List interfaces;
+				try {
+					interfaces= classType.interfaces();
+				} catch (ClassNotPreparedException e) {
+					return new StringBuffer();
+				}
 				if (interfaces.size() != 0) {
 					source.append("implements "); //$NON-NLS-1$
 					Iterator iterator= interfaces.iterator();
 					InterfaceType interface_= (InterfaceType)iterator.next();
-					source.append(interface_.name());
+					source.append(getDotName(interface_.name()));
 					while (iterator.hasNext()) {
-						source.append(',').append(((InterfaceType)iterator.next()).name());
+						source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
 					}
 				}
 			} else if (referenceType instanceof InterfaceType) {
@@ -219,16 +225,21 @@ public class BinaryBasedSourceGenerator {
 				
 				source.append("interface "); //$NON-NLS-1$
 				
-				source.append(getSimpleName(typeName));
+				source.append(getSimpleName(typeName)).append(' ');
 				
-				List interfaces= interfaceType.superinterfaces();
+				List interfaces;
+				try {
+					interfaces= interfaceType.superinterfaces();
+				} catch (ClassNotPreparedException e) {
+					return new StringBuffer();
+				}
 				if (interfaces.size() != 0) {
 					source.append("extends "); //$NON-NLS-1$
 					Iterator iterator= interfaces.iterator();
 					InterfaceType interface_= (InterfaceType)iterator.next();
-					source.append(interface_.name());
+					source.append(getDotName(interface_.name()));
 					while (iterator.hasNext()) {
-						source.append(',').append(interface_.name());
+						source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
 					}
 				}
 				
@@ -303,7 +314,7 @@ public class BinaryBasedSourceGenerator {
 			source.append("protected "); //$NON-NLS-1$
 		}
 		
-		source.append(field.typeName()).append(' ').append(field.name()).append(';').append('\n');
+		source.append(getDotName(field.typeName())).append(' ').append(field.name()).append(';').append('\n');
 		
 		return source;
 	}
@@ -333,13 +344,13 @@ public class BinaryBasedSourceGenerator {
 			source.append("protected "); //$NON-NLS-1$
 		}
 		
-		source.append(method.returnTypeName()).append(' ').append(method.name()).append('(');
+		source.append(getDotName(method.returnTypeName())).append(' ').append(method.name()).append('(');
 		
 		List arguments= method.argumentTypeNames();
 		int i= 0;
 		if (arguments.size() != 0) {
 			Iterator iterator= arguments.iterator();
-			source.append((String) iterator.next()).append(" arg").append(i++); //$NON-NLS-1$
+			source.append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
 			while (iterator.hasNext()) {
 				source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
 			}
