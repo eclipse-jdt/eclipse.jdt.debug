@@ -29,8 +29,8 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
@@ -242,8 +242,9 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 					if (type.exists() && project != null && project.isOnClasspath(type)) {
 						if (JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(),lineNumber) == null) {
 							Map attributes = new HashMap(10);
-							JavaCore.addJavaElementMarkerAttributes(attributes, type);
-							attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier()); //$NON-NLS-1$
+							int start= line.getOffset();
+							int end= start + line.getLength() - 1;
+							BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
 							JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
 						}
 					}

@@ -38,6 +38,19 @@ public class BreakpointUtils {
 	 * Marker attribute used to denote a run to line breakpoint
 	 */
 	private static final String RUN_TO_LINE =  JDIDebugUIPlugin.getUniqueIdentifier() + ".run_to_line"; //$NON-NLS-1$
+	
+	/**
+	 * Marker attribute used to denote the start of the region within a Java
+	 * member that the breakpoint is located within.
+	 */
+	private static final String MEMBER_START =  JDIDebugUIPlugin.getUniqueIdentifier() + ".member_start"; //$NON-NLS-1$
+	
+	/**
+	 * Marker attribute used to denote the end of the region within a Java
+	 * member that the breakpoint is located within.
+	 */
+	private static final String MEMBER_END =  JDIDebugUIPlugin.getUniqueIdentifier() + ".member_end"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the resource on which a breakpoint marker should
 	 * be created for the given member. The resource returned is the 
@@ -103,9 +116,17 @@ public class BreakpointUtils {
 		if (breakpoint instanceof IJavaWatchpoint) {
 			return getField((IJavaWatchpoint)breakpoint);
 		}
+		
 		int start = breakpoint.getCharStart();
 		int end = breakpoint.getCharEnd();
+		
 		IType type = getType(breakpoint);
+	
+		if (start == -1 && end == -1) {
+			start= breakpoint.getMarker().getAttribute(MEMBER_START, -1);
+			end= breakpoint.getMarker().getAttribute(MEMBER_END, -1);
+		}
+		
 		IMember member = null;
 		if ((type != null) && (end >= start) && (start >= 0)) {
 			try {
@@ -188,6 +209,27 @@ public class BreakpointUtils {
 		String handleId = element.getHandleIdentifier();
 		attributes.put(HANDLE_ID, handleId);
 		JavaCore.addJavaElementMarkerAttributes(attributes, element);		
+	}
+	
+	/**
+	 * Adds attributes to the given attribute map:<ul>
+	 * <li>Java element handle id</li>
+	 * <li>Member start position</li>
+	 * <li>Member end position</li>
+	 * <li>Attributes defined by <code>JavaCore</code></li>
+	 * </ul>
+	 * 
+	 * @param attributes the attribute map to use
+	 * @param element the Java element associated with the breakpoint
+	 * @param memberStart the start position of the Java member that the breakpoint is positioned within
+	 * @param memberEnd the end position of the Java member that the breakpoint is positioned within
+	 * @exception CoreException if an exception occurs configuring
+	 *  the marker
+	 */
+	public static void addJavaBreakpointAttributesWithMemberDetails(Map attributes, IJavaElement element, int memberStart, int memberEnd) {
+		addJavaBreakpointAttributes(attributes, element);
+		attributes.put(MEMBER_START, new Integer(memberStart));
+		attributes.put(MEMBER_END, new Integer(memberEnd));
 	}
 	
 	/**
