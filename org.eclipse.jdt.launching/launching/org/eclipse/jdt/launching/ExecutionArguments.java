@@ -151,8 +151,13 @@ public class ExecutionArguments {
 						return buf.toString();
 					}
 					if (ch > 0) {
-						if (ch != '"') {        // Only escape double quotes
-							buf.append('\\'); 
+						if (ch != '"') {           // Only escape double quotes
+							buf.append('\\');
+						} else {
+							if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+								// @see Bug 26870. Windows requires an extra escape for embedded strings
+								buf.append('\\');
+							}
 						}
 						buf.append((char)ch);
 						ch= getNext();
