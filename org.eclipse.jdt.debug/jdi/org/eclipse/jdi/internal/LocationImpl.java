@@ -6,6 +6,7 @@ package org.eclipse.jdi.internal;
  */
 
 import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
@@ -156,4 +157,32 @@ public class LocationImpl extends MirrorImpl implements Location {
 			return null;
 		return new LocationImpl(vmImpl, method, index);
 	}
+	/*
+	 * @see Location#lineNumber(String)
+	 */
+	public int lineNumber(String stratum) throws AbsentInformationException {
+		return 0;
+	}
+
+	/*
+	 * @see Location#sourceName(String)
+	 */
+	public String sourceName(String stratum) throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see Location#sourcePath(String)
+	 */
+	public String sourcePath(String stratum) throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see Location#sourcePath()
+	 */
+	public String sourcePath() throws AbsentInformationException {
+		return null;
+	}
+
 }

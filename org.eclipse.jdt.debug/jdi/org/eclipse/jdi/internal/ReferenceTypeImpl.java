@@ -6,6 +6,8 @@ package org.eclipse.jdi.internal;
  */
 
 import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Value;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
@@ -15,6 +17,7 @@ import org.eclipse.jdi.internal.event.*;
 import org.eclipse.jdi.internal.jdwp.*;
 import org.eclipse.jdi.internal.spy.*;
 import java.util.*;
+import java.util.List;
 import java.io.*;
 
 /**
@@ -1019,4 +1022,62 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 	getConstantMaps();
 	 	return fClassStatusVector;
 	 }
+	/*
+	 * @see TypeImpl#createNullValue()
+	 */
+	public Value createNullValue() {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#sourceNames(String)
+	 */
+	public List sourceNames(String arg0) throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#sourcePaths(String)
+	 */
+	public List sourcePaths(String arg0) throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#sourceDebugExtension()
+	 */
+	public String sourceDebugExtension() throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#allLineLocations(String, String)
+	 */
+	public List allLineLocations(String arg0, String arg1)
+		throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#locationsOfLine(String, String, int)
+	 */
+	public List locationsOfLine(String arg0, String arg1, int arg2)
+		throws AbsentInformationException {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#availableStrata()
+	 */
+	public List availableStrata() {
+		return null;
+	}
+
+	/*
+	 * @see ReferenceType#defaultStratum()
+	 */
+	public String defaultStratum() {
+		return null;
+	}
+
 }

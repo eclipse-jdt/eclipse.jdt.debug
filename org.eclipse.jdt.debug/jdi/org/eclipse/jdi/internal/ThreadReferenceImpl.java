@@ -6,6 +6,9 @@ package org.eclipse.jdi.internal;
  */
 
 import com.sun.jdi.*;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.Value;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
@@ -15,6 +18,7 @@ import org.eclipse.jdi.internal.event.*;
 import org.eclipse.jdi.internal.jdwp.*;
 import org.eclipse.jdi.internal.spy.*;
 import java.util.*;
+import java.util.List;
 import java.io.*;
 
 
@@ -569,4 +573,41 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 	getConstantMaps();
 	 	return fSuspendStatusVector;
 	 }
+
+	/*
+	 * @see ThreadReference#popFrames(StackFrame)
+	 */
+	public void popFrames(StackFrame frameToPop) throws IncompatibleThreadStateException {
+		if (!isSuspended()) {
+			throw new IncompatibleThreadStateException();
+		}
+		if (!virtualMachineImpl().canPopFrames()) {
+			throw new UnsupportedOperationException();
+		}
+		
+		StackFrameImpl frame = (StackFrameImpl) frameToPop;
+		
+		initJdwpRequest();
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			frame.writeWithThread(frame, outData);
+			
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SF_POP_FRAME, outBytes);
+			switch (replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_THREAD:
+					throw new IncompatibleThreadStateException();
+				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+					throw new IncompatibleThreadStateException();
+				case JdwpReplyPacket.NO_MORE_FRAMES:
+				default:
+					defaultReplyErrorHandler(replyPacket.errorCode());
+			}
+		} catch (IOException ioe) {
+			defaultIOExceptionHandler(ioe);
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+
 }

@@ -6,6 +6,7 @@ package org.eclipse.jdi.internal;
  */
 
 import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
@@ -15,6 +16,7 @@ import org.eclipse.jdi.internal.event.*;
 import org.eclipse.jdi.internal.jdwp.*;
 import org.eclipse.jdi.internal.spy.*;
 import java.util.*;
+import java.util.List;
 import java.io.*;
 
 /**
@@ -623,4 +625,43 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 	getConstantMaps();
 	 	return fInvokeOptionsVector;
 	 }
+	/**
+	 * @see Method#isObsolete()
+	 */
+	public boolean isObsolete() {
+		boolean obsolete= false;
+		initJdwpRequest();
+		try {
+			ByteArrayOutputStream outBytes= new ByteArrayOutputStream();
+			DataOutputStream outData= new DataOutputStream(outBytes);
+			writeWithReferenceType(this, outData);
+			
+			JdwpReplyPacket reply= requestVM(JdwpCommandPacket.M_OBSOLETE, outBytes);
+			defaultReplyErrorHandler(reply.errorCode());
+			
+			DataInputStream replyData = reply.dataInStream();
+			obsolete = readBoolean("is obsolete", replyData);			
+			
+		} catch (IOException ioe) {
+			defaultIOExceptionHandler(ioe);
+		} finally {
+			handledJdwpRequest();
+		}
+		return obsolete;
+	}
+
+	/*
+	 * @see Method#allLineLocations(String, String)
+	 */
+	public List allLineLocations(String stratum, String sourceName) throws AbsentInformationException {
+		return new ArrayList(0);
+	}
+
+	/*
+	 * @see Method#locationsOfLine(String, String, int)
+	 */
+	public List locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
+		return new ArrayList(0);
+	}
+
 }
