@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -16,13 +16,18 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.JavaSourcePathComputer;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * A classpath variable source container contains a source container
  * that is the resolved value of the associated variable.
- * 
+ * <p>
+ * This class may be instantiated; this class is not intended to be
+ * subclassed. 
+ * </p>
  * @since 3.0
  */
 public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
@@ -57,7 +62,7 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 			path = path.append(fVariable.removeFirstSegments(1));			
 		}
 		IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
-		return JavaApplicationSourcePathComputer.translate(new IRuntimeClasspathEntry[]{entry}, false);
+		return JavaSourcePathComputer.translate(new IRuntimeClasspathEntry[]{entry}, false);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()

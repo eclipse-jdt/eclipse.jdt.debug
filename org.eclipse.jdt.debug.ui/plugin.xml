@@ -2376,22 +2376,22 @@
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainer">
+            adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.launching.JavaProjectSourceContainer">
+            adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>         
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainer">
+            adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.ClasspathVariableSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>                  
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainer">
+            adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>                           
       </extension>     	   

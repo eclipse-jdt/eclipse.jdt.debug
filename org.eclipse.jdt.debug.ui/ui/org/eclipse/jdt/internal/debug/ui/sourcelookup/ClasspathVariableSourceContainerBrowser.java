@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
-import org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainer;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.NewVariableEntryDialog;
+import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathVariableSourceContainer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 

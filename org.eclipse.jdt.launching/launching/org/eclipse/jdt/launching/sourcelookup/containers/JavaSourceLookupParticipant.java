@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching.sourcelookup.containers;
 
 import java.io.File;
 import java.util.HashMap;
@@ -31,8 +31,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
 /**
- * Searches for Java source code.
- * 
+ * A source lookup participant that searches for Java source code.
+ * <p>
+ * This class may be instantiated; this class is not intended to be
+ * subclassed.
+ * </p>
  * @since 3.0
  */
 public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant {

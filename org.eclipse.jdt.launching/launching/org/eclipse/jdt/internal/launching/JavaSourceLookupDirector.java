@@ -17,6 +17,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
+import org.eclipse.jdt.launching.sourcelookup.containers.*;
 
 /**
  * Java source lookup director.

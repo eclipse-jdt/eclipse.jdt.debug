@@ -16,6 +16,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTyp
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching.sourcelookup.containers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +24,15 @@ import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * Java project source container. Searches for source in a project's
  * source folders.
+ * <p>
+ * This class may be instantiated; this class is not intended to be
+ * subclassed. 
+ * </p>
  * 
  * @since 3.0
  */

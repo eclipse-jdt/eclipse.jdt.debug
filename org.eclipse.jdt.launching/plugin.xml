@@ -166,7 +166,7 @@
    <extension point="org.eclipse.debug.core.sourcePathComputers">
    		<sourcePathComputer
    			id="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer"
-   			class="org.eclipse.jdt.internal.launching.JavaApplicationSourcePathComputer">
+   			class="org.eclipse.jdt.internal.launching.JavaSourcePathComputer">
    		</sourcePathComputer>
    </extension>
    <extension point="org.eclipse.debug.core.sourceLocators">

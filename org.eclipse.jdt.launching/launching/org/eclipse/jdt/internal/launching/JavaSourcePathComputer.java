@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,13 +29,21 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer;
+import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
 
 /**
- * Computes a default source lookup path for a local Java application.
+ * Computes a default source lookup path for Java applications.
+ * The source path provider associated with a launch configuration is consulted
+ * to compute a source lookup path. The source path provider is determined
+ * by the <code>ATTR_SOURCE_PATH_PROVIDER</code> launch configration attribute,
+ * which defaults to the <code>StandardSourcePathProvider</code> when unspecified.
+ * The source path provider computes a collection of <code>IRuntimeClasspathEntry</code>'s
+ * which are translated to source containers (<code>ISourceContainer</code>).
  * 
  * @since 3.0
  */
-public class JavaApplicationSourcePathComputer implements ISourcePathComputerDelegate {
+public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 	
 	/**
 	 * Unique identifier for the local Java application source path computer
@@ -68,7 +75,7 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 	 *  when comparing against existing packagr fragment roots
 	 * @exception CoreException if unable to expand the path
 	 */
-	protected static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries, boolean considerSourceAttachments) throws CoreException {
+	public static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries, boolean considerSourceAttachments) throws CoreException {
 		List containers = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];

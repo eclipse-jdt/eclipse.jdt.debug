@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -20,11 +20,17 @@ import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.JavaSourcePathComputer;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * A source container for a classpath container.
+ * <p>
+ * This class may be instantiated; this class is not intended to be
+ * subclassed. 
+ * </p>
  * 
  * @since 3.0
  */
@@ -77,7 +83,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(getPath(), IRuntimeClasspathEntry.USER_CLASSES);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveSourceLookupPath(new IRuntimeClasspathEntry[]{entry}, getDirector().getLaunchConfiguration());
-		return JavaApplicationSourcePathComputer.translate(entries, true);
+		return JavaSourcePathComputer.translate(entries, true);
 	}
 	
 	/**

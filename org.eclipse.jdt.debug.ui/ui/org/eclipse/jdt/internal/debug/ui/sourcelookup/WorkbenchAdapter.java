@@ -18,11 +18,11 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainer;
-import org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainer;
-import org.eclipse.jdt.internal.launching.JavaProjectSourceContainer;
-import org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainer;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourceContainer;
+import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathVariableSourceContainer;
+import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer;
+import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -17,11 +17,16 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * Package fragment root source container. Represents an archive
  * or folder in the Java model containing classfiles, with a possible
  * source attachment.
+ * <p>
+ * This class may be instantiated; this class is not intended to be
+ * subclassed. 
+ * </p>
  * 
  * @since 3.0
  */
