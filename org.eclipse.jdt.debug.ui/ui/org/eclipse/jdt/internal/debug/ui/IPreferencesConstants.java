@@ -20,6 +20,6 @@ public interface IPreferencesConstants {
 	static final String SHOW_UNSIGNED_VALUES= "org.eclipse.jdt.debug.ui.javaDebug.showUnsignedValues"; //$NON-NLS-1$
 	// Preference update flag useful for IPropertyChangeListeners to
 	// by notified of variable rendering preference changes
-	static final String VARIABLE_RENDERING = "VARIABLE_RENDERING";
+	static final String VARIABLE_RENDERING = "VARIABLE_RENDERING"; //$NON-NLS-1$
 	
 }

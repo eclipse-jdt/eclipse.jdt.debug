@@ -270,7 +270,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	protected void reportError(IStatus status) {
-		ErrorDialog.openError(getShell(), "Error evaluating", null, status);
+		ErrorDialog.openError(getShell(), DisplayMessages.getString("EvaluationAction.Error_evaluating_1"), null, status); //$NON-NLS-1$
 	}
 	
 	protected void reportError(Throwable exception) {
