@@ -186,7 +186,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 	public ExceptionBreakpointFilterEditor(Composite parent, IJavaExceptionBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;
-		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, "Exception &Scope");
+		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, "Re&strict to Selected Location(s):");
 		createControl(parent);
 	}
 	
