@@ -338,6 +338,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);			
 		}
+		populateJREComboBox();
 		selectJREComboBoxEntry(vmTypeID, vmName);
 	}	
 	
@@ -409,9 +410,20 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * Set the available items on the JRE combo box
 	 */
 	protected void populateJREComboBox() {
+		
+		ILaunchConfiguration config = getLaunchConfiguration();
+		IVMInstall defaultVM = null;
+		if (config != null) {
+			try {
+				defaultVM = JavaRuntime.computeVMInstall(config);
+			} catch (CoreException e) {
+			}
+		}
+		if (defaultVM == null) {
+			// The default VM is the workspace default if there is no config context
+			defaultVM = JavaRuntime.getDefaultVMInstall();
+		}
 
-		// Show the name of the 'default' VM, if it exists
-		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
 		int numVMs = fVMStandins.size();
 		if (defaultVM != null) {
 			numVMs++;
