@@ -22,8 +22,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -169,7 +171,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			
 				String typeName= null;
 				IResource resource;
-				IJavaLineBreakpoint breakpoint= null;
+//				IJavaLineBreakpoint breakpoint= null;
 				if (type == null) {
 					if (editorInput instanceof IFileEditorInput) {
 						resource= ((IFileEditorInput)editorInput).getFile();
@@ -183,9 +185,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						typeName= typeName.substring(0, index);
 					}
 					resource= BreakpointUtils.getBreakpointResource(type);
-					IJavaLineBreakpoint existingBreakpoint= JDIDebugModel.lineBreakpointExists(resource, typeName, lineNumber);
+					final IJavaLineBreakpoint existingBreakpoint= JDIDebugModel.lineBreakpointExists(resource, typeName, lineNumber);
 					if (existingBreakpoint != null) {
-						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existingBreakpoint, true);
+                        scheduleBreakpointRemoval(existingBreakpoint, true);
+						
 						return;
 					}
 					resource= BreakpointUtils.getBreakpointResource(type);
@@ -198,15 +201,30 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					} catch (BadLocationException ble) {
 						JDIDebugUIPlugin.log(ble);
 					}
-					breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
+                    scheduleLineBreakpointCreation(resource, typeName, lineNumber, -1, -1, 0, true, attributes, document, bestMatch, type, editorPart);
 				}
-				new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, bestMatch, typeName, type, resource, editorPart).schedule();
 			} catch (CoreException ce) {
-				ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}
 	}
+    
+	private void scheduleLineBreakpointCreation(final IResource resource, final String typeName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes, final IDocument document, final boolean bestMatch, final IType type, final IEditorPart editorPart) {
+        new Job(ActionMessages.getString("ToggleBreakpointAdapter.0")) { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    IJavaLineBreakpoint breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, charStart, charEnd, hitCount, register, attributes);
+                    new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, bestMatch, typeName, type, resource, editorPart).schedule();
+                    return Status.OK_STATUS;
+                } catch (CoreException e) {
+                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                } 
+                return Status.CANCEL_STATUS;
+            }
+        }.schedule();
+    }
+
 	/*(non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(IWorkbenchPart, ISelection)
 	 */
@@ -239,22 +257,22 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						return;
 					}
 					// check if this method breakpoint already exist. If yes, remove it.
-					IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+					final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 					IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
 					for (int i= 0; i < breakpoints.length; i++) {
-						IBreakpoint breakpoint= breakpoints[i];
-						if (breakpoint instanceof IJavaMethodBreakpoint) {
-							IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
-							if (typeName.equals(methodBreakpoint.getTypeName())
-									&& methodName.equals(methodBreakpoint.getMethodName())
-									&& methodSignature.equals(methodBreakpoint.getMethodSignature())) {
-								breakpointManager.removeBreakpoint(methodBreakpoint, true);
-								return;
-							}
-						}
+					    IBreakpoint breakpoint= breakpoints[i];
+					    if (breakpoint instanceof IJavaMethodBreakpoint) {
+					        final IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+					        if (typeName.equals(methodBreakpoint.getTypeName())
+					                && methodName.equals(methodBreakpoint.getMethodName())
+					                && methodSignature.equals(methodBreakpoint.getMethodSignature())) {
+					            scheduleBreakpointRemoval(breakpoint, true);
+					            return;
+					        }
+					    }
 					}
 					// add the breakpoint
-					JDIDebugModel.createMethodBreakpoint(getResource((IEditorPart)part), typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
+					scheduleMethodBreakpointCreation(getResource((IEditorPart)part), typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
 				}
 			}
 		} else if (selection instanceof IStructuredSelection) {
@@ -263,8 +281,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				report(ActionMessages.getString("ToggleBreakpointAdapter.9"), part); //$NON-NLS-1$
 				return;
 			}
-			// add or remove the breakpoint
-			IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 			for (int i= 0, length= members.length; i < length; i++) {
 				IMethod method= members[i];
 				IJavaBreakpoint breakpoint= getBreakpoint(method);
@@ -296,15 +312,43 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 							throw new CoreException(status);
 						}
 					}
-					JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method), type.getFullyQualifiedName(), methodName, methodSignature, true, false, false, -1, start, end, 0, true, attributes);
+					scheduleMethodBreakpointCreation(BreakpointUtils.getBreakpointResource(method), type.getFullyQualifiedName(), methodName, methodSignature, true, false, false, -1, start, end, 0, true, attributes);
 				} else {
 					// remove breakpoint
-					breakpointManager.removeBreakpoint(breakpoint, true);
+                    scheduleBreakpointRemoval(breakpoint, true);
+					
 				}
 			}
 		}
 	}
 
+    private void scheduleBreakpointRemoval(final IBreakpoint breakpoint, final boolean delete) {
+        new Job(ActionMessages.getString("ToggleBreakpointAdapter.1")) { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, delete);
+                    return Status.OK_STATUS;
+                } catch (CoreException e) {
+                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                return Status.CANCEL_STATUS;
+            } 
+        }.schedule();
+    }
+
+    private void scheduleMethodBreakpointCreation(final IResource resource, final String typeName, final String methodName, final String methodSignature, final boolean entry, final boolean exit, final boolean nativeOnly, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) {
+        new Job(ActionMessages.getString("ToggleBreakpointAdapter.2")) { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    JDIDebugModel.createMethodBreakpoint(resource, typeName, methodName, methodSignature, entry, exit, nativeOnly, lineNumber, charStart, charEnd, hitCount, register, attributes);
+                    return Status.OK_STATUS;
+                } catch (CoreException e) {
+                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                return Status.CANCEL_STATUS;
+            }
+        }.schedule();
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -394,13 +438,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					if (breakpoint instanceof IJavaWatchpoint) {
 						IJavaWatchpoint watchpoint= (IJavaWatchpoint)breakpoint;
 						if (typeName.equals(watchpoint.getTypeName()) && fieldName.equals(watchpoint.getFieldName())) {
-							breakpointManager.removeBreakpoint(watchpoint, true);
+							scheduleBreakpointRemoval(watchpoint, true);
 							return;
 						}
 					}
 				}
 				// add the watchpoint
-				JDIDebugModel.createWatchpoint(getResource((IEditorPart)part), typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10));
+                scheduleWatchpointCreation(getResource((IEditorPart)part), typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10));
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			IField[] members = getFields((IStructuredSelection)selection);
@@ -408,8 +452,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				report(ActionMessages.getString("ToggleBreakpointAdapter.10"), part); //$NON-NLS-1$
 				return;
 			}
-			// add or remove watchpoint
-			IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 			for (int i= 0, length= members.length; i < length; i++) {
 				IField element= members[i];
 				IJavaBreakpoint breakpoint= getBreakpoint(element);
@@ -424,15 +466,31 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					}
 					Map attributes = new HashMap(10);
 					BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
-					JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes);
+					scheduleWatchpointCreation(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes);
 				} else {
 					// remove breakpoint
-					breakpointManager.removeBreakpoint(breakpoint, true);
+					scheduleBreakpointRemoval(breakpoint, true);
 				}
 			}
 		}
 	}
-	
+	private void scheduleWatchpointCreation(final IResource resource, final String typeName, final String fieldName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) {
+        new Job(ActionMessages.getString("ToggleBreakpointAdapter.3")) { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    JDIDebugModel.createWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
+                    return Status.OK_STATUS;
+                } catch (CoreException e) {
+                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                return Status.CANCEL_STATUS;
+            }
+            
+        }.schedule();
+
+    }
+
+    
 	public static String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
 		String[] parameterTypes= Signature.getParameterTypes(methodSignature);
 		int length= length= parameterTypes.length;

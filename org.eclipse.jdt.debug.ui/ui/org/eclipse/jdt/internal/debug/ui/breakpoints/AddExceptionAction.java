@@ -11,15 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
 
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -37,21 +31,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		final AddExceptionDialog dialog= new AddExceptionDialog(shell, PlatformUI.getWorkbench().getProgressService());
 		dialog.setTitle(BreakpointMessages.getString("AddExceptionAction.0")); //$NON-NLS-1$
 		dialog.setMessage(BreakpointMessages.getString("AddExceptionAction.1"));		 //$NON-NLS-1$
-		if (dialog.open() == Window.OK) {
-			Runnable r = new Runnable() {
-				public void run() {
-					IViewPart part = JDIDebugUIPlugin.getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-					if (part instanceof IDebugView) {
-						Viewer viewer = ((IDebugView)part).getViewer();
-						if (viewer instanceof StructuredViewer) {
-							StructuredViewer sv = (StructuredViewer)viewer;
-							sv.setSelection(new StructuredSelection(dialog.getResult()), true);
-						}
-					}
-				}
-			};
-			JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
-		}
+		dialog.open();
 	}
 	
 	/* (non-Javadoc)
