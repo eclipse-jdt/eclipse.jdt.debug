@@ -1517,7 +1517,7 @@
 	<shortcut
 		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
-		helpContextId="org.eclipse.jdt.debug.ui.launchShortcutHelpContext.local_java_application"
+		helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
 		label="%JavaApplicationShortcut.label"
 		icon="icons/full/ctool16/java_app.gif"
 		modes="run, debug">
@@ -1529,7 +1529,7 @@
     <shortcut
         id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
         class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
-		helpContextId="org.eclipse.jdt.debug.ui.launchShortcutHelpContext.java_applet"
+		helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
         label="%AppletShortcut.label"
         icon="icons/full/ctool16/java_applet.gif"
         modes="run, debug">
