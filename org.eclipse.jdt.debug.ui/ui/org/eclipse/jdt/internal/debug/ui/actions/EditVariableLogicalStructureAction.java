@@ -102,7 +102,7 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
         ILogicalStructureType type = null;
         ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
         if (types.length > 0) {
-            type= DebugPlugin.getSelectedStructureType(types);
+            type= DebugPlugin.getDefaultStructureType(types);
         }
         return type;
     }
