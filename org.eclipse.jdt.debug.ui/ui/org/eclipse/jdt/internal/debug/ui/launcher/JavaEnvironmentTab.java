@@ -29,6 +29,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -297,6 +298,12 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
+		fPathTabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				setPathButtonsEnableState();
+			}			
+		});
+				
 		setEnvButtonsEnableState();
 		
 	}
@@ -613,6 +620,8 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	protected void setPathButtonsEnableState() {
 		List listWidget = getActiveListWidget();
 		boolean useDefault = isUseDefaultClasspath();
+		TabItem[] tabSelection = fPathTabFolder.getSelection();
+		boolean isClasspathTab = tabSelection != null && tabSelection.length == 1 && tabSelection[0].equals(fClassPathTabItem);
 		
 		int selectCount = listWidget.getSelectionIndices().length;
 		boolean selection = selectCount > 0;
@@ -622,11 +631,11 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		boolean firstSelected = selectedIndex == 0;
 		boolean lastSelcted = selectedIndex == (listWidget.getItemCount() - 1);
 		
-		fPathRemoveButton.setEnabled(!useDefault && selection);
-		fPathMoveUpButton.setEnabled(!useDefault && singleSelection && !firstSelected);
-		fPathMoveDownButton.setEnabled(!useDefault && singleSelection && !lastSelcted);
-		fPathAddArchiveButton.setEnabled(!useDefault);
-		fPathAddDirectoryButton.setEnabled(!useDefault);
+		fPathRemoveButton.setEnabled((!useDefault || !isClasspathTab) && selection);
+		fPathMoveUpButton.setEnabled((!useDefault || !isClasspathTab) && singleSelection && !firstSelected);
+		fPathMoveDownButton.setEnabled((!useDefault || !isClasspathTab) && singleSelection && !lastSelcted);
+		fPathAddArchiveButton.setEnabled((!useDefault || !isClasspathTab));
+		fPathAddDirectoryButton.setEnabled((!useDefault || !isClasspathTab));
 	
 	}
 	
