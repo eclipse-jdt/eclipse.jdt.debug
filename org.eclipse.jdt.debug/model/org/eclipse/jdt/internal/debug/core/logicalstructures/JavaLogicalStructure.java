@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -103,9 +105,9 @@ public class JavaLogicalStructure {
 			if (compiledExpression.hasErrors()) {
 				String[] errorMessages = compiledExpression.getErrorMessages();
 				for (int i = 0; i < errorMessages.length; i++) {
-					JDIDebugPlugin.logDebugMessage(errorMessages[i]);
+					JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, errorMessages[i], null));
 				}
-				return null;
+				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.0")); //$NON-NLS-1$
 			}
 			fResult= null;
 			fEvaluationEngine.evaluateExpression(compiledExpression, fEvaluationValue, fThread, this, DebugEvent.EVALUATION_IMPLICIT, false);
@@ -118,14 +120,14 @@ public class JavaLogicalStructure {
 				}
 			}
 			if (fResult == null) {
-				return null;
+				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.1")); //$NON-NLS-1$
 			}
 			if (fResult.hasErrors()) {
 				DebugException exception = fResult.getException();
 				if (exception != null) {
 					JDIDebugPlugin.log(exception);
 				}
-				return null;
+				return new JavaStructureErrorValue(MessageFormat.format(LogicalStructuresMessages.getString("JavaLogicalStructure.2"), new String[] { exception.getMessage() })); //$NON-NLS-1$
 			}
 			return fResult.getValue();
 		}
