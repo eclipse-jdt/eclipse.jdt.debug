@@ -374,10 +374,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			} else if (fRefreshChildren) {
 				if (fStackFrames.isEmpty()) {
 					fStackFrames = createAllStackFrames();
-					if (!fStackFrames.isEmpty()) {	
-						fRefreshChildren = false;
+					if (fStackFrames.isEmpty()) {	
+						//leave fRefreshChildren == true
+						//bug 6393
+						return fStackFrames;
 					}
-					return fStackFrames;
 				} 
 				// compute new or removed stack frames
 				List frames= getUnderlyingFrames();
