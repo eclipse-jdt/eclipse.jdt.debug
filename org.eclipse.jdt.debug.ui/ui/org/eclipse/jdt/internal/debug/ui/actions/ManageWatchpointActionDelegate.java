@@ -278,11 +278,17 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null && getPage() != null) {
 			IWorkbenchPart part = getPage().getActivePart();
-			if (part == null || part instanceof JavaSnippetEditor) {
+			if (part == null) {
 				getAction().setEnabled(false);
 			} else if (part != getPage().getActiveEditor()) {
 				ISelectionProvider sp= part.getSite().getSelectionProvider();
 				getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
+			} else { //dealing with active editor
+				if (getPage().getActiveEditor() instanceof ITextEditor) {
+					super.setEnabledState((ITextEditor)getPage().getActiveEditor());
+				} else {
+					getAction().setEnabled(false);
+				}
 			}
 		}	
 	}

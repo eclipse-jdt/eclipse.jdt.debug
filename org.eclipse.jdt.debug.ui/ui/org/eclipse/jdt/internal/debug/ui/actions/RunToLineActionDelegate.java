@@ -164,10 +164,13 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		IAction action= getAction();
 		if (action != null) {
 			try {
-				IDebugTarget target= getContext();
-				action.setEnabled(target != null 
-					&& !(target.isDisconnected() || target.isTerminated())
-					&& getTextEditor() != null);
+				super.setEnabledState(editor);
+				if (action.isEnabled()) {
+					IDebugTarget target= getContext();
+					action.setEnabled(target != null 
+						&& !(target.isDisconnected() 
+						|| target.isTerminated()));
+				}
 			} catch (DebugException de) {
 				action.setEnabled(false);
 				JDIDebugUIPlugin.log(de);

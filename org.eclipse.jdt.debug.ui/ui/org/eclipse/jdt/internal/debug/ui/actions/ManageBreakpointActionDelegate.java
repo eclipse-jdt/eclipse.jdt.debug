@@ -20,6 +20,7 @@ import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -269,7 +270,9 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null) {
-			getAction().setEnabled(editor != null);
+			getAction().setEnabled(editor != null  
+			&& (editor.getSite().getId().equals(JavaUI.ID_CF_EDITOR)
+			|| editor.getSite().getId().equals(JavaUI.ID_CU_EDITOR)));
 		} 
 	}
 	
