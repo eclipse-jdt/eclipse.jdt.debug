@@ -161,7 +161,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal message logged from JDT Debug UI: " + message, null));
+			log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal message logged from JDT Debug UI: " + message, null)); //$NON-NLS-1$
 		}
 	}
 	

@@ -672,7 +672,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 					if (dollar >= 0) {
 						name = name.substring(0, dollar);
 					}
-					name+= ".java";
+					name+= ".java"; //$NON-NLS-1$
 				}
 				packageName = ""; //$NON-NLS-1$
 			} else {
@@ -682,7 +682,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 					if (dollar >= 0) {
 						name = name.substring(0, dollar);
 					}
-					name += ".java";
+					name += ".java"; //$NON-NLS-1$
 				}
 				packageName = packageName.substring(0,index);
 			}
@@ -767,7 +767,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		} else {
 			status= exception.getStatus();
 		}
-		openConditionErrorDialog(breakpoint, "Conditional breakpoint evaluation failed", "An exception occurred while evaluating the condition for breakpoint: {0} ", status);
+		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_evaluation_failed_3"), DebugUIMessages.getString("JavaDebugOptionsManager.An_exception_occurred_while_evaluating_the_condition_for_breakpoint__{0}__4"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -779,10 +779,10 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		for (int i=0, numErrors= errors.length; i < numErrors; i++) {
 			error= errors[i];
 			message.append(error.getMessage());
-			message.append("\n ");
+			message.append("\n "); //$NON-NLS-1$
 		}
 		IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, message.toString(), null);
-		openConditionErrorDialog(breakpoint, "Conditional breakpoint compilation failed", "Errors detected compiling the condition for breakpoint {0}", status);
+		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_compilation_failed_6"), DebugUIMessages.getString("JavaDebugOptionsManager.Errors_detected_compiling_the_condition_for_breakpoint_{0}_7"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void openConditionErrorDialog(final IJavaLineBreakpoint breakpoint, final String title, final String errorMessage, final IStatus status) {

@@ -129,11 +129,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);		
 		
-		Composite comp= createLabelledComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePageSuspend_Execution_1")); //$NON-NLS-1$
+		Composite comp= createLabelledComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_Execution_1")); //$NON-NLS-1$
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
 		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_execution_on_co&mpilation_errors_1")); //$NON-NLS-1$
 		
-		comp= createLabelledComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePageHot_Code_Replace_Error_Reporting_2")); //$NON-NLS-1$
+		comp= createLabelledComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_Error_Reporting_2")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
 		

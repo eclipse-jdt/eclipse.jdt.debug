@@ -41,7 +41,7 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 		if (condition == null) {
 			condition = ""; //$NON-NLS-1$
 		}
-		fTextArea= createEditArea(parent, condition, "Edit the condition");
+		fTextArea= createEditArea(parent, condition, DebugUIMessages.getString("ConditionalBreakpointErrorDialog.Edit_the_condition_1")); //$NON-NLS-1$
 		
 		return dialogArea;
 	}

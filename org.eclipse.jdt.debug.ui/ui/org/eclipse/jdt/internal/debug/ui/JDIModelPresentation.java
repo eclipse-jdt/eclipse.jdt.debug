@@ -1124,7 +1124,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendSuspendPolicy(breakpoint, buffer);
 		appendThreadFilter(breakpoint, buffer);
 		if (breakpoint.getFilters().length > 0) {
-			buffer.append(" [scoped]");
+			buffer.append(DebugUIMessages.getString("JDIModelPresentation._[scoped]_1")); //$NON-NLS-1$
 		}
 		String state= null;
 		boolean c= breakpoint.isCaught();
@@ -1515,7 +1515,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected void appendConditional(IJavaLineBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.isConditionEnabled()) {
 			buffer.append(' ');
-			buffer.append("[conditional]");
+			buffer.append(DebugUIMessages.getString("JDIModelPresentation.[conditional]_2")); //$NON-NLS-1$
 		}
 	}
 }
