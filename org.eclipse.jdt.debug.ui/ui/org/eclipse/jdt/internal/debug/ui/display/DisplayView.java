@@ -366,7 +366,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			IDocument doc= fSourceViewer.getDocument();
 			if (doc != null) {
 				String contents= doc.get().trim();
-				memento.putTextData(contents);
+				if (contents.length() > 0) {
+					memento.putTextData(contents);
+				}
 			}
 		} else if (fRestoredContents != null) {
 			memento.putTextData(fRestoredContents);
