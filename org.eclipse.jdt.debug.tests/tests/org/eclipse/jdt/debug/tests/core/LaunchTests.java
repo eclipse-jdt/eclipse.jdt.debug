@@ -47,9 +47,13 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		assertTrue("Launch should have been added", added);
 
 		synchronized (this) {
-			if (!terminated) {
+			for (int i= 0; i < 300; i++) {
+				if (launch.isTerminated()) {
+					terminated= true;
+					break;
+				}
 				try {
-					wait(30000);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 				}
 			}
