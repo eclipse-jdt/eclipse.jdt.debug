@@ -526,7 +526,7 @@ public final class JavaRuntime {
 	 * @exception CoreException if unable to construct a runtime classpath entry
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) {
+	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) throws CoreException {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
 		return new RuntimeClasspathEntry(cpe, classpathProperty);
 	}
