@@ -146,7 +146,7 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 	 */
 	protected String getTypeName() throws CoreException {
 		String linkText = getLinkText();		
-		int index = linkText.lastIndexOf('(');
+		int index = linkText.indexOf('(');
 		if (index >= 0) {
 			String typeName = linkText.substring(0, index);
 			// remove the method name
