@@ -90,12 +90,10 @@ public interface IVMInstall {
 	IVMInstallType getVMInstallType();
 	
 	/**
-	 * Returns the library location of this IVMInstall that has been
+	 * Returns the library location of this IVMInstall.
 	 * @see IVMInstall#setLibraryLocation(LibraryLocation)
 	 * @return 	The library location of this IVMInstall.
 	 * 			Returns null when not set or previously set to null.
-	 * 			Client should then use the default obtained from 
-	 * 			<code>IVMInstallType#getDefaultLibraryLocation(File)</code>
 	 */
 	LibraryLocation getLibraryLocation();
 	/**
