@@ -18,9 +18,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.core.ILogicalStructureTypeDelegate;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -45,7 +45,7 @@ public abstract class LogicalObjectStructureType implements ILogicalStructureTyp
 	private static IStatusHandler fgThreadProvider;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
+	 * @see org.eclipse.debug.core.model.ILogicalStructureType#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
 	 */
 	public boolean providesLogicalStructure(IValue value) {
 		if (value instanceof IJavaObject) {
@@ -88,7 +88,7 @@ public abstract class LogicalObjectStructureType implements ILogicalStructureTyp
 	protected abstract IEvaluationRunnable getEvaluation();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getLogicalStructure(org.eclipse.debug.core.model.IValue)
+	 * @see org.eclipse.debug.core.model.ILogicalStructureType#getLogicalStructure(org.eclipse.debug.core.model.IValue)
 	 */
 	public synchronized IValue getLogicalStructure(IValue value) throws CoreException {
 		final IJavaThread thread = getThread(value);
