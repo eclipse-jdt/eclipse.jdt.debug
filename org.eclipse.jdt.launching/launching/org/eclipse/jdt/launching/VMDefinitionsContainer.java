@@ -39,25 +39,50 @@ import org.xml.sax.SAXException;
 /**
  * This is a container for VM definitions such as the VM definitions that are
  * stored in the workbench preferences.  
+ * <p>
+ * An instance of this class may be obtained from an XML document by calling
+ * <code>parseXMLIntoContainer</code>.
+ * </p>
+ * <p>
+ * An instance of this class may be translated into an XML document by calling
+ * <code>getAsXML</code>.
+ * </p>
+ * <p>
+ * Clients may instantiate this class; it is not intended to be subclassed.
+ * </p>
+ * 
+ * @since 2.1
  */
 public class VMDefinitionsContainer {
 		
 	/**
-	 * Map of VMInstallTypes to Lists of corresponding VMInstalls	 */
+	 * Map of VMInstallTypes to Lists of corresponding VMInstalls.	 */
 	private Map fVMTypeToVMMap;
+	
+	/**
+	 * The number of VMs managed by this container.	 */
 	private int fVMCount = 0;
 	
+	/**
+	 * The composite identifier of the default VM.  This consists of the install type ID
+	 * plus an ID for the VM.	 */
 	private String fDefaultVMInstallCompositeID;
+	
+	/**
+	 * The identifier of the connector to use for the default VM.	 */
 	private String fDefaultVMInstallConnectorTypeID;
 	
 	/**
-	 * Constructor	 */
+	 * @see java.lang.Object#Object()
+	 */
 	public VMDefinitionsContainer() {
 		fVMTypeToVMMap = new HashMap(10);
 	}
 	
 	/**
-	 * Add the specified VM to the VM definitions managed by this container.	 */
+	 * Add the specified VM to the VM definitions managed by this container.
+	 * 
+	 * @param vm the VM to be added to this container	 */
 	public void addVM(IVMInstall vm) {	
 		IVMInstallType vmInstallType = vm.getVMInstallType();
 		List vmList = (List) fVMTypeToVMMap.get(vmInstallType);
@@ -70,7 +95,9 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
-	 * Add all VM's in the specified list to the VM definitions managed by this container.	 */
+	 * Add all VM's in the specified list to the VM definitions managed by this container.
+	 * 
+	 * @param vmList a list of VMs to be added to this container	 */
 	public void addVMList(List vmList) {
 		Iterator iterator = vmList.iterator();
 		while (iterator.hasNext()) {
@@ -80,13 +107,19 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
-	 * Return the mapping of VMInstallTypes to VMs.	 */
+	 * Return a mapping of VM install types to lists of VMs.  The keys of this map are instances of
+	 * <code>IVMInstallType</code>.  The values are instances of <code>java.util.List</code>
+	 * which contain instances of <code>IVMInstall</code>.  
+	 * 
+	 * @return Map the mapping of VM install types to lists of VMs	 */
 	public Map getVMTypeToVMMap() {
 		return fVMTypeToVMMap;
 	}
 	
 	/**
-	 * Return a List of all VMs in this container.	 */
+	 * Return a list of all VMs in this container.  The order of the list is not specified.
+	 * 
+	 * @return List the data structure containing all VMs managed by this container	 */
 	public List getVMList() {
 		List resultList = new ArrayList(fVMCount);
 		
@@ -101,25 +134,58 @@ public class VMDefinitionsContainer {
 		return resultList;
 	}
 	
+	/**
+	 * Returns the composite ID for the default VM.  The composite ID consists
+	 * of an ID for the VM install type together with an ID for VM.  This is
+	 * necessary because VM ids by themselves are not necessarily unique across
+	 * VM install types.
+	 * 
+	 * @return String returns the composite ID of the current default VM
+	 */
 	public String getDefaultVMInstallCompositeID(){
 		return fDefaultVMInstallCompositeID;
 	}
 	
+	/**
+	 * Sets the composite ID for the default VM.  The composite ID consists
+	 * of an ID for the VM install type together with an ID for VM.  This is
+	 * necessary because VM ids by themselves are not necessarily unique across
+	 * VM install types.
+	 * 
+	 * @param id identifies the new default VM using a composite ID
+	 */
 	public void setDefaultVMInstallCompositeID(String id){
 		fDefaultVMInstallCompositeID = id;
 	}
 	
+	/**
+	 * Return the default VM's connector type ID.
+	 * 
+	 * @return String the current value of the default VM's connector type ID
+	 */
 	public String getDefaultVMInstallConnectorTypeID() {
 		return fDefaultVMInstallConnectorTypeID;
 	}
 	
+	/**
+	 * Set the default VM's connector type ID.
+	 * 
+	 * @param id the new value of the default VM's connector type ID
+	 */
 	public void  setDefaultVMInstallConnectorTypeID(String id){
 		fDefaultVMInstallConnectorTypeID = id;
 	}
 	
 	/**
-	 * Return the VM definitions in this object as a String of XML.  The String
+	 * Return the VM definitions contained in this object as a String of XML.  The String
 	 * is suitable for storing in the workbench preferences.
+	 * <p>
+	 * The resulting XML is compatible with the static method <code>parseXMLIntoContainer</code>.
+	 * </p>
+	 * @return String the results of flattening this object into XML
+	 * @throws IOException if this method fails. Reasons include:<ul>
+	 * <li>serialization of the XML document failed</li>
+	 * </ul>
 	 */	public String getAsXML() throws IOException{
 		
 		// Create the Document and the top-level node
@@ -213,11 +279,26 @@ public class VMDefinitionsContainer {
 	}
 			
 	/**
-	 * Parse the VM definitions in the specified InputStream and return an instance
+	 * Parse the VM definitions contained in the specified InputStream and return an instance
 	 * of <code>VMDefinitionsContainer</code>.
+	 * <p>
 	 * The VMs in the returned container are instances of <code>VMStandin</code>.
+	 * </p>
+	 * <p>
 	 * This method has no side-effects.  That is, no notifications are sent for VM adds,
-	 * changes, deletes.  
+	 * changes, deletes, and the workbench preferences are not affected.
+	 * </p>
+	 * <p>
+	 * If the <code>getAsXML</code> method is called on the returned container object,
+	 * the resulting XML will be sematically equivalent (though not necessarily syntactically equivalent) as
+	 * the XML contained in <code>inputStream</code>.
+	 * </p>
+	 * @param inputStream the <code>InputStream</code> containing XML that declares a set of VMs and a default VM
+	 * @return VMDefinitionsContainer a container for the VM objects declared in <code>inputStream</code>
+	 * @throws IOException if this method fails. Reasons include:<ul>
+	 * <li>the XML in <code>inputStream</code> was badly formatted</li>
+	 * <li>the top-level node was not 'vmSettings'</li>
+	 * </ul>
 	 */	public static VMDefinitionsContainer parseXMLIntoContainer(InputStream inputStream) throws IOException {
 		
 		// Create the container to populate
