@@ -44,11 +44,6 @@ public class BreakpointLocationVerifierJob extends Job {
 	private IDocument fDocument;
 	
 	/**
-	 * The offset in the document where the breakpoint has been requested
-	 */
-	private int fOffset;
-
-	/**
 	 * The temporary breakpoint that has been set. Can be <code>null</code> if the callee was not able
 	 * to check if a breakpoint was already set at this position.
 	 */	
@@ -80,10 +75,9 @@ public class BreakpointLocationVerifierJob extends Job {
 	 */
 	private IEditorStatusLine fStatusLine;
 	
-	public BreakpointLocationVerifierJob(IDocument document, int offset, IJavaLineBreakpoint breakpoint, int lineNumber, String typeName, IType type, IResource resource, IEditorStatusLine statusLine) {
+	public BreakpointLocationVerifierJob(IDocument document, IJavaLineBreakpoint breakpoint, int lineNumber, String typeName, IType type, IResource resource, IEditorStatusLine statusLine) {
 		super(ActionMessages.getString("BreakpointLocationVerifierJob.breakpoint_location")); //$NON-NLS-1$
 		fDocument= document;
-		fOffset= offset;
 		fBreakpoint= breakpoint;
 		fLineNumber= lineNumber;
 		fTypeName= typeName;
@@ -94,7 +88,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	
 	public IStatus run(IProgressMonitor monitor) {
 		CompilationUnit compilationUnit= AST.parseCompilationUnit(fDocument.get().toCharArray());
-		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fOffset);
+		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getValidLocation();		
 		String typeName= locator.getFullyQualifiedTypeName();

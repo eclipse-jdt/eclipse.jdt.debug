@@ -88,8 +88,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	private CompilationUnit fCompilationUnit;
-	private int fPosition;
-	private int fPositionLine;
+	private int fLineNumber;
 
 	private int fLocation;
 	private boolean fLocationFound;
@@ -97,12 +96,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/**
 	 * @param compilationUnit the JDOM CompilationUnit of the source code.
-	 * @param position the offset in the source code where to put the breakpoint.
+	 * @param lineNumber the line number in the source code where to put the breakpoint.
 	 */
-	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int position) {
+	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int lineNumber) {
 		fCompilationUnit= compilationUnit;
-		fPosition= position;
-		fPositionLine= fCompilationUnit.lineNumber(fPosition);
+		fLineNumber= lineNumber;
 		fLocationFound= false;
 	}
 	
@@ -164,15 +162,17 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	private boolean visit(ASTNode node, boolean isCode) {
 		int startPosition= node.getStartPosition();
-		int endPosition = startPosition + node.getLength();
+		int startLine = fCompilationUnit.lineNumber(startPosition);
+		int endLine= fCompilationUnit.lineNumber(startPosition + node.getLength() - 1);
 		// if we already found a correct location, or if the position is not in this part of the code,
 		// no need to check the element inside.
-		if (fLocationFound || endPosition < fPosition) {
+		if (fLocationFound || endLine < fLineNumber) {
 			return false;
 		}
-		int startLine = fCompilationUnit.lineNumber(startPosition);
-		// if it is a structure, or there is more than one line of code, go in
-		if (isCode && (fPositionLine == startLine || startLine == fCompilationUnit.lineNumber(endPosition))) {
+		// if the first line of this node always represents some executable code and the
+		// breakpoint is requested on this line or on a previous line, this is a valid 
+		// location
+		if (isCode && (fLineNumber <= startLine)) {
 			fLocation= startLine;
 			fLocationFound= true;
 			fTypeName= computeTypeName(node);
@@ -252,7 +252,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.BooleanLiteral)
 	 */
 	public boolean visit(BooleanLiteral node) {
-		return visit(node, true);
+		return visit(node, false);
 	}
 
 	/**
@@ -280,7 +280,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.CharacterLiteral)
 	 */
 	public boolean visit(CharacterLiteral node) {
-		return visit(node, true);
+		return visit(node, false);
 	}
 
 	/**
@@ -386,7 +386,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.InfixExpression)
 	 */
 	public boolean visit(InfixExpression node) {
-		return visit(node, true);
+		return visit(node, false);
 	}
 
 	/**
@@ -449,7 +449,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NumberLiteral)
 	 */
 	public boolean visit(NumberLiteral node) {
-		return visit(node, true);
+		return visit(node, false);
 	}
 
 	/**
@@ -477,7 +477,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.PrefixExpression)
 	 */
 	public boolean visit(PrefixExpression node) {
-		return visit(node, true);
+		return visit(node, false);
 	}
 
 	/**
@@ -527,7 +527,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.StringLiteral)
 	 */
 	public boolean visit(StringLiteral node) {
-		return visit(node, true);
+		return visit(node, false);
 	}
 
 	/**

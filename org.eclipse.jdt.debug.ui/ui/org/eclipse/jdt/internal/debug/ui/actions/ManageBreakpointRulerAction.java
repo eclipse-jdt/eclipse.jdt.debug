@@ -217,7 +217,10 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 		
 		try {
 			IDocument document= getDocument();
-			IRegion line= document.getLineInformation(getVerticalRulerInfo().getLineOfLastMouseButtonActivity());
+			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
+			IRegion line= document.getLineInformation(lineNumber);
+			// Ruler and Document are 0-based, editor is 1-based. We need the editor line number after this point
+			lineNumber++;
 
 			IType type= null;
 			IResource resource;
@@ -262,7 +265,6 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 
 			Map attributes= new HashMap(10);
 			String typeName= null;
-			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity() + 1; // Ruler is 0-based; editor is 1-based (nice :-/ )
 			IJavaLineBreakpoint breakpoint= null;
 			if (type != null) {
 				IJavaProject project= type.getJavaProject();
@@ -276,7 +278,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				}
 				breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
 			}
-			new BreakpointLocationVerifierJob(document, line.getOffset(), breakpoint, lineNumber, typeName, type, resource, (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class)).schedule();
+			new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, typeName, type, resource, (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class)).schedule();
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (CoreException e) {
