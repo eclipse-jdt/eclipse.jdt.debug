@@ -42,7 +42,7 @@ public class FloatValueImpl extends PrimitiveValueImpl implements FloatValue {
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new FloatTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getFloatType();
 	}
 
 	/**

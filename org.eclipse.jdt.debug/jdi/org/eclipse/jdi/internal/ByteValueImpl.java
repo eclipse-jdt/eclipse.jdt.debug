@@ -42,7 +42,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new ByteTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getByteType();
 	}
 	
 	/**

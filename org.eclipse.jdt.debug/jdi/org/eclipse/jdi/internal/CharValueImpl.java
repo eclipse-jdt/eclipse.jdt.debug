@@ -42,7 +42,7 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new CharTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getCharType();
 	}
 
 	/**

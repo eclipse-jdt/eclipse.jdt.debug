@@ -42,7 +42,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new LongTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getLongType();
 	}
 
 	/**

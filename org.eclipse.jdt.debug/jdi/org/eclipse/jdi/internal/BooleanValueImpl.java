@@ -42,7 +42,7 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements BooleanValue
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new BooleanTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getBooleanType();
 	}
 
 	/**

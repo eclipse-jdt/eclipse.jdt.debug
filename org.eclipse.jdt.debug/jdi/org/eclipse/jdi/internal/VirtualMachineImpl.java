@@ -119,8 +119,20 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanSetDefaultStratum;
 	private boolean[] fHcrCapabilities = null;
 	
+	/*
+	 * singletons for primitive types	 */
+	private BooleanTypeImpl fBooleanType;
+	private ByteTypeImpl fByteType;
+	private CharTypeImpl fCharType;
+	private DoubleTypeImpl fDoubleType;
+	private FloatTypeImpl fFloatType;
+	private IntegerTypeImpl fIntegerType;
+	private LongTypeImpl fLongType;
+	private ShortTypeImpl fShortType;
+	
 	/**
-	 * Disconnected flag	 */
+	 * Disconnected flag
+	 */
 	private boolean fIsDisconnected = false;
 	
 	/** 
@@ -1163,7 +1175,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	
 	/**
 	 * Returns whether this VM is disconnected.
-	 * 	 * @return whether this VM is disconnected	 */
+	 * 
+	 * @return whether this VM is disconnected
+	 */
 	public boolean isDisconnected() {
 		return fIsDisconnected;
 	}
@@ -1175,6 +1189,85 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	public synchronized void setDisconnected(boolean disconnected) {
 		fIsDisconnected = disconnected;
+	}
+	
+	/**
+	 * Return the boolean type for this VM.	 */
+	protected BooleanTypeImpl getBooleanType() {
+		if (fBooleanType == null) {
+			fBooleanType= new BooleanTypeImpl(this);
+		}
+		return fBooleanType;
+	}
+
+	/**
+	 * Return the byte type for this VM.
+	 */
+	protected ByteTypeImpl getByteType() {
+		if (fByteType == null) {
+			fByteType= new ByteTypeImpl(this);
+		}
+		return fByteType;
+	}
+
+	/**
+	 * Return the char type for this VM.
+	 */
+	protected CharTypeImpl getCharType() {
+		if (fCharType == null) {
+			fCharType= new CharTypeImpl(this);
+		}
+		return fCharType;
+	}
+
+	/**
+	 * Return the double type for this VM.
+	 */
+	protected DoubleTypeImpl getDoubleType() {
+		if (fDoubleType == null) {
+			fDoubleType= new DoubleTypeImpl(this);
+		}
+		return fDoubleType;
+	}
+
+	/**
+	 * Return the float type for this VM.
+	 */
+	protected FloatTypeImpl getFloatType() {
+		if (fFloatType == null) {
+			fFloatType= new FloatTypeImpl(this);
+		}
+		return fFloatType;
+	}
+
+	/**
+	 * Return the integer type for this VM.
+	 */
+	protected IntegerTypeImpl getIntegerType() {
+		if (fIntegerType == null) {
+			fIntegerType= new IntegerTypeImpl(this);
+		}
+		return fIntegerType;
+	}
+
+	/**
+	 * Return the long type for this VM.
+	 */
+	protected LongTypeImpl getLongType() {
+		if (fLongType == null) {
+			fLongType= new LongTypeImpl(this);
+		}
+		return fLongType;
+	}
+
+	/**
+	 * Return the short type for this VM.
+	 */
+	protected ShortTypeImpl getShortType() {
+		if (fShortType == null) {
+			fShortType= new ShortTypeImpl(this);
+		}
+		return fShortType;
 	}
 
 }

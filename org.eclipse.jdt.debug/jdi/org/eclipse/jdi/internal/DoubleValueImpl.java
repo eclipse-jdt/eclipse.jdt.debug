@@ -42,7 +42,7 @@ public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue {
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new DoubleTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getDoubleType();
 	}
 
 	/**

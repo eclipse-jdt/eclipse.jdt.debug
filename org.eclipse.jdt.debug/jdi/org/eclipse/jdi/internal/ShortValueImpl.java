@@ -42,7 +42,7 @@ public class ShortValueImpl extends PrimitiveValueImpl implements ShortValue {
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new ShortTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getShortType();
 	}
 
 	/**

@@ -42,7 +42,7 @@ public class IntegerValueImpl extends PrimitiveValueImpl implements IntegerValue
 	 * @returns type of value.
    	 */
 	public Type type() {
-		return new IntegerTypeImpl(virtualMachineImpl());
+		return virtualMachineImpl().getIntegerType();
 	}
 
 	/**
