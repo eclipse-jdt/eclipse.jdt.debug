@@ -178,6 +178,11 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		fSearchExternalJarsCheckButton = new Button(mainComp, SWT.CHECK);
 		fSearchExternalJarsCheckButton.setText(LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
 		fSearchExternalJarsCheckButton.setFont(font);
+		fSearchExternalJarsCheckButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});			
 
 		fStopInMainCheckButton = new Button(comp, SWT.CHECK);
 		fStopInMainCheckButton.setText(LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
