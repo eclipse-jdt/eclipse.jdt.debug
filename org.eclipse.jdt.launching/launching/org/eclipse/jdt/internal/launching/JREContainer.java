@@ -39,7 +39,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * Constructs a JRE classpath conatiner on the given VM install
 	 * 
-	 * @param vm vm install
+	 * @param vm vm install - cannot be <code>null</code>
 	 * @param path container path used to resolve this JRE
 	 */
 	public JREContainer(IVMInstall vm, IPath path) {

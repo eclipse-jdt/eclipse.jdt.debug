@@ -170,7 +170,10 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				IJavaProject[] projArray = (IJavaProject[])affectedProjects.toArray(new IJavaProject[affectedProjects.size()]);
 				IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
 				IVMInstall vm = JREContainerInitializer.resolveVM(containerPath);
-				JREContainer container = new JREContainer(vm, containerPath);
+				JREContainer container = null;
+				if (vm != null) {
+					container = new JREContainer(vm, containerPath);
+				}
 				IClasspathContainer[] containers = new IClasspathContainer[projArray.length];
 				Arrays.fill(containers, container);
 				JavaCore.setClasspathContainer(containerPath, projArray, containers, monitor);
