@@ -117,13 +117,13 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
-		Iterator enum= selection.iterator();
-		if (!enum.hasNext()) {
+		Iterator itr= selection.iterator();
+		if (!itr.hasNext()) {
 			return;
 		}
 
-		while (enum.hasNext()) {
-			IJavaBreakpoint breakpoint= (IJavaBreakpoint)enum.next();
+		while (itr.hasNext()) {
+			IJavaBreakpoint breakpoint= (IJavaBreakpoint)itr.next();
 			try {
 				int oldHitCount= breakpoint.getHitCount();
 				int newHitCount= hitCountDialog(breakpoint);

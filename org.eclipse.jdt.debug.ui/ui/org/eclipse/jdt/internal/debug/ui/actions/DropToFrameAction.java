@@ -29,10 +29,10 @@ public class DropToFrameAction extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
-		Iterator enum= selection.iterator();
+		Iterator itr= selection.iterator();
 		
-		while (enum.hasNext()) {
-			IJavaStackFrame frame= (IJavaStackFrame)enum.next();
+		while (itr.hasNext()) {
+			IJavaStackFrame frame= (IJavaStackFrame)itr.next();
 			try {
 				frame.dropToFrame();
 			} catch (DebugException de) {

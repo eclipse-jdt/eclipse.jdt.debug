@@ -32,10 +32,10 @@ public class ExcludeExceptionLocationAction extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
-		Iterator enum= selection.iterator();
+		Iterator itr= selection.iterator();
 		
-		while (enum.hasNext()) {
-			IJavaThread thread= (IJavaThread)enum.next();
+		while (itr.hasNext()) {
+			IJavaThread thread= (IJavaThread)itr.next();
 			try {
 				IBreakpoint[] breakpoints= thread.getBreakpoints();
 				IJavaStackFrame frame= (IJavaStackFrame)thread.getTopStackFrame();

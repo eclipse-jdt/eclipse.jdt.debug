@@ -44,9 +44,9 @@ public abstract class AbstractAddStepFilterAction extends ObjectActionDelegate {
 		}
 
 		// For each selected stack frame, add a corresponding active step filter
-		Iterator enum = selection.iterator();
-		while (enum.hasNext()) {
-			IJavaStackFrame frame = (IJavaStackFrame)enum.next();
+		Iterator itr = selection.iterator();
+		while (itr.hasNext()) {
+			IJavaStackFrame frame = (IJavaStackFrame)itr.next();
 			String pattern = generateStepFilterPattern(frame);
 			if (pattern != null) {
 				addActiveStepFilter(pattern);						

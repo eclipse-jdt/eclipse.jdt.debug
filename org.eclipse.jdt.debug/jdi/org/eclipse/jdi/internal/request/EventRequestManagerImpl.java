@@ -260,10 +260,10 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	 * Checks if a steprequest is for the given thread is already enabled.
 	 */ 
 	boolean existsEnabledStepRequest(ThreadReferenceImpl threadImpl) {
-		Enumeration enum = fEnabledRequests[STEP_INDEX].elements();
+		Enumeration enumeration = fEnabledRequests[STEP_INDEX].elements();
 		StepRequestImpl step;
-		while (enum.hasMoreElements()) {
-			step = (StepRequestImpl)enum.nextElement();
+		while (enumeration.hasMoreElements()) {
+			step = (StepRequestImpl)enumeration.nextElement();
 			if (step.thread() == threadImpl)
 				return true;
 		}

@@ -41,10 +41,10 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	 */
 	public void run(IAction action) {
 		IStructuredSelection selection= getStructuredSelection();
-		Iterator enum= selection.iterator();
-		while (enum.hasNext()) {
+		Iterator itr= selection.iterator();
+		while (itr.hasNext()) {
 			try {
-				IJavaBreakpoint breakpoint= (IJavaBreakpoint) enum.next();
+				IJavaBreakpoint breakpoint= (IJavaBreakpoint) itr.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
 				String title= ActionMessages.getString("BreakpointAction.Breakpoint_configuration_1"); //$NON-NLS-1$

@@ -50,10 +50,10 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
-		Iterator enum= selection.iterator();
+		Iterator itr= selection.iterator();
 		try {
-			while (enum.hasNext()) {
-				Object element= enum.next();
+			while (itr.hasNext()) {
+				Object element= itr.next();
 				doAction(element);
 			}
 		} catch(DebugException e) {

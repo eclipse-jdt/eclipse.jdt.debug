@@ -106,9 +106,9 @@ public static void main(String[] arguments) throws Throwable {
 	Vector classes= getAllTestCases(info);
 
 	// Run the other tests
-	Enumeration enum= classes.elements();
-	while (enum.hasMoreElements()) {
-		Class testClass= (Class)enum.nextElement();
+	Enumeration enumeration= classes.elements();
+	while (enumeration.hasMoreElements()) {
+		Class testClass= (Class)enumeration.nextElement();
 		test= run(result, testClass, arguments, info);
 		info= test.getVMInfo(); // In case the test has changed this info
 	}
