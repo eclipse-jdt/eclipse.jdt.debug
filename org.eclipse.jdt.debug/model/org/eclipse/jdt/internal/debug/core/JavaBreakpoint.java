@@ -143,10 +143,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	/**
 	 * Returns a string corresponding to the reference type
-	 * name in which this breakpoint is installed.
+	 * name in which this breakpoint is installed or
+	 * <code>null</code> if no reference type could be
+	 * found.
 	 */
 	protected String getReferenceTypeName() {
-		String name= "";
+		String name= null;
 		try {
 			IType type = getType();
 			if (type != null) {
@@ -157,9 +159,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		} catch (CoreException ce) {
 			JDIDebugPlugin.logError(ce);
-		}
-		if (name == null) {
-			name= "";
 		}
 		return name;
 	}	
@@ -242,6 +241,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected boolean installableReferenceType(ReferenceType type) {
 		String installableType= getReferenceTypeName();
 		String queriedType= type.name();
+		if (installableType == null || queriedType == null) {
+			return false;
+		}
 		int installableLength= installableType.length();
 		int queriedLength= queriedType.length();
 		if (queriedType.regionMatches(0, installableType, 0, installableLength)) {
@@ -322,7 +324,25 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * added to the given target, this breakpoint will suspend
 	 * execution of that target as appropriate.
 	 */
-	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;
+	protected void addToTarget(JDIDebugTarget target) throws CoreException {
+		String referenceTypeName= getReferenceTypeName();
+		if (referenceTypeName == null) {
+			return;
+		}
+		
+		// create request to listen to class loads
+		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
+		
+		// create breakpoint requests for each class currently loaded
+		List classes= target.jdiClassesByName(referenceTypeName);
+		if (!classes.isEmpty()) {
+			Iterator iter = classes.iterator();
+			while (iter.hasNext()) {
+				ReferenceType type= (ReferenceType) iter.next();
+				createRequest(target, type);
+			}
+		}
+	}
 	
 	/**
 	 * Update all requests that this breakpoint has installed in the
@@ -393,8 +413,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
+			} finally {
+				deregisterRequest(req, target);
 			}
-			deregisterRequest(req, target);
 		}
 	}		
 	
