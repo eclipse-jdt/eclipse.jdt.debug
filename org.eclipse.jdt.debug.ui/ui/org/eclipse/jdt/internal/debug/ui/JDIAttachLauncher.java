@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.ui;
  */
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ILauncherDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -48,21 +50,29 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 	 * Perform the attach launch.
 	 */
 	protected boolean doLaunch(Object element, ILauncher launcher) {
-		AttachingConnector connector= getAttachingConnector();
 		
-
 		// determine the launched project from the element
 		IResource res= null;
+		IDebugElement debugElement= null;
 		if (element instanceof IAdaptable) {
+			debugElement= (IDebugElement)((IAdaptable) element).getAdapter(IDebugElement.class);
+			if (debugElement != null) {
+				ILaunch launch= debugElement.getLaunch();
+				element= launch.getElement();
+			}
 			res= (IResource) ((IAdaptable) element).getAdapter(IResource.class);
 		}
 		if (res != null) {
 			element= res.getProject();
 		}
+		
 		if (!(element instanceof IProject)) {
+			errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_resolve_a_project_for_an_attach_launch_context_1"), //$NON-NLS-1$
+				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, null);
 			return false;
 		}
 
+		AttachingConnector connector= getAttachingConnector();
 		if (connector != null) {
 			Map map= connector.defaultArguments();
 			Connector.Argument param= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
@@ -139,6 +149,8 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 	protected void errorDialog(String message, int code, Throwable exception) {
 		Status s= new Status(IStatus.ERROR, "org.eclipse.jdt.ui", IJDIStatusConstants.CODE_CONNECTION_FAILED, message, exception); //$NON-NLS-1$
 		String title= DebugUIMessages.getString("JDIAttachLauncher.Remote_Java_Application_3"); //$NON-NLS-1$
+		String string= DebugUIMessages.getString("JDIAttachLauncher.Launch_attempt_failed__{0}_1"); //$NON-NLS-1$
+		message= MessageFormat.format(string, new String[] {title});
 		ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, s);
 	}
 	
@@ -183,7 +195,9 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 	public boolean launch(Object[] objects, String mode, ILauncher launcher) {
 		Object element= null;
 		if (objects.length > 0) {
-			element= objects[0];
+			if (!(element instanceof IDebugElement)) {
+				element= objects[0];
+			}
 		}
 		return doLaunchUsingWizard(element, launcher);
 	}
