@@ -94,6 +94,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Whether this stack frame has been declared out of synch
 	 */
 	private boolean fIsOutOfSynch= false;
+	
+	/**
+	 * Local cache for source name debug attribute
+	 */
+	private String fSourceName;
 
 	/**
 	 * Creates a new stack frame in the given thread.
@@ -765,16 +770,25 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getSourceName()
 	 */
 	public String getSourceName() throws DebugException {
-		try {
-			Location l = getUnderlyingMethod().location();
-			if (l != null) {
-				return l.sourceName();
+		if (fSourceName == null) {
+			try {
+				Location l = getUnderlyingMethod().location();
+				if (l != null) {
+					fSourceName = l.sourceName();
+				}
+			} catch (AbsentInformationException e) {
+				fSourceName = "";
+			} catch (NativeMethodException e) {
+				fSourceName = "";
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
-		} catch (AbsentInformationException e) {
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
-		return null;
+		if (fSourceName == null || fSourceName.length() == 0) {
+			return null;
+		} else {
+			return fSourceName;
+		}
 	}
 	
 	protected boolean isTopStackFrame() throws DebugException {
