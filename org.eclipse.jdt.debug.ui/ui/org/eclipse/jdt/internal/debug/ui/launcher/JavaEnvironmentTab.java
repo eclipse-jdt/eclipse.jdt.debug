@@ -330,10 +330,23 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		TableItem[] items = tableWidget.getItems();
 		Map map = createMapFromTableItems(items);
 		String attributeID = (String) tableWidget.getData();
+		// no need to update if empty or null and still empty or null.
+		// this avoid the nasty "save changes" prompt when there are no changes
+		try {
+			Map previousMap = config.getAttribute(attributeID, (Map)null);
+			if ((previousMap == null || previousMap.isEmpty()) && (map == null || map.isEmpty())) {
+				return;
+			} 
+		} catch (CoreException e) {
+			// ignore
+		}
 		config.setAttribute(attributeID, map);			
 	}
 	
 	protected Map createMapFromTableItems(TableItem[] items) {
+		if (items.length == 0) {
+			return null;
+		}
 		Map map = new HashMap(items.length);
 		for (int i = 0; i < items.length; i++) {
 			TableItem item = items[i];
