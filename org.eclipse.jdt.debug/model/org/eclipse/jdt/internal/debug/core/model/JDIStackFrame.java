@@ -299,7 +299,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					return location.lineNumber();
 				}
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				if (getThread().isSuspended()) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}
 			}
 		}
 		return -1;
@@ -652,13 +654,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					fDeclaringTypeName= getUnderlyingMethod().declaringType().name();
 				}
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				// execution will not reach this line, as 
-				// #targetRequestFailed will throw an exception			
-				return null;
+				if (getThread().isSuspended()) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}
+				return JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 			}
 		}
-		return getUnderlyingMethod().declaringType().name();
+		return fDeclaringTypeName;
 	}
 	
 	/**
@@ -678,10 +680,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					}
 				}
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				// execution will not reach this line, as 
-				// #targetRequestFailed will throw an exception			
-				return null;
+				if (getThread().isSuspended()) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}
+				return JDIDebugModelMessages.getString("JDIStackFrame.<unknown_receiving_type>_2"); //$NON-NLS-1$
 			}
 		}
 		return fReceivingTypeName;
@@ -694,10 +696,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		try {
 			return getUnderlyingMethod().name();	
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as 
-			// #targetRequestFailed will throw an exception			
-			return null;
+			if (getThread().isSuspended()) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
+			return JDIDebugModelMessages.getString("JDIStackFrame.<unknown_method>_1"); //$NON-NLS-1$
 		}
 	}
 	
