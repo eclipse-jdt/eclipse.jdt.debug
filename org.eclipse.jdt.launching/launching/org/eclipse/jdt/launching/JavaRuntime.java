@@ -536,7 +536,8 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		List classpathEntries = new ArrayList(5);
-		expandProject(entry, classpathEntries);
+		List expanding = new ArrayList(5);
+		expandProject(entry, classpathEntries, expanding);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			Object e = classpathEntries.get(i);
@@ -922,9 +923,12 @@ public final class JavaRuntime {
 	 * @param projectEntry project classpath entry
 	 * @param a list of entries already expanded, should be empty to begin,
 	 *  and contains the result
+	 * @param expanding a list of project that have been or currently are being
+	 *  expanded (to detect cycles in the classpath)
 	 * @exception CoreException if unable to expand the classpath
 	 */
-	private static void expandProject(IClasspathEntry projectEntry, List expandedPath) throws CoreException {
+	private static void expandProject(IClasspathEntry projectEntry, List expandedPath, List expanding) throws CoreException {
+		expanding.add(projectEntry);
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
 		IPath projectPath = projectEntry.getPath();
@@ -959,8 +963,8 @@ public final class JavaRuntime {
 			} else {
 				switch (entry.getEntryKind()) {
 					case IClasspathEntry.CPE_PROJECT:
-						if (!expandedPath.contains(entry)) {
-							expandProject(entry, expandedPath);
+						if (!expanding.contains(entry)) {
+							expandProject(entry, expandedPath, expanding);
 						}
 						break;
 					case IClasspathEntry.CPE_CONTAINER:
