@@ -65,7 +65,11 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			String arg= cmdLine[i];
 			if (arg.indexOf("swt.jar") >= 0 || arg.indexOf("org.eclipse.swt") >= 0 || "-ws".equals(arg)) {	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				String[] cmdLine2= new String[cmdLine.length + 2];
-				String wrapper= createWrapper(clazz, "start_carbon.sh");	//$NON-NLS-1$
+				
+				String wrapper= "/tmp/start_carbon.sh";	//$NON-NLS-1$
+				copy(clazz, "start_carbon.sh", wrapper);	//$NON-NLS-1$
+				copy(clazz, "JavaApplicationStub", "/tmp/JavaApplicationStub");	//$NON-NLS-1$ //$NON-NLS-2$
+				
 				int j= 0;
 				cmdLine2[j++]= "/bin/sh";	//$NON-NLS-1$
 				cmdLine2[j++]= wrapper;
@@ -77,56 +81,20 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		}
 		return cmdLine;
 	}
-	
-	static String createWrapper(Class where, String filename) {
-
-		/*
-		 * In order to build an application bundle under MacOS X we need a small stub
-		 * that reads the various artefacts of a bundle and starts the Java VM. We copy
-		 * the stub either from the running Eclipse or from the JavaVM
-		 * framework. Here we create the appropriate pathname.
-		 */
-		int pos= 0;
-		String javaApplStub= System.getProperty("sun.boot.library.path");	//$NON-NLS-1$
-		if (javaApplStub != null)
-			pos= javaApplStub.indexOf(':');
-		if (pos > 0)
-			javaApplStub= javaApplStub.substring(0, pos);	
-		String expected= "/Contents/Resources/Java";	//$NON-NLS-1$
-		if (javaApplStub.endsWith(expected)) {
-			javaApplStub= javaApplStub.substring(0, javaApplStub.length()-expected.length());
-			javaApplStub+= "/Contents/MacOS/";	//$NON-NLS-1$
-		} else {
-			javaApplStub= System.getProperty("java.class.path");	//$NON-NLS-1$
-			if (javaApplStub != null)
-				pos= javaApplStub.indexOf(expected);
-			else
-				pos= 0;
-			if (pos > 0) {
-				javaApplStub= javaApplStub.substring(0, pos);
-				javaApplStub+= "/Contents/MacOS/";	//$NON-NLS-1$				
-			} else {
-				// fall back
-				javaApplStub= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/"; //$NON-NLS-1$
-			}
-		}
-		javaApplStub= "JAVASTUB=\""+ javaApplStub + "\"\n";	//$NON-NLS-1$ //$NON-NLS-2$
 		
-	
-		String output= "/tmp/start_carbon.sh";	//$NON-NLS-1$
+	static void copy(Class where, String from, String to) {
+		
+		String output= to;
 		FileOutputStream os= null;
 		try {
 			os= new FileOutputStream(output);
 		} catch (FileNotFoundException ex) {
-			return null;
+			return;
 		}
-						
+
 		InputStream is= null;
 		try {
-			os.write("#!/bin/sh\n".getBytes());	//$NON-NLS-1$
-			os.write(javaApplStub.getBytes());
-
-			is= where.getResourceAsStream(filename);
+			is= where.getResourceAsStream(from);
 			if (is != null) {
 				while (true) {
 					int c= is.read();
@@ -137,7 +105,7 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			}
 			os.flush();
 		} catch (IOException io) {
-			return null;
+			return;
 		} finally {
 			if (is != null) {
 				try {
@@ -150,7 +118,5 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			} catch(IOException e) {
 			}
 		}
-		
-		return output;
 	}
 }

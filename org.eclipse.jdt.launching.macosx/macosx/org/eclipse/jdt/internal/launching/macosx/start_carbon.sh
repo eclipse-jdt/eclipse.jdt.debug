@@ -1,3 +1,4 @@
+#!/bin/sh
 
 #********************************************************************** 
 # Copyright (c) 2002, 2003 IBM Corp.  All rights reserved.
@@ -97,7 +98,7 @@ cd "$APP_NAME.app/Contents"
 #
 # Copy the JavaAppLauncher into the bundle 
 #
-cp "$JAVASTUB"/JavaApplicationStub MacOS
+cp /tmp/JavaApplicationStub MacOS
 chmod +x MacOS/JavaApplicationStub
 
 #
