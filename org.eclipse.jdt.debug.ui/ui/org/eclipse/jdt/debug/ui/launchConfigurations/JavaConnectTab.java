@@ -165,6 +165,13 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(LauncherMessages.getString("JavaConnectTab.Connection_Properties_1")); //$NON-NLS-1$
+		group.setLayout(new GridLayout());
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		group.setLayoutData(gd);		
+	
+		//Add in an intermediate composite to allow for spacing
+		Composite spacingComposite = new Composite(group, SWT.NONE);
 		y = new GridLayout();
 		spacingComposite.setLayout(y);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
