@@ -937,8 +937,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		try {
 			setSuspended(false);
-			getVM().resume();
 			resumeThreads();
+			getVM().resume();
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
