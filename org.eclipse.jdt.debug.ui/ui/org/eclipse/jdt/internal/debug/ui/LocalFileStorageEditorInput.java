@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
-import org.eclipse.ui.IEditorInput;
 
 public class LocalFileStorageEditorInput extends StorageEditorInput {
 
@@ -23,8 +22,8 @@ public class LocalFileStorageEditorInput extends StorageEditorInput {
 	}
 	
 
-	/**
-	 * @see IEditorInput#exists()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
 	public boolean exists() {
 		return ((LocalFileStorage)getStorage()).getFile().exists();
