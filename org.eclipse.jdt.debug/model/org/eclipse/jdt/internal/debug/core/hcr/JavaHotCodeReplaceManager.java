@@ -75,13 +75,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	private static final String CLASS_FILE_EXTENSION= "class"; //$NON-NLS-1$
 	
 	/**
-	 * Name of obsolete "project build watcher". Maintained here
-	 * to enable project cleanup (references to this builder must
-	 * be removed from old projects).
-	 */
-	public static String BUILDER_ID= "org.eclipse.jdt.debug.hcrbuilder"; //$NON-NLS-1$
-	
-	/**
 	 * The list of <code>IJavaHotCodeReplaceListeners</code> which this hot code replace 
 	 * manager will notify about hot code replace attempts.
 	 */
@@ -167,11 +160,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public void startup() {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		// Unregister build watchers with each project (Bug 8157)
-		IProject[] projects= getWorkspace().getRoot().getProjects();
-		for (int i= 0, numProjects= projects.length;  i < numProjects; i++) {
-			unregisterBuildWatcherForProject(projects[i]);
-		}
 	}
 	
 	/**
@@ -290,66 +278,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				}
 			};
 			fork(wRunnable);
-		}
-	}
-	
-	/**
-	 * Removes references to the obsolete "hcrbuilder" from
-	 * the given project (Bug 8157).
-	 */
-	private void unregisterBuildWatcherForProject(IProject project) {
-		try {
-			IProjectDescription description = project.getDescription();
-			ICommand buildWatcherCommand = getBuildWatcherCommand(description);
-	
-			if (buildWatcherCommand != null) {
-				// Remove the obsolete hcr builder from the build spec
-				removeCommand(project, buildWatcherCommand);
-			}
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
-		}
-	}
-	
-	
-	/**
-	 * Find the specific build watcher command amongst the build spec of a given description
-	 */
-	private ICommand getBuildWatcherCommand(IProjectDescription description) throws CoreException {
-
-		ICommand[] commands = description.getBuildSpec();
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(BUILDER_ID)) {
-				return commands[i];
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Update the build watcher command in the build spec (removing it if present,
-	 * add one first if none).
-	 */
-	private void removeCommand(IProject project, ICommand oldCommand) throws CoreException {
-		IProjectDescription description = project.getDescription();
-		ICommand[] oldCommands = description.getBuildSpec();
-		for (int i = 0, numCommands = oldCommands.length; i < numCommands; i++) {
-			if (oldCommands[i] == oldCommand) {
-				// Remove the old command, preserving ordering.
-				ICommand[] newCommands= new ICommand[numCommands - 1];
-				if (i != 0) {
-					// No need to copy zero elements
-					System.arraycopy(oldCommands, 0, newCommands, 0, i);
-				}
-				if (i != numCommands - 1) {
-					// The removed command was at the end. No more to copy.
-					System.arraycopy(oldCommands, i+1, newCommands, i, numCommands - i);
-				}
-				// Commit the spec change into the project
-				description.setBuildSpec(newCommands);
-				project.setDescription(description, null);
-				break;
-			}
 		}
 	}
 	
