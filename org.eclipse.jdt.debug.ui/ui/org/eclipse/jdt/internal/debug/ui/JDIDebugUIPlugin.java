@@ -92,6 +92,12 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	// Map of VMInstallTypeIDs to IConfigurationElements
 	protected Map fVmInstallTypePageMap;
+	
+	/**
+	 * Whether this plugin is in the process of shutting
+	 * down.
+	 */
+	private boolean fShuttingDown= false;
 
 	/**
 	 * @see Plugin(IPluginDescriptor)
@@ -240,6 +246,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		if(isShuttingDown()) {
+			return;
+		}
 		//JavaDebugPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
@@ -299,6 +308,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @see AbstractUIPlugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		setShuttingDown(true);
 		JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
 		JavaCore.removeElementChangedListener(fJavaModelListener);
 		JavaDebugOptionsManager.getDefault().shutdown();
@@ -313,6 +323,28 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			fUtilPresentation.dispose();
 		}
 		super.shutdown();
+	}
+	
+	/**
+	 * Returns whether this plug-in is in the process of
+	 * being shutdown.
+	 *
+	 * @return whether this plug-in is in the process of
+	 *  being shutdown
+	 */
+	protected boolean isShuttingDown() {
+		return fShuttingDown;
+	}
+
+	/**
+	 * Sets whether this plug-in is in the process of
+	 * being shutdown.
+	 *
+	 * @param value whether this plug-in is in the process of
+	 *  being shutdown
+	 */
+	private void setShuttingDown(boolean value) {
+		fShuttingDown = value;
 	}
 	
 	/**

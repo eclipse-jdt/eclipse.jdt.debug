@@ -188,13 +188,16 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	}
 	
 	/**
-	 * Called at shutdown by the java debug ui plug-in
+	 * Called at shutdown by the Java debug ui plug-in
 	 */
 	public void shutdown() throws CoreException {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		if (!JDIDebugUIPlugin.getDefault().isShuttingDown()) {
+			//avert restoring the preference store at shutdown
+			JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		}
 		JDIDebugModel.removeJavaBreakpointListener(this);
 		fProblemMap.clear();
 		fLocationMap.clear();
