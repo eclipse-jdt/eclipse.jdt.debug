@@ -113,11 +113,13 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeWithThread(this, outData);
 			writeInt(sizeNotThis, "size", outData); //$NON-NLS-1$
-			for (int i = 0; i < sizeNotThis; i++) {
-				LocalVariableImpl var = (LocalVariableImpl)variables.get(i);
-				checkVM(var);
-				writeInt(var.slot(), "slot", outData); //$NON-NLS-1$
-				writeByte(var.tag(), "tag", JdwpID.tagMap(), outData); //$NON-NLS-1$
+			for (int i = 0; i < sizeAll; i++) {
+				if (!isThisValue[i]) {
+					LocalVariableImpl var = (LocalVariableImpl)variables.get(i);
+					checkVM(var);
+					writeInt(var.slot(), "slot", outData); //$NON-NLS-1$
+					writeByte(var.tag(), "tag", JdwpID.tagMap(), outData); //$NON-NLS-1$
+				}
 			}
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SF_GET_VALUES, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
