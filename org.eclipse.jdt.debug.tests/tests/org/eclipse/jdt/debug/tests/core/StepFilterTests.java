@@ -43,7 +43,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-			thread = stepWithFilters(stackFrame);
+			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
@@ -66,7 +66,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-			thread = stepWithFilters(stackFrame);
+			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterTwo' but was " + recTypeName, recTypeName.equals("StepFilterTwo"));
@@ -89,7 +89,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-			thread = stepWithFilters(stackFrame);
+			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterThree' but was " + recTypeName, recTypeName.equals("StepFilterThree"));
@@ -102,6 +102,52 @@ public class StepFilterTests extends AbstractDebugTest {
 		}				
 	}	
 
+	public void testStepReturnFilter() throws Exception {
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
+		String typeName = "StepFilterOne";
+		ILineBreakpoint bp = createLineBreakpoint(19, "StepFilterThree");
+		bp.setEnabled(true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			thread = stepReturnWithFilters(stackFrame);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			String recTypeName = stackFrame.getReceivingTypeName();
+			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
+			int lineNumber = stackFrame.getLineNumber();
+			assertTrue("Line number should have been 23, but was " + lineNumber, lineNumber == 23);			
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			resetStepFilters();
+		}				
+	}
+	
+	public void testStepOverFilter() throws Exception {
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo,StepFilterThree," + fOriginalInactiveFilters);
+		String typeName = "StepFilterOne";
+		ILineBreakpoint bp = createLineBreakpoint(19, "StepFilterThree");
+		bp.setEnabled(true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			thread = stepOverWithFilters(stackFrame);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			String recTypeName = stackFrame.getReceivingTypeName();
+			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
+			int lineNumber = stackFrame.getLineNumber();
+			assertTrue("Line number should have been 23, but was " + lineNumber, lineNumber == 23);			
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			resetStepFilters();
+		}				
+	}	
+	
 	protected void resetStepFilters() {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, fOriginalInactiveFilters);
