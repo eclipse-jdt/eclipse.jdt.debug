@@ -528,6 +528,12 @@
 			menubarPath="debug"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
 		</action>
+		<action
+			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+			label="%EnableBreakpoint.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+		</action>
 	</viewerContribution>
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CompilationUnitRulerPopupActions" 
@@ -537,6 +543,12 @@
 			label="%AddBreakpoint.label"
 			menubarPath="debug"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+		</action>
+		<action
+			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+			label="%EnableBreakpoint.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
 		</action>
 	</viewerContribution>	
 	<viewerContribution 
