@@ -1037,7 +1037,7 @@ public final class JavaRuntime {
 				vm = vt.findVMInstallByName(name);
 				if (vm == null) {
 					// error - install not found
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {type, name}), null);					 //$NON-NLS-1$
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {vt.getName(), name}), null);					 //$NON-NLS-1$
 				} else {
 					return vm;
 				}
