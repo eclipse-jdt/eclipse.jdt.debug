@@ -80,10 +80,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
 	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
 	private static final String EVAL_FIELD_NAME= "___field"; //$NON-NLS-1$
-	
-	private int[] fLocalModifiers;
-	private String[] fLocalTypesNames;
-	private String[] fLocalVariables;
+
+	private String[] fLocalVariableTypeNames;
+	private String[] fLocalVariableNames;
 	private String fCodeSnippet;
 		
 	private boolean fRightTypeFound;
@@ -108,13 +107,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private int fRunMethodStartOffset;
 	private int fRunMethodLength;
 	
-	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
 		fPosition= position;
-		fLocalModifiers= localModifiers;
-		fLocalTypesNames= localTypesNames;
-		fLocalVariables= localVariables;
+		fLocalVariableTypeNames= localTypesNames;
+		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
 		fIsInAStaticMethod= false;
 		fIsLineNumber= isLineNumber;
@@ -176,14 +174,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		buffer.append("void "); //$NON-NLS-1$
 		buffer.append(getUniqueMethodName(RUN_METHOD_NAME, bodyDeclarations));
 		buffer.append('(');
-		for(int i= 0, length= fLocalModifiers.length; i < length; i++) {
-			if (fLocalModifiers[i] != 0) {
-				buffer.append(Flags.toString(fLocalModifiers[i]));
-				buffer.append(' ');
-			}
-			buffer.append(getDotName(fLocalTypesNames[i]));
+		for(int i= 0, length= fLocalVariableNames.length; i < length; i++) {
+			buffer.append(getDotName(fLocalVariableTypeNames[i]));
 			buffer.append(' ');
-			buffer.append(fLocalVariables[i]);
+			buffer.append(fLocalVariableNames[i]);
 			if (i + 1 < length)
 				buffer.append(", "); //$NON-NLS-1$
 		}

@@ -49,10 +49,8 @@ public class EvaluationSourceGenerator {
 
 	private String fCodeSnippet;
 	
-	private String[] fImports;
-	private int[] fLocalModifiers;
-	private String[] fLocalTypesNames;
-	private String[] fLocalVariables;
+	private String[] fLocalVariableTypeNames;
+	private String[] fLocalVariableNames;
 		
 	
 	private String fSource;
@@ -64,12 +62,14 @@ public class EvaluationSourceGenerator {
 	/**
 	 * Rebuild source in presence of external local variables
 	 */
-	public EvaluationSourceGenerator(String[] imports, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
-		fImports = imports;
-		fLocalModifiers = localModifiers;
-		fLocalTypesNames = localTypesNames;
-		fLocalVariables = localVariables;
+	public EvaluationSourceGenerator(String[] localVariableTypesNames, String[] localVariableNames, String codeSnippet) {
+		fLocalVariableTypeNames = localVariableTypesNames;
+		fLocalVariableNames = localVariableNames;
 	 	fCodeSnippet= getCompleteSnippet(codeSnippet);
+	}
+	
+	public EvaluationSourceGenerator(String codeSnippet) {
+		this(new String[0], new String[0], codeSnippet);
 	}
 
 	protected String getCompleteSnippet(String codeSnippet) {
@@ -113,7 +113,7 @@ public class EvaluationSourceGenerator {
 
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		
 		setSource(visitor.getSource());
@@ -133,13 +133,13 @@ public class EvaluationSourceGenerator {
 	}
 	
 	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(objectValue);
 		return objectToEvaluationSourceMapper;
 	}
 	
 	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) throws DebugException {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(classType);
 		return objectToEvaluationSourceMapper;
 	}

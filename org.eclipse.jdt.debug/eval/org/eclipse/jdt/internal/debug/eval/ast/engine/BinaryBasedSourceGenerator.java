@@ -28,11 +28,10 @@ public class BinaryBasedSourceGenerator {
 	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
 	private static final String ANONYMOUS_CLASS_NAME= "___EvalClass"; //$NON-NLS-1$
 	
-	private int[] fLocalModifiers;
 	
-	private String[] fLocalTypesNames;
+	private String[] fLocalVariableTypeNames;
 	
-	private String[] fLocalVariables;
+	private String[] fLocalVariableNames;
 	
 	private boolean fIsInStaticMethod;
 	
@@ -44,10 +43,9 @@ public class BinaryBasedSourceGenerator {
 	
 	private String fCompilationUnitName;
 	
-	public BinaryBasedSourceGenerator(int[] localModifiers, String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
-		fLocalModifiers= localModifiers;
-		fLocalTypesNames= localTypesNames;
-		fLocalVariables= localVariables;
+	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
+		fLocalVariableTypeNames= localTypesNames;
+		fLocalVariableNames= localVariables;
 		fIsInStaticMethod= isInStaticMethod;
 	}
 	
@@ -96,14 +94,10 @@ public class BinaryBasedSourceGenerator {
 		source.append("void "); //$NON-NLS-1$
 		source.append(getUniqueMethodName(RUN_METHOD_NAME, type));
 		source.append('(');
-		for(int i= 0, length= fLocalModifiers.length; i < length; i++) {
-			if (fLocalModifiers[i] != 0) {
-				source.append(Flags.toString(fLocalModifiers[i]));
-				source.append(' ');
-			}
-			source.append(getDotName(fLocalTypesNames[i]));
+		for(int i= 0, length= fLocalVariableNames.length; i < length; i++) {
+			source.append(getDotName(fLocalVariableTypeNames[i]));
 			source.append(' ');
-			source.append(fLocalVariables[i]);
+			source.append(fLocalVariableNames[i]);
 			if (i + 1 < length)
 				source.append(", "); //$NON-NLS-1$
 		}

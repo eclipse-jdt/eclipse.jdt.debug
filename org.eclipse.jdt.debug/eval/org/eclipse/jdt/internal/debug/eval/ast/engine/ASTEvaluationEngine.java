@@ -270,15 +270,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 			// to solve and remove
 			// ******
-			int[] localModifiers = new int[numLocals];
 			String[] localTypesNames= new String[numLocals];
 			String[] localVariables= new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
 				localVariables[i] = locals[i].getName();
 				localTypesNames[i] = locals[i].getReferenceTypeName();
-				localModifiers[i]= 0;
 			}
-			mapper = new EvaluationSourceGenerator(new String[0], localModifiers, localTypesNames, localVariables, snippet);
+			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
 			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
@@ -318,7 +316,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		EvaluationSourceGenerator mapper = null;
 		CompilationUnit unit = null;
 
-		mapper = new EvaluationSourceGenerator(new String[0], new int[0], new String[0], new String[0], snippet);
+		mapper = new EvaluationSourceGenerator(new String[0], new String[0], snippet);
 
 		try {
 			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
