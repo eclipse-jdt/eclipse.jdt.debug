@@ -44,6 +44,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private final static String ERROR_TERMINATE = ERROR + "terminate.exception";
 	private static final String ERROR_GET_CRC= ERROR + "get_crc";
 	
+	private static final int MAX_THREAD_DEATH_ATTEMPTS = 1;
+	
 	/**
 	 * Key used to store the class name attribute pertinent to a
 	 * specific method entry request. Used for method entry breakpoints.
@@ -110,6 +112,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * The thread death object used to interrupt threads on the target.
 	 */
 	protected ObjectReference fThreadDeath;
+	
+	/**
+	 * Number of attempts to create instance of thread death.
+	 */
+	protected int fThreadDeathAttempts = 0;
 
 	/**
 	 * The name of this target - set by the client on creation, or retrieved from the
@@ -325,6 +332,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * to <code>ITerminate#canTerminate()</code>.
 	 */
 	protected void createThreadDeathInstance(ThreadReference threadRef) {
+		if (fThreadDeathAttempts == MAX_THREAD_DEATH_ATTEMPTS) {
+			if (fUniversalClassPrepareReq != null) {
+				try {
+					getEventRequestManager().deleteEventRequest(fUniversalClassPrepareReq);
+					fClassPrepareRequestsByClass.remove("*");
+				} catch (RuntimeException e) {
+					internalError(e);
+				}
+				fUniversalClassPrepareReq = null;
+			}
+			return;
+		}
+		fThreadDeathAttempts++;
 		// Try to create an instance of java.lang.ThreadDeath
 		// NB: This has to be done when the VM is interrupted by an event
 		if (fThreadDeath == null) {
