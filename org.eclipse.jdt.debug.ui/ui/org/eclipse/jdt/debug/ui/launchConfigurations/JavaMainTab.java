@@ -14,6 +14,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -408,8 +409,13 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IStatus status = workspace.validateName(name, IResource.PROJECT);
 			if (status.isOK()) {
-				if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-					setErrorMessage(LauncherMessages.getString("JavaMainTab.Project_does_not_exist_15")); //$NON-NLS-1$
+				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+				if (!project.exists()) {
+					setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.20"), new String[] {name})); //$NON-NLS-1$
+					return false;
+				}
+				if (!project.isOpen()) {
+					setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.21"), new String[] {name})); //$NON-NLS-1$
 					return false;
 				}
 			} else {

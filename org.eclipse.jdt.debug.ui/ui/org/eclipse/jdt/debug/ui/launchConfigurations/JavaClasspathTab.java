@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -401,8 +402,13 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IStatus status = workspace.validateName(projectName, IResource.PROJECT);
 		if (status.isOK()) {
-			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).exists()) {
-				setErrorMessage(LauncherMessages.getString("JavaMainTab.Project_does_not_exist_15")); //$NON-NLS-1$
+			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			if (!project.exists()) {
+				setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.20"), new String[] {projectName})); //$NON-NLS-1$
+				return false;
+			}
+			if (!project.isOpen()) {
+				setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.21"), new String[] {projectName})); //$NON-NLS-1$
 				return false;
 			}
 		} else {
