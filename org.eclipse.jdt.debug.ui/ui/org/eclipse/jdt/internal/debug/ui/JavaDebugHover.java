@@ -107,7 +107,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 						IJavaElement javaElement = resolve[i];
 						if (javaElement instanceof IField) {
 						    IField field = (IField)javaElement;
-						    IJavaFieldVariable fieldVariable = frame.getThis().getField(field.getElementName(), Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true));
+						    String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
+						    typeSignature = typeSignature.replace('.', '/');
+							IJavaFieldVariable fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
 						    if (fieldVariable != null) {
 						        StringBuffer buf = new StringBuffer();
 						        appendVariable(buf, fieldVariable);
@@ -123,7 +125,20 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 						    }
 						    if (parent instanceof IMethod) {
 								IMethod method = (IMethod) parent;
-								if (method.getSignature().equals(frame.getSignature())) {
+								boolean equal = false;
+								if (method.isBinary()) {
+									// compare resolved signatures
+									if (method.getSignature().equals(frame.getSignature())) {
+										equal = true;
+									}
+								} else {
+									// compare unresolved signatures
+									if (frame.getMethodName().equals(method.getElementName())
+											&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())) {
+										equal = true;
+									}
+								}
+								if (equal) {
 									return generateHoverForLocal(frame, var.getElementName());
 								}
 							}
