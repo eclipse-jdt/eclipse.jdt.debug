@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -234,7 +233,6 @@ public class BreakpointUtils {
 	 * breakpoint a run-to-line breakpoint:<ul>
 	 * <li>PERSISTED = false</li>
 	 * <li>RUN_TO_LINE = true</li>
-	 * <li>IMarker.SEVERITY = IMarker.SEVERITY_WARNING</li>
 	 * </ul>
 	 * 
 	 * @param attributes the attribute map to use
@@ -245,10 +243,6 @@ public class BreakpointUtils {
 	public static void addRunToLineAttributes(Map attributes) {
 		attributes.put(IBreakpoint.PERSISTED, Boolean.FALSE);
 		attributes.put(RUN_TO_LINE, Boolean.TRUE);
-		// Our annotation extension specifies a marker severity of SEVERITY_INFO.
-		// So we set the severity to anything other than SEVERITY_INFO here so the marker
-		// won't be shown in the editor's annotation pane. 
-		attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_WARNING));
 	}	
 	
 	/**
