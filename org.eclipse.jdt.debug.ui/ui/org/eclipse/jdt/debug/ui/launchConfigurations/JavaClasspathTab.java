@@ -60,6 +60,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -97,6 +98,12 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
+		Label label = new Label(comp, SWT.NONE);
+		label.setText(LauncherMessages.getString("JavaClasspathTab.0")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+		
 		fClasspathViewer = new RuntimeClasspathViewer(comp);
 		fClasspathViewer.addEntriesChangedListener(this);
 		fClasspathViewer.getControl().setFont(font);
@@ -114,8 +121,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		pathButtonComp.setLayoutData(gd);
 		pathButtonComp.setFont(font);
-		
-		createVerticalSpacer(pathButtonComp, 1);
 		
 		createPathButtons(pathButtonComp);
 	}
