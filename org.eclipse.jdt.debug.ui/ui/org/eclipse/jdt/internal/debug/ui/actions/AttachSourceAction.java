@@ -34,7 +34,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	// a dialog to set the source attachment properties
 	private class SourceAttachmentDialog extends StatusDialog implements IStatusChangeListener {
 		
-		private org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock fSourceAttachmentBlock;
+		private SourceAttachmentBlock fSourceAttachmentBlock;
 				
 		public SourceAttachmentDialog(Shell parent, IRuntimeClasspathEntry entry) {
 			super(parent);
