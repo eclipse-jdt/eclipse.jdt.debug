@@ -3,19 +3,16 @@
 <schema targetNamespace="org.eclipse.jdt.launching">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.jdt.launching" id="vmConnectors" name="Java VM Connectors"/>
+      <meta.schema plugin="org.eclipse.jdt.launching" id="classpathProviders" name="Java Runtime Classpath Providers"/>
    </appInfo>
    <documentation>
-      This extension point represents different kinds of connections to remote VMs.  Each extension must implement
-&lt;samp&gt;org.eclipse.jdt.launching.IVMConnector&lt;/samp&gt;.  An IVMConnector is responsible for establishing a connection
-with a remote VM.
+      This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="vmConnector" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
                  <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,54 +38,53 @@ with a remote VM.
       </complexType>
    </element>
 
-   <element name="vmConnector">
+	<element name="classpathProviders">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier that can be used to reference this IVMConnector.
+                  a unique identifier that can be used to reference this classpath provider
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the class that implements this connector.  The class must implement &lt;samp&gt;IVMConnector&lt;/samp&gt;.
+                  the class that implements this classpath provider. The class must implement IRuntimeClasspathProvider
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.IVMConnector"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.AbstractVMInstallType"/>
                </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         2.1
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an IVMConnector:
+          The following is an example of a classpath provider: 
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.jdt.launching.vmConnectors"&gt;
-		&lt;vmConnector
-			class="com.example.ConnectorImplementation"
-			id="com.example.ConnectorId"&gt;
-		&lt;/vmConnector&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.jdt.launching.classpathProvider"&gt;
+  &lt;classpathProvider
+   class="com.example.ProviderImplementation"
+   id="com.example.ProviderId"&gt;
+  &lt;/classpathProvider&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         An implementation of a standard socket attach connector is provided.
       </documentation>
    </annotation>
 
