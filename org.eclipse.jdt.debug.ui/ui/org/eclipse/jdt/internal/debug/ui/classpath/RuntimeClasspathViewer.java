@@ -37,12 +37,7 @@ import org.eclipse.swt.widgets.Shell;
  * A viewer that displays and manipulates runtime classpath entries.
  */
 public class RuntimeClasspathViewer extends TreeViewer implements IClasspathViewer {
-	
-	/**
-	 * Whether enabled/editable.
-	 */
-	private boolean fEnabled = true;
-	
+		
 	/**
 	 * Entry changed listeners
 	 */
@@ -65,7 +60,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		
 		getTree().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
-				if (isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+				if (updateSelection(RuntimeClasspathAction.REMOVE, (IStructuredSelection)getSelection()) && event.character == SWT.DEL && event.stateMask == 0) {
 					List selection= getSelectionFromWidget();
 					getClasspathContentProvider().removeAll(selection);
 					notifyChanged();
@@ -141,7 +136,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
 	public boolean isEnabled() {
-		return fEnabled;
+		return true;
 	}
 	
 	/**
