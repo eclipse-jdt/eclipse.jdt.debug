@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
@@ -31,6 +32,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
@@ -189,6 +191,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		if (sourceElement instanceof IJavaElement) {
 			return ((IJavaElement) sourceElement).getJavaProject();
+		}
+		if (sourceElement instanceof IResource) {
+			IJavaProject project = JavaCore.create(((IResource)sourceElement).getProject());
+			if (project.exists()) {
+				return project;
+			}
 		}
 		// if no source element, try the project associated with the launch - bug 27837
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
