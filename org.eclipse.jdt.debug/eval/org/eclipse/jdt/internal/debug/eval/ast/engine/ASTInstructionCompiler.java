@@ -245,7 +245,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			((CompoundInstruction)instruction).setEnd(fCounter);
 		}
 		fInstructions.add(instruction);
-		verbose("Add " + instruction.toString());
+		verbose("Add " + instruction.toString()); //$NON-NLS-1$
 	}
 	
 	
@@ -935,7 +935,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Anonymous type declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1010,7 +1010,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Assert statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Assert_statement_cannot_be_used_in_an_evaluation_expression_3"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1085,7 +1085,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message("Unrecognized assignment operator : " + opToken, node.getStartPosition()));
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		return true;
@@ -1126,7 +1126,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(BreakStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Break Statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Break_Statement_cannot_be_used_in_an_evaluation_expression_5"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1155,7 +1155,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Catch clause cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Catch_clause_cannot_be_used_in_an_evaluation_expression_6"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1183,7 +1183,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (node.getAnonymousClassDeclaration() != null) {
 			setHasError(true);
-			addErrorMessage(new Message("Anonymous type declaration cannot be used in an evaluation expression", node.getStartPosition()));
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_7"), node.getStartPosition())); //$NON-NLS-1$
 		}
 
 		IMethodBinding methodBinding= node.resolveConstructorBinding();
@@ -1192,7 +1192,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (typeBinding.isLocal()) {
 			setHasError(true);
-			addErrorMessage(new Message("Constructor of a local type cannot be used in an evaluation expression", node.getStartPosition()));
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8"), node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		if (hasErrors()) {
@@ -1262,7 +1262,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("this constructor invocation cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.this_constructor_invocation_cannot_be_used_in_an_evaluation_expression_9"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1271,7 +1271,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(ContinueStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Continue statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Continue_statement_cannot_be_used_in_an_evaluation_expression_10"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1280,7 +1280,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(DoStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Do statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Do_statement_cannot_be_used_in_an_evaluation_expression_11"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1365,7 +1365,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(ForStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("For statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.For_statement_cannot_be_used_in_an_evaluation_expression_12"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1579,7 +1579,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message("Unrecognized infix operator : " + opToken, node.getStartPosition()));
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Unrecognized_infix_operator____13") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		if (hasErrors()) {
@@ -1665,7 +1665,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(LabeledStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Labeled Statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Labeled_Statement_cannot_be_used_in_an_evaluation_expression_14"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1819,7 +1819,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				break;
 			default:
 				setHasError(true);
-				addErrorMessage(new Message("unrecognized postfix operator : " + opToken, node.getStartPosition()));
+				addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.unrecognized_postfix_operator____15") + opToken, node.getStartPosition())); //$NON-NLS-1$
 				break;
 		}
 
@@ -1887,7 +1887,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message("unrecognized prefix operator : " + opToken, node.getStartPosition()));
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		return true;
@@ -1968,7 +1968,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String variableId = node.getIdentifier();
 		if (binding == null) {
 			setHasError(true);
-			addErrorMessage(new Message("binding == null for " + variableId, node.getStartPosition()));
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.binding_==_null_for__17") + variableId, node.getStartPosition())); //$NON-NLS-1$
 			return true;
 		}
 		
@@ -2020,7 +2020,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Single variable declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Single_variable_declaration_cannot_be_used_in_an_evaluation_expression_18"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2045,7 +2045,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("super constructor invocation cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.super_constructor_invocation_cannot_be_used_in_an_evaluation_expression_19"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -2131,7 +2131,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Switch case cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Switch_case_cannot_be_used_in_an_evaluation_expression_20"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2143,7 +2143,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Switch statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Switch_statement_cannot_be_used_in_an_evaluation_expression_21"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2183,7 +2183,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Throw statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Throw_statement_cannot_be_used_in_an_evaluation_expression_22"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2195,7 +2195,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Try statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Try_statement_cannot_be_used_in_an_evaluation_expression_23"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2207,7 +2207,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Type declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Type_declaration_cannot_be_used_in_an_evaluation_expression_24"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2219,7 +2219,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Type declaration statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Type_declaration_statement_cannot_be_used_in_an_evaluation_expression_25"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -2244,7 +2244,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Variable declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Variable_declaration_cannot_be_used_in_an_evaluation_expression_26"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2268,7 +2268,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Variable declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Variable_declaration_cannot_be_used_in_an_evaluation_expression_27"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2277,7 +2277,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(WhileStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("While statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.While_statement_cannot_be_used_in_an_evaluation_expression_28"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 	

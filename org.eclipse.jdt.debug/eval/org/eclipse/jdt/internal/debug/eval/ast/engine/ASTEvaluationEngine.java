@@ -329,7 +329,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				Message message= messages[i];
 				int errorOffset= message.getSourcePosition();
 				// TO DO: Internationalize "void method..." error message check
-				if (codeSnippetStartOffset <= errorOffset && errorOffset <= codeSnippetEndOffset && !"Void methods cannot return a value".equals(message.getMessage())) {
+				if (codeSnippetStartOffset <= errorOffset && errorOffset <= codeSnippetEndOffset && !EngineEvaluationMessages.getString("ASTEvaluationEngine.Void_methods_cannot_return_a_value_1").equals(message.getMessage())) { //$NON-NLS-1$
 					errorSequence.addError(message);
 					error = true;
 				}
