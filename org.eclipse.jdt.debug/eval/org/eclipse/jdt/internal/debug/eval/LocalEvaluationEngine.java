@@ -99,6 +99,12 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	private List fSnippetFiles;
 	
 	/**
+	 * Collection of directories created by this evaluation
+	 * engine.
+	 */
+	private List fDirectories;
+	
+	/**
 	 * Evaluation context for the Java project associated
 	 * with this evaluation engine.
 	 */
@@ -566,7 +572,27 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		Iterator iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
 			File file = (File)iter.next();
-			file.delete();
+			if (!file.delete()) {
+				JDIDebugPlugin.logError(
+					new DebugException(
+						 new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+									MessageFormat.format("Unable to delete temporary evaluation class file {0}", new String[] {file.getAbsolutePath()}), null))
+				);				
+			}
+		}
+		List directories = getDirectories();
+		// remove directories in bottom up order
+		int i = directories.size() - 1;
+		while (i >= 0) {
+			File dir = (File)directories.get(i);
+			if (!dir.delete()) {
+				JDIDebugPlugin.logError(
+					new DebugException(
+						 new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+									MessageFormat.format("Unable to delete temporary evaluation directory {0}", new String[] {dir.getAbsolutePath()}), null))
+				);
+			}
+			i--;
 		}
 		reset();
 		setJavaProject(null);
@@ -575,6 +601,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		setResult(null);
 		setEvaluationContext(null);
 	}
+	
 
 	/**
 	 * Resets this engine for another evaluation.
@@ -688,9 +715,12 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 							String pkgDirName = dir.getCanonicalPath();
 							for (int j = 0; j < (compoundName.length - 1); j++) {
 								pkgDirName += File.separator +  compoundName[j];
+								File pkgDir = new File(pkgDirName);
+								if (!pkgDir.exists()) {
+									pkgDir.mkdir();
+									addDirectory(pkgDir);
+								}
 							}
-							File pkgDir = new File(pkgDirName);
-							pkgDir.mkdirs();
 							String name = compoundName[compoundName.length - 1] + ".class"; //$NON-NLS-1$
 							File classFile = new File(pkgDirName + File.separator + name);
 							if (!classFile.exists()) {
@@ -730,7 +760,19 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		fSnippetFiles.add(file);
 	}
 	
-	
+	/**
+	 * Adds the given file to this engine's collection 
+	 * of cerated directories, which are to
+	 * be deleted when this engine is diposed.
+	 * 
+	 * @param file directory created for class file deployment
+	 */
+	private void addDirectory(File file) {
+		if (fDirectories == null) {
+			fDirectories = new ArrayList();
+		}
+		fDirectories.add(file);
+	}	
 
 	/**
 	 * Returns an evaluation context for this evaluation
@@ -771,6 +813,20 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			return fSnippetFiles;
 		}
 	}
+	
+	/**
+	 * Returns a collection of directories created by
+	 * this evaluation engine, possibly empty.
+	 * 
+	 * @return directories created when deploying class files
+	 */
+	protected List getDirectories() {
+		if (fDirectories == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return fDirectories;
+		}
+	}	
 	
 	/**
 	 * Retursn whether this evaluation engine has been
