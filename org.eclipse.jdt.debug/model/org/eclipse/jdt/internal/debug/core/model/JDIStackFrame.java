@@ -567,7 +567,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 			return false;
 		} catch (DebugException e) {
-			if (e.getStatus().getException() instanceof IncompatibleThreadStateException) {
+			if (e.getStatus().getException() instanceof IncompatibleThreadStateException || e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 				// if the thread has since resumed, drop is not supported
 				return false;
 			}
