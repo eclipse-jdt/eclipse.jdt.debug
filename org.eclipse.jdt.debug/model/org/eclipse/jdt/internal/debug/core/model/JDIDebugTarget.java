@@ -638,7 +638,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 
 		try {
-			getThreadStartHandler().deleteRequest();
+			disposeThreadHandler();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
 				vm.dispose();
@@ -653,6 +653,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 
 	}
 	
+	/**
+	 * Allows for ThreadStartHandler to do clean up/disposal.
+	 */
+	private void disposeThreadHandler() {
+		ThreadStartHandler handler = getThreadStartHandler();
+		if (handler != null) {
+			handler.deleteRequest();
+		}
+	}
+
 	/**
 	 * Returns the underlying virtual machine associated with this
 	 * debug target, or <code>null</code> if none (disconnected/terminated)
