@@ -39,9 +39,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	private Value fValue;
 	private List fVariables;
 	
-	private static final String fgToStringSignature = "()Ljava/lang/String;"; //$NON-NLS-1$
-	private static final String fgToString = "toString"; //$NON-NLS-1$
-	
 	/**
 	 * A flag indicating if this value is still allocated (valid)
 	 */
