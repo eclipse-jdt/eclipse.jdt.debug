@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tim Tromey - update method signature syntax (bug 31507)
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
