@@ -185,7 +185,22 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @exception Exception if the event is never received.
 	 */
 	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws CoreException {
-		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
+	    return launchAndWait(configuration, waiter, true);
+	}
+	
+	/**
+	 * Launches the given configuration and waits for an event. Returns the
+	 * source of the event. If the event is not received, the launch is
+	 * terminated and an exception is thrown.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param waiter the event waiter to use
+	 * @param register whether to register the launch
+	 * @return Object the source of the event
+	 * @exception Exception if the event is never received.
+	 */
+	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter, boolean register) throws CoreException {
+		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null, false, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
 			try {
@@ -198,7 +213,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend, launch terminated.", suspendee);
 		return suspendee;		
-	}
+	}	
 	
 	/**
 	 * Launches the type with the given name, and waits for a
@@ -238,10 +253,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName) throws Exception {
+		return launchToBreakpoint(mainTypeName, true);
+	}
+	
+	/**
+	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param mainTypeName the program to launch
+	 * @param register whether to register the launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToBreakpoint(String mainTypeName, boolean register) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
 		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
-		return launchToBreakpoint(config);
-	}
+		return launchToBreakpoint(config, register);
+	}	
 
 	/**
 	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused 
@@ -252,13 +280,26 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */	
 	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws CoreException {
+	    return launchToBreakpoint(config, true);
+	}
+	
+	/**
+	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param config the configuration to launch
+	 * @param whether to register the launch
+	 * @return thread in which the first suspend event occurred
+	 */	
+	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config, boolean register) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
-		Object suspendee= launchAndWait(config, waiter);
+		Object suspendee= launchAndWait(config, waiter, register);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
 		return (IJavaThread)suspendee;		
-	}
+	}	
 	
 	/**
 	 * Launches the type with the given name, and waits for a terminate

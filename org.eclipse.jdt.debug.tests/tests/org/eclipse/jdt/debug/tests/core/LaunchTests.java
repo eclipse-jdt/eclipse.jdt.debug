@@ -11,10 +11,12 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
@@ -30,7 +32,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		super(name);
 	}
 
-	public void testDeferredBreakpoints() throws CoreException {
+	public void testLaunchNotification() throws CoreException {
 		String typeName = "Breakpoints";		
 
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
@@ -71,6 +73,26 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 			}
 		}
 		assertTrue("Launch should have been removed", removed);		
+	}
+	
+	/**
+	 * Tests launching an unregistered launch.
+	 * 
+	 * @throws Exception
+	 */
+	public void testUnregisteredLaunch() throws Exception {
+	   String typeName = "Breakpoints";
+	   createLineBreakpoint(52, typeName);
+	   IJavaThread thread = null;
+       try {
+           thread = launchToBreakpoint(typeName, false);
+           assertNotNull("Breakpoint not hit within timeout period", thread);
+           ILaunch launch = thread.getLaunch();
+           assertFalse("Launch should not be registered", DebugPlugin.getDefault().getLaunchManager().isRegistered(launch));
+       } finally {
+           terminateAndRemove(thread);
+           removeAllBreakpoints();
+       }	   
 	}
 
 	/* (non-Javadoc)
