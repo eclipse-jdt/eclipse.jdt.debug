@@ -642,7 +642,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;
+		IJavaThread thread = (IJavaThread) suspendee;
+		// force thread to update stack frames
+		thread.getTopStackFrame();
+		return thread;
 	}
 
 	/**
@@ -659,7 +662,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;		
+		IJavaThread thread = (IJavaThread) suspendee;
+		// force thread to update stack frames
+		thread.getTopStackFrame();
+		return thread;		
 	}
 	
 	/**
@@ -676,7 +682,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;
+		IJavaThread thread = (IJavaThread) suspendee;
+		// force thread to update stack frames
+		thread.getTopStackFrame();
+		return thread;
 	}	
 	
 	/**
@@ -702,7 +711,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;		
+		IJavaThread thread = (IJavaThread) suspendee;
+		// force thread to update stack frames
+		thread.getTopStackFrame();
+		return thread;		
 	}	
 
 	/**
@@ -728,7 +740,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;		
+		IJavaThread thread = (IJavaThread) suspendee;
+		// force thread to update stack frames
+		thread.getTopStackFrame();
+		return thread;		
 	}	
 	
 	/**
@@ -754,7 +769,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;		
+		IJavaThread thread = (IJavaThread) suspendee;
+		// force thread to update stack frames
+		thread.getTopStackFrame();
+		return thread;		
 	}	
 	/**
 	 * Sets the "suspend on uncaught exception" preference as specified.
