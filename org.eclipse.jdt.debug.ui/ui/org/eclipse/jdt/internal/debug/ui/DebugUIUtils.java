@@ -21,13 +21,13 @@ public class DebugUIUtils {
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(Shell shell, String resourcePrefix, IStatus s) {
-		String message= getResourceString(resourcePrefix + "message");
+		String message= getResourceString(resourcePrefix + "message"); //$NON-NLS-1$
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
 		if (message.equals(s.getMessage())) {
 			message= null;
 		}
-		String title= getResourceString(resourcePrefix + "title");
+		String title= getResourceString(resourcePrefix + "title"); //$NON-NLS-1$
 		ErrorDialog.openError(shell, title, message, s);
 	}
 
@@ -41,7 +41,7 @@ public class DebugUIUtils {
 		if (fgResourceBundle != null) {
 			return fgResourceBundle.getString(key);
 		} else {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 
@@ -50,7 +50,7 @@ public class DebugUIUtils {
 	 */
 	public static ResourceBundle getResourceBundle() {
 		try {
-			return ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.DebugUIResources");
+			return ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.DebugUIResources"); //$NON-NLS-1$
 		} catch (MissingResourceException e) {
 			logError(e);
 		}
@@ -64,7 +64,7 @@ public class DebugUIUtils {
 		if (JDIDebugUIPlugin.getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			System.out.println("Internal error logged from UI: ");
+			System.out.println("Internal error logged from UI: "); //$NON-NLS-1$
 			e.printStackTrace();
 			System.out.println();
 		}

@@ -12,13 +12,13 @@ public class JavaDebugUI {
 	/**
 	 * Plug-in identifier for the Java Debug UI
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.jdt.debug.ui";
+	public static final String PLUGIN_ID = "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
 
 	/**
 	 * Identifier for a Java Application launch configuration
 	 * (value <code>org.eclipse.jdt.debug.ui.localJavaApplication"</code>).
 	 */
-	public static final String JAVA_APPLICATION_LANUCH_CONFIGURATION_ID = "org.eclipse.jdt.debug.ui.localJavaApplication";
+	public static final String JAVA_APPLICATION_LAUNCH_CONFIGURATION_ID = "org.eclipse.jdt.debug.ui.localJavaApplication"; //$NON-NLS-1$
 		
 	/**
 	 * Main type launch configuration attribute name.
@@ -26,7 +26,7 @@ public class JavaDebugUI {
 	 * launch is stored in a launch configuration with
 	 * this key.
 	 */
-	public static final String MAIN_TYPE_ATTR = "MAIN_TYPE";	
+	public static final String MAIN_TYPE_ATTR = "MAIN_TYPE";	 //$NON-NLS-1$
 	
 	/**
 	 * Program arguments launch configuration attribute name.
@@ -34,7 +34,7 @@ public class JavaDebugUI {
 	 * in a launch configuration with this key. Program
 	 * arguments are stored as a raw string.
 	 */
-	public static final String PROGRAM_ARGUMENTS_ATTR = "PROGRAM_ARGUMENTS";
+	public static final String PROGRAM_ARGUMENTS_ATTR = "PROGRAM_ARGUMENTS"; //$NON-NLS-1$
 	
 	/**
 	 * VM arguments launch configuration attribute name.
@@ -42,21 +42,21 @@ public class JavaDebugUI {
 	 * in a launch configuration with this key. VM
 	 * arguments are stored as a raw string.
 	 */
-	public static final String VM_ARGUMENTS_ATTR = "VM_ARGUMENTS";	
+	public static final String VM_ARGUMENTS_ATTR = "VM_ARGUMENTS";	 //$NON-NLS-1$
 	
 	/**
 	 * VM install launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstall</code>
 	 * identifying a VM to use for a launch.
 	 */
-	public static final String VM_INSTALL_ATTR = "VM_INSTALL_ID";
+	public static final String VM_INSTALL_ATTR = "VM_INSTALL_ID"; //$NON-NLS-1$
 	
 	/**
 	 * VM install type launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstallType</code>
 	 * identifying a type of VM to use for a launch.
 	 */
-	public static final String VM_INSTALL_TYPE_ATTR = "VM_INSTALL_TYPE_ID";
+	public static final String VM_INSTALL_TYPE_ATTR = "VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	
 	/**
 	 * Bootpath launch configuration attribute name.
@@ -64,7 +64,7 @@ public class JavaDebugUI {
 	 * in a launch configuration with this key. A bootpath
 	 * is stored as a raw string.
 	 */
-	public static final String BOOTPATH_ATTR = "BOOTPATH";	
+	public static final String BOOTPATH_ATTR = "BOOTPATH";	 //$NON-NLS-1$
 	
 	/**
 	 * Status code indicating a launch configuration does not
