@@ -581,7 +581,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			Filter filter = (Filter)filters[i];
 			String name= filter.getName();
 			if (name.equals(DEFAULT_PACKAGE)) {
-				name= "";
+				name= ""; //$NON-NLS-1$
 			}
 			stringFilters[i]= name;
 		}
