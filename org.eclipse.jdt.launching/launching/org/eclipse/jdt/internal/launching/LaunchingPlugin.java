@@ -508,21 +508,21 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 		// Try to retrieve a status handler.  If found, have it run the build, otherwise
 		// just do it with a null progress monitor
-		IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), WORKSPACE_RUNNABLE_STATUS, LaunchingMessages.getString("LaunchingPlugin.Build_in_progress_1"), null); //$NON-NLS-1$
-		IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
-		if (handler != null) {			
-			try {
-				handler.handleStatus(status, runnable);
-			} catch (CoreException ce) {
-				log(ce);
-			}
-		} else {
+//		IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), WORKSPACE_RUNNABLE_STATUS, LaunchingMessages.getString("LaunchingPlugin.Build_in_progress_1"), null); //$NON-NLS-1$
+//		IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
+//		if (handler != null) {			
+//			try {
+//				handler.handleStatus(status, runnable);
+//			} catch (CoreException ce) {
+//				log(ce);
+//			}
+//		} else {
 			try {
 				ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
 			} catch (CoreException ce) {
 				log(ce);
 			}
-		}
+//		}
 	}	
 			
 	/**
