@@ -3156,8 +3156,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationExpression node) {
+		/* if it is in the code to execute, return <code>false</code>,
+		 * we don't use the standart accept order.
+		 * Otherwise, return true. We want to search the code to execute
+		 * in variable declarations (in case of inner classes).
+		 */
 		if (!isActive()) {
-			return false;
+			return true;
 		}
 		for (Iterator iter= node.fragments().iterator(); iter.hasNext();) {
 			((VariableDeclarationFragment) iter.next()).accept(this);
@@ -3167,11 +3172,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationFragment)
-	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
+		/* if it is in the code to execute, return <code>false</code>,
+		 * we don't use the standart accept order.
+		 * Otherwise, return true. We want to search the code to execute
+		 * in variable declarations (in case of inner classes).
+		 */
 		if (!isActive()) {
-			return false;
+			return true;
 		}
 		// get the type of the variable
 		ITypeBinding typeBinding;
@@ -3210,8 +3219,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationStatement node) {
+		/* if it is in the code to execute, return <code>false</code>,
+		 * we don't use the standart accept order.
+		 * Otherwise, return true. We want to search the code to execute
+		 * in variable declarations (in case of inner classes).
+		 */
 		if (!isActive()) {
-			return false;
+			return true;
 		}
 		for (Iterator iter= node.fragments().iterator(); iter.hasNext();) {
 			((VariableDeclarationFragment) iter.next()).accept(this);
