@@ -604,15 +604,18 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		if (selected) {
 			fClassPathList.setEnabled(true);
 		} else {
-			fClassPathList.setEnabled(false);			
+			fClassPathList.setEnabled(false);	
 		}
-		try {
-			getWorkingCopy().setAttribute(JavaDebugUI.DEFAULT_CLASSPATH_ATTR, selected);
-			IJavaProject javaProject = JavaLocalApplicationLaunchConfigurationHelper.getJavaProject(getWorkingCopy());
-			String[] defaultClassPath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
-			fClassPathList.setItems(defaultClassPath);
-			updateConfigFromPathList(fClassPathList);
-		} catch (CoreException ce) {			
+		
+		getWorkingCopy().setAttribute(JavaDebugUI.DEFAULT_CLASSPATH_ATTR, selected);
+		if (selected) {
+			try {
+				IJavaProject javaProject = JavaLocalApplicationLaunchConfigurationHelper.getJavaProject(getWorkingCopy());
+				String[] defaultClassPath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
+				fClassPathList.setItems(defaultClassPath);
+				updateConfigFromPathList(fClassPathList);
+			} catch (CoreException ce) {			
+			}
 		}
 	}
 	
