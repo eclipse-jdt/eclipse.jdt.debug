@@ -197,6 +197,7 @@
 		<action
 			id="org.eclipse.jdt.ui.actions.SuspendPolicy"
 			label="%suspendPolicy.label"
+			icon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
 			menubarPath="emptyBreakpointGroup"
 			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointThreadToggleAction"
 			enablesFor="1">
@@ -258,6 +259,7 @@
 		<action
 			id="org.eclipse.jdt.ui.actions.OpenOnConsoleType"
 			label="%openOnConsoleTypeAction.label"
+			icon="../org.eclipse.jdt.ui/icons/full/ctool16/opentype.gif"
 			tooltip="%openOnConsoleTypeAction.tooltip"
 			menubarPath="additions"
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnConsoleTypeAction">
