@@ -284,6 +284,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Key_in_the_name_of_a_new_step_filter_10")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAddFilterButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fAddFilterButton);
 		fAddFilterButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				editFilter();
@@ -298,6 +299,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddTypeButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_Java_type_and_add_it_to_step_filters_12")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fAddTypeButton);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				addType();
@@ -312,6 +314,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddPackageButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_package_and_add_it_to_step_filters_14")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fAddPackageButton);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				addPackage();
@@ -326,6 +329,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fRemoveFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Remove_all_selected_step_filters_16")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveFilterButton);
 		fRemoveFilterButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fRemoveFilterButton);
 		fRemoveFilterButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				removeFilters();
