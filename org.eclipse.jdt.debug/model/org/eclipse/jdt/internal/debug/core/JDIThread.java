@@ -632,7 +632,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					} else {
 						stepReturn0();
 						fRunning = true;
-						decrementStepCount();
+						fStepCount--;
 						return;
 					}
 				}
@@ -758,7 +758,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				}
 			} else {
 				if (detail == DebugEvent.STEP_END) {
-					decrementStepCount();
+					fStepCount--;
 				}
 				if (fStepCount == 0) {
 					stopStepTimer();
@@ -981,12 +981,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		fStepCount = 0;
 		abortDrop();
 		abortStep();
-	}
-	
-	protected void decrementStepCount() {
-		if (fStepCount > 0) {
-			fStepCount--;
-		}
 	}
 	
 	/**
