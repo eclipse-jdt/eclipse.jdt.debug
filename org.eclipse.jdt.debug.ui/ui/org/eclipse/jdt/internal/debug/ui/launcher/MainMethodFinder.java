@@ -71,9 +71,6 @@ public class MainMethodFinder {
 			element= ((IDebugTarget)element).getLaunch();
 		}
 		
-		if (element instanceof ILaunch) 
-			element= ((ILaunch)element).getElement();
-
 		if (element instanceof IAdaptable) {
 			IJavaElement jelem= (IJavaElement) ((IAdaptable) element).getAdapter(IJavaElement.class);
 			if (jelem != null) {

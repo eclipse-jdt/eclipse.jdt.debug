@@ -200,13 +200,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		ILaunchConfiguration configuration= launch.getLaunchConfiguration();
 		IJavaProject javaProject = null;
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		if (configuration == null) {
-			// Old-style launcher support
-			Object element = launch.getElement();
-			if (element instanceof IJavaElement) {
-				javaProject = ((IJavaElement)element).getJavaProject();
-			}
-		} else {
+		if (configuration != null) {
 			// Launch configuration support
 			try {
 				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
