@@ -255,6 +255,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				return isReplacedByConstantValue((InfixExpression)node);
 			case ASTNode.PREFIX_EXPRESSION:
 				return isReplacedByConstantValue((PrefixExpression)node);
+			case ASTNode.CAST_EXPRESSION:
+				return isReplacedByConstantValue(((CastExpression)node).getExpression());
 			default:
 				return false;
 		}
