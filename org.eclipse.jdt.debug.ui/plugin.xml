@@ -2646,20 +2646,47 @@ M4 = Platform-specific fourth key
          </enablement>
       </consolePageParticipant>
    </extension>
-   <extension
-         point="org.eclipse.debug.ui.debugViewContentProviders">
-      <debugViewContentProvider
-      		id="org.eclipse.jdt.debug.ui.IJavaThreadContentProvider"
-            class="org.eclipse.jdt.internal.debug.ui.JavaDebugContentProvider">
-            <enablement>
-            	<or>
-            		<adapt type="org.eclipse.jdt.debug.core.IJavaThread"/>
-            		<instanceof value="org.eclipse.jdt.internal.debug.ui.IJavaMonitorElement"/>
-            	</or>
-            </enablement>
-      </debugViewContentProvider>
-   </extension>   
 	<extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer"/>
 	</extension>
+	
+	<!-- Workbench adapters for monitor information -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+            <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaMonitorThread">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+            <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+            <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+            <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
+            adaptableType="org.eclipse.jdt.debug.core.IJavaThread">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+            <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+         </factory>                  
+    </extension>	
+    
 </plugin>

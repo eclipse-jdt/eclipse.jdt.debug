@@ -8,72 +8,63 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui;
+package org.eclipse.jdt.internal.debug.ui.monitors;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
- * Object used to display waiting thread in the debug launch view.
- * In this case, the thread owns for the owned monitors, and is waiting
- * for the parent monitor.
+ * Object used to display owning thread in the debug launch view.
+ * In this case, the thread is waiting for the contended monitor,
+ * and owns the parent monitor.
  */
-public class JavaWaitingThread implements IDebugElement, IJavaMonitorElement {
-
+public class JavaOwningThread extends PlatformObject implements IDebugElement {
+	
 	/**
 	 * The thread object in the thread and monitor model.
 	 */
 	private JavaMonitorThread fThread;
-
+	
 	/**
-	 * The monitors this thread owns.
+	 * The monitor this thread is waiting for.
 	 */
-	private JavaOwnedMonitor[] fOwnedMonitors;
+	private JavaContendedMonitor fContendedMonitor;
 	/**
 	 * The parent, in the debug view tree.
 	 */
-	private JavaOwnedMonitor fParent;
+	private JavaContendedMonitor fParent;
 
-	public JavaWaitingThread(JavaMonitorThread thread, JavaOwnedMonitor parent) {
+	public JavaOwningThread(JavaMonitorThread thread, JavaContendedMonitor parent) {
 		fThread= thread;
 		thread.addElement(this);
 		fParent= parent;
 	}
 
+	
 	public JavaMonitorThread getThread() {
 		return fThread;
 	}
 	
-	public JavaOwnedMonitor getParent() {
+	public JavaContendedMonitor getParent() {
 		return fParent;
 	}
 
-	public JavaOwnedMonitor[] getOwnedMonitors() {
-		JavaMonitor[] ownedMonitors= fThread.getOwnedMonitors0();
-		JavaOwnedMonitor[] tmp= new JavaOwnedMonitor[ownedMonitors.length];
-		if (fOwnedMonitors == null) {
-			// the list was empty, creating new objects
-			for (int i= 0; i < ownedMonitors.length; i++) {
-				tmp[i]= new JavaOwnedMonitor(ownedMonitors[i], this);
-			}
-		} else {
-			// trying to reuse the objects from the previous list
-	outer:	for (int i= 0; i < ownedMonitors.length; i++) {
-				JavaMonitor ownedMonitor= ownedMonitors[i];
-				for (int j= 0; j < fOwnedMonitors.length; j++) {
-					if (fOwnedMonitors[j].getMonitor() == ownedMonitor) {
-						tmp[i]= fOwnedMonitors[j];
-						continue outer;
-					}
-				}
-				tmp[i]= new JavaOwnedMonitor(ownedMonitor, this);
-			}
+	public JavaContendedMonitor getContendedMonitor() {
+		JavaMonitor contendedMonitor= fThread.getContendedMonitor0();
+		if (contendedMonitor == null) {
+			fContendedMonitor= null;
+		} else if (fContendedMonitor == null || fContendedMonitor.getMonitor() != contendedMonitor) {
+			// create a new object only if the monitor from the model changed
+			fContendedMonitor= new JavaContendedMonitor(contendedMonitor, this);
 		}
-		fOwnedMonitors= tmp;
-		return fOwnedMonitors;
+		return fContendedMonitor;
 	}
 	
+	public void update() {
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
@@ -93,13 +84,6 @@ public class JavaWaitingThread implements IDebugElement, IJavaMonitorElement {
 	 */
 	public ILaunch getLaunch() {
 		return fThread.getLaunch();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
 	}
 
 	/**

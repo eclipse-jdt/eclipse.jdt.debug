@@ -8,8 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui;
+package org.eclipse.jdt.internal.debug.ui.monitors;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -19,7 +20,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * In this case, the monitor is owned by the owning thread, and waited
  * by the parent thread.
  */
-public class JavaContendedMonitor implements IDebugElement, IJavaMonitorElement {
+public class JavaContendedMonitor extends PlatformObject implements IDebugElement {
 
 	/**
 	 * The monitor object in the threads and monitors model.
@@ -79,13 +80,5 @@ public class JavaContendedMonitor implements IDebugElement, IJavaMonitorElement 
 	public ILaunch getLaunch() {
 		return fMonitor.getLaunch();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
 	
-
 }

@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui;
+package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -24,7 +25,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 /**
  * Represent a Java thread in the threads and monitors model.
  */
-public class JavaMonitorThread {
+public class JavaMonitorThread extends PlatformObject {
 	
 	/**
 	 * The underlying thread.
