@@ -282,7 +282,12 @@ public abstract class JavaBreakpointTypeChange extends Change {
 		Object destination= getDestination();
 		String newChangedTypeName;
 		if (destination instanceof IPackageFragment) {
-			newChangedTypeName= ((IPackageFragment)destination).getElementName() + '.' + changedType.getElementName();
+			IPackageFragment packageDestination= (IPackageFragment) destination;
+			if (packageDestination.isDefaultPackage()) {
+				newChangedTypeName= changedType.getElementName();
+			} else {
+				newChangedTypeName= ((IPackageFragment)destination).getElementName() + '.' + changedType.getElementName();
+			}
 		} else {
 			newChangedTypeName= ((IType)destination).getFullyQualifiedName() + '$' + changedType.getElementName();
 		}
