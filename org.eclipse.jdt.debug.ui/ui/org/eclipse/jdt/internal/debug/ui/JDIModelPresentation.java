@@ -1373,7 +1373,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buff.toString();
 	}
 
-	protected String getBreakpointText(IBreakpoint breakpoint) throws CoreException {
+	protected String getBreakpointText(IBreakpoint breakpoint) {
 	    try {
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
 				return getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
@@ -1392,12 +1392,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
 				return getClassPrepareBreakpointText((IJavaClassPrepareBreakpoint)breakpoint);
 			}
-	
+			// Should never get here
 			return ""; //$NON-NLS-1$
 	    } catch (CoreException e) {
-	        // Log any exceptions and re-throw
 	        JDIDebugUIPlugin.log(e);
-	        throw e;
+	        return DebugUIMessages.getString("JDIModelPresentation.4"); //$NON-NLS-1$
 	    }
 	}
 
