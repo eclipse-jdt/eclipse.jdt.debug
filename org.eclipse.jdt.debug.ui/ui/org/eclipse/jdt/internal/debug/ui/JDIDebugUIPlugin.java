@@ -192,6 +192,12 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
+		Display.getDefault().asyncExec(
+			new Runnable() {
+				public void run() {
+					createImageRegistry();
+				}
+			});
 	}
 	
 	public void shutdown() throws CoreException {
