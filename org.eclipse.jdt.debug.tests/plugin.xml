@@ -141,6 +141,32 @@
                id="org.eclipse.jdt.debug.tests.testShowConsoleAction">
          </action>         
       </actionSet>
+      <actionSet
+            label="IO Console Tests"
+            description="Test the generic IOConsole"
+            id="org.eclipse.jdt.debug.tests.ioConsoleTest">
+         <menu
+               label="Run"
+               path="additions"
+               id="org.eclipse.ui.run"/>
+         <action
+               label="IOConsole Echo Test"
+               class="org.eclipse.jdt.debug.tests.console.IOConsoleEchoActionDelegate"
+               menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
+               id="org.eclipse.jdt.debug.tests.echoTest"/>
+         <action
+               label="IOConsole Multiple Stream Test"
+               class="org.eclipse.jdt.debug.tests.console.IOConsoleMultipleStreamActionDelegate"
+               menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
+               id="org.eclipse.jdt.debug.tests.outputTest"/>
+<!--
+         <action
+               label="IOConsole Output Test"
+               class="org.eclipse.jdt.debug.tests.console.IOConsoleOutputActionDelegate"
+               menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
+               id="org.eclipse.jdt.debug.tests.outputTest"/>
+-->
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
