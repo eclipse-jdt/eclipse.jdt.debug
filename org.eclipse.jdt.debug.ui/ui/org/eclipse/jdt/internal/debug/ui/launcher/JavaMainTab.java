@@ -318,7 +318,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	protected void updateConfigFromJRE() {
 		if (getWorkingCopy() != null) {
 			int vmIndex = fJRECombo.getSelectionIndex();
-			if (vmIndex > 0) {
+			if (vmIndex > -1) {
 				VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
 				String vmID = vmStandin.getId();
 				getWorkingCopy().setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmID);

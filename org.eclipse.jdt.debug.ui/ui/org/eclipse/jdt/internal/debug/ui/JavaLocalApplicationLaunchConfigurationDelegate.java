@@ -95,6 +95,8 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		} else if (object instanceof IEditorInput) {
 			IJavaElement javaElement = (IJavaElement) ((IEditorInput)object).getAdapter(IJavaElement.class);
 			initializeDefaults(configuration, javaElement);
+		} else {
+			initializeHardCodedDefaults(configuration);
 		}
 	}
 	
@@ -132,10 +134,17 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			initializeFromContextJavaProject(workingCopy, javaElement);
 			initializeFromContextMainTypeAndName(workingCopy, javaElement);
 		}
+		initializeHardCodedDefaults(workingCopy);
+	}
+	
+	/**
+	 * Initialize those attributes whose default values are independent of any context.
+	 */
+	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy workingCopy) {
 		initializeFromDefaultVM(workingCopy);
 		initializeFromDefaultContainer(workingCopy);
 		initializeFromDefaultPerspectives(workingCopy);	
-		initializeFromDefaultBuild(workingCopy);				
+		initializeFromDefaultBuild(workingCopy);						
 	}
 	
 	/**

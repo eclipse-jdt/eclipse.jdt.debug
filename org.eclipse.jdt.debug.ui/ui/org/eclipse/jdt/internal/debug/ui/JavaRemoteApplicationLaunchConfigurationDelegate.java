@@ -79,7 +79,9 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		} else if (object instanceof IEditorInput) {
 			IJavaElement javaElement = (IJavaElement) ((IEditorInput)object).getAdapter(IJavaElement.class);
 			initializeDefaults(configuration, javaElement);
-		}		
+		} else {
+			initializeHardCodedDefaults(configuration);
+		}
 	}
 
 	/**
@@ -116,11 +118,18 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 			initializeFromContextJavaProject(workingCopy, javaElement);
 			initializeFromContextName(workingCopy, javaElement);
 		}
+		initializeHardCodedDefaults(workingCopy);
+	}
+	
+	/**
+	 * Initialize those attributes whose default values are independent of any context.
+	 */
+	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy workingCopy) {
 		initializeFromDefaultHostName(workingCopy);
 		initializeFromDefaultPortNumber(workingCopy);
 		initializeFromDefaultAllowTerminate(workingCopy);
 		initializeFromDefaultContainer(workingCopy);
-		initializeFromDefaultPerspectives(workingCopy);			
+		initializeFromDefaultPerspectives(workingCopy);					
 	}
 	
 	/**
