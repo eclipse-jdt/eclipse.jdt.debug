@@ -111,7 +111,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	// column weights
 	private float fWeight1 = 1/3F;
 	private float fWeight2 = 1/3F;
-	private float fWeight3 = 1/3F;
+	
 	// ignore column re-sizing when the table is being resized
 	private boolean fResizingTable = false; 
 	
@@ -122,11 +122,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Selection listeners (checked JRE changes)
 	 */
 	private ListenerList fSelectionListeners = new ListenerList();
-	
-	/**
-	 * Flag used to determine if a selection change was fired
-	 */
-	private boolean fFired = false;
 	
 	/**
 	 * Previous selection
@@ -228,7 +223,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * Creates this block's control in the given control.
 	 * 
-	 * @param anscestor containing control
+	 * @param ancestor containing control
 	 * @param useManageButton whether to present a single 'manage...' button to
 	 *  the user that opens the installed JREs pref page for JRE management,
 	 *  or to provide 'add, remove, edit, and search' buttons.
@@ -376,7 +371,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		for (int i = 0; i < listeners.length; i++) {
 			ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
 			listener.selectionChanged(event);
-			fFired = true;
 		}	
 	}
 
@@ -488,13 +482,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				}
 			}
 		});
-		column3.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (column3.getWidth() > 0 && !fResizingTable) {
-					fWeight3 = getColumnWeight(2);
-				}
-			}
-		});
 	}	
 
 	private void resizeTable(Composite parent, Composite buttons, Table table, TableColumn column1, TableColumn column2, TableColumn column3) {
@@ -538,7 +525,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
 		 }
 		 fResizingTable = false;		
-	} 
+	}
+	
 	/**
 	 * Returns this block's control
 	 * 
@@ -826,14 +814,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param qualifier key qualifier
 	 */
 	public void saveColumnSettings(IDialogSettings settings, String qualifier) {
-		for (int i = 0; i < 3; i++) {
-			saveColumn(settings, qualifier, i);
+		for (int i = 0; i < 2; i++) {
+			//persist the first 2 column weights
+			settings.put(qualifier + ".column" + i, getColumnWeight(i));	 //$NON-NLS-1$
 		}
 		settings.put(qualifier + ".sortColumn", fSortColumn); //$NON-NLS-1$
-	}
-	
-	private void saveColumn(IDialogSettings settings, String qualifier, int col) {
-		settings.put(qualifier + ".column" + col, getColumnWeight(col));	 //$NON-NLS-1$
 	}
 	
 	private float getColumnWeight(int col) {
@@ -844,7 +829,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 	
 	/**
-	 * Retsore table settings from the given dialog store using the
+	 * Restore table settings from the given dialog store using the
 	 * given key.
 	 * 
 	 * @param settings dialog settings store
@@ -853,7 +838,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	public void restoreColumnSettings(IDialogSettings settings, String qualifier) {
 		fWeight1 = restoreColumnWeight(settings, qualifier, 0);
 		fWeight2 = restoreColumnWeight(settings, qualifier, 1);
-		fWeight3 = restoreColumnWeight(settings, qualifier, 2);
 		fVMList.getTable().layout(true);
 		try {
 			fSortColumn = settings.getInt(qualifier + ".sortColumn"); //$NON-NLS-1$
