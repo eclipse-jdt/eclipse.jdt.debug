@@ -63,11 +63,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 	}
 	
-	protected String getJDKLocation() {
-		File location= fVMInstance.getInstallLocation();
-		return location.getAbsolutePath();
-	}
-	
 	/**
 	 * Returns the working directory to use for the launched VM,
 	 * or <code>null</code> if the working directory is to be inherited
@@ -98,27 +93,14 @@ public class StandardVMRunner extends AbstractVMRunner {
 	
 	/**
 	 * Construct and return a String containing the full path of a java executable
-	 * command such as 'java' or 'javaw.exe'.  This methods tries to use the user specified
-	 * command (from the launch config tab) for this if possible.  The command is searched
-	 * for in the JDK_HOME/jre/bin & JDK_HOME/bin directories in that order.	 */
-	protected String constructProgramString(VMRunnerConfiguration config) {
-		
-		// Build the path to the java executable.  First try 'jre/bin', and if that
-		// doesn't exist, try just 'bin'
-		String jdkLocation = null;
-		StringBuffer buff= new StringBuffer(getJDKLocation());
-		buff.append(File.separatorChar);
-		String jdkRootString = buff.toString();
-		File jdkBinFile = new File(jdkRootString + "jre" + File.separatorChar + "bin"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (isExistingDirectory(jdkBinFile)) {
-			jdkLocation = jdkBinFile.getAbsolutePath();
-		} else {
-			jdkBinFile = new File(jdkRootString + "bin"); //$NON-NLS-1$
-			jdkLocation = jdkBinFile.getAbsolutePath();
-		}
-		jdkLocation += File.separatorChar;
-		buff = new StringBuffer(jdkLocation);
-		
+	 * command such as 'java' or 'javaw.exe'.  If the configuration specifies an
+	 * explicit executable, that is used.
+	 * 
+	 * @return full path to java executable
+	 * @exception CoreException if unable to locate an executeable
+	 */
+	protected String constructProgramString(VMRunnerConfiguration config) throws CoreException {
+
 		// Look for the user-specified java executable command
 		String command= null;
 		Map map= config.getVMSpecificAttributesMap();
@@ -126,38 +108,43 @@ public class StandardVMRunner extends AbstractVMRunner {
 			command = (String)map.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 		}
 		
-		// If no java command was specified, try 'java', and tweak it as necessary
+		// If no java command was specified, use default executable
 		if (command == null) {
-			buff.append("java"); //$NON-NLS-1$
-			return adjustProgramString(buff.toString());
-		} 
-		
-		// Otherwise, use the user-specified command with the previously-determined 
-		// jdk bin location
-		buff.append(command);
-		String program= buff.toString();
-		
-		// If neither the completed path, or the completed path plus '.exe' are valid,
-		// try just plain 'java'.  This guards against users entering non-existant
-		// java commands
-		File exe= new File(program + ".exe"); //$NON-NLS-1$
-		File javaCommand= new File(program); 		
-		if (!exe.isFile() && !javaCommand.isFile()) {
-			File java= new File(jdkLocation + "java.exe"); //$NON-NLS-1$
-			if (java.isFile()) {
-				program= java.getAbsolutePath();
-			} else {
-				java= new File(jdkLocation + "java"); //$NON-NLS-1$
-				if (java.isFile()) {
-					program= java.getAbsolutePath();
-				}
+			File exe = StandardVMType.findJavaExecutable(fVMInstance.getInstallLocation());
+			if (exe == null) {
+				abort(MessageFormat.format("Unable to locate executable for {0}", new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
+			return exe.getAbsolutePath();
 		}
-		return program;
+				
+		// Build the path to the java executable.  First try 'jre/bin', and if that
+		// doesn't exist, try just 'bin'
+		String installLocation = fVMInstance.getInstallLocation().getAbsolutePath() + File.separatorChar;
+		File exe = new File(installLocation + "jre" + File.separatorChar + "bin" + File.separatorChar + command); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fileExists(exe)) {
+			return exe.getAbsolutePath(); 
+		}
+		exe = new File(exe.getAbsolutePath() + ".exe");
+		if (fileExists(exe)) {
+			return exe.getAbsolutePath(); 
+		}		
+		exe = new File(installLocation + "bin" + File.separatorChar + command); //$NON-NLS-1$ //$NON-NLS-2$		
+		if (fileExists(exe)){
+			return exe.getAbsolutePath();
+		}
+		exe = new File(exe.getAbsolutePath() + ".exe");
+		if (fileExists(exe)){
+			return exe.getAbsolutePath();
+		}		 
+		
+		// not found
+		abort(MessageFormat.format("Specified executable {0} does not exist for {1}", new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		// NOTE: an exception will be thrown - null cannot be returned
+		return null;		
 	}	
 	
-	protected boolean isExistingDirectory(File file) {
-		return file.exists() && file.isDirectory();
+	protected boolean fileExists(File file) {
+		return file.exists() && file.isFile();
 	}
 
 	protected String convertClassPath(String[] cp) {
@@ -249,18 +236,5 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.worked(1);
 		subMonitor.done();
 	}
-
-	protected String adjustProgramString(String program) {
-		
-		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
-		File javaw= new File(program + "w"); //$NON-NLS-1$
-		if (javawexe.isFile()) {
-			program= javawexe.getAbsolutePath();
-		} else if (javaw.isFile()) {
-			program= javaw.getAbsolutePath();
-		}
-		
-		return program;
-	}	
 
 }

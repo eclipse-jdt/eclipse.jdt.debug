@@ -80,6 +80,9 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected ILaunchConfigurationWorkingCopy fWorkingCopy;
 	protected ILaunchConfiguration fLaunchConfiguration;
 	
+	// State
+	protected boolean fIsInitializing = false;
+	
 	// Constants
 	protected static final String DEFAULT_JRE_NAME_PREFIX = LauncherMessages.getString("JavaJRETab.Default_1"); //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -177,6 +180,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		fIsInitializing = true;
 		fOkToClearUnknownVM = false;
 		if (getLaunchConfiguration() != null && !configuration.equals(getLaunchConfiguration())) {
 			fUnknownVMName = null;
@@ -189,6 +193,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			dynamicTab.initializeFrom(configuration);
 		}		
 		fOkToClearUnknownVM = true;
+		fIsInitializing = false;
 	}
 
 	/**
@@ -371,8 +376,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 					wc = (ILaunchConfigurationWorkingCopy)getLaunchConfiguration();
 				}
 			}
-			if (wc != null) {
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+			if (!fIsInitializing) {
+				if (wc != null) {
+					wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+				}
 			}
 		} else {
 			if (wc == null) {
@@ -388,8 +395,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 					return;
 				}
 			}
-			getDynamicTab().setDefaults(wc);
-			getDynamicTab().initializeFrom(wc);
+			if (!fIsInitializing) {
+				getDynamicTab().setDefaults(wc);
+				getDynamicTab().initializeFrom(wc);
+			}
 		}
 				
 		updateLaunchConfigurationDialog();		
