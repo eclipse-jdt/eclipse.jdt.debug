@@ -1132,7 +1132,7 @@
     		<and>
 				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
 				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
+			</and>
 			</enablement>
 		</action>
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.Execute" 
