@@ -102,7 +102,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	// column weights
 	private float fWeight1 = 1/3F;
 	private float fWeight2 = 1/3F;
-	private float fWeight3 = 1/3F;
+
 	// ignore column re-sizing when the table is being resized
 	private boolean fResizingTable = false; 
 	
@@ -430,13 +430,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 			public void controlResized(ControlEvent e) {
 				if (column2.getWidth() > 0 && !fResizingTable) {
 					fWeight2 = getColumnWeight(1);
-				}
-			}
-		});
-		column3.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (column3.getWidth() > 0 && !fResizingTable) {
-					fWeight3 = getColumnWeight(2);
 				}
 			}
 		});
@@ -798,7 +791,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	public void restoreColumnSettings(IDialogSettings settings, String qualifier) {
 		fWeight1 = restoreColumnWeight(settings, qualifier, 0);
 		fWeight2 = restoreColumnWeight(settings, qualifier, 1);
-		fWeight3 = restoreColumnWeight(settings, qualifier, 2);
+		
 		fVMList.getTable().layout(true);
 		try {
 			fSortColumn = settings.getInt(qualifier + ".sortColumn"); //$NON-NLS-1$
@@ -819,14 +812,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	}
 	
 	private float restoreColumnWeight(IDialogSettings settings, String qualifier, int col) {
-		Table table = fVMList.getTable();
-		
 		try {
 			return settings.getFloat(qualifier + ".column" + col); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 1/3F;
 		}
-
 	}
 	
 	/**
