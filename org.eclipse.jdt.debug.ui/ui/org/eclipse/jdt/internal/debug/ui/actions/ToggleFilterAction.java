@@ -32,7 +32,7 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	public void init(IViewPart view) {
 		IDebugViewAdapter adapter= (IDebugViewAdapter) view.getAdapter(IDebugViewAdapter.class);
 		if (adapter != null) {
-			fViewer= adapter.getViewer();
+			setViewer(adapter.getViewer());
 		}
 	}
 
@@ -49,14 +49,14 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	 * on the value of the parameter.
 	 */
 	protected void valueChanged(final boolean on) {
-		if (fViewer.getControl().isDisposed()) {
+		if (getViewer().getControl().isDisposed()) {
 			return;
 		}
-		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
 			public void run() {
 				if (on) {
 					ViewerFilter filter= getViewerFilter();
-					ViewerFilter[] filters= fViewer.getFilters();
+					ViewerFilter[] filters= getViewer().getFilters();
 					boolean alreadyAdded= false;
 					for (int i= 0; i < filters.length; i++) {
 						ViewerFilter addedFilter= filters[i];
@@ -66,16 +66,15 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 						}
 					}
 					if (!alreadyAdded) {
-						fViewer.addFilter(filter);
+						getViewer().addFilter(filter);
 					}
 					
 				} else {
-					fViewer.removeFilter(getViewerFilter());
+					getViewer().removeFilter(getViewerFilter());
 				}
 				setToolTipText(getToolTipText(on));									
 			}
 		});
-
 	}
 
 	/**
@@ -118,5 +117,4 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
-
 }

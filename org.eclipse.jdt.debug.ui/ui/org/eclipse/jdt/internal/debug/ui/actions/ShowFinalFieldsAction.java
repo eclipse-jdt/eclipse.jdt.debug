@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -47,7 +48,8 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	}
 
 	public ShowFinalFieldsAction() {
-		fFinalFilter= new FinalFilter();
+		setViewerFilter(new FinalFilter());
+		setId(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowFinalFieldsAction");
 	}
 
 	/**
@@ -55,6 +57,10 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	 */
 	protected ViewerFilter getViewerFilter() {
 		return fFinalFilter;
+	}
+	
+	protected void setViewerFilter(FinalFilter filter) {
+		fFinalFilter= filter;
 	}
 
 	/**
