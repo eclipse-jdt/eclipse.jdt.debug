@@ -6,6 +6,7 @@ package org.eclipse.jdt.debug.eval;
  */
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
@@ -48,44 +49,21 @@ public interface IEvaluationResult {
 	 * @see #getProblems()
 	 * @see #getException()
 	 */
-	boolean hasProblems();
+	boolean hasErrors();
 	
 	/**
-	 * Returns an array of problem markers. Each marker describes a problems that
-	 * occurred with the evaluation. If a problem regards the type of a variable,
-	 * the marker source line number is -1. If the problem regards the name
-	 * of a variable, the marker source line number is 0. Otherwise the marker
-	 * source line number is relative to the initializer code.
+	 * Returns an array of problem messages. Each message describes a problem that
+	 * occurred while compiling the snippet.
 	 *
-	 * @return problems, or an empty array if no problems
+	 * @return compilation error messages, or an empty array if no errors occurred
 	 */
-	IMarker[] getProblems();
+	Message[] getErrors();
 	
 	/**
-	 * Returns the source fragment for a corresponding problem. If a problem is
-	 * about a global variable, the corresponding source fragment
-	 * is the name of the variable. If a problem is about a code snippet,
-	 * the source fragment is the code snippet. If a problem is about an import,
-	 * the source fragment is the import. If a problem is about a
-	 * package declaration, the source fragment is the package declaration.
-	 * 
-	 * @param problem A problem marker returned by <code>getProblems</code>.
-	 * @return A source fragment for the problem.
+	 * Adds the given error to the collection of compilation errors
+	 * associated with this result.
 	 */
-	String getSourceFragment(IMarker problem);
-
-	/**
-	 * Returns the kind of a corresponding problem, indicating if a problem is
-	 * about a global variable, a code snippet, an import or a package declaration.
-	 * The returned values is one of <code>ICodeSnippetRequestor.VARIABLE</code>, 
-	 * <code>ICodeSnippetRequestor.CODE_SNIPPET</code>, <code>ICodeSnippetRequestor.IMPORT</code>
-	 * or <code>ICodeSnippetRequestor.PACKAGE</code>.
-	 * 
-	 * @param problem A problem marker returned by <code>getProblems</code>.
-	 * @return constant representing the kind of problem
-	 * @see org.eclipse.jdt.core.eval.ICodeSnippetRequestor
-	 */
-	int getKind(IMarker problem);
+	void addError(Message error);
 	
 	/**
 	 * Returns the snippet that was evaluated.

@@ -35,15 +35,15 @@ public class InspectAction extends EvaluateAction {
 	 */
 	public void evaluationComplete(final IEvaluationResult res) {
 		final IJavaValue value= res.getValue();
-		if (res.hasProblems() || value != null) {
+		if (res.hasErrors() || value != null) {
 			Display display= Display.getDefault();
 			if (display.isDisposed()) {
 				return;
 			}
 			display.asyncExec(new Runnable() {
 				public void run() {
-					if (res.hasProblems()) {
-						reportProblems(res);
+					if (res.hasErrors()) {
+						reportErrors(res);
 					} 
 					if (value != null) {
 						// make expression view visible

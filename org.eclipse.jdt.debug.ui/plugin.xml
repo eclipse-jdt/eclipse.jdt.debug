@@ -672,9 +672,14 @@
 	</page>
 	<page name="%javaStepFilterPrefName"
          id="org.eclipse.jdt.ui.JavaStepFilterPreferencePage"   
-	     class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
+         class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
          category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
-	</page>	
+	</page>
+	<page name="%javaDebugWorkInProgressName"
+		 id="org.eclipse.jdt.ui.JavaDebugWorkInProgressPreferencePage"
+		 class="org.eclipse.jdt.internal.debug.ui.JavaDebugWorkInProgressPreferencePage"
+		 category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
+	</page>
 </extension>
 
 <extension point = "org.eclipse.debug.core.launchers">

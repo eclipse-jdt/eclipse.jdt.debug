@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -170,9 +171,21 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 					IJavaWatchpoint jWatchpoint= (IJavaWatchpoint)breakpoint;
 					jWatchpoint.setAccess(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.ACCESS));
 					break;
-				case 'C': //caught
-					IJavaExceptionBreakpoint jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
-					jeBreakpoint.setCaught(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CAUGHT));
+				case 'C': //caught or condition
+					switch (property.charAt(property.length() - 1)) {
+						case 'T': // caught
+							IJavaExceptionBreakpoint jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
+							jeBreakpoint.setCaught(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CAUGHT));
+							break;
+						case 'N': // condition
+							IJavaLineBreakpoint lineBreakpoint= (IJavaLineBreakpoint)breakpoint;
+							lineBreakpoint.setCondition(getPreferenceStore().getString(JavaBreakpointPreferenceStore.CONDITION));
+							break;
+						case 'D': // condition_enabled
+							lineBreakpoint= (IJavaLineBreakpoint)breakpoint;
+							lineBreakpoint.setConditionEnabled(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CONDITION_ENABLED));
+							break;
+					}
 					break;
 				case 'E'://enabled
 					newEnabled= true;
@@ -217,7 +230,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 					}
 					break;
 				case 'U':
-					jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
+					IJavaExceptionBreakpoint jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
 					jeBreakpoint.setUncaught(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.UNCAUGHT));
 					break;
 			}

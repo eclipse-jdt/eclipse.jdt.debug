@@ -1,0 +1,36 @@
+/*
+ * (c) Copyright 2001 MyCorporation.
+ * All Rights Reserved.
+ */
+package org.eclipse.jdt.internal.debug.eval.ast.engine;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.debug.eval.ast.model.IObject;
+import org.eclipse.jdt.debug.eval.ast.model.IType;
+
+/**
+ * A simple instruction cannot contain other instructions
+ * so its size is always one.
+ * 
+ * @version 	1.0
+ * @author
+ */
+public abstract class SimpleInstruction extends Instruction {
+
+	/**
+	 * Constructor for SimpleInstruction.
+	 */
+	protected SimpleInstruction() {
+		super();
+	}
+	
+	public int getSize() {
+		return 1;
+	}
+
+
+
+
+
+
+}

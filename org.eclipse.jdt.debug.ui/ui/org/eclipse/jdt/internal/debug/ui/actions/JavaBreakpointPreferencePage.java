@@ -7,12 +7,14 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -20,6 +22,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -72,7 +75,43 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				super.doStore();
 			}
 		}
-}
+	}
+
+	class BreakpointStringFieldEditor extends StringFieldEditor {
+		public BreakpointStringFieldEditor(
+			String name,
+			String labelText,
+			Composite parent) {
+			super(name, labelText, parent);
+		}
+
+		/**
+		 * @see StringFieldEditor#checkState()
+		 */
+		protected boolean checkState() {
+			Text control= getTextControl();
+			if (!control.isEnabled()) {
+				clearErrorMessage();
+				return true;
+			}
+			return super.checkState();
+		}
+		
+		protected void doStore() {
+			Text text = getTextControl();
+			if (text.isEnabled()) {
+				super.doStore();
+			}
+		}
+
+		/**
+		 * @see FieldEditor#refreshValidState()
+		 */
+		public void refreshValidState() {
+			super.refreshValidState();
+		}
+	}
+	
 	class LabelFieldEditor extends FieldEditor {
 
 		private Label fTitleLabel;
@@ -134,6 +173,11 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	private Text fHitCountTextControl;
 	private BooleanFieldEditor fHitCountEnabler;
 	private BreakpointIntegerFieldEditor fHitCount;
+	
+	private Text fConditionTextControl;
+	private BooleanFieldEditor fConditionEnabler;
+	private BreakpointStringFieldEditor fCondition;
+
 	private IJavaBreakpoint fBreakpoint;
 	protected static final String VM_SUSPEND_POLICY = "VM"; //$NON-NLS-1$
 	protected static final String THREAD_SUSPEND_POLICY = "THREAD"; //$NON-NLS-1$
@@ -159,6 +203,20 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				checkState();
 			}
 		});
+		if (fConditionEnabler == null) {
+			return;
+		}
+		fConditionEnabler.setPropertyChangeListener(new IPropertyChangeListener() {
+			/**
+			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				boolean enabled = ((Boolean) event.getNewValue()).booleanValue();
+				fConditionTextControl.setEnabled(enabled);
+				fCondition.refreshValidState();
+				checkState();
+			}
+		});		
 	}
 
 	/**
@@ -205,7 +263,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			} else {
 				store.setValue(JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED, false);
 			}
-			
+
 			String policy = ""; //$NON-NLS-1$
 			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD) {
 				policy = THREAD_SUSPEND_POLICY;
@@ -244,6 +302,17 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			addField(createCaughtEditor(getFieldEditorParent()));
 			addField(createFilterEditor(getFieldEditorParent()));
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
+			IJavaLineBreakpoint lineBreakpoint= (IJavaLineBreakpoint)breakpoint;
+			if (lineBreakpoint.supportsCondition()) {
+				createConditionEditor(getFieldEditorParent());
+				String condition= lineBreakpoint.getCondition();
+				store.setValue(JavaBreakpointPreferenceStore.CONDITION, condition);
+				if (lineBreakpoint.isConditionEnabled()) {
+					store.setValue(JavaBreakpointPreferenceStore.CONDITION_ENABLED, true);
+				} else {
+					store.setValue(JavaBreakpointPreferenceStore.CONDITION_ENABLED, false);				
+				}
+			}
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint jmBreakpoint = (IJavaMethodBreakpoint) breakpoint;
 				this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Method_Breakpoint_Properties_10")); //$NON-NLS-1$
@@ -305,7 +374,24 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		addField(fHitCount);
 	}
 
-	protected FieldEditor createLabelEditor(Composite parent, String title, String value) {
+	protected void createConditionEditor(Composite parent) {
+		fConditionEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CONDITION_ENABLED, "Enable condition", parent);
+		addField(fConditionEnabler);
+
+		fCondition =
+			new BreakpointStringFieldEditor(JavaBreakpointPreferenceStore.CONDITION, "Condition", parent);
+		fConditionTextControl= fCondition.getTextControl(parent);
+		try {
+			fConditionTextControl.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
+		} catch (CoreException ce) {
+		}
+		addField(fCondition);
+	}
+	
+	protected FieldEditor createLabelEditor(
+		Composite parent,
+		String title,
+		String value) {
 		return new LabelFieldEditor(parent, title, value);
 	}
 	

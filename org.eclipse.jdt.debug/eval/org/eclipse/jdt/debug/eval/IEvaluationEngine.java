@@ -7,6 +7,7 @@ package org.eclipse.jdt.debug.eval;
  
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.eval.ast.model.ICompiledExpression;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -91,6 +92,10 @@ public interface IEvaluationEngine {
 	 * </ul>
 	 */
 	void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
+	
+	ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) throws DebugException;
+	
+	void evaluate(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
 	
 	/**
 	 * Asynchronously evaluates the given snippet in the context of

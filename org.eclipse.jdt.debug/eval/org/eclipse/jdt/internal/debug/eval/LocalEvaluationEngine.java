@@ -33,8 +33,10 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
+import org.eclipse.jdt.debug.eval.ast.model.ICompiledExpression;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
@@ -330,13 +332,14 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see ICodeSnippetRequestor#acceptProblem(IMarker, String, int)
 	 */
-	public void acceptProblem(
-		IMarker problemMarker,
-		String fragmentSource,
-		int fragmentKind) {
-			getResult().addProblem(problemMarker, fragmentKind, fragmentSource);
+	public void acceptProblem(IMarker problemMarker, String fragmentSource, int fragmentKind) {
+		if (problemMarker.getAttribute(IMarker.SEVERITY, -1) != IMarker.SEVERITY_ERROR) {
+			return;
+		}
+		Message message= new Message(problemMarker.getAttribute(IMarker.MESSAGE, ""), problemMarker.getAttribute(IMarker.CHAR_START, 0));
+		getResult().addError(message);
 	}
-
+	
 	/**
 	 * @see IEvaluationEngine#getDebugTarget()
 	 */
@@ -1367,4 +1370,24 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	protected String getCodeSnippetClassName() {
 		return fCodeSnippetClassName;
 	}
+
+	/**
+	 * @see ICodeSnippetRequestor#isRequestingClassFiles()
+	 */
+	public boolean isRequestingClassFiles() {
+		return true;
+	}
+	/*
+	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
+	 */
+	public void evaluate(ICompiledExpression expression, IJavaStackFrame frame,	IEvaluationListener listener) throws DebugException {
+	}
+
+	/*
+	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaStackFrame)
+	 */
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame)	throws DebugException {
+		return null;
+	}
+
 }

@@ -28,6 +28,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -218,11 +219,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project) throws CoreException {
 		IEvaluationEngine engine = EvaluationManager.getEvaluationEngine(vm);
 		if (engine == null) {
-			IPath outputLocation = project.getOutputLocation();
-			IWorkspace workspace = project.getProject().getWorkspace();
-			IResource res = workspace.getRoot().findMember(outputLocation);
-			File dir = new File(res.getLocation().toOSString());
-			engine= EvaluationManager.newClassFileEvaluationEngine(project, vm, dir);
+			engine= EvaluationManager.newEvaluationEngine(project, vm);
 		}	
 		return engine;
 			
@@ -447,37 +444,33 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		reportError(message);
 	}
 	
-	protected boolean reportProblems(IEvaluationResult result) {
-		IMarker[] problems= result.getProblems();
-		boolean severeProblems= true;
-		if (problems.length == 0) {
+	protected boolean reportErrors(IEvaluationResult result) {
+		Message[] errors= result.getErrors();
+		boolean severeErrors= true;
+		if (errors.length == 0) {
 			reportError(result.getException());
 		} else {
-			severeProblems= reportProblems(problems);
-			if (!severeProblems) {
+			severeErrors= reportErrors(errors);
+			if (!severeErrors) {
 				//warnings...may be an exception
-				severeProblems= result.getException() != null;
+				severeErrors= result.getException() != null;
 				reportError(result.getException());
 			}
 		}
-		return severeProblems;
+		return severeErrors;
 	}
 	
-	protected boolean reportProblems(IMarker[] problems) {
-		
-		String defaultMsg= ActionMessages.getString("Evaluate.error.message.unqualified_error"); //$NON-NLS-1$
+	protected boolean reportErrors(Message[] errors) {
 		
 		String message= ""; //$NON-NLS-1$
-		for (int i= 0; i < problems.length; i++) {
-			IMarker problem= problems[i];
-			if (problem.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
-				//more than a warning
-				String msg= problems[i].getAttribute(IMarker.MESSAGE, defaultMsg);
-				if (i == 0) {
-					message= msg;
-				} else {
-					message= MessageFormat.format(ActionMessages.getString("Evaluate.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
-				}
+		for (int i= 0; i < errors.length; i++) {
+			Message error= errors[i];
+			//more than a warning
+			String msg= error.getMessage();
+			if (i == 0) {
+				message= msg;
+			} else {
+				message= MessageFormat.format(ActionMessages.getString("Evaluate.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
 			}
 		}
 		

@@ -15,10 +15,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -42,6 +44,7 @@ public class JDIDebugPlugin extends Plugin {
 	 * Breakpoint listener list.
 	 */
 	private ListenerList fBreakpointListeners = null;
+	private ListenerList fConditionalBreakpointListeners= null;
 	
 	/**
 	 * Breakpoint notification types
@@ -98,6 +101,7 @@ public class JDIDebugPlugin extends Plugin {
 	public void startup() throws CoreException {
 		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
 		fBreakpointListeners = new ListenerList(5);
+		fConditionalBreakpointListeners= new ListenerList(1);
 	}
 	
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
@@ -158,6 +162,51 @@ public class JDIDebugPlugin extends Plugin {
 	}
 	
 	/**
+	 * Adds the given conditional breakpoint listener to the JDI debug model.
+	 * 
+	 * @param listener conditional breakpoint listener
+	 */
+	public void addConditionalBreakpointListener(IJavaConditionalBreakpointListener listener) {
+		fConditionalBreakpointListeners.add(listener);
+	}
+	
+	/**
+	 * Removes the given conditional breakpoint listener to the JDI debug model.
+	 * 
+	 * @param listener conditional breakpoint listener
+	 */
+	public void removeConditionalBreakpointListener(IJavaConditionalBreakpointListener listener) {
+		fConditionalBreakpointListeners.remove(listener);
+	}	
+	
+	/**
+	 * Notifies listeners that the given breakpoint has compilation errors
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @param errors the compilation errors in the breakpoint's condition
+	 */
+	public void fireBreakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
+		Object listeners[]= fConditionalBreakpointListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasCompilationErrors(breakpoint, errors);
+		}
+	}
+	
+	/**
+	 * Notifies listeners that the given breakpoint has runtime errors
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @param errors the runtime errors that occurred evaluating the breakpoint's
+	 *  condition
+	 */
+	public void fireBreakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, Throwable exception) {
+		Object listeners[]= fConditionalBreakpointListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasRuntimeException(breakpoint, exception);
+		}
+	}
+	
+	/**
 	 * Adds the given breakpoint listener to the JDI debug model.
 	 * 
 	 * @param listener breakpoint listener
@@ -173,7 +222,7 @@ public class JDIDebugPlugin extends Plugin {
 	 */
 	public void removeJavaBreakpointListener(IJavaBreakpointListener listener) {
 		fBreakpointListeners.remove(listener);
-	}		
+	}
 	
 	/**
 	 * Notifies listeners that the given breakpoint has been added.

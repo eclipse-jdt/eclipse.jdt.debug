@@ -47,7 +47,6 @@ public interface IJavaObject extends IJavaValue {
 	 * </ul>
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException;	
-	
 	/**
 	 * Returns a variable representing the field in this object
 	 * with the given name, or <code>null</code> if there is no
@@ -63,7 +62,21 @@ public interface IJavaObject extends IJavaValue {
 	 * the failure.</li>
 	 */
 	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException;
-	
+	/**
+	 * Returns a variable representing the field in this object
+	 * with the given name, or <code>null</code> if there is no
+	 * field with the given name, or the name is ambiguous.
+	 * 
+	 * @param name field name
+	 * @param typeSignature the name of the type in which the field
+	 *  is defined
+	 * @return the variable representing the field, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException;
 }
 
 

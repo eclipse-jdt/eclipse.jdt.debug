@@ -6,13 +6,19 @@ package org.eclipse.jdt.debug.eval;
  */
  
 import java.io.File;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.internal.debug.eval.ast.ASTAPIEvaluationEngine;
 import org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine;
 
 /**
@@ -38,6 +44,8 @@ public class EvaluationManager {
 	 * The singleton evaluation manager.
 	 */
 	private static EvaluationManager fgManager;
+	
+	private static boolean fgUseASTEngine= false;
 	
 	/**
 	 * Cache of active evaluation engines by VM.
@@ -159,8 +167,38 @@ public class EvaluationManager {
 
 	}
 	
+	public static void useASTEvaluationEngine(boolean useAST) {
+		fgUseASTEngine= useAST;
+		getDefault().disposeAllEvaluationEngines();
+	}
+	
+	public static boolean isUsingASTEvaluationEngine() {
+		return fgUseASTEngine;
+	}
+	
+	private void disposeAllEvaluationEngines() {
+		if (fEngines != null) {
+			Enumeration engines= fEngines.elements();
+			while (engines.hasMoreElements()) {
+				IEvaluationEngine engine = (IEvaluationEngine) engines.nextElement();
+				disposeEvaluationEngine(engine);
+			}
+		}
+	}
+	
+	public static IEvaluationEngine newEvaluationEngine(IJavaProject project, IJavaDebugTarget vm) throws CoreException {
+		if (fgUseASTEngine) {
+			return newASTAPIEvaluationEngine(project, vm);
+		}
+		IPath outputLocation = project.getOutputLocation();
+		IWorkspace workspace = project.getProject().getWorkspace();
+		IResource res = workspace.getRoot().findMember(outputLocation);
+		File dir = new File(res.getLocation().toOSString());
+		return newClassFileEvaluationEngine(project, vm, dir);
+	}
+	
 	/**
-	 * Creates and retuns a new evaluation engine that
+	 * Creates and returns a new evaluation engine that
 	 * performs evaluations for local Java applications
 	 * by deploying class files.
 	 * 
@@ -178,6 +216,16 @@ public class EvaluationManager {
 		return engine;
 	}
 	 
+	/**
+	 * Creates and returns a new evaluation engine that performs
+	 * evaluations by creating an abstract syntax tree (AST) represention
+	 * of an expression.
+	 */
+	public static ASTAPIEvaluationEngine newASTAPIEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
+		ASTAPIEvaluationEngine engine= new ASTAPIEvaluationEngine(project, target);
+		getDefault().addEvaluationEngine(engine);
+		return engine;
+	}
 
 }
 

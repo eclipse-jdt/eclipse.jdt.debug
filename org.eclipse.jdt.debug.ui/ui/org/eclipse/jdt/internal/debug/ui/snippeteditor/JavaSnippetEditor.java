@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -407,15 +408,15 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void evaluationComplete(final IEvaluationResult result) {
 		Runnable r = new Runnable() {
 			public void run() {
-				boolean severeProblems= false;
-				if (result.hasProblems()) {
-					IMarker[] problems = result.getProblems();
-					int count= problems.length;
+				boolean severeErrors= false;
+				if (result.hasErrors()) {
+					Message[] errors = result.getErrors();
+					int count= errors.length;
 					if (count == 0) {
 						showException(result.getException());
 					} else {
-						severeProblems= showAllProblems(problems);
-						if (!severeProblems) {
+						severeErrors= showAllErrors(errors);
+						if (!severeErrors) {
 							//warnings only..check for exception
 							if (result.getException() != null) {
 								showException(result.getException());
@@ -424,7 +425,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 					}
 				} 
 				final IJavaValue value= result.getValue();
-				if (value != null && !severeProblems) {
+				if (value != null && !severeErrors) {
 					switch (fResultMode) {
 					case RESULT_DISPLAY:
 						Runnable r = new Runnable() {
@@ -578,7 +579,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		this.notifyAll();	
 	}
 	
-	protected boolean showAllProblems(IMarker[] problems) {
+	protected boolean showAllErrors(Message[] errors) {
 		IDocument document = getSourceViewer().getDocument();
 		String delimiter = document.getLegalLineDelimiters()[0];
 		int insertionPoint = fSnippetStart;
@@ -588,25 +589,23 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			JDIDebugUIPlugin.logError(ble);
 		}
 		int firstInsertionPoint = insertionPoint;
-		boolean severeProblem=false;
-		for (int i = 0; i < problems.length; i++) {
-			IMarker problem= problems[i];
-			if (problem.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
-				//only show problems that are greater severity than a warning
-				insertionPoint = showOneProblem(document, problem, insertionPoint, delimiter);
-				severeProblem= true;
-			}
+		boolean severeError=false;
+		for (int i = 0; i < errors.length; i++) {
+			Message error= errors[i];
+			//only show problems that are greater severity than a warning
+			insertionPoint = showOneError(document, error, insertionPoint, delimiter);
+			severeError= true;
 		}
-		if (severeProblem) {
+		if (severeError) {
 			selectAndReveal(firstInsertionPoint, insertionPoint - firstInsertionPoint);
 			fSnippetStart = insertionPoint;
 		}
-		return severeProblem;
+		return severeError;
 	}
 
-	protected int showOneProblem(IDocument document, IMarker problem, int insertionPoint, String delimiter) {
+	protected int showOneError(IDocument document, Message problem, int insertionPoint, String delimiter) {
 		String message= SnippetMessages.getString("SnippetEditor.error.unqualified"); //$NON-NLS-1$
-		message= problem.getAttribute(IMarker.MESSAGE, message) + delimiter;
+		message= problem.getMessage() + delimiter;
 		try {
 			document.replace(insertionPoint, 0, message);
 		} catch (BadLocationException e) {

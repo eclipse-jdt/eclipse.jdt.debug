@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -15,6 +16,8 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import sun.security.krb5.internal.i;
+import sun.security.krb5.internal.crypto.e;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -77,12 +80,12 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @return underlying object reference
 	 */
-	protected ObjectReference getUnderlyingObject() {
+	public ObjectReference getUnderlyingObject() {
 		return (ObjectReference)getUnderlyingValue();
 	}
 
 	/**
-	 * @see IJavaObject#getField(String)
+	 * @see IJavaObject#getField(String, boolean)
 	 */
 	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
@@ -94,6 +97,47 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			Field field = ref.fieldByName(name);
 			if (field != null) {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
+			} else {
+				Field enclosingThis= null;
+				Iterator fields= ref.fields().iterator();
+				while (fields.hasNext()) {
+					Field fieldTmp = (Field)fields.next();
+					if (fieldTmp.name().startsWith("this$")) {
+						enclosingThis= fieldTmp;
+						break;
+					}
+				}
+				return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
+			}
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+		}
+		// it is possible to return null
+		return null;
+	}
+	
+	/**
+	 * @see IJavaObject#getField(String, String)
+	 */
+	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException {
+		ReferenceType ref= getUnderlyingReferenceType();
+		try {
+			Field field= null, enclosingThis= null, fieldTmp= null;
+			Iterator fields= ref.fields().iterator();
+			while (fields.hasNext()) {
+				fieldTmp = (Field)fields.next();
+				if (name.equals(fieldTmp.name()) && typeSignature.equals(fieldTmp.declaringType().signature())) {
+					field= fieldTmp;
+					break;
+				}
+				if (fieldTmp.name().startsWith("this$")) {
+					enclosingThis= fieldTmp;
+				}
+			}
+			if (field != null) {
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
+			} else {
+				return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, typeSignature);
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$

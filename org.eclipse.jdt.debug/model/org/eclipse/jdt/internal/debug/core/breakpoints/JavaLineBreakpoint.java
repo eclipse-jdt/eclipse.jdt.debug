@@ -5,19 +5,39 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.debug.eval.ast.model.ICompiledExpression;
+import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveValue;
+import org.eclipse.jdt.internal.core.JavaModel;
+import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.eval.ast.ASTAPIEvaluationEngine;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
@@ -27,14 +47,45 @@ import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
 public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreakpoint {
 
+	/**
+	 * Breakpoint attribute storing a breakpoint's conditional expression
+	 * (value <code>"org.eclipse.jdt.debug.core.condition"</code>). This attribute is stored as a
+	 * <code>String</code>.
+	 */
+	protected static final String CONDITION= "org.eclipse.jdt.debug.core.condition";
+	/**
+	 * Breakpoint attribute storing a breakpoint's condition enablement
+	 * (value <code>"org.eclipse.jdt.debug.core.conditionEnabled"</code>). This attribute is stored as an
+	 * <code>boolean</code>.
+	 */
+	protected static final String CONDITION_ENABLED= "org.eclipse.jdt.debug.core.conditionEnabled";
+
 	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	// Marker label String keys
 	protected static final String LINE= "line"; //$NON-NLS-1$
+	
+	/**
+	 * Maps suspended threads to the suspend event that suspended them
+	 */
+	private Map fSuspendEvents= new HashMap();
+	/**
+	 * Collection of targets in which an evaluation is occurring. This collection
+	 * is maintained to assure that conditional breakpoints don't attempt nested
+	 * evaluations.
+	 */
+	private Set fEvaluatingTargets= new HashSet();
+	/**
+	 * The cached compiled expression for this breakpoint. This value must be cleared
+	 * everytime the breakpoint is added to a target.
+	 */
+	private ICompiledExpression fCompiledExpression;
 		
 	public JavaLineBreakpoint() {
 	}
@@ -65,6 +116,19 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			}
 		};
 		run(wr);
+	}
+	
+	/**
+	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
+	 */
+	public void addToTarget(JDIDebugTarget target) throws CoreException {
+		fCompiledExpression= null;
+		super.addToTarget(target);
+	}
+	
+	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		fEvaluatingTargets.remove(target);
+		super.removeFromTarget(target);
 	}
 	
 	/**
@@ -239,6 +303,239 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			attributes.put(HIT_COUNT, new Integer(hitCount));
 			attributes.put(EXPIRED, new Boolean(false));
 		}
+	}
+	
+	/**
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget)
+	 * 
+	 * (From referenced JavaDoc:
+	 * 	Returns whethers the thread should be resumed
+	 */
+	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target) {
+		ThreadReference threadRef= ((LocatableEvent)event).thread();
+		JDIThread thread= target.findThread(threadRef);		
+		if (thread == null) {
+			return true;
+		} else {
+			if (hasCondition()) {
+				try {
+					return handleConditionalBreakpointEvent(event, thread, target);
+				} catch (CoreException exception) {
+					// log error
+					return !suspendForEvent(event, thread);
+				}
+			} else {
+				return !suspendForEvent(event, thread); // Resume if suspend fails
+			}
+		}						
+	}
+	
+	/**
+	 * Returns whether this breakpoint has an enabled condition
+	 */
+	protected boolean hasCondition() {
+		try {
+			return isConditionEnabled() && !"".equals(getCondition());
+		} catch (CoreException exception) {
+			// log error
+			return false;
+		}
+	}
+	
+	/**
+	 * Suspends the given thread for the given breakpoint event. Returns
+	 * whether the thread suspends.
+	 */
+	protected boolean suspendForEvent(Event event, JDIThread thread) {
+		expireHitCount(event);
+		return suspend(thread);
+	}
+	
+	/**
+	 * Returns whether this breakpoint should resume based on the
+	 * value of its condition.
+	 * 
+	 * If there is not an enabled condition which evaluates to <code>true</code>,
+	 * the thread should resume.
+	 */
+	protected boolean handleConditionalBreakpointEvent(Event event, JDIThread thread, JDIDebugTarget target) throws CoreException {
+		if (fEvaluatingTargets.contains(target)) {
+			// If an evaluation is already being computed for this thread,
+			// we can't perform another
+			return !suspendForEvent(event, thread);
+		}
+		final String condition= getCondition();
+		if (!isConditionEnabled() || "".equals(condition)) {
+			return !suspendForEvent(event, thread);
+		}
+		IMarker marker= getMarker();
+		if (marker == null) {
+			return true;
+		}
+		IJavaProject project= getJavaProject(marker.getResource().getProject());
+		final IEvaluationEngine engine = getEvaluationEngine(target, project);
+		if (engine == null) {
+			// If no engine is available, suspend
+			return !suspendForEvent(event, thread);
+		}
+		thread.handleSuspendForBreakpointQuiet(this);
+		final JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
+		
+		final EvaluationListener listener= new EvaluationListener();
+
+		if (fCompiledExpression == null) {
+			fCompiledExpression= engine.getCompiledExpression(condition, frame);
+		}
+		if (conditionHasErrors()) {
+			fireConditionHasErrors();
+			return !suspendForEvent(event, thread);
+		}
+		fEvaluatingTargets.add(target);
+		fSuspendEvents.put(thread, event);
+		engine.evaluate(fCompiledExpression, frame, listener);
+
+		// Do not resume. When the evaluation returns, the evaluation listener
+		// will resume the thread if necessary or update for suspension.
+		return false;
+	}
+	
+	/**
+	 * Listens for evaluation completion for condition evaluation.
+	 * If an evaluation evaluates true or has an error, this breakpoint
+	 * will suspend the thread in which the breakpoint was hit.
+	 * If the evaluation returns false, the thread is resumed.
+	 */
+	class EvaluationListener implements IEvaluationListener {
+		IEvaluationResult fResult;
+		
+		public void evaluationComplete(IEvaluationResult result) {
+			fResult= result;
+			JDIThread thread= (JDIThread)result.getThread();
+			fEvaluatingTargets.remove(thread.getDebugTarget());
+			Event event= (Event)fSuspendEvents.get(thread);
+			if (result.hasErrors()) {
+				Throwable exception= result.getException();
+				if (exception instanceof VMDisconnectedException) {
+					JDIDebugPlugin.logError((VMDisconnectedException)exception);
+					try {
+						thread.resumeForEvaluation();
+					} catch(DebugException e) {
+						JDIDebugPlugin.logError(e);
+					}
+				} else {
+					fireConditionHasRuntimeErrors(exception);
+					suspendForEvent(event, thread);
+					return;
+				}
+			}
+			try {
+				IValue value= result.getValue();
+				if (value instanceof IJavaPrimitiveValue) {
+					// Suspend when the condition evaluates true
+					IJavaPrimitiveValue javaValue= (IJavaPrimitiveValue)value;
+					if (javaValue.getJavaType().getName().equals("boolean") && javaValue.getBooleanValue()) {
+						suspendForEvent(event, thread);
+						return;
+					}
+				}
+				thread.resumeForEvaluation();
+				return;
+			} catch (DebugException e) {
+				JDIDebugPlugin.logError(e);
+			}
+			// Suspend when the an error occurs
+			suspendForEvent(event, thread);
+			}
+		
+		public IEvaluationResult getResult() {
+			return fResult;
+		}
+	};
+	
+	private void fireConditionHasRuntimeErrors(Throwable exception) {
+		JDIDebugPlugin.getDefault().fireBreakpointHasRuntimeException(this, exception);
+	}
+	
+	/**
+	 * Notifies listeners that a conditional breakpoint expression has been
+	 * compiled that contains errors
+	 */
+	private void fireConditionHasErrors() {
+		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(this, fCompiledExpression.getErrors());
+	}
+	
+	public boolean conditionHasErrors() {
+		if (fCompiledExpression == null) {
+			return false;
+		}
+		return fCompiledExpression.getErrors().length != 0;
+	}
+	
+	private IJavaProject getJavaProject(IProject project) {
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				JavaModel model = JavaModelManager.getJavaModel(project.getWorkspace());
+				if (model != null) {
+					return model.getJavaProject(project);
+				}
+			}
+		} catch (CoreException e) {
+		}
+		return null;
+	}
+	
+	public IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project)   {
+		IEvaluationEngine engine = EvaluationManager.getEvaluationEngine(vm);
+		if (engine == null) {
+			try {
+				engine= EvaluationManager.newEvaluationEngine(project, vm);
+			} catch (CoreException e) {
+				return null;
+			}
+		}
+		if (engine instanceof ASTAPIEvaluationEngine) {
+			return engine;
+		}
+		return null;
+	}
+	
+	/**
+	 * @see IJavaLineBreakpoint#supportsCondition
+	 */
+	public boolean supportsCondition() {
+		return EvaluationManager.isUsingASTEvaluationEngine();
+	}
+	
+	/**
+	 * @see IJavaLineBreakpoint#getCondition()
+	 */
+	public String getCondition() throws CoreException {
+		return ensureMarker().getAttribute(CONDITION, "");
+	}
+	
+	/**
+	 * @see IJavaLineBreakpoint#setCondition(String)
+	 */
+	public void setCondition(String condition) throws CoreException {
+		// Clear the cached compiled expression
+		fCompiledExpression= null;	
+		ensureMarker().setAttributes(new String []{CONDITION},
+			new Object[]{condition});
+	}			
+
+	/**
+	 * @see IJavaLineBreakpoint#isConditionEnabled()
+	 */
+	public boolean isConditionEnabled() throws CoreException {
+		return ensureMarker().getAttribute(CONDITION_ENABLED, false);
+	}
+	
+	/**
+	 * @see IJavaLineBreakpoint#setConditionEnabled(boolean)
+	 */
+	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
+		ensureMarker().setAttributes(new String []{CONDITION_ENABLED},
+			new Object[]{new Boolean(conditionEnabled)});
 	}
 	
 }

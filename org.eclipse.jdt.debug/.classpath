@@ -8,8 +8,8 @@
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
     <classpathentry kind="src" path="/org.eclipse.jdt.core"/>
-    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="eval"/>
     <classpathentry kind="src" path="jdi interfaces"/>
+    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

@@ -870,6 +870,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return true;
 		}
 	}
+	
+	/**
+	 * Updates the state of this thread to suspend for
+	 * the given breakpoint  but does not fire notification
+	 * of the suspend.
+	 */
+	public boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
+		fCurrentBreakpoint= breakpoint;
+		setRunning(false);
+		abortStep();
+		return true;
+	}
 
 	/**
 	 * @see IStep#isStepping()
@@ -963,6 +975,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			getUnderlyingThread().resume();
 		} catch (VMDisconnectedException e) {
+			disconnected();
+		} catch (RuntimeException e) {
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_resuming"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Updates the state of this thread to resumed,
+	 * but does not fire notification of the resumption.
+	 */
+	public void resumeForEvaluation() throws DebugException {
+		if (!isSuspended()) {
+			return;
+		}
+		setRunning(true);
+		disposeStackFrames();
+		try {
+			getUnderlyingThread().resume();
+		} catch (VMDisconnectedException exception) {
 			disconnected();
 		} catch (RuntimeException e) {
 			setRunning(false);

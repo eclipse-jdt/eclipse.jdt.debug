@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -15,31 +16,42 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-public class DebugErrorDialog extends ErrorDialog {
+/**
+ * An error dialog which allows the user to set
+ * a boolean preference.
+ * 
+ * This is typically used to set a preference that
+ * determines if the dialog should be shown in
+ * the future
+ */
+public class ErrorDialogWithToggle extends ErrorDialog {
 
 	/**
-	 * The preference key which determines whether this dialog is shown again.
-	 * This key must be a valid preference in the JDIDebugUIPlugin preference
-	 * store.
+	 * The preference key which is set by the toggle button.
+	 * This key must be a boolean preference in the preference store.
 	 */
-	private String fShowAgainKey= null;
+	private String fPreferenceKey= null;
 	/**
-	 * The message displayed to the user, asking if this dialog should continue
-	 * to be shown.
+	 * The message displayed to the user, with the toggle button
 	 */
-	private String fShowAgainMessage= null;
-	private Button fShowAgain= null;
+	private String fToggleMessage= null;
+	private Button fToggleButton= null;
+	/**
+	 * The preference store which will be affected by the toggle button
+	 */
+	IPreferenceStore fStore= null;
 
-	public DebugErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask, String showAgainKey, String showAgainMessage) {
+	public ErrorDialogWithToggle(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask, String preferenceKey, String toggleMessage, IPreferenceStore store) {
 		super(parentShell, dialogTitle, message, status, displayMask);
-		fShowAgainKey= showAgainKey;
-		fShowAgainMessage= showAgainMessage;
+		fStore= store;
+		fPreferenceKey= preferenceKey;
+		fToggleMessage= toggleMessage;
 	}
 
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea= (Composite) super.createDialogArea(parent);
-		setShowHCRButton(createCheckButton(dialogArea, fShowAgainMessage)); //$NON-NLS-1$
-		getShowHCRButton().setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(fShowAgainKey));
+		setToggleButton(createCheckButton(dialogArea, fToggleMessage));
+		getToggleButton().setSelection(fStore.getBoolean(fPreferenceKey));
 		
 		return dialogArea;
 	}
@@ -69,14 +81,14 @@ public class DebugErrorDialog extends ErrorDialog {
 	}
 	
 	private void storePreference() {
-		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(fShowAgainKey, getShowHCRButton().getSelection());
+		fStore.setValue(fPreferenceKey, getToggleButton().getSelection());
 	}
 
-	protected Button getShowHCRButton() {
-		return fShowAgain;
+	protected Button getToggleButton() {
+		return fToggleButton;
 	}
 
-	protected void setShowHCRButton(Button showHCR) {
-		fShowAgain = showHCR;
+	protected void setToggleButton(Button button) {
+		fToggleButton = button;
 	}
 }

@@ -45,7 +45,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 		
 		final IJavaValue value= result.getValue();
 		
-		if (result.hasProblems() || value != null) {
+		if (result.hasErrors() || value != null) {
 			final Display display= JDIDebugUIPlugin.getStandardDisplay();
 			if (display.isDisposed()) {
 				return;
@@ -55,8 +55,8 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 					if (display.isDisposed()) {
 						return;
 					}
-					if (result.hasProblems()) {
-						boolean severeProblems= reportProblems(result);
+					if (result.hasErrors()) {
+						boolean severeProblems= reportErrors(result);
 						if (severeProblems) {
 							IDataDisplay dataDisplay= getDataDisplay();
 							if (dataDisplay != null) {

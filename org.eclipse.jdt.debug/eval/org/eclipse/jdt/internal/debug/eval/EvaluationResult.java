@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
@@ -49,31 +50,20 @@ public class EvaluationResult implements IEvaluationResult {
 	private Throwable fException;
 	
 	/**
-	 * List of <code>IMarker</code>s describing compilation
-	 * problems, or <code>null</code> if none.
+	 * List of <code>Message</code>s describing compilation
+	 * problems.
 	 */
-	private List fProblems;
-	
-	/**
-	 * List of problem kinds (<code>Integer</code>), corresponding
-	 * to problem markers, or <code>null</code> if none.
-	 */
-	private List fKinds;
-	
-	/**
-	 * List of source fragments (<code>String</code>), corresponding to
-	 * problem markers, or <code>null</code> if none.
-	 */
-	private List fFragments;
+	private List fErrors;
 
 	/**
 	 * Constructs a new evaluation result for the given
 	 * engine, thread, and code snippet.
 	 */
-	protected EvaluationResult(IEvaluationEngine engine, String snippet, IJavaThread thread) {
+	public EvaluationResult(IEvaluationEngine engine, String snippet, IJavaThread thread) {
 		setEvaluationEngine(engine);
 		setThread(thread);
 		setSnippet(snippet);
+		fErrors= new ArrayList();
 	}
 
 	/**
@@ -90,49 +80,23 @@ public class EvaluationResult implements IEvaluationResult {
 	 * @param value result of an evaluation, possibly
 	 * 	<code>null</code>
 	 */
-	protected void setValue(IJavaValue value) {
+	public void setValue(IJavaValue value) {
 		fValue = value;
 	}	
 
 	/**
 	 * @see IEvaluationResult#hasProblems()
 	 */
-	public boolean hasProblems() {
-		return getProblems().length > 0 || getException() != null;
+	public boolean hasErrors() {
+		return getErrors().length > 0 || getException() != null;
 	}
 
 	/**
 	 * @see IEvaluationResult#getProblems()
 	 */
-	public IMarker[] getProblems() {
-		if (fProblems == null) {
-			return new IMarker[0];
-		}
-		return (IMarker[])fProblems.toArray(new IMarker[fProblems.size()]);
+	public Message[] getErrors() {
+		return (Message[])fErrors.toArray(new Message[fErrors.size()]);
 	}
-
-	/**
-	 * @see IEvaluationResult#getSourceFragment(IMarker)
-	 */
-	public String getSourceFragment(IMarker problem) {
-		int index = fProblems.indexOf(problem);
-		if (index >= 0) {
-			return (String)fFragments.get(index);
-		}
-		throw new IllegalArgumentException(EvaluationMessages.getString("EvaluationResult.Problem_marker_does_not_exist_in_this_evaluation_result._1")); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see IEvaluationResult#getKind(IMarker)
-	 */
-	public int getKind(IMarker problem) {
-		int index = fProblems.indexOf(problem);
-		if (index >= 0) {
-			return ((Integer)fKinds.get(index)).intValue();
-		}
-		throw new IllegalArgumentException(EvaluationMessages.getString("EvaluationResult.Problem_marker_does_not_exist_in_this_evaluation_result._1")); //$NON-NLS-1$
-	}
-
 	/**
 	 * @see IEvaluationResult#getSnippet()
 	 */
@@ -162,7 +126,7 @@ public class EvaluationResult implements IEvaluationResult {
 	 * 
 	 * @param e exception
 	 */
-	protected void setException(Throwable e) {
+	public void setException(Throwable e) {
 		fException = e;
 	}
 
@@ -217,15 +181,8 @@ public class EvaluationResult implements IEvaluationResult {
 	 *   import, the source fragment is the import. If a problem is about a
 	 *   package declaration, the source fragment is the package declaration.
 	 */
-	protected void addProblem(IMarker marker, int kind, String fragment) {
-		if (fProblems == null) {
-			fProblems = new ArrayList();
-			fKinds = new ArrayList();
-			fFragments = new ArrayList();
-		}
-		fProblems.add(marker);
-		fKinds.add(new Integer(kind));
-		fFragments.add(fragment);
+	public void addError(Message message) {
+		fErrors.add(message);
 	}
 }
 
