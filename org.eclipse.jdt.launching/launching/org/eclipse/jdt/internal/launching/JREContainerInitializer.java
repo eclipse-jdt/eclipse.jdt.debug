@@ -35,23 +35,11 @@ import org.eclipse.jdt.launching.VMStandin;
  * Resolves a container for a JRE classpath container entry.
  */
 public class JREContainerInitializer extends ClasspathContainerInitializer {
-	
-	// avoid stack overflow
-	private static IPath fPath;
-	private static IJavaProject fProject;
 
 	/**
 	 * @see ClasspathContainerInitializer#initialize(IPath, IJavaProject)
 	 */
-	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
-		if (fPath != null) {
-			if (fPath.equals(containerPath) && fProject.equals(project)) {
-				return; 
-			}
-		}
-		fPath = containerPath;
-		fProject = project;
-		
+	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {		
 		int size = containerPath.segmentCount();
 		if (size > 0) {
 			if (containerPath.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
@@ -63,8 +51,6 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {container}, null);
 			}
 		}
-		fPath = null;
-		fProject = null;
 	}
 	
 	/**
