@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.jdt.launching"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.jdt.internal.launching.LaunchingPlugin">
+<plugin>
 
-   <runtime>
-      <library name="launching.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.jdt.debug"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.core.runtime"/>
-   </requires>
-
-
+    
 <!-- Extension point definitions -->
    <extension-point id="classpathProviders" name="%classpathProviders" schema="schema/classpathProviders.exsd"/>
    <extension-point id="runtimeClasspathEntryResolvers" name="%runtimeClasspathEntryResolvers" schema="schema/runtimeClasspathEntryResolvers.exsd"/>
