@@ -154,6 +154,10 @@ public interface IRuntimeClasspathEntry {
 	 * an analogous form and meaning as the variable path, namely the
 	 * first segment  is the name of a classpath variable.
 	 * </p>
+	 * <p>
+	 * Note that an empty path (<code>Path.EMPTY</code>) is considered
+	 * <code>null</code>.
+	 * </p>
 	 *
 	 * @param path the path to the source archive, or <code>null</code> if none
 	 */
@@ -173,10 +177,14 @@ public interface IRuntimeClasspathEntry {
 	
 	/**
 	 * Sets the path within the source archive where package fragments
-	 * are located. An empty path indicates that packages are located at
+	 * are located. A root path indicates that packages are located at
 	 * the root of the source archive. Only valid if a source attachment
 	 * path is also specified.
-	 *
+	 * <p>
+	 * Note that an empty path (<code>Path.EMPTY</code>) is considered
+	 * <code>null</code>.
+	 * </p>
+	 * 
 	 * @param path root path within the source archive, or <code>null</code>
 	 */	
 	public void setSourceAttachmentRootPath(IPath path);
