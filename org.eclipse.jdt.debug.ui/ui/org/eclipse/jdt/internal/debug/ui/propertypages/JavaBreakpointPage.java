@@ -120,31 +120,52 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 */
 	protected void doStore() throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		if (fSuspendThreadButton.getSelection()) {
-			breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
-		} else {
-			breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		}
+		storeSuspendPolicy(breakpoint);
+		storeHitCount(breakpoint);
+		storeEnabled(breakpoint);
+	}
+
+	/**
+	 * Stores the value of the enabled state in the breakpoint.
+	 * @param breakpoint the breakpoint to update
+	 * @throws CoreException if an exception occurs while setting
+	 *  the enabled state
+	 */
+	private void storeEnabled(IJavaBreakpoint breakpoint) throws CoreException {
+		boolean enabled= fEnabledButton.getSelection();
+		breakpoint.setEnabled(enabled);
+	}
+
+	/**
+	 * Stores the value of the hit count in the breakpoint.
+	 * @param breakpoint the breakpoint to update
+	 * @throws CoreException if an exception occurs while setting
+	 *  the hit count
+	 */
+	private void storeHitCount(IJavaBreakpoint breakpoint) throws CoreException {
 		boolean hitCountEnabled= fHitCountButton.getSelection();
 		int hitCount= -1;
-		String hitCountText= fHitCountText.getText();
 		if (hitCountEnabled) {
 			try {
-				hitCount= Integer.parseInt(hitCountText);
+				hitCount= Integer.parseInt(fHitCountText.getText());
 			} catch (NumberFormatException e) {
-				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.2"), new String[] {hitCountText}), e)); //$NON-NLS-1$
+				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.2"), new String[] { fHitCountText.getText() }), e)); //$NON-NLS-1$
 			}
 		}
-		if (!hitCountEnabled && breakpoint.getHitCount() > 0) {
-			// Disable hit count
-			breakpoint.setHitCount(-1);
-		} else if (hitCountEnabled && hitCount != breakpoint.getHitCount()) {
-			breakpoint.setHitCount(hitCount);
+		breakpoint.setHitCount(hitCount);
+	}
+
+	/**
+	 * Stores the value of the suspend policy in the breakpoint.
+	 * @param breakpoint the breakpoint to update
+	 * @throws CoreException if an exception occurs while setting the suspend policy
+	 */
+	private void storeSuspendPolicy(IJavaBreakpoint breakpoint) throws CoreException {
+		int suspendPolicy= IJavaBreakpoint.SUSPEND_VM;
+		if (fSuspendThreadButton.getSelection()) {
+			suspendPolicy= IJavaBreakpoint.SUSPEND_THREAD;
 		}
-		boolean enabled= fEnabledButton.getSelection();
-		if (enabled != breakpoint.isEnabled()) {
-			breakpoint.setEnabled(enabled);
-		}
+		breakpoint.setSuspendPolicy(suspendPolicy);
 	}
 
 	/**
