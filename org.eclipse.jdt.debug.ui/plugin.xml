@@ -186,7 +186,7 @@
 	</view>
 	<view
       	name="%MonitorsView.name"
-		icon="icons/full/monitor/thread_and_monitor_icon.gif"
+		icon="icons/full/cview16/thread_and_monitor_view.gif"
 		category="org.eclipse.debug.ui"
 		class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorsView"
 		id="org.eclipse.jdt.debug.ui.MonitorsView">
@@ -540,10 +540,10 @@
             id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
          <action
                id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
-               hoverIcon="icons/full/monitor/suspendall_icon.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               disabledIcon="icons/full/monitor/suspendall_default_icon.gif"
-               icon="icons/full/monitor/suspendall_default_icon.gif"
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
+               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/suspend_co.gif"
+			   hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"             
                helpContextId="monitor_trace_action_context"
                label="%MonitorTraceAction.label"
                menubarPath="vmGroup"
@@ -551,10 +551,10 @@
          </action>
         <action
                id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
-               hoverIcon="icons/full/monitor/resumeall_icon.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               disabledIcon="icons/full/monitor/resumeall_default_icon.gif"
-               icon="icons/full/monitor/resumeall_default_icon.gif"
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
+               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/resume_co.gif"
+               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"            
                helpContextId="monitor_quit_action_context"
                label="%MonitorQuitAction.label"
                menubarPath="vmGroup"
@@ -693,10 +693,10 @@
          <action
                id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
                toolbarPath="vmGroup"
-               hoverIcon="icons/full/monitor/suspendall_icon.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               disabledIcon="icons/full/monitor/suspendall_default_icon.gif"
-               icon="icons/full/monitor/suspendall_default_icon.gif"
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
+               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/suspend_co.gif"
+               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"             
                helpContextId="monitor_trace_action_context"
                label="%MonitorTraceAction.label"
                tooltip="%MonitorTraceAction.tooltip">
@@ -704,17 +704,19 @@
          <action
                id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
                toolbarPath="vmGroup"
-               hoverIcon="icons/full/monitor/resumeall_icon.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               disabledIcon="icons/full/monitor/resumeall_default_icon.gif"
-               icon="icons/full/monitor/resumeall_default_icon.gif"
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
+               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/resume_co.gif"
+               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"                           
                helpContextId="monitor_quit_action_context"
                label="%MonitorQuitAction.label"
                tooltip="%MonitorQuitAction.tooltip">
          </action>
          <action
                label="%DeadlockView.label"
-               icon="icons/full/monitor/deadlockview_icon.gif"
+               icon="icons/full/elcl16/deadlock_view.gif"
+               disabledIcon="icons/full/dlcl16/deadlock_view.gif"
+               hoverIcon="icons/full/clcl16/deadlock_view.gif"
                helpContextId="deadlock_view_action_context"
                tooltip="%DeadlockView.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleDeadLocksViewAction"
@@ -724,7 +726,9 @@
          </action>
          <action
                label="%ThreadView.label"
-               icon="icons/full/monitor/threadview_icon.gif"
+               icon="icons/full/elcl16/thread_view.gif"
+               disabledIcon="icons/full/dlcl16/thread_view.gif"
+   			   hoverIcon="icons/full/clcl16/thread_view.gif"
                helpContextId="thread_view_action_context"
                tooltip="%ThreadView.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleThreadsViewAction"
@@ -734,7 +738,9 @@
          </action>
          <action
                label="%MonitorView.label"
-               icon="icons/full/monitor/monitorview_icon.gif"
+               icon="icons/full/elcl16/monitor_view.gif"
+               disabledIcon="icons/full/dlcl16/monitor_view.gif"
+               hoverIcon="icons/full/clcl16/monitor_view.gif"
                helpContextId="monitor_view_action_context"
                tooltip="%MonitorView.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleMonitorsViewAction"

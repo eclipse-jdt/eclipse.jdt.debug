@@ -75,12 +75,12 @@ public class JavaDebugImages {
 	
 	public static final String IMG_VIEW_ARGUMENTS_TAB= NAME_PREFIX + "variable_tab.gif";  //$NON-NLS-1$
 	
-	public static final String IMG_OBJS_THREAD = NAME_PREFIX + "thread_icon.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_icon.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_MONITOR_OWNED = NAME_PREFIX + "monitor_owned_icon.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_MONITOR_WAITED = NAME_PREFIX + "monitor_waited_icon.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_THREAD_OWNING = NAME_PREFIX + "thread_owning_icon.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_THREAD_WAITING = NAME_PREFIX + "thread_waiting_icon.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_THREAD = NAME_PREFIX + "thread_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR_OWNED = NAME_PREFIX + "monitor_owned_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR_WAITED = NAME_PREFIX + "monitor_waited_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_THREAD_OWNING = NAME_PREFIX + "thread_owning_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_THREAD_WAITING = NAME_PREFIX + "thread_waiting_obj.gif";  //$NON-NLS-1$
 	
 	/*
 	 * Set of predefined Image Descriptors.
