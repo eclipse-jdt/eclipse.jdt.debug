@@ -823,9 +823,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (fIsOutOfSynch) {
 			return true;
 		}
-		JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
-		if (target.hasHCROccurred() && target.isOutOfSynch(getUnderlyingMethod().declaringType().name())) {
-			return true;
+		// if this frame's thread is not suspended, the out-of-synch info cannot
+		// change until it suspends again
+		if (getThread().isSuspended()) {
+			JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
+			if (target.hasHCROccurred() && target.isOutOfSynch(getUnderlyingMethod().declaringType().name())) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -839,14 +843,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// cannot be obsolete.
 			return false;
 		}
-		try {
-			return getUnderlyingMethod().isObsolete();
-		} catch (RuntimeException re) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.Exception_occurred_determining_if_stack_frame_is_obsolete_1"), new String[] {re.toString()}), re); //$NON-NLS-1$
-			// execution will not reach this line, as 
-			// #targetRequestFailed will throw an exception			
-			return true;
+		// if this frame's thread is not suspended, the obsolete status cannot
+		// change until it suspends again
+		if (getThread().isSuspended()) {
+			try {
+				return getUnderlyingMethod().isObsolete();
+			} catch (RuntimeException re) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.Exception_occurred_determining_if_stack_frame_is_obsolete_1"), new String[] {re.toString()}), re); //$NON-NLS-1$
+				// execution will not reach this line, as 
+				// #targetRequestFailed will throw an exception			
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	protected boolean exists() throws DebugException {
