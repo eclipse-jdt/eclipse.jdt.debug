@@ -84,7 +84,7 @@ public class ValueCache {
 		Object value = null;
 		SoftReference ref = (SoftReference)cacheTable.get(key);
 		if (ref != null) {
-			value = (Object)ref.get();
+			value = ref.get();
 		}
 		return value;
 	}
@@ -142,7 +142,7 @@ public class ValueCache {
 		Object value = null;
 		SoftReference ref = (SoftReference)cacheTable.get(key);
 		if (ref != null) {
-			value = (Object)ref.get();
+			value = ref.get();
 			refTable.remove(ref);
 		}
 		cacheTable.remove(key);

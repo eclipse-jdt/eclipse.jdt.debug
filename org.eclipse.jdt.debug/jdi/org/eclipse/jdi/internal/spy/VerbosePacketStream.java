@@ -173,10 +173,10 @@ public class VerbosePacketStream extends PrintStream {
 		println();
 		
 		printDescription(TcpIpSpyMessages.getString("VerbosePacketStream.Flags__5")); //$NON-NLS-1$
-		byte flags= (byte)packet.getFlags();
+		byte flags= packet.getFlags();
 		printHex(flags);
 		if ((flags & JdwpPacket.FLAG_REPLY_PACKET) != 0) {
-			print(MessageFormat.format(TcpIpSpyMessages.getString("VerbosePacketStream._(REPLY_to_{0})_6"), new String[] {(String) JdwpCommandPacket.commandMap().get(new Integer(TcpipSpy.getCommand((JdwpReplyPacket)packet)))})); //$NON-NLS-1$
+			print(MessageFormat.format(TcpIpSpyMessages.getString("VerbosePacketStream._(REPLY_to_{0})_6"), new String[] {(String) JdwpCommandPacket.commandMap().get(new Integer(TcpipSpy.getCommand(packet)))})); //$NON-NLS-1$
 		} else {
 			print(TcpIpSpyMessages.getString("VerbosePacketStream._(COMMAND)_7")); //$NON-NLS-1$
 		}
@@ -2500,7 +2500,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	protected void printHex(byte b) {
-		printHexString(Integer.toHexString((int)b & 0xFF).toUpperCase(), 2);
+		printHexString(Integer.toHexString(b & 0xFF).toUpperCase(), 2);
 	}
 
 	protected void printHex(int i) {

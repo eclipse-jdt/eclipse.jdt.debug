@@ -187,7 +187,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		iter= threadsToRemove.iterator();
 		while (iter.hasNext()) {
-			map.remove((JDIThread)iter.next());
+			map.remove(iter.next());
 		}
 	}
 	
@@ -494,7 +494,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				DebugException exception= result.getException();
 				Throwable wrappedException= exception.getStatus().getException();
 				if (wrappedException instanceof VMDisconnectedException) {
-					JDIDebugPlugin.log((VMDisconnectedException)wrappedException);
+					JDIDebugPlugin.log(wrappedException);
 					try {
 						thread.resumeQuiet();
 					} catch(DebugException e) {

@@ -48,7 +48,7 @@ public class ArrayAccess extends ArrayInstruction {
 			JDIArrayPartition partition= (JDIArrayPartition)variables[0];
 			int offset= partition.getEnd() - firstIndex + 1;
 			int partitionIndex= (index - firstIndex) / offset;
-			variables= (IVariable[])((JDIArrayPartition)variables[partitionIndex]).getValue().getVariables();
+			variables= ((JDIArrayPartition)variables[partitionIndex]).getValue().getVariables();
 			firstIndex= firstIndex + offset * partitionIndex;
 		}
 		push(variables[index - firstIndex]);

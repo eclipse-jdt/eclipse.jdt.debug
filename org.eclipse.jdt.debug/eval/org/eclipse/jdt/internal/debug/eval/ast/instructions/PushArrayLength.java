@@ -26,7 +26,7 @@ public class PushArrayLength extends CompoundInstruction {
 	public void execute() throws CoreException {
 		IJavaArray receiver= (IJavaArray)popValue();
 		
-		int length= ((IJavaArray)receiver).getLength();
+		int length= receiver.getLength();
 		pushNewValue(length);
 	}
 	

@@ -802,7 +802,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 		Object sourceElement= locator.getSourceElement(frame);
 		if (sourceElement instanceof IType) {
-			return (ICompilationUnit)((IType)sourceElement).getCompilationUnit();
+			return ((IType)sourceElement).getCompilationUnit();
 		}
 		if (sourceElement instanceof ICompilationUnit) {
 			return (ICompilationUnit)sourceElement;

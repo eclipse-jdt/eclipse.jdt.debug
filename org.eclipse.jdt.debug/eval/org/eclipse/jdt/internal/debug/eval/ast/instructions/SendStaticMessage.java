@@ -45,7 +45,7 @@ public class SendStaticMessage extends CompoundInstruction {
 		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
 		for (int i= fArgCount - 1; i >= 0; i--) {
-			args[i] = (IJavaValue)popValue();
+			args[i] = popValue();
 		}
 		
 		IJavaType receiver= getType(fTypeName);

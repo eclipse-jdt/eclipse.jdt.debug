@@ -411,10 +411,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	protected void initializeBreakpoints() {
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
 		manager.addBreakpointListener(this);
-		IBreakpoint[] bps = (IBreakpoint[]) manager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
+		IBreakpoint[] bps = manager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i = 0; i < bps.length; i++) {
 			if (bps[i] instanceof IJavaBreakpoint) {
-				breakpointAdded((IJavaBreakpoint)bps[i]);
+				breakpointAdded(bps[i]);
 			}
 		}
 	}

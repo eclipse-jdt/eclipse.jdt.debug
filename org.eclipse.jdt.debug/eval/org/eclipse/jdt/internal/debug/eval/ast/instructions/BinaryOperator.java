@@ -40,7 +40,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	}
 	
 	private void executeAssignment() throws CoreException {
-		IJavaValue value = (IJavaValue) popValue();
+		IJavaValue value = popValue();
 		IJavaVariable variable = (IJavaVariable) pop();
 		IJavaValue variableValue = (IJavaValue)variable.getValue();
 		
@@ -78,8 +78,8 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	}
 	
 	private void executeBinary() throws CoreException {
-		IJavaValue right= (IJavaValue)popValue();
-		IJavaValue left= (IJavaValue)popValue();
+		IJavaValue right= popValue();
+		IJavaValue left= popValue();
 
 		switch (fResultTypeId) {
 			case T_String:
@@ -157,7 +157,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 			case T_long:
 				return newValue((int) getLongResult(leftOperand, rightOperand));
 			case T_int:
-				return newValue((int) getIntResult(leftOperand, rightOperand));
+				return newValue(getIntResult(leftOperand, rightOperand));
 			default:
 				return null;
 		}
@@ -170,7 +170,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 			case T_float:
 				return newValue((long) getFloatResult(leftOperand, rightOperand));
 			case T_long:
-				return newValue((long) getLongResult(leftOperand, rightOperand));
+				return newValue(getLongResult(leftOperand, rightOperand));
 			case T_int:
 				return newValue((long) getIntResult(leftOperand, rightOperand));
 			default:
@@ -183,7 +183,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 			case T_double:
 				return newValue((float) getDoubleResult(leftOperand, rightOperand));
 			case T_float:
-				return newValue((float) getFloatResult(leftOperand, rightOperand));
+				return newValue(getFloatResult(leftOperand, rightOperand));
 			case T_long:
 				return newValue((float) getLongResult(leftOperand, rightOperand));
 			case T_int:
@@ -196,7 +196,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	private IJavaValue getDoubleValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
-				return newValue((double) getDoubleResult(leftOperand, rightOperand));
+				return newValue(getDoubleResult(leftOperand, rightOperand));
 			case T_float:
 				return newValue((double) getFloatResult(leftOperand, rightOperand));
 			case T_long:

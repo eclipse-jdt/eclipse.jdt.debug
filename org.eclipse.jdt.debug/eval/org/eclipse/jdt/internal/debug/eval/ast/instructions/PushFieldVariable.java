@@ -53,7 +53,7 @@ public class PushFieldVariable extends CompoundInstruction {
 		if (fDeclaringTypeSignature == null) {
 			field= ((JDIObjectValue)receiver).getField(fName, fSuperClassLevel);
 		} else {
-			field= ((IJavaObject)receiver).getField(fName, fDeclaringTypeSignature);
+			field= receiver.getField(fName, fDeclaringTypeSignature);
 		}
 		
 		if (field == null) {

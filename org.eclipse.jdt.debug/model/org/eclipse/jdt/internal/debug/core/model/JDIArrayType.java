@@ -57,7 +57,7 @@ public class JDIArrayType extends JDIType implements IJavaArrayType {
 	public IJavaType getComponentType() throws DebugException {
 		try {
 			Type type = ((ArrayType)getUnderlyingType()).componentType();
-			return JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
+			return JDIType.createType(getDebugTarget(), type);
 		} catch (ClassNotLoadedException e) {
 			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_retrieving_component_type_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {

@@ -34,7 +34,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 	 */
 	public void execute() throws CoreException {
 		IJavaType type= (IJavaType)pop();
-		IJavaValue value= (IJavaValue)popValue();
+		IJavaValue value= popValue();
 		if (value instanceof JDINullValue) {
 			pushNewValue(false);
 			return;

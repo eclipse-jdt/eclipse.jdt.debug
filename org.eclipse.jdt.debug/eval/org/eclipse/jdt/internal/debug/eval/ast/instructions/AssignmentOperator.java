@@ -31,7 +31,7 @@ public class AssignmentOperator extends CompoundInstruction {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IJavaValue value = (IJavaValue) popValue();
+		IJavaValue value = popValue();
 		IJavaVariable variable = (IJavaVariable) pop();
 		
 		if (value instanceof IJavaPrimitiveValue) {

@@ -80,7 +80,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return new JDIObjectValue(target, (ObjectReference)value);
 		}
 		if (value instanceof PrimitiveValue) {
-			return new JDIPrimitiveValue(target, (PrimitiveValue)value);
+			return new JDIPrimitiveValue(target, value);
 		}
 		return new JDIValue(target, value);
 	}

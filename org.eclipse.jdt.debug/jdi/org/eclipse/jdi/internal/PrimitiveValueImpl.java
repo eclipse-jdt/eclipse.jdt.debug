@@ -77,7 +77,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 		if (fValue instanceof Boolean)
 			return ((Boolean)fValue).booleanValue() ? (double)1 : (double)0;
 		else if (fValue instanceof Character)
-			return (double)((Character)fValue).charValue();
+			return ((Character)fValue).charValue();
 		else return ((Number)fValue).doubleValue();
 	}
 
@@ -88,7 +88,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 		if (fValue instanceof Boolean)
 			return ((Boolean)fValue).booleanValue() ? (float)1 : (float)0;
 		else if (fValue instanceof Character)
-			return (float)((Character)fValue).charValue();
+			return ((Character)fValue).charValue();
 		else return ((Number)fValue).floatValue();
 	}
 
@@ -99,7 +99,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 		if (fValue instanceof Boolean)
 			return ((Boolean)fValue).booleanValue() ? (int)1 : (int)0;
 		else if (fValue instanceof Character)
-			return (int)((Character)fValue).charValue();
+			return ((Character)fValue).charValue();
 		else return ((Number)fValue).intValue();
 	}
 
@@ -110,7 +110,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 		if (fValue instanceof Boolean)
 			return ((Boolean)fValue).booleanValue() ? (long)1 : (long)0;
 		else if (fValue instanceof Character)
-			return (long)((Character)fValue).charValue();
+			return ((Character)fValue).charValue();
 		else return ((Number)fValue).longValue();
 	}
 

@@ -292,7 +292,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				evaluationFinished(result);
 				return;
 			}
-			final Interpreter interpreter = new Interpreter((InstructionSequence) fExpression, fContext);
+			final Interpreter interpreter = new Interpreter(fExpression, fContext);
 		
 			class EvaluationRunnable implements IEvaluationRunnable, ITerminate {
 				

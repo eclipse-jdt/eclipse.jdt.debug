@@ -183,7 +183,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = (InterfaceType) iterator.next();
 				if (interfaceType != null) {
-					javaInterfaceTypeList.add((IJavaInterfaceType)JDIType.createType(getDebugTarget(), interfaceType));
+					javaInterfaceTypeList.add(JDIType.createType(getDebugTarget(), interfaceType));
 				}				
 			}
 			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
@@ -206,7 +206,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = (InterfaceType) iterator.next();
 				if (interfaceType != null) {
-					javaInterfaceTypeList.add((IJavaInterfaceType)JDIType.createType(getDebugTarget(), interfaceType));
+					javaInterfaceTypeList.add(JDIType.createType(getDebugTarget(), interfaceType));
 				}				
 			}
 			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];

@@ -1004,7 +1004,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			IJavaObject classObject = (IJavaObject)classClass.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", args, getThread()); //$NON-NLS-2$ //$NON-NLS-1$
 			object = (IJavaObject)classObject.sendMessage("newInstance", "()Ljava/lang/Object;", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 		} else {
-			object = (IJavaObject)clazz.newInstance("<init>", null, getThread()); //$NON-NLS-1$
+			object = clazz.newInstance("<init>", null, getThread()); //$NON-NLS-1$
 		}
 		return object;
 	}

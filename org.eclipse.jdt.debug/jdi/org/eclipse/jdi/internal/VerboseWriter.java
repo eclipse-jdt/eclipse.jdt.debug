@@ -256,9 +256,9 @@ public class VerboseWriter {
 		do {
 			int t = b & 15;
 			if (t > 9) {
-				t = t - 10 + (int) 'a';
+				t = t - 10 + 'a';
 			} else {
-				t += (int) '0';
+				t += '0';
 			}
 			buffer[count-- + abspos] = (char) t;
 			b >>>= 4;
@@ -285,7 +285,7 @@ public class VerboseWriter {
 	 */
 	public void printHex(byte b) {
 		char buffer[] = new char[VERBOSE_HEX_WIDTH];
-		appendHexByte((byte)b, buffer, 0);
+		appendHexByte(b, buffer, 0);
 		appendHexSpaces(buffer, 1);
 		print(buffer);
 	}

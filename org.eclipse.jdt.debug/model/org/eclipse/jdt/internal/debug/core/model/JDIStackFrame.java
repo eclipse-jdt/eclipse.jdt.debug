@@ -608,7 +608,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 			if (var instanceof JDIThisVariable) {
 				// save for later - check for instance and static vars
-				thisVariable= (IJavaVariable)var;
+				thisVariable= var;
 			}
 		}
 

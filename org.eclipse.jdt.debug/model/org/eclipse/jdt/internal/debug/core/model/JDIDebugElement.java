@@ -333,7 +333,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @return Java debug target
 	 */
 	protected JDIDebugTarget getJavaDebugTarget() {
-		return (JDIDebugTarget)fDebugTarget;
+		return fDebugTarget;
 	}
 
 	/**

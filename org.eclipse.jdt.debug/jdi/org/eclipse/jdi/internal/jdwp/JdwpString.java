@@ -74,7 +74,7 @@ public class JdwpString {
 			throw new NullPointerException(JDWPMessages.getString("JdwpString.str_is_null_4")); //$NON-NLS-1$
 		int utfCount = 0;
 		for (int i = 0; i < str.length(); i++) {
-			int charValue = (int) str.charAt(i);
+			int charValue = str.charAt(i);
 			if (charValue > 0 && charValue <= 127)
 				utfCount += 1;
 			else
@@ -86,7 +86,7 @@ public class JdwpString {
 		byte utfBytes[] = new byte[utfCount];
 		int utfIndex = 0;
 		for (int i = 0; i < str.length(); i++) {
-			int charValue = (int) str.charAt(i);
+			int charValue = str.charAt(i);
 			if (charValue > 0 && charValue <= 127)
 				utfBytes[utfIndex++] = (byte) charValue;
 			else

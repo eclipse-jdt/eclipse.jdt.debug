@@ -347,9 +347,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		ITypeBinding parentBinding;
 		if (parent instanceof TypeDeclaration) {
-			parentBinding= (ITypeBinding) ((TypeDeclaration)parent).resolveBinding();
+			parentBinding= ((TypeDeclaration)parent).resolveBinding();
 		} else {
-			parentBinding= (ITypeBinding) ((AnonymousClassDeclaration)parent).resolveBinding();
+			parentBinding= ((AnonymousClassDeclaration)parent).resolveBinding();
 		}
 		if (isInstanceOf(parentBinding, referenceTypeBinding)) {
 			return 0;
