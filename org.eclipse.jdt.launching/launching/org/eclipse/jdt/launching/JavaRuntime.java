@@ -994,7 +994,7 @@ public final class JavaRuntime {
 			return null;
 		}			
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
-		if (javaProject != null && !javaProject.getProject().isOpen()) {
+		if (javaProject != null && javaProject.getProject().exists() && !javaProject.getProject().isOpen()) {
 			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.28"), new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null); //$NON-NLS-1$
 		}
 		if ((javaProject == null) || !javaProject.exists()) {
