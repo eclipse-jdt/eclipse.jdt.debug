@@ -402,7 +402,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(data);		
 		
 		fSuspendButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
-		fAlertHCRButton= createCheckButton(composite, DebugUIMessages.getString("Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
+		fAlertHCRButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 	
 		createSpace(composite);
 		

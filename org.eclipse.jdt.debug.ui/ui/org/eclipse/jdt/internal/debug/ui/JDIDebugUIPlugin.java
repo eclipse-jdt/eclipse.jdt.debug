@@ -183,7 +183,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 			public void run() {
 				Shell shell= getActiveWorkbenchShell();
 				String vmName= fLabelProvider.getText(target);
-				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("Hot_code_replace_failed_1"), MessageFormat.format(DebugUIMessages.getString("{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), new Object[] {vmName}), exception.getStatus(), IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), new Object[] {vmName}), exception.getStatus(), IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
 				dialog.open();
 			}
 		});
@@ -194,7 +194,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	public void hotCodeReplaceSucceeded() {
 	}
 
-		/**
+	/**
 	 * Debug ui thread safe access to a display
 	 */
 	protected Display getDisplay() {
@@ -202,6 +202,5 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		//prereq the base eclipse ui plugin.
 		return Display.getDefault();
 	}
-
 }
 

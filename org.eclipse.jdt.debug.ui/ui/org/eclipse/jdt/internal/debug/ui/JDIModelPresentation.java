@@ -1158,7 +1158,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 			String dec= frame.getDeclaringTypeName();			
 			if (frame.isObsolete()) {
-				label.append(DebugUIMessages.getString("<obsolete_method_in__1")); //$NON-NLS-1$
+				label.append(DebugUIMessages.getString("JDIModelPresentation.<obsolete_method_in__1")); //$NON-NLS-1$
 				label.append(dec);
 				label.append('>');
 				return label.toString();
