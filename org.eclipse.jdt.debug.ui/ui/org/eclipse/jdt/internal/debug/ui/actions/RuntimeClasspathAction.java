@@ -6,8 +6,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
  
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,7 +17,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import sun.security.action.GetBooleanAction;
 
 /**
  * Action used with a runtime classpath viewer.
