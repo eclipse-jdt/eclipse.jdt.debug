@@ -345,7 +345,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 							return false;
 						if (CLASS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension())) {
 							IMarker[] problemMarkers= null;
-							boolean hasCompilerErrors= false;
+							boolean hasCompileErrors= false;
 							try {
 								// Get the source file associated with the class file
 								// and query it for compilation errors
@@ -354,12 +354,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 									problemMarkers= sourceFile.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 									for (int i= 0; i < problemMarkers.length; i++) {
 										if (problemMarkers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
-											hasCompilerErrors= true;
+											hasCompileErrors= true;
 									}
 								}
 							} catch (CoreException exception) {
 							}
-							if (hasCompilerErrors) {
+							if (!hasCompileErrors) {
 								// Only return class files that have no compilation errors.
 								fFiles.add(resource);
 							}
