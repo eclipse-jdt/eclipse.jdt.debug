@@ -47,7 +47,7 @@ public class InspectAction extends EvaluateAction {
 						// make expression view visible
 						showExpressionView();
 						JavaInspectExpression exp = new JavaInspectExpression(res.getSnippet().trim(), value);
-						DebugPlugin.getDefault().getExpressionManager().addExpression(exp, null);
+						DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
 					}
 				}
 			});

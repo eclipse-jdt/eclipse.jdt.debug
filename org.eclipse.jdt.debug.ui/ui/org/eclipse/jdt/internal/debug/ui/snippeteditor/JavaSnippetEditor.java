@@ -438,7 +438,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							snippet= snippet.replace('\t', ' ');
 							showExpressionView();
 							JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
-							DebugPlugin.getDefault().getExpressionManager().addExpression(exp, null);
+							DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
 							break;
 						case RESULT_RUN:
 							// no action
