@@ -10,42 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
-
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IOConsole;
-import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
 
 /**
- * Provides links for stack traces
+ * creates JavaExceptionHyperLinks
+ * 
+ * @since 3.1
  */
-public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
-	
-	/**
-	 * The console associated with this line tracker 
-	 */
-	private IOConsole fConsole;
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.IConsole)
-     */
-    public void connect(IConsole console) {
-	    fConsole = (IOConsole) console;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#disconnect()
-     */
-    public void disconnect() {
-        fConsole = null;
-    }
+public class JavaExceptionConsoleTracker extends JavaConsoleTracker {
     
-    protected IOConsole getConsole() {
-        return fConsole;
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
@@ -53,10 +29,12 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
         try {
             int offset = event.getOffset();
             int length = event.getLength();
-            IHyperlink link = new JavaStackTraceHyperlink(fConsole);
-            fConsole.addHyperlink(link, offset, length);   
+            IOConsole console = getConsole();
+            String exceptionName;
+            exceptionName = console.getDocument().get(offset, length);
+            IHyperlink link = new JavaExceptionHyperLink(console, exceptionName);
+            getConsole().addHyperlink(link, offset, length);
         } catch (BadLocationException e) {
         }
     }
-
 }

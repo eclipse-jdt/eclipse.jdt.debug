@@ -2135,16 +2135,6 @@ M4 = Platform-specific fourth key
    <extension
          point="org.eclipse.debug.ui.consoleLineTrackers">
       <consoleLineTracker
-            class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            processType="java"
-            id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
-      </consoleLineTracker>
-      <consoleLineTracker
-            class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            processType="org.eclipse.ant.ui.antProcess"
-            id="org.eclipse.jdt.debug.ui.AntJavaConsoleTracker">
-      </consoleLineTracker>      
-      <consoleLineTracker
             class="org.eclipse.jdt.internal.debug.ui.console.J9ConsoleTracker"
             processType="j9"
             id="org.eclipse.jdt.debug.ui.J9ConsoleTracker">
@@ -2590,4 +2580,57 @@ M4 = Platform-specific fourth key
           class="org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookSourcepathProvider">
        </classpathProvider>
    </extension>
+   
+   <!--Java Stack Trace Console-->
+   <extension
+         point="org.eclipse.ui.console.consoleFactory">
+      <consoleFactory
+            label="Java Stack Trace Console"
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
+         <enablement/>
+      </consoleFactory>
+   </extension>
+   
+   <!--Java Stack Trace Pattern Matchers-->
+   <!--""-->
+   <extension
+         point="org.eclipse.ui.console.consolePatternMatchListener">
+      <consolePatternMatchListener
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
+            regex="\S\w\S.*(.*.java:.*)"
+            id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
+         <enablement>
+            <or>
+               <test property="org.eclipse.debug.ui.processTypeTest" value="java"/>
+               <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
+               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
+            </or>
+         </enablement>
+      </consolePatternMatchListener>
+      <consolePatternMatchListener
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaNativeConsoleTracker"
+            regex="\S\w\S.*\(Native Method\)"
+            id="org.eclipse.jdt.debug.ui.JavaNativeConsoleTracker">
+         <enablement>
+            <or>
+               <test property="org.eclipse.debug.ui.processTypeTest" value="java"/>
+               <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
+               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
+            </or>
+         </enablement>
+      </consolePatternMatchListener>
+            <consolePatternMatchListener
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaExceptionConsoleTracker"
+            regex="[\S]+Exception"
+            id="org.eclipse.jdt.debug.ui.JavaExceptionConsoleTracker">
+         <enablement>
+            <or>
+               <test property="org.eclipse.debug.ui.processTypeTest" value="java"/>
+               <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
+               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
+            </or>
+         </enablement>
+      </consolePatternMatchListener>
+   </extension>   
+
 </plugin>

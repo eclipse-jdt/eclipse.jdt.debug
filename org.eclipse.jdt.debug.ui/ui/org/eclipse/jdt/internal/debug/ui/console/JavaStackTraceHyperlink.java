@@ -17,9 +17,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.console.IConsole;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
@@ -30,6 +31,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -38,12 +40,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class JavaStackTraceHyperlink implements IHyperlink {
 	
-	private IConsole fConsole;
+	private IOConsole fConsole;
 
 	/**
 	 * Constructor for JavaStackTraceHyperlink.
 	 */
-	public JavaStackTraceHyperlink(IConsole console) {
+	public JavaStackTraceHyperlink(IOConsole console) {
 		fConsole = console;
 	}
 
@@ -132,9 +134,12 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	private ISourceLocator getSourceLocator() {
 		ISourceLocator sourceLocator = null;
-		ILaunch launch = getConsole().getProcess().getLaunch();
-		if (launch != null) {
-			sourceLocator = launch.getSourceLocator();
+		IProcess process = (IProcess) getConsole().getAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS);
+		if (process != null) {
+		    ILaunch launch = process.getLaunch();
+			if (launch != null) {
+				sourceLocator = launch.getSourceLocator();
+			}  
 		}
 		return sourceLocator;
 	}
@@ -190,7 +195,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 *  
 	 * @return console
 	 */
-	protected IConsole getConsole() {
+	protected IOConsole getConsole() {
 		return fConsole;
 	}
 	

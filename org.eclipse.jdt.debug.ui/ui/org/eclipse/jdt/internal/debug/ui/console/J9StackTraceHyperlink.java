@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.ui.console.IOConsole;
 
 /**
  * A hyperlink from a J9 stack trace line of the form "*.*(*)*"
@@ -26,7 +27,7 @@ public class J9StackTraceHyperlink extends JavaStackTraceHyperlink {
      * @see JavaStackTraceHyperlink#JavaStackTraceHyperlink(IConsole, int, int)
 	 */
 	public J9StackTraceHyperlink(IConsole console) {
-		super(console);
+	    super((IOConsole)console);
 	}
 
 	/**
