@@ -120,22 +120,34 @@ public class BreakpointLocationVerifierJob extends Job {
 		}
 		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(fDocument.get().toCharArray());
-		parser.setProject(project);
-		String unitName;
-		if (fType.isBinary()) {
-			String className= fType.getClassFile().getElementName();
-			int nameLength= className.indexOf('$');
-			if (nameLength < 0) {
-				nameLength= className.indexOf('.');
+		boolean resolveBindings= project != null;
+		if (resolveBindings) {
+			String unitName;
+			if (fType == null) {
+				unitName= fResource.getName();
+				if (!unitName.endsWith(".java")) { //$NON-NLS-1$
+					resolveBindings= false;
+				}
+			} else {
+				if (fType.isBinary()) {
+					String className= fType.getClassFile().getElementName();
+					int nameLength= className.indexOf('$');
+					if (nameLength < 0) {
+						nameLength= className.indexOf('.');
+					}
+					unitName= className.substring(0, nameLength) + ".java"; //$NON-NLS-1$
+				} else {
+					unitName= fType.getCompilationUnit().getElementName();
+				}
 			}
-			unitName= className.substring(0, nameLength) + ".java"; //$NON-NLS-1$
-		} else {
-			unitName= fType.getCompilationUnit().getElementName();
+			if (resolveBindings) {
+				parser.setProject(project);
+				parser.setUnitName(unitName);
+				parser.setResolveBindings(true);
+			}
 		}
-		parser.setUnitName(unitName);
-		parser.setResolveBindings(true);
 		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
-		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, fBestMatch);
+		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, resolveBindings, fBestMatch);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getLineLocation();		
 		String typeName= locator.getFullyQualifiedTypeName();

@@ -118,6 +118,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	private CompilationUnit fCompilationUnit;
 	private int fLineNumber;
+	private boolean fBindingsResolved;
 	private boolean fBestMatch;
 
 	private int fLocationType;
@@ -131,9 +132,10 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @param lineNumber the line number in the source code where to put the breakpoint.
 	 * @param bestMatch if <code>true</code> look for the best match, otherwise look only for a valid line
 	 */
-	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int lineNumber, boolean bestMatch) {
+	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int lineNumber, boolean bindingsResolved, boolean bestMatch) {
 		fCompilationUnit= compilationUnit;
 		fLineNumber= lineNumber;
+		fBindingsResolved= bindingsResolved;
 		fBestMatch= bestMatch;
 		fLocationFound= false;
 	}
@@ -283,6 +285,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	}
 	
 	private boolean isReplacedByConstantValue(Name node) {
+		if (!fBindingsResolved) {
+			return false;
+		}
 		// if node is a variable with a constant value (static final field)
 		IBinding binding= node.resolveBinding();
 		if (binding.getKind() == IBinding.VARIABLE) {
@@ -292,6 +297,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	}
 	
 	private boolean isReplacedByConstantValue(FieldAccess node) {
+		if (!fBindingsResolved) {
+			return false;
+		}
 		// if the node is 'this.<field>', and the field is static final
 		Expression expression= node.getExpression();
 		if (expression.getNodeType() == ASTNode.THIS_EXPRESSION) {
@@ -301,6 +309,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	}
 	
 	private boolean isReplacedByConstantValue(SuperFieldAccess node) {
+		if (!fBindingsResolved) {
+			return false;
+		}
 		// if the field is static final
 		return node.resolveFieldBinding().getConstantValue() != null;
 	}
