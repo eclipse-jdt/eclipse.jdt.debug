@@ -12,10 +12,27 @@
 <h3>VMRunnerConfiguration contains environment</h3>
 <p>Two methods have been added to the <code>VMRunnerConfiguration</code> type
   to support the setting and retrieving of environment variables.
-<p>Implementors of <code>IVMRunner</code> should call
-  VMRunnerConfiguration#getEnvironment() and pass that environment into
-  the executed VM. Clients who use DebugPlugin#exec(String[] cmdLine, File workingDirectory)
-  can do this by calling DebugPlugin#exec(String[] cmdLine, File workingDirectory, String[] envp)
-  instead. Simply passing in the result from getEnvironment() is sufficient.</p>
+<p>Implementors of <code>IVMRunner</code> should call <code>VMRunnerConfiguration.getEnvironment()</code> 
+  and pass that environment into the executed VM. Clients who use <code>DebugPlugin#exec(String[] 
+  cmdLine, File workingDirectory)</code> can do this by calling <code>DebugPlugin#exec(String[] 
+  cmdLine, File workingDirectory, String[] envp)</code> instead. Simply passing 
+  in the result from <code>getEnvironment()</code> is sufficient.</p>
+<h3>VMRunnerConfiguration and Bootstrap Classes</h3>
+<p>In prior releases, the <code>VMRunnerConfiguration</code> had one attribute 
+  to describe a boot path. The attribute is a collection of <code>Strings</code> 
+  to be specified in the -<code>Xbootclasspath</code> argument. Three new attributes 
+  have been added to the VMRunnerConfiguration to support VMs that allow for prepending 
+  and appending to the boot path. The new methods/attributes added are:</p>
+<ul>
+  <li><code>getPrependBootClassPath()</code> - returns a collection of entries 
+    to be prepended to the boot path (the <code>-Xbootclasspath/p</code> argument)</li>
+  <li><code>getMainBootClassPath()</code> - returns a collection of entries to 
+    be placed on the boot path (the <code>-Xbootclasspath</code> argument)</li>
+  <li><code>getAppendBootClassPath()</code> - returns a collection of entries 
+    to be appended to the boot path (the <code>-Xbootclasspath/a</code> argument)</li>
+</ul>
+<p>The old attribute,<code> getBootClassPath()</code> still exists, and contains 
+  a complete path equivalent to that of the three new attributes. However, <code>VMRunners</code> 
+  that support the new boot path options should take advantage of the new attributes.</p>
 </body>
 </html>
