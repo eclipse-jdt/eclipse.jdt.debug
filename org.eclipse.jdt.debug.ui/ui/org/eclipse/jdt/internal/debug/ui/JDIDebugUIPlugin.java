@@ -175,6 +175,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_PORT, "8000"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_HOST, "localhost"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.ALERT_HCR_FAILED, true);
+		store.setDefault(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, true);
 		
 		JavaDebugPreferencePage.initDefaults(store);
 	}
@@ -195,6 +196,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceFailed(DebugException)
 	 */
 	public void hotCodeReplaceFailed(final IJavaDebugTarget target, final DebugException exception) {
+		if (!getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED)) {
+			return;
+		}
 		// do not report errors for snippet editor targets
 		// that do not support HCR. HCR is simulated by using
 		// a new class loader for each evaluation
@@ -210,10 +214,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 				}
 			}
 		}
-		
-		if (!getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED)) {
-			return;
-		}
 		getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				Shell shell= getActiveWorkbenchShell();
@@ -224,7 +224,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 				} else {
 					status= exception.getStatus();
 				}
-				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), new Object[] {vmName}), status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), //$NON-NLS-1$
+					MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), //$NON-NLS-1$
+					new Object[] {vmName}), status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR, IJDIPreferencesConstants.ALERT_HCR_FAILED,
+					DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_hot_code_replace_failure_1")); //$NON-NLS-1$
 				dialog.open();
 			}
 		});
@@ -233,6 +236,28 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded()
 	 */
 	public void hotCodeReplaceSucceeded() {
+	}
+	
+	/**
+	 * @see IJavaHotCodeReplaceListener#obsoleteMethods(IJavaDebugTarget)
+	 */
+	public void obsoleteMethods(final IJavaDebugTarget target) {
+		if (!getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS)) {
+			return;
+		}
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				Shell shell= getActiveWorkbenchShell();
+				String vmName= fLabelProvider.getText(target);
+				IStatus status;
+				status= new Status(IStatus.WARNING, getPluginId(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.Stepping_may_be_hazardous_1"), null); //$NON-NLS-1$
+				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Obsolete_methods_remain_1"), //$NON-NLS-1$
+					MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_contains_obsolete_methods_1"), //$NON-NLS-1$
+					new Object[] {vmName}), status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR, IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS,
+					DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_obsolete_methods_1")); //$NON-NLS-1$
+				dialog.open();
+			}
+		});
 	}
 
 	/**

@@ -17,16 +17,29 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DebugErrorDialog extends ErrorDialog {
 
-	private Button fShowHCR= null;
+	/**
+	 * The preference key which determines whether this dialog is shown again.
+	 * This key must be a valid preference in the JDIDebugUIPlugin preference
+	 * store.
+	 */
+	private String fShowAgainKey= null;
+	/**
+	 * The message displayed to the user, asking if this dialog should continue
+	 * to be shown.
+	 */
+	private String fShowAgainMessage= null;
+	private Button fShowAgain= null;
 
-	public DebugErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask) {
+	public DebugErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask, String showAgainKey, String showAgainMessage) {
 		super(parentShell, dialogTitle, message, status, displayMask);
+		fShowAgainKey= showAgainKey;
+		fShowAgainMessage= showAgainMessage;
 	}
 
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea= (Composite) super.createDialogArea(parent);
-		setShowHCRButton(createCheckButton(dialogArea, DebugUIMessages.getString("DebugErrorDialog.Always_alert_me_of_hot_code_replace_failure_1"))); //$NON-NLS-1$
-		getShowHCRButton().setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
+		setShowHCRButton(createCheckButton(dialogArea, fShowAgainMessage)); //$NON-NLS-1$
+		getShowHCRButton().setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(fShowAgainKey));
 		
 		return dialogArea;
 	}
@@ -56,14 +69,14 @@ public class DebugErrorDialog extends ErrorDialog {
 	}
 	
 	private void storePreference() {
-		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, getShowHCRButton().getSelection());
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(fShowAgainKey, getShowHCRButton().getSelection());
 	}
 
 	protected Button getShowHCRButton() {
-		return fShowHCR;
+		return fShowAgain;
 	}
 
 	protected void setShowHCRButton(Button showHCR) {
-		fShowHCR = showHCR;
+		fShowAgain = showHCR;
 	}
 }

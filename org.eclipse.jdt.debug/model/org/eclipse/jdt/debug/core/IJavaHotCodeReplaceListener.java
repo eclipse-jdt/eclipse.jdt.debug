@@ -32,6 +32,12 @@ public interface IJavaHotCodeReplaceListener {
 	 * attempt succeeded.
 	 */
 	public void hotCodeReplaceSucceeded();	
+	
+	/**
+	 * Notifies the listener that obsolete methods remain on the
+	 * stack after a hot code replace.
+	 */
+	public void obsoleteMethods(IJavaDebugTarget target);
 
 }
 

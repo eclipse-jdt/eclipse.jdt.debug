@@ -102,6 +102,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	// Preference widgets
 	private Button fSuspendButton;
 	private Button fAlertHCRButton;
+	private Button fAlertObsoleteButton;
 	private Button fHexButton;
 	private Button fCharButton;
 	private Button fUnsignedButton;
@@ -461,6 +462,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		fSuspendButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
+		fAlertObsoleteButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
 	
 		createSpace(composite);
 		
@@ -958,6 +960,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fStepFilterContentProvider.setDefaults();
 		fSuspendButton.setSelection(JDIDebugModel.getDefaultSuspendOnUncaughtExceptions());
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
+		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
 	}
 	
 	/**
@@ -1033,6 +1036,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));		
 		fSuspendButton.setSelection(JDIDebugModel.suspendOnUncaughtExceptions());
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
+		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
 	}
 	
 	/**
@@ -1046,6 +1050,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
 		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
 	}
 
 	protected PropertyChangeListener getPropertyChangeListener() {

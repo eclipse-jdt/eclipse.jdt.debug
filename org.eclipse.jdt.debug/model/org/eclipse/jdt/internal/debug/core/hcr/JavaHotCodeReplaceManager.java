@@ -183,7 +183,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWorkspace().removeResourceChangeListener(this);
 		fHotCodeReplaceListeners.removeAll();
-		clearHotSwapTargets();
+		fHotSwapTargets= null;
+		fNoHotSwapTargets= null;
 	}
 	/**
 	 * Returns the workspace.
@@ -208,7 +209,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 		List resources= getChangedClassFiles(event);
 		if (!resources.isEmpty()) {
-			doHotCodeReplace(resources);
+			notifyTargets(resources);
 		}
 	}
 	
@@ -267,29 +268,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	/**
-	 * Perform a hot code replace with the given resources.
-	 * For a JDK 1.4 compliant VM this involves:
-	 * <ol>
-	 * <li>Popping all frames from all thread stacks which will be affected by reloading the given resources</li>
-	 * <li>Telling the VirtualMachine to redefine the affected classes</li>
-	 * <li>Performing a step-into operation on all threads which were affected by the class redefinition.
-	 *     This returns execution to the first (deepest) affected method on the stack</li>
-	 * </ol>
-	 * For a J9 compliant VM this involves:
-	 * <ol>
-	 * <li>Telling the VirtualMachine to redefine the affected classes</li>
-	 * <li>Popping all frames from all thread stacks which were affected by reloading the given resources and then
-	 *     performing a step-into operation on all threads which were affected by the class redefinition.</li>
-	 * </ol>
+	 * Notifies the targets of the changed types
 	 */
-	private void doHotCodeReplace(final List resources) {
+	private void notifyTargets(final List resources) {
 		final List hotSwapTargets= getHotSwapTargets();
 		final List noHotSwapTargets= getNoHotSwapTargets();
 		final List qualifiedNames= getQualifiedNames(resources);
 		if (!hotSwapTargets.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
-					notify(hotSwapTargets, resources, qualifiedNames);
+					doHotCodeReplace(hotSwapTargets, resources, qualifiedNames);
 				}
 			};
 			fork(wRunnable);	
@@ -400,18 +388,26 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		return fNoHotSwapTargets;
 	}
 	
-	protected void clearHotSwapTargets() {
-		fHotSwapTargets= null;
-		fNoHotSwapTargets= null;
-	}
-	
 	/**
-	 * Notifies the targets of the changed types
+	 * Perform a hot code replace with the given resources.
+	 * For a JDK 1.4 compliant VM this involves:
+	 * <ol>
+	 * <li>Popping all frames from all thread stacks which will be affected by reloading the given resources</li>
+	 * <li>Telling the VirtualMachine to redefine the affected classes</li>
+	 * <li>Performing a step-into operation on all threads which were affected by the class redefinition.
+	 *     This returns execution to the first (deepest) affected method on the stack</li>
+	 * </ol>
+	 * For a J9 compliant VM this involves:
+	 * <ol>
+	 * <li>Telling the VirtualMachine to redefine the affected classes</li>
+	 * <li>Popping all frames from all thread stacks which were affected by reloading the given resources and then
+	 *     performing a step-into operation on all threads which were affected by the class redefinition.</li>
+	 * </ol>
 	 * 
-	 * @param targets the targets to notify
+	 * @param targets the targets in which to perform HCR
 	 * @param resources the resources which correspond to the changed classes
 	 */
-	private void notify(List targets, List resources, List qualifiedNames) {
+	private void doHotCodeReplace(List targets, List resources, List qualifiedNames) {
 		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.drop_to_frame_failed"), null); //$NON-NLS-1$
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
@@ -436,6 +432,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					}
 				}
 				target.typesHaveChanged(resources, qualifiedNames);
+				if (containsObsoleteMethods(target)) {
+					fireObsoleteMethods(target);
+				}
 				if (target.getVM().canPopFrames() && framesPopped) {
 					// Second half of JDK 1.4 drop to frame support:
 					// All affected frames have been popped and the classes
@@ -481,6 +480,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		for (int i=0; i<listeners.length; i++) {
 			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceFailed(target, exception);
 		}
+	}
+	
+	/**
+	 * Notifies listeners that obsolete methods remain on the stack
+	 */
+	private void fireObsoleteMethods(JDIDebugTarget target) {
+		Object[] listeners= fHotCodeReplaceListeners.getListeners();
+		for (int i=0; i<listeners.length; i++) {
+			((IJavaHotCodeReplaceListener)listeners[i]).obsoleteMethods(target);
+		}		
 	}
 	
 	/**
@@ -534,7 +543,26 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 	}
-
+	
+	/**
+	 * Returns whether or not the given target contains stack frames with obsolete
+	 * methods.
+	 */
+	protected boolean containsObsoleteMethods(JDIDebugTarget target) throws DebugException {
+		IThread[] threads=target.getThreads();
+		List frames= null;
+		Iterator iter= null;
+		for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
+			frames= ((JDIThread)threads[i]).computeStackFrames();
+			iter= frames.iterator();
+			while (iter.hasNext()) {
+				if (((JDIStackFrame)iter.next()).isObsolete()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Returns a list of frames which should be popped in the given threads.
@@ -1009,23 +1037,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			int count= resourcePath.matchingFirstSegments(outputPath);
 			resourcePath= resourcePath.removeFirstSegments(count);
 			String pathString= resourcePath.toString();
-			pathString= translateResourceName(pathString);
+			// get rid of ".class" then switch to dot separated
+			pathString= pathString.substring(0, pathString.length() - 6).replace(IPath.SEPARATOR, '.');
 			qualifiedNames.add(pathString);
 		}
 		return qualifiedNames;
-	}
-	
-	/**
-	 * Translates the given resourceName, which is of the form:
-	 * 	foo/bar/baz.class
-	 * the form:
-	 * 	foo.bar.baz
-	 */
-	private static String translateResourceName(String resourceName) {
-		// get rid of ".class"
-		resourceName= resourceName.substring(0, resourceName.length() - 6);
-		// switch to dot separated
-		return resourceName.replace(IPath.SEPARATOR, '.');
 	}
 
 }

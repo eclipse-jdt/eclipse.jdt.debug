@@ -23,5 +23,6 @@ public interface IJDIPreferencesConstants {
 	// by notified of variable rendering preference changes
 	static final String VARIABLE_RENDERING = "VARIABLE_RENDERING"; //$NON-NLS-1$
 	static final String ALERT_HCR_FAILED = "org.eclipse.jdt.debug.ui.javaDebug.alertHCRFailed"; //$NON-NLS-1$
+	static final String ALERT_OBSOLETE_METHODS = "org.eclipse.jdt.debug.ui.javaDebug.alertObsoleteMethods"; //$NON-NLS-1$
 	
 }
