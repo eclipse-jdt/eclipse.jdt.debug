@@ -198,6 +198,9 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	 */
 	protected void handleConnectorComboModified() {
 		int index = fConnectorCombo.getSelectionIndex();
+		if ( (index < 0) || (index >= fConnectors.length) ) {
+			return;
+		}
 		IVMConnector vm = fConnectors[index];
 		if (vm.equals(fConnector)) {
 			return; // selection did not change
