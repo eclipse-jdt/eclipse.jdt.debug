@@ -1244,7 +1244,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		try {
 			setTerminating(true);
-			getThreadStartHandler().deleteRequest();
+			disposeThreadHandler();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
 				vm.exit(1);
