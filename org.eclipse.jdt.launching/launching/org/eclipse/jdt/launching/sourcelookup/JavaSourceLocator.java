@@ -282,6 +282,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Returns source locations that are associted with the given runtime classpath
 	 * entries.
+	 * 
+	 * XXX: fix for containers
 	 */
 	private static IJavaSourceLocation[] getSourceLocations(IRuntimeClasspathEntry[] entries) {
 		List locations = new ArrayList(entries.length);
@@ -296,8 +298,31 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.ARCHIVE:
+					String path = entry.getResolvedSourceAttachmentPath();
+					if (path == null) {
+						// if there is no source attachment, look in the archive itself
+						path = entry.getResolvedPath();
+					}
+					if (path != null) {
+						File file = new File(path);
+						if (file.exists()) {
+							if (file.isDirectory()) {
+								location = new DirectorySourceLocation(file);
+							} else {
+								try {
+									location = new ArchiveSourceLocation(path, entry.getResolvedSourceAttachmentRootPath());
+								} catch (IOException e) {
+									LaunchingPlugin.log(e);
+								}
+							}
+						}
+					}
 					break;
 				case IRuntimeClasspathEntry.VARIABLE:
+					if (entry.getPath().toString().equals(JavaRuntime.JRELIB_VARIABLE)) {
+						// do not add - it is in the workspace
+						break;
+					}
 					try {
 						location = new ArchiveSourceLocation(entry.getResolvedSourceAttachmentPath(), entry.getResolvedSourceAttachmentRootPath());
 					} catch (IOException e) {
