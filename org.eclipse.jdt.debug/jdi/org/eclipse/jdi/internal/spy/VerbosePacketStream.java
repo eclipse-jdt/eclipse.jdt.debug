@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UTFDataFormatException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 /**
  * The <code>VerbosePacketWriter</code> is responsible for writing
@@ -123,9 +124,7 @@ public class VerbosePacketStream extends PrintStream {
 	private static final byte[] padding;
 	static {
 		padding= new byte[256];
-		for(int i= 0; i < 256; i++) {
-			padding[i]= ' ';
-		}
+		Arrays.fill(padding, (byte)' ');
 	}
 	
 	private static final String shift= new String(padding, 0, 32);
@@ -136,10 +135,8 @@ public class VerbosePacketStream extends PrintStream {
 		
 	private static final byte[] zeros;
 	static {
-		zeros= new byte[16];
-		for(int i= 0; i < 16; i++) {
-			zeros[i]= '0';
-		}
+		zeros= new byte[32];
+		Arrays.fill(zeros, (byte)'0');
 	}
 	
 	public synchronized void print(JdwpPacket packet, boolean fromVM) throws IOException {
@@ -2184,7 +2181,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 
 	private long readID(DataInputStream in, int size) throws IOException {
-		int id = 0;
+		long id = 0;
 		for (int i = 0; i < size; i++) {
 			int b = in.readUnsignedByte();	// Note that the byte must be treated as unsigned.
 			id = id << 8 | b;
@@ -2443,7 +2440,7 @@ public class VerbosePacketStream extends PrintStream {
 	
 	protected void printlnObjectId(String description, long value) {
 		printDescription(description);
-		printHex(value, TcpipSpy.getReferenceTypeIDSize());
+		printHex(value, TcpipSpy.getObjectIDSize());
 		if (value == 0) {
 			println(" (NULL)"); //$NON-NLS-1$
 		} else {
@@ -2494,6 +2491,7 @@ public class VerbosePacketStream extends PrintStream {
 	protected void printHexString(String hex, int width) {
 		width-= hex.length();
 		print("0x"); //$NON-NLS-1$
+		
 		write(zeros, 0, width);
 		print(hex);
 	}
