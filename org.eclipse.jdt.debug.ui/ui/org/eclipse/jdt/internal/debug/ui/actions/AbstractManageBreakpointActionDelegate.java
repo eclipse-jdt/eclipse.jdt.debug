@@ -54,12 +54,6 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 				member= ActionDelegateHelper.getDefault().getCurrentMember(selection);
 			} else {
 				member= getMember(selection);
-				if (member != null) {
-					IJavaProject project= member.getJavaProject();
-					if (!member.exists() || (project == null || !project.isOnClasspath(member))) {
-						member= null;
-					}
-				}
 			}
 		}
 		

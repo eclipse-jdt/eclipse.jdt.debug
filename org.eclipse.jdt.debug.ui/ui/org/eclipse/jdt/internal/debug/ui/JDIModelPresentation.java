@@ -1335,25 +1335,33 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
 		
-		String lineInfo= getLineBreakpointText(watchpoint);
-		String state= null;
+		String typeName= watchpoint.getTypeName();
+		IMember member= BreakpointUtils.getMember(watchpoint);
+		StringBuffer label= new StringBuffer();
+		label.append(getQualifiedName(typeName));
+		appendHitCount(watchpoint, label);
+		appendSuspendPolicy(watchpoint,label);
+		appendThreadFilter(watchpoint, label);
+		
+
 		boolean access= watchpoint.isAccess();
 		boolean modification= watchpoint.isModification();
 		if (access && modification) {
-			state= DebugUIMessages.getString("JDIModelPresentation.access_and_modification_70"); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.access_and_modification_70")); //$NON-NLS-1$
 		} else if (access) {
-			state= DebugUIMessages.getString("JDIModelPresentation.access_71"); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.access_71")); //$NON-NLS-1$
 		} else if (modification) {
-			state= DebugUIMessages.getString("JDIModelPresentation.modification_72"); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.modification_72")); //$NON-NLS-1$
 		}
-		String label= null;
-		if (state == null) {
-			label= lineInfo;
+		
+		label.append(" - "); //$NON-NLS-1$
+		if (member != null) {
+			label.append(getJavaLabelProvider().getText(member));
 		} else {
-			String format= DebugUIMessages.getString("JDIModelPresentation.{1}__{0}_73"); //$NON-NLS-1$
-			label= MessageFormat.format(format, new Object[] {state, lineInfo});
+			label.append(watchpoint.getFieldName());
 		}
-		return label;	
+
+		return label.toString();	
 	}	
 
 	protected String getStackFrameText(IStackFrame stackFrame) throws DebugException {

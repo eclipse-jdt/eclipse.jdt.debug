@@ -150,12 +150,6 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 				}
 			}
 
-			if (m != null) {
-				IJavaProject project= m.getJavaProject();
-				if (!m.exists() || (project == null || !project.isOnClasspath(m))) {
-					m= null;
-				}
-			}
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
 		}

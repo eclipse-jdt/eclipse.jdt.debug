@@ -35,6 +35,8 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.ITypeNameRequestor;
@@ -50,9 +52,14 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -67,21 +74,48 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		if (getBreakpoint() == null) {
 			try {
 				IMember element= getMember();
-				if (element == null || !enableForMember(element)) {
-					report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
-					return;
+				if (element == null) {
+					IWorkbenchPage page= getPage();
+					if (page != null) {
+						ISelection selection= page.getSelection();
+						if (selection instanceof ITextSelection) {
+							IEditorInput editorInput = getTextEditor().getEditorInput();
+							IResource resource;
+							if (editorInput instanceof IFileEditorInput) {
+								resource= ((IFileEditorInput)editorInput).getFile();
+							} else {
+								resource= ResourcesPlugin.getWorkspace().getRoot();
+							}
+							IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
+							CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
+							BreakpointFieldLocator locator= new BreakpointFieldLocator(((ITextSelection)selection).getOffset());
+							compilationUnit.accept(locator);
+							String fieldName= locator.getFieldName();
+							if (fieldName == null) {
+								report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
+								return;
+							}
+							String typeName= locator.getTypeName();
+							setBreakpoint(JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10)));
+						}
+					}
+				} else {
+					if (!enableForMember(element)) {
+						report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
+						return;
+					}
+					IType type = element.getDeclaringType();
+					int start = -1;
+					int end = -1;
+					ISourceRange range = element.getNameRange();
+					if (range != null) {
+						start = range.getOffset();
+						end = start + range.getLength();
+					}
+					Map attributes = new HashMap(10);
+					BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
+					setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
 				}
-				IType type = element.getDeclaringType();
-				int start = -1;
-				int end = -1;
-				ISourceRange range = element.getNameRange();
-				if (range != null) {
-					start = range.getOffset();
-					end = start + range.getLength();
-				}
-				Map attributes = new HashMap(10);
-				BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
-				setBreakpoint(createBreakpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
 			} catch (JavaModelException e) {
 				JDIDebugUIPlugin.log(e);
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), ActionMessages.getString("ManageWatchpointAction.The_selected_field_is_not_visible_in_the_currently_selected_debug_context._A_stack_frame_or_suspended_thread_which_contains_the_declaring_type_of_this_field_must_be_selected_1")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -99,10 +133,6 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
-	}
-	
-	protected IJavaBreakpoint createBreakpoint(IResource resource, String typeName, String fieldName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
-		return JDIDebugModel.createWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 	
 	protected IJavaBreakpoint getBreakpoint(IMember selectedField) {
