@@ -329,7 +329,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		// NB: This has to be done when the VM is interrupted by an event
 		if (fThreadDeath == null) {
 			JDIThread jt = findThread(threadRef);
-			if (jt != null && !jt.canPerformEvaluation()) {
+			if (jt != null && jt.fInEvaluation) {
 				// invalid state to perform an evaluation
 				return;
 			}
@@ -345,8 +345,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 					return;
 				}
 				try {
-					fThreadDeath= jt.newInstance(threadDeathClass, constructor, new LinkedList());
-				} catch (DebugException e) {
+					fThreadDeath= threadDeathClass.newInstance(threadRef, constructor, new LinkedList(), ClassType.INVOKE_SINGLE_THREADED);
+				} catch (ClassNotLoadedException e) {
+					internalError(e);
+				} catch (InvalidTypeException e) {
+					internalError(e);
+				} catch (InvocationException e) {
+					internalError(e);
+				} catch (IncompatibleThreadStateException e) {
 					internalError(e);
 				}
 				if (fThreadDeath != null) {
