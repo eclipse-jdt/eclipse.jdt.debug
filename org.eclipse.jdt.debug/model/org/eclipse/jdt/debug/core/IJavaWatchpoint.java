@@ -6,6 +6,7 @@ package org.eclipse.jdt.debug.core;
  */
  
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.IField;
 
 /**
@@ -73,6 +74,6 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
-	public boolean isAccessSuspend(IJavaDebugTarget target);
+	public boolean isAccessSuspend(IDebugTarget target);
 }
 

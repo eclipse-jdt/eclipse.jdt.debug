@@ -9,13 +9,13 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 
 import com.sun.jdi.Field;
@@ -489,7 +489,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		}
 	}
 		
-	public boolean isAccessSuspend(IJavaDebugTarget target) {
+	public boolean isAccessSuspend(IDebugTarget target) {
 		Integer lastEventType= (Integer) fLastEventTypes.get(target);
 		if (lastEventType == null) {
 			return false;
