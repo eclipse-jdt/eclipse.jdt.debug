@@ -11,13 +11,9 @@
 package org.eclipse.jdt.debug.tests;
 
 import java.util.Enumeration;
-
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-import org.eclipse.jdt.debug.tests.core.ExternalArchiveSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.ArrayTests;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
@@ -28,11 +24,13 @@ import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.DebugEventTests;
+import org.eclipse.jdt.debug.tests.core.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.DirectorySourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.DirectorySourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.ExternalArchiveSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.FolderSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.HcrTests;
 import org.eclipse.jdt.debug.tests.core.HitCountBreakpointsTests;
@@ -55,7 +53,6 @@ import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.RefreshTabTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
-import org.eclipse.jdt.debug.tests.core.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
@@ -76,10 +73,6 @@ import org.eclipse.swt.widgets.Display;
  * Tests for integration and nightly builds.
  */
 public class AutomatedSuite extends TestSuite {
-	
-	static {
-		SelectedResourceManager.setDebug(true);
-	}
 	
 	/**
 	 * Flag that indicates test are in progress
