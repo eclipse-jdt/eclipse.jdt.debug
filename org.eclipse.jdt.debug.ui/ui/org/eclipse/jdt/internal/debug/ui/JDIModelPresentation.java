@@ -158,7 +158,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	public JDIModelPresentation() {
 		super();
 	}
-			
+    
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
@@ -679,7 +679,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaWaitingThreadImage((JavaWaitingThread)item);
 			}
             if (item instanceof NoMonitorInformationElement) {
-                return fDebugImageRegistry.get(new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, 0));
+                return getDebugImageRegistry().get(new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, 0));
             }
 		} catch (CoreException e) {
 		    // no need to log errors - elements may no longer exist by the time we render them
@@ -699,7 +699,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else {
 			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flag);
 		}
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 
 	/**
@@ -714,7 +714,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else {
 			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flag);
 		}
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 
 	/**
@@ -724,7 +724,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	private Image getJavaContendedMonitorImage(JavaContendedMonitor monitor) {
 		int flag= JDIImageDescriptor.CONTENTED_MONITOR | (monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, flag);
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 
 	/**
@@ -734,7 +734,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	private Image getJavaOwnedMonitorImage(JavaOwnedMonitor monitor) {
 		int flag= JDIImageDescriptor.OWNED_MONITOR | (monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, flag);
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 
 	protected Image getBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
