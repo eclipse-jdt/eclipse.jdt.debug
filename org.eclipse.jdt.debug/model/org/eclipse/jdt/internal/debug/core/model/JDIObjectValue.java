@@ -278,25 +278,24 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		return res;
 	}
 	
-	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
 	 */
 	public IJavaThread[] getWaitingThreads() throws DebugException {
-		IJavaThread[] waitingThreads= null;
+		List waiting = new ArrayList();
 		try {
 			List threads= getUnderlyingObject().waitingThreads();
 			JDIDebugTarget debugTarget= (JDIDebugTarget)getDebugTarget();
-			waitingThreads= new IJavaThread[threads.size()];
-			int i= 0;
 			for (Iterator iter= threads.iterator(); iter.hasNext();) {
-				waitingThreads[i++]= debugTarget.getJDIThread((ThreadReference) iter.next());
+				JDIThread jdiThread = debugTarget.findThread((ThreadReference) iter.next());
+				if (jdiThread != null) {
+					waiting.add(jdiThread);
+				}
 			}
 		} catch (IncompatibleThreadStateException e) {
 			targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValue.0"), e); //$NON-NLS-1$
 		}
-		return waitingThreads;
+		return (IJavaThread[]) waiting.toArray(new IJavaThread[waiting.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -308,7 +307,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			ThreadReference thread= getUnderlyingObject().owningThread();
 			JDIDebugTarget debugTarget= (JDIDebugTarget)getDebugTarget();
 			if (thread != null) {
-				owningThread= debugTarget.getJDIThread(thread);
+				owningThread= debugTarget.findThread(thread);
 			}
 		} catch (IncompatibleThreadStateException e) {
 			targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValue.1"), e); //$NON-NLS-1$

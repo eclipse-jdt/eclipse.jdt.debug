@@ -466,21 +466,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
-	 * Return the JDIThread of this debug target associated to the
-	 * given thread, or <code>null</code> if no JDIThread is associated
-	 * to the given thread.
-	 */
-	public JDIThread getJDIThread(ThreadReference threadReference) {
-		for (Iterator iter = getThreadIterator(); iter.hasNext();) {
-			JDIThread thread = (JDIThread) iter.next();
-			if (thread.getUnderlyingThread().equals(threadReference)) {
-				return thread;
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
