@@ -2052,7 +2052,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		ITypeBinding typeBinding= node.getExpression().resolveTypeBinding();
 		Type paramType= node.getParameter().getType();
-		String typeSignature= getTypeSignature(paramType.resolveBinding());
+        ITypeBinding paramBinding = paramType.resolveBinding();
+		String typeSignature= getTypeSignature(paramBinding);
 		int paramTypeId= getTypeId(paramType);
 		boolean isParamPrimitiveType= paramTypeId != Instruction.T_Object && paramTypeId != Instruction.T_String;
 		String paramIdentifier= node.getParameter().getName().getIdentifier();
@@ -2095,6 +2096,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 							storeInstruction();
 						storeInstruction();
 					storeInstruction();
+                    if (checkAutoBoxing(typeBinding.getElementType(), paramBinding)) {
+                        storeInstruction();
+                    }                        
 				storeInstruction();
 				addPopInstruction();
 				node.getBody().accept(this);
@@ -2128,6 +2132,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 						push(new PushLocalVariable(iteratorIdentifier));
 						storeInstruction();
 					storeInstruction();
+                    if (checkAutoBoxing(typeBinding.getTypeArguments()[0], paramBinding)) {
+                        storeInstruction();
+                    }
 				storeInstruction();
 				addPopInstruction();
 				node.getBody().accept(this);
