@@ -118,8 +118,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	private boolean fIsSystemThread;
 
 	/**
-	 * The breakpoint that caused the last suspend, or
-	 * <code>null</code> if none.
+	 * The collectoin of breakpoints that caused the last suspend, or 
+	 * an empty collection if the thread is not suspended or was not
+	 * suspended by any breakpoint(s).
 	 */
 	private List fCurrentBreakpoints = new ArrayList(2);
 
@@ -1012,8 +1013,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Sets whether this thread is currently executing.
 	 * When set to <code>true</code>, this thread's current
-	 * breakpoint is cleared. When set to <code>false</code>,
-	 * a note is made that this thread has been interrupted.
+	 * breakpoints are cleared.
 	 * 
 	 * @param running whether this thread is executing
 	 */
