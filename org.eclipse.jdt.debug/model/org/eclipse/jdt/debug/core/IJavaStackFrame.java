@@ -115,6 +115,38 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 */
 	public boolean isSynchronized() throws DebugException;
 	/**
+	 * Returns whether the method associated with this stack frame
+	 * is running code in the VM that is out of synch with the code
+	 * in the workspace.
+	 * 
+	 * @return whether this stack frame is out of synch with the VM.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public boolean isOutOfSynch() throws DebugException;
+	/**
+	 * Returns whether the method associated with this stack frame
+	 * is running code in the VM that is out of synch with the code
+	 * in the workspace.
+	 * 
+	 * @return whether this stack frame may be out of synch with the VM.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public boolean mayBeOutOfSynch() throws DebugException;
+	/**
 	 * Returns the fully qualified name of the type that declares the method
 	 * associated with this stack frame.
 	 *

@@ -294,7 +294,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaVariable) {
 				return getVariableText((IJavaVariable) item);
 			} else if (item instanceof IStackFrame) {
-				return getStackFrameText((IStackFrame) item);
+				String label= getStackFrameText((IStackFrame) item);
+				if (item instanceof IJavaStackFrame) {
+					if (((IJavaStackFrame)item).isOutOfSynch()) {
+						label= label + " (out of synch)";
+					} else if (((IJavaStackFrame)item).mayBeOutOfSynch()) {
+						label= label + " (may be out of synch)";
+					}
+				}
+				return label;
 			} else if (item instanceof IMarker) {
 				IBreakpoint breakpoint = getBreakpoint((IMarker)item);
 				if (breakpoint != null) {
@@ -312,6 +320,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				} else if (item instanceof IJavaValue) {
 					label= getValueText((IJavaValue) item);
 				}
+				if (item instanceof IJavaThread) {
+					if (((IJavaThread)item).isOutOfSynch()) {
+						label= label + " (out of synch)";
+					} else if (((IJavaThread)item).mayBeOutOfSynch()) {
+						label= label + " (may be out of synch)";
+					}
+				} else if (item instanceof IJavaDebugTarget) {
+					if (((IJavaDebugTarget)item).isOutOfSynch()) {
+						label= label + " (out of synch)";
+					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
+						label= label + " (may be out of synch)";
+					}
+				}		
 				if (item instanceof ITerminate) {
 					if (((ITerminate) item).isTerminated()) {
 						label= DebugUIMessages.getString("JDIModelPresentation.<terminated>_2") + " " + label; //$NON-NLS-2$ //$NON-NLS-1$

@@ -939,6 +939,36 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		return fTerminated;
 	}
 	
+	public boolean isOutOfSynch() throws DebugException {
+		if (isSuspended()) {
+			IStackFrame[] frames= getStackFrames();
+			for (int i= 0; i < frames.length; i++) {
+				if (((JDIStackFrame) frames[i]).isOutOfSynch()) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			// If the thread is not suspended, there's no way to 
+			// say for certain that it is running out of synch code
+			return false;
+		}
+	}
+	
+	public boolean mayBeOutOfSynch() throws DebugException {
+		if (isSuspended()) {
+			IStackFrame[] frames= getStackFrames();
+			for (int i= 0; i < frames.length; i++) {
+				if (((JDIStackFrame) frames[i]).mayBeOutOfSynch()) {
+					return true;
+				}
+			}
+			return false;	
+		} else {
+			return ((JDIDebugTarget)getDebugTarget()).hasHCRFailed();
+		}
+	}	
+	
 	/**
 	 * Sets whether this thread is terminated
 	 * 

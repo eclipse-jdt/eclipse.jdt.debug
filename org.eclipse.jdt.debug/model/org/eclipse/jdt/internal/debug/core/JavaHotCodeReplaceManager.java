@@ -58,6 +58,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * manager will notify about hot code replace attempts.
 	 */
 	private ListenerList fHotCodeReplaceListeners= new ListenerList(1);
+	
+	/**
+	 * The lists of hot swap targets which support HCR and those which don't
+	 */
+	private List fHotSwapTargets= new ArrayList(1);
+	private List fNoHotSwapTargets= new ArrayList(1);
 
 	/**
 	 * Visitor for resource deltas.
@@ -95,6 +101,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		getWorkspace().removeResourceChangeListener(this);
 		fHotCodeReplaceListeners.removeAll();
+		clearHotSwapTargets();
 	}
 
 	/**
@@ -119,114 +126,81 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		final List resources= getChangedClassFiles(event.getDelta());
 		if (resources.isEmpty()) {
 			return;
-		}		
-		final List j9HotSwapTargets= getJ9HotSwapTargets();
-		final List jdkHotSwapTargets= getJDKHotSwapTargets();
-		if (j9HotSwapTargets.isEmpty() && jdkHotSwapTargets.isEmpty()) {
-			return;
-		}
-		final List typeNames= JDTDebugUtils.getQualifiedNames(resources);
-		if (!j9HotSwapTargets.isEmpty()) {
+		}	
+		final List hotSwapTargets= getHotSwapTargets();
+		final List noHotSwapTargets= getNoHotSwapTargets();
+		final List qualifiedNames= JDIDebugUtils.getQualifiedNames(resources);
+		if (!hotSwapTargets.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
-					notifyJ9(j9HotSwapTargets, resources, typeNames);
+					notify(hotSwapTargets, resources, qualifiedNames);
 				}
 			};
 			fork(wRunnable);	
 		}
-		if (!jdkHotSwapTargets.isEmpty()) {
+		if (!noHotSwapTargets.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
-					notifyJDK(jdkHotSwapTargets, resources, typeNames);
+					notifyFailedHCR(noHotSwapTargets, resources, qualifiedNames);
 				}
 			};
-			fork(wRunnable);	
+			fork(wRunnable);
 		}
 	}
 	
 	/**
-	 * Returns the currently registered debug targets that support
-	 * J9 hot code replace, or <code>null</code> if none.
+	 * Notify the given targets that HCR failed for classes
+	 * with the given fully qualified names.
 	 */
-	protected List getJ9HotSwapTargets() {
-		return getHotSwapTargets(false);
-	}
-	
-	/**
-	 * Returns the currently registered debug targets that support
-	 * JDK 1.4 hot code replace, or <code>null</code> if none.
-	 */	
-	protected List getJDKHotSwapTargets() {
-		return getHotSwapTargets(true);
-	}
-
-	/**
-	 * Returns the currently registered debug targets that support
-	 * hot code replace, or <code>null</code> if none.
-	 * 
-	 * @param jdk <code>true</code> if this method will return targets
-	 *  which support JDK 1.4 hot code replace, <code>false</code> if
-	 *  this method will return targets which support J9 hot code replace.
-	 */
-	protected List getHotSwapTargets(boolean jdk) {
-		List hotSwapTargets = new ArrayList(0);
-		DebugPlugin plugin= DebugPlugin.getDefault();
-		IDebugTarget[] allTargets= plugin.getLaunchManager().getDebugTargets();
-		boolean supports;
-		for (int i= 0; i < allTargets.length; i++) {
-			supports= false;
-			IDebugTarget target= allTargets[i];
-			if (target instanceof JDIDebugTarget) {
-				JDIDebugTarget javaTarget= (JDIDebugTarget) target;
-				if ((jdk && javaTarget.supportsJDKHotCodeReplace()) || 
-					(!jdk && javaTarget.supportsJ9HotCodeReplace())) {
-						supports= true;
-				}
-				if (supports) {
-					hotSwapTargets.add(target);
-				}
+	protected void notifyFailedHCR(List targets, List resources, List qualifiedNames) {
+		Iterator iter= targets.iterator();
+		while (iter.hasNext()) {
+			JDIDebugTarget target= (JDIDebugTarget) iter.next();
+			if (target.isTerminated() || target.isDisconnected()) {
+				target.typesFailedReload(resources, qualifiedNames);
 			}
 		}
-		return hotSwapTargets;
-	}
-
-	/**
-	 * Notifies the J9 targets of the changed types.
-	 */
-	protected void notifyJ9(List targets, List resources, List typeNames) {
-		notify(targets, resources, typeNames, false);
 	}
 	
 	/**
-	 * Notifies the JDK targets of the changed types
-	 */	
-	protected void notifyJDK(List target, List resources, List typeNames) {
-		notify(target, resources, typeNames, true);
+	 * Returns the currently registered debug targets that support
+	 * hot code replace.
+	 */
+	protected List getHotSwapTargets() {
+		return fHotSwapTargets;
+	}
+	
+	/**
+	 * Returns the currently registered debug targets that do
+	 * not support hot code replace.
+	 */
+	protected List getNoHotSwapTargets() {
+		return fNoHotSwapTargets;
+	}
+	
+	protected void clearHotSwapTargets() {
+		fHotSwapTargets= null;
+		fNoHotSwapTargets= null;
 	}
 	
 	/**
 	 * Notifies the targets of the changed types
 	 * 
-	 * @param jdk <code>true</code> if this method will use JDK-style
-	 * 	HCR notification, <code>false</code> if this method will use
-	 *  J9-style notification.
+	 * @param targets the targets to notify
+	 * @param resources the resources which correspond to the changed classes
 	 */
-	private void notify(List targets, List resources, List typeNames, boolean jdk) {
-		String[] qNames = (String[]) typeNames.toArray(new String[typeNames.size()]);		
+	private void notify(List targets, List resources, List qualifiedNames) {
 		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugModelMessages.getString("JavaHotCodeReplaceManager.drop_to_frame_failed"), null); //$NON-NLS-1$
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
 			try {
-				if (jdk) {
-					// JDK 1.4 support
-					target.typesHaveChanged(resources);
-				} else {
-					// J9 HCR support
-					target.typesHaveChanged(qNames);
+				if (target.isTerminated() || target.isDisconnected()) {
+					continue;
 				}
+				target.typesHaveChanged(resources, qualifiedNames);
 				try {
-					attemptDropToFrame(target, typeNames);
+					attemptDropToFrame(target, qualifiedNames);
 				} catch (DebugException de) {
 					ms.merge(de.getStatus());
 				}
@@ -406,23 +380,50 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		new Thread(runnable).start();
 	}
 	/**
+	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 * 
 	 * When a launch is deregistered, check if there are any
 	 * other launches registered. If not, stop listening
 	 * to resource changes.
 	 */
 	public void launchDeregistered(ILaunch launch) {
-		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= manager.getLaunches();
-		if (launches.length < 1) {
-			getWorkspace().removeResourceChangeListener(this);
+		if (!(launch instanceof JDIDebugTarget)) {
+			return;
 		}
+		JDIDebugTarget target= (JDIDebugTarget) launch.getDebugTarget();
+		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		// Remove the target from its hot swap target cache.
+		if (!fHotSwapTargets.remove(target)) {
+			fNoHotSwapTargets.remove(target);
+		}
+		// If there are no more JDIDebugTargets, stop
+		// listening to resource changes.
+		for (int i= 0; i < launches.length; i++) {
+			if (launches[i] instanceof JDIDebugTarget) {
+				return;
+			}
+		}
+		// To get here, there must be no JDIDebugTargets
+		getWorkspace().removeResourceChangeListener(this);
 	}
 
 	/**
+	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 * 
 	 * Begin listening for resource changes when a launch is
 	 * registered.
 	 */
 	public void launchRegistered(ILaunch launch) {
+		IDebugTarget debugTarget= launch.getDebugTarget();
+		if (!(debugTarget instanceof JDIDebugTarget)) {
+			return;
+		}
+		JDIDebugTarget target= (JDIDebugTarget) debugTarget;
+		if (target.supportsHotCodeReplace()) {
+			fHotSwapTargets.add(target);
+		} else {
+			fNoHotSwapTargets.add(target);
+		}
 		getWorkspace().addResourceChangeListener(this);
 	}
 

@@ -10,10 +10,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -118,6 +120,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Collection of breakpoints added to this target. Values are of type <code>IJavaBreakpoint</code>.
 	 */
 	private List fBreakpoints;
+	
+	/**
+	 * Collection of types (Strings) that have attempted HCR, but failed.
+	 */
+	private List fOutOfSynchTypes;
 	 
 	/**
 	 * The instance of <code>java.lang.ThreadDeath</code> used to
@@ -184,6 +191,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		setName(name);
 		setBreakpoints(new ArrayList(5));
 		setThreadList(new ArrayList(5));
+		setOutOfSynchTypes(new ArrayList(2));
 		initialize();
 	}
 
@@ -437,12 +445,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		fSupportsTerminate = supported;
 	}
 	
+	protected boolean supportsHotCodeReplace() {
+		return supportsJ9HotCodeReplace() || supportsJDKHotCodeReplace();
+	}
+	
 	/**
 	 * Returns whether this debug target supports hot code replace for the J9 VM.
 	 * 
 	 * @return whether this debug target supports J9 hot code replace
 	 */
-	protected boolean supportsJ9HotCodeReplace() {
+	private boolean supportsJ9HotCodeReplace() {
 		if (!isTerminated() && getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
 			try {
 				return ((org.eclipse.jdi.hcr.VirtualMachine) getVM()).canReloadClasses();
@@ -459,7 +471,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @return whether this debug target supports JDK hot code replace
 	 */
-	protected boolean supportsJDKHotCodeReplace() {
+	private boolean supportsJDKHotCodeReplace() {
 		if (!isTerminated()) {
 			return getVM().canRedefineClasses();
 		}
@@ -513,6 +525,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		fVirtualMachine = vm;
 	}
 
+	public void typesHaveChanged(List resources, List qualifiedNames) throws DebugException {
+		if (supportsJDKHotCodeReplace()) {
+			typesHaveChangedJDK(resources, qualifiedNames);
+		} else if (supportsJ9HotCodeReplace()) {
+			typesHaveChangedJ9(resources, qualifiedNames);
+		}
+	}
+
 	/**
 	 * Notifies this target that the specified types have been changed and
 	 * should be replaced. A fully qualified name of each type must
@@ -530,8 +550,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * change</li>
 	 * </ul>
 	 */
-	public void typesHaveChanged(String[] typeNames) throws DebugException {
-			
+	private void typesHaveChangedJ9(List resources, List qualifiedNames) throws DebugException {
+		String[] typeNames = (String[]) qualifiedNames.toArray(new String[qualifiedNames.size()]);					
 		if (supportsJ9HotCodeReplace()) {
 			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) getVM();
 			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
@@ -561,30 +581,111 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * This method is to be used for JDK hot code replace.
 	 */
-	public void typesHaveChanged(List resources) throws DebugException {
+	private void typesHaveChangedJDK(List resources, List qualifiedNames) throws DebugException {
 		if (supportsJDKHotCodeReplace()) {
-			Map typesToBytes= getTypesToBytes(resources);
+			Map typesToBytes= getTypesToBytes(resources, qualifiedNames);
 			try {
 				getVM().redefineClasses(typesToBytes);
 			} catch (UnsupportedOperationException exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_redefinition"), exception); //$NON-NLS-1$
 			} catch (NoClassDefFoundError exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_bad_bytes"), exception); //$NON-NLS-1$
 			} catch (VerifyError exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_verify_error"), exception); //$NON-NLS-1$
 			} catch (UnsupportedClassVersionError exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_class_version"), exception); //$NON-NLS-1$
 			} catch (ClassFormatError exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_format_error"), exception); //$NON-NLS-1$
 			} catch (ClassCircularityError exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"), exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
+				typesFailedHCR(typesToBytes.keySet());
 				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception); //$NON-NLS-1$
 			}
 			reinstallBreakpointsIn(resources);
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
 		}
+	}
+	
+	public void typesFailedReload(List resources, List qualifiedNames) {
+		Set failedClasses= new HashSet(qualifiedNames.size());
+		Iterator iter= qualifiedNames.iterator();
+		while (iter.hasNext()) {
+			String name= (String) iter.next();
+			List classes= jdiClassesByName(name);
+			failedClasses.addAll(classes);
+		}
+		typesFailedHCR(failedClasses);
+	}
+	
+	/**
+	 * Sets the list of out of synch types
+	 * to the given list.
+	 */
+	private void setOutOfSynchTypes(List types) {
+		fOutOfSynchTypes= types;
+	}
+	
+	/**
+	 * The given types have failed to be reloaded by HCR.
+	 */
+	private void typesFailedHCR(Set types) {
+		fOutOfSynchTypes.addAll(types);
+	}
+	
+	/**
+	 * Returns whether the given type is out of synch in this
+	 * target.
+	 */
+	public boolean isOutOfSynch(ReferenceType type) {
+		if (fOutOfSynchTypes == null) {
+			return false;
+		}
+		return fOutOfSynchTypes.contains(type);
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#isOutOfSynch()
+	 */
+	public boolean isOutOfSynch() throws DebugException {
+		Iterator threads= getThreadList().iterator();
+		while (threads.hasNext()) {
+			JDIThread thread= (JDIThread)threads.next();
+			if (thread.isOutOfSynch()) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+	/**
+	 * @see IJavaDebugTarget#mayBeOutOfSynch()
+	 */
+	public boolean mayBeOutOfSynch() throws DebugException {
+		Iterator threads= getThreadList().iterator();
+		while (threads.hasNext()) {
+			JDIThread thread= (JDIThread)threads.next();
+			if (thread.mayBeOutOfSynch()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether a hot code replace attempt has failed.
+	 * 
+	 * HCR has failed if there are any out of synch types
+	 */
+	protected boolean hasHCRFailed() {
+		return fOutOfSynchTypes != null && !fOutOfSynchTypes.isEmpty();
 	}
 	
 	private String getString(String key) {
@@ -601,7 +702,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		IJavaBreakpoint breakpoint= null;
 		String installedType= null;
 		
-		List classNames= JDTDebugUtils.getQualifiedNames(resources);
+		List classNames= JDIDebugUtils.getQualifiedNames(resources);
 		
 		for (int i= 0; i < copy.length; i++) {
 			breakpoint= copy[i];
@@ -624,35 +725,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * class files.
 	 * 
 	 * @param resources the classfiles
+	 * @param qualifiedNames the fully qualified type names corresponding to the
+	 *  classfiles. The typeNames correspond to the resources on a one-to-one
+	 *  basis.
 	 * @return a mapping of class files to bytes
 	 *  key: class file
 	 *  value: the bytes which make up that classfile
 	 */
-	protected Map getTypesToBytes(List resources) {
+	protected Map getTypesToBytes(List resources, List qualifiedNames) {
 		Map typesToBytes= new HashMap(resources.size());
-		Iterator iter= resources.iterator();
-		IProject project= null;
-		IPath outputPath= null;
-		IJavaProject javaProject= null;
-		while (iter.hasNext()) {
-			IResource resource= (IResource)iter.next();
-			if (project == null || !resource.getProject().equals(project)) {
-				project= resource.getProject();
-				javaProject= JavaCore.create(project);
-				try {
-					outputPath= javaProject.getOutputLocation();
-				} catch (JavaModelException jme) {
-					JDIDebugPlugin.logError(jme);
-					project= null;
-					continue;
-				}
-			}
-			IPath resourcePath= resource.getFullPath();
-			int count= resourcePath.matchingFirstSegments(outputPath);
-			resourcePath= resourcePath.removeFirstSegments(count);
-			String qualifiedName= resourcePath.toString();
-			qualifiedName= JDTDebugUtils.translateResourceName(qualifiedName);
-			List classes= jdiClassesByName(qualifiedName);
+		Iterator resourceIter= resources.iterator();
+		Iterator nameIter= qualifiedNames.iterator();
+		IResource resource;
+		String name;
+		while (resourceIter.hasNext()) {
+			resource= (IResource) resourceIter.next();
+			name= (String) nameIter.next();
+			List classes= jdiClassesByName(name);
 			byte[] bytes= null;
 			try {
 				bytes= Util.getResourceContentsAsByteArray((IFile) resource);

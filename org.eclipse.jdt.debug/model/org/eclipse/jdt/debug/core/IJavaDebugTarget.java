@@ -171,6 +171,31 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * 
 	 * @return the void <code>IJavaValue</code>
 	 */	
-	IJavaValue voidValue();	
-
+	IJavaValue voidValue();
+	/**
+	 * Returns whether any of the threads associated with this debug target
+	 * are running code in the VM that is out of synch with the code
+	 * in the workspace.
+	 * 
+	 * @return whether this debug target is out of synch with the VM.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	boolean isOutOfSynch() throws DebugException;
+	/**
+	 * Returns whether any of the threads associated with this debug target
+	 * may be running code in the VM that is out of synch with the code
+	 * in the workspace.
+	 * 
+	 * @return whether this debug target may be out of synch with the VM.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	boolean mayBeOutOfSynch() throws DebugException;
 }

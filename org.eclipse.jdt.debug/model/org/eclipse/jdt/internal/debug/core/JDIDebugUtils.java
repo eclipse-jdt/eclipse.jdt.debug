@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class JDTDebugUtils {
+public class JDIDebugUtils {
 
 	/**
 	 * Returns a collection of <code>String</code>s representing
@@ -56,7 +56,7 @@ public class JDTDebugUtils {
 	 * the form:
 	 * 	foo.bar.baz
 	 */
-	protected static String translateResourceName(String resourceName) {
+	private static String translateResourceName(String resourceName) {
 		// get rid of ".class"
 		resourceName= resourceName.substring(0, resourceName.length() - 6);
 		// switch to dot separated

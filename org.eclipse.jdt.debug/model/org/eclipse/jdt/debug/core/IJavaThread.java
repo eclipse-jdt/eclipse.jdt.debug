@@ -41,7 +41,31 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 * </ul>
 	 */
 	boolean isSystemThread() throws DebugException;
-	
+	/**
+	 * Returns whether any of the stack frames associated with this thread
+	 * are running code in the VM that is out of synch with the code
+	 * in the workspace.
+	 * 
+	 * @return whether this thread is out of synch with the VM.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	boolean isOutOfSynch() throws DebugException;
+	/**
+	 * Returns whether this thread may be running code in the VM that
+	 * is out of synch with the code in the workspace.
+	 * 
+	 * @return whether this thread may be out of synch with the VM.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	boolean mayBeOutOfSynch() throws DebugException;	
 	/**
 	 * Returns the name of the thread group this thread belongs to.
 	 *
