@@ -1484,39 +1484,38 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			
 			Runnable detailRunnable = new Runnable() {	
 				public void run() {
-					IValue requestedValue= fValue;
-					if (fValue instanceof IJavaObject && ! (fValue instanceof IJavaArray)) {
+					IJavaValue detailFormatterResult= null;
+					if (fValue instanceof IJavaObject && !(fValue instanceof IJavaArray)) {
 						// try to use the detail formatters system on the object
-						IJavaValue prettyPrinterResult;
 						try {
-							prettyPrinterResult= JavaDetailFormattersManager.getDefault().getValueDetail((IJavaObject)fValue, fJavaThread, fJavaProject);
+							detailFormatterResult= JavaDetailFormattersManager.getDefault().getValueDetail((IJavaObject)fValue, fJavaThread, fJavaProject);
 						} catch (DebugException e) {
 							handleDebugException(e, (IJavaValue)fValue);
 							return;
 						}
-						if (prettyPrinterResult != null) {
-							if (prettyPrinterResult instanceof IJavaPrimitiveValue) {
-								appendJDIPrimitiveValueString(prettyPrinterResult);
-								if (requestedValue == fRequestedValues.remove(fListener)) {
+						if (detailFormatterResult != null) {
+							if (detailFormatterResult instanceof IJavaPrimitiveValue) {
+								appendJDIPrimitiveValueString(detailFormatterResult);
+								if (fValue == fRequestedValues.remove(fListener)) {
 									notifyListener();
 								}
 								return;
 							}
-							fValue= prettyPrinterResult;
 						}
 					}
+					final IValue value= detailFormatterResult == null ? fValue : detailFormatterResult;
 					IEvaluationRunnable er = new IEvaluationRunnable() {
 						public void run(IJavaThread jt, IProgressMonitor pm) {
-							if (fValue instanceof IJavaArray) {
+							if (value instanceof IJavaArray) {
 								appendArrayDetail((IJavaArray)fValue, jt);
-							} else if (fValue instanceof IJavaObject) {
+							} else if (value instanceof IJavaObject) {
 								try {
-									appendObjectDetail((IJavaObject)fValue, jt);
+									appendObjectDetail((IJavaObject)value, jt);
 								} catch (DebugException e) {
 									handleDebugException(e, (IJavaValue)fValue);
 								}
 							} else {
-								appendJDIValueString(fValue);
+								appendJDIValueString(value);
 							}
 						}
 					};
@@ -1525,7 +1524,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					} catch (DebugException e) {
 						handleDebugException(e, (IJavaValue)fValue);
 					}
-					if (requestedValue == fRequestedValues.remove(fListener)) {
+					if (fValue == fRequestedValues.remove(fListener)) {
 						// If another evaluation occurs before this one finished,
 						// don't display this result
 						notifyListener();
