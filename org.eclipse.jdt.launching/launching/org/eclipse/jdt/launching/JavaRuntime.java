@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -1144,37 +1145,7 @@ public final class JavaRuntime {
 	
 	private static void loadVMConfiguration(File f) throws IOException {
 		InputStream stream= new BufferedInputStream(new FileInputStream(f));
-		Reader reader= new InputStreamReader(stream);
-		readVMs(reader);
-	}
-	
-	private static void detectVMConfiguration() {
-		IVMInstallType[] vmTypes= getVMInstallTypes();
-		boolean defaultSet= false;
-		for (int i= 0; i < vmTypes.length; i++) {
-			File detectedLocation= vmTypes[i].detectInstallLocation();
-			if (detectedLocation != null) {
-				int unique = i;
-				IVMInstallType vmType = vmTypes[i];
-				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
-					unique++;
-				}
-				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(unique));
-				detected.setName(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
-				detected.setInstallLocation(detectedLocation);
-				if (detected != null && !defaultSet) {
-					try {
-						setDefaultVMInstall(detected, null);
-						defaultSet= true;
-					} catch (CoreException e) {
-						LaunchingPlugin.log(e);
-					}
-				}
-			}
-		}
-	}
-	
-	private static void readVMs(Reader reader) throws IOException {
+		Reader reader= new InputStreamReader(stream, "UTF-8"); //$NON-NLS-1$
 		Element config= null;
 		try {
 			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -1201,6 +1172,32 @@ public final class JavaRuntime {
 				Element vmTypeElement = (Element) node;
 				if (vmTypeElement.getNodeName().equalsIgnoreCase("vmType")) { //$NON-NLS-1$
 					createFromVMType(vmTypeElement);
+				}
+			}
+		}
+	}
+	
+	private static void detectVMConfiguration() {
+		IVMInstallType[] vmTypes= getVMInstallTypes();
+		boolean defaultSet= false;
+		for (int i= 0; i < vmTypes.length; i++) {
+			File detectedLocation= vmTypes[i].detectInstallLocation();
+			if (detectedLocation != null) {
+				int unique = i;
+				IVMInstallType vmType = vmTypes[i];
+				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
+					unique++;
+				}
+				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(unique));
+				detected.setName(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
+				detected.setInstallLocation(detectedLocation);
+				if (detected != null && !defaultSet) {
+					try {
+						setDefaultVMInstall(detected, null);
+						defaultSet= true;
+					} catch (CoreException e) {
+						LaunchingPlugin.log(e);
+					}
 				}
 			}
 		}
