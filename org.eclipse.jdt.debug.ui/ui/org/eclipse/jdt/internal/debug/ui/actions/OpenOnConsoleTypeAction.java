@@ -32,7 +32,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewActionDelegate;
@@ -57,26 +61,31 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 		there were more than one in the workspace), and an editor opened revealing 
  * 		the beginning of the type.
  */
-public class OpenOnConsoleTypeAction extends Action implements IViewActionDelegate {
+public class OpenOnConsoleTypeAction extends Action implements IViewActionDelegate, Listener {
 																	
 	private IViewPart fViewPart;
 	
 	private String fPkgName;
 	private String fTypeName;
 	private int fLineNumber;
+	private boolean fInitiatedFromDoubleClick= false;
 	
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {		
-		fViewPart = view;	
+		setViewPart(view);
+		Widget underlyingWidget= (Widget)view.getAdapter(Widget.class);
+		if (underlyingWidget != null) {
+			underlyingWidget.addListener(SWT.MouseDoubleClick, this);
+		}
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		doOpenType();
+		run();
 	}
 	
 	/**
@@ -94,19 +103,19 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 
 	protected void doOpenType() {		
 		// determine what we're searching for
-		fPkgName = null;
-		fTypeName = null;
-		fLineNumber = -1;
+		setPkgName(null);
+		setTypeName(null);
+		setLineNumber(-1);
 		determineSearchParameters();
-		if (fTypeName == null) {
+		if (getTypeName() == null) {
 			return;
 		}
 		
 		// convert package & type names to form required by SearchEngine API
-		char[] typeCharArray = fTypeName.toCharArray();
+		char[] typeCharArray = getTypeName().toCharArray();
 		char[] pkgCharArray;
-		if (fPkgName != null) {
-			pkgCharArray = fPkgName.toCharArray();
+		if (getPkgName() != null) {
+			pkgCharArray = getPkgName().toCharArray();
 		} else {
 			pkgCharArray = null;
 		}
@@ -217,7 +226,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 		ISelection selection = selectionProvider.getSelection();
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection = (ITextSelection)selection;
-			if (textSelection.getLength() > 0) {
+			if (textSelection.getLength() > 0 && !initiatedFromDoubleClick()) {
 				parseSelection(textSelection.getText());
 			} else {
 				IDocument consoleDocument = DebugUIPlugin.getCurrentConsoleDocument();
@@ -277,11 +286,11 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 		// extract package name and the simple type name
 		int lastPkgDot = qualifiedName.lastIndexOf('.');
 		if (lastPkgDot == -1) {
-			fPkgName = null;
-			fTypeName = qualifiedName;
+			setPkgName(null);
+			setTypeName(qualifiedName);
 		} else {
-			fPkgName = qualifiedName.substring(0, lastPkgDot);
-			fTypeName = qualifiedName.substring(lastPkgDot + 1, qualifiedName.length());
+			setPkgName(qualifiedName.substring(0, lastPkgDot));
+			setTypeName(qualifiedName.substring(lastPkgDot + 1, qualifiedName.length()));
 		}
 		
 		// look for line #
@@ -294,7 +303,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 					buffer.append(character);
 				} else {
 					try {
-						fLineNumber = Integer.parseInt(buffer.toString());
+						setLineNumber(Integer.parseInt(buffer.toString()));
 					} catch (NumberFormatException nfe) {
 						
 					}
@@ -304,8 +313,59 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 	}
 
 	protected Shell getShell() {
-		return fViewPart.getViewSite().getShell();
+		return getViewPart().getViewSite().getShell();
 	}		
 	
+	/**
+	 * @see Listener#handleEvent(Event)
+	 */
+	public void handleEvent(Event event) {
+		try {
+			setInitiatedFromDoubleClick(true);
+			doOpenType();
+		} finally {
+			setInitiatedFromDoubleClick(false);
+		}
+	}
+	
+	protected boolean initiatedFromDoubleClick() {
+		return fInitiatedFromDoubleClick;
+	}
+
+	protected void setInitiatedFromDoubleClick(boolean initiatedFromDoubleClick) {
+		fInitiatedFromDoubleClick = initiatedFromDoubleClick;
+	}
+	
+	protected int getLineNumber() {
+		return fLineNumber;
+	}
+
+	protected void setLineNumber(int lineNumber) {
+		fLineNumber = lineNumber;
+	}
+
+	protected String getPkgName() {
+		return fPkgName;
+	}
+
+	protected void setPkgName(String pkgName) {
+		fPkgName = pkgName;
+	}
+
+	protected String getTypeName() {
+		return fTypeName;
+	}
+
+	protected void setTypeName(String typeName) {
+		fTypeName = typeName;
+	}
+	
+	protected IViewPart getViewPart() {
+		return fViewPart;
+	}
+
+	protected void setViewPart(IViewPart viewPart) {
+		fViewPart = viewPart;
+	}
 }
 
