@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -137,26 +138,97 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		// Register build watchers with each project
-		try {
-			IProject[] projects= getWorkspace().getRoot().getProjects();
-			int numProjects= projects.length;
-			IProject project= null;
-			for (int i= 0;  i < numProjects; i++) {
-				project= projects[i];
-				IProjectDescription description = project.getDescription();
-				ICommand buildWatcherCommand = getBuildWatcherCommand(description);
-	
-				if (buildWatcherCommand == null) {
-		
-					// Add a Java command to the build spec
-					ICommand command = description.newCommand();
-					command.setBuilderName(ProjectBuildWatcher.BUILDER_ID);
-					setBuildWatcherCommand(project, command);
-				}
-			}
-		} catch (CoreException exception) {
+		IProject[] projects= getWorkspace().getRoot().getProjects();
+		for (int i= 0, numProjects= projects.length;  i < numProjects; i++) {
+			registerBuildWatcherForProject(projects[i]);
 		}
 	}
+	
+	/**
+	 * Deregisters this HCR manager as a resource change listener. Removes all hot
+	 * code replace listeners. This method is called by the JDI debug model plugin
+	 * on shutdown.
+	 */
+	public void shutdown() {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+		getWorkspace().removeResourceChangeListener(this);
+		fHotCodeReplaceListeners.removeAll();
+		clearHotSwapTargets();
+		clearProjectBuildWatchers();
+	}
+	/**
+	 * Returns the workspace.
+	 */
+	protected IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+	
+	private void clearProjectBuildWatchers() {
+		fProjectToBuilder= null;
+	}
+	
+	/**
+	 * Returns the launch manager.
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+	/**
+	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		handleNewProjects(event);
+		final List resources= getChangedClassFiles(event.getDelta());
+		if (resources.isEmpty()) {
+			return;
+		}
+		final List hotSwapTargets= getHotSwapTargets();
+		final List noHotSwapTargets= getNoHotSwapTargets();
+		final List qualifiedNames= JDIDebugUtils.getQualifiedNames(resources);
+		if (!hotSwapTargets.isEmpty()) {
+			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					notify(hotSwapTargets, resources, qualifiedNames);
+				}
+			};
+			fork(wRunnable);	
+		}
+		if (!noHotSwapTargets.isEmpty()) {
+			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					notifyFailedHCR(noHotSwapTargets, resources, qualifiedNames);
+				}
+			};
+			fork(wRunnable);
+		}
+	}
+	
+	private void handleNewProjects(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		IResource resource= delta.getResource();
+		if (resource.getType() == (IResource.PROJECT) && delta.getKind() == IResourceDelta.ADDED) {
+			// A new project has been created
+			registerBuildWatcherForProject((IProject)resource);
+		}
+	}
+	
+	private void registerBuildWatcherForProject(IProject project) {
+		try {
+			IProjectDescription description = project.getDescription();
+			ICommand buildWatcherCommand = getBuildWatcherCommand(description);
+	
+			if (buildWatcherCommand == null) {
+				// Add a Java command to the build spec
+				ICommand command = description.newCommand();
+				command.setBuilderName(ProjectBuildWatcher.BUILDER_ID);
+				setBuildWatcherCommand(project, command);
+			}
+		} catch (CoreException exception) {
+			JDIDebugPlugin.logError(exception);
+		}
+	}
+	
 	
 	/**
 	 * Find the specific build watcher command amongst the build spec of a given description
@@ -201,60 +273,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		// Commit the spec change into the project
 		description.setBuildSpec(newCommands);
 		project.setDescription(description, null);
-	}
-	
-	/**
-	 * Deregisters this HCR manager as a resource change listener. Removes all hot
-	 * code replace listeners. This method* is called by the JDI debug model plugin
-	 * on shutdown.
-	 */
-	public void shutdown() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		DebugPlugin.getDefault().removeDebugEventListener(this);
-		getWorkspace().removeResourceChangeListener(this);
-		fHotCodeReplaceListeners.removeAll();
-		clearHotSwapTargets();
-	}
-	/**
-	 * Returns the workspace.
-	 */
-	protected IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-	
-	/**
-	 * Returns the launch manager.
-	 */
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
-	/**
-	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		final List resources= getChangedClassFiles(event.getDelta());
-		if (resources.isEmpty()) {
-			return;
-		}
-		final List hotSwapTargets= getHotSwapTargets();
-		final List noHotSwapTargets= getNoHotSwapTargets();
-		final List qualifiedNames= JDIDebugUtils.getQualifiedNames(resources);
-		if (!hotSwapTargets.isEmpty()) {
-			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
-					notify(hotSwapTargets, resources, qualifiedNames);
-				}
-			};
-			fork(wRunnable);	
-		}
-		if (!noHotSwapTargets.isEmpty()) {
-			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
-					notifyFailedHCR(noHotSwapTargets, resources, qualifiedNames);
-				}
-			};
-			fork(wRunnable);
-		}
 	}
 	
 	/**
@@ -320,7 +338,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					// Thus, pop the frames that contain affected methods
 					// *before* the class redefinition to avoid problems.
 					try {
-						attemptPopFrames(target, qualifiedNames, poppedThreads);
+						attemptPopFrames(target, resources, qualifiedNames, poppedThreads);
 						framesPopped= true; // No exception occurred
 					} catch (DebugException de) {
 						ms.merge(de.getStatus());
@@ -340,7 +358,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				} else {
 					// J9 drop to frame support:
 					// After redefining classes, drop to frame
-					attemptDropToFrame(target, qualifiedNames);
+					attemptDropToFrame(target, resources, qualifiedNames);
 				}
 				fireHCRSucceeded();
 			} catch (DebugException de) {
@@ -380,10 +398,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * 
 	 * @param target the debug target in which frames are to be dropped
 	 */
-	protected void attemptDropToFrame(JDIDebugTarget target, List replacedClassNames) throws DebugException {
+	protected void attemptDropToFrame(JDIDebugTarget target, List resourceList, List replacedClassNames) throws DebugException {
 		IThread[] threads= target.getThreads();
 		List dropFrames= new ArrayList(1);
 		int numThreads= threads.length;
+		IResource[] resources= new IResource[resourceList.size()];
+		resourceList.toArray(resources);
 		for (int i = 0; i < numThreads; i++) {
 			JDIThread thread= (JDIThread) threads[i];
 			if (thread.isSuspended()) {
@@ -395,7 +415,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						// smart drop to frame support
 						ICompilationUnit compilationUnit= getCompilationUnit(frame);
 						try {
-							IMethod method= getMethod(frame);
+							IMethod method= getMethod(frame, resources);
 							if (method != null) {
 								CompilationUnitDelta delta= new CompilationUnitDelta(compilationUnit, fLastBuildTime);
 								if (!delta.hasChanged(method)) {
@@ -450,8 +470,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * @param poppedThreads a list of the threads in which frames
 	 *        were popped.This parameter may have entries added by this method
 	 */
-	protected void attemptPopFrames(JDIDebugTarget target, List replacedClassNames, List poppedThreads) throws DebugException {
-		List popFrames= getFramesToPop(target.getThreads(), replacedClassNames);
+	protected void attemptPopFrames(JDIDebugTarget target, List resources, List replacedClassNames, List poppedThreads) throws DebugException {
+		List popFrames= getFramesToPop(target.getThreads(), resources, replacedClassNames);
 
 		// All threads that want to drop to frame are able. Proceed with the drop
 		JDIStackFrame popFrame= null;
@@ -471,15 +491,17 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * Returns a list of frames which should be popped in the given threads.
 	 */
-	protected List getFramesToPop(IThread[] threads, List replacedClassNames) throws DebugException {
+	protected List getFramesToPop(IThread[] threads, List resourceList, List replacedClassNames) throws DebugException {
 		JDIThread thread= null;
 		JDIStackFrame dropFrame= null;
 		List popFrames= new ArrayList();
 		int numThreads= threads.length;
+		IResource[] resources= new IResource[resourceList.size()];
+		resourceList.toArray(resources);
 		for (int i = 0; i < numThreads; i++) {
 			thread= (JDIThread) threads[i];
 			if (thread.isSuspended()) {
-				dropFrame= getDropFrame(thread, replacedClassNames);
+				dropFrame= getDropFrame(thread, resources, replacedClassNames);
 				if (dropFrame == null) {
 					// No frame to drop to in this thread
 					continue;
@@ -508,7 +530,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * stack frames whose methods were directly affected (and not simply all frames
 	 * in affected types) will be returned.
 	 */
-	protected JDIStackFrame getDropFrame(JDIThread thread, List replacedClassNames) throws DebugException {
+	protected JDIStackFrame getDropFrame(JDIThread thread, IResource[] resources, List replacedClassNames) throws DebugException {
 		List frames= thread.computeStackFrames();
 		JDIStackFrame dropFrame= null;
 		JDIStackFrame frame= null;
@@ -524,7 +546,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				compilationUnit= getCompilationUnit(frame);
 				try {
 					project= compilationUnit.getCorrespondingResource().getProject();
-					method= getMethod(frame);
+					method= getMethod(frame, resources);
 					builder= (ProjectBuildWatcher)fProjectToBuilder.get(project);
 					if (method != null && builder != null) {
 						delta= new CompilationUnitDelta(compilationUnit, builder.getLastBuildTime());
@@ -592,53 +614,32 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	
 	/**
 	 * Returns the method in which this stack frame is
-	 * suspended
+	 * suspended or <code>null</code> if none can be found
 	 */
-	public IMethod getMethod(JDIStackFrame frame) throws CoreException {
-		StringBuffer methodName= new StringBuffer(frame.getDeclaringTypeName());
-		methodName.append('.');
-		methodName.append(frame.getMethodName());
-		return new MethodFinder().getMethod(methodName.toString());
+	public IMethod getMethod(JDIStackFrame frame, IResource[] resources) throws CoreException {
+		String declaringTypeName= frame.getDeclaringTypeName();
+		String methodName= frame.getMethodName();
+		String[] arguments= Signature.getParameterTypes(frame.getSignature());
+		ICompilationUnit compilationUnit= getCompilationUnit(frame);
+		IType type= compilationUnit.getType(getUnqualifiedName(declaringTypeName));;
+		if (type != null) {
+			return type.getMethod(methodName, arguments);
+		}
+		return null;
 	}
 	
 	/**
-	 * Utility class which searches for an IMethod with a
-	 * search engine by collecting search results from
-	 * the engine
+	 * Given a fully qualified name, return the unqualified name.
 	 */
-	class MethodFinder implements IJavaSearchResultCollector {
-		/**
-		 * The method caught by the search result collector
-		 */
-		IMethod fMethod= null;
-		public IMethod getMethod(String methodName) {
-			SearchEngine engine= new SearchEngine();
-			IWorkspace workspace= getWorkspace();
-			IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-			try {
-				engine.search(workspace, methodName, IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, scope, this);
-			} catch (JavaModelException exception) {
-			}
-			return fMethod;
-		}
-		
-		public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy)	throws CoreException {
-				if (accuracy != IJavaSearchResultCollector.EXACT_MATCH) {
-					return;
-				}
-				if (enclosingElement instanceof IMethod) {
-					fMethod= (IMethod) enclosingElement;
-				}
-			}
-			
-			public void aboutToStart() {}
-			public void done() {}
-			public IProgressMonitor getProgressMonitor() {
-				return null;
-			}
+	protected String getUnqualifiedName(String qualifiedName) {
+		int index= qualifiedName.lastIndexOf('.');
+		return qualifiedName.substring(index + 1);
 	}
 	
-	
+	/**
+	 * Notify the given frames that a drop to frame has failed after
+	 * an HCR with the given class names.
+	 */
 	private void notifyFailedDrop(List frames, List replacedClassNames) throws DebugException {
 		JDIStackFrame frame;
 		Iterator iter= frames.iterator();
