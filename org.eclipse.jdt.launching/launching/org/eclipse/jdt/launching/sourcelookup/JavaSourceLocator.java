@@ -359,41 +359,29 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					resolved.add(entry);
 					break;
 				case IRuntimeClasspathEntry.VARIABLE:
-					if (entry.getVariableName().equals(JavaRuntime.JRELIB_VARIABLE)) {
-						IJavaProject pro = JavaLaunchConfigurationUtils.getJavaProject(configuration);
-						IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
-						IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
-						// omit from path unless JRE_LIB resolves to a library different
-						// than the config's project's JRE
-						if (!buildVM.equals(runVM)) {
-							IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
-							// add to the beginning
-							for (int j = 0; j < rs.length; j++) {
-								resolved.add(j, rs[j]);
-							}
-						}
-					} else {
-						resolved.add(entry);
-					}
-					break;
 				case IRuntimeClasspathEntry.CONTAINER:
-					if (entry.getVariableName().equals(JavaRuntime.JRE_CONTAINER)) {
+					boolean include = false;
+					String name = entry.getVariableName();
+					if (name.equals(JavaRuntime.JRELIB_VARIABLE) || name.equals(JavaRuntime.JRE_CONTAINER)) {
 						IJavaProject pro = JavaLaunchConfigurationUtils.getJavaProject(configuration);
-						IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
-						IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
+						include = pro == null;
 						// omit from path unless JRE_LIB resolves to a library different
-						// than the config's project's JRE
-						if (!buildVM.equals(runVM)) {
-							IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
-							// add to the beginning
-							for (int j = 0; j < rs.length; j++) {
-								resolved.add(j, rs[j]);
-							}
+						// than the config's project's JRE, or there is no project						
+						if (!include) {
+							IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
+							IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
+							include = !buildVM.equals(runVM);
 						}
 					} else {
-						// XXX: need to expand & resolve
-						resolved.add(entry);
-					}				
+						include = true;
+					}		
+					if (include) {
+						IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
+						// add to the beginning
+						for (int j = 0; j < rs.length; j++) {
+							resolved.add(j, rs[j]);
+						}
+					}						
 					break;
 			}
 		}	
