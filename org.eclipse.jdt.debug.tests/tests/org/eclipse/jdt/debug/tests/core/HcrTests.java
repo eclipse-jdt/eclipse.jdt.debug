@@ -11,6 +11,8 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -47,6 +49,16 @@ public class HcrTests extends AbstractDebugTest {
 				assertNotNull("Could not find 'x'", variable);
 				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
 				
+				// close the editor
+				DebugPlugin.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+							public void run() {
+								DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
+							}
+						});
+					}
+				});
 				// now do the HCR
 				ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
 				assertTrue("HcrClass.java does not exist", cu.exists());
