@@ -1,19 +1,27 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.util.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.Event;
-import com.sun.jdi.event.ExceptionEvent;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ExceptionRequest;
 
@@ -125,6 +133,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}	
 	
 	protected ExceptionRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		if (!isCaught() && !isUncaught()) {
+			return null;
+		}
 			ExceptionRequest request= null;
 			try {
 				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
@@ -236,28 +247,56 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * the appropriate settings.
 	 */
 	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {		
-		
 		// if the hit count has changed, or the request has expired and is being re-enabled,
 		// create a new request
 		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
-			try {
-				// delete old request
-				//on JDK you cannot delete (disable) an event request that has hit its count filter
-				if (!isExpired(request)) {
-					target.getEventRequestManager().deleteEventRequest(request); // disable & remove
-				}
-				ReferenceType exClass = ((ExceptionRequest)request).exception();				
-				request = newRequest(target, exClass);
-			} catch (VMDisconnectedException e) {
-				if (target.isTerminated() || target.isDisconnected()) {
-					return request;
-				}
-				JDIDebugPlugin.logError(e);
-			} catch (RuntimeException e) {
-				JDIDebugPlugin.logError(e);
-			}
+			request= createUpdatedExceptionRequest(target, (ExceptionRequest)request);
 		}
 		return request;
-	}		
+	}	
+	
+	protected EventRequest updateCaughtState(EventRequest req, JDIDebugTarget target) throws CoreException  {
+		if(!(req instanceof ExceptionRequest)) {
+			return req;
+		}
+		ExceptionRequest request= (ExceptionRequest)req;
+		
+		if (request.notifyCaught() != isCaught() || request.notifyUncaught() != isUncaught()) {
+			request= createUpdatedExceptionRequest(target, (ExceptionRequest)request);
+		}
+		return request;
+	}
+	
+	protected ExceptionRequest createUpdatedExceptionRequest(JDIDebugTarget target, ExceptionRequest request) throws CoreException{
+		try {
+			// delete old request
+			//on JDK you cannot delete (disable) an event request that has hit its count filter
+			if (!isExpired(request)) {
+				target.getEventRequestManager().deleteEventRequest(request); // disable & remove
+			}
+			ReferenceType exClass = ((ExceptionRequest)request).exception();				
+			request = newRequest(target, exClass);
+		} catch (VMDisconnectedException e) {
+			if (target.isTerminated() || target.isDisconnected()) {
+				return request;
+			}
+			JDIDebugPlugin.logError(e);
+		} catch (RuntimeException e) {
+			JDIDebugPlugin.logError(e);
+		}
+		return request;
+	}
+	/**
+	 * @see JavaBreakpoint#updateRequest(EventRequest, JDIDebugTarget)
+	 */
+	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+		updateEnabledState(request);
+		EventRequest newRequest = updateHitCount(request, target);
+		newRequest= updateCaughtState(newRequest,target);
+		if (newRequest != null && newRequest != request) {
+			replaceRequest(target, request, newRequest);
+			request = newRequest;
+		}
+	}
 }
 
