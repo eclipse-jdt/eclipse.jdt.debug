@@ -37,7 +37,6 @@ import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JDIDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -196,7 +195,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * @param resources the resources which correspond to the changed classes
 	 */
 	private void notify(List targets, List resources, List qualifiedNames) {
-		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugModelMessages.getString("JavaHotCodeReplaceManager.drop_to_frame_failed"), null); //$NON-NLS-1$
+		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.drop_to_frame_failed"), null); //$NON-NLS-1$
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
@@ -275,7 +274,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						notifyFailedDrop(((JDIThread)threads[i]).computeStackFrames(), replacedClassNames);
 					}
 					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.NOT_SUPPORTED, JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
+						DebugException.NOT_SUPPORTED, JDIDebugHCRMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
 				}
 			}
 		}
