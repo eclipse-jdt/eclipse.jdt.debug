@@ -61,16 +61,18 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * given (throwable) type. Caught and uncaught specify where the exception
 	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
 	 * Checked indicates if the given exception is a checked exception.
+	 * Note: the breakpoint is not added to the breakpoint manager
+	 * - it is merely created.
+	 *
 	 * @param type the exception for which to create the breakpoint
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
  	 * @param checked whether the exception is a checked exception
- 	 * @param add whether to add the exception to the breakpoint manager
-	 * @return a Java exception breakpoint
+	 * @return a java exception breakpoint
 	 * @exception DebugException if unable to create the associated marker due
 	 *  to a lower level exception.
 	 */	
-	public JavaExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked, final boolean add) throws DebugException {
+	public JavaExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -95,32 +97,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				JavaCore.addJavaElementMarkerAttributes(attributes, exception);
 				marker.setAttributes(attributes);
 				
-				if (add) {
-					addToBreakpointManager();				
-				}
+				addToBreakpointManager();				
 			}
 
 		};
 		run(wr);
-
-	}
-	/**
-	 * Creates and returns an exception breakpoint for the
-	 * given (throwable) type. Caught and uncaught specify where the exception
-	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
-	 * Checked indicates if the given exception is a checked exception.
-	 * The breakpoint is added to the breakpoint manager.
-	 *
-	 * @param type the exception for which to create the breakpoint
-	 * @param caught whether to suspend in caught locations
-	 * @param uncaught whether to suspend in uncaught locations
- 	 * @param checked whether the exception is a checked exception
-	 * @return a Java exception breakpoint
-	 * @exception DebugException if unable to create the associated marker due
-	 *  to a lower level exception.
-	 */	
-	public JavaExceptionBreakpoint(IType exception, boolean caught, boolean uncaught, boolean checked) throws DebugException {
-		this(exception, caught, uncaught, checked, true);
 	}
 	
 	/**

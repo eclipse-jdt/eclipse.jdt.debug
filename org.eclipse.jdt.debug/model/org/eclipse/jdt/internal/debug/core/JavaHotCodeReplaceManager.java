@@ -156,7 +156,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
-			if (!target.isTerminated() && !target.isDisconnected()) {
+			if (target.isTerminated() || target.isDisconnected()) {
 				target.typesFailedReload(resources, qualifiedNames);
 			}
 		}

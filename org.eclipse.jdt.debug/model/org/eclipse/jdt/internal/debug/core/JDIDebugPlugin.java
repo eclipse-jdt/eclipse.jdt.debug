@@ -46,7 +46,7 @@ public class JDIDebugPlugin extends Plugin {
 		fJavaHCRMgr= new JavaHotCodeReplaceManager();
 		fJavaHCRMgr.startup();		
 
-		JDIDebugModel.setupState();
+		JDIDebugModel.setupStepFilterState();
 	}
 	
 

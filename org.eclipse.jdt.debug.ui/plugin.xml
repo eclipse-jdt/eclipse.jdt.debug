@@ -226,38 +226,42 @@
 	<editorContribution 
 		id="org.eclipse.jdt.debug.ui.CUEditMenu" 
 		targetID="org.eclipse.jdt.ui.CompilationUnitEditor"> 
-		<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="edit/additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
-		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="edit/additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
+			tooltip="%Inspect.description" 
 			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
 		</action> 
+		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="edit/additions" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			tooltip="%Display.description" 
+			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+		</action> 		
 	</editorContribution>		
 	<editorContribution 
 		id="org.eclipse.jdt.debug.ui.CFEditMenu" 
 		targetID="org.eclipse.jdt.ui.ClassFileEditor"> 
-		<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="edit/additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
-		</action> 		
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="edit/additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
+			tooltip="%Inspect.description" 
 			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
 		</action> 
+		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="edit/additions" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			tooltip="%Display.description" 
+			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+		</action> 		
 	</editorContribution>
 </extension> 
 
-<!-- Property adapters for Java breakpoints -->
+<!-- Property adapters for java breakpoints -->
 <extension point="org.eclipse.debug.ui.breakpointPropertyAdapters">
 		<breakpointPropertyAdapter
 			id="org.eclipse.jdt.debug.javaBreakpointPropertyAdapter"
@@ -329,38 +333,6 @@
 			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnDeclaringTypeAction">
 		</action>
 	</objectContribution>
-	<viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CUEvaluateActions" 
-    	targetID="#CompilationUnitEditorContext"> 
-    	<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="additions" 
-			icon="icons/full/etool16/insp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
-		</action> 
-     </viewerContribution>
-     <viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CFEvaluateActions" 
-    	targetID="#ClassFileEditorContext"> 
-    	<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="additions" 
-			icon="icons/full/etool16/insp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
-		</action> 
-     </viewerContribution> 
 </extension>
 
 <extension

@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -24,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -85,34 +83,29 @@ public class JDIDebugModel {
 		fgDefaultActiveStepFilters.add("sunw.*");      //$NON-NLS-1$
 	}		
 
-	private static Properties fgProperties;
-	
 	/**
 	 * State variables for step filters
 	 */
-	private static boolean fgStateModified = false;
-	private static boolean fgUseStepFilters = false;
-	private static boolean fgFilterSynthetics = true;
-	private static boolean fgFilterStatics = false;
-	private static boolean fgFilterConstructors = false;
-	private static List fgActiveStepFilterList;
-	private static List fgInactiveStepFilterList;
+	private static boolean fStepFiltersModified = false;
+	private static Properties fStepFilterProperties;
+	private static boolean fUseStepFilters = true;
+	private static boolean fFilterSynthetic = true;
+	private static boolean fFilterStatic = true;
+	private static boolean fFilterConstructor = true;
+	private static List fActiveStepFilterList;
+	private static List fInactiveStepFilterList;
 	
 	/**
-	 * Constants used for persisting state
+	 * Constants used for persisting step filter state
 	 */
-	private static final String PREFERENCES_FILE_NAME = "jdiDebugModel.ini"; //$NON-NLS-1$
-	private static final String PROPERTIES_HEADER = " JDI Debug Model properties"; //$NON-NLS-1$
+	private static final String STEP_FILTERS_FILE_NAME = "stepFilters.ini"; //$NON-NLS-1$
+	private static final String STEP_FILTER_PROPERTIES_HEADER = " Step filter properties"; //$NON-NLS-1$
 	private static final String USE_FILTERS_KEY = "use_filters"; //$NON-NLS-1$
-	private static final String FILTER_SYNTHETICS_KEY = "filter_synthetics"; //$NON-NLS-1$
-	private static final String FILTER_STATICS_KEY = "filter_statics"; //$NON-NLS-1$
-	private static final String FILTER_CONSTRUCTORS_KEY = "filter_constructors"; //$NON-NLS-1$
+	private static final String FILTER_SYNTHETIC_KEY = "filter_synthetic"; //$NON-NLS-1$
+	private static final String FILTER_STATIC_KEY = "filter_static"; //$NON-NLS-1$
+	private static final String FILTER_CONSTRUCTOR_KEY = "filter_constructor"; //$NON-NLS-1$
 	private static final String ACTIVE_FILTERS_KEY = "active_filters"; //$NON-NLS-1$
 	private static final String INACTIVE_FILTERS_KEY = "inactive_filters"; //$NON-NLS-1$
-	
-	
-	private static boolean fgSuspendOnUncaughtExceptions= true;
-	private static final String SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY= "suspend_on_uncaught_exceptions";
 	
 	/**
 	 * Not to be instantiated.
@@ -334,7 +327,7 @@ public class JDIDebugModel {
 	 * @return whether to use step filters
 	 */
 	public static boolean useStepFilters() {
-		return fgUseStepFilters;
+		return fUseStepFilters;
 	}
 	
 	/**
@@ -343,8 +336,8 @@ public class JDIDebugModel {
 	 * @param useFilters whether to use step filters
 	 */
 	public static void setUseStepFilters(boolean useFilters) {
-		fgUseStepFilters = useFilters;
-		setStateModified(true);
+		fUseStepFilters = useFilters;
+		setStepFiltersModified(true);
 	}
 	
 	/**
@@ -352,8 +345,8 @@ public class JDIDebugModel {
 	 * 
 	 * @return whether to filter synthetic methods
 	 */
-	public static boolean filterSynthetics() {
-		return fgFilterSynthetics;
+	public static boolean getFilterSynthetic() {
+		return fFilterSynthetic;
 	}
 	
 	/**
@@ -361,9 +354,9 @@ public class JDIDebugModel {
 	 * 
 	 * @param filter whether to filter synthetic methods
 	 */
-	public static void setFilterSynthetics(boolean filter) {
-		fgFilterSynthetics = filter;
-		setStateModified(true);		
+	public static void setFilterSynthetic(boolean filter) {
+		fFilterSynthetic = filter;
+		setStepFiltersModified(true);		
 	}
 	
 	/**
@@ -371,8 +364,8 @@ public class JDIDebugModel {
 	 * 
 	 * @return whether to filter static initializers
 	 */
-	public static boolean filterStatics() {
-		return fgFilterStatics;
+	public static boolean getFilterStatic() {
+		return fFilterStatic;
 	}
 	
 	/**
@@ -380,9 +373,9 @@ public class JDIDebugModel {
 	 * 
 	 * @param filter whether to filter static initializers
 	 */
-	public static void setFilterStatics(boolean filter) {
-		fgFilterStatics = filter;
-		setStateModified(true);		
+	public static void setFilterStatic(boolean filter) {
+		fFilterStatic = filter;
+		setStepFiltersModified(true);		
 	}
 	
 	/**
@@ -390,8 +383,8 @@ public class JDIDebugModel {
 	 * 
 	 * @return whether to filter constructors
 	 */
-	public static boolean filterConstructors() {
-		return fgFilterConstructors;
+	public static boolean getFilterConstructor() {
+		return fFilterConstructor;
 	}
 	
 	/**
@@ -399,9 +392,9 @@ public class JDIDebugModel {
 	 * 
 	 * @param filter whether to filter constructors
 	 */
-	public static void setFilterConstructors(boolean filter) {
-		fgFilterConstructors = filter;
-		setStateModified(true);		
+	public static void setFilterConstructor(boolean filter) {
+		fFilterConstructor = filter;
+		setStepFiltersModified(true);		
 	}
 	
 	/**
@@ -410,7 +403,7 @@ public class JDIDebugModel {
 	 * @return the list of active step filters
 	 */
 	public static List getActiveStepFilters() {
-		return fgActiveStepFilterList;
+		return fActiveStepFilterList;
 	}
 	
 	/**
@@ -420,8 +413,8 @@ public class JDIDebugModel {
 	 * @param list The list to be the active step filters
 	 */
 	public static void setActiveStepFilters(List list) {
-		fgActiveStepFilterList = list;
-		setStateModified(true);
+		fActiveStepFilterList = list;
+		setStepFiltersModified(true);
 	}
 
 	/**
@@ -430,7 +423,7 @@ public class JDIDebugModel {
 	 * @return The list of inactive step filters
 	 */
 	public static List getInactiveStepFilters() {
-		return fgInactiveStepFilterList;
+		return fInactiveStepFilterList;
 	}
 	
 	/**
@@ -440,8 +433,8 @@ public class JDIDebugModel {
 	 * @param list The list to be the inactive step filters
 	 */
 	public static void setInactiveStepFilters(List list) {
-		fgInactiveStepFilterList = list;
-		setStateModified(true);
+		fInactiveStepFilterList = list;
+		setStepFiltersModified(true);
 	}
 	
 	/**
@@ -457,20 +450,20 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Loads the preferences file if it exists, otherwise initializes
+	 * Loads the step filter state file if it exists, otherwise initializes
 	 * the state to the specified default values.
 	 */
-	public static void setupState() {
-		setProperties(new Properties());
-		File prefFile = JDIDebugPlugin.getDefault().getStateLocation().append(PREFERENCES_FILE_NAME).toFile();
-		if (prefFile.exists()) {		
-			readState(prefFile);
+	public static void setupStepFilterState() {
+		setStepFilterProperties(new Properties());		
+		File stepFilterFile = JDIDebugPlugin.getDefault().getStateLocation().append(STEP_FILTERS_FILE_NAME).toFile();
+		if (stepFilterFile.exists()) {		
+			readStepFilterState(stepFilterFile);
 		} else {
-			initializeState();
+			initializeFilters();
 		}
 	}
 	
-	private static void initializeState() {
+	private static void initializeFilters() {
 		setUseStepFilters(getDefaultUseStepFilters());		
 		setActiveStepFilters(getDefaultActiveStepFilters());		
 		setInactiveStepFilters(getDefaultInactiveStepFilters());
@@ -491,17 +484,17 @@ public class JDIDebugModel {
 	 * @return default list of inactive step filters
 	 */
 	public static List getDefaultInactiveStepFilters() {
-		return Collections.EMPTY_LIST;
+		return new ArrayList(0);
 	}
 	
 	/**
 	 * Returns whether to use step filters by default.
-	 * Always returns <code>false</code>
+	 * Always returns <code>true</code>
 	 * 
 	 * @return whether to use step filters by default.
 	 */
 	public static boolean getDefaultUseStepFilters() {
-		return false;
+		return true;
 	}
 	
 	/**
@@ -516,7 +509,7 @@ public class JDIDebugModel {
 	
 	/**
 	 * Returns whether to use filter static initializers by default.
-	 * Always returns <code>false</code>
+	 * Always returns <code>true</code>
 	 * 
 	 * @return whether to use filter static initializers by default.
 	 */
@@ -526,7 +519,7 @@ public class JDIDebugModel {
 	
 	/**
 	 * Returns whether to use filter constructors by default.
-	 * Always returns <code>false</code>
+	 * Always returns <code>true</code>
 	 * 
 	 * @return whether to use filter constructors by default.
 	 */
@@ -535,27 +528,17 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Returns whether to suspend execution on uncaught exceptions.
-	 * Always returns <code>true</code>
-	 * 
-	 * @return whether to suspend execution on uncaught exceptions.
-	 */
-	public static boolean getDefaultSuspendOnUncaughtExceptions() {
-		return true;	
-	}
-	
-	/**
-	 * Read the persisted state stored in the given File (which is assumed
+	 * Read the step filter state stored in the given File (which is assumed
 	 * to be a java.util.Properties style file), and parse the String values into 
 	 * the appropriate data structures.
 	 * 
 	 * @param file The file to read from
 	 */
-	private static void readState(File file) {
+	private static void readStepFilterState(File file) {
 		FileInputStream fis= null;
 		try {
 			fis = new FileInputStream(file);
-			getProperties().load(fis);			
+			getStepFilterProperties().load(fis);			
 		} catch (IOException ioe) {		
 			JDIDebugPlugin.logError(ioe);	
 		} finally {
@@ -568,15 +551,13 @@ public class JDIDebugModel {
 			}
 		}
 		
-		setUseStepFilters(parseBoolean(getProperties().getProperty(USE_FILTERS_KEY, "true"))); //$NON-NLS-1$
-		setFilterSynthetics(parseBoolean(getProperties().getProperty(FILTER_SYNTHETICS_KEY, "true"))); //$NON-NLS-1$
-		setFilterStatics(parseBoolean(getProperties().getProperty(FILTER_STATICS_KEY, "false"))); //$NON-NLS-1$
-		setFilterConstructors(parseBoolean(getProperties().getProperty(FILTER_CONSTRUCTORS_KEY, "false"))); //$NON-NLS-1$
-		setActiveStepFilters(parseList(getProperties().getProperty(ACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
-		setInactiveStepFilters(parseList(getProperties().getProperty(INACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
-		
-		setSuspendOnUncaughtExceptions(parseBoolean(getProperties().getProperty(SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY, "true"))); //$NON-NLS-1$
-		setStateModified(false);
+		setUseStepFilters(parseBoolean(getStepFilterProperties().getProperty(USE_FILTERS_KEY, "true"))); //$NON-NLS-1$
+		setFilterSynthetic(parseBoolean(getStepFilterProperties().getProperty(FILTER_SYNTHETIC_KEY, "true"))); //$NON-NLS-1$
+		setFilterStatic(parseBoolean(getStepFilterProperties().getProperty(FILTER_STATIC_KEY, "false"))); //$NON-NLS-1$
+		setFilterConstructor(parseBoolean(getStepFilterProperties().getProperty(FILTER_CONSTRUCTOR_KEY, "false"))); //$NON-NLS-1$
+		setActiveStepFilters(parseList(getStepFilterProperties().getProperty(ACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
+		setInactiveStepFilters(parseList(getStepFilterProperties().getProperty(INACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
+		setStepFiltersModified(false);
 	}
 	
 	private static boolean parseBoolean(String booleanString) {
@@ -601,23 +582,20 @@ public class JDIDebugModel {
 	 * has been modified from that state stored on disk.
 	 */
 	public static void saveStepFilterState() {
-		if (!stateModified()) {
+		if (!stepFiltersModified()) {
 			return;
 		}
-		File file = JDIDebugPlugin.getDefault().getStateLocation().append(PREFERENCES_FILE_NAME).toFile();
+		File file = JDIDebugPlugin.getDefault().getStateLocation().append(STEP_FILTERS_FILE_NAME).toFile();
 		FileOutputStream fos= null;
 		try {
-			Properties props= getProperties();
-			props.setProperty(USE_FILTERS_KEY, serializeBoolean(fgUseStepFilters));
-			props.setProperty(FILTER_SYNTHETICS_KEY, serializeBoolean(fgFilterSynthetics));
-			props.setProperty(FILTER_STATICS_KEY, serializeBoolean(fgFilterStatics));
-			props.setProperty(FILTER_CONSTRUCTORS_KEY, serializeBoolean(fgFilterConstructors));
-			props.setProperty(ACTIVE_FILTERS_KEY, serializeList(fgActiveStepFilterList));
-			props.setProperty(INACTIVE_FILTERS_KEY, serializeList(fgInactiveStepFilterList));
-			props.setProperty(SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY, serializeBoolean(fgSuspendOnUncaughtExceptions));
-			
+			getStepFilterProperties().setProperty(USE_FILTERS_KEY, serializeBoolean(fUseStepFilters));
+			getStepFilterProperties().setProperty(FILTER_SYNTHETIC_KEY, serializeBoolean(fFilterSynthetic));
+			getStepFilterProperties().setProperty(FILTER_STATIC_KEY, serializeBoolean(fFilterStatic));
+			getStepFilterProperties().setProperty(FILTER_CONSTRUCTOR_KEY, serializeBoolean(fFilterConstructor));
+			getStepFilterProperties().setProperty(ACTIVE_FILTERS_KEY, serializeList(fActiveStepFilterList));
+			getStepFilterProperties().setProperty(INACTIVE_FILTERS_KEY, serializeList(fInactiveStepFilterList));
 			fos = new FileOutputStream(file);
-			getProperties().store(fos, PROPERTIES_HEADER);
+			getStepFilterProperties().store(fos, STEP_FILTER_PROPERTIES_HEADER);
 		} catch (IOException ioe) {
 			JDIDebugPlugin.logError(ioe);
 		} finally {
@@ -655,38 +633,19 @@ public class JDIDebugModel {
 		return buffer.toString();
 	}
 	
-	private static Properties getProperties() {
-		return fgProperties;
+	private static Properties getStepFilterProperties() {
+		return fStepFilterProperties;
 	}
 
-	private static void setProperties(Properties properties) {
-		fgProperties = properties;
+	private static void setStepFilterProperties(Properties stepFilterProperties) {
+		fStepFilterProperties = stepFilterProperties;
 	}
 	
-	private static boolean stateModified() {
-		return fgStateModified;
+	private static boolean stepFiltersModified() {
+		return fStepFiltersModified;
 	}
 
-	private static void setStateModified(boolean stepFiltersModified) {
-		fgStateModified = stepFiltersModified;
-	}
-	
-	public static void setSuspendOnUncaughtExceptions(boolean suspend) {
-		fgSuspendOnUncaughtExceptions= suspend;
-		setStateModified(true);
-		//update all of the current JDI debug targets
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		IDebugTarget[] targets= launchManager.getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget iDebugTarget = targets[i];
-			if (iDebugTarget instanceof JDIDebugTarget) {
-				JDIDebugTarget jdiTarget= (JDIDebugTarget)iDebugTarget;
-				jdiTarget.setEnabledSuspendOnUncaughtException(suspend);
-			}
-		}
-	}
-	
-	public static boolean suspendOnUncaughtExceptions() {
-		return fgSuspendOnUncaughtExceptions;
+	private static void setStepFiltersModified(boolean stepFiltersModified) {
+		fStepFiltersModified = stepFiltersModified;
 	}
 }

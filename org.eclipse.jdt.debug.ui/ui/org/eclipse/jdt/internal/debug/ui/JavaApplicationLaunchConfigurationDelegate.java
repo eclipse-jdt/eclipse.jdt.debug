@@ -36,21 +36,21 @@ import org.eclipse.jdt.launching.VMRunnerResult;
 public class JavaApplicationLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate {
 
-	/**
+	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
 	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return verifyAndLaunch(configuration, mode, true);
 	}
 
-	/**
+	/*
 	 * @see ILaunchConfigurationDelegate#verify(ILaunchConfiguration, String)
 	 */
 	public void verify(ILaunchConfiguration configuration, String mode) throws CoreException {
 		verifyAndLaunch(configuration, mode, false);
 	}
 
-	/**
+	/*
 	 * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
 	 */
 	public void initializeDefaults(
@@ -71,8 +71,8 @@ public class JavaApplicationLaunchConfigurationDelegate
 	 * @exception CoreException if the configuration is invalid or
 	 *  if launching fails.
 	 * 
-	 * [Issue: it is assumed that a launch configuration resides in
-	 *  the project to be launched. It is not possible to store configurations
+	 * [Issue: it is assumed that a launch configuration resides int
+	 *  the project to be lanuched. It is not possible to store configurations
 	 *  to launch project A in project B.]
 	 */
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {

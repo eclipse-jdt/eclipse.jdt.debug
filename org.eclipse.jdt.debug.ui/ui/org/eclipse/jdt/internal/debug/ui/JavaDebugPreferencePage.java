@@ -79,7 +79,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  */
 public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Listener {
 	
-	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
+	private static final String DEFAULT_NEW_FILTER_TEXT = "";
 	
 	private static final Image IMG_CUNIT = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CUNIT);
 	private static final Image IMG_PKG = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
@@ -198,9 +198,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		public void saveFilters() {
 			JDIDebugModel.setUseStepFilters(fUseFiltersCheckbox.getSelection());
-			JDIDebugModel.setFilterSynthetics(fFilterSyntheticButton.getSelection());
-			JDIDebugModel.setFilterStatics(fFilterStaticButton.getSelection());
-			JDIDebugModel.setFilterConstructors(fFilterConstructorButton.getSelection());
+			JDIDebugModel.setFilterSynthetic(fFilterSyntheticButton.getSelection());
+			JDIDebugModel.setFilterStatic(fFilterStaticButton.getSelection());
+			JDIDebugModel.setFilterConstructor(fFilterConstructorButton.getSelection());
 			
 			List active = new ArrayList(fFilters.size());
 			List inactive = new ArrayList(fFilters.size());
@@ -232,20 +232,20 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fViewer.setChecked(filter, newState);
 		}
 		
-		/**
+		/*
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
 			return fFilters.toArray();
 		}
 		
-		/**
+		/*
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
-		/**
+		/*
 		 * @see IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -260,14 +260,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		public CellModifier() {
 		}
 		
-		/**
+		/*
 		 * @see ICellModifier#canModify(Object, String)
 		 */
 		public boolean canModify(Object element, String property) {
 			return isNameProperty(property);
 		}
 		
-		/**
+		/*
 		 * @see ICellModifier#getValue(Object, String)
 		 */
 		public Object getValue(Object element, String property) {
@@ -278,7 +278,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			return null;
 		}
 		
-		/**
+		/*
 		 * @see ICellModifier#modify(Object, String, Object)
 		 */
 		public void modify(Object element, String property, Object value) {
@@ -302,7 +302,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * Label provider for StepFilter model objects
 	 */
 	protected class StepFilterLabelProvider extends LabelProvider implements ITableLabelProvider {
-		/**
+		/*
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
 		public String getColumnText(Object object, int column) {
@@ -312,19 +312,19 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			return ""; //$NON-NLS-1$
 		}
 		
-		/**
+		/*
 		 * @see ILabelProvider#getText(Object)
 		 */
 		public String getText(Object element) {
 			return ((StepFilter)element).getName();
 		}
 		
-		/**
+		/*
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
 		public Image getColumnImage(Object object, int column) {
 			String name = ((StepFilter)object).getName();
-			if (name.endsWith(".*")) { //$NON-NLS-1$
+			if (name.endsWith(".*")) {
 				return IMG_PKG;
 			} else {
 				return IMG_CUNIT;
@@ -341,6 +341,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * Set the default preferences for this page.
 	 */
 	public static void initDefaults(IPreferenceStore store) {
+		store.setDefault(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
 		store.setDefault(IJDIPreferencesConstants.SHOW_HEX_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_CHAR_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, false);		
@@ -362,9 +363,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);		
 		
-		fSuspendButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
-	
-		createSpace(composite);
+		//fSuspendButton= createCheckButton(composite, "Suspend &execution on uncaught exceptions");
+		
+		//createSpace(composite);
 		
 		createPrimitiveDisplayPreferences(composite);
 		
@@ -381,18 +382,18 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * Create the primitive display preferences composite widget
 	 */
 	private void createPrimitiveDisplayPreferences(Composite parent) {
-		Composite comp= createLabelledComposite(parent, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2"));	 //$NON-NLS-1$
+		Composite comp= createLabelledComposite(parent, 1, "Primitive type display options");	
 		
-		fHexButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Display_&hexadecimal_values_(byte,_short,_char,_int,_long)_3")); //$NON-NLS-1$
-		fCharButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Display_ASCII_&character_values_(byte,_short,_int,_long)_4")); //$NON-NLS-1$
-		fUnsignedButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5")); //$NON-NLS-1$
+		fHexButton= createCheckButton(comp, "Display &hexadecimal values (byte, short, char, int, long)");
+		fCharButton= createCheckButton(comp, "Display ASCII &character values (byte, short, int, long)");
+		fUnsignedButton= createCheckButton(comp, "Display &unsigned values (byte)");
 	}
 	
 	/**
 	 * Create a group to contain the step filter related widgetry
 	 */
 	private void createStepFilterPreferences(Composite parent) {
-		Composite comp = createLabelledComposite(parent, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Step_filters_6")); //$NON-NLS-1$
+		Composite comp = createLabelledComposite(parent, 1, "Step filters");
 		
 		// top level container
 		Composite container = new Composite(comp, SWT.NONE);
@@ -404,7 +405,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		// use filters checkbox
 		fUseFiltersCheckbox = new Button(container, SWT.CHECK);
-		fUseFiltersCheckbox.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Use_&step_filters_7")); //$NON-NLS-1$
+		fUseFiltersCheckbox.setText("Use &step filters");
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fUseFiltersCheckbox.setLayoutData(gd);	
@@ -418,7 +419,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		//table label
 		fTableLabel= new Label(container, SWT.NONE);
-		fTableLabel.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Defined_step_fi&lters__8")); //$NON-NLS-1$
+		fTableLabel.setText("D&efined step filters:");
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
@@ -465,8 +466,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		// Add filter button
 		fAddFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fAddFilterButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Filter_9")); //$NON-NLS-1$
-		fAddFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Key_in_the_name_of_a_new_step_filter_10")); //$NON-NLS-1$
+		fAddFilterButton.setText("Add &Filter");
+		fAddFilterButton.setToolTipText("Key in the name of a new step filter");
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAddFilterButton.setLayoutData(gd);
 		fAddFilterButton.addSelectionListener(new SelectionListener() {
@@ -479,8 +480,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Type..._11")); //$NON-NLS-1$
-		fAddTypeButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_Java_type_and_add_it_to_step_filters_12")); //$NON-NLS-1$
+		fAddTypeButton.setText("Add &Type...");
+		fAddTypeButton.setToolTipText("Choose a Java type and add it to step filters");
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
@@ -493,8 +494,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
-		fAddPackageButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Package..._13")); //$NON-NLS-1$
-		fAddPackageButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_package_and_add_it_to_step_filters_14")); //$NON-NLS-1$
+		fAddPackageButton.setText("Add &Package...");
+		fAddPackageButton.setToolTipText("Choose a package and add it to step filters");
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
@@ -507,8 +508,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		// Remove button
 		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFilterButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.&Remove_15")); //$NON-NLS-1$
-		fRemoveFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Remove_all_selected_step_filters_16")); //$NON-NLS-1$
+		fRemoveFilterButton.setText("&Remove");
+		fRemoveFilterButton.setToolTipText("Remove all selected step filters");
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fRemoveFilterButton.setLayoutData(gd);
 		fRemoveFilterButton.addSelectionListener(new SelectionListener() {
@@ -522,28 +523,28 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		// filter synthetic checkbox
 		fFilterSyntheticButton = new Button(container, SWT.CHECK);
-		fFilterSyntheticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_s&ynthetic_methods_(requires_VM_support)_17")); //$NON-NLS-1$
+		fFilterSyntheticButton.setText("Filter s&ynthetic methods (requires VM support)");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fFilterSyntheticButton.setLayoutData(gd);
 		
 		// filter static checkbox
 		fFilterStaticButton = new Button(container, SWT.CHECK);
-		fFilterStaticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_static_&initializers_18")); //$NON-NLS-1$
+		fFilterStaticButton.setText("Filter static &initializers");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fFilterStaticButton.setLayoutData(gd);
 		
 		// filter constructor checkbox
 		fFilterConstructorButton = new Button(container, SWT.CHECK);
-		fFilterConstructorButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_co&nstructors_19")); //$NON-NLS-1$
+		fFilterConstructorButton.setText("Filter co&nstructors");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fFilterConstructorButton.setLayoutData(gd);
 		
-		fFilterSyntheticButton.setSelection(JDIDebugModel.filterSynthetics());
-		fFilterStaticButton.setSelection(JDIDebugModel.filterStatics());
-		fFilterConstructorButton.setSelection(JDIDebugModel.filterConstructors());
+		fFilterSyntheticButton.setSelection(JDIDebugModel.getFilterSynthetic());
+		fFilterStaticButton.setSelection(JDIDebugModel.getFilterStatic());
+		fFilterConstructorButton.setSelection(JDIDebugModel.getFilterConstructor());
 		boolean enabled = JDIDebugModel.useStepFilters();
 		fUseFiltersCheckbox.setSelection(enabled);
 		toggleStepFilterWidgetsEnabled(enabled);
@@ -681,14 +682,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_TYPES, false);
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_20"); //$NON-NLS-1$
-			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_type_selection_dialog_for_step_filters_21"); //$NON-NLS-1$
+			String title= "Add type to step filters";
+			String message= "Could not open type selection dialog for step filters";
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_22")); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Select_a_type_to_filter_when_stepping_23")); //$NON-NLS-1$
+		dialog.setTitle("Add type to step filters");
+		dialog.setMessage("Select a type to filter when stepping");
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -706,14 +707,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		try {
 			dialog = createAllPackagesDialog(shell);
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_24"); //$NON-NLS-1$
-			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_package_selection_dialog_for_step_filters_25"); //$NON-NLS-1$
+			String title= "Add package to step filters";
+			String message= "Could not open package selection dialog for step filters";
 			ExceptionHandler.handle(jme, title, message);
 			return;			
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_26")); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Select_a_package_to_filter_when_stepping_27")); //$NON-NLS-1$
+		dialog.setTitle("Add package to step filters");
+		dialog.setMessage("Select a package to filter when stepping");
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -723,7 +724,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
 			if (filter.length() < 1) {
-				filter = DebugUIMessages.getString("JavaDebugPreferencePage.(default_package)_28"); //$NON-NLS-1$
+				filter = "(default package)";
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}
@@ -779,7 +780,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		storeValues();
 		getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, new Boolean(true), new Boolean(false));
 		fStepFilterContentProvider.saveFilters();
-		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
 		return true;
 	}
 	
@@ -794,12 +794,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
 
+		//fSuspendButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS));	
 		fHexButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES));
 		fCharButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));
 		
 		fStepFilterContentProvider.setDefaults();
-		fSuspendButton.setSelection(JDIDebugModel.getDefaultSuspendOnUncaughtExceptions());
 	}
 	
 	/**
@@ -876,10 +876,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private void setValues() {
 		IPreferenceStore store = getPreferenceStore();
 		
+		//fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fHexButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES));
 		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));		
-		fSuspendButton.setSelection(JDIDebugModel.suspendOnUncaughtExceptions());
 	}
 	
 	/**
@@ -888,6 +888,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private void storeValues() {
 		IPreferenceStore store = getPreferenceStore();
+	//	store.setValue(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_HEX_VALUES, fHexButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_CHAR_VALUES, fCharButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());

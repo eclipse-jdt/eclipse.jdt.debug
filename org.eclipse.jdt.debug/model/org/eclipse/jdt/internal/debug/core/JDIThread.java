@@ -1709,16 +1709,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * filtered.  Return false otherwise.
 		 */
 		protected boolean locationIsFiltered(Method method) {
-			boolean filterStatics = JDIDebugModel.filterStatics();
-			boolean filterSynthetics = JDIDebugModel.filterSynthetics();
-			boolean filterConstructors = JDIDebugModel.filterConstructors();
-			if (!(filterStatics || filterSynthetics  || filterConstructors)) {
+			boolean filterStatic = JDIDebugModel.getFilterStatic();
+			boolean filterSynthetic = JDIDebugModel.getFilterSynthetic();
+			boolean filterConstructor = JDIDebugModel.getFilterConstructor();
+			if (!(filterStatic || filterSynthetic  || filterConstructor)) {
 				return false;
 			}			
 			
-			if ((filterStatics && method.isStaticInitializer())	||
-				(filterSynthetics && method.isSynthetic()) ||
-				(filterConstructors && method.isConstructor()) ) {
+			if ((filterStatic && method.isStaticInitializer())	||
+				(filterSynthetic && method.isSynthetic()) ||
+				(filterConstructor && method.isConstructor()) ) {
 				return true;	
 			}
 			

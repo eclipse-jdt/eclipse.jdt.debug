@@ -26,7 +26,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -726,9 +725,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaBreakpoint) {
 				return getBreakpointImage((IJavaBreakpoint)item);
 			}
-			if (item instanceof IJavaStackFrame || item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
-				return getDebugElementImage(item);
-			}
 		} catch (CoreException e) {
 		}
 		return null;
@@ -769,55 +765,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			computeBaseImageDescriptor(element), computeAdornmentFlags(element), BIG_SIZE);
 
 		return fRegistry.get(descriptor);			
-	}
-	
-	/**
-	 * Returns the image associated with the given element or <code>null</code>
-	 * if none is defined.
-	 */
-	protected Image getDebugElementImage(Object element) {
-		ImageDescriptor image= DebugUITools.getDefaultImageDescriptor(element);
-		if (image == null) {
-			return null;
-		}
-		JDIDebugElementImageDescriptor descriptor= new JDIDebugElementImageDescriptor(image, computeJDIAdornmentFlags(element));
-		return fRegistry.get(descriptor);
-	}
-	
-	/**
-	 * Returns the adornment flags for the given element.
-	 * These flags are used to render appropriate overlay
-	 * icons for the element.
-	 */
-	private int computeJDIAdornmentFlags(Object element) {
-		try {
-			if (element instanceof IJavaStackFrame) {
-				if (((IJavaStackFrame)element).isOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (((IJavaStackFrame)element).mayBeOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.MAY_BE_OUT_OF_SYNCH;
-				}
-			}
-			if (element instanceof IJavaThread) {
-				if (((IJavaThread)element).isOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (((IJavaThread)element).mayBeOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.MAY_BE_OUT_OF_SYNCH;
-				}
-			}
-			if (element instanceof IJavaDebugTarget) {
-				if (((IJavaDebugTarget)element).isOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (((IJavaDebugTarget)element).mayBeOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.MAY_BE_OUT_OF_SYNCH;
-				}
-			}
-		} catch (DebugException exception) {
-		}
-		return 0;
 	}
 	
 	private ImageDescriptor computeBaseImageDescriptor(IAdaptable element) {
