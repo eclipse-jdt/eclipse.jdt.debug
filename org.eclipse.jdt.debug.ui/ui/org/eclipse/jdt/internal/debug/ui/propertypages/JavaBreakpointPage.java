@@ -14,7 +14,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -51,11 +54,17 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	private static final String fgHitCountErrorMessage= PropertyPageMessages.getString("JavaBreakpointPage.0"); //$NON-NLS-1$
 	
 	/**
+	 * Store the breakpoint properties.
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				doStore();
+			}
+		};
 		try {
-			doStore();
+			ResourcesPlugin.getWorkspace().run(wr, null);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.getString("JavaBreakpointPage.1"), e); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);
@@ -105,7 +114,9 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	}
 	
 	/**
-	 * Stores the values configured in this page.
+	 * Stores the values configured in this page. This method
+	 * should be called from within a workspace runnable to
+	 * reduce the number of resource deltas.
 	 */
 	protected void doStore() throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
