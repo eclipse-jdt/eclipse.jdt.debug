@@ -247,16 +247,28 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			// add the data to the different hash maps.
 			for (int i= 0; i < repeatCount; i++, inputStartLine++) {
 				fileInfo.addLineInfo(inputStartLine, outputStartLine, outputLineIncrement);
-				for (int j= 0; j < outputLineIncrement; j++, outputStartLine++) {
-					Integer key= new Integer(outputStartLine);
-					List inputLines= (List)fOutputLineToInputLine.get(key);
-					if (inputLines == null) {
-						inputLines= new ArrayList();
-						fOutputLineToInputLine.put(key, inputLines);
+				if (outputLineIncrement == 0) {
+					// see bug 40022
+					addLineInfoToMap(inputStartLine, lineFileId, outputStartLine);
+				} else {
+					for (int j= 0; j < outputLineIncrement; j++, outputStartLine++) {
+						addLineInfoToMap(inputStartLine, lineFileId, outputStartLine);
 					}
-					inputLines.add(new int[] {lineFileId, inputStartLine});
 				}
 			}
+		}
+
+		/**
+		 * Add the data to the map.
+		 */
+		private void addLineInfoToMap(int inputStartLine, int lineFileId, int outputStartLine) {
+			Integer key= new Integer(outputStartLine);
+			List inputLines= (List)fOutputLineToInputLine.get(key);
+			if (inputLines == null) {
+				inputLines= new ArrayList();
+				fOutputLineToInputLine.put(key, inputLines);
+			}
+			inputLines.add(new int[] {lineFileId, inputStartLine});
 		}
 
 		/**
