@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.launching;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -115,6 +116,9 @@ public class JavaLaunchConfigurationUtils {
 		
 		TransformerFactory factory= TransformerFactory.newInstance();
 		Transformer transformer= factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		
 		DOMSource source= new DOMSource(doc);
 		StreamResult outputTarget= new StreamResult(s);
 		transformer.transform(source, outputTarget);
