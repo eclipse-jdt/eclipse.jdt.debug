@@ -39,9 +39,11 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected java.util.List fVMStandins;	
 	
 	// Dynamic JRE UI widgets
-	private ILaunchConfigurationTab fDynamicTab;
-	private Composite fDynamicTabHolder;
+	protected ILaunchConfigurationTab fDynamicTab;
+	protected Composite fDynamicTabHolder;
 	
+	// Constants
+	protected static final String DEFAULT_JRE_NAME = LauncherMessages.getString("JavaJRETab.Default_1"); //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 		
 	/**
@@ -151,12 +153,16 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		int vmIndex = fJRECombo.getSelectionIndex();
-		if (vmIndex > -1) {
-			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
-			String vmID = vmStandin.getId();
+		int selectedIndex = fJRECombo.getSelectionIndex();
+		if (selectedIndex > -1) {
+			String vmID = null;
+			String vmTypeID = null;
+			if (selectedIndex > 0) {
+				VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - 1);
+				vmID = vmStandin.getId();
+				vmTypeID = vmStandin.getVMInstallType().getId();
+			} 
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmID);
-			String vmTypeID = vmStandin.getVMInstallType().getId();
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 		}	
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
@@ -173,9 +179,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		setErrorMessage(null);
 		setMessage(null);
 		
-		int vmIndex = fJRECombo.getSelectionIndex();
-		if (vmIndex > -1) {
-			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
+		// Don't do any validation if the default VM was chosen
+		int selectedIndex = fJRECombo.getSelectionIndex();
+		if (selectedIndex > 0) {
+			VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - 1);
 			IVMInstall vm = vmStandin.convertToRealVM();
 			File location = vm.getInstallLocation();
 			if (location == null) {
@@ -186,7 +193,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 				setErrorMessage(LauncherMessages.getString("JavaJRETab.JRE_home_directory_does_not_exist_37")); //$NON-NLS-1$
 				return false;
 			}			
-		} else {
+		} else if (selectedIndex < 0) {
 			setErrorMessage(LauncherMessages.getString("JavaJRETab.JRE_not_specified_38")); //$NON-NLS-1$
 			return false;
 		}		
@@ -209,7 +216,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see IAddVMDialogRequestor#isDuplicateName(IVMInstallType, String)
 	 */
 	public boolean isDuplicateName(IVMInstallType type, String name) {
-		for (int i= 0; i < fVMStandins.size(); i++) {
+		if (name.equals(DEFAULT_JRE_NAME)) {
+			return true;
+		}
+		for (int i = 0; i < fVMStandins.size(); i++) {
 			IVMInstall vm= (IVMInstall)fVMStandins.get(i);
 			if (vm.getVMInstallType() == type) {
 				if (vm.getName().equals(name))
@@ -241,11 +251,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);			
 		}
-		if (vmID == null) {
-			clearJREComboBoxEntry();
-		} else {
-			selectJREComboBoxEntry(vmID);
-		}
+		selectJREComboBoxEntry(vmID);
 	}	
 	
 	/**
@@ -280,14 +286,18 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * Set the available items on the JRE combo box
 	 */
 	protected void populateJREComboBox() {
-		String[] vmNames = new String[fVMStandins.size()];
+		String[] vmNames = new String[fVMStandins.size() + 1];
+
+		// Set the name of the 'default' VM
+		vmNames[0] = DEFAULT_JRE_NAME;
+		int index = 1;
+
+		// Add all installed VMs
 		Iterator iterator = fVMStandins.iterator();
-		int index = 0;
 		while (iterator.hasNext()) {
 			VMStandin standin = (VMStandin)iterator.next();
 			String vmName = standin.getName();
-			vmNames[index] = vmName;
-			index++;
+			vmNames[index++] = vmName;
 		}
 		fJRECombo.setItems(vmNames);
 	}	
@@ -295,22 +305,21 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	/**
 	 * Cause the VM with the specified ID to be selected in the JRE combo box.
 	 * This relies on the fact that the JRE names in the combo box are in the
-	 * same order as they in the <code>fVMStandins</code> list.
+	 * same order as they are in the <code>fVMStandins</code> list.
 	 */
 	protected void selectJREComboBoxEntry(String vmID) {
-		int index = -1;
-		for (int i = 0; i < fVMStandins.size(); i++) {
-			VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
-			if (vmStandin.getId().equals(vmID)) {
-				index = i;
-				break;
+		int index = 0;
+		if (vmID != null) {
+			for (int i = 0; i < fVMStandins.size(); i++) {
+				VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
+				if (vmStandin.getId().equals(vmID)) {
+					index = i + 1;
+					break;
+				}
 			}
 		}
-		if (index > -1) {
-			fJRECombo.select(index);
-		} else {
-			clearJREComboBoxEntry();
-		}
+
+		fJRECombo.select(index);
 	}	
 	
 	/**
@@ -336,9 +345,12 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 */
 	protected ILaunchConfigurationTab getTabForCurrentJRE() {
 		int selectedIndex = fJRECombo.getSelectionIndex();
-		VMStandin vmStandin = (VMStandin) fVMStandins.get(selectedIndex);
-		String vmInstallTypeID = vmStandin.getVMInstallType().getId();
-		return JDIDebugUIPlugin.getDefault().getVMInstallTypePage(vmInstallTypeID);		
+		if (selectedIndex > 0) {
+			VMStandin vmStandin = (VMStandin) fVMStandins.get(selectedIndex - 1);
+			String vmInstallTypeID = vmStandin.getVMInstallType().getId();
+			return JDIDebugUIPlugin.getDefault().getVMInstallTypePage(vmInstallTypeID);		
+		}
+		return null;
 	}
 	
 	/**
