@@ -1,10 +1,7 @@
-/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import java.net.URL;import java.io.File;import org.eclipse.jdt.internal.launching.LaunchingMessages;
-
+package org.eclipse.jdt.launching;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.net.URL;import java.io.File;import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 /**
- * An abstract implementation of IVMInstall.
- * Subclasses should only implement 
- * <code>IVMInstall getVMRunner(String mode)</code>
+ * Abstract implementation of a VM install. * <p> * Clients implenmenting VM installs should subclass this class. * </p>
  */
 public abstract class AbstractVMInstall implements IVMInstall {
 	private IVMInstallType fType;
@@ -12,13 +9,13 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	private String fName;
 	private File fInstallLocation;	private LibraryLocation[] fSystemLibraryDescriptions;	private URL fJavadocLocation;	
 	/**
-	 * Constructs a new AbstractVM.
-	 * @param	type	The IVMType this vm belongs to.
+	 * Constructs a new VM install.	 * 
+	 * @param	type	The type of this VM install.
 	 * 					Must not be null
-	 * @param	id		The id of this vm instance
+	 * @param	id		The unique identifier of this VM instance
 	 * 					Must not be null;
-	 * @throws	IllegalArgumentException	When any of the 
-	 * 					parameters is null.
+	 * @throws	IllegalArgumentException	if any of the required
+	 * 					parameters are null.
 	 */
 	public AbstractVMInstall(IVMInstallType type, String id) {
 		if (type == null)

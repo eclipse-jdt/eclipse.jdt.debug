@@ -15,7 +15,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 public interface IJavaLaunchConfigurationConstants {
 
 	/**
-	 * Identifier for a Java Application launch configuration
+	 * Identifier for a Local Java Application launch configuration
 	 * (value <code>org.eclipse.jdt.launching.localJavaApplication"</code>).
 	 */
 	public static final String ID_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".localJavaApplication"; //$NON-NLS-1$
@@ -27,42 +27,40 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".remoteJavaApplication"; //$NON-NLS-1$	
 
 	/**
-	 * Identifier for the standard socket attaching VM connector
+	 * Identifier for the standard Socket Attaching VM connector
 	 * (value <code>org.eclipse.jdt.launching.socketAttachConnector"</code>).
 	 */
 	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$	
 			
 	/**
-	 * Name of project containing the main type.
+	 * Launch configuration attribute key. The value is a name of
+	 * a Java project associated with a Java launch configuration.
 	 */
 	public static final String ATTR_PROJECT_NAME = LaunchingPlugin.getUniqueIdentifier() + ".PROJECT_ATTR"; //$NON-NLS-1$
 	
 	/**
-	 * Main type launch configuration attribute name.
-	 * The fully qualified name of the <code>IType</code> to launch.
+	 * Launch configuration attribute key. The value is a fully qualified name
+	 * of a main type to launch.
 	 */
 	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MAIN_TYPE";	 //$NON-NLS-1$
 	
 	/**
-	 * Program arguments launch configuration attribute name.
-	 * The program arguments for a Java application are stored
-	 * in a launch configuration with this key. Program
-	 * arguments are stored as a raw string.
+	 * Launch configuration attribute key. The value is a string specifying
+	 * program arguments for a Java launch configuration, as they should appear
+	 * on the command line.
 	 */
 	public static final String ATTR_PROGRAM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
 	
 	/**
-	 * VM arguments launch configuration attribute name.
-	 * The VM arguments for a Java application are stored
-	 * in a launch configuration with this key. VM
-	 * arguments are stored as a raw string.
+	 * Launch configuration attribute key. The value is a string specifying
+	 * VM arguments for a Java launch configuration, as they should appear
+	 * on the command line.
 	 */
 	public static final String ATTR_VM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".VM_ARGUMENTS";	 //$NON-NLS-1$
 	
 	/**
-	 * Working directory attribute name. The working directory
-	 * to be used by the VM is stored with this key. The value
-	 * is a string specifying an path to the working directory to use.
+	 * Launch configuration attribute key. The value is a string specifying a
+	 * path to the working directory to use when launching a local VM.
 	 * When unspecified, the working directory is inherited from the current process.
 	 * When specified as an absolute path, the path represents a path in the local
 	 * file system. When specified as a full path, the path represents a workspace
@@ -71,125 +69,110 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_WORKING_DIRECTORY = LaunchingPlugin.getUniqueIdentifier() + ".WORKING_DIRECTORY";	 //$NON-NLS-1$
 	
 	/**
-	 * VM install launch configuration attribute name.
-	 * The <code>id</code> of an <code>IVMInstall</code>
-	 * identifying a VM to use for a launch.
-	 * 
-	 * @deprecated use <code>ATTR_VM_INSTALL_NAME</code>
-	 */
-	public static final String ATTR_VM_INSTALL = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_ID"; //$NON-NLS-1$
-
-	/**
-	 * VM install launch configuration attribute name.
-	 * The name of an <code>IVMInstall</code>
-	 * identifying a VM to use for a launch.
+	 * Launch configuration attribute key. The value is a name of a VM install
+	 * to use when launching a local VM. This attribute must be qualified
+	 * by a VM install type, via the <code>ATTR_VM_INSTALL_TYPE</code>
+	 * attribute. When unspecified, the default VM is used.
 	 */
 	public static final String ATTR_VM_INSTALL_NAME = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_NAME"; //$NON-NLS-1$
 		
 	/**
-	 * VM install type launch configuration attribute name.
-	 * The <code>id</code> of an <code>IVMInstallType</code>
-	 * identifying a type of VM to use for a launch.
+	 * Launch configuration attribute key. The value is an identifier of
+	 * a VM install type. Used in conjunction with a VM install name, to 
+	 * specify the VM to use when launching a local Java application.
+	 * The associated VM install name is specified via the attribute
+	 * <code>ATTR_VM_INSTALL_NAME</code>.
 	 */
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	
 	/**
-	 * A Map attribute for launch configurations containing attributes specific
-	 * to a particular VM install type.
+	 * Launch configuration attribute key. The value is a Map attributes specific
+	 * to a particular VM install type, used when launching a local Java
+	 * application. The attributes in the map are implementation dependent
+	 * and are limited to String keys and values.
 	 */
 	public static final String ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP = LaunchingPlugin.getUniqueIdentifier() + "VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
 	
 	/**
-	 * VM connector launch configuration attribute name.
-	 * The <code>id</code> of an <code>IVMConnector</code>
-	 * identifying a connector to use for a remote attach.
+	 * Launch configuration attribute key. The value is an identifier of
+	 * a VM connector, specifying a connector to use when attaching to
+	 * a remote VM.
 	 */
 	public static final String ATTR_VM_CONNECTOR= LaunchingPlugin.getUniqueIdentifier() + ".VM_CONNECTOR_ID"; //$NON-NLS-1$
-	
+		
 	/**
-	 * Bootpath launch configuration attribute name.
-	 * The bootpath for a Java application is stored
-	 * in a launch configuration with this key. A bootpath
-	 * is stored as a raw string.
-	 * 
-	 * @deprecated use ATTR_CLASSPATH - contains both use classes and bootstrap classes
-	 */
-	public static final String ATTR_BOOTPATH = LaunchingPlugin.getUniqueIdentifier() + ".BOOTPATH";	 //$NON-NLS-1$
-	
-	/**
-	 * Classpath launch configuration attribute name.
-	 * If this attribute is present on a launch configuration, its value becomes
-	 * the sole classpath for the launch.  If not present, a default class runtime
-	 * classpath is used. The attribute value is a list of strings which are mementos
-	 * for runtime class path entries.
+	 * Launch configuration attribute key. The attribute value is a list of strings
+	 * which are mementos for runtime class path entries. When unspecified, a default
+	 * classpath is generated, based on the project associated with a launch
+	 * configuration.
 	 */
 	public static final String ATTR_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH";	 //$NON-NLS-1$
 	
 	/**
-	 * Default classpath launch configuration boolean attribute name.
-	 * If this attribute is present on a launch configuration, then the default
-	 * class path is computed at runtime.  If this attribute is set, the contents
-	 * of <code>ATTR_CLASSPATH</code> and <code>ATTR_BOOTPATH</code> are ignored.
+	 * Launch configuration attribute key. The value is a boolean specfying
+	 * whether a default classpath should be used when launching a local
+	 * Java application. When <code>false</code>, a classpath must be specified
+	 * via the <code>ATTR_CLASSPATH</code> attribute.
 	 */
 	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
 
 	/**
-	 * Classpath provider launch configuration attribute name.
-	 * If this attribute is present on a launch configuration, its value is the
-	 * identifier of a classpath provider extension used to compute the classpath
-	 * for a launch configuration.
+	 * Launch configuration attribute key. The value is an identifier of a
+	 * classpath provider extension used to compute the classpath
+	 * for a launch configuration. When unspecified, a default classpath
+	 * provider is used.
 	 */
 	public static final String ATTR_CLASSPATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_PROVIDER";	 //$NON-NLS-1$
 	
 	/**
-	 * Classpath launch configuration attribute name.
-	 * If this attribute is present on a launch configuration, its value becomes
-	 * the sole source lookup path for the launch. Its value is a list of
-	 * strings which are mementos for associated runtime classpath entries.
+	 * Launch configuration attribute key. The value is an ordered list of
+	 * strings which are mementos for associated runtime classpath entries
+	 * interpreted as locations in which to look for source code.
 	 */
 	public static final String ATTR_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH";	 //$NON-NLS-1$
 		
 	/**
-	 * Default source lookup path launch configuration boolean attribute name.
-	 * If this attribute is present on a launch configuration, then the default
-	 * source lookup path is computed at runtime.  If this attribute is set, the contents
-	 * of <code>ATTR_SOURCE_PATH</code> is ignored.
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * whether a default source lookup path should be used. A default source
+	 * lookup path is the same as a launch configuration's classpath. When
+	 * <code>false</code> a source path must be specified via the
+	 * <code>ATTR_SOURCE_PATH</code> attribute.
 	 */
 	public static final String ATTR_DEFAULT_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_SOURCE_PATH"; //$NON-NLS-1$
 
 	/**
-	 * Source path provider launch configuration attribute name.
-	 * If this attribute is present on a launch configuration, its value is the
-	 * identifier of a source path provider extension used to compute the source lookup path
-	 * for a launch configuration.
+	 * Launch configuration attribute key. The value is an identifier of a
+	 * source path provider extension used to compute the source lookup path
+	 * for a launch configuration. When unspecified, a default source lookup
+	 * path provider is used.
 	 */
 	public static final String ATTR_SOURCE_PATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH_PROVIDER";	 //$NON-NLS-1$
 			
 	/**
-	 * Allow termination launch configuration attribute name.
-	 * This attribute is used for attach launching.
+	 * Launch configuration attribute key. The value is a boolean, indicating
+	 * whether a VM will support/allow the terminate action.
+	 * This attribute is used for remote debugging.
 	 */
 	public static final String ATTR_ALLOW_TERMINATE = LaunchingPlugin.getUniqueIdentifier() + ".ALLOW_TERMINATE";	 //$NON-NLS-1$
 
 	/**
-	 * Attribute key for the argument map used to
-	 * establish a remote connection. The value is 
-	 * a map with keys correpsonding to arguments names
-	 * returned by <code>IVMConnector#getDefaultArguments()</code>,
-	 * and values which are strings corresponding to the
-	 * values to use in establishing the connection.
+	 * Launch configuration attribute key. The value is 
+	 * a map. Keys in the map correpsond to arguments names
+	 * returned by <code>IVMConnector#getDefaultArguments()</code>.
+	 * Values are strings corresponding to the values to use when
+	 * establishing a connection to a remote VM.
 	 */
 	public static final String ATTR_CONNECT_MAP = LaunchingPlugin.getUniqueIdentifier() + ".CONNECT_MAP";	 //$NON-NLS-1$
 	
 	/**
 	 * Status code indicating a launch configuration does not
-	 * specify a project that contains the main class to launch.
+	 * specify a project when a project is required.
 	 */
 	public static final int ERR_UNSPECIFIED_PROJECT = 100;	
 		
 	/**
 	 * Status code indicating a launch configuration does not
-	 * specify a main class to launch.
+	 * specify a main type to launch.
 	 */
 	public static final int ERR_UNSPECIFIED_MAIN_TYPE = 101;	
 		

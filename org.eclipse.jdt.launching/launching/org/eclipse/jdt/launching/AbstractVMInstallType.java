@@ -3,21 +3,19 @@ import org.eclipse.jdt.internal.launching.*;
 
 
 /**
- * This is an abstract impelementation of the IVMType interface.
- * It handles the managment of IVMInstall instances and fetches
- * the IVMType id from the configuration markup.
+ * Abstract implementation of a VM install type.
  * Subclasses should implement
  * <ul>
  * <li><code>IVMInstall doCreateVMInstall(String id)</code></li>
  * <li><code>String getName()</code></li>
  * <li><code>IStatus validateInstallLocation(File installLocation)</code></li>
- * </ul>
+ * </ul> * <p> * Clients implementing VM install types should subclass this class. * </p>
  */
 
 public abstract class AbstractVMInstallType implements IVMInstallType, IExecutableExtension {
 	private List fVMs;
 	private String fId;
-	
+		/**	 * Constructs a new VM install type.	 */
 	protected AbstractVMInstallType() {
 		fVMs= new ArrayList(10);
 	}

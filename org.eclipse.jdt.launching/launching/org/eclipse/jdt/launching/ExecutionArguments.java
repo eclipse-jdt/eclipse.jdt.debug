@@ -11,15 +11,10 @@ import java.util.ArrayList;
 /**
  * The execution arguments for running a Java VM. The execution arguments are
  * separated into two parts: arguments to the VM itself, and arguments to the Java 
- * main program.
+ * main program. This class provides convenience methods for parsing a string
+ * of arguments into seperate components.
  * <p>
  * Clients may instantiate this class; it is not intended to be subclassed.
- * </p>
- * <p>
- * Note: This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  */
 public class ExecutionArguments {
@@ -40,36 +35,36 @@ public class ExecutionArguments {
 	}
 	
 	/**
-	 * Returns the VM arguments.
+	 * Returns the VM arguments as one string.
 	 *
-	 * @return the VM arguments
+	 * @return the VM arguments as one string
 	 */
 	public String getVMArguments() {
 		return fVMArgs;
 	}
 	
 	/**
-	 * Returns the program arguments.
+	 * Returns the program arguments as one string.
 	 *
-	 * @return the program arguments
+	 * @return the program arguments as one string
 	 */
 	public String getProgramArguments() {
 		return fProgramArgs;
 	}
 	
 	/**
-	 * Returns the VM arguments as array
+	 * Returns the VM arguments as an array of individual arguments.
 	 *
-	 * @return the VM arguments
+	 * @return the VM arguments as an array of individual arguments
 	 */
 	public String[] getVMArgumentsArray() {
 		return parseArguments(fVMArgs);
 	}
 	
 	/**
-	 * Returns the program arguments as array
+	 * Returns the program arguments as an array of individual arguments.
 	 *
-	 * @return the program arguments
+	 * @return the program arguments as an array of individual arguments
 	 */
 	public String[] getProgramArgumentsArray() {
 		return parseArguments(fProgramArgs);

@@ -34,17 +34,14 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 /**
- * Provides convenience methods for accessing and
- * verifying launch configuration attributes.
+ * Abstract implementation of a Java launch configuration delegate.
+ * Provides convenience methods for accessing and verifying launch
+ * configuration attributes.
  * <p>
- * Clients are intended to subclass this class
+ * Clients implementing Java launch configuration delegates should
+ * subclass this class.
  * </p>
- * <p>
- * Note: This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
+ * @since 2.0
  */
 public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 	
