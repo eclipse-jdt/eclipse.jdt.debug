@@ -40,8 +40,9 @@ public class JavaDebugImages {
 	 * Available cached Images in the Java debug plug-in image registry.
 	 */	
 	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.gif";			//$NON-NLS-1$
-	public static final String IMG_OBJS_EXCEPTION_DISABLED= NAME_PREFIX + "exception_obj_disabled.gif";			//$NON-NLS-1$
+	public static final String IMG_OBJS_EXCEPTION_DISABLED= NAME_PREFIX + "jexceptiond_obj.gif";			//$NON-NLS-1$
 	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
+	
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "installed_ovr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED= NAME_PREFIX + "installed_ovr_disabled.gif";	//$NON-NLS-1$
 	
@@ -60,13 +61,14 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT= NAME_PREFIX + "conditional_ovr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= NAME_PREFIX + "conditional_ovr_disabled.gif";	//$NON-NLS-1$
 
-	public static final String IMG_OBJS_SCOPED_BREAKPOINT= NAME_PREFIX + "scopedexceptionbp_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SCOPED_BREAKPOINT= NAME_PREFIX + "scoped_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SCOPED_BREAKPOINT_DISABLED= NAME_PREFIX + "scoped_ovr.gif";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT= NAME_PREFIX + "uncaught_underlay.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "uncaught_underlay.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT= NAME_PREFIX + "uncaught_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "uncaught_ovr.gif";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_CAUGHT_BREAKPOINT= NAME_PREFIX + "caught_underlay.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_underlay.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_CAUGHT_BREAKPOINT= NAME_PREFIX + "caught_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_ovr.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 
@@ -101,7 +103,8 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT);
 	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED);
 	
-	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT= createManaged(T_OBJ, IMG_OBJS_SCOPED_BREAKPOINT);
+	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_SCOPED_BREAKPOINT);
+	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_SCOPED_BREAKPOINT_DISABLED);
 	
 	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT);
 	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED);

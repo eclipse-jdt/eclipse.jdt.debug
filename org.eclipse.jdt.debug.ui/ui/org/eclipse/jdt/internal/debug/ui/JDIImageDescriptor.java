@@ -34,6 +34,8 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int CAUGHT=				0x080;
 	/** Flag to render the uncaught breakpoint adornment */
 	public final static int UNCAUGHT=				0x100;
+	/** Flag to render the scoped breakpoint adornment */
+	public final static int SCOPED=				0x200;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -89,59 +91,34 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		if (bg == null) {
 			bg= DEFAULT_IMAGE_DATA;
 		}
-		int flags= getFlags();
-		if (((flags & CAUGHT) != 0) || ((flags & UNCAUGHT) != 0)) {
-			drawUnderlays(flags);
-		} 
 		drawImage(bg, 0, 0);
-		drawOverlays(flags);
+		drawOverlays();
 	}
 
-	protected void drawUnderlays(int flags) {
-		ImageData bg= null;
-		if ((flags & CAUGHT) != 0) {
-			//underlay
-			if ((flags & ENABLED) !=0) {
-				bg= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT.getImageData();
-			} else {
-				bg= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED.getImageData();
-			}
-		} if ((flags & UNCAUGHT) != 0) {
-			//underlay
-			if ((flags & ENABLED) !=0) {
-				bg= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT.getImageData();
-			} else {
-				bg= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED.getImageData();
-			}
-		}
-		if (bg != null) {
-			drawImage(bg, 0, 0);
-		}
-	}	
-	
-	
-	/**
+/**
 	 * Add any overlays to the image as specified in the flags.
 	 */
-	protected void drawOverlays(int flags) {
-		
+	protected void drawOverlays() {
+		int flags= getFlags();
+		int x= 0;
+		int y= 0;
 		ImageData data= null;
 		if ((flags & IS_OUT_OF_SYNCH) != 0) {
-			int x= getSize().x;
-			int y= 0;
+			x= getSize().x;
+			y= 0;
 			data= JavaDebugImages.DESC_OVR_IS_OUT_OF_SYNCH.getImageData();
 			x -= data.width;
 			drawImage(data, x, y);
 		} else if ((flags & MAY_BE_OUT_OF_SYNCH) != 0) {
-			int x= getSize().x;
-			int y= 0;
+			x= getSize().x;
+			y= 0;
 			data= JavaDebugImages.DESC_OVR_MAY_BE_OUT_OF_SYNCH.getImageData();
 			x -= data.width;
 			drawImage(data, x, y);
 		} else {
 			if ((flags & INSTALLED) != 0) {
-				int x= 0;
-				int y= getSize().y;
+				x= 0;
+				y= getSize().y;
 				if ((flags & ENABLED) !=0) {
 					data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED.getImageData();
 				} else {
@@ -151,10 +128,40 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				y -= data.height;
 				drawImage(data, x, y);
 			}
-			
+			if ((flags & CAUGHT) != 0) {
+				if ((flags & ENABLED) !=0) {
+					data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT.getImageData();
+				} else {
+					data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED.getImageData();
+				}
+				x= 0;
+				y= 0;
+				drawImage(data, x, y);
+			}
+			if ((flags & UNCAUGHT) != 0) {
+				if ((flags & ENABLED) !=0) {
+					data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT.getImageData();
+				} else {
+					data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED.getImageData();
+				}
+				x= data.width;
+				y= data.height;
+				drawImage(data, x, y);
+			}
+			if ((flags & SCOPED) != 0) {
+				if ((flags & ENABLED) !=0) {
+					data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT.getImageData();
+				} else {
+					data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT_DISABLED.getImageData();
+				}
+				x= 0;
+				y= getSize().y;
+				y-= data.height;
+				drawImage(data, x, y);
+			}
 			if ((flags & CONDITIONAL) != 0) {
-				int x= getSize().x;
-				int y= 0;
+				x= getSize().x;
+				y= 0;
 				if ((flags & ENABLED) !=0) {
 					data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT.getImageData();
 				} else {
@@ -164,9 +171,8 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				drawImage(data, x, y);
 			} else {
 				if ((flags & ENTRY) != 0) {
-					int x= getSize().x;
-					int y= 0;
-				
+					x= getSize().x;
+					y= 0;
 					if ((flags & ENABLED) !=0) {
 						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
 					} else {
@@ -176,8 +182,8 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 					drawImage(data, x, y);
 				}
 				if ((flags & EXIT)  != 0){
-					int x= getSize().x;
-					int y= getSize().y;
+					x= getSize().x;
+					y= getSize().y;
 					if ((flags & ENABLED) != 0) {
 						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
 					} else {
