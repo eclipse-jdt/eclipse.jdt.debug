@@ -293,7 +293,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		}
 		// if node is a variable with a constant value (static final field)
 		IBinding binding= node.resolveBinding();
-		if (binding.getKind() == IBinding.VARIABLE) {
+		if (binding != null && binding.getKind() == IBinding.VARIABLE) {
 			return ((IVariableBinding)binding).getConstantValue() != null;
 		}
 		return false;
@@ -305,8 +305,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		}
 		// if the node is 'this.<field>', and the field is static final
 		Expression expression= node.getExpression();
-		if (expression.getNodeType() == ASTNode.THIS_EXPRESSION) {
-			return node.resolveFieldBinding().getConstantValue() != null;
+		IVariableBinding binding= node.resolveFieldBinding();
+		if (binding != null && expression.getNodeType() == ASTNode.THIS_EXPRESSION) {
+			return binding.getConstantValue() != null;
 		}
 		return false;
 	}
@@ -316,7 +317,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			return false;
 		}
 		// if the field is static final
-		return node.resolveFieldBinding().getConstantValue() != null;
+		IVariableBinding binding= node.resolveFieldBinding();
+		if (binding != null) {
+			return binding.getConstantValue() != null;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -389,7 +394,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				// this assigment to be executed
 				if (leftHandSide instanceof Name) {
 					IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
-					if (!binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
+					if (binding != null && !binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
 						int startLine = fCompilationUnit.lineNumber(node.getStartPosition());
 						if (fLineNumber < startLine) {
 							node.getRightHandSide().accept(this);
