@@ -20,7 +20,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
@@ -553,7 +552,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Shell shell= getShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = createAllPackagesDialog(shell);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell);
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_24"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_package_selection_dialog_for_step_filters_25"); //$NON-NLS-1$
@@ -635,35 +634,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		String[] strings = JavaDebugOptionsManager.parseList(getPreferenceStore().getString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST));
 		return toList(strings);
 	}	
-	
-	/**
-	 * Ignore package fragments that contain only non-Java resources, and make sure
-	 * that each fragment is added to the list only once.
-	 */
-	private SelectionDialog createAllPackagesDialog(Shell shell) throws JavaModelException{
-		IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
-		IJavaModel model= JavaCore.create(wsroot);
-		IJavaProject[] projects= model.getJavaProjects();
-		Set packageNameSet= new HashSet(); 
-		List packageList = new ArrayList();
-		for (int i = 0; i < projects.length; i++) {						
-			IPackageFragment[] pkgs= projects[i].getPackageFragments();	
-			for (int j = 0; j < pkgs.length; j++) {
-				IPackageFragment pkg = pkgs[j];
-				if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
-					continue;
-				}
-				if (packageNameSet.add(pkg.getElementName())) {
-					packageList.add(pkg);
-				}
-			}
-		}
-		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
-		dialog.setIgnoreCase(false);
-		dialog.setElements(packageList.toArray()); // XXX inefficient
-		return dialog;
-	}
 	
 	/**
 	 * Content provider for the table.  Content consists of instances of StepFilter.

@@ -5,6 +5,13 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -12,8 +19,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -21,6 +31,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -28,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -293,6 +305,35 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
 		return fEvaluationEngineManager.getEvaluationEngine(project, target);
+	}
+	
+	/**
+	 * Utility method to create and return a selection dialog that allows
+	 * selection of a specific Java package.  Empty packages are not returned.
+	 */
+	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell) throws JavaModelException{
+		IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
+		IJavaModel model= JavaCore.create(wsroot);
+		IJavaProject[] projects= model.getJavaProjects();
+		Set packageNameSet= new HashSet(); 
+		List packageList = new ArrayList();
+		for (int i = 0; i < projects.length; i++) {						
+			IPackageFragment[] pkgs= projects[i].getPackageFragments();	
+			for (int j = 0; j < pkgs.length; j++) {
+				IPackageFragment pkg = pkgs[j];
+				if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
+					continue;
+				}
+				if (packageNameSet.add(pkg.getElementName())) {
+					packageList.add(pkg);
+				}
+			}
+		}
+		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
+		dialog.setIgnoreCase(false);
+		dialog.setElements(packageList.toArray()); // XXX inefficient
+		return dialog;
 	}
 }
 

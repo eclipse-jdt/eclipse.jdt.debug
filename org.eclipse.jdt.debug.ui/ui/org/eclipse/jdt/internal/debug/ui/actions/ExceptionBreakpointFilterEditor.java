@@ -6,19 +6,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */ 
  
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -27,9 +19,7 @@ import org.eclipse.jdt.internal.debug.ui.Filter;
 import org.eclipse.jdt.internal.debug.ui.FilterLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.FilterViewerSorter;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -70,35 +60,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class ExceptionBreakpointFilterEditor extends FieldEditor {
-
-	/**
-	 * Ignore package fragments that contain only non-Java resources, and make sure
-	 * that each fragment is added to the list only once.
-	 */
-	private SelectionDialog createAllPackagesDialog(Shell shell) throws JavaModelException{
-		IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
-		IJavaModel model= JavaCore.create(wsroot);
-		IJavaProject[] projects= model.getJavaProjects();
-		Set packageNameSet= new HashSet(); 
-		List packageList = new ArrayList();
-		for (int i = 0; i < projects.length; i++) {						
-			IPackageFragment[] pkgs= projects[i].getPackageFragments();	
-			for (int j = 0; j < pkgs.length; j++) {
-				IPackageFragment pkg = pkgs[j];
-				if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
-					continue;
-				}
-				if (packageNameSet.add(pkg.getElementName())) {
-					packageList.add(pkg);
-				}
-			}
-		}
-		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
-		dialog.setIgnoreCase(false);
-		dialog.setElements(packageList.toArray()); // XXX inefficient
-		return dialog;
-	}
 
 	private IJavaExceptionBreakpoint fBreakpoint;
 	private Button fAddFilterButton;
@@ -503,7 +464,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = createAllPackagesDialog(shell);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell);
 		} catch (JavaModelException jme) {
 			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_package_to_scope_12"); //$NON-NLS-1$
 			String message= ActionMessages.getString("ExceptionBreakpointFilterEditor.Could_not_open_package_selection_dialog_for_scope_definition_13");  //$NON-NLS-1$
