@@ -2471,7 +2471,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			typeBinding= typeBinding.getElementType();
 		}
 
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, hasInitializer, fCounter));
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), hasInitializer, fCounter));
 		if (hasInitializer) {
 			initializer.accept(this);
 		}
@@ -2740,7 +2740,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression initializer= node.getInitializer();
 		boolean hasInitializer= initializer != null;
 
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, hasInitializer, fCounter));
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), hasInitializer, fCounter));
 
 		if (hasInitializer) {
 			initializer.accept(this);
