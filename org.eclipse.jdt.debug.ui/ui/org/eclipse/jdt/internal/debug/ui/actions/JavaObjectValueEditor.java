@@ -54,12 +54,23 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      */
     public boolean editVariable(IVariable variable, Shell shell) {
         try {
-            ExpressionInputDialog dialog= new ExpressionInputDialog(shell, (IJavaVariable) variable);
-            if (dialog.open() == Window.OK) {
-                String result = dialog.getResult();
-                IValue newValue = evaluate(shell, result);
-                if (newValue != null) {
-                    variable.setValue(newValue);
+            IJavaVariable javaVariable = (IJavaVariable) variable;
+            String signature = javaVariable.getSignature();
+            if (signature.equals("Ljava/lang/String;")) { //$NON-NLS-1$
+                StringValueInputDialog dialog= new StringValueInputDialog(shell, javaVariable);
+                if (dialog.open() == Window.OK) {
+                    String result = dialog.getResult();
+                    if (dialog.isUseLiteralValue()) {
+	                    variable.setValue(result);
+                    } else {
+                        setValue(variable, shell, result);
+                    }
+                }
+            } else {
+                ExpressionInputDialog dialog= new ExpressionInputDialog(shell, javaVariable);
+                if (dialog.open() == Window.OK) {
+                    String result = dialog.getResult();
+                    setValue(variable, shell, result);
                 }
             }
         } catch (DebugException e) {
@@ -72,6 +83,19 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             }
         }
         return true;
+    }
+
+    /**
+     * @param variable
+     * @param shell
+     * @param result
+     * @throws DebugException
+     */
+    private void setValue(IVariable variable, Shell shell, String result) throws DebugException {
+        IValue newValue = evaluate(shell, result);
+        if (newValue != null) {
+            variable.setValue(newValue);
+        }
     }
 
     /**
