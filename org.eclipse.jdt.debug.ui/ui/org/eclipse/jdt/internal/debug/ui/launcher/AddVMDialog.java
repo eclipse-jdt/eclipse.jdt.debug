@@ -28,10 +28,12 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -240,7 +242,7 @@ public class AddVMDialog extends StatusDialog {
 		IStatus s = null;
 		File file = null;
 		if (locationName.length() == 0) {//$NON-NLS-1$
-			s = new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.enterLocation")); //$NON-NLS-1$
+			s = new StatusInfo(IStatus.INFO, LauncherMessages.getString("addVMDialog.enterLocation")); //$NON-NLS-1$
 		} else {
 			file= new File(locationName);
 			if (!file.exists()) {
@@ -262,7 +264,7 @@ public class AddVMDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String name= fVMName.getText();
 		if (name == null || name.trim().length() == 0) {
-			status.setError(LauncherMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
+			status.setInfo(LauncherMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
 		} else {
 			IVMInstallType type= getVMType();
 			if (fRequestor.isDuplicateName(type, name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
@@ -440,5 +442,16 @@ public class AddVMDialog extends StatusDialog {
 	private void setSystemLibrarySourceStatus(IStatus status) {
 		fStati[4]= status;
 	}
+	
+	/**
+	 * Updates the status of the ok button to reflect the given status.
+	 * Subclasses may override this method to update additional buttons.
+	 * @param status the status.
+	 */
+	protected void updateButtonsEnableState(IStatus status) {
+		Button ok = getButton(IDialogConstants.OK_ID);
+		if (ok != null && !ok.isDisposed())
+			ok.setEnabled(status.getSeverity() == IStatus.OK);
+	}	
 	
 }
