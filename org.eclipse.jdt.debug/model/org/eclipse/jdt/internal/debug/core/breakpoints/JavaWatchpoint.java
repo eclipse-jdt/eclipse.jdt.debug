@@ -331,7 +331,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Adds the default access and modification attributes of
 	 * the watchpoint to the given map
 	 * <ul>
-	 * <li>access = false
+	 * <li>access = true
 	 * <li>modification = true
 	 * <li>auto disabled = false
 	 * <ul>
