@@ -40,7 +40,6 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 	 */
 	class HitCountDialog extends InputDialog {
 		
-		private Button fEnabledButton;
 		private boolean fHitCountEnabled;
 		
 		protected  HitCountDialog(Shell parentShell,
@@ -51,60 +50,41 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 		}
 		
-		/**
-		 * @see Window#close()
-		 */
-		public boolean close() {
-			setHitCountEnabled(getEnabledButton().getSelection());
-			return super.close();
-		}
+		
 		/**
 		 * @see Dialog#createDialogArea(Composite)
 		 */
 		protected Control createDialogArea(Composite parent) {
 			Composite area= (Composite)super.createDialogArea(parent);
-			Button b= new Button(area, SWT.CHECK);
-			GridData data = new GridData(
-				GridData.GRAB_HORIZONTAL |
-				GridData.HORIZONTAL_ALIGN_FILL);
+			
+			final Button checkbox = new Button(area, SWT.CHECK);
+			GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-			b.setLayoutData(data);
-			b.setFont(parent.getFont());
-			b.setText(ActionMessages.getString("BreakpointHitCountAction.Enable_Hit_Count_1")); //$NON-NLS-1$
-			b.setSelection(true);
-			b.addSelectionListener(new SelectionListener() {
+			checkbox.setLayoutData(data);
+			checkbox.setFont(parent.getFont());
+			checkbox.setText(ActionMessages.getString("BreakpointHitCountAction.Enable_Hit_Count_1")); //$NON-NLS-1$
+			checkbox.setSelection(true);
+			fHitCountEnabled = true;
+			checkbox.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
-					boolean enabled= getEnabledButton().getSelection();
-					getText().setEnabled(enabled);
-					if (enabled) {
+					fHitCountEnabled = checkbox.getSelection();
+					getText().setEnabled(fHitCountEnabled);
+					if (fHitCountEnabled) {
 						validateInput();
 					} else {
-						getOkButton().setEnabled(true);
-						setErrorMessage(""); //$NON-NLS-1$
+						setErrorMessage(null); //$NON-NLS-1$
 					}
 				}
 				
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
-			setEnabledButton(b);
+			
 			return area;
-		}
-
-		protected Button getEnabledButton() {
-			return fEnabledButton;
-		}
-
-		protected void setEnabledButton(Button enabledButton) {
-			fEnabledButton = enabledButton;
 		}
 
 		protected boolean isHitCountEnabled() {
 			return fHitCountEnabled;
-		}
-
-		protected void setHitCountEnabled(boolean hitCountEnabled) {
-			fHitCountEnabled = hitCountEnabled;
 		}
 	}
 
