@@ -50,17 +50,16 @@ public class DataDisplay implements IDataDisplay {
 	 * @see IDataDisplay#displayExpression(String)
 	 */
 	public void displayExpression(String expression) {
-		ITextSelection selection= (ITextSelection)getTextViewer().getSelectionProvider().getSelection();
-		int offset= selection.getOffset();
-		expression= expression.trim();
-		StringBuffer buffer= new StringBuffer(expression);
-		buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-		buffer.append('\t');
-		expression= buffer.toString();
+		IDocument document= fTextViewer.getDocument();
+		int offset= document.getLength();
 		try {
-			getTextViewer().getDocument().replace(offset, selection.getLength(), expression);	
-			getTextViewer().setSelectedRange(offset + expression.length(), 0);	
-			getTextViewer().revealRange(offset, expression.length());
+			// add a cariage return if needed.
+			if (offset != document.getLineInformationOfOffset(offset).getOffset()) {
+				expression= System.getProperty("line.separator") + expression.trim(); //$NON-NLS-1$
+			}
+			document.replace(offset, 0, expression);	
+			fTextViewer.setSelectedRange(offset + expression.length(), 0);	
+			fTextViewer.revealRange(offset, expression.length());
 		} catch (BadLocationException ble) {
 			JDIDebugUIPlugin.log(ble);
 		}
@@ -70,22 +69,18 @@ public class DataDisplay implements IDataDisplay {
 	 * @see IDataDisplay#displayExpressionValue(String)
 	 */
 	public void displayExpressionValue(String value) {
-		value= value + System.getProperty("line.separator"); //$NON-NLS-1$
-		ITextSelection selection= (ITextSelection)getTextViewer().getSelectionProvider().getSelection();
-
-		int offset= selection.getOffset();
+		value= System.getProperty("line.separator") + '\t' + value; //$NON-NLS-1$
+		ITextSelection selection= (ITextSelection)fTextViewer.getSelectionProvider().getSelection();
+	
+		int offset= selection.getOffset() + selection.getLength();
 		int length= value.length();
-		int replace= selection.getLength() - offset;
-		if (replace < 0) {
-			replace= 0;
-		}
 		try {
-			getTextViewer().getDocument().replace(offset, replace, value);	
+			fTextViewer.getDocument().replace(offset, 0, value);	
 		} catch (BadLocationException ble) {
 			JDIDebugUIPlugin.log(ble);
 		}
-		getTextViewer().setSelectedRange(offset + length, 0);	
-		getTextViewer().revealRange(offset, length);
+		fTextViewer.setSelectedRange(offset + length, 0);	
+		fTextViewer.revealRange(offset, length);
 	}
 
 	/**

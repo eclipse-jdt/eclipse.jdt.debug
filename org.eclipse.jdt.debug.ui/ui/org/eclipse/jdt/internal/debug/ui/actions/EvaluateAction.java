@@ -251,11 +251,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					String expression= (String)selection;
 					
-					IDataDisplay dataDisplay= getDataDisplay();
-					if (dataDisplay != null) {
-						dataDisplay.displayExpression(expression);
-					}
-					
 					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
 					setEvaluating(true);
 					if (object == null) {
@@ -439,12 +434,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IWorkbenchPart part= getTargetPart();
 		if (part != null) {
 			IDataDisplay display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
-			if (display == null) {
-				ITextViewer viewer = (ITextViewer)part.getAdapter(ITextViewer.class);
-				if (viewer != null) {
-					display= new DataDisplay(viewer);
-				}
-			}
+//			if (display == null) {
+//				ITextViewer viewer = (ITextViewer)part.getAdapter(ITextViewer.class);
+//				if (viewer != null) {
+//					display= new DataDisplay(viewer);
+//				}
+//			}
 			if (display != null) {
 				IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 				if (page != null) {

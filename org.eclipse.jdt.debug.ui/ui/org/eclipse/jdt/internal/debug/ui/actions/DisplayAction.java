@@ -25,19 +25,21 @@ import org.eclipse.ui.IWorkbenchPart;
  * Displays the result of an evaluation in the display view
  */
 public class DisplayAction extends EvaluateAction implements IValueDetailListener {
-	
+
 	/**
 	 * The result of a toString evaluation returned asynchronously by the
 	 * debug model.
 	 */
 	private String fResult;
-	
+
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
 	protected void displayResult(IEvaluationResult result) {
+		final IDataDisplay directDisplay= getDirectDataDisplay();
+		final String snippet= result.getSnippet();
+		String resultString= ""; //$NON-NLS-1$
 		IJavaValue value= result.getValue();
-		String resultString= " "; //$NON-NLS-1$
 		try {
 			String sig= null;
 			IJavaType type= value.getJavaType();
@@ -52,10 +54,10 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				}
 				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value) }); //$NON-NLS-1$
 			}
-		} catch(DebugException x) {
+		} catch (DebugException x) {
 			resultString= getExceptionMessage(x);
 		}
-	
+
 		final String finalString= resultString;
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
@@ -63,6 +65,9 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				if (!display.isDisposed()) {
 					IDataDisplay dataDisplay= getDataDisplay();
 					if (dataDisplay != null) {
+						if (directDisplay == null) {
+							dataDisplay.displayExpression(snippet);
+						}
 						dataDisplay.displayExpressionValue(finalString);
 					}
 				}
@@ -70,7 +75,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns the result of evaluating 'toString' on the given
 	 * value.
@@ -95,7 +100,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 		}
 		return getResult();
 	}
-	
+
 	/**
 	 * @see IValueDetailListener#detailComputed(IValue, String)
 	 */
@@ -105,21 +110,21 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 			notifyAll();
 		}
 	}
-	
+
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
 		if (part instanceof JavaSnippetEditor) {
-			((JavaSnippetEditor)part).evalSelection(JavaSnippetEditor.RESULT_DISPLAY);
+			((JavaSnippetEditor) part).evalSelection(JavaSnippetEditor.RESULT_DISPLAY);
 			return;
 		}
-		super.run();	
+		super.run();
 	}
-	
+
 	protected String getResult() {
 		return fResult;
 	}
 
 	protected void setResult(String result) {
-		fResult = result;
+		fResult= result;
 	}
 }
