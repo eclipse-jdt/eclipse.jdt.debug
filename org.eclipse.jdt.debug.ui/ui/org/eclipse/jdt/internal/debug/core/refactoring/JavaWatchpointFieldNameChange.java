@@ -113,7 +113,6 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointlistener);
 		IField newField= fDeclaringType.getField(fNewName);
 		Map attributes= fWatchpoint.getMarker().getAttributes();
 		boolean isAccess= fWatchpoint.isAccess();
