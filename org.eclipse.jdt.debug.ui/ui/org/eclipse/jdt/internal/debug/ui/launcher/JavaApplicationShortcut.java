@@ -1,9 +1,15 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2001, 2002 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -25,7 +31,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -76,13 +81,11 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 	 * @return the selected type or <code>null</code> if none.
 	 */
 	protected IType chooseType(IType[] types, String mode) {
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider());
-		dialog.setElements(types);
-		dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_4")); //$NON-NLS-1$
+		MainTypeSelectionDialog dialog= new MainTypeSelectionDialog(getShell(), types);		
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_&main_type_to_debug__5")); //$NON-NLS-1$
+			dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_Debug")); //$NON-NLS-1$
 		} else {
-			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_&main_type_to_run__6")); //$NON-NLS-1$
+			dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_Run")); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == dialog.OK) {
