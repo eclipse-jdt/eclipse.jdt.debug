@@ -21,6 +21,7 @@ import org.eclipse.jdi.internal.connect.SocketAttachingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketRawLaunchingConnectorImpl;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.LaunchingConnector;
@@ -36,11 +37,6 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	public static int MAJOR_INTERFACE_VERSION = 1;
 	/** Minor interface version. */
 	public static int MINOR_INTERFACE_VERSION = 0;
-	/** Default for timeout on requests to Virtual Machine. */
-	public static int DEFAULT_REQUEST_TIMEOUT = 10000;
-
-	/** Timeout value for requests to VM if not overriden for a particular VM. */
-	private int fGlobalRequestTimeout = DEFAULT_REQUEST_TIMEOUT;
 	/** PrintWriter where verbose info is written to, null if no verbose must be given. */
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
@@ -100,13 +96,6 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		try {
 			InputStream stream = url.openStream();
 			PropertyResourceBundle prefs = new PropertyResourceBundle(stream);
-
-				
-			try {
-				fGlobalRequestTimeout = Integer.parseInt(prefs.getString("User.timeout")); //$NON-NLS-1$
-			} catch (NumberFormatException e) {
-			} catch (MissingResourceException e) {
-			}
 			
 			try {		
 				fVerbose = Boolean.valueOf(prefs.getString("User.verbose")).booleanValue(); //$NON-NLS-1$
@@ -130,7 +119,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 * NOTE: This is not in compliance with the Sun's JDI.
 	 */
 	public int getGlobalRequestTimeout() {
-		return fGlobalRequestTimeout;
+		return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 	}
 	
 	/**
