@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException("Thread was not suspended.");
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_1")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -136,7 +137,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException("Thread was not suspended.");
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_2")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -176,9 +177,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException("Thread was not suspended.");
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_3")); //$NON-NLS-1$
 				case JdwpReplyPacket.INVALID_INDEX:
-					throw new IndexOutOfBoundsException("Invalid index of stack frames given.");
+					throw new IndexOutOfBoundsException(JDIMessages.getString("ThreadReferenceImpl.Invalid_index_of_stack_frames_given_4")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -281,7 +282,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException("Thread was not suspended.");
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_5")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
@@ -346,7 +347,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JDWP_THREAD_STATUS_WAIT:
 					return THREAD_STATUS_WAIT;
 			}
-			throw new InternalException("Unknown thread status received: " + threadStatus);
+			throw new InternalException(JDIMessages.getString("ThreadReferenceImpl.Unknown_thread_status_received___6") + threadStatus); //$NON-NLS-1$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return 0;
@@ -374,7 +375,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.INVALID_CLASS:
-					throw new InvalidTypeException ("Stop argument not an instance of java.lang.Throwable in the target VM.");
+					throw new InvalidTypeException (JDIMessages.getString("ThreadReferenceImpl.Stop_argument_not_an_instance_of_java.lang.Throwable_in_the_target_VM_7")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 		} catch (IOException e) {
@@ -496,9 +497,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 */
 	public String toString() {
 		try {
-			return type().toString() + " " + "(name=" + name() + ", id=" + getObjectID() + ")";
+			return MessageFormat.format(JDIMessages.getString("ThreadReferenceImpl.{0}_(name={1},_id={2})_8"), new String[]{type().toString(), name(), getObjectID().toString()}); //$NON-NLS-1$
 		} catch (ObjectCollectedException e) {
-			return "(Garbage Collected) ThreadReference " + idString();
+			return JDIMessages.getString("ThreadReferenceImpl.(Garbage_Collected)_ThreadReference__9") + idString(); //$NON-NLS-1$
 		} catch (Exception e) {
 			return fDescription;
 		}
@@ -609,11 +610,11 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new InvalidStackFrameException();
 				case JdwpReplyPacket.INVALID_FRAMEID:
-					throw new InvalidStackFrameException("Unable to pop the requested stack frame from the call stack (Reasons include: The frame id was invalid; The thread was resumed)");
+					throw new InvalidStackFrameException(JDIMessages.getString("ThreadReferenceImpl.Unable_to_pop_the_requested_stack_frame_from_the_call_stack_(Reasons_include__The_frame_id_was_invalid;_The_thread_was_resumed)_10")); //$NON-NLS-1$
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException("Unable to pop the requested stack frame. The requested stack frame is not suspended.");
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Unable_to_pop_the_requested_stack_frame._The_requested_stack_frame_is_not_suspended_11")); //$NON-NLS-1$
 				case JdwpReplyPacket.NO_MORE_FRAMES:
-					throw new InvalidStackFrameException("Unable to pop the requested stack frame from the call stack (Reasons include: The requested frame was the last frame on the call stack; The requested frame was the last frame above a native frame)");
+					throw new InvalidStackFrameException(JDIMessages.getString("ThreadReferenceImpl.Unable_to_pop_the_requested_stack_frame_from_the_call_stack_(Reasons_include__The_requested_frame_was_the_last_frame_on_the_call_stack;_The_requested_frame_was_the_last_frame_above_a_native_frame)_12")); //$NON-NLS-1$
 				default:
 					defaultReplyErrorHandler(replyPacket.errorCode());
 			}

@@ -155,7 +155,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 		else if (fValue instanceof Short)
 			return ((Short)fValue).compareTo(obj);
 			
-		throw new InternalException("Invalid Primitive Value encountered.");
+		throw new InternalException(JDIMessages.getString("PrimitiveValueImpl.Invalid_Primitive_Value_encountered_1")); //$NON-NLS-1$
 		
 	}
 	
@@ -195,6 +195,6 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 			case ShortValueImpl.tag:
 				return ShortValueImpl.read(target, in);
 		}
-		throw new InternalException("Invalid Primitive Value tag encountered: " + type);
+		throw new InternalException(JDIMessages.getString("PrimitiveValueImpl.Invalid_Primitive_Value_tag_encountered___2") + type); //$NON-NLS-1$
 	}
 }

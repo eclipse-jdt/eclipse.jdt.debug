@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -244,7 +245,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	public void checkHCRSupported() throws UnsupportedOperationException {
 		if (!name().equals("j9")) //$NON-NLS-1$
-			throw new UnsupportedOperationException("Target VM " + name() + "does not support Hot Code Replacement.");
+			throw new UnsupportedOperationException(MessageFormat.format(JDIMessages.getString("VirtualMachineImpl.Target_VM_{0}_does_not_support_Hot_Code_Replacement_1"), new String[]{name()})); //$NON-NLS-1$
 	}
 
 	/*
@@ -267,7 +268,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			getIDSizes();
 			if (!fGotIDSizes) {	// We can't do much without them.
 				disconnectVM();
-				throw new VMDisconnectedException("Failed to get ID sizes.");
+				throw new VMDisconnectedException(JDIMessages.getString("VirtualMachineImpl.Failed_to_get_ID_sizes_2")); //$NON-NLS-1$
 			}
 
 			// tbd: This call should be moved to addKnownRefType() when it can be made specific
@@ -896,7 +897,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				case HCR_RELOAD_IGNORED:
 					return RELOAD_IGNORED;
 			}
-			throw new InternalError("Invalid result flag in Classes Have Changed response: " + resultFlag + ".");
+			throw new InternalError(JDIMessages.getString("VirtualMachineImpl.Invalid_result_flag_in_Classes_Have_Changed_response___3") + resultFlag + JDIMessages.getString("VirtualMachineImpl._4")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return 0;

@@ -63,7 +63,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException("Can't compare field to given object.");
+			throw new ClassCastException(JDIMessages.getString("FieldImpl.Can__t_compare_field_to_given_object_1")); //$NON-NLS-1$
 		
 		// See if declaring types are the same, if not return comparison between declaring types.
 		Field type2 = (Field)object;
@@ -152,7 +152,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 			return null;
 		FieldImpl field = referenceType.findField(ID);
 		if (field == null)
-			throw new InternalError("Got FieldID of ReferenceType that is not a member of the ReferenceType.");
+			throw new InternalError(JDIMessages.getString("FieldImpl.Got_FieldID_of_ReferenceType_that_is_not_a_member_of_the_ReferenceType_2")); //$NON-NLS-1$
 		return field;
 	}
 	

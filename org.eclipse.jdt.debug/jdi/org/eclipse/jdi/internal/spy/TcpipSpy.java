@@ -18,6 +18,7 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.MessageFormat;
 
 /**
  * This class can be used to spy all JDWP packets. It should be configured 'in between' the debugger
@@ -56,7 +57,7 @@ public class TcpipSpy extends Thread {
 				int b = fDataIn.read();
 				fDataOut.write(b);
 			}
-			out.println(fDescription + "performed handshake.");
+			out.println(MessageFormat.format(SpyMessages.getString("TcpipSpy.{0}_performed_handshake_1"), new String[]{fDescription})); //$NON-NLS-1$
 			out.flush();
 			fDataOut.flush();
 			
@@ -66,14 +67,14 @@ public class TcpipSpy extends Thread {
 				fDataOut.writeInt(length);
 				length -= 4;
 				out.println();
-				out.println(fDescription + " remaining length:" + length + ".");
+				out.println(MessageFormat.format(SpyMessages.getString("TcpipSpy.{0}_remaining_length__{1}_2"), new String[]{fDescription, Integer.toString(length)})); //$NON-NLS-1$
 				while (length-- > 0) {
 					int b = fDataIn.readUnsignedByte();
 					fDataOut.write(b);
 					if (b <= 0xf)
-						out.print(" 0");
+						out.print(" 0"); //$NON-NLS-1$
 					else
-						out.print(" ");
+						out.print(" "); //$NON-NLS-1$
 
 					out.print(Integer.toHexString(b));
 				}
@@ -81,7 +82,7 @@ public class TcpipSpy extends Thread {
 				fDataOut.flush();
 			}
 		} catch (Exception e) {
-			out.println(fDescription + " ERROR: " + e);
+			out.println(MessageFormat.format(SpyMessages.getString("TcpipSpy.{0}_ERROR__{1}_5"), new String[]{fDescription, e.toString()})); //$NON-NLS-1$
 		}
 	}
 
@@ -95,27 +96,27 @@ public class TcpipSpy extends Thread {
 			outputFile = args[2];
 		}
 		catch (Exception e) {
-			out.println("Usage: TcpipSpy <inPort> <outPort> <outputFile>");
+			out.println(SpyMessages.getString("TcpipSpy.Usage__TcpipSpy_<inPort>_<outPort>_<outputFile>_6")); //$NON-NLS-1$
 			System.exit(-1);
 		}
 		
 		try {
 			File file = new File(outputFile);
-			out.println("TcpipSpy: logging output to " + file.getAbsolutePath());
+			out.println(SpyMessages.getString("TcpipSpy.TcpipSpy__logging_output_to__7") + file.getAbsolutePath()); //$NON-NLS-1$
 			out = new PrintStream(new BufferedOutputStream(new FileOutputStream(file)));
 		}
 		catch (Exception e) {
-			out.println("Cannot open " + outputFile);
+			out.println(SpyMessages.getString("TcpipSpy.Cannot_open__8") + outputFile); //$NON-NLS-1$
 			System.exit(-2);
 		}
-		out.println("Waiting in port " + inPort + ", connecting to port " + outPort);
+		out.println(MessageFormat.format(SpyMessages.getString("TcpipSpy.Waiting_in_port_{0},_connecting_to_port_{1}_9"), new String[]{Integer.toString(inPort), Integer.toString(outPort)})); //$NON-NLS-1$
 		out.println();
 		try {
 			ServerSocket serverSock = new ServerSocket(inPort);
 			Socket inSock = serverSock.accept();
 			Socket outSock = new Socket(InetAddress.getLocalHost(), outPort);
-			new TcpipSpy("From debugger:", inSock.getInputStream(), outSock.getOutputStream()).start();
-			new TcpipSpy("From VM:", outSock.getInputStream(), inSock.getOutputStream()).start();
+			new TcpipSpy(SpyMessages.getString("TcpipSpy.From_debugger__10"), inSock.getInputStream(), outSock.getOutputStream()).start(); //$NON-NLS-1$
+			new TcpipSpy(SpyMessages.getString("TcpipSpy.From_VM__11"), outSock.getInputStream(), inSock.getOutputStream()).start(); //$NON-NLS-1$
 		} catch (Exception e) {
 			out.println(e);
 		}

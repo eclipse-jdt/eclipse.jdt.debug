@@ -484,7 +484,7 @@ public class AddVMDialog extends StatusDialog {
 		FileDialog dialog= new FileDialog(getShell());
 		dialog.setFilterPath(lastUsedDir);
 		dialog.setText(LauncherMessages.getString("addVMDialog.pickJREJarDialog.text")); //$NON-NLS-1$
-		dialog.setFilterExtensions(new String[] { "*.jar;*.zip"}); //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] {"*.jar;*.zip"}); //$NON-NLS-1$
 		String newPath= dialog.open();
 		if  (newPath != null) {
 			fSystemLibrary.setText(newPath);

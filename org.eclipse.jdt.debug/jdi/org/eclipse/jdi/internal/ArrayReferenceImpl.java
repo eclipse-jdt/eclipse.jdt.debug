@@ -90,7 +90,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_GET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.INVALID_INDEX:
-					throw new IndexOutOfBoundsException("Invalid index of array reference given.");
+					throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_index_of_array_reference_given_1")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -131,7 +131,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 				case VoidValueImpl.tag:
 				case 0:
 				default:
-					throw new InternalException("Invalid ArrayReference Value tag encountered: " + type);
+					throw new InternalException(JDIMessages.getString("ArrayReferenceImpl.Invalid_ArrayReference_Value_tag_encountered___2") + type); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -207,11 +207,11 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		if (length < 0)
 			length = length() - index;
 		else if (index + length > length())
-			throw new IndexOutOfBoundsException("Attempted to set more values in array than length of array.");
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Attempted_to_set_more_values_in_array_than_length_of_array_3")); //$NON-NLS-1$
 
 		// Check if enough values are given.
 		if (values.size() < srcIndex + length)
-			throw new IndexOutOfBoundsException("Attempted to set more values in array than given.");
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Attempted_to_set_more_values_in_array_than_given_4")); //$NON-NLS-1$
 
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -259,7 +259,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			buf.append(idString());
 			return buf.toString();
 		} catch (ObjectCollectedException e) {
-			return "(Garbage Collected) ArrayReference" + "[" + length() + "] " + idString();
+			return JDIMessages.getString("ArrayReferenceImpl.(Garbage_Collected)_ArrayReference_5") + "[" + length() + "] " + idString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (Exception e) {
 			return fDescription;
 		}

@@ -121,7 +121,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		if (fCodeIndexToLine != null) {
 			if (fCodeIndexToLine.isEmpty())
-				throw new AbsentInformationException("Got empty line number table for this method.");
+				throw new AbsentInformationException(JDIMessages.getString("MethodImpl.Got_empty_line_number_table_for_this_method_1")); //$NON-NLS-1$
 			else
 				return;
 		}
@@ -135,7 +135,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.M_LINE_TABLE, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.ABSENT_INFORMATION:
-					throw new AbsentInformationException("No line number information available.");
+					throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_line_number_information_available_2")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -146,7 +146,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			fCodeIndexToLine = new HashMap();
 			fLineToCodeIndexes = new Vector();
 			if (nrOfElements == 0)
-				throw new AbsentInformationException("Got empty line number table for this method.");
+				throw new AbsentInformationException(JDIMessages.getString("MethodImpl.Got_empty_line_number_table_for_this_method_3")); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				long lineCodeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				Long lineCodeIndexLong = new Long(lineCodeIndex);
@@ -182,7 +182,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		getLineTable();
 		if (lineCodeIndex > fHighestValidCodeIndex)
-			throw new InvalidCodeIndexException ("Invalid code index of a location given.");
+			throw new InvalidCodeIndexException (JDIMessages.getString("MethodImpl.Invalid_code_index_of_a_location_given_4")); //$NON-NLS-1$
 
 		Long lineCodeIndexObj;
 		Integer lineNrObj;
@@ -192,7 +192,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			lineNrObj = (Integer)codeIndexToLine().get(lineCodeIndexObj);
 		} while (lineNrObj == null && --lineCodeIndex >= fLowestValidCodeIndex);
 		if (lineNrObj == null)
-			throw new InvalidCodeIndexException ("Invalid code index of a location given.");
+			throw new InvalidCodeIndexException (JDIMessages.getString("MethodImpl.Invalid_code_index_of_a_location_given_5")); //$NON-NLS-1$
 		return lineNrObj.intValue();
 	}
 
@@ -341,7 +341,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException("Can't compare method to given object.");
+			throw new ClassCastException(JDIMessages.getString("MethodImpl.Can__t_compare_method_to_given_object_6")); //$NON-NLS-1$
 		
 		// See if declaring types are the same, if not return comparison between declaring types.
 		Method type2 = (Method)object;
@@ -412,7 +412,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	public List locationsOfLine(int line) throws AbsentInformationException, InvalidLineNumberException {
 		Vector indexes = lineToCodeIndexes(line);
 		if (indexes == null)
-			throw new InvalidLineNumberException("No executable code at line " + line + ".");
+			throw new InvalidLineNumberException(JDIMessages.getString("MethodImpl.No_executable_code_at_line__7") + line + JDIMessages.getString("MethodImpl._8")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Iterator codeIndexes = indexes.iterator();
 		Vector locations = new Vector();
@@ -455,7 +455,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.M_VARIABLE_TABLE, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.ABSENT_INFORMATION:
-					throw new AbsentInformationException("No local variable information available.");
+					throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_local_variable_information_available_9")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -570,7 +570,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		// The method must be part of a known reference type.
 		MethodImpl method = referenceType.findMethod(ID);
 		if (method == null)
-			throw new InternalError("Got MethodID of ReferenceType that is not a member of the ReferenceType.");
+			throw new InternalError(JDIMessages.getString("MethodImpl.Got_MethodID_of_ReferenceType_that_is_not_a_member_of_the_ReferenceType_10")); //$NON-NLS-1$
 		return method;
 	}
 	

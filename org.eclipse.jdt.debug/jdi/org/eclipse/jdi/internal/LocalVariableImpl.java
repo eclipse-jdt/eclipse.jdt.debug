@@ -75,7 +75,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException("Can't compare local variable to given object.");
+			throw new ClassCastException(JDIMessages.getString("LocalVariableImpl.Can__t_compare_local_variable_to_given_object_1")); //$NON-NLS-1$
 		
 		// See if methods are the same, if not return comparison between methods.
 		LocalVariableImpl var2 = (LocalVariableImpl)object;
@@ -85,7 +85,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		// Return comparison between the index of each local variable in its stack frame.
 		// Code indexes must be treated as unsigned. This matters if you have to compare them.
 		if (fCodeIndex < 0 || var2.fCodeIndex < 0)
-			throw new InternalError("Code indexes are assumed to be always positive.");
+			throw new InternalError(JDIMessages.getString("LocalVariableImpl.Code_indexes_are_assumed_to_be_always_positive_2")); //$NON-NLS-1$
 		
 		long index2 = var2.fCodeIndex;
 		if (fCodeIndex < index2)
@@ -106,7 +106,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		checkVM(frame);
 		StackFrameImpl frameImpl = (StackFrameImpl)frame;
 		if (!fMethod.equals(frameImpl.location().method()))
-			throw new IllegalArgumentException("The stack frame's method does not match this variable's method.");
+			throw new IllegalArgumentException(JDIMessages.getString("LocalVariableImpl.The_stack_frame__s_method_does_not_match_this_variable__s_method_3")); //$NON-NLS-1$
 
 		long currentIndex = frameImpl.location().codeIndex();
 		
@@ -114,7 +114,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		if (currentIndex >= 0 && fCodeIndex >= 0 && fCodeIndex + fLength >= 0)
 			return fCodeIndex <= currentIndex && currentIndex < fCodeIndex + fLength;
 
-		throw new InternalError("Code indexes are assumed to be always positive.");
+		throw new InternalError(JDIMessages.getString("LocalVariableImpl.Code_indexes_are_assumed_to_be_always_positive_4")); //$NON-NLS-1$
 	}
 	
 	/** 

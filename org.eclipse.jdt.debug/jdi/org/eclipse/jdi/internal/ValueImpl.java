@@ -90,7 +90,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 			case 0:
 				return null;
 			default:
-				throw new InternalException("Invalid Value tag encountered: " + type);
+				throw new InternalException(JDIMessages.getString("ValueImpl.Invalid_Value_tag_encountered___1") + type); //$NON-NLS-1$
 		}
 	}
 

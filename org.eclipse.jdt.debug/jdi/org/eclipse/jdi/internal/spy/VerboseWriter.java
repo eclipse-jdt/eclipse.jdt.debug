@@ -379,7 +379,7 @@ public class VerboseWriter extends BufWriter {
 
 		String result = (String)valueToString.get(val);
 		if (result == null)
-			print(val.toString() + " <unknown value>");
+			print(val.toString() + SpyMessages.getString("VerboseWriter._<unknown_value>_1")); //$NON-NLS-1$
 		else
 			print(result);
 	}
@@ -416,19 +416,19 @@ public class VerboseWriter extends BufWriter {
 			// See if we have a desciption for the bit.
 			String bitString = (String)bitNames.elementAt(i);
 			if (bitString == null)
-				bitString = "<unknown bit>";
+				bitString = SpyMessages.getString("VerboseWriter.<unknown_bit>_2"); //$NON-NLS-1$
 
 			if (!bitsSet) {
 				print(bitString);
 			} else {
-				print(" & ");
+				print(" & "); //$NON-NLS-1$
 				print(bitString);
 			}
 			bitsSet = true;
 		}
 
 		if (!bitsSet)
-			print("<none>");
+			print(SpyMessages.getString("VerboseWriter.<none>_4")); //$NON-NLS-1$
 	}
 	
 	/**

@@ -119,7 +119,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != sizeNotThis) 
-				throw new InternalError("Retrieved a different number of values from the VM than requested.");
+				throw new InternalError(JDIMessages.getString("StackFrameImpl.Retrieved_a_different_number_of_values_from_the_VM_than_requested_1")); //$NON-NLS-1$
 			
 			for (int i = 0, j = 0; i < sizeAll; i++) {
 				if (!isThisValue[i])

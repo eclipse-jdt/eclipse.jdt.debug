@@ -79,7 +79,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		try {
 			return name();
 		} catch (ClassNotPreparedException e) {
-			return "(Unloaded Type)";
+			return JDIMessages.getString("TypeImpl.(Unloaded_Type)_1"); //$NON-NLS-1$
 		} catch (Exception e) {
 			return fDescription;
 		}
@@ -274,9 +274,9 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return arraySignatureToName(signature);
 			case '(':
-				throw new InternalError("Can't convert method signature to name.");
+				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_convert_method_signature_to_name_2")); //$NON-NLS-1$
 		}
-		throw new InternalError("Invalid signature: \"" + signature + "\"");
+		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____3") + signature + JDIMessages.getString("TypeImpl.__4")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private static String getPrimitiveSignatureToName(char signature) {
@@ -308,7 +308,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	private static int signatureClassTypeStringLength(String signature, int index) {
 		int endPos = signature.indexOf(';', index + 1);
 		if (endPos < 0)
-			throw new InternalError("Invalid Class Type signature.");
+			throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_Class_Type_signature_5")); //$NON-NLS-1$
 			
 		return endPos - index + 1;
 	}
@@ -333,9 +333,9 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return 1 + signatureTypeStringLength(signature, index + 1);
 			case '(':
-				throw new InternalError("Can't covert method signature to name.");
+				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_covert_method_signature_to_name_6")); //$NON-NLS-1$
 		}
-		throw new InternalError("Invalid signature: \"" + signature + "\"");
+		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____7") + signature + JDIMessages.getString("TypeImpl.__8")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -366,8 +366,8 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return ArrayReferenceImpl.tag;
 			case '(':
-				throw new InternalError("Can't covert method signature to tag: " + signature);
+				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_covert_method_signature_to_tag___9") + signature); //$NON-NLS-1$
 		}
-		throw new InternalError("Invalid signature: \"" + signature + "\"");
+		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____10") + signature + JDIMessages.getString("TypeImpl.__11")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -574,7 +574,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
 		if (methodID.value() == 0) {
-			return new MethodImpl(virtualMachineImpl(), this, methodID, "Obsolete method", "", -1);
+			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", -1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		Iterator iter = allMethods().iterator();
 		while(iter.hasNext()) {
@@ -619,7 +619,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			HashMap map = new HashMap();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != fieldsSize) 
-				throw new InternalError("Retrieved a different number of values from the VM than requested.");
+				throw new InternalError(JDIMessages.getString("ReferenceTypeImpl.Retrieved_a_different_number_of_values_from_the_VM_than_requested_3")); //$NON-NLS-1$
 				
 			for (int i = 0; i < nrOfElements; i++) {
 				map.put(fields.get(i), ValueImpl.readWithTag(this, replyData));
@@ -656,7 +656,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException("Can't compare reference type to given object.");
+			throw new ClassCastException(JDIMessages.getString("ReferenceTypeImpl.Can__t_compare_reference_type_to_given_object_4")); //$NON-NLS-1$
 		return name().compareTo(((ReferenceType)object).name());
 	}
 	
@@ -701,7 +701,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 			return locations;
 		}
-		throw new InvalidLineNumberException("No executable code at line " + line  + ".");
+		throw new InvalidLineNumberException(JDIMessages.getString("ReferenceTypeImpl.No_executable_code_at_line__5") + line  + JDIMessages.getString("ReferenceTypeImpl._6")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -830,7 +830,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_FILE, this);
 			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION)
-				throw new AbsentInformationException("Source name is not known.");
+				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.Source_name_is_not_known_7")); //$NON-NLS-1$
 			else
 				defaultReplyErrorHandler(replyPacket.errorCode());
 		
@@ -930,7 +930,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			case InterfaceTypeImpl.typeTag:
 				return InterfaceTypeImpl.read(target, in);
 		}
-		throw new InternalException("Invalid ReferenceTypeID tag encountered: " + typeTag);
+		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___8") + typeTag); //$NON-NLS-1$
 	}
 	
 	/**
@@ -965,7 +965,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			case InterfaceTypeImpl.typeTag:
 				return InterfaceTypeImpl.readWithSignature(target, in);
 		}
-		throw new InternalException("Invalid ReferenceTypeID tag encountered: " + typeTag);
+		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___9") + typeTag); //$NON-NLS-1$
 	}
 		
 	/**
@@ -1012,7 +1012,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 		}
 
-		throw new ClassNotLoadedException(TypeImpl.classSignatureToName(signature), "Type has not been loaded.");
+		throw new ClassNotLoadedException(TypeImpl.classSignatureToName(signature), JDIMessages.getString("ReferenceTypeImpl.Type_has_not_been_loaded_10")); //$NON-NLS-1$
 	}
 	
 	/**

@@ -176,7 +176,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 		if (fields.isEmpty())
 			return new HashMap();
 			
-		throw new IllegalArgumentException("getValues not allowed on array.");
+		throw new IllegalArgumentException(JDIMessages.getString("ArrayTypeImpl.getValues_not_allowed_on_array_1")); //$NON-NLS-1$
 	}
 
 	/** 
