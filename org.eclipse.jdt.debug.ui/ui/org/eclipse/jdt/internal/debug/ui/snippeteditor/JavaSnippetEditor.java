@@ -62,6 +62,7 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -119,6 +120,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private IDebugTarget fVM;
 	private String[] fLaunchedClassPath;
 	private String fLaunchedWorkingDir;
+	private IVMInstall fLaunchedVM;
 	private List fSnippetStateListeners;	
 	
 	private boolean fEvaluating;
@@ -325,6 +327,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		boolean cpChange= classPathHasChanged();
 		if (!cpChange) {
 			cpChange = workingDirHasChanged();
+		}
+		if (!cpChange) {
+			cpChange = vmHasChanged();
 		}
 		boolean launch= fVM == null || cpChange;
 
@@ -766,7 +771,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected boolean workingDirHasChanged() {
-		String wd = ScrapbookLauncher.getWorkingDirectoryAttribute(getPage());
+		String wd = getWorkingDirectoryAttribute();
 		boolean changed = false;
 		if (wd == null || fLaunchedWorkingDir == null) {
 			if (wd != fLaunchedWorkingDir) {
@@ -782,7 +787,25 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		return changed;
 	}
-		
+	
+	protected boolean vmHasChanged() {
+		IVMInstall vm = getVMInstall();
+		boolean changed = false;
+		if (vm == null || fLaunchedVM == null) {
+			if (vm != fLaunchedVM) {
+				changed = true;
+			}
+		} else {
+			if (!vm.equals(fLaunchedVM)) {
+				changed = true;
+			}
+		}
+		if (changed && fVM != null) {
+			MessageDialog.openWarning(getShell(), SnippetMessages.getString("SnippetEditor.Warning_1"), SnippetMessages.getString("SnippetEditor.The_JRE_has_changed._Restarting_the_evaluation_context._2")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return changed;
+	}
+			
 	protected boolean classPathsEqual(String[] path1, String[] path2) {
 		if (path1.length != path2.length) {
 			return false;
@@ -953,7 +976,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected void launchVM() {
 		DebugPlugin.getDefault().addDebugEventFilter(this);
 		fLaunchedClassPath = getClassPath(getJavaProject());
-		fLaunchedWorkingDir = ScrapbookLauncher.getWorkingDirectoryAttribute(getPage());
+		fLaunchedWorkingDir = getWorkingDirectoryAttribute();
+		fLaunchedVM = getVMInstall();
 		Runnable r = new Runnable() {
 			public void run() {
 				ScrapbookLauncher.getDefault().launch(getPage());
@@ -1089,4 +1113,28 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		return new JDISourceViewer(parent, ruler, styles);
 	}
+	
+	/**
+	 * Returns the working directory attribute for this scrapbook
+	 */
+	protected String getWorkingDirectoryAttribute() {
+		try {
+			return ScrapbookLauncher.getWorkingDirectoryAttribute(getPage());
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the vm install for this scrapbook
+	 */
+	protected IVMInstall getVMInstall() {
+		try {
+			return ScrapbookLauncher.getVMInstall(getPage());
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return null;
+	}	
 }

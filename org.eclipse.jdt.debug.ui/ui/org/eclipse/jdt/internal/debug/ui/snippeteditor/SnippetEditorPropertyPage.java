@@ -10,15 +10,19 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -32,8 +36,11 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 
 	private WorkingDirectoryBlock fWorkingDirBlock = new WorkingDirectoryBlock();
 	
-	// temporary config used to make working dir block work like a tab
-	private ILaunchConfigurationWorkingCopy fConfig;
+	private JavaJRETab fJRETab = new JavaJRETab();
+	
+	// launch config template for this scrapbook file
+	private ILaunchConfiguration fConfig;
+	private ILaunchConfigurationWorkingCopy fWorkingCopy;
 	
 	private Proxy fProxy;
 
@@ -104,19 +111,45 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout topLayout = new GridLayout();
+		topLayout.numColumns = 1;
+		comp.setLayout(topLayout);				
+		
+		// fake launch config dialog
 		fProxy = new Proxy();
-		fWorkingDirBlock.setLaunchConfigurationDialog(fProxy);
-		fWorkingDirBlock.createControl(parent);
-		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+		
 		try {
-			fConfig = type.newInstance(null, "TEMP_CONFIG"); //$NON-NLS-1$
+			fConfig = ScrapbookLauncher.getLaunchConfigurationTemplate(getFile());
+			if (fConfig != null) {
+				fWorkingCopy = fConfig.getWorkingCopy();
+			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+			// unable to retrieve launch config, create a new one
+			fConfig = null;
+			fWorkingCopy = null;
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_retrieve_scrapbook_runtime_settings._Settings_will_revert_to_defaults._1"), e); //$NON-NLS-1$
 		}
-		String attr = ScrapbookLauncher.getWorkingDirectoryAttribute(getFile());
-		fConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, attr);
+
+		if (fConfig == null) {
+			try {
+				fConfig = ScrapbookLauncher.createLaunchConfigurationTemplate(getFile());
+				fWorkingCopy = fConfig.getWorkingCopy();
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_create_launch_configuration_for_scrapbook_file_2"), e); //$NON-NLS-1$
+			}
+		}
+				
+		fWorkingDirBlock.setLaunchConfigurationDialog(fProxy);
+		fWorkingDirBlock.createControl(comp);		
+		
+		fJRETab.setLaunchConfigurationDialog(fProxy);
+		fJRETab.createControl(comp);
+		
 		fWorkingDirBlock.initializeFrom(fConfig);
-		return fWorkingDirBlock.getControl();
+		fJRETab.initializeFrom(fConfig);
+		
+		return comp;
 	}
 	
 	/**
@@ -131,8 +164,10 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
-		fConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-		fWorkingDirBlock.initializeFrom(fConfig);
+		fWorkingDirBlock.setDefaults(fWorkingCopy);
+		fJRETab.setDefaults(fWorkingCopy);
+		fWorkingDirBlock.initializeFrom(fWorkingCopy);
+		fJRETab.initializeFrom(fWorkingCopy);
 	}
 	
 	/**
@@ -146,28 +181,38 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	 * @see IDialogPage#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return fWorkingDirBlock.getErrorMessage();
+		String message = fWorkingDirBlock.getErrorMessage();
+		if (message != null) {
+			return fJRETab.getErrorMessage();
+		}
+		return null;
 	}
 
 	/**
 	 * @see IMessageProvider#getMessage()
 	 */
 	public String getMessage() {
-		return fWorkingDirBlock.getMessage();
+		String message = fWorkingDirBlock.getMessage();
+		if (message != null) {
+			return fJRETab.getMessage();
+		}
+		return null;
 	}
 
 	/**
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fWorkingDirBlock.performApply(fConfig);
-		String attr = null;
+		fWorkingDirBlock.performApply(fWorkingCopy);
+		fJRETab.performApply(fWorkingCopy);
 		try {
-			attr = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+			if (!fWorkingCopy.contentsEqual(fConfig)) {
+				fConfig = fWorkingCopy.doSave();
+				fWorkingCopy = fConfig.getWorkingCopy();
+			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_save_working_directory._2"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_save_scrapbook_settings._3"), e); //$NON-NLS-1$
 		}
-		ScrapbookLauncher.setWorkingDirectoryAttribute(getFile(), attr);
 		return super.performOk();
 	}
 }
