@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,8 +82,8 @@ public class StandardVMType extends AbstractVMInstallType {
 		return null;							
 	}
 	
-	/**
-	 * @see IVMInstallType#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
 	public String getName() {
 		return LaunchingMessages.getString("StandardVMType.Standard_VM_3"); //$NON-NLS-1$
@@ -134,8 +134,8 @@ public class StandardVMType extends AbstractVMInstallType {
 		return info.getVersion();
 	}
 		
-	/**
-	 * @see IVMInstallType#detectInstallLocation()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#detectInstallLocation()
 	 */
 	public File detectInstallLocation() {
 		// do not detect on the Mac OS
@@ -225,7 +225,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * NOTE: We do not add libraries from the "endorsed" directory explicitly, as
 	 * the bootpath contains these entries already (if they exist).
 	 * 
-	 * @see IVMInstallType#getDefaultSystemLibraryDescription(File)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(File)
 	 */
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
 
@@ -392,7 +392,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		fDefaultRootPath = defaultRootPath;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
@@ -515,7 +515,8 @@ public class StandardVMType extends AbstractVMInstallType {
 		}
 		return (String[])list.toArray(new String[list.size()]);
 	}
-	/**
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#disposeVMInstall(java.lang.String)
 	 */
 	public void disposeVMInstall(String id) {
@@ -526,7 +527,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		super.disposeVMInstall(id);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
 	public URL getDefaultJavadocLocation(File installLocation) {

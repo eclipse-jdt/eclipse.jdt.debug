@@ -94,8 +94,8 @@ public class SocketAttachConnector implements IVMConnector {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
 	}		
 
-	/**
-	 * @see IVMConnector#connect(Map, IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMConnector#connect(java.util.Map, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.ILaunch)
 	 */
 	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
 		if (monitor == null) {

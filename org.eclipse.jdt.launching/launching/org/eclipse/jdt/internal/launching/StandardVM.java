@@ -20,8 +20,8 @@ public class StandardVM extends AbstractVMInstall {
 	StandardVM(IVMInstallType type, String id) {
 		super(type, id);
 	}
-	/**
-	 * @see IVM#getIVMRunner(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#getVMRunner(java.lang.String)
 	 */
 	public IVMRunner getVMRunner(String mode) {
 		if (ILaunchManager.RUN_MODE.equals(mode)) {

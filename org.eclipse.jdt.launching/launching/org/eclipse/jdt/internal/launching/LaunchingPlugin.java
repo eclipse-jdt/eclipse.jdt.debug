@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -481,7 +481,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Save preferences whenever the connect timeout changes.
 	 * Process changes to the list of installed JREs.
 	 * 
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
@@ -626,14 +626,14 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 	}
 
-	/**
-	 * @see IVMInstallChangedListener#vmAdded(IVMInstall)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 	 */
 	public void vmAdded(IVMInstall vm) {
 	}
 
-	/**
-	 * @see IVMInstallChangedListener#vmChanged(PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 	 */
 	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 		if (!fBatchingChanges) {
@@ -647,8 +647,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}		
 	}
 
-	/**
-	 * @see IVMInstallChangedListener#vmRemoved(IVMInstall)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 	 */
 	public void vmRemoved(IVMInstall vm) {
 		if (!fBatchingChanges) {
