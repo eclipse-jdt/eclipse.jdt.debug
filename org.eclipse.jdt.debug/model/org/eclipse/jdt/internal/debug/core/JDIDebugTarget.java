@@ -968,23 +968,37 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		return fDisconnected;
 	}
 	
+	
+	protected ClassPrepareRequest createClassPrepareRequest(String classPattern) {
+		return createClassPrepareRequest(classPattern, null);
+	}
+	
 	/**
 	 * Creates, enables and returns a class prepare request for the
 	 * specified class name in this target, or <code>null</code> if
-	 * unable to create the request. This is a utility method used
-	 * by event requesters that need to create class prepare requests.
+	 * unable to create the request. Can specify a class exclusion filter
+	 * as well.
+	 * This is a utility method used by event requesters that need to
+	 * create class prepare requests.
 	 * 
-	 * @param className regular expression specifying the pattern of
+	 * @param classPattern regular expression specifying the pattern of
 	 * 	class names that will cause the event request to fire. Regular
 	 * 	expressions may begin with a '*', end with a '*', or be an exact
 	 * 	match.
+	 *  @param classExclusionPattern regular expression specifying the pattern of
+	 * 	class names that will not cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match.  May be <code>null</code>.
 	 */
-	protected ClassPrepareRequest createClassPrepareRequest(String className) {
+	protected ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern) {
 		EventRequestManager manager= getEventRequestManager();
 		ClassPrepareRequest req= null;
 		try {
 			req= manager.createClassPrepareRequest();
-			req.addClassFilter(className);
+			req.addClassFilter(classPattern);
+			if (classExclusionPattern != null) {
+				req.addClassExclusionFilter(classExclusionPattern);
+			}
 			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			req.enable();
 		} catch (RuntimeException e) {

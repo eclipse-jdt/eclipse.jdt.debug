@@ -354,6 +354,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*"), target);  //$NON-NLS-1$
 		} else {
 			registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
+			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*", referenceTypeName), target);  //$NON-NLS-1$
 		}
 		
 		// create breakpoint requests for each class currently loaded
@@ -381,10 +382,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * different types that the local type is associated with as well as the 
 	 * performance problems of using ReferenceType#nestedTypes.  From the Java 
 	 * model perspective a local type is defined within a method of a type.  
-	 * Therefore the type of a breakpoint set in a local type is actually the type
-	 * of that defined the method where the local type was defined (and where the breakpoint
-	 * was positioned).  The local type is enclosed within the top level type according
-	 * to the VM.  So if "normal" attempts to create a request when a breakpoint is
+	 * Therefore the type of a breakpoint placed in a local type is the type
+	 * that encloses the method where the local type was defined.
+	 * The local type is enclosed within the top level type according
+	 * to the VM.
+	 * So if "normal" attempts to create a request when a breakpoint is
 	 * being added to a target, we must be dealing with a local type and therefore resort
 	 * to looking up all of the nested types of the top level enclosing type.
 	 */
@@ -404,6 +406,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}	
 	}
+	
 	/**
 	 * Update all requests that this breakpoint has installed in the
 	 * given target to reflect the current state of this breakpoint.
