@@ -7,6 +7,7 @@ package org.eclipse.jdt.launching;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -64,6 +65,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
 		Process p= null;
 		try {
+
 			if (workingDirectory == null) {
 				p= Runtime.getRuntime().exec(cmdLine, null);
 			} else {
@@ -73,7 +75,8 @@ public abstract class AbstractVMRunner implements IVMRunner {
 				if (p != null) {
 					p.destroy();
 				}
-				abort(LaunchingMessages.getString("AbstractVMRunner.Exception_starting_process_1"), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+				String errorCmdLine= getCmdLineAsString(cmdLine);
+				abort(MessageFormat.format(LaunchingMessages.getString("AbstractVMRunner.Exception_starting_process_1"), new String[]{errorCmdLine}), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 			
@@ -88,6 +91,16 @@ public abstract class AbstractVMRunner implements IVMRunner {
 			}
 		}
 		return p;
-	}			
+	}	
+	
+	protected String getCmdLineAsString(String[] cmdLine) {
+		StringBuffer buff= new StringBuffer();
+		for (int i = 0; i < cmdLine.length; i++) {
+			String string = cmdLine[i];
+			buff.append(string);
+			buff.append(' ');	
+		} 
+		return buff.toString().trim();
+	}
 			
 }
