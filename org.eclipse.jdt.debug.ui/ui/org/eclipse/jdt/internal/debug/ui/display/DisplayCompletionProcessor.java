@@ -30,6 +30,9 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -128,7 +131,10 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				
 				int[] localModifiers= new int[localVariableNames.length];
 				Arrays.fill(localModifiers, 0);
-				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), -1, documentOffset,
+				
+				int insertionPosition = computeInsertionPosition(receivingType, stackFrame);
+				
+				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
 					 localVariableTypeNames, localVariableNames,
 					 localModifiers, stackFrame.isStatic(), fCollector);
 					 
@@ -144,6 +150,51 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
 		return null;
 	}
+
+	protected int computeInsertionPosition(IType receivingType, IJavaStackFrame stackFrame) throws JavaModelException, DebugException {
+		int insertion = -1;
+		if (!receivingType.isBinary() || receivingType.getDeclaringType() == null) {
+			ICompilationUnit stackCU= getCompilationUnit(stackFrame);
+			ICompilationUnit typeCU= receivingType.getCompilationUnit();
+			if (typeCU != null && typeCU.equals(stackCU)) {
+				if (stackCU != null) {
+					IDocument doc = new Document(stackCU.getSource());
+					try {
+						insertion = doc.getLineOffset(stackFrame.getLineNumber());
+					} catch(BadLocationException e) {
+						JDIDebugUIPlugin.log(e);
+					}	
+				}
+			}
+		}
+		return insertion;
+	}
+	
+	/**
+	 * Returns the compliation unit associated with this
+	 * Java stack frame.  Returns <code>null</code> for a binary stack
+	 * frame.
+	 */
+	protected ICompilationUnit getCompilationUnit(IJavaStackFrame stackFrame) {
+		// Get the corresponding element.
+		ILaunch launch = stackFrame.getLaunch();
+		if (launch == null) {
+			return null;
+		}
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null) {
+			return null;
+		}
+		Object sourceElement= locator.getSourceElement(stackFrame);
+		if (sourceElement instanceof IType) {
+			return (ICompilationUnit)((IType)sourceElement).getCompilationUnit();
+		}
+		if (sourceElement instanceof ICompilationUnit) {
+			return (ICompilationUnit)sourceElement;
+		}
+		return null;
+	}
+	
 	protected void handle(ITextViewer viewer, CoreException x) {
 		Shell shell= viewer.getTextWidget().getShell();
 		ErrorDialog.openError(shell,
@@ -351,7 +402,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				String innerTypeName= typeNames[i];
 				try {
 					Integer.parseInt(innerTypeName);
-					continue; //loop over anonymous types
+					return type;
 				} catch (NumberFormatException e) {
 				}
 				type = type.getType(innerTypeName);

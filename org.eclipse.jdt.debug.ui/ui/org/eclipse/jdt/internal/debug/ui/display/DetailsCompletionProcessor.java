@@ -60,8 +60,8 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 				}
 		
 				configureResultCollector(project, textSelection);	
-
-				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), -1, documentOffset,
+				int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
+				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
 					 new char[0][], new char[0][],
 					 new int[0], stackFrame.isStatic(), getCollector());
 					 
