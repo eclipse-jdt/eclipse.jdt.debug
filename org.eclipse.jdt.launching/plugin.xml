@@ -138,22 +138,22 @@
    <extension point="org.eclipse.debug.core.sourceContainerTypes">
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.javaProject"
-   			name="Java Project"
+   			name="%javaProjectSourceContainerType.name"
    			class="org.eclipse.jdt.internal.launching.JavaProjectSourceContainerTypeDelegate">
    		</sourceContainerType> 
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
-   			name="Package Fragment Root"
+   			name="%packageFragmentRootSourceContainerType.name"
    			class="org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainerTypeDelegate">
    		</sourceContainerType>    		
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.classpathVariable"
-   			name="Java Classpath Variable"
+   			name="%classpathVariableSourceContainerType.name"
    			class="org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainerTypeDelegate">
    		</sourceContainerType>   		
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.classpathContainer"
-   			name="Java Library"
+   			name="%classpathContainerSourceContainerType.name"
    			class="org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainerTypeDelegate">
    		</sourceContainerType>    		
    </extension>
@@ -167,9 +167,7 @@
    		<sourceLocator
    			id="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
    			class="org.eclipse.jdt.internal.launching.JavaSourceLookupDirector"
-   			name="Java Source Locator">
+   			name="%javaSourceLookupDirector.name">
    		</sourceLocator>
    </extension>
-   		
-
 </plugin>

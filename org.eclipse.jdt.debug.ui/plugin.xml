@@ -2298,8 +2298,8 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            name="Debugging Java"
-            description="Debugging Java programs"
+            name="%Context.javaDebugging.name"
+            description="%Context.javaDebugging.description"
             id="org.eclipse.jdt.debug.ui.debugging"
             parentId="org.eclipse.debug.ui.debugging">
       </context>
