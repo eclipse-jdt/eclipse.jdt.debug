@@ -280,7 +280,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 			int i = 0;
 			while (keys.hasNext()) {
 				String key= (String)keys.next();
-				vars[i] = key + "=" + (String)map.get(key);
+				vars[i] = key + "=" + (String)map.get(key); //$NON-NLS-1$
 				i++;
 			}
 		}

@@ -30,7 +30,7 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	
 	private IViewPart fView;
 	
-	protected String fId= "";
+	protected String fId= ""; //$NON-NLS-1$
 	
 	private IAction fAction;
 	private boolean fNeedsInitialization= true;
