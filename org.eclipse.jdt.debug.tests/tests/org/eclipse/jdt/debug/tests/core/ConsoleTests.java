@@ -16,7 +16,13 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.MessageConsole;
+
+import com.ibm.xslt4j.bcel.generic.FDIV;
 
 /**
  * Tests console line tracker.
@@ -25,6 +31,27 @@ public class ConsoleTests extends AbstractDebugTest {
 	
 	public ConsoleTests(String name) {
 		super(name);
+	}
+	
+	class TestConsole extends MessageConsole {
+	    
+	    public boolean fInit = false;
+	    public boolean fDispose = false;
+
+        public TestConsole(boolean autoLifecycle) {
+            super("Life's like that", null, autoLifecycle);
+        }
+        
+        protected void init() {
+            super.init();
+            fInit = true;
+        }
+        
+        protected void dispose() {
+            super.dispose();
+            fDispose = true;
+        }
+	    
 	}
 	
 	/** 
@@ -62,5 +89,23 @@ public class ConsoleTests extends AbstractDebugTest {
 		}				
 	} 
 	
+	public void testAutoLifecycle() {
+	    TestConsole console = new TestConsole(true);
+	    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+	    consoleManager.addConsoles(new IConsole[]{console});
+	    consoleManager.removeConsoles(new IConsole[]{console});
+	    assertTrue("Console was not initialized", console.fInit);
+	    assertTrue("Console was not disposed", console.fDispose);
+	}
+	
+	public void testManualLifecycle() {
+	    TestConsole console = new TestConsole(false);
+	    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+	    consoleManager.addConsoles(new IConsole[]{console});
+	    consoleManager.removeConsoles(new IConsole[]{console});
+	    assertTrue("Console was initialized", !console.fInit);
+	    assertTrue("Console was disposed", !console.fDispose);
+	    console.dispose();
+	}	
 
 }
