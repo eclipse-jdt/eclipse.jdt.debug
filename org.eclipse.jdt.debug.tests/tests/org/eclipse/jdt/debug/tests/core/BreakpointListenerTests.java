@@ -184,6 +184,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			assertEquals("Should be no removes", 0, fRemoveCallbacks);			
 			
 		} finally {
+			getJavaProject().getProject().open(null);
 			getBreakpointManager().removeBreakpointListener((IBreakpointsListener)this);
 			removeAllBreakpoints();
 		}
