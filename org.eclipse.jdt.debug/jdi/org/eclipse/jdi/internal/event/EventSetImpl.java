@@ -108,18 +108,30 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 		if (fEvents.size() == 1) {
 			// Most event sets have only one event.
 			// Avoid expensive object creation.
-			((EventImpl)fEvents.get(0)).thread().resume();
+			ThreadReference ref= ((EventImpl)fEvents.get(0)).thread();
+			if (ref != null) {
+				ref.resume();
+			} else {
+				((EventImpl)fEvents.get(0)).virtualMachine().resume();
+			}
 			return;
 		}
 		Iterator iter = fEvents.iterator();
 		List resumedThreads= new ArrayList(fEvents.size());
 		while (iter.hasNext()) {
 			EventImpl event = (EventImpl)iter.next();
-			ThreadReference thread= event.thread();			
-			if (thread != null && !resumedThreads.contains(thread)) {
-				thread.resume();
+			ThreadReference thread= event.thread();
+			if (thread == null) {
+				event.virtualMachine().resume();
+				return;
+			}	
+			if (!resumedThreads.contains(thread)) {
 				resumedThreads.add(thread);
 			}
+		}
+		Iterator resumeIter= resumedThreads.iterator();
+		while (resumeIter.hasNext()) {
+			((ThreadReference)resumeIter.next()).resume();
 		}
 	}
 	
