@@ -292,7 +292,7 @@ public class MonitorManager {
 		}
 	}
 
-	protected void updateDeadlock(IJavaThread thread) {
+	private void updateDeadlock(IJavaThread thread) {
 		//updating data on deadlocks
 		List l = listToDeadlock(thread, new ArrayList(4));
 		// if thread is caught in a deadlock, 
@@ -304,7 +304,7 @@ public class MonitorManager {
 		}
 	}
 	
-	protected void updateMonitors(IJavaThread thread) throws DebugException {
+	private void updateMonitors(IJavaThread thread) throws DebugException {
 		IJavaObject[] ownedMonitors;
 		IJavaObject currentContendedMonitor;
 		IJavaObject monitor;

@@ -11,11 +11,16 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Listen to certain events in the debug view
@@ -34,6 +39,7 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 		Object source;
 		boolean monitorInformationAvailable= true;
 		boolean updateNeeded= false;
+		final IJavaDebugTarget[] targets = new IJavaDebugTarget[1];
 		for (int i = 0; i < events.length; i++) {
 			event= events[i];
 			source= event.getSource();
@@ -44,14 +50,14 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 					IJavaDebugTarget target= (IJavaDebugTarget)source;
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
-						MonitorManager.getDefault().updatePartial(target);
+						targets[0] = target;
 						updateNeeded= true;
 					} 
 				} else if (source instanceof IJavaThread) {
 					IJavaDebugTarget target= (IJavaDebugTarget)((IJavaThread)source).getDebugTarget();
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
-						MonitorManager.getDefault().updatePartial(target);
+						targets[0] = target;
 						updateNeeded= true;
 					}
 					
@@ -61,25 +67,42 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 					IJavaDebugTarget target= (IJavaDebugTarget)source;
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
-						MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+						targets[0] = target;
 						updateNeeded= true;
 					}
 				} else if (source instanceof IJavaThread) {
 					IJavaDebugTarget target= (IJavaDebugTarget)((IJavaThread)source).getDebugTarget();
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
-						MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
+						targets[0] = target;
 						updateNeeded= true;
 					}
 				}
 			} else if(event.getKind() == DebugEvent.TERMINATE && source instanceof IJavaDebugTarget) {
 				MonitorManager.getDefault().removeMonitorInformation((IJavaDebugTarget)source);
-				updateNeeded= true;
-				
+				((MonitorsView)getView()).refreshCurrentViewer(monitorInformationAvailable, false);
 			}
 		}
 		if (updateNeeded) {
-			((MonitorsView)getView()).refreshCurrentViewer(monitorInformationAvailable, false);
+			Job job = new Job(MonitorMessages.getString("MonitorsView.4")) { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					MonitorManager.getDefault().updatePartial(targets[0]);
+					Runnable r = new Runnable() {
+						public void run() {
+							((MonitorsView)getView()).refreshCurrentViewer(true, false);
+						}
+					};
+					getView().asyncExec(r);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getView().getAdapter(IWorkbenchSiteProgressService.class);
+			if (service == null) {
+				job.schedule();
+			} else {
+				service.schedule(job);
+			}
 		}
 	}
 	/**

@@ -11,8 +11,13 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Suspend all non-system threads and updates the data in MonitorManager
@@ -24,12 +29,29 @@ public class MonitorTraceAction extends MonitorAction {
 	 */
 	public void run(IAction action) {
 			
-		IJavaDebugTarget target= getDebugTarget();
+		final IJavaDebugTarget target= getDebugTarget();
 		if (target == null) {
 			return;
 		}
-		MonitorManager.getDefault().update(target);
-		fView.refreshCurrentViewer(target.supportsMonitorInformation(), false);
+		Job job = new Job(MonitorMessages.getString("MonitorsView.4")) { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				MonitorManager.getDefault().update(target);
+				Runnable r = new Runnable() {
+					public void run() {
+						fView.refreshCurrentViewer(target.supportsMonitorInformation(), false);
+					}
+				};
+				fView.asyncExec(r);
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) fView.getAdapter(IWorkbenchSiteProgressService.class);
+		if (service == null) {
+			job.schedule();
+		} else {
+			service.schedule(job);
+		}		
 	}
 	
 	/* (non-Javadoc)
