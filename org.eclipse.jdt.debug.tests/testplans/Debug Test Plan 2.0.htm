@@ -652,6 +652,17 @@
  <li class=MsoNormal style='mso-list:l2 level1 lfo8;tab-stops:list .5in'>Debug keyboard navigation</li>
 </ul>
 
+<h2>Memory Leak</h2>
+<p>Use "optimize it" (or perhaps just the system process monitor) to ensure that we free allocated memory for the following tasks:</P>
+
+<ul style='margin-top:0in' type=disc>
+ <li> Start/kill debug session</li>
+ <li> Open/close snippet editor (and start an evaluation)</li>
+ <li> Open close preference pages, views and dialogs</li>
+ <li> Open/close perspective</li>
+ <li> Evaluations in debugger</li>
+</ul>
+
 </div>
 
 </body>
