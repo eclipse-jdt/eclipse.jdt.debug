@@ -20,7 +20,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -357,4 +361,34 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		return contents;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#verifyWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		IPath path = getWorkingDirectoryPath(configuration);
+		if (path == null) {
+			// default working dir for applets is the project's output directory
+			String outputDir = JavaRuntime.getProjectOutputDirectory(configuration);
+			File workspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+			return new File(workspaceRoot, outputDir);
+		} else {
+			if (path.isAbsolute()) {
+				File dir = new File(path.toOSString());
+				if (dir.isDirectory()) {
+					return dir;
+				} else {
+					abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+				}
+			} else {
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (res instanceof IContainer && res.exists()) {
+					return res.getLocation().toFile();
+				} else {
+					abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+				}
+			}
+		}
+		return null;		
+	}
+
 }

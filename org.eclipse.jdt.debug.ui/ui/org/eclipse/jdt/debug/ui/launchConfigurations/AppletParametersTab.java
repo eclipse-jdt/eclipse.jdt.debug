@@ -50,7 +50,9 @@ import org.eclipse.swt.widgets.Text;
 /**
  * This tab appears for java applet launch configurations and allows the user to edit
  * applet-specific attributes such as width, height, name & applet parameters.
- * 
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed.
+ * </p>
  * @since 2.1
  */
 public class AppletParametersTab extends JavaLaunchConfigurationTab {

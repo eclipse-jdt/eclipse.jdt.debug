@@ -1731,4 +1731,32 @@ public final class JavaRuntime {
 		return fgMonitor;
 	}
 	
+	/**
+	 * Return the String representation of the output dir of the launch config's
+	 * project or <code>null</code> if there is no config, no project or some
+	 * sort of problem.
+	 * 
+	 * @return the output directory for the specified launch configuration's
+	 * project
+	 * @since 2.1
+	 */
+	public static String getProjectOutputDirectory(ILaunchConfiguration config) {
+		try {
+			if (config != null) {
+				IJavaProject javaProject = JavaRuntime.getJavaProject(config);
+				if (javaProject != null) {
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+					IPath outputLocation = javaProject.getOutputLocation();
+					IResource resource = root.findMember(outputLocation);
+					IPath path = resource.getFullPath();
+					if (path != null)  {
+						return path.makeRelative().toString();
+					}
+				} 
+			}
+		} catch (CoreException ce) {
+		} 
+		return null;
+	}
+	
 }

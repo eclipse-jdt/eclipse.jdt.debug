@@ -7,11 +7,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClassFile;
@@ -55,7 +53,9 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * This tab appears for java applet launch configurations and allows the user to edit
  * attributes such as the applet class to launch and its owning project, if any.
- * 
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed.
+ * </p>
  * @since 2.1
  */
 public class AppletMainTab extends JavaLaunchConfigurationTab {
@@ -257,7 +257,6 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)fProjText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)fMainText.getText());
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getProjectOutputDirectory());		
 		performApplyAppletViewerClassName(config);		
 	}
 	
@@ -537,25 +536,6 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 */
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
-	}
-
-	private String getProjectOutputDirectory() {
-		IJavaProject jproject = getJavaProject();
-		if (jproject == null) {
-			return EMPTY_STRING;
-		}
-		try {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IPath outputLocation = jproject.getOutputLocation();
-			IResource resource = root.findMember(outputLocation);
-			IPath path = resource.getLocation();
-			if (path == null)  {
-				return EMPTY_STRING;
-			}
-			return path.toOSString();
-		} catch(JavaModelException e) {
-			return EMPTY_STRING;
-		}
 	}
 
 }

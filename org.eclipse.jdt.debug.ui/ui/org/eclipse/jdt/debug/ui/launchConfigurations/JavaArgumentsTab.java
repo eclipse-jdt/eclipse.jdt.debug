@@ -46,13 +46,26 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	protected Text fPrgmArgumentsText;
 
 	// VM arguments widgets
-	protected VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
+	protected VMArgumentsBlock fVMArgumentsBlock;
 	
 	// Working directory
-	protected WorkingDirectoryBlock fWorkingDirectoryBlock = new WorkingDirectoryBlock();
+	protected WorkingDirectoryBlock fWorkingDirectoryBlock;
 		
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 		
+	public JavaArgumentsTab() {
+		fVMArgumentsBlock = createVMArgsBlock();
+		fWorkingDirectoryBlock = createWorkingDirBlock();
+	}
+	
+	protected VMArgumentsBlock createVMArgsBlock() {
+		return new VMArgumentsBlock();
+	}
+	
+	protected WorkingDirectoryBlock createWorkingDirBlock() {
+		return new WorkingDirectoryBlock();
+	}
+	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
