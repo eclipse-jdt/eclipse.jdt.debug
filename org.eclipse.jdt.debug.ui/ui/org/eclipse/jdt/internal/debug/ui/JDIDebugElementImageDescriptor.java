@@ -5,19 +5,11 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
 
-import java.util.HashMap;
-
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-
-import org.eclipse.ui.ISharedImages;
-
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * A JDIDebugElementImageDescriptor consists of a main icon and several adornments. The adornments
