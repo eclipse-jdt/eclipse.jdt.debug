@@ -112,7 +112,7 @@ public interface IRuntimeClasspathEntry {
 		
 	/**
 	 * Returns the resource associated with this entry, or <code>null</code>
-	 * if none. A project, library, or folder entry may be associated
+	 * if none. A project, archive, or folder entry may be associated
 	 * with a resource.
 	 * 
 	 * @return the resource associated with this entry, or <code>null</code>

@@ -258,7 +258,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		node.setAttribute("path", (new Integer(getClasspathProperty())).toString()); //$NON-NLS-1$
 		switch (getType()) {
 			case PROJECT :
-				node.setAttribute("projectName", getResource().getName()); //$NON-NLS-1$
+				node.setAttribute("projectName", getPath().lastSegment()); //$NON-NLS-1$
 				break;
 			case ARCHIVE :
 				IResource res = getResource();
@@ -301,9 +301,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public IResource getResource() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		switch (getType()) {
-			case PROJECT:
-				return root.findMember(getPath());
 			case CONTAINER:
+			case VARIABLE:
 				return null;
 			default:
 				return root.findMember(getPath());
