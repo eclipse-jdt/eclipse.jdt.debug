@@ -199,6 +199,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			String name = null;
 			try {
 				name = getFullyQualfiedName(frame);
+				if (name == null) {
+					return null;
+				}
 			} catch (CoreException e) {
 				// if the thread has since resumed, return null
 				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
@@ -233,6 +236,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			String name = null;
 			try {
 				name = getFullyQualfiedName(frame);
+				if (name == null) {
+					return null;
+				}
 			} catch (CoreException e) {
 				// if the thread has since resumed, return null
 				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
