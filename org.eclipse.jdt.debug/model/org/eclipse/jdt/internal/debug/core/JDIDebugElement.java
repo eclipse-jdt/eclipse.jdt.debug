@@ -173,7 +173,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
-	 * with the given underlying exception. If the underlyign exception is not a JDI
+	 * with the given underlying exception. If the underlying exception is not a JDI
 	 * exception, the original exception is thrown.
 	 * 
 	 * @param message Failure message
@@ -181,6 +181,9 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	protected void targetRequestFailed(String message, RuntimeException e) throws DebugException {
+		if (e instanceof VMDisconnectedException) {
+			return;
+		}
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 				DebugException.TARGET_REQUEST_FAILED, message, e));
@@ -309,7 +312,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	/**
 	 * Removes the given listener from this target's event dispatcher's
 	 * table of listeners for the specifed event request. The listener
-	 * will no longer be notified when the event occurrs. Listeners
+	 * will no longer be notified when the event occurs. Listeners
 	 * are responsible for deleting the event request if desired.
 	 * 
 	 * @param listener the listener to remove
@@ -320,7 +323,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
+	 * @see IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
