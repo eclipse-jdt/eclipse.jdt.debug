@@ -33,6 +33,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.views.console.HyperlinkPosition;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -679,7 +680,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}	
 	
 	/**
-	 * Performs a step with filters in the given stack frame and returns when
+	 * Performs a step into with filters in the given stack frame and returns when
 	 * complete.
 	 * 
 	 * @param frame stack frame to step in
@@ -688,7 +689,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
-		frame.stepWithFilters();
+		// turn filters on
+		try {
+			DebugUITools.setUseStepFilters(true);
+			frame.stepInto();
+		} finally {
+			// turn filters off
+			DebugUITools.setUseStepFilters(false);
+		}
+		
 		
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
