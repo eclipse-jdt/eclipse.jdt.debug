@@ -109,7 +109,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @param classpathProperty this entry's classpath property
 	 * @exception CoreException if unable to resolve the given entry
 	 */
-	public RuntimeClasspathEntry(IClasspathEntry entry, int classpathProperty) throws CoreException {
+	public RuntimeClasspathEntry(IClasspathEntry entry, int classpathProperty) {
 		switch (entry.getEntryKind()) {
 			case IClasspathEntry.CPE_CONTAINER:
 				setType(CONTAINER);

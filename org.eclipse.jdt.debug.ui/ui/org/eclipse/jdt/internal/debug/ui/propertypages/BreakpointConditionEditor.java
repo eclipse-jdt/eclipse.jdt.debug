@@ -119,11 +119,7 @@ public class BreakpointConditionEditor {
 			}
 		});
 		// we can only do code assist if there is an associated type
-		IType type = null;
-		try {
-			type= BreakpointUtils.getType(fBreakpoint);
-		} catch (CoreException e) {
-		}
+		IType type= BreakpointUtils.getType(fBreakpoint);
 		if (type != null) {
 			try {
 				getCompletionProcessor().setType(type);			

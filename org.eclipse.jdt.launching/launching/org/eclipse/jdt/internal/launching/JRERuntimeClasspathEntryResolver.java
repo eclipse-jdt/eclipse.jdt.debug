@@ -72,7 +72,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveVMInstall(IClasspathEntry)
 	 */
-	public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException {
+	public IVMInstall resolveVMInstall(IClasspathEntry entry) {
 		switch (entry.getEntryKind()) {
 			case IClasspathEntry.CPE_VARIABLE:
 				if (entry.getPath().segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {

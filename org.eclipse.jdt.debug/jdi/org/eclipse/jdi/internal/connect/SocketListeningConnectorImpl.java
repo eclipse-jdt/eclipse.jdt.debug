@@ -110,7 +110,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	/**
 	 * Cancels listening for connections. 
 	 */
-	public void stopListening(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
+	public void stopListening(Map connectionArgs) throws IOException {
 		((SocketTransportImpl)fTransport).closeListen();
 	}
 		
@@ -118,7 +118,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * Waits for a target VM to attach to this connector.
 	 * @return Returns a connected Virtual Machine.
 	 */
-	public VirtualMachine accept(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
+	public VirtualMachine accept(Map connectionArgs) throws IOException {
 		((SocketTransportImpl)fTransport).setAcceptTimeout(fTimeout);
 		((SocketTransportImpl)fTransport).accept();
 		if (fTransport.isOpen()) {

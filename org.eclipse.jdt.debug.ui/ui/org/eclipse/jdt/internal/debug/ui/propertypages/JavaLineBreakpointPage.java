@@ -199,12 +199,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 */
 	private void createConditionEditor(Composite parent) throws CoreException {
 		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
-		IType type = null;
-		try {
-			type = BreakpointUtils.getType(breakpoint);
-		} catch (CoreException e) {
-			// OK
-		}
+		IType type = BreakpointUtils.getType(breakpoint);
+		
 		String label = null;
 		if (type == null) {
 			label = PropertyPageMessages.getString("JavaLineBreakpointPage.12"); //$NON-NLS-1$

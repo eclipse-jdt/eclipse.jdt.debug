@@ -61,7 +61,7 @@ public class TcpipSpy extends Thread {
 	private static int fFrameIDSize;
 	private static boolean fHasSizes;
 
-	public TcpipSpy(boolean VMtoDebugger, InputStream in, OutputStream out) throws IOException {
+	public TcpipSpy(boolean VMtoDebugger, InputStream in, OutputStream out) {
 		fVMtoDebugger= VMtoDebugger;
 		fDataIn= new DataInputStream(new BufferedInputStream(in));
 		fDataOut= new DataOutputStream(new BufferedOutputStream(out));

@@ -49,14 +49,14 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
-	public IValue getValue() throws DebugException {
+	public IValue getValue() {
 		return fValue;
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
-	public String getName() throws DebugException {
+	public String getName() {
 		return fName;
 	}
 
@@ -70,7 +70,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws DebugException {
+	public boolean hasValueChanged() {
 		return false;
 	}
 
@@ -105,7 +105,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(IValue)
 	 */
-	public void setValue(IValue value) throws DebugException {
+	public void setValue(IValue value) {
 		fValue= value;
 	}
 
@@ -140,7 +140,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getJavaType()
 	 */
-	public IJavaType getJavaType() throws DebugException {
+	public IJavaType getJavaType() {
 		return fReferenceType;
 	}
 
@@ -154,56 +154,56 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isFinal()
 	 */
-	public boolean isFinal() throws DebugException {
+	public boolean isFinal() {
 		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPackagePrivate()
 	 */
-	public boolean isPackagePrivate() throws DebugException {
+	public boolean isPackagePrivate() {
 		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPrivate()
 	 */
-	public boolean isPrivate() throws DebugException {
+	public boolean isPrivate() {
 		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isProtected()
 	 */
-	public boolean isProtected() throws DebugException {
+	public boolean isProtected() {
 		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPublic()
 	 */
-	public boolean isPublic() throws DebugException {
+	public boolean isPublic() {
 		return true;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isStatic()
 	 */
-	public boolean isStatic() throws DebugException {
+	public boolean isStatic() {
 		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isSynthetic()
 	 */
-	public boolean isSynthetic() throws DebugException {
+	public boolean isSynthetic() {
 		return true;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
-	public boolean isLocal() throws DebugException {
+	public boolean isLocal() {
 		return false;
 	}
 }

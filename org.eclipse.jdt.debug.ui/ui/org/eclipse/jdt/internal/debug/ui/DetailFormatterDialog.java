@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
@@ -316,7 +315,7 @@ public class DetailFormatterDialog extends StatusDialog {
 			public void aboutToStart() {
 			}
 
-			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) throws CoreException {
+			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) {
 				if (!fFirst) {
 					return;
 				}

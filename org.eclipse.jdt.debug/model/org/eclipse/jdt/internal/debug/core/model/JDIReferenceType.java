@@ -46,7 +46,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getAvailableStrata()
 	 */
-	public String[] getAvailableStrata() throws DebugException {
+	public String[] getAvailableStrata() {
 		List strata = getReferenceType().availableStrata();
 		return (String[])strata.toArray(new String[strata.size()]);
 	}
@@ -64,10 +64,9 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getDefaultStratum()
 	 */
-	public String getDefaultStratum() throws DebugException {
+	public String getDefaultStratum() {
 		return getReferenceType().defaultStratum();
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getField(java.lang.String)

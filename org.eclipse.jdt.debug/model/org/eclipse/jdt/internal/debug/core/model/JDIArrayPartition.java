@@ -44,7 +44,10 @@ public class JDIArrayPartition extends JDIVariable {
 		fEnd= end;
 	}
 
-	public String getName() throws DebugException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IVariable#getName()
+	 */
+	public String getName() {
 		StringBuffer name = new StringBuffer();
 		name.append('[');
 		name.append(getStart());

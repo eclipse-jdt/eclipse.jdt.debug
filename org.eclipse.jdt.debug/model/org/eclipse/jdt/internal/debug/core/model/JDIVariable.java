@@ -143,7 +143,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * @see IJavaModifiers#isSynthetic()
 	 */
-	public boolean isSynthetic() throws DebugException {
+	public boolean isSynthetic() {
 		return false;
 	}
 	
@@ -171,28 +171,28 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * @see IJavaModifiers#isPackagePrivate()
 	 */
-	public boolean isPackagePrivate() throws DebugException {
+	public boolean isPackagePrivate() {
 		return false;
 	}
 	
 	/**
 	 * @see IJavaModifiers#isStatic()
 	 */
-	public boolean isStatic() throws DebugException {
+	public boolean isStatic() {
 		return false;
 	}
 	
 	/**
 	 * @see IJavaModifiers#isFinal()
 	 */
-	public boolean isFinal() throws DebugException {
+	public boolean isFinal() {
 		return false;
 	}
 	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
-	public boolean isLocal() throws DebugException {
+	public boolean isLocal() {
 		return false;
 	}
 
@@ -249,9 +249,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * @see IVariable#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws DebugException {
+	public boolean hasValueChanged() {
 		return getChangeCount() == getJavaDebugTarget().getSuspendCount();
 	}
-
 }
-

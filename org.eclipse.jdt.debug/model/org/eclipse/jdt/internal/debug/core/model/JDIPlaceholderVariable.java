@@ -53,7 +53,7 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
-	public boolean isLocal() throws DebugException {
+	public boolean isLocal() {
 		return false;
 	}
 
@@ -67,7 +67,7 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
-	public String getName() throws DebugException {
+	public String getName() {
 		return fName;
 	}
 	
@@ -85,56 +85,56 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws DebugException {
+	public boolean hasValueChanged() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPublic()
 	 */
-	public boolean isPublic() throws DebugException {
+	public boolean isPublic() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPrivate()
 	 */
-	public boolean isPrivate() throws DebugException {
+	public boolean isPrivate() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isProtected()
 	 */
-	public boolean isProtected() throws DebugException {
+	public boolean isProtected() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPackagePrivate()
 	 */
-	public boolean isPackagePrivate() throws DebugException {
+	public boolean isPackagePrivate() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isFinal()
 	 */
-	public boolean isFinal() throws DebugException {
+	public boolean isFinal() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isStatic()
 	 */
-	public boolean isStatic() throws DebugException {
+	public boolean isStatic() {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isSynthetic()
 	 */
-	public boolean isSynthetic() throws DebugException {
+	public boolean isSynthetic() {
 		return false;
 	}
 
@@ -162,7 +162,7 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
-	public void setValue(String expression) throws DebugException {
+	public void setValue(String expression) {
 	}
 
 	/* (non-Javadoc)
@@ -182,14 +182,14 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
-	public boolean verifyValue(String expression) throws DebugException {
+	public boolean verifyValue(String expression) {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
-	public boolean verifyValue(IValue value) throws DebugException {
+	public boolean verifyValue(IValue value) {
 		return false;
 	}
 
@@ -210,10 +210,7 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	public boolean equals(Object obj) {
 		if (obj instanceof JDIPlaceholderVariable) {
 			JDIPlaceholderVariable var = (JDIPlaceholderVariable)obj;
-			try {
-				return var.getName().equals(getName()) && var.getValue().equals(getValue());
-			} catch (DebugException e) {
-			}
+			return var.getName().equals(getName()) && var.getValue().equals(getValue());
 		}
 		return false;
 	}

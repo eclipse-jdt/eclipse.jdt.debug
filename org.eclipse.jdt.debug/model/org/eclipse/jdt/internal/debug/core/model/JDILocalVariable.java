@@ -178,9 +178,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
-	public boolean isLocal() throws DebugException {
+	public boolean isLocal() {
 		return true;
 	}
-
 }
-

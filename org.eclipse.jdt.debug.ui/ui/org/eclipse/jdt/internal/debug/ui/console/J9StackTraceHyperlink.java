@@ -53,7 +53,7 @@ public class J9StackTraceHyperlink extends JavaStackTraceHyperlink {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#getLineNumber()
 	 */
-	protected int getLineNumber() throws CoreException {
+	protected int getLineNumber() {
 		return -1;
 	}
 

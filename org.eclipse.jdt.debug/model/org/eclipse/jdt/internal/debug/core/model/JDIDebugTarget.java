@@ -706,7 +706,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * @see IJavaDebugTarget#mayBeOutOfSynch()
 	 */
-	public boolean mayBeOutOfSynch() throws DebugException {
+	public boolean mayBeOutOfSynch() {
 		List threadList= (List) getThreadList().clone();
 		Iterator threads= threadList.iterator();
 		while (threads.hasNext()) {
@@ -1064,11 +1064,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return;
 		}		
 		if (supportsBreakpoint(breakpoint)) {	
-			try {
-				((JavaBreakpoint)breakpoint).changeForTarget(this);
-			} catch (CoreException e) {
-				logError(e);
-			}
+			((JavaBreakpoint)breakpoint).changeForTarget(this);
 		}
 	}
 	
@@ -1907,7 +1903,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * @see IDebugTarget#hasThreads()
 	 */
-	public boolean hasThreads() throws DebugException {
+	public boolean hasThreads() {
 		return getThreadList().size() > 0;
 	}
 	

@@ -319,7 +319,7 @@ public class JavaProjectHelper {
 		}
 	}	
 	
-	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
+	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
 		List files = new ArrayList(1);
 		files.add(file);

@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.ui.console.IConsole;
 
 /**
@@ -29,7 +28,7 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#getLineNumber()
 	 */
-	protected int getLineNumber() throws CoreException {
+	protected int getLineNumber() {
 		return -1;
 	}
 

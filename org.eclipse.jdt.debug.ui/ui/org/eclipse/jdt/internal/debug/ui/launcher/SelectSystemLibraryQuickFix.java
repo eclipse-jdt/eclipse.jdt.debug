@@ -70,8 +70,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 
 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					String vmTypeId = vm.getVMInstallType().getId();
 					String vmName = vm.getName();
 					String prevId = JREContainerInitializer.getVMTypeId(unboundPath);

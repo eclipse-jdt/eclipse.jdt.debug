@@ -28,8 +28,7 @@ public abstract class OpenVariableTypeAction extends OpenTypeAction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#getTypeNameToOpen(IDebugElement)
 	 */
-	protected String getTypeNameToOpen(IDebugElement element)
-		throws DebugException {
+	protected String getTypeNameToOpen(IDebugElement element) throws DebugException {
 		return null;
 	}
 

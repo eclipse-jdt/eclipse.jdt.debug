@@ -169,7 +169,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 	/**
 	 * Adds the source name and hit count attributes to the given map.
 	 */
-	protected void addSourceNameAndHitCount(Map attributes, String sourceName, int hitCount) throws CoreException {
+	protected void addSourceNameAndHitCount(Map attributes, String sourceName, int hitCount) {
 		if (sourceName != null) {
 			attributes.put(SOURCE_NAME, sourceName);
 		}		

@@ -425,7 +425,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 	
-	protected void configureInstanceFilters(EventRequest request, JDIDebugTarget target) throws CoreException {
+	protected void configureInstanceFilters(EventRequest request, JDIDebugTarget target) {
 		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
 			Iterator iter = fInstanceFilters.iterator();
 			while (iter.hasNext()) {
@@ -539,7 +539,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Do nothing - we update the request when an API call changes an attribute
 	 */
-	public void changeForTarget(JDIDebugTarget target) throws CoreException {
+	public void changeForTarget(JDIDebugTarget target) {
 	}
 			
 	/**
@@ -813,7 +813,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 	
-	protected String getMarkerMessage(int hitCount, int suspendPolicy) throws CoreException {
+	protected String getMarkerMessage(int hitCount, int suspendPolicy) {
 		StringBuffer buff= new StringBuffer();
 		if (hitCount > 0){
 			buff.append(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaBreakpoint._[Hit_Count__{0}]_1"), new Object[]{Integer.toString(hitCount)})); //$NON-NLS-1$
@@ -996,14 +996,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * @see IJavaBreakpoint#getThreadFilter(IJavaDebugTarget)
 	 */
-	public IJavaThread getThreadFilter(IJavaDebugTarget target) throws CoreException {
+	public IJavaThread getThreadFilter(IJavaDebugTarget target) {
 		return (IJavaThread)fFilteredThreadsByTarget.get(target);
 	}
 	
 	/**
 	 * @see IJavaBreakpoint#getThreadFilters()
 	 */
-	public IJavaThread[] getThreadFilters() throws CoreException {
+	public IJavaThread[] getThreadFilters() {
 		IJavaThread[] threads= null;
 		Collection values= fFilteredThreadsByTarget.values();
 		threads= new IJavaThread[values.size()];
@@ -1069,7 +1069,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#getInstanceFilters()
 	 */
-	public IJavaObject[] getInstanceFilters() throws CoreException {
+	public IJavaObject[] getInstanceFilters() {
 		if (fInstanceFilters == null || fInstanceFilters.isEmpty()) {
 			return fgEmptyInstanceFilters;
 		}

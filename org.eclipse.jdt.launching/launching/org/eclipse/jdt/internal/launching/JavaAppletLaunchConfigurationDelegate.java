@@ -165,8 +165,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 * @param workingDir the working directory
 	 * @return system property for the policy file
 	 */
-	public String getJavaPolicyFile(File workingDir)
-		throws CoreException {
+	public String getJavaPolicyFile(File workingDir) {
 			File file = new File(workingDir, "java.policy.applet");//$NON-NLS-1$ 
 			if (!file.exists()) {
 				// copy it to the working directory

@@ -92,7 +92,7 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 	}
 
 	
-	private boolean changedJREVariable(IPath newPath, String var) throws CoreException {
+	private boolean changedJREVariable(IPath newPath, String var) {
 		IPath oldPath= JavaCore.getClasspathVariable(var);
 		return !newPath.equals(oldPath);
 	}

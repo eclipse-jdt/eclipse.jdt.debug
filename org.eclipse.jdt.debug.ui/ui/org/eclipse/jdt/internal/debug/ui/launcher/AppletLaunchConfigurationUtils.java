@@ -158,7 +158,7 @@ public class AppletLaunchConfigurationUtils {
 		}
 	}
 
-	private static List searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) throws JavaModelException {
+	private static List searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) {
 		return new ArrayList(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
 	}
 	
@@ -166,7 +166,7 @@ public class AppletLaunchConfigurationUtils {
 		return collectAppletTypesInProject(pm, type.getJavaProject()).contains(type);
 	}
 	
-	private static Object computeScope(Object element) throws JavaModelException {
+	private static Object computeScope(Object element) {
 		if (element instanceof IFileEditorInput) {
 			element= ((IFileEditorInput)element).getFile();
 		}

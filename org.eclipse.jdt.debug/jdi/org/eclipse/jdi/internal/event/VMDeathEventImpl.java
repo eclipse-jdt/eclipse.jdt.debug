@@ -12,7 +12,6 @@ package org.eclipse.jdi.internal.event;
 
 
 import java.io.DataInputStream;
-import java.io.IOException;
 
 import org.eclipse.jdi.internal.MirrorImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
@@ -40,7 +39,7 @@ public class VMDeathEventImpl extends EventImpl implements VMDeathEvent {
 	/**
 	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
 	 */
-	public static VMDeathEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+	public static VMDeathEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		VMDeathEventImpl event = new VMDeathEventImpl(vmImpl, requestID);
 		return event;

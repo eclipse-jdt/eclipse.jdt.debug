@@ -617,7 +617,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		recreate();
 	}
 
-	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount, int suspendPolicy, int lineNumber) throws CoreException {
+	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount, int suspendPolicy, int lineNumber) {
 		StringBuffer message= new StringBuffer(super.getMarkerMessage(hitCount, suspendPolicy));
 		if (lineNumber != -1) {
 			message.append(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaLineBreakpoint._[line__{0}]_1"), new Object[]{Integer.toString(lineNumber)})); //$NON-NLS-1$

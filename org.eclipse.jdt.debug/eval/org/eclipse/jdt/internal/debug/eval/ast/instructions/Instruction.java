@@ -80,7 +80,7 @@ public abstract class Instruction {
 	 *
 	 * @see Interpreter#createInternalVariable(String, String)
 	 */
-	protected IVariable createInternalVariable(String name, IJavaType referencType) throws CoreException {
+	protected IVariable createInternalVariable(String name, IJavaType referencType) {
 		return fInterpreter.createInternalVariable(name, referencType);
 	}
 

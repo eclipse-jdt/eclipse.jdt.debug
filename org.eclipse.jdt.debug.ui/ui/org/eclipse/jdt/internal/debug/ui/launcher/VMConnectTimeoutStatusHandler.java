@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -26,7 +25,7 @@ public class VMConnectTimeoutStatusHandler implements IStatusHandler {
 	/**
 	 * @see IStatusHandler#handleStatus(IStatus, Object)
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException {
+	public Object handleStatus(IStatus status, Object source) {
 		final boolean[] result = new boolean[1];
 		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
@@ -37,5 +36,4 @@ public class VMConnectTimeoutStatusHandler implements IStatusHandler {
 		});
 		return new Boolean(result[0]);
 	}
-
 }

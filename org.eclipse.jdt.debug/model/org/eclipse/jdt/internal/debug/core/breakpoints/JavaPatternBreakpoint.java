@@ -167,9 +167,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	}	
 	
 	/**
-	 * Adds the class name pattern and hit count attributes to the gvien map.
+	 * Adds the class name pattern and hit count attributes to the given map.
 	 */
-	protected void addPatternAndHitCount(Map attributes, String sourceName, String pattern, int hitCount) throws CoreException {
+	protected void addPatternAndHitCount(Map attributes, String sourceName, String pattern, int hitCount) {
 		attributes.put(PATTERN, pattern);
 		if (sourceName != null) {
 			attributes.put(SOURCE_NAME, sourceName);

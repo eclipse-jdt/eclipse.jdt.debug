@@ -1152,7 +1152,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 	
-	public boolean mayBeOutOfSynch() throws DebugException {
+	public boolean mayBeOutOfSynch() {
 		if (!isSuspended()) {
 			return ((JDIDebugTarget)getDebugTarget()).hasHCRFailed();
 		}
@@ -2385,7 +2385,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#hasOwnedMonitors()
 	 */
-	public boolean hasOwnedMonitors() throws DebugException {
+	public boolean hasOwnedMonitors() {
 		return isSuspended() && getOwnedMonitors().length > 0;
 	}
 	
@@ -2393,7 +2393,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#getOwnedMonitors()
 	 */
-	public IJavaObject[] getOwnedMonitors() throws DebugException {
+	public IJavaObject[] getOwnedMonitors() {
 		try {
 			JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
 			List ownedMonitors= getUnderlyingThread().ownedMonitors();
@@ -2414,7 +2414,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#getContendedMonitor()
 	 */
-	public IJavaObject getContendedMonitor() throws DebugException {
+	public IJavaObject getContendedMonitor() {
 		try {
 			ObjectReference monitor= getUnderlyingThread().currentContendedMonitor();
 			if (monitor != null) {

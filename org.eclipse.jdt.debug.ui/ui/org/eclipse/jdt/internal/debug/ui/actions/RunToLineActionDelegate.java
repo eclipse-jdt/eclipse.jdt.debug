@@ -113,7 +113,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	/**
 	 * Resolves a debug target context from the model
 	 */
-	protected IDebugTarget getContextFromThread(IThread thread) throws DebugException {
+	protected IDebugTarget getContextFromThread(IThread thread) {
 		if (thread.isSuspended()) {
 			return thread.getDebugTarget();
 		}
@@ -122,7 +122,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	/**
 	 * Resolves a stack frame context from the UI
 	 */
-	protected IThread getContextFromUI() throws DebugException {
+	protected IThread getContextFromUI() {
 		IAdaptable de= DebugUITools.getDebugContext();
 		if (de != null) {
 			IThread thread= null;

@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.core.runtime.CoreException;
 
 public class Pop extends SimpleInstruction {
 
 	/*
 	 * @see Instruction#execute()
 	 */
-	public void execute() throws CoreException {
+	public void execute() {
 		pop();
 	}
 

@@ -346,7 +346,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#getFilters()
 	 * @deprecated
 	 */
-	public String[] getFilters() throws CoreException {
+	public String[] getFilters() {
 		String[] iFilters= getInclusionFilters();
 		String[] eFilters= getExclusionFilters();
 		String[] filters= new String[iFilters.length + eFilters.length];
@@ -492,14 +492,14 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExclusionFilters()
 	 */
-	public String[] getExclusionFilters() throws CoreException {
+	public String[] getExclusionFilters() {
 		return getExclusionClassFilters();
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getInclusionFilters()
 	 */
-	public String[] getInclusionFilters() throws CoreException {
+	public String[] getInclusionFilters() {
 		return getInclusionClassFilters();
 	}
 

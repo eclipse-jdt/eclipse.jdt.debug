@@ -700,7 +700,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
-	protected synchronized String evaluateToString(IJavaValue value) throws DebugException {
+	protected synchronized String evaluateToString(IJavaValue value) {
 		fResult= null;
 		fPresentation.computeDetail(value, this);
 		if (fResult == null) {

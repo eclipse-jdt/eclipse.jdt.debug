@@ -40,7 +40,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
-	protected boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException {
+	protected boolean getToggleState(IJavaBreakpoint breakpoint) {
 		return false;
 	}
 

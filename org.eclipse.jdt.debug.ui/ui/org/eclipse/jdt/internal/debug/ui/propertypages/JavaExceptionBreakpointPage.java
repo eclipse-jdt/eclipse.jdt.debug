@@ -46,7 +46,7 @@ public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void createTypeSpecificEditors(Composite parent) throws CoreException {
+	protected void createTypeSpecificEditors(Composite parent) {
 		IJavaExceptionBreakpoint breakpoint= (IJavaExceptionBreakpoint) getBreakpoint();
 		SelectionAdapter exceptionBreakpointValidator= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

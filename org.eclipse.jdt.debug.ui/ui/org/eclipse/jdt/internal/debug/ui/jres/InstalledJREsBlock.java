@@ -658,7 +658,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		ProgressMonitorDialog pm = new ProgressMonitorDialog(getShell());
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(JREMessages.getString("InstalledJREsBlock.11"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				search(rootDir, locations, types, exstingLocations, monitor);
 				monitor.done();

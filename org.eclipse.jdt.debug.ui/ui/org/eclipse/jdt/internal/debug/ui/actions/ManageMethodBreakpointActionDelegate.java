@@ -84,7 +84,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 					} else {
 						if (container instanceof IMethod) {
 							if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
-								if (((IMethod)method).isSimilar((IMethod)container)) {
+								if (method.isSimilar((IMethod)container)) {
 									return methodBreakpoint;
 								}
 							}

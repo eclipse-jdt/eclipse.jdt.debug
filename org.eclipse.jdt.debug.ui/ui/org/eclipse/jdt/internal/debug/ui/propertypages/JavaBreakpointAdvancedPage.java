@@ -33,19 +33,14 @@ public class JavaBreakpointAdvancedPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		try {
-			doStore();
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.getString("JavaBreakpointAdvancedPage.0"), e); //$NON-NLS-1$
-			JDIDebugUIPlugin.log(e);
-		}
+		doStore();
 		return super.performOk();
 	}
 
 	/**
 	 * Stores the values configured in this page.
 	 */
-	protected void doStore() throws CoreException {
+	protected void doStore() {
 		fThreadFilterEditor.doStore();
 		if (fInstanceFilterEditor != null) {
 			fInstanceFilterEditor.doStore();

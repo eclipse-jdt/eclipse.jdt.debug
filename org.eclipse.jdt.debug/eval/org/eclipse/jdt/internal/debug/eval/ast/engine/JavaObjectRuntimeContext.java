@@ -59,7 +59,7 @@ public class JavaObjectRuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getThis()
 	 */
-	public IJavaObject getThis() throws CoreException {
+	public IJavaObject getThis() {
 		return fThisObject;
 	}
 
@@ -73,7 +73,7 @@ public class JavaObjectRuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getLocals()
 	 */
-	public IJavaVariable[] getLocals() throws CoreException {
+	public IJavaVariable[] getLocals() {
 		return new IJavaVariable[0];
 	}
 
@@ -94,7 +94,7 @@ public class JavaObjectRuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#isConstructor()
 	 */
-	public boolean isConstructor() throws CoreException {
+	public boolean isConstructor() {
 		return false;
 	}
 

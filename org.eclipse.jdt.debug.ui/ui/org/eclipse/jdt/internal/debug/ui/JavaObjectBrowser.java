@@ -194,7 +194,7 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 		return objectBrowser;
 	}
 
-	private IConfigurationElement getConfigElement(String typeName) throws DebugException {
+	private IConfigurationElement getConfigElement(String typeName) {
 		return (IConfigurationElement) fConfigElementMap.get(typeName);
 	}
 	

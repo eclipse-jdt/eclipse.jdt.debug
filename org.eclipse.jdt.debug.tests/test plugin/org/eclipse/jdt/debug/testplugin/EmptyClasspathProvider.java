@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.testplugin;
  
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
@@ -23,14 +22,14 @@ public class EmptyClasspathProvider implements IRuntimeClasspathProvider {
 	/**
 	 * @see IRuntimeClasspathProvider#computeUnresolvedClasspath(ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
+	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) {
 		return new IRuntimeClasspathEntry[0];
 	}
 
 	/**
 	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) {
 		return new IRuntimeClasspathEntry[0];
 	}
 

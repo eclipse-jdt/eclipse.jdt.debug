@@ -69,7 +69,7 @@ public class SWTCompositeObjectBrowser extends AbstractJavaObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public boolean hasChildren(IJavaValue value) throws DebugException {
+	public boolean hasChildren(IJavaValue value) {
 		// It's safe to always return true here, since a Composite will always have a
 		// layout, even if it's null
 		return true;

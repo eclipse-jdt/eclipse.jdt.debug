@@ -157,7 +157,7 @@ public class VerbosePacketStream extends PrintStream {
 		}
 	}
 	
-	protected void printHeader(JdwpPacket packet, boolean fromVM) throws IOException, UnableToParseDataException {
+	protected void printHeader(JdwpPacket packet, boolean fromVM) throws UnableToParseDataException {
 		if (fromVM) {
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.From_VM_1")); //$NON-NLS-1$
 		} else {

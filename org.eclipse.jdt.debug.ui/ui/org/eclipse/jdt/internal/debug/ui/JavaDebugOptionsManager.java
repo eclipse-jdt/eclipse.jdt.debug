@@ -196,9 +196,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	}
 	
 	/**
-	 * Called at startup by the java debug ui plug-in
+	 * Called at startup by the Java debug ui plug-in
 	 */
-	public void startup() throws CoreException {
+	public void startup() {
 		// lazy initialization will occur on the first launch
 		DebugPlugin debugPlugin = DebugPlugin.getDefault();
 		debugPlugin.getLaunchManager().addLaunchListener(this);
@@ -209,7 +209,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	/**
 	 * Called at shutdown by the Java debug ui plug-in
 	 */
-	public void shutdown() throws CoreException {
+	public void shutdown() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin debugPlugin = DebugPlugin.getDefault();
 		debugPlugin.removeDebugEventListener(this);

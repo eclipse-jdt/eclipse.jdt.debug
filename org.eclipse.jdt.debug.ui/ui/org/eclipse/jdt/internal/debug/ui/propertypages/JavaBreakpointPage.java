@@ -314,7 +314,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	* breakpoint page.
 	* @param parent
 	*/
-   protected void createTypeSpecificEditors(Composite parent) throws CoreException  {
+   protected void createTypeSpecificEditors(Composite parent) throws CoreException {
    		// Do nothing
    }
 	

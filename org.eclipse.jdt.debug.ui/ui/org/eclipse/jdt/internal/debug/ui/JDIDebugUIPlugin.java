@@ -440,7 +440,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		final JavaModelException[] exception= new JavaModelException[1];
 		ProgressMonitorDialog progressMonitor= new ProgressMonitorDialog(shell);
 		IRunnableWithProgress r= new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) {
 				try {
 					Set packageNameSet= new HashSet();
 					monitor.beginTask(DebugUIMessages.getString("JDIDebugUIPlugin.Searching_1"), projects.length); //$NON-NLS-1$

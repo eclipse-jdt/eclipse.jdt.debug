@@ -49,8 +49,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 
 			ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell());
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 						try {
 							JavaRuntime.setDefaultVMInstall(vm, monitor);
 						} catch (CoreException e) {

@@ -58,25 +58,16 @@ class JavaModelListener implements IElementChangedListener {
 			breakpoint= (IJavaBreakpoint)breakpoints[i];
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
-				IMethod method= null;
-				try {
-					method = BreakpointUtils.getMethod(methodBreakpoint);
-				} catch (CoreException x) {
-					JDIDebugUIPlugin.log(x);
-				}
+				IMethod method = BreakpointUtils.getMethod(methodBreakpoint);
 				if (method != null && containedInCollection(method, removedElements)) {
 					breakpointsToRemove.add(breakpoint);
 				}
 				continue;
 			}
 			
-			try {
-				IType type= BreakpointUtils.getType(breakpoint);
-				if (type != null && containedInCollection(type, removedElements)) {
-					breakpointsToRemove.add(breakpoint);
-				}
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
+			IType type= BreakpointUtils.getType(breakpoint);
+			if (type != null && containedInCollection(type, removedElements)) {
+				breakpointsToRemove.add(breakpoint);
 			}
 		}
 		if (!breakpointsToRemove.isEmpty()) {

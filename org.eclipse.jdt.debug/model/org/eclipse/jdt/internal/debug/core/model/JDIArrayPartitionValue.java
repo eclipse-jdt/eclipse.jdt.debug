@@ -45,7 +45,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	/**
 	 * @see IValue#getVariables()
 	 */
-	public IVariable[] getVariables() throws DebugException {
+	public IVariable[] getVariables() {
 		List list = getVariables0();
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
@@ -93,15 +93,14 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	/**
 	 * @see IJavaValue#getJavaType()
 	 */
-	public IJavaType getJavaType() throws DebugException {
+	public IJavaType getJavaType() {
 			return null;
 	}
 
 	/**
 	 * @see IValue#hasVariables()
 	 */
-	public boolean hasVariables() throws DebugException {
+	public boolean hasVariables() {
 		return getVariables0().size() > 0;
 	}
-
 }

@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 
-import org.eclipse.core.runtime.CoreException;
 
 public class ReturnInstruction extends CompoundInstruction {
 
@@ -26,7 +25,7 @@ public class ReturnInstruction extends CompoundInstruction {
 	/**
 	 * @see Instruction#execute()
 	 */
-	public void execute() throws CoreException {
+	public void execute() {
 		stop();
 	}
 	

@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 /**
@@ -62,7 +61,7 @@ public class JDIVoidValue extends JDIValue {
 	/**
 	 * @see IJavaValue#getJavaType()
 	 */
-	public IJavaType getJavaType() throws DebugException {
+	public IJavaType getJavaType() {
 		return new JDIVoidType((JDIDebugTarget)getDebugTarget());
 	}
 	/**
@@ -71,5 +70,4 @@ public class JDIVoidValue extends JDIValue {
 	public String toString() {
 		return "void"; //$NON-NLS-1$
 	}
-
 }

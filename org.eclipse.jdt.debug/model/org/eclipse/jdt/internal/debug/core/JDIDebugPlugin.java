@@ -160,7 +160,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	/**
 	 * @see Plugin#startup()
 	 */
-	public void startup() throws CoreException {
+	public void startup() {
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
 		getPluginPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);

@@ -163,7 +163,7 @@ public class EvaluationSourceGenerator {
 		setRunMethodLength(visitor.getRunMethodLength());
 	}
 	
-	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) throws DebugException {
+	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) {
 		
 		setCompilationUnitName(objectToEvaluationSourceMapper.getCompilationUnitName());
 		setSnippetStart(objectToEvaluationSourceMapper.getSnippetStart());
@@ -172,13 +172,13 @@ public class EvaluationSourceGenerator {
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
-	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
+	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) {
 		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(objectValue);
 		return objectToEvaluationSourceMapper;
 	}
 	
-	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) throws DebugException {
+	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) {
 		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(classType);
 		return objectToEvaluationSourceMapper;

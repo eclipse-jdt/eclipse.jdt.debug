@@ -220,7 +220,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	/**
 	 * @see com.sun.jdi.ReferenceType#allLineLocations()
 	 */
-	public List allLineLocations() throws AbsentInformationException {
+	public List allLineLocations() {
 		// If this reference type is an ArrayType, the returned list is always empty. 
 		return Collections.EMPTY_LIST;
 	}

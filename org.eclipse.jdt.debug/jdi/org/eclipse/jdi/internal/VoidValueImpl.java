@@ -12,7 +12,6 @@ package org.eclipse.jdi.internal;
 
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 
@@ -69,7 +68,7 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
 	/**
 	 * Writes value without value tag.
 	 */
-	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
+	public void write(MirrorImpl target, DataOutputStream out) {
 		// Nothing to write.
 	}
 

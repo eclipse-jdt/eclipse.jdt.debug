@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,8 +36,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class SnippetEditorPropertyPage extends PropertyPage {
 	
-
-
 	private WorkingDirectoryBlock fWorkingDirBlock = new WorkingDirectoryBlock();
 	
 	private JavaJRETab fJRETab = new JavaJRETab();
@@ -106,11 +102,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/**
 		 * @see IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
 		 */
-		public void run(
-			boolean fork,
-			boolean cancelable,
-			IRunnableWithProgress runnable)
-			throws InvocationTargetException, InterruptedException {
+		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) {
 		}
 
 		/**
@@ -124,7 +116,6 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		 */
 		public void setActiveTab(int index) {
 		}
-
 	}
 		
 	/**

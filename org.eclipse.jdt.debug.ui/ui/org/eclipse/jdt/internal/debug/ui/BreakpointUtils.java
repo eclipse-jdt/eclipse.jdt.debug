@@ -67,10 +67,8 @@ public class BreakpointUtils {
 	 * @param member member in which a breakpoint is being created
 	 * @return resource the resource on which a breakpoint marker
 	 *  should be created
-	 * @exception CoreException if an exception occurs accessing the
-	 *  underlying resource or Java model elements
 	 */
-	public static IResource getBreakpointResource(IMember member) throws CoreException {
+	public static IResource getBreakpointResource(IMember member) {
 		ICompilationUnit cu = member.getCompilationUnit();
 		if (cu != null && cu.isWorkingCopy()) {
 			member = (IMember)cu.getOriginal(member);
@@ -87,10 +85,8 @@ public class BreakpointUtils {
 	 * 
 	 * @param breakpoint Java breakpoint
 	 * @return the type the breakpoint is associated with
-	 * @exception CoreException if an exception occurs accessing
-	 *  the breakpoint or Java model
 	 */
-	public static IType getType(IJavaBreakpoint breakpoint) throws CoreException {
+	public static IType getType(IJavaBreakpoint breakpoint) {
 		String handle = breakpoint.getMarker().getAttribute(HANDLE_ID, null);
 		if (handle != null) {
 			IJavaElement je = JavaCore.create(handle);
@@ -267,10 +263,8 @@ public class BreakpointUtils {
 	 * 
 	 * @param breakpoint Java method entry breakpoint
 	 * @return method
-	 * @exception CoreException if an exception occurs accessing
-	 *  the breakpoint
 	 */
-	public static IMethod getMethod(IJavaMethodBreakpoint breakpoint) throws CoreException {	
+	public static IMethod getMethod(IJavaMethodBreakpoint breakpoint) {	
 		String handle = breakpoint.getMarker().getAttribute(HANDLE_ID, null);
 		if (handle != null) {
 			IJavaElement je = JavaCore.create(handle);
@@ -288,10 +282,8 @@ public class BreakpointUtils {
 	 * 
 	 * @param breakpoint Java watchpoint
 	 * @return field
-	 * @exception CoreException if an exception occurs accessing
-	 *  the breakpoint
 	 */
-	public static IField getField(IJavaWatchpoint breakpoint) throws CoreException {	
+	public static IField getField(IJavaWatchpoint breakpoint) {	
 		String handle = breakpoint.getMarker().getAttribute(HANDLE_ID, null);
 		if (handle != null) {
 			IJavaElement je = JavaCore.create(handle);
@@ -312,7 +304,7 @@ public class BreakpointUtils {
 	 * @return whether the given breakpoint is a run to line
 	 *  breakpoint
 	 */
-	public static boolean isRunToLineBreakpoint(IJavaLineBreakpoint breakpoint) throws CoreException {
+	public static boolean isRunToLineBreakpoint(IJavaLineBreakpoint breakpoint) {
 		return breakpoint.getMarker().getAttribute(RUN_TO_LINE, false);
 	}
 	

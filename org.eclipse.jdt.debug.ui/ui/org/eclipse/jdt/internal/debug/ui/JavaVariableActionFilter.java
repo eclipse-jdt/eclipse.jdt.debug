@@ -86,7 +86,7 @@ public class JavaVariableActionFilter implements IActionFilter {
 		}
 		return !var.getReferenceTypeName().equals(value.getReferenceTypeName());
 	}
-	protected String getTypeNameToOpen(String refType) throws DebugException {
+	protected String getTypeNameToOpen(String refType) {
 		refType = OpenVariableTypeAction.removeArray(refType);
 		if (fgPrimitiveTypes.contains(refType)) {
 			return null;

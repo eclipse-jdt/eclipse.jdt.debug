@@ -1010,7 +1010,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see IStackFrame#getRegisterGroups()
 	 */
-	public IRegisterGroup[] getRegisterGroups() throws DebugException {
+	public IRegisterGroup[] getRegisterGroups() {
 		return new IRegisterGroup[0];
 	}
 
@@ -1083,7 +1083,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#hasRegisterGroups()
 	 */
-	public boolean hasRegisterGroups() throws DebugException {
+	public boolean hasRegisterGroups() {
 		return false;
 	}
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -26,7 +25,7 @@ public class JavaExceptionBreakpointAdvancedPage extends JavaBreakpointAdvancedP
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointAdvancedPage#doStore()
 	 */
-	protected void doStore() throws CoreException {
+	protected void doStore() {
 		super.doStore();
 		fFilterEditor.doStore();
 	}

@@ -292,7 +292,7 @@ public class MonitorManager {
 		}
 	}
 
-	protected void updateDeadlock(IJavaThread thread) throws DebugException {
+	protected void updateDeadlock(IJavaThread thread) {
 		//updating data on deadlocks
 		List l = listToDeadlock(thread, new ArrayList(4));
 		// if thread is caught in a deadlock, 

@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -114,7 +113,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		fId= config.getAttribute("id"); //$NON-NLS-1$
 	}
 

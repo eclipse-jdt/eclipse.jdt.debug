@@ -87,7 +87,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	/**
 	 * Adds the class name pattern and hit count attributes to the gvien map.
 	 */
-	protected void addStratumPatternAndHitCount(Map attributes, String stratum, String sourceName, String sourcePath, String pattern, int hitCount) throws CoreException {
+	protected void addStratumPatternAndHitCount(Map attributes, String stratum, String sourceName, String sourcePath, String pattern, int hitCount) {
 		attributes.put(PATTERN, pattern);
 		attributes.put(STRATUM, stratum);
 		if (sourceName != null) {

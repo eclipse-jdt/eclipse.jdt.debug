@@ -441,7 +441,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/**
 	 * Parses the output from 'LibraryDetector'.
 	 */
-	protected LibraryInfo parseLibraryInfo(IProcess process) throws IOException {
+	protected LibraryInfo parseLibraryInfo(IProcess process) {
 		String text = process.getStreamsProxy().getOutputStreamMonitor().getContents();
 		if (text != null && text.length() > 0) {
 			int index = text.indexOf("|"); //$NON-NLS-1$

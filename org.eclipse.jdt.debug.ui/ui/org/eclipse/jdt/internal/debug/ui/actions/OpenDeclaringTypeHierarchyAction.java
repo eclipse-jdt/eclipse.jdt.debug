@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
 import org.eclipse.jface.action.IAction;
@@ -21,7 +20,7 @@ public class OpenDeclaringTypeHierarchyAction extends OpenDeclaringTypeAction {
 
 	protected IWorkbenchPart fTargetPart;
 	
-	protected void doAction(Object e) throws DebugException {
+	protected void doAction(Object e) {
 		Object sourceElement= getSourceElement(e);
 		if (sourceElement instanceof IJavaElement) {
 			OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, fTargetPart.getSite().getWorkbenchWindow());

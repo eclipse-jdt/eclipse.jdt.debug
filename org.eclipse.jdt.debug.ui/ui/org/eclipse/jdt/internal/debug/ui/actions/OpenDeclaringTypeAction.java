@@ -21,7 +21,7 @@ public class OpenDeclaringTypeAction extends OpenStackFrameAction {
 		return ((IJavaStackFrame)frame).getDeclaringTypeName();
 	}
 	
-	protected void doAction(Object e) throws DebugException {
+	protected void doAction(Object e) {
 		Object sourceElement= getSourceElement(e);
 		if (sourceElement != null) {
 			openInEditor(sourceElement);

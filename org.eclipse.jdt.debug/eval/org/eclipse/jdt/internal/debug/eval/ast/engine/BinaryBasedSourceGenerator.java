@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -48,7 +47,7 @@ public class BinaryBasedSourceGenerator {
 	
 	private String fCompilationUnitName;
 	
-	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
+	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) {
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fIsInStaticMethod= isInStaticMethod;
