@@ -1012,15 +1012,22 @@ public final class JavaRuntime {
 		for (int i = 0; i < unresolved.length; i++) {
 			IRuntimeClasspathEntry entry = unresolved[i];
 			if (unresolved[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				String location = null;
 				switch (entry.getType()) {
 					case IRuntimeClasspathEntry.CONTAINER:
 						IRuntimeClasspathEntry[] contained = computeDefaultContainerEntries(entry, jproject);
 						for (int j = 0; j < contained.length; j++) {
-							resolved.add(contained[j].getLocation());
+							location = contained[j].getLocation();
+							if (location != null) {
+								resolved.add(location);
+							}
 						}
 						break;
 					default:
-						resolved.add(entry.getLocation());
+						location = entry.getLocation();
+						if (location != null) {
+							resolved.add(location);
+						}
 						break;
 				}
 			}

@@ -188,9 +188,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				empty = false;
-				bootEntries.add(entries[i].getLocation());
-				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
+				String location = entries[i].getLocation();
+				if (location != null) {
+					empty = false;
+					bootEntries.add(location);
+					allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
+				}
 			}
 		}
 		if (empty) {
@@ -219,7 +222,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		List userEntries = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				userEntries.add(entries[i].getLocation());
+				String location = entries[i].getLocation();
+				if (location != null) {
+					userEntries.add(location);
+				}
 			}
 		}
 		return (String[])userEntries.toArray(new String[userEntries.size()]);

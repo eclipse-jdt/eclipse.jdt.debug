@@ -388,10 +388,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		switch (getType()) {
 			case PROJECT :
 				IJavaProject pro = (IJavaProject) JavaCore.create(getResource());
-				try {
-					path = pro.getOutputLocation();
-				} catch (JavaModelException e) {
-					LaunchingPlugin.log(e);
+				if (pro != null) {
+					try {
+						path = pro.getOutputLocation();
+					} catch (JavaModelException e) {
+						LaunchingPlugin.log(e);
+					}
 				}
 				break;
 			case ARCHIVE :
