@@ -111,8 +111,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
-	 * Launches the type with the given name, and waits for a suspend
-	 * event in that program. Returns the thread in which the suspend
+	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
 	 * @param mainTypeName the program to launch

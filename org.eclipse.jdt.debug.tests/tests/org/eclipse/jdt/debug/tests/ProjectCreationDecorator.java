@@ -84,6 +84,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("HitCountLooper");
 		createLaunchConfiguration("CompileError");
 		createLaunchConfiguration("MultiThreadedLoop");
+		createLaunchConfiguration("MultiThreadedException");
 				
 	}
 	

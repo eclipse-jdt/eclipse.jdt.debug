@@ -1,5 +1,6 @@
 package org.eclipse.jdt.debug.tests.core;
 
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -52,4 +53,25 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+
+	public void testExceptionThreadFilterBreakpoint() throws Exception {
+		String typeName = "MultiThreadedException";
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(11, typeName);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp1);
+			IJavaExceptionBreakpoint ex1 = createExceptionBreakpoint("java.lang.NullPointerException", false, true);
+			ex1.setThreadFilter(thread);
+			
+			thread = resume(thread);
+			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
+			
+			bp1.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+			
 }
