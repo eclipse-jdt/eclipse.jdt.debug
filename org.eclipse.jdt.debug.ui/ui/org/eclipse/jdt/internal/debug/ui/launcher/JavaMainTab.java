@@ -78,7 +78,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 		
 		Composite projComp = new Composite(comp, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
@@ -190,14 +190,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 */
 	public void dispose() {
 	}
-	
-	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp) {
-		new Label(comp, SWT.NONE);
-	}
-		
+			
 	/**
 	 * Show a dialog that lists all main types
 	 */

@@ -16,6 +16,10 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -73,6 +77,16 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 			name = javaProject.getElementName();
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
+	}	
+	
+	/**
+	 * Create some empty space 
+	 */
+	protected void createVerticalSpacer(Composite comp, int colSpan) {
+		Label label = new Label(comp, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = colSpan;
+		label.setLayoutData(gd);
 	}	
 }
 

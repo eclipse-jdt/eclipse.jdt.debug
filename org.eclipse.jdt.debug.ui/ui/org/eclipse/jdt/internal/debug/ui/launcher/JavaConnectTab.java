@@ -72,7 +72,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 
 		Composite projComp = new Composite(comp, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
@@ -106,7 +106,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		createVerticalSpacer(comp);		
+		createVerticalSpacer(comp, 1);		
 		
 		fHostLabel = new Label(comp, SWT.NONE);
 		fHostLabel.setText(LauncherMessages.getString("JavaConnectTab.&Host_name__4")); //$NON-NLS-1$
@@ -140,7 +140,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 		
 		Composite connectorComp = new Composite(comp,SWT.NONE);
 		GridLayout y = new GridLayout();
@@ -166,13 +166,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			names[i] = fConnectors[i].getName();
 		}
 		fConnectorCombo.setItems(names);
-	}
-
-	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp) {
-		new Label(comp, SWT.NONE);
 	}
 
 	/**

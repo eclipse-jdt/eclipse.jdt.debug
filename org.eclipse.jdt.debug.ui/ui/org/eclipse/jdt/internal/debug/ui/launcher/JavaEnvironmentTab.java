@@ -58,7 +58,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	protected TabFolder fPathTabFolder;
 	protected TabItem fBootPathTabItem;
 	protected TabItem fClassPathTabItem;
-	protected TabItem fExtensionPathTabItem;
 	protected TabItem fJRETabItem;
 	protected List fBootPathList;
 	protected List fClassPathList;
@@ -439,16 +438,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			TableItem tableItem = new TableItem(tableWidget, SWT.NONE);
 			tableItem.setText(new String[] {key, value});			
 		}
-	}
-	
-	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp, int colSpan) {
-		Label label = new Label(comp, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = colSpan;
-		label.setLayoutData(gd);
 	}
 	
 	/**

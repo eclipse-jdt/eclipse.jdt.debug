@@ -58,7 +58,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 				
 		Composite workingDirComp = new Composite(comp, SWT.NONE);
 		GridLayout workingDirLayout = new GridLayout();
@@ -102,7 +102,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		createVerticalSpacer(comp);
+		createVerticalSpacer(comp, 1);
 				
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
 		fPrgmArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
@@ -182,14 +182,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	public void dispose() {
 	}
-	
-	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp) {
-		new Label(comp, SWT.NONE);
-	}
-	
+		
 	/**
 	 * Show a dialog that lets the user select a working directory
 	 */
