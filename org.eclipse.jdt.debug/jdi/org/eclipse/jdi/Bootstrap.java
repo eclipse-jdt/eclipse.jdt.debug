@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdi;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 
@@ -24,7 +25,7 @@ public class Bootstrap
 			return fVirtualMachineManager;
 		
 		try {
-			String className= JDIDebugPlugin.getDefault().getDescriptor().getExtensionPoint("jdiclient").getLabel(); //$NON-NLS-1$
+			String className= Platform.getExtensionRegistry().getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), "jdiclient").getLabel(); //$NON-NLS-1$
 			Class clazz= null;
 			if (className != null) {
 				clazz= Class.forName(className);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -37,6 +34,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.osgi.framework.BundleContext;
 
 import com.sun.jdi.VirtualMachineManager;
 
@@ -113,13 +111,9 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.jdt.debug"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		// TODO review this change.  Unclear how the plugin id could ever be different
+		// should likely just be a constant reference.
+		return "org.eclipse.jdt.debug"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -152,15 +146,13 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		return runningVersion[0] > version[0] || (runningVersion[0] == version[0] && runningVersion[1] >= version[1]);
 	}
 		
-	public JDIDebugPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);	
+	public JDIDebugPlugin() {
+		super();	
 		fgPlugin = this;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#startup()
-	 */
-	public void startup() {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
 	}
@@ -184,24 +176,26 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	/**
 	 * Shutdown the HCR mgr and the Java debug targets.
 	 * 
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)@see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
-	public void shutdown() throws CoreException {
-		getPluginPreferences().removePropertyChangeListener(this);
-		savePluginPreferences();
-		JavaHotCodeReplaceManager.getDefault().shutdown();
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		IDebugTarget[] targets= launchManager.getDebugTargets();
-		for (int i= 0 ; i < targets.length; i++) {
-			IDebugTarget target= targets[i];
-			if (target instanceof JDIDebugTarget) {
-				((JDIDebugTarget)target).shutdown();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			getPluginPreferences().removePropertyChangeListener(this);
+			savePluginPreferences();
+			JavaHotCodeReplaceManager.getDefault().shutdown();
+			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+			IDebugTarget[] targets= launchManager.getDebugTargets();
+			for (int i= 0 ; i < targets.length; i++) {
+				IDebugTarget target= targets[i];
+				if (target instanceof JDIDebugTarget) {
+					((JDIDebugTarget)target).shutdown();
+				}
 			}
+			fBreakpointListeners = null;
+		} finally {
+			fgPlugin = null;
+			super.stop(context);
 		}
-		fBreakpointListeners = null;
-
-		fgPlugin = null;
-		super.shutdown();
 	}
 	
 	/**
