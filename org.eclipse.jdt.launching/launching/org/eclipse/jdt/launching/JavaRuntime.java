@@ -1669,6 +1669,10 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMChanged(PropertyChangeEvent event) {
+		if (event.getSource() instanceof VMStandin) {
+			// do not fire events for VM standins
+			return;
+		}		
 		Object[] listeners = fgVMListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
@@ -1683,6 +1687,10 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMAdded(IVMInstall vm) {
+		if (vm instanceof VMStandin) {
+			// do not fire events for VM standins
+			return;
+		}
 		Object[] listeners = fgVMListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
@@ -1697,6 +1705,10 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMRemoved(IVMInstall vm) {
+		if (vm instanceof VMStandin) {
+			// do not fire events for VM standins
+			return;
+		}
 		Object[] listeners = fgVMListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
