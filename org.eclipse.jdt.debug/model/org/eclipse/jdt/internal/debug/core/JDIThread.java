@@ -1176,33 +1176,23 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		VirtualMachine vm= getVM();
 		if (vm.canPopFrames()) {
 			// JDK 1.4 support
-			boolean poppingToTop= false;
-			IStackFrame topFrame= (getStackFrames())[0];
-			if (frame.equals(frame)) {
-				poppingToTop= true;
-			}
+			List frames = computeStackFrames();
+			Object lastFrame = frames.get(frames.size() - 1);
+			boolean last = frame.equals(lastFrame);
 			try {
 				// Pop the drop frame and all frames above it
+				preserveStackFrames();
 				fThread.popFrames(((JDIStackFrame) frame).getUnderlyingStackFrame());
-				if (!poppingToTop) {
-					// Step into the drop frame
-					stepInto();				
+				computeStackFrames();
+				if (last) {
+					fireSuspendEvent(DebugEvent.STEP_END);
+				} else {
+					stepInto();	
 				}
-			} catch (UnsupportedOperationException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
 			} catch (IncompatibleThreadStateException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
-			} catch (IllegalArgumentException exception) {
+			} catch (RuntimeException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
-			} catch (NativeMethodException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
-			} catch (InvalidStackFrameException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
-			}
-			finally {
-				disposeStackFrames();
-				computeStackFrames();
-				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);							
 			}
 		} else {
 			// J9 support
