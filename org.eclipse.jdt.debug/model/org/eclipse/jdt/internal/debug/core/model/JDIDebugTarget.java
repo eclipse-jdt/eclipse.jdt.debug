@@ -160,13 +160,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private int fSuspendCount = 0;
 	
 	/**
-	 * Evaluation engine cache by java project. Engines
+	 * Evaluation engine cache by Java project. Engines
 	 * are disposed when this target terminates.
 	 */
 	private HashMap fEngines;
 	
 	/**
-	 * List of step filters - each string is a patter/fully qualified
+	 * List of step filters - each string is a pattern/fully qualified
 	 * name of a type to filter.
 	 */
 	private String[] fStepFilters = null;
@@ -778,7 +778,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
-	 * Returns whether or not this debug target has performed
+	 * Returns whether this debug target has performed
 	 * a hot code replace
 	 */
 	public boolean hasHCROccurred() {
@@ -1300,6 +1300,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 			fEngines.clear();
 		}
+		fVirtualMachine= null;
 	}
 
 	/**
