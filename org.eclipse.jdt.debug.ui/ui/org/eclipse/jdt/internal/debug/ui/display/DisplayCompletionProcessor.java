@@ -36,6 +36,7 @@ import org.eclipse.jdt.internal.ui.text.java.JavaCompletionProposalComparator;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
+import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -50,7 +51,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.ContextType;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.texteditor.templates.TemplateProposal;
 
 /**
  * Display snippet completion processor.

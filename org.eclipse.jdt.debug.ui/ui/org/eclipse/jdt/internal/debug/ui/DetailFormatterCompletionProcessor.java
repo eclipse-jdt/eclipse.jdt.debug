@@ -15,11 +15,11 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
+import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.texteditor.templates.TemplateProposal;
 
 public class DetailFormatterCompletionProcessor extends DisplayCompletionProcessor {
 
