@@ -97,13 +97,7 @@ public class InspectAction extends EvaluateAction {
 		if (part.getSite().getId().equals(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
 			return;
 		}
-		IWorkbenchPage page = part.getSite().getPage();
-		if (page != null) {
-			part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-			if (part != null) {
-				page.bringToTop(part);
-			}
-		}
+		showExpressionView();
 	}
 	
 	protected IDataDisplay getDataDisplay() {
