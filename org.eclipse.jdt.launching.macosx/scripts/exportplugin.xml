@@ -25,6 +25,9 @@
 		<copy todir="${dest}/icons">
 			<fileset dir="icons" />
 		</copy>
+		<copy todir="${dest}/META-INF">
+			<fileset dir="META-INF" />
+		</copy>
 		<zip zipfile="${dest}/macosxlaunchingsrc.zip">
 		    <fileset dir="macosx" />
   		</zip>		
