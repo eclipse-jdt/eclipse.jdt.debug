@@ -1371,11 +1371,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
 		}
 		
-		label.append(" - "); //$NON-NLS-1$
 		if (member != null) {
+			label.append(" - "); //$NON-NLS-1$
 			label.append(getJavaLabelProvider().getText(member));
 		} else {
-			label.append(Signature.toString(methodBreakpoint.getMethodSignature(), methodBreakpoint.getMethodName(), null, false, false));
+			String methodSig= methodBreakpoint.getMethodSignature();
+			String methodName= methodBreakpoint.getMethodName();
+			if (methodSig != null) {
+				label.append(" - "); //$NON-NLS-1$
+				label.append(Signature.toString(methodSig, methodName, null, false, false));
+			} else if (methodName != null) {
+				label.append(" - "); //$NON-NLS-1$
+				label.append(methodName);
+			}
 		}
 
 		return label.toString();	
