@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.IJavaProject;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
+import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 
@@ -121,15 +123,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Launches the given configuration in debug mode, and waits for a suspend
-	 * event in that program. Returns the thread in which the suspend
+	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
 	 * 
 	 * @param config the configuration to launch
 	 * @return thread in which the first suspend event occurred
 	 */	
 	protected IJavaThread launch(ILaunchConfiguration config) throws Exception {
-		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		config.launch(getLaunchManager().DEBUG_MODE, null);
@@ -141,14 +143,60 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
-	 * Resumes the given thread, and waits for another suspend event.
+	 * Launches the type with the given name, and waits for a line breakpoint suspend
+	 * event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param mainTypeName the program to launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToLineBreakpoint(String mainTypeName, ILineBreakpoint bp) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		return launchToLineBreakpoint(config, bp);
+	}
+
+	/**
+	 * Launches the given configuration in debug mode, and waits for a line breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param config the configuration to launch
+	 * @return thread in which the first suspend event occurred
+	 */	
+	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		config.launch(getLaunchManager().DEBUG_MODE, null);
+
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee);
+		
+		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
+		IJavaThread thread = (IJavaThread) suspendee;
+		IBreakpoint hit = getBreakpoint(thread);
+		assertNotNull("suspended, but not by breakpoint", hit);
+		assertTrue("hit un-registered breakpoint", bp.equals(hit));
+		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
+		int lineNumber = breakpoint.getLineNumber();
+		int stackLine = thread.getTopStackFrame().getLineNumber();
+		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+		
+		return thread;		
+	}
+	
+	/**
+	 * Resumes the given thread, and waits for another breakpoint-caused suspend event.
 	 * Returns the thread in which the suspend event occurrs.
 	 * 
 	 * @param thread thread to resume
 	 * @return thread in which the first suspend event occurrs
 	 */
 	protected IJavaThread resume(IJavaThread thread) throws Exception {
-		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		thread.resume();
@@ -219,6 +267,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String typeName) throws Exception {
 		return JDIDebugModel.createLineBreakpoint(getJavaProject().getProject(), typeName, lineNumber, -1, -1, 0, true, null);
+	}
+	
+	/**
+	 * Creates and returns a line breakpoint at the given line number in the type with the
+	 * given name and sets the specified condition on the breakpoint.
+	 * 
+	 * @param lineNumber line number
+	 * @param typeName type name
+	 * @param condition condition
+	 */
+	protected IJavaLineBreakpoint createConditionalLineBreakpoint(int lineNumber, String typeName, String condition) throws Exception {
+		IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(getJavaProject().getProject(), typeName, lineNumber, -1, -1, 0, true, null);
+		bp.setCondition(condition);
+		bp.setConditionEnabled(true);
+		return bp;
 	}
 	
 	/**

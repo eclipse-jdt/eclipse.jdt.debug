@@ -32,12 +32,11 @@ public class LocalVariableTests extends AbstractDebugTest {
 	public void testSimpleVisibility() throws Exception {
 		String typeName = "LocalVariablesTests";
 		
-		createLineBreakpoint(7, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(7, typeName);		
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IJavaVariable[] vars = frame.getLocalVariables();
@@ -67,12 +66,11 @@ public class LocalVariableTests extends AbstractDebugTest {
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "LocalVariablesTests";
 		
-		createLineBreakpoint(11, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(11, typeName);		
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget)frame.getDebugTarget();

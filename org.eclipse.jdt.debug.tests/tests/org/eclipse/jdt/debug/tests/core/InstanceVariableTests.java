@@ -32,12 +32,11 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetField() throws Exception {
 		String typeName = "InstanceVariablesTests";
 		
-		createLineBreakpoint(19, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(19, typeName);		
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable ivt = frame.findVariable("ivt");
@@ -69,12 +68,11 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "InstanceVariablesTests";
 		
-		createLineBreakpoint(17, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(17, typeName);		
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable pubStr = frame.findVariable("pubStr");

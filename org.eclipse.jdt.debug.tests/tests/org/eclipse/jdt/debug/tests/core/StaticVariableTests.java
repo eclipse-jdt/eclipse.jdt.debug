@@ -28,12 +28,11 @@ public class StaticVariableTests extends AbstractDebugTest {
 	public void testSetValue() throws Exception {
 		String typeName = "StaticVariablesTests";
 		
-		createLineBreakpoint(29, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(29, typeName);		
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable pubStr = frame.findVariable("pubStr");

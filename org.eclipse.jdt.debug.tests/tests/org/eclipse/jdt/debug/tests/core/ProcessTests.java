@@ -9,6 +9,7 @@ package org.eclipse.jdt.debug.tests.core;
  * Tests IProcess.
  */
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -22,12 +23,12 @@ public class ProcessTests extends AbstractDebugTest {
 
 	public void testExitValueNormal() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
 				
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			thread= launchToLineBreakpoint(typeName, bp);
+
 			IProcess process = thread.getDebugTarget().getProcess();
 			assertNotNull("Missing process", process);
 			int exitValue = -1;
