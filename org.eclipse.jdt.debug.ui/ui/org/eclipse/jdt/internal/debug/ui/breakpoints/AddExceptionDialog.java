@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,15 +74,9 @@ public class AddExceptionDialog extends TypeSelectionDialog {
 	private static final String SETTING_CAUGHT_CHECKED= "caughtChecked"; //$NON-NLS-1$
 	private static final String SETTING_UNCAUGHT_CHECKED= "uncaughtChecked"; //$NON-NLS-1$
 	
-	/**
-	 * @param parent
-	 * @param context
-	 * @param elementKinds
-	 * @param scope
-	 */
 	public AddExceptionDialog(Shell parent, IRunnableContext context) {
 		super(parent, context, IJavaSearchConstants.CLASS, SearchEngine.createWorkspaceScope());
-		setFilter(BreakpointMessages.getString("AddExceptionDialog.14")); //$NON-NLS-1$
+		setFilter("*Exception*"); //$NON-NLS-1$
 	}
 
 	/*
