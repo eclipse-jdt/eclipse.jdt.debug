@@ -131,16 +131,16 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 
 	protected void getPreferenceValues() {
 		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		fInitialPort= store.getString(IPreferencesConstants.ATTACH_LAUNCH_PORT);
-		fInitialHost= store.getString(IPreferencesConstants.ATTACH_LAUNCH_HOST);
-		fAllowTerminate= store.getBoolean(IPreferencesConstants.ATTACH_LAUNCH_ALLOW_TERMINATE);
+		fInitialPort= store.getString(IJDIPreferencesConstants.ATTACH_LAUNCH_PORT);
+		fInitialHost= store.getString(IJDIPreferencesConstants.ATTACH_LAUNCH_HOST);
+		fAllowTerminate= store.getBoolean(IJDIPreferencesConstants.ATTACH_LAUNCH_ALLOW_TERMINATE);
 	}
 
 	protected void setPreferenceValues() {
 		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(IPreferencesConstants.ATTACH_LAUNCH_PORT, getPort());
-		store.setValue(IPreferencesConstants.ATTACH_LAUNCH_HOST, getHost());
-		store.setValue(IPreferencesConstants.ATTACH_LAUNCH_ALLOW_TERMINATE, getAllowTerminate());
+		store.setValue(IJDIPreferencesConstants.ATTACH_LAUNCH_PORT, getPort());
+		store.setValue(IJDIPreferencesConstants.ATTACH_LAUNCH_HOST, getHost());
+		store.setValue(IJDIPreferencesConstants.ATTACH_LAUNCH_ALLOW_TERMINATE, getAllowTerminate());
 	}
 
 	/**
