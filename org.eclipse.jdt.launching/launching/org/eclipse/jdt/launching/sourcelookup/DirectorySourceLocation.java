@@ -4,16 +4,34 @@ package org.eclipse.jdt.launching.sourcelookup;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+import java.text.MessageFormat;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
  
 /**
  * Locates source elements in a directory in the local
@@ -38,6 +56,13 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	private File fDirectory;
 	
 	/**
+	 * Constructs a new empty source location to be initialized from
+	 * a memento.
+	 */
+	public DirectorySourceLocation() {
+	}
+		
+	/**
 	 * Constructs a new source location that will retrieve source
 	 * elements from the given directory.
 	 * 
@@ -51,6 +76,10 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 * @see IJavaSourceLocation#findSourceElement(String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
+		if (getDirectory() == null) {
+			return null;
+		}
+		
 		// guess at source name if an inner type
 		String pathStr= name.replace('.', '/');
 		int dotIndex= pathStr.lastIndexOf('/');
@@ -106,4 +135,76 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}	
+	
+	/**
+	 * @see IJavaSourceLocation#getMemento()
+	 */
+	public String getMemento() throws CoreException {
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
+		node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
+		
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		
+		try {
+			serializer.asDOMSerializer().serialize(node);
+		} catch (IOException e) {
+			abort(MessageFormat.format("Unable to create memento for directory source location {0}", new String[] {getDirectory().getAbsolutePath()}), e);
+		}
+		return writer.toString();
+	}
+
+	/**
+	 * @see IJavaSourceLocation#initializeFrom(String)
+	 */
+	public void initializeFrom(String memento) throws CoreException {
+		Exception ex = null;
+		try {
+			Element root = null;
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+												
+			String path = root.getAttribute("path");
+			if (isEmpty(path)) {
+				abort("Unable to initialize source location - missing directory path", null);
+			} else {
+				File dir = new File(path);
+				if (dir.exists() && dir.isDirectory()) {
+					setDirectory(dir);
+				} else {
+					abort(MessageFormat.format("Unable to initialize source location - directory does not exist: {0}", new String[] {path}), null);
+				}
+			}
+			return;
+		} catch (ParserConfigurationException e) {
+			ex = e;			
+		} catch (SAXException e) {
+			ex = e;
+		} catch (IOException e) {
+			ex = e;
+		}
+		abort("Exception occurred initializing source location.", ex);		
+	}
+
+	private boolean isEmpty(String string) {
+		return string == null || string.length() == 0;
+	}
+	
+	/**
+	 * Throws an internal error exception
+	 */
+	private void abort(String message, Throwable e)	throws CoreException {
+		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
+		throw new CoreException(s);		
+	}
 }

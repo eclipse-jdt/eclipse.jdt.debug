@@ -5,11 +5,36 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
  
 /**
  * Locates source elements in a Java project. Returns
@@ -35,6 +60,13 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	private IJavaProject fProject;
 	
 	/**
+	 * Constructs a new empty source location to be initialized
+	 * by a memento.
+	 */
+	public JavaProjectSourceLocation() {
+	}
+	
+	/**
 	 * Constructs a new source location that will retrieve source
 	 * elements from the given Java project.
 	 * 
@@ -42,23 +74,27 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 */
 	public JavaProjectSourceLocation(IJavaProject project) {
 		setJavaProject(project);
-	}
+	}	
 	
 	/**
 	 * @see IJavaSourceLocation#findSourceElement(String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
-		String pathStr= name.replace('.', '/') + ".java"; //$NON-NLS-1$
-		IJavaElement jelement= getJavaProject().findElement(new Path(pathStr));
-		if (jelement == null) {
-			// maybe an inner type
-			int dotIndex= pathStr.lastIndexOf('/');
-			int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
-			if (dollarIndex != -1) {
-				jelement= getJavaProject().findElement(new Path(pathStr.substring(0, dollarIndex) + ".java")); //$NON-NLS-1$
+		if (getJavaProject() != null) {
+			String pathStr= name.replace('.', '/') + ".java"; //$NON-NLS-1$
+			IJavaElement jelement= getJavaProject().findElement(new Path(pathStr));
+			if (jelement == null) {
+				// maybe an inner type
+				int dotIndex= pathStr.lastIndexOf('/');
+				int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
+				if (dollarIndex != -1) {
+					jelement= getJavaProject().findElement(new Path(pathStr.substring(0, dollarIndex) + ".java")); //$NON-NLS-1$
+				}
 			}
+			return jelement;
+		} else {
+			return null;
 		}
-		return jelement;
 	}
 
 	/**
@@ -95,4 +131,72 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}		
+	/**
+	 * @see IJavaSourceLocation#getMemento()
+	 */
+	public String getMemento() throws CoreException {
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
+		node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
+		
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		
+		try {
+			serializer.asDOMSerializer().serialize(node);
+		} catch (IOException e) {
+			abort(MessageFormat.format("Unable to create memento for Java project source location {0}", new String[] {getJavaProject().getElementName()}), e);
+		}
+		return writer.toString();
+	}
+
+	/**
+	 * @see IJavaSourceLocation#initializeFrom(String)
+	 */
+	public void initializeFrom(String memento) throws CoreException {
+		Exception ex = null;
+		try {
+			Element root = null;
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+												
+			String name = root.getAttribute("name");
+			if (isEmpty(name)) {
+				abort("Unable to initialize source location - missing project name", null);
+			} else {
+				IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+				setJavaProject(JavaCore.create(proj));
+			}
+			return;
+		} catch (ParserConfigurationException e) {
+			ex = e;			
+		} catch (SAXException e) {
+			ex = e;
+		} catch (IOException e) {
+			ex = e;
+		}
+		abort("Exception occurred initializing source location.", ex);
+	}
+
+	private boolean isEmpty(String string) {
+		return string == null || string.length() == 0;
+	}
+	
+	/**
+	 * Throws an internal error exception
+	 */
+	private void abort(String message, Throwable e)	throws CoreException {
+		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
+		throw new CoreException(s);		
+	}
+
 }

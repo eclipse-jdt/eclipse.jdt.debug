@@ -5,17 +5,36 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
  
 /**
  * Locates source elements in an acrhive (zip) in the local
@@ -84,7 +103,14 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * The root source folder in the archive
 	 */
 	private IPath fRootPath;
-	
+
+	/**
+	 * Constructs a new empty source location to be initialized with 
+	 * a memento.
+	 */
+	public ArchiveSourceLocation() {
+	}
+		
 	/**
 	 * Constructs a new source location that will retrieve source
 	 * elements from the zip file with the given name.
@@ -188,5 +214,78 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 */
 	public int hashCode() {
 		return getArchive().hashCode();
+	}	
+	
+	/**
+	 * @see IJavaSourceLocation#getMemento()
+	 */
+	public String getMemento() throws CoreException {
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement("archiveSourceLocation"); //$NON-NLS-1$
+		node.setAttribute("archivePath", getArchive().getName()); //$NON-NLS-1$
+		if (getRootPath() != null) {
+			node.setAttribute("rootPath", getRootPath().toString()); //$NON-NLS-1$
+		}
+		
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		
+		try {
+			serializer.asDOMSerializer().serialize(node);
+		} catch (IOException e) {
+			abort(MessageFormat.format("Unable to create memento for archive source location {0}", new String[] {getArchive().getName()}), e);
+		}
+		return writer.toString();
+	}
+
+	/**
+	 * @see IJavaSourceLocation#initializeFrom(String)
+	 */
+	public void initializeFrom(String memento) throws CoreException {
+		Exception ex = null;
+		try {
+			Element root = null;
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+												
+			String path = root.getAttribute("archivePath");
+			if (isEmpty(path)) {
+				abort("Unable to initialize source location - missing archive path.", null);
+			}
+			String rootPath = root.getAttribute("rootPath");
+			
+			ZipFile zip = getZipFile(path);
+			setArchive(zip);
+			setRootPath(rootPath);
+			return;
+		} catch (ParserConfigurationException e) {
+			ex = e;			
+		} catch (SAXException e) {
+			ex = e;
+		} catch (IOException e) {
+			ex = e;
+		}
+		abort("Exception occurred initializing source location.", ex);		
+	}
+
+	private boolean isEmpty(String string) {
+		return string == null || string.length() == 0;
+	}
+	
+	/**
+	 * Throws an internal error exception
+	 */
+	private void abort(String message, Throwable e)	throws CoreException {
+		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
+		throw new CoreException(s);		
 	}	
 }

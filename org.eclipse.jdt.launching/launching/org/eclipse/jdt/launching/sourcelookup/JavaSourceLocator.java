@@ -5,11 +5,27 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.plugins.PluginClassLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -22,6 +38,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
@@ -31,6 +48,12 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -244,13 +267,32 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		try {
-			return JavaLaunchConfigurationUtils.encodeSourceLocations(getSourceLocations());
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_creating_a_source_locator_memento_for___JavaSourceLocator__2"), e)); //$NON-NLS-1$
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement("javaSourceLocator"); //$NON-NLS-1$
+		
+		IJavaSourceLocation[] locations = getSourceLocations();
+		for (int i = 0; i < locations.length; i++) {
+			Element child = doc.createElement("javaSourceLocation");
+			child.setAttribute("class", locations[i].getClass().getName());
+			child.setAttribute("memento", locations[i].getMemento());
+			node.appendChild(child);
 		}
-
+		
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		
+		try {
+			serializer.asDOMSerializer().serialize(node);
+		} catch (IOException e) {
+			abort("Unable to create memento for Java source locator.", e);
+		}
+		return writer.toString();
 	}
 
 	/**
@@ -266,14 +308,67 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#initiatlizeFromMemento(String)
 	 */
 	public void initiatlizeFromMemento(String memento) throws CoreException {
-		IJavaSourceLocation[] locations = null;
+		Exception ex = null;
 		try {
-			locations = JavaLaunchConfigurationUtils.decodeSourceLocations(memento);
+			Element root = null;
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+												
+			if (!root.getNodeName().equalsIgnoreCase("javaSourceLocator")) { 
+				abort("Unable to restore Java source locator - invalid format.", null);
+			}
+	
+			List sourceLocations = new ArrayList();
+			ClassLoader classLoader = LaunchingPlugin.getDefault().getDescriptor().getPluginClassLoader(); 
+			
+			NodeList list = root.getChildNodes();
+			int length = list.getLength();
+			for (int i = 0; i < length; ++i) {
+				Node node = list.item(i);
+				short type = node.getNodeType();
+				if (type == Node.ELEMENT_NODE) {
+					Element entry = (Element) node;
+					if (entry.getNodeName().equalsIgnoreCase("javaSourceLocation")) {
+						String className = entry.getAttribute("class");
+						String data = entry.getAttribute("memento");
+						if (isEmpty(className)) {
+							abort("Unable to restore Java source locator - invalid format.", null);
+						}
+						Class clazz  = null;
+						try {
+							clazz = classLoader.loadClass(className);
+						} catch (ClassNotFoundException e) {
+							abort(MessageFormat.format("Unable to restore source location - class not found: {0}", new String[] {className}), e);
+						}
+						
+						IJavaSourceLocation location = null;
+						try {
+							location = (IJavaSourceLocation)clazz.newInstance();
+						} catch (IllegalAccessException e) {
+							abort("Unable to restore source location.", e);
+						} catch (InstantiationException e) {
+							abort("Unable to restore source location.", e);
+						}
+						location.initializeFrom(data);
+						sourceLocations.add(location);
+					} else {
+						abort("Unable to restore Java source locator - invalid format.", null);
+					}
+				}
+			}
+			setSourceLocations((IJavaSourceLocation[])sourceLocations.toArray(new IJavaSourceLocation[sourceLocations.size()]));
+			return;
+		} catch (ParserConfigurationException e) {
+			ex = e;			
+		} catch (SAXException e) {
+			ex = e;
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_restoring___JavaSourceLocator___from_a_memento_3"), e)); //$NON-NLS-1$
+			ex = e;
 		}
-		setSourceLocations(locations);
+		abort("Exception occurred initializing source locator.", ex);
 	}
 	
 	/**
@@ -333,4 +428,15 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		return (IJavaSourceLocation[])locations.toArray(new IJavaSourceLocation[locations.size()]);		
 	}
 	
+	private boolean isEmpty(String string) {
+		return string == null || string.length() == 0;
+	}
+	
+	/**
+	 * Throws an internal error exception
+	 */
+	private void abort(String message, Throwable e)	throws CoreException {
+		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
+		throw new CoreException(s);		
+	}	
 }
