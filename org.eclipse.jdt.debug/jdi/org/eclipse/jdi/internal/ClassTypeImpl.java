@@ -44,16 +44,6 @@ import com.sun.jdi.Value;
  *
  */
 public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
-	/** Modifier bit flag: Is public; may be accessed from outside its package. */
-	public static final int MODIFIER_ACC_PUBLIC = 0x0001;
-	/** Modifier bit flag: Is final; no overriding is allowed. */
-	public static final int MODIFIER_ACC_FINAL = 0x0010;
-	/** Modifier bit flag: Treat superclass methods specially in invokespecial. */
-	public static final int MODIFIER_ACC_SUPER = 0x0020;
-	/** Modifier bit flag: Is an interface. */
-	public static final int MODIFIER_ACC_INTERFACE = 0x0200;
-	/** Modifier bit flag: Is abstract; no implementation is provided. */
-	public static final int MODIFIER_ACC_ABSTRACT = 0x0400;
 	
 	/** JDWP Tag. */
 	public static final byte typeTag = JdwpID.TYPE_TAG_CLASS;

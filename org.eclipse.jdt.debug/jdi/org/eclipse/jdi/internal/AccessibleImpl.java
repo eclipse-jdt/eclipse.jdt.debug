@@ -37,6 +37,8 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	public static final int MODIFIER_ACC_FINAL = 0x0010;
 	/** Modifier bit flag: Is synchronized; wrap use in monitor lock. */
 	public static final int MODIFIER_ACC_SYNCHRONIZED = 0x0020;
+	/** Modifier bit flag: Treat superclass methods specially in invokespecial. */
+	public static final int MODIFIER_ACC_SUPER = 0x0020;
 	/** Modifier bit flag: Is volitile; cannot be reached. */
 	public static final int MODIFIER_ACC_VOLITILE = 0x0040;
 	/** Modifier bit flag: Is transient; not written or read by a persistent object manager. */
