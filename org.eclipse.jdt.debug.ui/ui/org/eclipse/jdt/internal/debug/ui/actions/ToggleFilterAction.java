@@ -28,7 +28,6 @@ public abstract class ToggleFilterAction extends ToggleDelegateAction {
 				} else {
 					addFilterToViewer();
 				}
-				getAction().setToolTipText(getToolTipText(on));
 			}
 		});
 	}
@@ -39,14 +38,6 @@ public abstract class ToggleFilterAction extends ToggleDelegateAction {
 	 * if no filter is involved.
 	 */
 	protected abstract ViewerFilter getViewerFilter();
-	
-	/**
-	 * Returns the appropriate tool tip text depending on
-	 * the state of the action.
-	 */
-	protected String getToolTipText(boolean on) {
-		return on ?  getHideText() : getShowText();
-	}
 	
 	protected void setViewer(StructuredViewer viewer) {
 		super.setViewer(viewer);

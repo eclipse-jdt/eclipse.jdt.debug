@@ -58,25 +58,11 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	protected abstract void initActionId();
 
 	/**
-	 * Returns the appropriate tool tip text depending on
-	 * the state of the action.
-	 */
-	protected String getToolTipText(boolean on) {
-		return on ? getHideText() : getShowText();
-	}
-
-	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		valueChanged(action.isChecked());
-		String label= getToolTipText(action.isChecked());
-		action.setToolTipText(label);
 	}
-
-	protected abstract String getShowText();
-
-	protected abstract String getHideText();
 	
 	protected abstract void valueChanged(boolean on);
 	
@@ -118,7 +104,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 		if (event.getProperty().equals(getActionId())) {
 			boolean checked= ((Boolean)event.getNewValue()).booleanValue();
 			getAction().setChecked(checked);
-			getAction().setToolTipText(getToolTipText(checked));
 		} else if (event.getProperty().equals(IAction.CHECKED)) {
 			JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(getActionId(), getAction().isChecked());
 		}

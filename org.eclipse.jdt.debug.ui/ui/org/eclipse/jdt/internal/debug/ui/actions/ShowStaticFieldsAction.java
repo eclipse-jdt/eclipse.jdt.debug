@@ -33,20 +33,6 @@ public class ShowStaticFieldsAction extends ToggleFilterAction {
 	protected ViewerFilter getViewerFilter() {
 		return fgStaticFilter;
 	}
-
-	/**
-	 * @see ToggleFilterAction#getShowText()
-	 */
-	protected String getShowText() {
-		return ActionMessages.getString("ShowStaticFieldsAction.Show_Static_Fields_1"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ToggleFilterAction#getHideText()
-	 */
-	protected String getHideText() {
-		return ActionMessages.getString("ShowStaticFieldsAction.Hide_Static_Fields_2"); //$NON-NLS-1$
-	}
 	
 	/**
 	 * @see ToggleDelegateAction#initActionId()

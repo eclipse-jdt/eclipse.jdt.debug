@@ -279,6 +279,7 @@
 		targetID="org.eclipse.debug.ui.DebugView">
 		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"
 			label="%showQualifiedAction.label"
+			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			state="true"
@@ -290,6 +291,7 @@
 		targetID="org.eclipse.debug.ui.BreakpointView">
 		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"
 			label="%showQualifiedAction.label"
+			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			state="true"
@@ -301,18 +303,21 @@
 		targetID="org.eclipse.debug.ui.VariableView">
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowQualified"
 			label="%showQualifiedAction.label"
+			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowStaticFields"
 			label="%showStaticAction.label"
+			tooltip="%showStaticAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/static_co.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowFinalFields"
 			label="%showFinalAction.label"
+			tooltip="%showFinalAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/final_co.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
@@ -323,18 +328,21 @@
 		targetID="org.eclipse.debug.ui.ExpressionView">
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowQualified"
 			label="%showQualifiedAction.label"
+			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>	
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowStaticFields"
 			label="%showStaticAction.label"
+			tooltip="%showStaticAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/static_co.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowFinalFields"
 			label="%showFinalAction.label"
+			tooltip="%showFinalAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/final_co.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">

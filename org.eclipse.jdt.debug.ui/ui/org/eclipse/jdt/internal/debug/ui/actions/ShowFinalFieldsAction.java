@@ -34,20 +34,6 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	protected ViewerFilter getViewerFilter() {
 		return fgFinalFilter;
 	}
-
-	/**
-	 * @see ToggleDelegateAction#getShowText()
-	 */
-	protected String getShowText() {
-		return ActionMessages.getString("ShowFinalFieldsAction.Show_Final_Fields_1"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ToggleDelegateAction#getHideText()
-	 */
-	protected String getHideText() {
-		return ActionMessages.getString("ShowFinalFieldsAction.Hide_Final_Fields_2"); //$NON-NLS-1$
-	}
 	
 	/**
 	 * @see ToggleDelegateAction#initActionId()

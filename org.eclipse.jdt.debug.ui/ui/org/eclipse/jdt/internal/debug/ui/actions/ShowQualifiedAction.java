@@ -29,25 +29,10 @@ public class ShowQualifiedAction extends ToggleDelegateAction {
 			debugLabelProvider.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, (on ? Boolean.TRUE : Boolean.FALSE));
 			BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
 				public void run() {
-					getViewer().refresh();					
-					getAction().setToolTipText(getToolTipText(on));
+					getViewer().refresh();
 				}
 			});
 		}
-	}
-
-	/**
-	 * @see ToggleDelegateAction#getShowText()
-	 */
-	protected String getShowText() {
-		return ActionMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_1"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ToggleDelegateAction#getHideText()
-	 */
-	protected String getHideText() {
-		return ActionMessages.getString("ShowQualifiedAction.Hide_&Qualified_Names_3"); //$NON-NLS-1$
 	}
 	
 	/**
