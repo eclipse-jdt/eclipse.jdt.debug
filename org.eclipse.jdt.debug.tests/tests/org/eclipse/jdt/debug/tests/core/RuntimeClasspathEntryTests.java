@@ -48,7 +48,9 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 			}
 		}
 		assertNotNull("Did not find a variable entry", cpe);
-		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeClasspathEntry(cpe);
+		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(JavaRuntime.JRELIB_VARIABLE);
+		entry.setSourceAttachmentPath(cpe.getSourceAttachmentPath());
+		entry.setSourceAttachmentRootPath(cpe.getSourceAttachmentRootPath());
 	
 		assertEquals("Paths should be equal", cpe.getPath(), entry.getPath());
 		assertNull("Resource should be null", entry.getResource());
@@ -60,12 +62,13 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 		assertEquals("Entries should be equal", entry, restored);
 		
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		LibraryLocation lib = vm.getLibraryLocation();
-		if (lib == null) {
-			lib = vm.getVMInstallType().getDefaultLibraryLocation(vm.getInstallLocation());
+		LibraryLocation[] libs = vm.getLibraryLocations();
+		if (libs == null) {
+			libs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 		}
-		IPath sourcePath = lib.getSystemLibrarySourcePath();
-		IPath rootPath = lib.getPackageRootPath();
+		assertEquals("there is one system lib", 1, libs.length);
+		IPath sourcePath = libs[0].getSystemLibrarySourcePath();
+		IPath rootPath = libs[0].getPackageRootPath();
 		
 		assertEquals("Source attachment path did not resolve properly", sourcePath.toOSString(), entry.getResolvedSourceAttachmentPath());
 		assertEquals("Source root path did not resolve properly", rootPath.toOSString(), entry.getResolvedSourceAttachmentRootPath());
