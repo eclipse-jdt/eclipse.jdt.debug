@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.launching;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
@@ -104,15 +103,6 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	 */
 	public int hashCode() {
 		return fRoot.hashCode();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (IAdaptable.class.equals(adapter)) {
-			return getPackageFragmentRoot();
-		}
-		return super.getAdapter(adapter);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getPath()

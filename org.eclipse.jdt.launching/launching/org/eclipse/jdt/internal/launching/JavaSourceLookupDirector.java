@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType;
 
 /**
  * Java source lookup director.
@@ -19,10 +25,26 @@ import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector
  */
 public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 	
+	private static Set fFilteredTypes;
+	
+	static {
+		fFilteredTypes = new HashSet();
+		fFilteredTypes.add(ProjectSourceContainerType.TYPE_ID);
+		fFilteredTypes.add(WorkspaceSourceContainerType.TYPE_ID);
+		// can't reference UI constant
+		fFilteredTypes.add("org.eclipse.debug.ui.containerType.workingSet"); //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
 	public void initializeParticipants() {
 		addSourceLookupParticipant(new JavaSourceLookupParticipant());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
+	 */
+	public boolean supportsSourceContainerType(ISourceContainerType type) {
+		return !fFilteredTypes.contains(type.getId());
 	}
 }

@@ -107,7 +107,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	 * @return classpath container or <code>null</code>
 	 * @throws CoreException if unable to retrieve container
 	 */
-	protected IClasspathContainer getClasspathContainer() throws CoreException {
+	public IClasspathContainer getClasspathContainer() throws CoreException {
 		ISourceLookupDirector director = getDirector();
 		if (director != null) {
 			ILaunchConfiguration configuration = director.getLaunchConfiguration();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -17,6 +19,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainer;
 import org.eclipse.jdt.internal.ui.util.PixelConverter;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerWizard;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -28,10 +31,15 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ClasspathContainerSourceContainerBrowser implements ISourceContainerBrowser {
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell)
+	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell) {
-		ClasspathContainerWizard wizard = new ClasspathContainerWizard((IClasspathEntry)null, (IJavaProject)null, new IClasspathEntry[0]);
+	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration) {
+		IJavaProject project = null;
+		try {
+			project = JavaRuntime.getJavaProject(configuration);
+		} catch (CoreException e) {
+		}
+		ClasspathContainerWizard wizard = new ClasspathContainerWizard((IClasspathEntry)null, project, new IClasspathEntry[0]);
 		
 		wizard.setWindowTitle(SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.0")); //$NON-NLS-1$
 		WizardDialog dialog= new WizardDialog(shell, wizard);

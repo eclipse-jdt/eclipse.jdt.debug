@@ -2369,6 +2369,28 @@
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathContainer">
       </sourceContainerPresentation>
    </extension>
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.launching.JavaProjectSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>         
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>                  
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>                           
+      </extension>     	   
    
    <!-- Dynamic (String Substitution) Variables -->
    <extension
