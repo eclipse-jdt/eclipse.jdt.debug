@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -20,6 +21,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.core.IJavaElement;
@@ -189,31 +191,38 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 					// if it is a suspend thread event (not the result of an previous implicite evaluation),
 					// perform an implicit evaluation.
 					if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-						if (source instanceof IJavaThread) {
-							final IJavaThread javaThread= (IJavaThread) source;
-							if (preEvaluationCheck(javaThread, true)) {
-								Runnable runnable= new Runnable() {
-									public void run() {
-										DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-											public void run() {
-												evaluateExpression(javaThread, true);
-											}
-										});
-									}
-								};
-								DebugPlugin.getDefault().asyncExec(runnable);
+						if (source instanceof IThread) {
+							// consult the adapter in case of a wrappered debug model
+							final IJavaThread javaThread =(IJavaThread) ((IAdaptable)source).getAdapter(IJavaThread.class);
+							if (javaThread != null) {
+								if (preEvaluationCheck(javaThread, true)) {
+									Runnable runnable= new Runnable() {
+										public void run() {
+											DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+												public void run() {
+													evaluateExpression(javaThread, true);
+												}
+											});
+										}
+									};
+									DebugPlugin.getDefault().asyncExec(runnable);
+								}								
 							}
-						}
+						}						
 					}
 					break;
 				case DebugEvent.TERMINATE:
 					// if the last debug target on which the expression as been evaluated terminates,
 					// discard the result.
-					if (source.equals(fDebugTarget)) {
-						fResultValue= null;
-						setHasError(false);
-						setObsolete(false);
-						refresh();
+					if (source instanceof IDebugTarget) {
+						// consult the adapter in case of a wrappered debug model
+						IJavaDebugTarget target = (IJavaDebugTarget)((IAdaptable)source).getAdapter(IJavaDebugTarget.class);
+						if (target != null && target.equals(fDebugTarget)) {
+							fResultValue= null;
+							setHasError(false);
+							setObsolete(false);
+							refresh();
+						}
 					}
 					break;
 			}
