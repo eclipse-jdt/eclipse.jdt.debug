@@ -132,7 +132,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_is_not_supported_1")); //$NON-NLS-1$
 		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
-		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePageReplace_classfiles_containing_compilation_errors_1")); //$NON-NLS-1$
+		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Replace_classfiles_containing_compilation_errors_1")); //$NON-NLS-1$
 		
 		createSpacer(composite, 1);
 		
