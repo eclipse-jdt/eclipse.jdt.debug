@@ -1,13 +1,12 @@
 package org.eclipse.jdt.internal.debug.core;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-import java.util.*;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.*;import org.eclipse.jdt.debug.core.*;import com.sun.jdi.*;
-
+ 
+import com.sun.jdi.*;
+import java.util.*;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.*;import org.eclipse.jdt.debug.core.*;
 /**
  * The value of a variable
  */

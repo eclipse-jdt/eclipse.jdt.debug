@@ -1,14 +1,12 @@
 package org.eclipse.jdt.internal.debug.core;
 
-
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
-import java.util.*;import org.eclipse.core.runtime.IPath;import org.eclipse.core.runtime.Path;import org.eclipse.debug.core.DebugException;import org.eclipse.jdt.core.*;import org.eclipse.jdt.core.eval.IEvaluationContext;import com.sun.jdi.*;
-
+import com.sun.jdi.*;
+import java.util.*;import org.eclipse.core.runtime.IPath;import org.eclipse.core.runtime.Path;import org.eclipse.debug.core.DebugException;import org.eclipse.jdt.core.*;import org.eclipse.jdt.core.eval.IEvaluationContext;
 /**
  * An evaluation context for a stack frame.
  */

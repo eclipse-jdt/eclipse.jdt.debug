@@ -1,6 +1,10 @@
 package org.eclipse.jdt.internal.debug.core;
 
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import com.sun.jdi.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -15,6 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /**
  * An evaluation context for a stack frame.
  */

@@ -1,9 +1,8 @@
 package org.eclipse.jdt.internal.debug.core;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
  
 import com.sun.jdi.*;import com.sun.jdi.request.*;import java.util.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.jdi.TimeoutException;import org.eclipse.jdi.hcr.OperationRefusedException;import org.eclipse.jdt.debug.core.JDIDebugModel;
