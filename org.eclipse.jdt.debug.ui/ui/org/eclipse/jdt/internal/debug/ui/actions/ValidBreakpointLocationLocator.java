@@ -111,9 +111,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public int getValidLocation() {
 		if (fLocationFound) {
 			return fLocation;
-		} else {
-			return -1;
 		}
+		return -1;
 	}
 	
 	/**
