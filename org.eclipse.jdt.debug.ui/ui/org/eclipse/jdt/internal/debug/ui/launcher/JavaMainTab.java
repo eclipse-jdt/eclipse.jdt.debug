@@ -5,7 +5,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
  
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,8 +46,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
@@ -69,9 +66,6 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	// Used when multiple config attributes are getting updated at once.
 	private boolean fBatchUpdate = false;
 	
-	// Listener for modify events in all text-based widgets
-	private ModifyListener fModifyListener;
-
 	// Project UI widgets
 	private Label fProjLabel;
 	private Text fProjText;
@@ -83,23 +77,13 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	private Button fSearchButton;
 	private Button fSearchExternalJarsCheckButton;
 	
-	// Program arguments UI widgets
-	private Label fPrgmArgumentsLabel;
-	private Text fPrgmArgumentsText;
-
 	// JRE UI widgets
 	private Label fJRELabel;
 	private Combo fJRECombo;
 	private Button fJREAddButton;
 
-	// VM arguments UI widgets
-	private Label fVMArgumentsLabel;
-	private Text fVMArgumentsText;
-	
-	// Working directory UI widgets
-	private Label fWorkingDirLabel;
-	private Text fWorkingDirText;
-	private Button fWorkingDirBrowseButton;
+	// Build before launch UI widgets
+	private Button fBuildCheckButton;
 	
 	// Collections used to populating the JRE Combo box
 	private IVMInstallType[] fVMTypes;
@@ -137,7 +121,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		//createVerticalSpacer(comp);
+		createVerticalSpacer(comp);
 		
 		Composite projComp = new Composite(comp, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
@@ -207,55 +191,8 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		fSearchExternalJarsCheckButton.setText("Ext. jars");
 		fSearchExternalJarsCheckButton.setToolTipText("Include external jars when searching for a main class");
 				
-		//createVerticalSpacer(comp);
+		createVerticalSpacer(comp);
 		
-		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText("Program arguments");
-						
-		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 30;
-		fPrgmArgumentsText.setLayoutData(gd);
-		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateConfigFromPgmArgs();
-			}
-		});
-		
-		Composite workingDirComp = new Composite(comp, SWT.NONE);
-		GridLayout workingDirLayout = new GridLayout();
-		workingDirLayout.numColumns = 2;
-		workingDirLayout.marginHeight = 0;
-		workingDirLayout.marginWidth = 0;
-		workingDirComp.setLayout(workingDirLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		workingDirComp.setLayoutData(gd);
-		
-		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText("Working directory");
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fWorkingDirLabel.setLayoutData(gd);
-		
-		fWorkingDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fWorkingDirText.setLayoutData(gd);
-		fWorkingDirText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateConfigFromWorkingDirectory();
-			}
-		});
-		
-		fWorkingDirBrowseButton = new Button(workingDirComp, SWT.PUSH);
-		fWorkingDirBrowseButton.setText("Browse");
-		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleWorkingDirBrowseButtonSelected();
-			}
-		});
-						
-		//createVerticalSpacer(comp);
-				
 		Composite jreComp = new Composite(comp, SWT.NONE);
 		GridLayout jreLayout = new GridLayout();
 		jreLayout.numColumns = 2;
@@ -289,19 +226,16 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 			}
 		});
 		
-		fVMArgumentsLabel = new Label(comp, SWT.NONE);
-		fVMArgumentsLabel.setText("VM arguments");
-		
-		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 30;
-		fVMArgumentsText.setLayoutData(gd);	
-		fVMArgumentsText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateConfigFromVMArgs();
-			}
-		});	
+		createVerticalSpacer(comp);
 				
+		fBuildCheckButton = new Button(comp, SWT.CHECK);
+		fBuildCheckButton.setText("Build before launch");
+		fBuildCheckButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateConfigFromBuild();
+			}
+		});
+
 		return comp;
 	}
 	
@@ -327,10 +261,8 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
-		updatePgmArgsFromConfig(config);
 		updateJREFromConfig(config);
-		updateVMArgsFromConfig(config);
-		updateWorkingDirectoryFromConfig(config);
+		updateBuildFromConfig(config);
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -349,14 +281,6 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		}		
 	}
 
-	protected void updatePgmArgsFromConfig(ILaunchConfiguration config) {
-		try {
-			String pgmArgs = config.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, EMPTY_STRING);
-			fPrgmArgumentsText.setText(pgmArgs);
-		} catch (CoreException ce) {			
-		}
-	}
-	
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
 		try {
 			String vmID = config.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, EMPTY_STRING);
@@ -369,20 +293,12 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		}
 	}
 		
-	protected void updateVMArgsFromConfig(ILaunchConfiguration config) {
+	protected void updateBuildFromConfig(ILaunchConfiguration config) {
 		try {
-			String vmArgs = config.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, EMPTY_STRING);
-			fVMArgumentsText.setText(vmArgs);
+			boolean build = config.getAttribute(JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR, false);
+			fBuildCheckButton.setSelection(build);
 		} catch (CoreException ce) {			
-		}
-	}
-	
-	protected void updateWorkingDirectoryFromConfig(ILaunchConfiguration config) {
-		try {
-			String workingDir = config.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, EMPTY_STRING);
-			fWorkingDirText.setText(workingDir);
-		} catch (CoreException ce) {			
-		}		
+		}				
 	}
 
 	protected void updateConfigFromProject() {
@@ -395,14 +311,6 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	protected void updateConfigFromMain() {
 		if (getWorkingCopy() != null) {
 			getWorkingCopy().setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getText());
-			refreshStatus();
-		}
-	}
-	
-	protected void updateConfigFromPgmArgs() {
-		if (getWorkingCopy() != null) {
-			String pgmArgs = fPrgmArgumentsText.getText();
-			getWorkingCopy().setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, pgmArgs);
 			refreshStatus();
 		}
 	}
@@ -421,20 +329,12 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		}
 	}
 	
-	protected void updateConfigFromVMArgs() {
+	protected void updateConfigFromBuild() {
 		if (getWorkingCopy() != null) {
-			String vmArgs = fVMArgumentsText.getText();
-			getWorkingCopy().setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, vmArgs);
+			boolean build = fBuildCheckButton.getSelection();
+			getWorkingCopy().setAttribute(JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR, build);
 			refreshStatus();
-		}
-	}
-	
-	protected void updateConfigFromWorkingDirectory() {
-		if (getWorkingCopy() != null) {
-			String workingDir = fWorkingDirText.getText();
-			getWorkingCopy().setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, workingDir);
-			refreshStatus();
-		}
+		}		
 	}
 	
 	protected void refreshStatus() {
@@ -580,26 +480,6 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		if (dialog.open() != dialog.OK) {
 			return;
 		}
-	}
-	
-	/**
-	 * Show a dialog that lets the user select a working directory
-	 */
-	protected void handleWorkingDirBrowseButtonSelected() {
-		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage("Select a working directory for the launch configuration");
-		String currentWorkingDir = fWorkingDirText.getText();
-		if (!currentWorkingDir.trim().equals("")) {
-			File path = new File(currentWorkingDir);
-			if (path.exists()) {
-				dialog.setFilterPath(currentWorkingDir);
-			}			
-		}
-		
-		String selectedDirectory = dialog.open();
-		if (selectedDirectory != null) {
-			fWorkingDirText.setText(selectedDirectory);
-		}		
 	}
 	
 	/**

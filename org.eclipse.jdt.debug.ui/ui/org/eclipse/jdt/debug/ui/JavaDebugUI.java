@@ -79,6 +79,21 @@ public class JavaDebugUI {
 	public static final String BOOTPATH_ATTR = PLUGIN_ID + "BOOTPATH";	 //$NON-NLS-1$
 	
 	/**
+	 * Classpath launch configuration attribute name.
+	 * If this attribute is present on a launch configuration, its value becomes
+	 * the sole classpath for the launch.  If not present, a default class runtime
+	 * classpath is used.
+	 */
+	public static final String CLASSPATH_ATTR = PLUGIN_ID + "CLASSPATH";	 //$NON-NLS-1$
+	
+	/**
+	 * Environment variables launch configuration attribute name.
+	 * This attribute contains name value pairs specifiying environment variables
+	 * that will be set in the launched environment.
+	 */
+	public static final String ENVIRONMENT_VARIABLES_ATTR = PLUGIN_ID + "ENVIRONMENT_VARIABLES";	 //$NON-NLS-1$
+	
+	/**
 	 * Host name launch configuration attribute name.
 	 * This attribute is used for attach launching.
 	 */
@@ -95,6 +110,13 @@ public class JavaDebugUI {
 	 * This attribute is used for attach launching.
 	 */
 	public static final String PORT_ATTR = PLUGIN_ID + "PORT";	 //$NON-NLS-1$
+
+	/**
+	 * 
+	 * Build the workspace launch configuration attribute name.
+	 * If true, the workspace is incrementally built before the launch happens.
+	 */
+	public static final String BUILD_BEFORE_LAUNCH_ATTR = PLUGIN_ID + "BUILD_BEFORE_LAUNCH";	 //$NON-NLS-1$
 
 	/**
 	 * Status code indicating a launch configuration does not
