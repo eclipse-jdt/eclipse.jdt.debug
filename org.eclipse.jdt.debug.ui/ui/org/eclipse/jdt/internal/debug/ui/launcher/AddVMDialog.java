@@ -24,15 +24,16 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.ComboDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
+import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.jdt.internal.ui.wizards.swt.MGridLayout;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -187,14 +188,18 @@ public class AddVMDialog extends StatusDialog {
 	protected Control createDialogArea(Composite ancestor) {
 		createDialogFields();
 		Composite parent= new Composite(ancestor, SWT.NULL);
-		MGridLayout layout= new MGridLayout();
+		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
-		layout.minimumWidth= convertWidthInCharsToPixels(80);
 		parent.setLayout(layout);
 		
-		fVMTypeCombo.doFillIntoGrid(parent, 3);								
+		fVMTypeCombo.doFillIntoGrid(parent, 3);
+		LayoutUtil.setWidthHint(fVMTypeCombo.getComboControl(null), convertWidthInCharsToPixels(50));
+		
 		fVMName.doFillIntoGrid(parent, 3);
+
 		fJRERoot.doFillIntoGrid(parent, 3);
+		LayoutUtil.setHorizontalGrabbing(fJRERoot.getTextControl(null));
+		
 		fDebuggerTimeout.doFillIntoGrid(parent, 3);
 
 		fUseDefaultLibrary.doFillIntoGrid(parent, 3);

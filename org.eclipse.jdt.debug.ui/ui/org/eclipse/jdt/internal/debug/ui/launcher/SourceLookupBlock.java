@@ -30,8 +30,6 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.jdt.internal.ui.wizards.swt.MGridData;
-import org.eclipse.jdt.internal.ui.wizards.swt.MGridLayout;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
@@ -40,6 +38,8 @@ import org.eclipse.jdt.launching.sourcelookup.JavaProjectSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -231,7 +231,7 @@ public class SourceLookupBlock {
 	public Control createControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		
-		MGridLayout layout= new MGridLayout();
+		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.numColumns= 2;
@@ -242,14 +242,15 @@ public class SourceLookupBlock {
 		
 		fProjectList.doFillIntoGrid(composite, 3);
 		LayoutUtil.setHorizontalSpan(fProjectList.getLabelControl(null), 2);
+		LayoutUtil.setHorizontalGrabbing(fProjectList.getLabelControl(null));
 		
 		Composite c2 = new Composite(composite, SWT.NONE);
-		layout = new MGridLayout();
+		layout = new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.numColumns= 2;
 		c2.setLayout(layout);
-		MGridData gd = new MGridData(MGridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		c2.setLayoutData(gd);
 				
 		fZipSourceRootField.doFillIntoGrid(c2, 2);
