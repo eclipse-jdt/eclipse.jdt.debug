@@ -1,0 +1,155 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.jdt.debug.tests.performance;
+
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
+import org.eclipse.test.performance.Dimension;
+
+/*
+ * Create & remove * (line breakpoint|watchpoint|method entry breakpoint) -
+ * small source file - large source file Enable & disable * (line
+ * breakpoint|watchpoint|method entry breakpoint)
+ */
+public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements IBreakpointListener {
+
+    int breakpointCount = 0;
+
+    public PerfBreakpointTests(String name) {
+        super(name);
+    }
+
+    public void testBreakpointCreation() throws Exception {
+        tagAsSummary("Install Line Breakpoints", Dimension.CPU_TIME);
+        String typeName = "LargeSourceFile";
+        IResource resource = getBreakpointResource(typeName);
+
+        createLineBreakpoint(14, typeName);
+        IJavaThread thread = launchToBreakpoint(typeName);
+        try {
+            DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+
+            int[] lineNumbers = new int[50];
+            for (int i = 0; i < lineNumbers.length; i++) {
+                lineNumbers[i] = 15 + i;
+            }
+            createLineBreakpoints(resource, typeName, lineNumbers);
+            waitForBreakpointCount(lineNumbers.length);
+            removeAllBreakpoints();
+            breakpointCount = 0;
+
+            lineNumbers = new int[100];
+            for (int i = 0; i < lineNumbers.length; i++) {
+                lineNumbers[i] = 15 + i;
+            }
+
+            for (int i = 0; i < 5; i++) {
+                startMeasuring();
+                createLineBreakpoints(resource, typeName, lineNumbers);
+                waitForBreakpointCount(lineNumbers.length);
+                stopMeasuring();
+                removeAllBreakpoints();
+                breakpointCount = 0;
+            }
+            commitMeasurements();
+            assertPerformance();
+        } finally {
+            DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+            removeAllBreakpoints();
+            terminateAndRemove(thread);
+        }
+    }
+
+    public void testBreakpointRemoval() throws Exception {
+        tagAsSummary("Remove Line Breakpoints", Dimension.CPU_TIME);
+        String typeName = "LargeSourceFile";
+        IResource resource = getBreakpointResource(typeName);
+
+        IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
+        IJavaThread thread = launchToBreakpoint(typeName);
+        bp.delete();
+
+        IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+        try {
+            manager.addBreakpointListener(this);
+
+            int[] lineNumbers = new int[50];
+            for (int i = 0; i < lineNumbers.length; i++) {
+                lineNumbers[i] = 15 + i;
+            }
+
+            for (int i = 0; i < 5; i++) {
+                createLineBreakpoints(resource, typeName, lineNumbers);
+                IBreakpoint[] breakpoints = manager.getBreakpoints();
+                manager.removeBreakpoints(breakpoints, true);
+                waitForBreakpointCount(0);
+            }
+
+            lineNumbers = new int[50];
+            for (int i = 0; i < lineNumbers.length; i++) {
+                lineNumbers[i] = 15 + i;
+            }
+
+            for (int i = 0; i < 50; i++) {
+                createLineBreakpoints(resource, typeName, lineNumbers);
+                waitForBreakpointCount(lineNumbers.length);
+                IBreakpoint[] breakpoints = manager.getBreakpoints();
+                startMeasuring();
+                manager.removeBreakpoints(breakpoints, true);
+                waitForBreakpointCount(0);
+                stopMeasuring();
+            }
+            commitMeasurements();
+            assertPerformance();
+        } finally {
+            manager.removeBreakpointListener(this);
+            removeAllBreakpoints();
+            terminateAndRemove(thread);
+        }
+    }
+
+    private synchronized void waitForBreakpointCount(int i) throws Exception {
+        long end = System.currentTimeMillis() + 60000;
+        while (breakpointCount != i && System.currentTimeMillis() < end) {
+            wait(30000);
+        }
+        assertEquals("Expected " + i + " breakpoints, notified of " + breakpointCount, i, breakpointCount);
+    }
+
+    private void createLineBreakpoints(IResource resource, String typeName, int[] lineNumbers) throws CoreException {
+        for (int i = 0; i < lineNumbers.length; i++) {
+            JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumbers[i], -1, -1, 0, true, null);
+        }
+    }
+
+    public synchronized void breakpointAdded(IBreakpoint breakpoint) {
+        breakpointCount++;
+        notifyAll();
+    }
+
+    public synchronized void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+        breakpointCount--;
+        notifyAll();
+    }
+
+    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+    }
+}

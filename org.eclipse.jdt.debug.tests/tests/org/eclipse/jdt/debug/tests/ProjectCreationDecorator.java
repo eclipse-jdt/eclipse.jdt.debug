@@ -92,6 +92,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		}
 		
 		// create launch configurations
+        createLaunchConfiguration("LargeSourceFile");
 		createLaunchConfiguration("Breakpoints");
 		createLaunchConfiguration("InstanceVariablesTests");
 		createLaunchConfiguration("LocalVariablesTests");
@@ -133,7 +134,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("ConsoleVariableLineLength");
 		createLaunchConfiguration("StackTraces");
 		createLaunchConfiguration("ConsoleInput");
-		createLaunchConfiguration("PrintConcatenation");
+		createLaunchConfiguration("PrintConcatenation");        
 	}
 	
 	/**
