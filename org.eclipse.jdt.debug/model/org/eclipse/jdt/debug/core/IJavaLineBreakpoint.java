@@ -16,7 +16,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 
 
 /**
- * A breakpoint that suspend execution when a particular line of code
+ * A breakpoint that suspends execution when a particular line of code
  * is reached.
  * <p>
  * Clients are not intended to implement this interface
@@ -84,6 +84,7 @@ public interface IJavaLineBreakpoint extends IJavaBreakpoint, ILineBreakpoint {
 	 * suspends when the value of the condition changes.
 	 * @exception CoreException if unable to access the property on
 	 * 	this breakpoint's underlying marker
+	 * @since 2.1
 	 */
 	public boolean isConditionSuspendOnTrue() throws CoreException;
 	/**
@@ -94,6 +95,7 @@ public interface IJavaLineBreakpoint extends IJavaBreakpoint, ILineBreakpoint {
 	 * 
 	 * @exception CoreException if unable to access the property on 	this
 	 * breakpoint's underlying marker
+	 * @since 2.1
 	 */
 	public void setConditionSuspendOnTrue(boolean suspendOnTrue) throws CoreException;
 
