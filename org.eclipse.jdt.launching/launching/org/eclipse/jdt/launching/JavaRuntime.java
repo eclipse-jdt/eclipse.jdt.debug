@@ -480,9 +480,17 @@ public final class JavaRuntime {
 		return null;
 	}
 
-	
-	public static IRuntimeClasspathEntry newStringVariableClasspathEntry(String variableString) {
-		return new VariableClasspathEntry(variableString);
+	/**
+	 * Returns a new runtime classpath entry for the given expression that
+	 * may contain string substitution variable references. The resulting expression
+	 * refers to an archive (jar or directory) containing class files.
+	 * 
+	 * @param expression an expression that resolves to the location of an archive
+	 * @return runtime classpath entry
+	 * @since 3.0
+	 */
+	public static IRuntimeClasspathEntry newStringVariableClasspathEntry(String expression) {
+		return new VariableClasspathEntry(expression);
 	}
 	
 	/**

@@ -29,7 +29,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
 	public void initializeFrom(Element memento) throws CoreException {
-		variableString = memento.getAttribute("variableString");
+		variableString = memento.getAttribute("variableString"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,6 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
 	public int getType() {
-		//FIXME could return VARIABLE, but I think that was intended for Classpath Variables
 		return OTHER; 
 	}
 	/**
