@@ -257,6 +257,14 @@
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
+		<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			label="%showQualifiedAction.label"
+			toolbarPath="renderGroup"
+			icon="icons/full/elcl16/qnames_co.gif"
+			tooltip="%showQualifiedAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+		</action>
 	</viewContribution>
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
@@ -277,6 +285,14 @@
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
+			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			label="%showQualifiedAction.label"
+			toolbarPath="renderGroup"
+			icon="icons/full/elcl16/qnames_co.gif"
+			tooltip="%showQualifiedAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+		</action>
 	</viewContribution>	
 	<viewContribution
 		id="org.eclipse.jdt.debug.ui.BreakpointViewActions"
@@ -287,6 +303,26 @@
 			icon="icons/full/clcl16/exc_catch.gif"
 			tooltip="%exceptionAction.tooltip"
 			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
+		</action>
+			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			label="%showQualifiedAction.label"
+			toolbarPath="renderGroup"
+			icon="icons/full/elcl16/qnames_co.gif"
+			tooltip="%showQualifiedAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+		</action>
+	</viewContribution>
+	<viewContribution
+		id="org.eclipse.jdt.debug.ui.LaunchViewActions"
+		targetID="org.eclipse.debug.ui.DebugView">
+			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			label="%showQualifiedAction.label"
+			toolbarPath="renderGroup"
+			icon="icons/full/elcl16/qnames_co.gif"
+			tooltip="%showQualifiedAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
 </extension>

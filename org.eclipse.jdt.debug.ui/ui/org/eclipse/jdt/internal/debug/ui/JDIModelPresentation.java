@@ -76,6 +76,16 @@ import org.eclipse.ui.PlatformUI;
  */
 public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IPropertyChangeListener, IDebugEventListener {
 
+	/**
+	 * Qualified names presentation property (value <code>"org.eclipse.debug.ui.displayQualifiedNames"</code>).
+	 * When <code>DISPLAY_QUALIFIED_NAMES</code> is set to <code>True</code>,
+	 * this label provider should use fully qualified type names when rendering elements.
+	 * When set to <code>False</code>,this label provider should use simple names
+	 * when rendering elements.
+	 * @see #setAttribute(String, Object)
+	 */
+	public final static String DISPLAY_QUALIFIED_NAMES= "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
+	
 	protected HashMap fAttributes= new HashMap(3);
 
 	static final Point BIG_SIZE= new Point(22, 16);

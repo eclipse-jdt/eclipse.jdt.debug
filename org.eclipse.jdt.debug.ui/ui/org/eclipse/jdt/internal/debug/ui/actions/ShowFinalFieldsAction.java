@@ -8,7 +8,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -49,7 +49,7 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 
 	public ShowFinalFieldsAction() {
 		setViewerFilter(new FinalFilter());
-		setId(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowFinalFieldsAction"); //$NON-NLS-1$
+		setId(JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowFinalFieldsAction"); //$NON-NLS-1$
 	}
 
 	/**
@@ -64,14 +64,14 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	}
 
 	/**
-	 * @see ToggleFilterAction#getShowText()
+	 * @see ToggleDelegateAction#getShowText()
 	 */
 	protected String getShowText() {
 		return ActionMessages.getString("ShowFinalFieldsAction.Show_Final_Fields_1"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ToggleFilterAction#getHideText()
+	 * @see ToggleDelegateAction#getHideText()
 	 */
 	protected String getHideText() {
 		return ActionMessages.getString("ShowFinalFieldsAction.Hide_Final_Fields_2"); //$NON-NLS-1$
