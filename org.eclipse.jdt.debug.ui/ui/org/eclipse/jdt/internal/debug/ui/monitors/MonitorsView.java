@@ -293,6 +293,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 			case VIEW_ID_DEADLOCK:
 				if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0 && MonitorManager.getDefault().getThreads().length > 0) {
 					showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
+					showPage= false;
 					break;
 				} else {
 					changeFromShowMessagePage= true;
