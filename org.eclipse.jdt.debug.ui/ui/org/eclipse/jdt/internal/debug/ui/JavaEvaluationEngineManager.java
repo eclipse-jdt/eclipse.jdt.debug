@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -33,6 +34,10 @@ public class JavaEvaluationEngineManager implements IDebugEventSetListener {
 	 * 
 	 */
 	HashMap fTargetMap= new HashMap();
+
+	public JavaEvaluationEngineManager() {
+		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
 
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvent(DebugEvent)
@@ -77,6 +82,14 @@ public class JavaEvaluationEngineManager implements IDebugEventSetListener {
 		return engine;
 	}
 	
+	/**
+	 * Disposes this evaluation engine manager.
+	 * When disposed, the manager disposes all engines
+	 * it is currently managing.
+	 * 
+	 * After this evaluation engine manager has been disposed, it
+	 * must not be reused.
+	 */
 	public void dispose() {
 		HashMap engines;
 		Iterator iter= fTargetMap.values().iterator();
@@ -89,6 +102,7 @@ public class JavaEvaluationEngineManager implements IDebugEventSetListener {
 			}
 			engines.clear();
 		}
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 
 }
