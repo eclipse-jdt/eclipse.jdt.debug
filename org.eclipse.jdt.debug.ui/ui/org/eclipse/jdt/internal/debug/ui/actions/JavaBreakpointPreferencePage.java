@@ -281,7 +281,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 							fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 							event.doit= false;
 						}
-					}
+					} else if (event.stateMask == SWT.CTRL && event.character == SWT.CR) {
+						((JavaBreakpointPropertiesDialog) JavaBreakpointPreferencePage.this.getContainer()).okPressed();
+						event.doit= false;
+					} 
 				}
 			});
 
