@@ -1,4 +1,4 @@
-<project name="exportplugins" default="export" basedir=".">
+<project name="Export plugins" default="export" basedir=".">
 	<target name="init">
 		<tstamp/>
 		<available file="../../org.eclipse.ui.externaltools/scripts/exportplugin.xml" property="externaltools.exists"/>
