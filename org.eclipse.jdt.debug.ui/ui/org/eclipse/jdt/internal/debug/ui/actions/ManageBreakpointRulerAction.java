@@ -31,25 +31,139 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.MarkerRulerInfoAction;
+import org.eclipse.ui.texteditor.IUpdate;
 
-public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {	
-		
+public class ManageBreakpointRulerAction extends Action implements IUpdate {	
+	
+	private IVerticalRulerInfo fRuler;
+	private ITextEditor fTextEditor;
+	private String fMarkerType;
+	private List fMarkers;
+
+	private String fAddLabel;
+	private String fRemoveLabel;
+	
 	public ManageBreakpointRulerAction(IVerticalRulerInfo ruler, ITextEditor editor) {
-		super(ActionMessages.getResourceBundle(), "ManageBreakpoints.", ruler, editor, IBreakpoint.BREAKPOINT_MARKER, false); //$NON-NLS-1$
+		fRuler= ruler;
+		fTextEditor= editor;
+		fMarkerType= IBreakpoint.BREAKPOINT_MARKER;
+		fAddLabel= ActionMessages.getString("ManageBreakpointRulerAction.add.label");
+		fRemoveLabel= ActionMessages.getString("ManageBreakpointRulerAction.remove.label");
+	}
+	
+	/** 
+	 * Returns the resource for which to create the marker, 
+	 * or <code>null</code> if there is no applicable resource.
+	 *
+	 * @return the resource for which to create the marker or <code>null</code>
+	 */
+	protected IResource getResource() {
+		IEditorInput input= fTextEditor.getEditorInput();
+		
+		IResource resource= (IResource) input.getAdapter(IFile.class);
+		
+		if (resource == null)
+			resource= (IResource) input.getAdapter(IResource.class);
+			
+		return resource;
 	}
 	
 	/**
-	 * @see MarkerRulerAction#getMarkers()
+	 * Checks whether a position includes the ruler's line of activity.
+	 *
+	 * @param position the position to be checked
+	 * @param document the document the position refers to
+	 * @return <code>true</code> if the line is included by the given position
 	 */
+	protected boolean includesRulerLine(Position position, IDocument document) {
+
+		if (position != null) {
+			try {
+				int markerLine= document.getLineOfOffset(position.getOffset());
+				int line= fRuler.getLineOfLastMouseButtonActivity();
+				if (line == markerLine) {
+					return true;
+				}
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns this action's vertical ruler info.
+	 *
+	 * @return this action's vertical ruler
+	 */
+	protected IVerticalRulerInfo getVerticalRulerInfo() {
+		return fRuler;
+	}
+	
+	/**
+	 * Returns this action's editor.
+	 *
+	 * @return this action's editor
+	 */
+	protected ITextEditor getTextEditor() {
+		return fTextEditor;
+	}
+	
+	/**
+	 * Returns the <code>AbstractMarkerAnnotationModel</code> of the editor's input.
+	 *
+	 * @return the marker annotation model
+	 */
+	protected AbstractMarkerAnnotationModel getAnnotationModel() {
+		IDocumentProvider provider= fTextEditor.getDocumentProvider();
+		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
+		if (model instanceof AbstractMarkerAnnotationModel) {
+			return (AbstractMarkerAnnotationModel) model;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the <code>IDocument</code> of the editor's input.
+	 *
+	 * @return the document of the editor's input
+	 */
+	protected IDocument getDocument() {
+		IDocumentProvider provider= fTextEditor.getDocumentProvider();
+		return provider.getDocument(fTextEditor.getEditorInput());
+	}
+	
+	/**
+	 * @see IUpdate#update()
+	 */
+	public void update() {
+		fMarkers= getMarkers();
+		setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
+	}
+
+	/**
+	 * @see Action#run()
+	 */
+	public void run() {
+		if (fMarkers.isEmpty()) {
+			addMarker();
+		} else {
+			removeMarkers(fMarkers);
+		}
+	}
+	
 	protected List getMarkers() {
 		
 		List breakpoints= new ArrayList();
@@ -85,9 +199,6 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 		return breakpoints;
 	}
 	
-	/**
-	 * @see MarkerRulerAction#addMarker()
-	 */
 	protected void addMarker() {
 		
 		IEditorInput editorInput= getTextEditor().getEditorInput();
@@ -134,9 +245,6 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 		}
 	}
 	
-	/**
-	 * @see MarkerRulerAction#removeMarkers(List)
-	 */
 	protected void removeMarkers(List markers) {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		try {
