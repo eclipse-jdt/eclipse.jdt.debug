@@ -1661,8 +1661,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			} catch (ObjectCollectedException e) {
 				return false;
 			} catch (TimeoutException e) {
-				// log the error and attempt to create the thread
-				JDIDebugPlugin.log(e);
+				// continue - attempt to create the thread
 			}
 			JDIThread jdiThread= findThread(thread);
 			if (jdiThread == null) {
