@@ -70,6 +70,10 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		}
 		
 		// create request to listen to class loads
+		//name may only be partially resolved
+		if (!referenceTypeName.endsWith("*")) {
+			referenceTypeName= referenceTypeName + '*';
+		}
 		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
 		
 		// create breakpoint requests for each class currently loaded

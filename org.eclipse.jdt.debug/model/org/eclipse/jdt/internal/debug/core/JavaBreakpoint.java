@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.Breakpoint;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -343,18 +341,26 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		
 		// create request to listen to class loads
-		registerRequest(target.createClassPrepareRequest(enclosingTypeName), target);
+		if (referenceTypeName.indexOf('$') == -1) {
+			registerRequest(target.createClassPrepareRequest(enclosingTypeName), target);
+			//register to ensure we here about local and anonymous inner classes
+			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*"), target);  //$NON-NLS-1$
+		} else {
+			registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
+		}
 		
 		// create breakpoint requests for each class currently loaded
 		List classes= target.jdiClassesByName(referenceTypeName);
+		if (classes.isEmpty() && enclosingTypeName.equals(referenceTypeName)) {
+			return;
+		} 
+		
 		boolean success= false;
-		if (!classes.isEmpty()) {
-			Iterator iter = classes.iterator();
-			while (iter.hasNext()) {
-				ReferenceType type= (ReferenceType) iter.next();
-				if (createRequest(target, type)) {
-					success= true;
-				}
+		Iterator iter = classes.iterator();
+		while (iter.hasNext()) {
+			ReferenceType type= (ReferenceType) iter.next();
+			if (createRequest(target, type)) {
+				success= true;
 			}
 		}
 		
