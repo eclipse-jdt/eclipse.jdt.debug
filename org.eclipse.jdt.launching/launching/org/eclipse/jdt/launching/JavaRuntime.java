@@ -1949,7 +1949,7 @@ public final class JavaRuntime {
 	
 	/**
 	 * Adds all java library path extra classpath entry values to the given entries collection
-	 * specified on the gvien project's classpath, and returns a collection of required
+	 * specified on the given project's classpath, and returns a collection of required
 	 * projects, or <code>null</code>.
 	 *  
 	 * @param project project being processed
