@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPart;
 public abstract class AbstractManageBreakpointActionDelegate extends ManageBreakpointActionDelegate implements IObjectActionDelegate {
 
 	private IMember[] fMembers;
-	private IJavaBreakpoint fBreakpoint;
 	private IWorkbenchPart fTargetPart;
 	
 	/**
