@@ -30,7 +30,7 @@
 
 
 <!-- Not to be extended com.sun.tools.jdi.VirtualMachineManagerImpl or org.eclipse.jdi.internal.VirtualMachineManagerImpl -->
-   <extension-point id="jdiclient" name="org.eclipse.jdi.internal.VirtualMachineManagerImpl"/>
+   <extension-point id="jdiclient" name="org.eclipse.jdi.internal.VirtualMachineManagerImpl"  schema="schema/jdiclient.exsd"/>
 
 <!-- Extensions -->
    <extension
