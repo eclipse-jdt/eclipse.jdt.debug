@@ -14,6 +14,7 @@ package org.eclipse.jdt.debug.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -574,7 +575,8 @@ public class JDIDebugModel {
 				continue;
 			}
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
-			if (breakpoint.getMarker().getType().equals(markerType)) {
+			IMarker marker = breakpoint.getMarker();
+			if (marker != null && marker.exists() && marker.getType().equals(markerType)) {
 				String breakpointTypeName = breakpoint.getTypeName();
 				if (breakpointTypeName.equals(typeName) || breakpointTypeName.startsWith(typeName + '$')) {
 					if (breakpoint.getLineNumber() == lineNumber) {
