@@ -29,7 +29,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	}
 	
 	/**
-	 * @see IAdaptable
+	 * @see PlatformObject#getAdapter(Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaVariable.class || adapter == IJavaModifiers.class) {
@@ -40,7 +40,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 
 
 	/**
-	 * @see IDebugElement
+	 * @see IDebugElement#getElementType()
 	 */
 	public int getElementType() {
 		return VARIABLE;
@@ -73,7 +73,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 * is cached, but on each access we see if the value has changed
 	 * and update if required.
 	 *
-	 * @see IVariable
+	 * @see IVariable#getValue()
 	 */
 	public IValue getValue() throws DebugException {
 		Value currentValue = getCurrentValue();
@@ -94,84 +94,84 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	}
 
 	/**
-	 * @see IValueModification
+	 * @see IValueModification#supportsValueModification()
 	 */
 	public boolean supportsValueModification() {
 		return false;
 	}
 
 	/**
-	 * @see IValueModification
+	 * @see IValueModification#setValue(String)
 	 */
 	public void setValue(String expression) throws DebugException {
 		notSupported(JDIDebugModelMessages.getString("JDIVariable.does_not_support_value_modification")); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see IValueModification
+	 * @see IValueModification#verifyValue(String)
 	 */
 	public boolean verifyValue(String expression) {
 		return false;
 	}	
 	 
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#isVolatile()
 	 */
 	public boolean isVolatile() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#isTransient()
 	 */
 	public boolean isTransient() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isSynthetic()
 	 */
 	public boolean isSynthetic() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isPublic()
 	 */
 	public boolean isPublic() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isPrivate()
 	 */
 	public boolean isPrivate() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isProtected()
 	 */
 	public boolean isProtected() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isPackagePrivate()
 	 */
 	public boolean isPackagePrivate() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isStatic()
 	 */
 	public boolean isStatic() throws DebugException {
 		return false;
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isFinal()
 	 */
 	public boolean isFinal() throws DebugException {
 		return false;
