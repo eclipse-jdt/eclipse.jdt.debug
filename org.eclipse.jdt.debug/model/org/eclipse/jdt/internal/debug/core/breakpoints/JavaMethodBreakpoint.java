@@ -45,14 +45,16 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * Breakpoint attribute storing the name of the method
 	 * in which a breakpoint is contained.
-	 * (value <code>"org.eclipse.jdt.debug.core.methodName"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.methodName"</code>). 
+	 * This attribute is a <code>String</code>.
 	 */
 	private static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$	
 	
 	/**
 	 * Breakpoint attribute storing the signature of the method
 	 * in which a breakpoint is contained.
-	 * (value <code>"org.eclipse.jdt.debug.core.methodSignature"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.methodSignature"</code>). 
+	 * This attribute is a <code>String</code>.
 	 */
 	private static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$	
 	
@@ -107,7 +109,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * this breakpoint suspended it. Reasons include:
 	 * <ol>
 	 * <li>Method entry (value <code>ENTRY_EVENT</code>)</li>
-	 * <li>Methdo exit (value <code>EXIT_EVENT</code>)</li>
+	 * <li>Method exit (value <code>EXIT_EVENT</code>)</li>
 	 * </ol>
 	 */
 	private HashMap fLastEventTypes= new HashMap(10); // $NON-NLS-1$
@@ -116,6 +118,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * Used to match type names 
 	 */
 	private StringMatcher fMatcher;
+	
+	/**
+	 * Cache of whether this breakpoint uses a type name pattern
+	 */
+	private Boolean fUsesTypePattern= null;
+	
 	/**
 	 * Constructs a new unconfigured method breakpoint
 	 */
@@ -380,7 +388,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * Set the enabled state of the given request to the given
 	 * value
 	 */
-	protected void internalUpdateEnabledState(EventRequest request, boolean enabled) {
+	private void internalUpdateEnabledState(EventRequest request, boolean enabled) {
 		// change the enabled state
 		try {
 			// if the request has expired, do not enable/disable.
@@ -449,6 +457,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 */
 	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIDebugTarget target, JDIThread thread) {
 		try {
+			if (isNativeOnly()) {
+				if (!method.isNative()) {
+					return true;
+				}
+			}
+			
 			if (getMethodName() != null) {
 				if (!method.name().equals(getMethodName())) {
 					return true;
@@ -457,12 +471,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			
 			if (getMethodSignature() != null) {
 				if (!method.signature().equals(getMethodSignature())) {
-					return true;
-				}
-			}
-			
-			if (isNativeOnly()) {
-				if (!method.isNative()) {
 					return true;
 				}
 			}
@@ -479,21 +487,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				return handleHitCount(event, count, target, thread);
 			} else {
 				// no hit count - suspend
-				return !suspend(thread, target); // resume if suspend fails
+				return !suspend(thread); // resume if suspend fails
 			}
 			
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
 		}
 		return true;
-	}
-	
-	/**
-	 * Suspend the given thread in the given target, and returns
-	 * whether the thread suspended.
-	 */
-	private boolean suspend(JDIThread thread, JDIDebugTarget target) {
-		return suspend(thread);	
 	}
 	
 	/**
@@ -510,7 +510,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			event.request().putProperty(HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit
-				boolean resume = !suspend(thread, target); // resume if suspend fails
+				boolean resume = !suspend(thread); // resume if suspend fails
 				try {
 					// make a note that we auto-disabled the breakpoint
 					// order is important here...see methodEntryChanged
@@ -658,7 +658,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		if (isTypePattern()) {
+		if (usesTypePattern()) {
 			// pre-notification
 			fireAdding(target);
 			
@@ -685,9 +685,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * 
 	 * @return whether this breakpoint uses type name pattern matching
 	 */
-	protected boolean isTypePattern() throws CoreException {
-		String name = getTypeName();
-		return name != null && (name.startsWith("*") || name.endsWith("*")); //$NON-NLS-1$ //$NON-NLS-2$
+	protected boolean usesTypePattern() throws CoreException {
+		if (fUsesTypePattern == null) {
+			String name = getTypeName();
+			fUsesTypePattern= new Boolean(name != null && (name.startsWith("*") || name.endsWith("*"))); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return fUsesTypePattern.booleanValue();
 	}
 	
 	/**
@@ -704,5 +707,4 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		registerRequest(exitRequest, target);
 		return true;
 	}
-
 }

@@ -887,7 +887,7 @@
      <objectContribution 
      	id="org.eclipse.jdt.debug.ui.MethodBreakpointActions"
      	objectClass="org.eclipse.jdt.core.IMethod">
-     	<filter name="MethodActionFilter" value="isBinaryMethod"/>
+     	<filter name="MethodActionFilter" value="isNotAbstract"/>
 		<action id="org.eclipse.jdt.debug.ui.MethodBreakpoint"
 		 	label="%manageMethodBreakpointAction.label"
 		 	helpContextId="manage_method_breakpoint_action_context"
