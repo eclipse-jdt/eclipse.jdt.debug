@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.ActionMessages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -264,7 +265,7 @@ public abstract class AbstractBreakpointActionDelegate extends PartEventAction i
 	 * Displays the given exception in an error dialog.
 	 */
 	protected void errorDialog(CoreException e) {
-		ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Error", null, e.getStatus());
+		ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("AbstractBreakpointActionDelegate.Error_1"), null, e.getStatus()); //$NON-NLS-1$
 	}
 	
 	/**

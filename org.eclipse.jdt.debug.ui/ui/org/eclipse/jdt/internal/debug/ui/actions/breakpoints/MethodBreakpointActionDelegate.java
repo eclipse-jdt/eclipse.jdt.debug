@@ -43,7 +43,7 @@ public class MethodBreakpointActionDelegate extends AbstractBreakpointActionDele
 		// get the type name for the node
 		TypeDeclaration typeDeclaration = getTypeDeclaration(node);
 		String name = getQualifiedName(typeDeclaration);
-		System.out.println(name + " " + getCopmilationUnit(node).lineNumber(node.getStartPosition()));
+		System.out.println(name + ' ' + getCopmilationUnit(node).lineNumber(node.getStartPosition()));
 		return null;		
 	}
 
