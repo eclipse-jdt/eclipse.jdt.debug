@@ -30,7 +30,6 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -2400,7 +2399,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#hasOwnedMonitors()
 	 */
-	public boolean hasOwnedMonitors() {
+	public boolean hasOwnedMonitors() throws DebugException {
 		return isSuspended() && getOwnedMonitors().length > 0;
 	}
 	
@@ -2408,7 +2407,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#getOwnedMonitors()
 	 */
-	public IJavaObject[] getOwnedMonitors() {
+	public IJavaObject[] getOwnedMonitors() throws DebugException {
 		try {
 			JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
 			List ownedMonitors= getUnderlyingThread().ownedMonitors();
@@ -2422,9 +2421,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
-		} catch (VMDisconnectedException e) {
-		} catch (ObjectCollectedException e) {
-		} catch (TimeoutException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThread.43"), e); //$NON-NLS-1$
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThread.44"), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -2432,16 +2431,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#getContendedMonitor()
 	 */
-	public IJavaObject getContendedMonitor() {
+	public IJavaObject getContendedMonitor() throws DebugException {
 		try {
 			ObjectReference monitor= getUnderlyingThread().currentContendedMonitor();
 			if (monitor != null) {
 				return new JDIObjectValue((JDIDebugTarget)getDebugTarget(), monitor);
 			}
 		} catch (IncompatibleThreadStateException e) {
-		} catch (VMDisconnectedException e) {
-		} catch (ObjectCollectedException e) {
-		} catch (TimeoutException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThread.45"), e); //$NON-NLS-1$
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThread.46"), e); //$NON-NLS-1$
 		}
 		
 		return null;
