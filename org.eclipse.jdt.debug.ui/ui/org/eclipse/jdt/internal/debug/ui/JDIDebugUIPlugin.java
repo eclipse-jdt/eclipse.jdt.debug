@@ -182,6 +182,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		JavaDebugPreferencePage.initDefaults(store);
 	}
 	
+	/**
+	 * @see AbstractUIPlugin#startup()
+	 */
 	public void startup() throws CoreException {
 		JDIDebugModel.addHotCodeReplaceListener(this);
 		super.startup();
@@ -199,10 +202,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 			});		
 	}
 	
+	/**
+	 * @see AbstractUIPlugin#shutdown()
+	 */
 	public void shutdown() throws CoreException {
 		JDIDebugModel.removeHotCodeReplaceListener(this);
 		JavaDebugOptionsManager.getDefault().shutdown();
-		getImageDescriptorRegistry().dispose();
+		if (fImageDescriptorRegistry != null) {
+			fImageDescriptorRegistry.dispose();
+		}
 		super.shutdown();
 	}
 	/**
