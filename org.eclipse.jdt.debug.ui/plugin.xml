@@ -748,6 +748,16 @@
          <action
                state="false"
                style="toggle"
+               id="org.eclipse.jdt.ui.variableViewActions.ShowNullEntries"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
+               helpContextId="show_null_entries_action_context"
+               label="%showNullEntriesAction.label"
+               menubarPath="javaActions"
+               tooltip="%showNullEntriesAction.tooltip">
+         </action>                  
+         <action
+               state="false"
+               style="toggle"
                id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
                icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
@@ -790,6 +800,16 @@
                menubarPath="javaActions"
                id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions">
          </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.variableViewActions.ShowNullEntries"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
+               helpContextId="show_null_entries_action_context"
+               label="%showNullEntriesAction.label"
+               menubarPath="javaActions"
+               tooltip="%showNullEntriesAction.tooltip">
+         </action>                  
          <action
                state="false"
                style="toggle"

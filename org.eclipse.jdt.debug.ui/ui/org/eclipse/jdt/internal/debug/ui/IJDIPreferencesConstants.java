@@ -118,6 +118,15 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_SHOW_CONSTANTS= IJavaDebugUIConstants.PLUGIN_ID + ".show_constants"; //$NON-NLS-1$
 	
 	/**
+	 * Boolean preference indicating whether null array entries should be shown
+	 * in variable views. A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 3.0
+	 */	
+	public static final String PREF_SHOW_NULL_ARRAY_ENTRIES = IJavaDebugUIConstants.PLUGIN_ID + ".show_null_entries"; //$NON-NLS-1$	
+	
+	/**
 	 * Boolean preference indicating whether hex values should be shown for primitives
 	 * in variable views. A view may over-ride this preference, and if so, stores
 	 * its preference, prefixed by view id.
