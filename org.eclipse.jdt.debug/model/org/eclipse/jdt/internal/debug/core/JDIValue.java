@@ -25,6 +25,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	protected static final String ERROR_TO_STRING = ERROR + "to_string";
 	protected static final String ERROR_TO_STRING_NOT_SUSPENDED = ERROR + "to_string.not_suspended";
 	protected static final String ERROR_TO_STRING_NOT_IMPLEMENTED = ERROR + "to_string.not_implemented";
+	protected static final String ERROR_TO_STRING_TIMEOUT = ERROR + "to_string.timeout";
 	private final static String DEALLOCATED= PREFIX + "deallocated";	
 	private final static String ID= PREFIX + "id";	
 	private static final String fgToStringSignature = "()Ljava/lang/String;";
@@ -354,7 +355,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	/**
 	 * @see IJavaValue
 	 */
-	public String evaluateToString() throws DebugException {
+	public synchronized String evaluateToString() throws DebugException {
 		String sig = getSignature();
 		if (sig == null) {
 			return DebugJavaUtils.getResourceString(NULL);
@@ -368,6 +369,44 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			requestFailed(ERROR_TO_STRING_NOT_SUSPENDED, null);
 		}
 		
+		
+		final String[] toString = new String[1];
+		final DebugException[] ex = new DebugException[1];
+		Runnable eval= new Runnable() {
+			public void run() {
+				try {
+					toString[0] = evaluateToString0();
+				} catch (DebugException e) {
+					ex[0]= e;
+				}					
+				synchronized (JDIValue.this) {
+					JDIValue.this.notifyAll();
+				}
+			}
+		};
+		
+		int timeout = ((JDIThread)getThread()).getReqeustTimeout();
+		Thread evalThread = new Thread(eval);
+		evalThread.start();
+		try {
+			wait(timeout);
+		} catch (InterruptedException e) {
+		}
+		
+		if (ex[0] != null) {
+			throw ex[0];
+		}
+		
+		if (toString[0] != null) {
+			return toString[0];
+		}	
+		
+		requestFailed(ERROR_TO_STRING_TIMEOUT, null);
+		return null;
+	}
+	
+	
+	protected String evaluateToString0() throws DebugException {
 		String toString = null;
 		try {
 			ObjectReference object = (ObjectReference)fValue;
@@ -386,8 +425,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			targetRequestFailed(ERROR_TO_STRING, e);
 		}
 		
-		return toString;
-				
-	}
-	 
+		return toString;		
+	} 
 }
