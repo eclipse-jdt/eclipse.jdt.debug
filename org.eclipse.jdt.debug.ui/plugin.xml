@@ -510,6 +510,7 @@
                tooltip="%dropFrameAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
                menubarPath="stepReturnGroup"
+               icon="icons/full/elcl16/drop_to_frame.gif"
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.DropToFrame">
          </action>
