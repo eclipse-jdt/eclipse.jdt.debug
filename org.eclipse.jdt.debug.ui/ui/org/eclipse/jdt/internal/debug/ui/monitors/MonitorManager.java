@@ -209,66 +209,7 @@ public class MonitorManager {
 	 */
 	public void update(IJavaDebugTarget target){
 
-		try {
-			// clear all the tables
-			removeMonitorInformation(target);
-			
-			// construct the list of all the non system threads
-			IThread[] threadResult= target.getThreads();
-			List threadsList = new ArrayList();
-			IJavaThread thread;
-			for (int i = 0; i < threadResult.length; i++) {
-				thread = (IJavaThread)threadResult[i];
-				if(!thread.isSystemThread()){
-					threadsList.add(thread);
-				}
-			}
-			IJavaThread[] threads= (IJavaThread[]) threadsList.toArray(new IJavaThread[threadsList.size()]);
-			
-			//suspend all the non system threads
-			suspend(threads);
-			
-			IJavaObject[] ownedMonitors;
-			IJavaObject currentContendedMonitor;
-			IJavaObject monitor;
-			//updating data on 
-			//owning threads / owned monitors and contending threads / contended monitors
-			for (int i = 0; i < threads.length; i++) {
-				thread = threads[i];
-				ownedMonitors = thread.getOwnedMonitors();
-				currentContendedMonitor = thread.getContendedMonitor();
-				// owning threads / owned monitors
-				if(thread.hasOwnedMonitors()){
-					addThreadWithOwnedMonitors(thread, ownedMonitors);
-					
-					for(int j=0; j < ownedMonitors.length; j++) {
-						monitor = ownedMonitors[j];
-						addMonitorWithOwningThread(monitor, thread);
-					}
-				}
-				// contending threads / contended monitors
-				if(currentContendedMonitor != null){
-					addThreadWithContendedMonitor(thread, currentContendedMonitor);
-					addMonitorWithContendedThread(currentContendedMonitor, thread);
-				}
-			}
-			
-			//updating data on deadlocks
-			for (int i = 0; i < threads.length; i++) {
-				thread = threads[i];
-				
-				List l = listToDeadlock(thread, new ArrayList(4));
-				// if thread is caught in a deadlock, 
-				// l will be the list showing this deadlock
-				if(l != null){
-					ThreadWrapper tw = new ThreadWrapper(thread, l);
-					// adding this deadlock list
-					fDeadLockLists.add(tw);
-				}
-			}
-		} catch(DebugException e){
-			JDIDebugPlugin.log(e);
-		}
+		update(target, true);
 	}
 		
 	/**
@@ -281,9 +222,24 @@ public class MonitorManager {
 	 */
 	public void updatePartial(IJavaDebugTarget target){
 
+		update(target, false);
+	}
+	
+	/**
+	 * Updates the data on threads, monitors and deadlocks
+	 * for the suspended threads contained within the specified
+	 * debug target. If <code>suspendThreads</code>, 
+	 * 
+	 * @param target The debug target
+	 * @param whether to suspend the threads
+	 */
+	private void update(IJavaDebugTarget target, boolean suspendThreads){
+
 		try {
+			// clear all the tables
 			removeMonitorInformation(target);
 			
+			// construct the list of all the non system threads
 			IThread[] threadResult= target.getThreads();
 			List threadsList = new ArrayList(threadResult.length);
 			IJavaThread thread;
@@ -295,43 +251,59 @@ public class MonitorManager {
 			}
 			IJavaThread[] threads= (IJavaThread[]) threadsList.toArray(new IJavaThread[threadsList.size()]);
 			
-			IJavaObject[] ownedMonitors;
-			IJavaObject currentContendedMonitor;
-			IJavaObject monitor;		
-			for (int i = 0; i < threads.length; i++) {
-				thread = threads[i];
-				ownedMonitors = thread.getOwnedMonitors();
-				currentContendedMonitor = thread.getContendedMonitor();
-				
-				// owning threads / owned monitors
-				if(thread.hasOwnedMonitors()){
-					addThreadWithOwnedMonitors(thread, ownedMonitors);
-					
-					for(int j=0; j < ownedMonitors.length; j++){
-						monitor = ownedMonitors[j];
-						addMonitorWithOwningThread(monitor, thread);
-					}
-				}
-				// contending threads / contended monitors
-				if(currentContendedMonitor != null){
-					addThreadWithContendedMonitor(thread, currentContendedMonitor);
-					addMonitorWithContendedThread(currentContendedMonitor, thread);
-				}
+			if (suspendThreads) {
+				//suspend all the non system threads
+				suspend(threads);
 			}
 			
+			//updating data on owning threads / owned monitors
+			// and contending threads / contended monitors
 			for (int i = 0; i < threads.length; i++) {
-				thread = (IJavaThread)threads[i];
-					
-				// deadlocks
-				List l = listToDeadlock(thread, new ArrayList(4));
-				// if thread is in a deadlock
-				if(l != null){
-					ThreadWrapper tw = new ThreadWrapper(thread, l);
-					fDeadLockLists.add(tw);
-				}
+				thread = threads[i];
+				updateMonitors(thread);
+			}
+			//all of the monitor information is needed before
+			//the deadlock information can be calculated
+			for (int i = 0; i < threads.length; i++) {
+				thread = threads[i];
+				updateDeadlock(thread);
 			}
 		} catch(DebugException e){
 			JDIDebugPlugin.log(e);
+		}
+	}
+
+	protected void updateDeadlock(IJavaThread thread) throws DebugException {
+		//updating data on deadlocks
+		List l = listToDeadlock(thread, new ArrayList(4));
+		// if thread is caught in a deadlock, 
+		// l will be the list showing this deadlock
+		if(l != null){
+			ThreadWrapper tw = new ThreadWrapper(thread, l);
+			// adding this deadlock list
+			fDeadLockLists.add(tw);
+		}
+	}
+	
+	protected void updateMonitors(IJavaThread thread) throws DebugException {
+		IJavaObject[] ownedMonitors;
+		IJavaObject currentContendedMonitor;
+		IJavaObject monitor;
+		ownedMonitors = thread.getOwnedMonitors();
+		currentContendedMonitor = thread.getContendedMonitor();
+		// owning threads / owned monitors
+		if(thread.hasOwnedMonitors()){
+			addThreadWithOwnedMonitors(thread, ownedMonitors);
+			
+			for(int j=0; j < ownedMonitors.length; j++) {
+				monitor = ownedMonitors[j];
+				addMonitorWithOwningThread(monitor, thread);
+			}
+		}
+		// contending threads / contended monitors
+		if(currentContendedMonitor != null){
+			addThreadWithContendedMonitor(thread, currentContendedMonitor);
+			addMonitorWithContendedThread(currentContendedMonitor, thread);
 		}
 	}
 
@@ -342,7 +314,7 @@ public class MonitorManager {
 	private void suspend(IJavaThread[] threads){		
 		try {
 			for (int i = 0; i < threads.length; i++) {
-				IJavaThread thread = (IJavaThread)threads[i];
+				IJavaThread thread = threads[i];
 				if (!thread.isSuspended()) {
 					thread.suspend();
 					while (!thread.isSuspended()) {
@@ -425,9 +397,8 @@ public class MonitorManager {
 					return res;
 				}
 			}
-		} 
-		// if the thread is not waiting for any monitor
-		else {
+		} else {
+			// if the thread is not waiting for any monitor
 			return null;	
 		}
 		return null;
