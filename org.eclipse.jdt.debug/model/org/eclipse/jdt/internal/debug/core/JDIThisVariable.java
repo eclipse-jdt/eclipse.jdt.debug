@@ -20,6 +20,7 @@ public class JDIThisVariable extends JDIVariable {
 	 * The wrappered object
 	 */
 	protected ObjectReference fObject;
+	
 	/**
 	 * Constructs a variable representing 'this' in a stack frame.
 	 */
@@ -36,19 +37,18 @@ public class JDIThisVariable extends JDIVariable {
 	}
 
 	/**
-	 * @see IDebugElement
+	 * @see IVariable#getName()
 	 */
 	public String getName() {
 		return "this"; //$NON-NLS-1$
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		try {
 			return fObject.type().signature();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -56,12 +56,11 @@ public class JDIThisVariable extends JDIVariable {
 	}
 
 	/**
-	 * @see IVariable
+	 * @see IVariable#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			return getValue().getReferenceTypeName();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
