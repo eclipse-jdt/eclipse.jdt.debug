@@ -507,4 +507,14 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	}
 
+	/**
+	 * (non java-doc)
+	 * Remove the provided <code>detailFormatter</code> from the map
+	 * @param detailFormatter
+	 */
+	public void removeAssociatedDetailFormatter(DetailFormatter detailFormatter) {
+		fDetailFormattersMap.remove(detailFormatter.getTypeName());
+		savePreference();
+	}
+
 }

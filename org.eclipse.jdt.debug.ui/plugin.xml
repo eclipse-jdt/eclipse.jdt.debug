@@ -1219,6 +1219,15 @@
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
          </action>
+         <action
+               label="%removeDetailFormatter.label"
+               helpContextId="remove_detail_formatter_action_context"
+               tooltip="%removeDetailFormatter.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RemoveDetailFormatterAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.removeDetailFormatter">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
@@ -1266,6 +1275,15 @@
                menubarPath="emptyNavigationGroup"
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
+         </action>
+         <action
+               label="%removeDetailFormatter.label"
+               helpContextId="remove_detail_formatter_action_context"
+               tooltip="%removeDetailFormatter.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RemoveDetailFormatterAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.removeDetailFormatter">
          </action>
       </objectContribution>
       <objectContribution
