@@ -78,7 +78,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 					case DebugEvent.SUSPEND:
 					case DebugEvent.RESUME:
 						// refresh on thread suspend/resume
-						handleThreadSuspendResume();
+						if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+							handleThreadSuspendResume();
+						}
 						break;
 					case DebugEvent.TERMINATE:
 						// clean the thread map when a thread terminates
