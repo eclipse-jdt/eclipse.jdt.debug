@@ -570,7 +570,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns FieldImpl of a field in the reference specified by a given fieldID, or null if not found.
 	 */
 	public FieldImpl findField(JdwpFieldID fieldID) {
-		Iterator iter = allFields().iterator();
+		Iterator iter = fields().iterator();
 		while(iter.hasNext()) {
 			FieldImpl field = (FieldImpl)iter.next();
 			if (field.getFieldID().equals(fieldID))
@@ -583,7 +583,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns MethodImpl of a method in the reference specified by a given methodID, or null if not found.
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
-		Iterator iter = allMethods().iterator();
+		Iterator iter = methods().iterator();
 		while(iter.hasNext()) {
 			MethodImpl method = (MethodImpl)iter.next();
 			if (method.getMethodID().equals(methodID))
