@@ -85,5 +85,27 @@
             description="testing">
       </variable>
    </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.valueVariables">
+      <variable
+            name="VALUE_VAR_WITH_INITIALIZER"
+            initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
+            description="sample variable with initializer">
+      </variable>
+      <variable
+            name="VALUE_VAR_WITH_VALUE"
+            description="sample variable with value"
+            initialValue="initial-value">
+      </variable>      
+   </extension>   
+   <extension
+         point="org.eclipse.debug.core.contextVariables">
+      <variable
+            name="SAMPLE_CONTEXT_VAR"
+            resolver="org.eclipse.jdt.debug.testplugin.SampleContextVariableResolver"
+            description="sample context variable">
+      </variable>
+   </extension>   
 
 </plugin>
