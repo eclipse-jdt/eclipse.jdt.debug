@@ -118,6 +118,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private IEvaluationContext fEvaluationContext;
 	private IDebugTarget fVM;
 	private String[] fLaunchedClassPath;
+	private String fLaunchedWorkingDir;
 	private List fSnippetStateListeners;	
 	
 	private boolean fEvaluating;
@@ -322,8 +323,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 
 		boolean cpChange= classPathHasChanged();
+		if (!cpChange) {
+			cpChange = workingDirHasChanged();
+		}
 		boolean launch= fVM == null || cpChange;
-				
+
 		if (cpChange) {
 			shutDownVM();
 		}
@@ -761,6 +765,24 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return false;
 	}
 	
+	protected boolean workingDirHasChanged() {
+		String wd = ScrapbookLauncher.getWorkingDirectoryAttribute(getPage());
+		boolean changed = false;
+		if (wd == null || fLaunchedWorkingDir == null) {
+			if (wd != fLaunchedWorkingDir) {
+				changed = true;
+			}
+		} else {
+			if (!wd.equals(fLaunchedWorkingDir)) {
+				changed = true;
+			}
+		}
+		if (changed) {
+			MessageDialog.openWarning(getShell(), SnippetMessages.getString("SnippetEditor.Warning_1"), SnippetMessages.getString("SnippetEditor.The_working_directory_has_changed._Restarting_the_evaluation_context._2")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return changed;
+	}
+		
 	protected boolean classPathsEqual(String[] path1, String[] path2) {
 		if (path1.length != path2.length) {
 			return false;
@@ -931,6 +953,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected void launchVM() {
 		DebugPlugin.getDefault().addDebugEventFilter(this);
 		fLaunchedClassPath = getClassPath(getJavaProject());
+		fLaunchedWorkingDir = ScrapbookLauncher.getWorkingDirectoryAttribute(getPage());
 		Runnable r = new Runnable() {
 			public void run() {
 				ScrapbookLauncher.getDefault().launch(getPage());
