@@ -31,6 +31,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddJarAction;
+import org.eclipse.jdt.internal.debug.ui.actions.AddLibraryAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddVariableAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
@@ -142,7 +143,10 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		advancedActions.add(action);		
 
 		action = new AddVariableAction(null);								
-		advancedActions.add(action);		
+		advancedActions.add(action);	
+		
+		action = new AddLibraryAction(null);
+		advancedActions.add(action);
 		
 		action = new AttachSourceAction(null, SWT.RADIO);								
 		advancedActions.add(action);

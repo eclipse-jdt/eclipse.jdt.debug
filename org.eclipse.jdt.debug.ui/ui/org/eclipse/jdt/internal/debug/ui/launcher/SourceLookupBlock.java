@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -25,6 +26,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddJarAction;
+import org.eclipse.jdt.internal.debug.ui.actions.AddLibraryAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddVariableAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
@@ -166,6 +168,9 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 
 		action = new AddVariableAction(fPathViewer);								
 		advancedActions.add(action);		
+		
+		action = new AddLibraryAction(null);
+		advancedActions.add(action);
 		
 		action = new AttachSourceAction(fPathViewer, SWT.RADIO);								
 		advancedActions.add(action);				

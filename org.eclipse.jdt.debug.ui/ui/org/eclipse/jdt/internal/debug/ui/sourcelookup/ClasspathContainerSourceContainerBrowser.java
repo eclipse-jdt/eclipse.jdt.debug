@@ -19,12 +19,9 @@ import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.util.PixelConverter;
-import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerWizard;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourceContainer;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -37,7 +34,8 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		return editSourceContainers(shell, director, null, SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.0")); //$NON-NLS-1$
+		return editLibraries(shell, director, null);
+		// SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.0")
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
@@ -52,7 +50,8 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 		ClasspathContainerSourceContainer sourceContainer = (ClasspathContainerSourceContainer)containers[0];
 		IPath containerPath = (sourceContainer).getPath();
 		IClasspathEntry classpathEntry = JavaCore.newContainerEntry(containerPath);
-		return editSourceContainers(shell, director, classpathEntry, SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.1")); //$NON-NLS-1$
+		return editLibraries(shell, director, classpathEntry);
+		//, SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.1")
 	}
 	
 	/**
@@ -64,7 +63,7 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 	 * @param title dialog title
 	 * @return new or replacement source containers
 	 */
-	private ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, IClasspathEntry classpathEntry, String title) {
+	private ISourceContainer[] editLibraries(Shell shell, ISourceLookupDirector director, IClasspathEntry classpathEntry) {
 		IJavaProject project = null;
 		ILaunchConfiguration configuration = director.getLaunchConfiguration();
 		if (configuration != null) {
@@ -73,16 +72,14 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 			} catch (CoreException e) {
 			}
 		}
-		ClasspathContainerWizard wizard = new ClasspathContainerWizard(classpathEntry, project, new IClasspathEntry[0]);
-		
-		wizard.setWindowTitle(title);
-		WizardDialog dialog= new WizardDialog(shell, wizard);
-		PixelConverter converter= new PixelConverter(shell);
-		
-		dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(40), converter.convertHeightInCharsToPixels(20));
-		dialog.create();
-		if (dialog.open() == Window.OK) {
-			IClasspathEntry[] created= wizard.getNewEntries();
+		IClasspathEntry[] edits = null;
+		if (classpathEntry == null) {
+			edits = new IClasspathEntry[0];
+		} else {
+			edits = new IClasspathEntry[]{classpathEntry};
+		}
+		IClasspathEntry[] created = BuildPathDialogAccess.chooseContainerEntries(shell, project, edits);
+		if (created != null) {
 			if (created != null) {	
 				ISourceContainer[] newContainers = new ISourceContainer[created.length];
 				for (int i = 0; i < created.length; i++) {
