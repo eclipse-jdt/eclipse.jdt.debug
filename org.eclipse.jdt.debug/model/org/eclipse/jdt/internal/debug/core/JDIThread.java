@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
@@ -234,9 +235,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IJavaThread#getBreakpoint()
+	 * @see IThread#getBreakpoint()
 	 */
-	public IJavaBreakpoint getBreakpoint() {
+	public IBreakpoint getBreakpoint() {
 		if (fCurrentBreakpoint != null && !fCurrentBreakpoint.getMarker().exists()) {
 			fCurrentBreakpoint= null;
 		}

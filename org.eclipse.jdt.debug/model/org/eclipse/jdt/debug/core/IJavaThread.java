@@ -56,15 +56,6 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	String getThreadGroupName() throws DebugException;
 	
 	/**
-	 * Returns the breakpoint that caused this thread to suspend,
-	 * or <code>null</code> if this thread is not suspended or
-	 * was not suspended by a breakpoint.
-	 *
-	 * @return breakpoint that caused suspend, or <code>null</code> if none
-	 */
-	IJavaBreakpoint getBreakpoint();
-	
-	/**
 	 * Returns a variable with the given name, or <code>null</code> if
 	 * unable to resolve a variable with the name, or if this
 	 * thread is not currently suspended.
