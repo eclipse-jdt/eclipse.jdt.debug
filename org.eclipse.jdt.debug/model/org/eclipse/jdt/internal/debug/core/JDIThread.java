@@ -1257,14 +1257,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		} else {
 			// J9 support
-			StepHandler handler = new DropToFrameHandler(frame);
-			handler.step();
+			// This block is synchronized, such that the step request
+	 		// begins before a background evaluation can be performed.
+			synchronized (this) {
+				StepHandler handler = new DropToFrameHandler(frame);
+				handler.step();
+			}
 		}
 	}
 	
 	/**
 	 * Steps until the specified stack frame is the top frame. Provides
 	 * ability to step over/return in the non-top stack frame.
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
 	 * 
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
@@ -1273,7 +1279,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	protected void stepToFrame(IStackFrame frame) throws DebugException {
+	protected synchronized void stepToFrame(IStackFrame frame) throws DebugException {
 		if (!canStepReturn()) {
 			return;
 		}
