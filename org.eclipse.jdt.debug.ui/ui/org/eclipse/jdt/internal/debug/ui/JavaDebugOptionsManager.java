@@ -625,14 +625,31 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 */
 	protected IMarker getProblem(IJavaStackFrame frame) {
 		try {
-			String packageName = frame.getDeclaringType().getName();
+			String name = frame.getSourceName();
+			String packageName = frame.getDeclaringTypeName();
 			int index = packageName.lastIndexOf('.');
 			if (index == -1) {
+				if (name == null) {
+					// guess at source name if no debug attribute
+					name = packageName;
+					int dollar = name.indexOf('$');
+					if (dollar >= 0) {
+						name = name.substring(0, dollar);
+					}
+					name+= ".java";
+				}
 				packageName = ""; //$NON-NLS-1$
 			} else {
+				if (name == null) {
+					name = packageName.substring(index + 1);
+					int dollar = name.indexOf('$');
+					if (dollar >= 0) {
+						name = name.substring(0, dollar);
+					}
+					name += ".java";
+				}
 				packageName = packageName.substring(0,index);
 			}
-			String name = frame.getSourceName();
 			int line = frame.getLineNumber();
 			Location l = new Location(packageName, name, line);
 			return  (IMarker)fLocationMap.get(l);		
