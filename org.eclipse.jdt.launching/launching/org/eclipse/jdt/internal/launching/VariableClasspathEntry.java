@@ -94,5 +94,27 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 //			return null;
 //		}
 //	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		if (variableString != null)
+			return variableString.hashCode();
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof VariableClasspathEntry) {
+			VariableClasspathEntry other= (VariableClasspathEntry)obj;
+			if (variableString != null) {
+				return variableString.equals(other.variableString);
+			}
+		}
+		return false;
+	}
 
 }
