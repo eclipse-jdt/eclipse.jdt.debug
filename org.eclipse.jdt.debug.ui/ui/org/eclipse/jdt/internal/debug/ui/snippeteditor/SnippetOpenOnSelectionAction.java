@@ -5,26 +5,32 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.actions.AbstractOpenJavaElementAction;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.actions.OpenAction;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * This action opens a Java editor on the element represented by text selection of
  * the code snippet.
  */
-public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction {
+public class SnippetOpenOnSelectionAction extends OpenAction {
 	
 	protected JavaSnippetEditor fEditor;
 	private String fDialogTitle;
 	private String fDialogMessage;
 	
 	public SnippetOpenOnSelectionAction(JavaSnippetEditor editor) {
-		super();
-		
+		super(editor.getSite());
 		fEditor= editor;
 		setResources();
 	}
@@ -36,10 +42,6 @@ public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction 
 		setDialogTitle(SnippetMessages.getString("SnippetOpenOnSelectionDialog.title")); //$NON-NLS-1$
 		setDialogMessage(SnippetMessages.getString("SnippetOpenOnSelectionDialog.message")); //$NON-NLS-1$
 	}
-		
-	public SnippetOpenOnSelectionAction() {
-		this(null);
-	}
 	
 	protected void setDialogTitle(String title) {
 		fDialogTitle= title;
@@ -49,8 +51,60 @@ public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction 
 		fDialogMessage= message;
 	}
 	
-	public void setContentEditor(JavaSnippetEditor contentEditor) {
+	protected void setEditor(JavaSnippetEditor contentEditor) {
 		fEditor= contentEditor;
+	}
+	
+	/**
+	 * Shows a dialog for resolving an ambigous java element.
+	 * Utility method that can be called by subclassers.
+	 */
+	protected IJavaElement selectJavaElement(List elements, Shell shell, String title, String message) {
+		
+		int nResults= elements.size();
+		
+		if (nResults == 0)
+			return null;
+		
+		if (nResults == 1)
+			return (IJavaElement) elements.get(0);
+		
+		int flags= JavaElementLabelProvider.SHOW_DEFAULT
+						| JavaElementLabelProvider.SHOW_QUALIFIED
+						| JavaElementLabelProvider.SHOW_ROOT;
+						
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
+		dialog.setTitle(title);
+		dialog.setMessage(message);
+		dialog.setElements(elements.toArray());
+		
+		if (dialog.open() == dialog.OK) {
+			Object[] selection= dialog.getResult();
+			if (selection != null && selection.length > 0) {
+				nResults= selection.length;
+				for (int i= 0; i < nResults; i++) {
+					Object current= selection[i];
+					if (current instanceof IJavaElement)
+						return (IJavaElement) current;
+				}
+			}
+		}		
+		return null;
+	}
+	
+	
+	/**
+	 * Filters out source references from the given code resolve results.
+	 * A utility method that can be called by subclassers. 
+	 */
+	protected List filterResolveResults(IJavaElement[] codeResolveResults) {
+		int nResults= codeResolveResults.length;
+		List refs= new ArrayList(nResults);
+		for (int i= 0; i < nResults; i++) {
+			if (codeResolveResults[i] instanceof ISourceReference)
+				refs.add(codeResolveResults[i]);
+		}
+		return refs;
 	}
 			
 	public void run() {
@@ -60,23 +114,22 @@ public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction 
 		try {
 			IJavaElement[] result= fEditor.codeResolve();
 			if (result != null && result.length > 0) {
-				IJavaElement chosen= selectJavaElement(filterResolveResults(result), getShell(),  fDialogTitle, fDialogMessage);
+				IJavaElement chosen= selectJavaElement(filterResolveResults(result), getShell(), fDialogTitle, fDialogMessage);
 				if (chosen != null) {
-					open(chosen);
+					run(new StructuredSelection(chosen));
 					return;
 				}
 			}
 		} catch (JavaModelException x) {
 			JDIDebugUIPlugin.log(x);
-		} catch (PartInitException x) {
-			JDIDebugUIPlugin.log(x);
 		}
 		
 		getShell().getDisplay().beep();		
 	}
-	
-	protected Shell getShell() {
-		return fEditor.getSite().getWorkbenchWindow().getShell();
-	}					
-	
+	/**
+	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
+	 */
+	protected void selectionChanged(ITextSelection selection) {
+		setEnabled(fEditor != null);
+	}
 }

@@ -5,25 +5,35 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  * All Rights Reserved.
  */
  
-import org.eclipse.jdt.core.IMember;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.actions.OpenTypeHierarchyAction;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * This action opens a Java editor on the element represented by text selection of
  * the connected java source editor. In addition, if the element is a type, it also 
  * opens shows the element in the type hierarchy viewer.
  */
-public class SnippetOpenHierarchyOnSelectionAction extends SnippetOpenOnSelectionAction {
+public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyAction {
+	
+	private JavaSnippetEditor fEditor;
+	private String fDialogTitle;
+	private String fDialogMessage;
 	
 	public SnippetOpenHierarchyOnSelectionAction(JavaSnippetEditor editor) {
-		super(editor);
-	}
-	
-	public SnippetOpenHierarchyOnSelectionAction() {
-		this(null);
+		super(editor.getSite());
+		fEditor= editor;
+		setResources();
 	}
 	
 	protected void setResources() {
@@ -37,13 +47,102 @@ public class SnippetOpenHierarchyOnSelectionAction extends SnippetOpenOnSelectio
 	/**
 	 * @see AbstractOpenJavaElementAction#open
 	 */
-	protected void open(ISourceReference element) throws JavaModelException, PartInitException {
+	/*protected void open(ISourceReference element) throws JavaModelException, PartInitException {
 		if (element instanceof IMember) {
 			OpenTypeHierarchyUtil.open(new IMember[] { (IMember) element }, fEditor.getSite().getWorkbenchWindow());
 		} else {
 			getShell().getDisplay().beep();
 		}
+	}*/
+	/**
+	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
+	 */
+	protected void selectionChanged(ITextSelection selection) {
+		super.selectionChanged(selection);
 	}
 	
+	protected void setDialogTitle(String title) {
+		fDialogTitle= title;
+	}
+	
+	protected void setDialogMessage(String message) {
+		fDialogMessage= message;
+	}
+	
+	public void run() {
+		if (fEditor == null) {
+			return;
+		}
+		try {
+			IJavaElement[] result= fEditor.codeResolve();
+			if (result != null && result.length > 0) {
+				IJavaElement chosen= selectJavaElement(filterResolveResults(result), getShell(), fDialogTitle, fDialogMessage);
+				if (chosen != null) {
+					run(new StructuredSelection(chosen));
+					return;
+				}
+			}
+		} catch (JavaModelException x) {
+			JDIDebugUIPlugin.log(x);
+		}
+		
+		getShell().getDisplay().beep();		
+	}
+	
+	protected void setEditor(JavaSnippetEditor contentEditor) {
+		fEditor= contentEditor;
+	}
+	
+		/**
+	 * Filters out source references from the given code resolve results.
+	 * A utility method that can be called by subclassers. 
+	 */
+	protected List filterResolveResults(IJavaElement[] codeResolveResults) {
+		int nResults= codeResolveResults.length;
+		List refs= new ArrayList(nResults);
+		for (int i= 0; i < nResults; i++) {
+			if (codeResolveResults[i] instanceof ISourceReference)
+				refs.add(codeResolveResults[i]);
+		}
+		return refs;
+	}
+			
+
+	/**
+	 * Shows a dialog for resolving an ambigous java element.
+	 * Utility method that can be called by subclassers.
+	 */
+	protected IJavaElement selectJavaElement(List elements, Shell shell, String title, String message) {
+		
+		int nResults= elements.size();
+		
+		if (nResults == 0)
+			return null;
+		
+		if (nResults == 1)
+			return (IJavaElement) elements.get(0);
+		
+		int flags= JavaElementLabelProvider.SHOW_DEFAULT
+						| JavaElementLabelProvider.SHOW_QUALIFIED
+						| JavaElementLabelProvider.SHOW_ROOT;
+						
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
+		dialog.setTitle(title);
+		dialog.setMessage(message);
+		dialog.setElements(elements.toArray());
+		
+		if (dialog.open() == dialog.OK) {
+			Object[] selection= dialog.getResult();
+			if (selection != null && selection.length > 0) {
+				nResults= selection.length;
+				for (int i= 0; i < nResults; i++) {
+					Object current= selection[i];
+					if (current instanceof IJavaElement)
+						return (IJavaElement) current;
+				}
+			}
+		}		
+		return null;
+	}
 }
 

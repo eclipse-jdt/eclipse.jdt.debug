@@ -28,7 +28,6 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	
 	public SnippetEditorActionContributor() {
 		super();
-		initializeActions();
 	}
 	
 	/**
@@ -36,9 +35,12 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	 */
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		
+		if (fRunSnippetAction == null) {
+			toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
+			return;
+		}
 		super.contributeToToolBar(toolBarManager);
 		
-		toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 		toolBarManager.add(fRunSnippetAction);
 		toolBarManager.add(fStopAction);
 		toolBarManager.add(fSelectImportsAction);
@@ -48,13 +50,16 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	 *	@see EditorActionBarContributor#contributeToMenu(IMenuManager)
 	 */
 	public void contributeToMenu(IMenuManager menu) {
-		
+		if (fOpenOnSelectionAction == null) {
+			return;
+		}
 		super.contributeToMenu(menu);
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnSelectionAction);
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnTypeSelectionAction);
+			navigateMenu.updateAll(true);
 		}
 	}
 	
@@ -68,13 +73,19 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		fSnippetEditor= null;
 		if (part instanceof JavaSnippetEditor) {
 			fSnippetEditor= (JavaSnippetEditor) part;
+			if (fOpenOnSelectionAction == null) {
+				initializeActions();
+				contributeToMenu(getActionBars().getMenuManager());
+				contributeToToolBar(getActionBars().getToolBarManager());
+			}
 		}
-			
+		
 		fStopAction.setEditor(fSnippetEditor);		
 		fRunSnippetAction.setEditor(fSnippetEditor);
 		fSelectImportsAction.setEditor(fSnippetEditor);
-		fOpenOnSelectionAction.setContentEditor(fSnippetEditor);
-		fOpenOnTypeSelectionAction.setContentEditor(fSnippetEditor);
+		fOpenOnSelectionAction.setEditor(fSnippetEditor);
+		fOpenOnTypeSelectionAction.setEditor(fSnippetEditor);
+			
 		updateStatus(fSnippetEditor);			
 	}
 	 
@@ -84,7 +95,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		fOpenOnTypeSelectionAction= new SnippetOpenHierarchyOnSelectionAction(fSnippetEditor);
 		fRunSnippetAction= new RunSnippetAction(fSnippetEditor);
 		fStopAction= new StopAction(fSnippetEditor);
-		fSelectImportsAction= new SelectImportsAction(null);
+		fSelectImportsAction= new SelectImportsAction(fSnippetEditor);
 	}	
 	
 	protected void updateStatus(JavaSnippetEditor editor) {
