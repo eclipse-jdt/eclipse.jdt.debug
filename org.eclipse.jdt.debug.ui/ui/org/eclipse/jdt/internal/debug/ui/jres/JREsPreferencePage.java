@@ -130,7 +130,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			public void run() {
 				IVMInstall defaultVM = getCurrentDefaultVM();
 				IVMInstall[] vms = fJREBlock.getJREs();
-				JREsUpdater updater = new JREsUpdater(getShell());
+				JREsUpdater updater = new JREsUpdater();
 				if (!updater.updateJRESettings(vms, defaultVM)) {
 					canceled[0] = true;
 				}
