@@ -937,7 +937,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		resume(true);
+		// if a client calls resume, then we should resume on a VMStart event in case
+		// it has not yet been received, and the target was created with the "resume"
+		// flag as "false". See bug 32372.		
+		setResumeOnStartup(true);
+		resume(true);		
 	}
 	
 	/**
@@ -957,7 +961,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * notification to listeners if <code>fireNotification</code>
 	 * is <code>true</code>.
 	 */
-	public void resume(boolean fireNotification) throws DebugException {
+	protected void resume(boolean fireNotification) throws DebugException {
 		if (!isSuspended() || !isAvailable()) {
 			return;
 		}
@@ -1706,7 +1710,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 
 	 * @param resume whether the VM should be resumed on startup
 	 */
-	private void setResumeOnStartup(boolean resume) {
+	private synchronized void setResumeOnStartup(boolean resume) {
 		fResumeOnStartup = resume;
 	}
 	
@@ -1715,7 +1719,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 
 	 * @return whether this VM should be resumed on startup
 	 */
-	protected boolean isResumeOnStartup() {
+	protected synchronized boolean isResumeOnStartup() {
 		return fResumeOnStartup;
 	}
 	
