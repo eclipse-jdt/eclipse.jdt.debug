@@ -68,7 +68,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private static final int HCR_CAN_DO_RETURN = 2;
 	private static final int HCR_CAN_REENTER_ON_EXIT = 3;
 	
-	protected static final String JAVA_STRATUM_NAME= "Java";
+	protected static final String JAVA_STRATUM_NAME= "Java"; //$NON-NLS-1$
 	
 	/** Timeout value for requests to VM if not overriden for a particular VM. */
 	private int fRequestTimeout;

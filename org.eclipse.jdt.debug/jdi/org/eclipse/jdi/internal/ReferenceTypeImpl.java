@@ -1463,7 +1463,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		if (lastDotOffset == -1) {
 			return sourceName;
 		}
-		char fileSeparator= System.getProperty("file.separator").charAt(0);
+		char fileSeparator= System.getProperty("file.separator").charAt(0); //$NON-NLS-1$
 		return name.substring(0, lastDotOffset).replace('.', fileSeparator) + fileSeparator + sourceName;
 	}
 
@@ -1508,7 +1508,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// TODO: remove the workaround when the J9SC20030415 bug is fixed (see bug 96485 of the vendor bug system).
 		// Workaround to a J9SC bug. It returns an empty string instead of a ABSENT_INFORMATION
 		// error if the source debug extension is not available.
-		if ("".equals(fSmap)) {
+		if ("".equals(fSmap)) { //$NON-NLS-1$
 			throw new AbsentInformationException("Source Debug Extension not defined");
 		}
 		// parse the source map.
