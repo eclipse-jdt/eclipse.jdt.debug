@@ -231,7 +231,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		if (o instanceof JDIFieldVariable) {
 			JDIFieldVariable f = (JDIFieldVariable)o;
 			if (fObject != null) {
-				return f.fObject.equals(fObject) && f.fField.equals(fField);
+				return fObject.equals(f.fObject) && f.fField.equals(fField);
 			}
 			return f.fField.equals(fField);
 		}
