@@ -9,6 +9,7 @@ import java.util.Hashtable;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.jdt.ui.text.IColorManager;
@@ -46,12 +47,18 @@ public class JDIContentAssistPreference {
 		return null;
 	}
 	
+	private static JavaSnippetCompletionProcessor getJavaSnippetProcessor(ContentAssistant assistant) {
+		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
+		if (p instanceof JavaSnippetCompletionProcessor)
+			return  (JavaSnippetCompletionProcessor) p;
+		return null;
+	}
+	
 	private static void configureDisplayProcessor(ContentAssistant assistant, IPreferenceStore store) {
 		DisplayCompletionProcessor dcp= getDisplayProcessor(assistant);
 		if (dcp == null) {
 			return;
 		}
-			
 		String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
 		if (triggers != null) {
 			dcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
@@ -65,6 +72,27 @@ public class JDIContentAssistPreference {
 		
 		enabled= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
 		dcp.orderProposalsAlphabetically(enabled);
+	}
+	
+	private static void configureJavaSnippetProcessor(ContentAssistant assistant, IPreferenceStore store) {
+		JavaSnippetCompletionProcessor cp= getJavaSnippetProcessor(assistant);
+		if (cp == null) {
+			return;
+		}
+			
+		String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
+		if (triggers != null) {
+			cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+		}
+			
+		boolean enabled= store.getBoolean(ContentAssistPreference.SHOW_VISIBLE_PROPOSALS);
+		restrictProposalsToVisibility(enabled);
+		
+		enabled= store.getBoolean(ContentAssistPreference.CASE_SENSITIVITY);
+		restrictProposalsToMatchingCases(enabled);
+		
+		enabled= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		cp.orderProposalsAlphabetically(enabled);
 	}
 	
 	/**
@@ -99,6 +127,7 @@ public class JDIContentAssistPreference {
 		assistant.enableAutoInsert(enabled);
 
 		configureDisplayProcessor(assistant, store);
+		configureJavaSnippetProcessor(assistant, store);
 	}
 	
 	
@@ -118,7 +147,24 @@ public class JDIContentAssistPreference {
 		}
 	}
 	
-	/**
+	private static void changeJavaSnippetProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
+		JavaSnippetCompletionProcessor cp= getJavaSnippetProcessor(assistant);
+		if (cp == null) {
+			return;
+		}
+		if (ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA.equals(key)) {
+			String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
+			if (triggers != null) {
+				cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			}
+		} else if (ContentAssistPreference.ORDER_PROPOSALS.equals(key)) {
+			boolean enable= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+			cp.orderProposalsAlphabetically(enable);
+		}	
+	}
+	
+	
+		/**
 	 * Changes the configuration of the given content assistant according to the given property
 	 * change event and the given preference store.
 	 */
@@ -151,6 +197,7 @@ public class JDIContentAssistPreference {
 		}
 		
 		changeDisplayProcessor(assistant, store, p);
+		changeJavaSnippetProcessor(assistant, store, p);
 	}
 	
 	/**

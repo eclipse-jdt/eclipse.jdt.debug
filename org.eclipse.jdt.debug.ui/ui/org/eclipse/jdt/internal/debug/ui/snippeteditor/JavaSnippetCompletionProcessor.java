@@ -4,9 +4,14 @@
  */
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
+import org.eclipse.jdt.internal.ui.text.template.TemplateContext;
+import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -14,9 +19,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jdt.internal.ui.text.template.TemplateContext;
-import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
 
 /**
  * Java snippet completion processor.
@@ -27,7 +29,18 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	private JavaSnippetEditor fEditor;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
+	private Comparator fComparator;
 	
+	private char[] fProposalAutoActivationSet;
+	
+	private static class CompletionProposalComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			ICompletionProposal c1= (ICompletionProposal) o1;
+			ICompletionProposal c2= (ICompletionProposal) o2;
+			return c1.getDisplayString().compareTo(c2.getDisplayString());
+		}
+	};
+		
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fCollector= new ResultCollector();
 		fEditor= editor;
@@ -55,13 +68,6 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
-		return null;
-	}
-
-	/**
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
-	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
 
@@ -101,6 +107,41 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 		System.arraycopy(templateResults, 0, total, 0, templateResults.length);
 		System.arraycopy(results, 0, total, templateResults.length, results.length);
 		
-		return total;
+		return order(total);
+	}
+	
+	/**
+	 * Order the given proposals.
+	 */
+	private ICompletionProposal[] order(ICompletionProposal[] proposals) {
+		if (fComparator != null)
+			Arrays.sort(proposals, fComparator);
+		return proposals;	
+	}	
+	
+	/**
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
+	 */
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		return fProposalAutoActivationSet;
+	}
+	
+	/**
+	 * Sets this processor's set of characters triggering the activation of the
+	 * completion proposal computation.
+	 * 
+	 * @param activationSet the activation set
+	 */
+	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
+		fProposalAutoActivationSet= activationSet;
+	}
+	
+	/**
+	 * Tells this processor to order the proposals alphabetically.
+	 * 
+	 * @param order <code>true</code> if proposals should be ordered.
+	 */
+	public void orderProposalsAlphabetically(boolean order) {
+		fComparator= order ? new CompletionProposalComparator() : null;
 	}
 }

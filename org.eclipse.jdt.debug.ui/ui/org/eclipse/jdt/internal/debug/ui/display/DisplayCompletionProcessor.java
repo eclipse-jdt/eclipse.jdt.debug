@@ -4,6 +4,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
  * All Rights Reserved.
  */
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
@@ -128,7 +129,11 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 						curr.setReplacementLength(0);
 					}
 				}
-				return proposals;			
+				/*
+				 * Order here and not in result collector to make sure that the order
+				 * applies to all proposals and not just those of the compilation unit. 
+				 */
+				return order(proposals);	
 			}
 		} catch (JavaModelException x) {
 			Shell shell= viewer.getTextWidget().getShell();
@@ -153,6 +158,15 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		return null;
 
 	}
+	
+	/**
+	 * Order the given proposals.
+	 */
+	private ICompletionProposal[] order(ICompletionProposal[] proposals) {
+		if (fComparator != null)
+			Arrays.sort(proposals, fComparator);
+		return proposals;	
+	}	
 	
 	/**
 	 * Configures the display result collection for the current code assist session
