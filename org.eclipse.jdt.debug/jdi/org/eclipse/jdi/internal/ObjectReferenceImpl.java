@@ -318,6 +318,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 					throw new IncompatibleThreadStateException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
 					throw new IncompatibleThreadStateException();
+				case JdwpReplyPacket.INVALID_TYPESTATE:
+					throw new IncompatibleThreadStateException();
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
