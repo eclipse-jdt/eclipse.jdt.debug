@@ -15,10 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -29,15 +26,12 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodFinder;
@@ -337,6 +331,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		// Launch the configuration
 		VMRunnerResult result = runner.run(runConfig);
 		
+		
 		// Persist config info as default values on the launched resource
 		IResource resource = null;
 		try {
@@ -347,6 +342,9 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			getLaunchManager().setDefaultLaunchConfiguration(resource, configuration);
 		}
 
+		if (result == null) {
+			return null;
+		}
 		// Create & return Launch
 		ISourceLocator sourceLocator = new JavaUISourceLocator(javaProject);
 		Launch launch = new Launch(configuration, mode, sourceLocator, result.getProcesses(), result.getDebugTarget());
