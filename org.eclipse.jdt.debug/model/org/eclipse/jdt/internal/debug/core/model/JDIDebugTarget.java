@@ -5,7 +5,6 @@ package org.eclipse.jdt.internal.debug.core.model;
  * All Rights Reserved.
  */
 
-import java.io.ByteArrayInputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,19 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -41,11 +32,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -147,12 +134,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * underlying VM.
 	 */
 	private String fName;
-	
-	/**
-	 * Collection of temporary files deployed to the target for evaluation.
-	 * These files are deleted when this target terminates.
-	 */
-	private HashMap fTempFiles;
 
 	/**
 	 * The event dispatcher for this debug target, which runs in its
@@ -167,30 +148,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	
 	private IJavaExceptionBreakpoint fSuspendOnUncaughtExceptionBreakpoint= null;
 	 
-	class TypeCollector implements IJavaSearchResultCollector {
-			private List fResult;
-			private IProgressMonitor fProgressMonitor;
-
-			public TypeCollector(List result, IProgressMonitor progressMonitor) {
-				fResult= result;
-				fProgressMonitor= progressMonitor;
-			}
-			
-			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) {
-				fResult.add(enclosingElement);
-			}
-							
-			public IProgressMonitor getProgressMonitor() {
-				return fProgressMonitor;
-			}
-			
-			public void aboutToStart() {
-			}
-			
-			public void done() {
-			}
-	}
-
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
 	 * 
@@ -1145,8 +1102,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * All threads are removed from this target.
 	 * This target is removed as a breakpoint listener,
 	 * and all breakpoints are removed from this target.
-	 * Temporary .class files created for evaluation
-	 * are deleted.
 	 * </p>
 	 */
 	protected void cleanup() {
@@ -1155,7 +1110,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		plugin.getBreakpointManager().removeBreakpointListener(this);
 		plugin.getLaunchManager().removeLaunchListener(this);
 		removeAllBreakpoints();
-		cleanupTempFiles();
 		fOutOfSynchTypes.clear();
 	}
 
@@ -1241,94 +1195,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return this;
 		}
 		return super.getAdapter(adapter);
-	}
-
-	/**
-	 * Deploys the given class files for the given evaluation context.
-	 *
-	 * <p>Currently, this involves writing them to the output folder of the
-	 * associated Java Project.</p>
-	 *
-	 * @exception DebugException if this fails due to a lower level exception.
-	 */
-	protected void deploy(final byte[][] classFiles, final String[][] classFileNames, IEvaluationContext context) throws DebugException {
-		if (fTempFiles == null) {
-			fTempFiles = new HashMap(10);
-		}
-		IJavaProject javaProject = context.getProject();
-		final IProject project= javaProject.getProject();
-		IPath projectPath= project.getFullPath();
-		
-		// determine the folder in which output packages are located
-		IPath oPath = null;
-		try {
-			oPath = javaProject.getOutputLocation();
-		} catch (JavaModelException e) {
-			throw new DebugException(e.getStatus());
-		}
-
-		// create the files in a workspace runnable
-		final IWorkspace workspace= javaProject.getProject().getWorkspace();
-		final IPath outputPath= oPath;
-		final boolean outputToProject= outputPath.equals(projectPath);
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {					
-					// allow for output path to be project itself
-					IContainer outputContainer= null;
-					if (outputToProject) {
-						outputContainer= project;
-					} else {
-						outputContainer= workspace.getRoot().getFolder(outputPath);
-					}
-					for (int i = 0; i < classFiles.length; i++) {
-						String[] compoundName = classFileNames[i];
-						//create required folders
-						IContainer parent = outputContainer;
-						for (int j = 0; j < (compoundName.length - 1); j++) {
-							IFolder folder = parent.getFolder(new Path(compoundName[j]));
-							if (!folder.exists()) {
-								folder.create(false, true, null);
-							}
-							parent = folder;
-						}
-						String name = compoundName[compoundName.length - 1] + ".class"; //$NON-NLS-1$
-						IPath path = new Path(name);
-						if (fTempFiles.get(path) == null) {
-							IFile file = parent.getFile(path);
-							if (file.exists()) {
-								file.delete(true, null);
-							}
-							file.create(new ByteArrayInputStream(classFiles[i]), false, null);
-							fTempFiles.put(path, file);
-						}						
-					}	
-				}
-			};
-		try {	
-			workspace.run(runnable, null);				
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}
-	}
-	
-	/**
-	 * Deletes deployed temporary evaluation class files
-	 */
-	protected void cleanupTempFiles() {
-		if (fTempFiles == null) {
-			return;
-		}
-		if (fTempFiles.size() > 0) {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IResource[] files = new IResource[fTempFiles.size()];
-			files = (IResource[])fTempFiles.values().toArray(files);
-			try {
-				workspace.delete(files, false, null);
-			} catch (CoreException e) {
-				logError(e);
-			}
-			fTempFiles.clear();
-		}
 	}
 	
 	/**
