@@ -101,7 +101,7 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT);
 	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED);
 	
-	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_SCOPED_BREAKPOINT);
+	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT= createManaged(T_OBJ, IMG_OBJS_SCOPED_BREAKPOINT);
 	
 	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT);
 	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED);
