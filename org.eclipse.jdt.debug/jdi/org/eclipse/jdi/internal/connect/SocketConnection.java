@@ -28,10 +28,10 @@ public class SocketConnection extends Connection {
     /* (non-Javadoc)
      * @see com.sun.jdi.connect.spi.Connection#close()
      */
-    public void close() throws IOException {        
+    public synchronized void close() throws IOException {        
 		if (fTransport == null)
 		    return;
-
+		
 		fTransport.close();
 		fTransport = null;
     }
@@ -39,14 +39,17 @@ public class SocketConnection extends Connection {
     /* (non-Javadoc)
      * @see com.sun.jdi.connect.spi.Connection#isOpen()
      */
-    public boolean isOpen() {
+    public synchronized boolean isOpen() {
         return fTransport != null;
     }
 
     /* (non-Javadoc)
      * @see com.sun.jdi.connect.spi.Connection#readPacket()
      */
-    public byte[] readPacket() throws IOException {        
+    public byte[] readPacket() throws IOException {  
+        if (!isOpen()) {
+            throw new ClosedConnectionException();
+        }
         DataInputStream stream = new DataInputStream(fTransport.getInputStream());
         synchronized(stream) {
             int packetLength = 0;
