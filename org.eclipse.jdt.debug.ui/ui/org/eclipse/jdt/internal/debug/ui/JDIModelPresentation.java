@@ -1169,10 +1169,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
 		
 		String lineInfo= getLineBreakpointText(watchpoint);
-		StringBuffer buf = new StringBuffer(lineInfo);
-		appendSuspendPolicy(watchpoint, buf);
-		lineInfo = buf.toString();
-
 		String state= null;
 		boolean access= watchpoint.isAccess();
 		boolean modification= watchpoint.isModification();
