@@ -181,8 +181,8 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 				IRuntimeClasspathEntry[] entries = r2.getRuntimeClasspathEntries();
 				IClasspathEntry[] cps = new IClasspathEntry[entries.length];
 				for (int i = 0; i < entries.length; i++) {
-					IRuntimeClasspathEntry entry = entries[i];
-					cps[i] = new ClasspathEntry(entry, this);
+					IRuntimeClasspathEntry childEntry = entries[i];
+					cps[i] = new ClasspathEntry(childEntry, this);
 				}
 				return cps;
 			} catch (CoreException e) {
