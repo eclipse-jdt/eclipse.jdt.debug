@@ -10,9 +10,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.*;
 
@@ -48,17 +49,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private static final int MAX_THREAD_DEATH_ATTEMPTS = 1;
 	
 	/**
-	 * Key used to store the class name attribute pertinent to a
-	 * specific method entry request. Used for method entry breakpoints.
-	 */
-	protected final static String CLASS_NAME= "className";
-	/**
-	 * Key used to store the name and signature
-	 * attribute pertinent to a specific method 
-	 * entry request breakpoint. Used for method entry breakpoints.
-	 */
-	protected final static String BREAKPOINT_INFO= "breakpointInfo";
-	/**
 	 * Associated system process, or <code>null</code> if not available.
 	 */
 	protected IProcess fProcess;
@@ -79,28 +69,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	protected boolean fSupportsDisconnect;
 	/**
-	 * Table of deferred breakpoints (cannot be installed because the
-	 * corresponding class is not yet loaded). 
-	 * <p>
-	 * Key: the fully qualified name of the class
-	 * Value: a <code>List</code> of <code>IMarker</code>s representing the
-	 * deferred breakpointsin that class.
-	 */
-	protected Map fDeferredBreakpointsByClass;
-	/**
 	 * Table of class prepare requests for deferred breakpoints
 	 * <p>
 	 * Key: the fully qualified name of the class<br>
 	 * Value: a <code>ClassPrepareRequest</code>s
 	 */
-	protected Map fClassPrepareRequestsByClass;
+	protected Map fClassPrepareRequestsByClass;	
 	/**
-	 * Table of installed breakpoints
-	 * <p>
-	 * Key: breakpoint (<code>IJavaBreakpoint</code>)
-	 * Value: the event request associated with the breakpoint (<code>Object</code>).
+	 * Collection of breakpoints added to this target. Values are of type <code>IJavaBreakpoint</code>.
 	 */
-	protected HashMap fInstalledBreakpoints;
+	protected List fBreakpoints;
 		
 	/**
 	 * A flag indicating that a hot code replace is being performed, and
@@ -165,9 +143,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		fTerminated= false;
 		fName= name;
 
-		fDeferredBreakpointsByClass= new HashMap(10);
 		fClassPrepareRequestsByClass= new HashMap(5);
-		fInstalledBreakpoints= new HashMap(10);
+		fBreakpoints = new ArrayList(5);
 		initialize();
 	}
 
@@ -399,73 +376,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * Defers the given breakpoint.
-	 *
-	 * @param breakpoint the breakpoint to defer
-	 * @param typeName name of the type the given breakpoint is associated with
-	 */
-	protected void defer(IJavaBreakpoint breakpoint, String typeName) {
-		List bps= (List) fDeferredBreakpointsByClass.get(typeName);
-		if (bps == null) {
-			// listen for the load of the type
-			/** NOTE: Do not listen for typeName + "$*" since JDI
-			    will given $* classes without asking */
-			listenForClassLoad(typeName);
-			bps= new ArrayList(1);
-			fDeferredBreakpointsByClass.put(typeName, bps);
-		}
-		bps.add(breakpoint);
-	}
-
-	/**
-	 * Returns a location for the line number in the given type, or any of its
-	 * nested types. Returns <code>null</code> if a location cannot be determined.
-	 */
-	protected Location determineLocation(int lineNumber, ReferenceType type) {
-		List locations= null;
-		try {
-			locations= type.locationsOfLine(lineNumber);
-		} catch (AbsentInformationException e) {
-			return null;
-		} catch (NativeMethodException e) {
-			return null;
-		} catch (InvalidLineNumberException e) {
-			//possible in a nested type, fall through and traverse nested types
-		} catch (VMDisconnectedException e) {
-			return null;
-		} catch (ClassNotPreparedException e) {
-			// could be a nested type that is not yet loaded
-			return null;
-		} catch (RuntimeException e) {
-			// not able to retrieve line info
-			internalError(e);
-			return null;
-		}
-		
-		if (locations != null && locations.size() > 0) {
-			return (Location) locations.get(0);
-		} else {
-			Iterator nestedTypes= null;
-			try {
-				nestedTypes= type.nestedTypes().iterator();
-			} catch (RuntimeException e) {
-				// not able to retrieve line info
-				internalError(e);
-				return null;
-			}
-			while (nestedTypes.hasNext()) {
-				ReferenceType nestedType= (ReferenceType) nestedTypes.next();
-				Location innerLocation= determineLocation(lineNumber, nestedType);
-				if (innerLocation != null) {
-					return innerLocation;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * @see IDisconnect
 	 */
 	public void disconnect() throws DebugException {
@@ -515,10 +425,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				}
 				switch (result) {
 					case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS:
-						reinstallTriggers();
 						break;
 					case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_IGNORED:
-						reinstallTriggers();
 						targetRequestFailed(ERROR_HCR_IGNORED, null);
 						break;
 					case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
@@ -591,10 +499,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Attempt to create a ThreadDeath instance if required.
 	 */
 	protected void handleClassLoad(ClassPrepareEvent event) {
-		installDeferredBreakpoints(event);
 		ThreadReference threadRef= event.thread();
 		createThreadDeathInstance(threadRef);
-		resume(threadRef);
 	}
 
 	/**
@@ -697,6 +603,29 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		fClassPrepareRequestsByClass.put(className, req);
 		return req;
 	}
+	
+	/**
+	 * Creates, enables and returns a class prepare request for the
+	 * specified class name, or <code>null</code> if unable to
+	 * create the request. Caches the request in the class prepare
+	 * request table.
+	 */
+	protected ClassPrepareRequest createClassPrepareRequest(String className) {
+		EventRequestManager manager= getEventRequestManager();
+		ClassPrepareRequest req= null;
+		try {
+			req= manager.createClassPrepareRequest();
+			req.addClassFilter(className);
+			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+			req.enable();
+		} catch (VMDisconnectedException e) {
+			return null;
+		} catch (RuntimeException e) {
+			internalError(e);
+			return null;
+		}
+		return req;
+	}
 
 	/**
 	 * @see ISuspendResume
@@ -714,7 +643,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		if (breakpoint instanceof JavaBreakpoint) {
 			try {
-				((JavaBreakpoint)breakpoint).addToTarget(this);
+				((JavaBreakpoint)breakpoint).addToTarget(JDIDebugTarget.this);
+				fBreakpoints.add(breakpoint);
 			} catch (CoreException e) {
 				logError(e);
 			}
@@ -728,9 +658,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (isTerminated() || isDisconnected()) {
 			return;
 		}		
-		if (breakpoint instanceof JavaBreakpoint) {		
+		if (breakpoint instanceof JavaBreakpoint) {	
 			try {
-				((JavaBreakpoint)breakpoint).changeForTarget(this);
+				((JavaBreakpoint)breakpoint).changeForTarget(JDIDebugTarget.this);
 			} catch (CoreException e) {
 				logError(e);
 			}
@@ -740,97 +670,24 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * @see IBreakpointSupport
 	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (isTerminated() || isDisconnected()) {
 			return;
 		}		
-		if (breakpoint instanceof JavaBreakpoint) {		
+		if (breakpoint instanceof JavaBreakpoint) {
 			try {
-				((JavaBreakpoint)breakpoint).removeFromTarget(this);
+				((JavaBreakpoint)breakpoint).removeFromTarget(JDIDebugTarget.this);
+				fBreakpoints.remove(breakpoint);
 			} catch (CoreException e) {
 				logError(e);
 			}
 		}
 	}
 	
-	/**
-	 * Add a breakpoint to the installed breakpoints collection
-	 */
-	public void installBreakpoint(IJavaBreakpoint breakpoint, Object request) {
-		fInstalledBreakpoints.put(breakpoint, request);
-	}	
-	
-	/**
-	 * Remove a breakpoint from the installed breakpoints collection
-	 */
-	public Object uninstallBreakpoint(JavaBreakpoint breakpoint) {
-		return fInstalledBreakpoints.remove(breakpoint);		
+	protected void run(IWorkspaceRunnable wr) throws CoreException {
+		ResourcesPlugin.getWorkspace().run(wr, null);
 	}
 	
-	/**
-	 * Return the request object associated with the given breakpoint
-	 */
-	public Object getRequest(JavaBreakpoint breakpoint) {
-		return fInstalledBreakpoints.get(breakpoint);
-	}
-	
-	/**
-	 * Return the deferred breakpoints
-	 */
-	public List getDeferredBreakpointsByClass(String name) {
-		return (List)fDeferredBreakpointsByClass.get(name);
-	}
-	
-	/**
-	 * Remove a deferred breakpoint
-	 */
-	public void removeDeferredBreakpointByClass(String name) {
-		fDeferredBreakpointsByClass.remove(name);
-	}	
-
-	/**
-	 * Retrieve the access watchpoint request on the given field from
-	 * the event request manager and return it. If no such request
-	 * exists, return null
-	 */
-	protected AccessWatchpointRequest getAccessWatchpointRequest(Field field) {
-		Iterator requests= getEventRequestManager().accessWatchpointRequests().iterator();
-		while (requests.hasNext()) {
-			AccessWatchpointRequest existingRequest= (AccessWatchpointRequest)requests.next();
-			if (existingRequest.field() == field) {
-				return existingRequest;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Retrieve the modification watchpoint request on the given field from
-	 * the event request manager and return it. If no such request
-	 * exists, return null
-	 */
-	protected ModificationWatchpointRequest getModificationWatchpointRequest(Field field) {
-		Iterator requests= getEventRequestManager().modificationWatchpointRequests().iterator();
-		while (requests.hasNext()) {
-			ModificationWatchpointRequest existingRequest= (ModificationWatchpointRequest)requests.next();
-			if (existingRequest.field() == field) {
-				return existingRequest;
-			}
-		}
-		return null;
-	}
-	
-	protected MethodEntryRequest getMethodEntryRequest(String className) {
-		Iterator requests= getEventRequestManager().methodEntryRequests().iterator();
-		while (requests.hasNext()) {
-			MethodEntryRequest existingRequest= (MethodEntryRequest)requests.next();
-			if (className.equals(existingRequest.getProperty(CLASS_NAME))) {
-				return existingRequest;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * @see IBreakpointSupport
 	 */
@@ -897,74 +754,21 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			child.terminated();
 		}
 	}
-		
-	/**
-	 * Attempts to install a deferred breakpoint
-	 * into the newly loaded class.
-	 */
-	private void installDeferredBreakpoints(ClassPrepareEvent event) {
-		String className= jdiGetTypeName(event.referenceType());
-		String topLevelName= className;
-		int index= className.indexOf('$');
-		if (index >= 0) {
-			//inner class load...resolve the top level type name
-			topLevelName= className.substring(0, index);
-		}
-		ArrayList markers= (ArrayList) fDeferredBreakpointsByClass.remove(topLevelName);
-		if (markers != null) {
-			//no longer need to listen for this class load
-			ClassPrepareRequest request= (ClassPrepareRequest) fClassPrepareRequestsByClass.remove(topLevelName);
-			getEventRequestManager().deleteEventRequest(request);
-			Iterator itr= ((ArrayList) markers.clone()).iterator();
-			while (itr.hasNext()) {
-				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
-				breakpointAdded(breakpoint);
-			}			
-		}
-	}
 
 	/**
 	 * Sets all the breakpoints to be uninstalled.
 	 */
 	protected void uninstallAllBreakpoints() {
-		Iterator breakpoints= ((Map)((HashMap)fInstalledBreakpoints).clone()).keySet().iterator();
+		Iterator breakpoints= fBreakpoints.iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
 			try {
-				breakpoint.decrementInstallCount();				
+				breakpoint.removeFromTarget(this);
 			} catch (CoreException e) {
 				internalError(e);
 			}
 		}
-		fInstalledBreakpoints.clear();
-	}
-
-	/**
-	 * Reinstalls the caught exceptions and previously installed breakpoints
-	 * after a hot code replace
-	 */
-	protected void reinstallTriggers() throws DebugException {
-		if (!fInstalledBreakpoints.isEmpty()) {
-			Iterator itr= ((Map)((HashMap)fInstalledBreakpoints).clone()).keySet().iterator();
-			while (itr.hasNext()) {
-				// do not notify the breakpoint manager of uninstall, as we
-				// are in a resource change callback and cannot modify the resource tree
-				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
-				if (breakpoint instanceof JavaWatchpoint) {
-					Object[] requests= (Object[])fInstalledBreakpoints.remove(breakpoint);
-					for (int i=0; i<requests.length; i++) {
-						EventRequest req = (EventRequest)requests[i];
-						if (req != null) {
-							getEventRequestManager().deleteEventRequest(req);
-						}
-					}
-				} else {
-					EventRequest req = (EventRequest)fInstalledBreakpoints.remove(breakpoint);
-					getEventRequestManager().deleteEventRequest(req);
-				}
-				breakpointAdded(breakpoint);
-			}
-		}
+		fBreakpoints.clear();
 	}
 
 	/**
@@ -1154,17 +958,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 	
 	/**
-	 * Returns whether the given request is expired
-	 */
-	protected boolean isExpired(EventRequest request) {
-		Boolean requestExpired= (Boolean) request.getProperty(IJavaDebugConstants.EXPIRED);
-		if (requestExpired == null) {
-				return false;
-		}
-		return requestExpired.booleanValue();
-	}
-	
-	/**
 	 * The JDIDebugPlugin is shutting down.
 	 * Shutdown the event dispatcher.
 	 */
@@ -1208,5 +1001,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		return null;
 	}
+	
+	protected void addJDIEventListener(IJDIEventListener listener, EventRequest request) {
+		fEventDispatcher.addJDIEventListener(listener, request);
+	}
+	
+	protected void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
+		fEventDispatcher.removeJDIEventListener(listener, request);
+	}
+	
 }
 

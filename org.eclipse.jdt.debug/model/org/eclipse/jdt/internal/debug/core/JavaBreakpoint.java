@@ -1,7 +1,6 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -12,12 +11,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.*;
 
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.event.Event;
-import com.sun.jdi.request.EventRequest;
-import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.*;
 
-public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint {
-
+public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
 
 // Thread and marker label resource String keys
 	protected static final String THREAD_PREFIX= "jdi_thread.";
@@ -26,12 +22,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected static final String THREAD_LABEL= THREAD_PREFIX + LABEL;
 	protected static final String MARKER_LABEL= MARKER_PREFIX + LABEL;
 	protected static final String NO_MARKER="java_breakpoint.error.no_marker";
+	
+	protected HashMap fRequestsByTarget;
+	
 	/**
 	 * JavaBreakpoint attributes
 	 */	
 	protected static final String[] fgExpiredEnabledAttributes= new String[]{IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED};
 	
 	public JavaBreakpoint() {
+		fRequestsByTarget = new HashMap(2);
 	}	
 	
 	public String getModelIdentifier() {
@@ -51,14 +51,125 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		return m;
 	}
-	/**
-	 * Handles the given event in the given target.
-	 */
-	protected abstract void handleEvent(Event event, JDIDebugTarget target) throws CoreException;
+	
+	protected void registerRequest(JDIDebugTarget target, EventRequest request) throws CoreException {
+		if (request == null) {
+			return;
+		}
+		List reqs = getRequests(target);
+		if (reqs == null) {
+			reqs = new ArrayList(1);
+			fRequestsByTarget.put(target, reqs);
+		}
+		reqs.add(request);
+		target.addJDIEventListener(this, request);
+		// update the install attibute on the breakpoint
+		if (!(request instanceof ClassPrepareRequest)) {
+			incrementInstallCount();
+		}
+	}
+	
+	protected List getRequests(JDIDebugTarget target) {
+		return (List)fRequestsByTarget.get(target);
+	}
+	
+	protected void deregisterRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+		target.removeJDIEventListener(this, request);
+		if (!(request instanceof ClassPrepareRequest)) {
+			decrementInstallCount();
+		}
+	}
 
+	protected void replaceRequest(JDIDebugTarget target, EventRequest oldRequest, EventRequest newRequest) {
+		List list = getRequests(target);
+		if (list == null) {
+			// error
+			return;
+		}
+		list.remove(oldRequest);
+		list.add(newRequest);
+		target.removeJDIEventListener(this, oldRequest);
+		target.addJDIEventListener(this, newRequest);
+	}
+	
 	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;
-	protected abstract void changeForTarget(JDIDebugTarget target) throws CoreException;
-	protected abstract void removeFromTarget(JDIDebugTarget target) throws CoreException;
+	
+	protected void changeForTarget(final JDIDebugTarget target) throws CoreException {
+		List requests = getRequests(target);
+		if (requests != null) {
+			Iterator iter = requests.iterator();
+			while (iter.hasNext()) {
+				EventRequest req = (EventRequest)iter.next();
+				if (!(req instanceof ClassPrepareRequest)) {
+					updateRequest(req, target);
+				}
+			}
+		}
+	}
+
+	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+		updateEnabledState(request);
+		EventRequest newRequest = updateHitCount(request, target);
+		if (newRequest != request) {
+			replaceRequest(target, request, newRequest);
+			request = newRequest;
+		}
+	}
+	
+	protected abstract EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException;
+	
+	/**
+	 * Returns whether the hitCount of this breakpoint is equal to the hitCount of
+	 * the associated request.
+	 */
+	protected boolean hasHitCountChanged(EventRequest request) throws CoreException {
+		int hitCount= getHitCount();
+		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
+		int oldCount = -1;
+		if (requestCount != null)  {
+			oldCount = requestCount.intValue();
+		} 
+		return hitCount != oldCount;
+	}
+	
+	protected void fork(final IWorkspaceRunnable wRunnable) {
+		Runnable runnable= new Runnable() {
+			public void run() {
+				try {
+					ResourcesPlugin.getWorkspace().run(wRunnable, null);
+				} catch (CoreException ce) {
+					logError(ce);
+				}
+			}
+		};
+		new Thread(runnable).start();
+	}
+	
+	/**
+	 * An exception breakpoint has been removed
+	 */
+	protected void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		List requests = getRequests(target);
+		if (requests == null) {
+			// error
+			return;
+		}
+		
+		Iterator iter = requests.iterator();
+		while (iter.hasNext()) {
+			EventRequest req = (EventRequest)iter.next();
+			try {
+				// cannot delete an expired request
+				if (!isExpired(req)) {
+					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
+				}
+			} catch (VMDisconnectedException e) {
+			} catch (RuntimeException e) {
+				logError(e);
+			}
+			deregisterRequest(req, target);
+		}
+	}		
 	
 	/**
 	 * Update the enabled state of the given request, which is associated
@@ -66,14 +177,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * to the enabled state of this breakpoint.
 	 */
 	protected void updateEnabledState(EventRequest request) throws CoreException  {
-		updateEnabledState(request, isEnabled());
-	}
-
-	/**
-	 * Set the enabled state of the given request as specified by the enabled
-	 * parameter
-	 */
-	protected void updateEnabledState(EventRequest request, boolean enabled) {
+		boolean enabled = isEnabled();
 		if (request.isEnabled() != enabled) {
 			// change the enabled state
 			try {

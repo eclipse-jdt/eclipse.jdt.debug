@@ -7,15 +7,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugConstants;
-import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 
 import com.sun.jdi.*;
-import com.sun.jdi.event.Event;
-import com.sun.jdi.event.LocatableEvent;
-import com.sun.jdi.request.BreakpointRequest;
-import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.event.*;
+import com.sun.jdi.request.*;
 
 public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreakpoint {
 	
@@ -106,56 +104,46 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
-	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
+	 * Creates the event requests to:<ul>
+	 * <li>Listen to class loads related to the breakpoint</li>
+	 * <li>Respond to the breakpoint being hti</li>
+	 * </ul>
 	 */
-	public void addToTarget(JDIDebugTarget target) throws CoreException {
+	protected void  addToTarget(JDIDebugTarget target) throws CoreException {
 		String topLevelName= getTopLevelTypeName();
 		if (topLevelName == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
 			return;
 		}
 		
-		// look for the top-level class - if it is loaded, inner classes may also be loaded
+		// create request to listen to class loads
+		registerRequest(target, target.createClassPrepareRequest(topLevelName));
+		
+		// create breakpoint requests for each class currently loaded
 		List classes= target.jdiClassesByName(topLevelName);
-		if (classes == null || classes.isEmpty()) {
-			// defer
-			target.defer(this, topLevelName);
-		} else {
-			// try to install
-			ReferenceType type= (ReferenceType) classes.get(0);
-			if (!installLineBreakpoint(target, type)) {
-				// install did not succeed - could be an inner type not yet loaded
-				target.defer(this, topLevelName);
+		if (classes != null) {
+			Iterator iter = classes.iterator();
+			while (iter.hasNext()) {
+				ReferenceType type= (ReferenceType) iter.next();
+				createRequest(target, type);
 			}
 		}
-	}	
-	
+	}
+		
 	/**
 	 * Installs a line breakpoint in the given type, returning whether successful.
 	 */
-	protected boolean installLineBreakpoint(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		Location location= null;
 		int lineNumber= getLineNumber();			
 		location= determineLocation(lineNumber, type);
 		if (location == null) {
 			// could be an inner type not yet loaded, or line information not available
-			return false;
+			return;
 		}
 		
-		if (createLineBreakpointRequest(location, target) != null) {
-			// update the install attibute on the breakpoint
-			if (!target.inHCR()) {
-				try {
-					incrementInstallCount();
-				} catch (CoreException e) {
-					logError(e);
-				}
-			}
-			return true;
-		} else {
-			return false;
-		}
-		
+		EventRequest request = createLineBreakpointRequest(location, target);	
+		registerRequest(target, request);		
 	}	
 	
 	/**
@@ -168,14 +156,11 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			request= target.getEventRequestManager().createBreakpointRequest(location);
 			configureRequest(request);
 		} catch (VMDisconnectedException e) {
-			target.uninstallBreakpoint(this);
 			return null;
 		} catch (RuntimeException e) {
-			target.uninstallBreakpoint(this);
 			logError(e);
 			return null;
 		}
-		target.installBreakpoint(this, request);	
 		return request;
 	}
 	
@@ -226,26 +211,14 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 
 		return null;
-	}	
-	
-	public void changeForTarget(JDIDebugTarget target) throws CoreException {
-		BreakpointRequest request= (BreakpointRequest) target.getRequest(this);
-		if (request != null) {
-			// already installed - could be a change in the enabled state or hit count
-			//may result in a new request being generated
-			request= updateHitCount(request, target);
-			if (request != null) {
-				updateEnabledState(request);
-				target.installBreakpoint(this, request);				
-			}
-		}	
-	}
+	}			
+
 	
 	/**
 	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
 	 * the appropriate settings.
 	 */
-	protected BreakpointRequest updateHitCount(BreakpointRequest request, JDIDebugTarget target) throws CoreException {		
+	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {		
 		
 		// if the hit count has changed, or the request has expired and is being re-enabled,
 		// create a new request
@@ -264,22 +237,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			}
 		}
 		return request;
-	}
-	
-	/**
-	 * Returns whether the hitCount of this breakpoint is equal to the hitCount of
-	 * the associated request.
-	 */
-	protected boolean hasHitCountChanged(EventRequest request) throws CoreException {
-		int hitCount= getHitCount();
-		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		int oldCount = -1;
-		if (requestCount != null)  {
-			oldCount = requestCount.intValue();
-		} 
-		return hitCount != oldCount;
-	}
-		
+	}		
 	
 	/**
 	 * Configure a breakpoint request with common properties:
@@ -302,45 +260,14 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
 		}
 		// Important: only enable a request after it has been configured
-		request.setEnabled(isEnabled());		
+		updateEnabledState(request);
 	}	
-	
-	/**
-	 * Enable a request and increment the install count of the associated breakpoint.
-	 */
-	protected void completeConfiguration(EventRequest request) {
-		// Important: Enable only after request has been configured		
-		try {	
-			request.setEnabled(isEnabled());				
-			incrementInstallCount();
-		} catch (CoreException e) {
-			logError(e);
-		}
-	}		
-	
-	/**
-	 * @see IJavaBreakpoint#handleEvent(Event)
-	 */
-	public void handleEvent(Event event, JDIDebugTarget target) throws CoreException {
-		if (!(event instanceof LocatableEvent)) {
-			return;
-		}
-		ThreadReference threadRef= ((LocatableEvent)event).thread();
-		JDIThread thread= target.findThread(threadRef);		
-		if (thread == null) {
-			target.resume(threadRef);
-			return;
-		} else {
-			thread.handleSuspendForBreakpoint(this);
-			expireHitCount((LocatableEvent)event);	
-		}			
-	}
 	
 	/**
 	 * Called when a breakpoint event is encountered
 	 */
-	public void expireHitCount(LocatableEvent event) {
-		EventRequest request= (EventRequest)event.request();
+	public void expireHitCount(Event event) {
+		EventRequest request= event.request();
 		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
 		if (requestCount != null) {
 			try {
@@ -353,47 +280,34 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			}
 		}
 	}	
-	
+		
 	/**
-	 * @see JavaBreakpoint#removeFromTarget(JDIDebugTarget)
+	 * @see IJavaBreakpoint#handleEvent(Event)
 	 */
-	public void removeFromTarget(JDIDebugTarget target) throws CoreException {		
-		BreakpointRequest request= (BreakpointRequest) target.getRequest(this);
-		if (request == null) {
-			//deferred breakpoint
-			if (!this.getMarker().exists()) {
-				//resource no longer exists
-				return;
-			}
-			String name= getTopLevelTypeName();
-			if (name == null) {
-//				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			List breakpoints= (List) target.getDeferredBreakpointsByClass(name);
-			if (breakpoints == null) {
-				return;
-			}
-
-			breakpoints.remove(this);
-			if (breakpoints.isEmpty()) {
-				target.removeDeferredBreakpointByClass(name);
-			}
-		} else {
-			//installed breakpoint
+	public boolean handleEvent(Event event, JDIDebugTarget target) {
+		if (event instanceof ClassPrepareEvent) {
+			// create a new request
+			ClassPrepareEvent cpe = (ClassPrepareEvent)event;
 			try {
-				// cannot delete an expired request
-				if (!isExpired(request)) {
-					target.getEventRequestManager().deleteEventRequest(request); // disable & remove
-				}
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
+				createRequest(target, cpe.referenceType());
+			} catch (CoreException e) {
 				logError(e);
 			}
+			return true;
+		} else {
+			ThreadReference threadRef= ((LocatableEvent)event).thread();
+			JDIThread thread= target.findThread(threadRef);		
+			if (thread == null) {
+				return true;
+			} else {
+				thread.handleSuspendForBreakpoint(this);
+				expireHitCount(event);	
+				return false;
+			}						
 		}
+
 	}		
-	
+
 	/**
 	 * @see JavaBreakpoint#isSupportedBy(VirtualMachine)
 	 */
@@ -518,54 +432,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		return null;
 	}
-/*
-	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
-		int lineNumber= getAttribute(IMarker.LINE_NUMBER, -1);
-		if (lineNumber > -1) {
-			if (systemThread) {
-				return getFormattedString(LINE_BREAKPOINT_SYS, new String[] {threadName, String.valueOf(lineNumber), typeName});
-			} else {
-				return getFormattedString(LINE_BREAKPOINT_USR, new String[] {threadName, String.valueOf(lineNumber), typeName});
-			}
-		}
-		return "";
-	}
-	
-	public String getMarkerText(boolean showQualified, String memberString) {
-		IType type= getType();
-		if (type != null) {
-			StringBuffer label= new StringBuffer();
-			if (showQualified) {
-				label.append(type.getFullyQualifiedName());
-			} else {
-				label.append(type.getElementName());
-			}
-			int lineNumber= getLineNumber();
-			if (lineNumber > 0) {
-				label.append(" [");
-				label.append(DebugJavaUtils.getResourceString(MARKER_LABEL + LINE));
-				label.append(' ');
-				label.append(lineNumber);
-				label.append(']');
-
-			}
-			int hitCount= getHitCount();
-			if (hitCount > 0) {
-				label.append(" [");
-				label.append(DebugJavaUtils.getResourceString(MARKER_LABEL + HITCOUNT));
-				label.append(' ');
-				label.append(hitCount);
-				label.append(']');
-			}
-			if (memberString != null) {
-				label.append(" - ");
-				label.append(memberString);
-			}
-			return label.toString();
-		}
-		return "";		
-	}
-	*/
 
 }
 

@@ -29,5 +29,11 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 * Generate the field associated with this watchpoint
 	 */
 	public IField getField() throws CoreException;	
+	
+	/**
+	 * Returns whether this breakpoint last suspended for an access (<code>true</code>)
+	 * or modification (<code>false</code>).
+	 */
+	public boolean isAccessSuspend();
 }
 

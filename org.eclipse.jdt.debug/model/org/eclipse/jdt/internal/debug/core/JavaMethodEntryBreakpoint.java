@@ -19,18 +19,6 @@ import com.sun.jdi.request.MethodEntryRequest;
 public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJavaMethodEntryBreakpoint {
 	
 	static String fMarkerType= IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT;
-
-	/**
-	 * Key used to store the class name attribute pertinent to a
-	 * specific method entry request. Used for method entry breakpoints.
-	 */
-	public final static String CLASS_NAME= "className";
-	/**
-	 * Key used to store the name and signature
-	 * attribute pertinent to a specific method 
-	 * entry request breakpoint. Used for method entry breakpoints.
-	 */
-	public final static String BREAKPOINT_INFO= "breakpointInfo";
 	
 	public JavaMethodEntryBreakpoint() {
 	}
@@ -100,155 +88,46 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		IType type = getType();
 		String className = type.getFullyQualifiedName();
 		
-		MethodEntryRequest request = target.getMethodEntryRequest(className);
-		
-		if (request == null) {
-			try {
-				request= target.getEventRequestManager().createMethodEntryRequest();
-				request.addClassFilter(className);
-				request.putProperty(CLASS_NAME, className);
-				request.putProperty(BREAKPOINT_INFO, new ArrayList(1));
-				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-				// Store this breakpoint at the "key" breakpoint to be dispatched to when
-				// an event comes back for this request
-				request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);
-				// Create the list of method entry breakpoints (including this one) in the request
-				request.putProperty(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT, new ArrayList(3));				
-				request.putProperty(IJavaDebugConstants.HIT_COUNT, new ArrayList(3));
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
-				logError(e);
-				return;
-			}
-		}
-		List breakpointInfo= (List)request.getProperty(BREAKPOINT_INFO);
-		breakpointInfo.add(null);
-		
-		List breakpoints= (List)request.getProperty(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT);
-		breakpoints.add(this);
-		
-		
-		List hitCounts = (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		int hitCount = getHitCount();
-		if (hitCount > 0) {
-			hitCounts.add(new Integer(hitCount));
-		} else {
-			hitCounts.add(null);
-		}
-		completeConfiguration(request);
-		target.installBreakpoint(this, request);
-	}
-	
-	/**
-	 * A method entry breakpoint has been changed.
-	 * Update the request.
-	 */
-	public void changeForTarget(JDIDebugTarget target) throws CoreException  {
-		MethodEntryRequest request = (MethodEntryRequest)target.getRequest(this);
-		if (request == null) {
+		MethodEntryRequest request;
+		try {
+			request= target.getEventRequestManager().createMethodEntryRequest();
+			request.addClassFilter(className);
+			request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+			int hitCount = getHitCount();
+			if (hitCount > 0) {
+				request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
+			}		
+			request.setEnabled(isEnabled());
+		} catch (VMDisconnectedException e) {
+			return;
+		} catch (RuntimeException e) {
+			logError(e);
 			return;
 		}
-		// check the enabled state
-		updateEnabledState(request);
-		updateHitCount(request);
+		registerRequest(target, request);
+
 	}
 
 	/**
 	 * Update the hit count associated with this method entry breakpoint
 	 * in the given request
 	 */	
-	private void updateHitCount(MethodEntryRequest request) throws CoreException {
-		if (!isEnabled()) {
-			// Don't reset the request hitCount it this breakpoint is disabled
-			return;
-		}
-		List breakpoints= (List) request.getProperty(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT);
-		int index= breakpoints.indexOf(this);
-		// update the breakpoint's hit count
-		List hitCounts= (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		int hitCount= getHitCount();
-		if (hitCount > 0) {
-			hitCounts.set(index, new Integer(hitCount));
-		} else {
-			//back to a regular breakpoint
-			hitCounts.set(index, null);			
-		}		
-	}
-	
-	/**
-	 * Enable a request as appropriate and increment the install count of the associated breakpoint.
-	 */
-	protected void completeConfiguration(EventRequest request) {
-		// Important: Enable only after request has been configured		
-		if (!(request instanceof MethodEntryRequest)) {
-			return;
-		}
-		try {	
-			updateEnabledState((MethodEntryRequest) request);
-			incrementInstallCount();
-		} catch (CoreException e) {
-			logError(e);
-		}
-	}		
-	
-	/**
-	 * Update the enabled state of the request associated with this
-	 * method entry breakpoint. Since a request is potentially associated
-	 * with multiple method entry breakpoints, it should be enabled if 
-	 * any of them are enabled.
-	 */
-	protected void updateEnabledState(MethodEntryRequest request) throws CoreException {
-		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
-		Iterator breakpoints= ((List)request.getProperty(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT)).iterator();
-		boolean requestEnabled= false;
-		while (breakpoints.hasNext()) {
-			JavaMethodEntryBreakpoint breakpoint= (JavaMethodEntryBreakpoint)breakpoints.next();
-			if (breakpoint.isEnabled()) {
-				requestEnabled = true;
-				break;
-			}
-		}
-		updateEnabledState(request, requestEnabled);
-	}
-	
-	/**
-	 * @see JavaBreakpoint#removeFromTarget(JDIDebugTarget)
-	 */
-	public void removeFromTarget(JDIDebugTarget target) {
-		MethodEntryRequest request = (MethodEntryRequest)target.getRequest(this);
-		if (request != null) {
+	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {
+		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
 			try {
-				decrementInstallCount();
-			} catch (CoreException e) {
+				int hitCount = getHitCount();
+				Integer hc = null;
+				if (hitCount > 0) {
+					hc = new Integer(hitCount);
+				}
+				request.putProperty(IJavaDebugConstants.HIT_COUNT, hc);
+			} catch (VMDisconnectedException e) {
+			} catch (RuntimeException e) {
 				logError(e);
 			}
-			List breakpoints= (List)request.getProperty(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT);
-			int index = breakpoints.indexOf(this);
-			breakpoints.remove(index);
-			if (breakpoints.isEmpty()) {
-				try {
-					target.getEventRequestManager().deleteEventRequest(request); // disable & remove
-				} catch (VMDisconnectedException e) {
-				} catch (RuntimeException e) {
-					logError(e);
-				}
-			} else {
-				List hitCounts= (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-				hitCounts.remove(index);
-				
-				// Fixup the list of breakpoints in the request
-				JavaMethodEntryBreakpoint breakpoint= (JavaMethodEntryBreakpoint) request.getProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY);
-				if (breakpoint == this) {
-					// We were the "key" breakpoint in the request. select a
-					// new key for the request
-					Iterator breakpointIterator= breakpoints.iterator();
-					JavaMethodEntryBreakpoint newKey= (JavaMethodEntryBreakpoint) breakpointIterator.next();
-					request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, newKey);
-				}
-			}
 		}
-	}	
+		return request;
+	}
 	
 	/**
 	 * Sets the <code>METHOD_HANDLE</code> attribute of this breakpoint, associated
@@ -272,41 +151,35 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	 * in a method that a method entry breakpoint has been set for,
 	 * dispatch the event to the correct breakpoint.
 	 */
-	public void handleEvent(Event genericEvent, JDIDebugTarget target) throws CoreException {
+	public boolean handleEvent(Event genericEvent, JDIDebugTarget target) {
 		if (!(genericEvent instanceof MethodEntryEvent)) {
-			return;
+			return true;
 		}
 		MethodEntryEvent event= (MethodEntryEvent) genericEvent;
 		Method enteredMethod = event.method();
 		String enteredMethodName= enteredMethod.name();
 		MethodEntryRequest request = (MethodEntryRequest)event.request();
-		List breakpoints = (List)request.getProperty(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT);
-		Iterator requestBreakpoints= breakpoints.iterator();
-		JavaMethodEntryBreakpoint breakpoint= null;
-		int index= 0;
-		while (requestBreakpoints.hasNext()) {
-			JavaMethodEntryBreakpoint aBreakpoint= (JavaMethodEntryBreakpoint)requestBreakpoints.next();
-			Object[] nameSignature= aBreakpoint.getMethodNameSignature();
+		try {
+			Object[] nameSignature= getMethodNameSignature();
 			if (nameSignature != null && nameSignature[0].equals(enteredMethodName) &&
 				nameSignature[1].equals(enteredMethod.signature())) {
-				breakpoint= aBreakpoint;
-				break;
-			}
-			index++;	
+					// simulate hit count
+					Integer count = (Integer)request.getProperty(IJavaDebugConstants.HIT_COUNT);
+					if (count != null) {
+						return handleHitCountMethodEntryBreakpoint(event, count, target);
+					} else {
+						// no hit count - suspend
+						doSuspend(event.thread(), target);
+						return false;
+					}
+			} else {
+				return true;
+				}
+		} catch (CoreException e) {
+			logError(e);
 		}
-		if (breakpoint == null || !breakpoint.isEnabled()) {
-			doResume(event.thread(), target);
-			return;
-		}	
+		return true;
 		
-		List counts = (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		Integer count= (Integer)counts.get(index);
-		if (count != null) {
-			breakpoint.handleHitCountMethodEntryBreakpoint(event, counts, count, index, target);
-		} else {
-			// no hit count - suspend
-			breakpoint.doSuspend(event.thread(), target);
-		}
 	}
 	
 	/**
@@ -331,16 +204,15 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		}		
 	}
 	
-	protected void handleHitCountMethodEntryBreakpoint(MethodEntryEvent event, List counts, Integer count, int index, JDIDebugTarget target) {	
+	protected boolean handleHitCountMethodEntryBreakpoint(MethodEntryEvent event, Integer count, JDIDebugTarget target) {	
 	// decrement count and suspend if 0
 		int hitCount = count.intValue();
 		if (hitCount > 0) {
 			hitCount--;
 			count = new Integer(hitCount);
-			counts.set(index, count);
+			event.request().putProperty(IJavaDebugConstants.HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit
-				counts.set(index, null);
 				doSuspend(event.thread(), target);
 				try {
 					// make a note that we auto-disabled the breakpoint
@@ -350,13 +222,14 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				} catch (CoreException e) {
 					logError(e);
 				}
+				return false;
 			}  else {
 				// count still > 0, keep running
-				doResume(event.thread(), target);		
+				return true;		
 			}
 		} else {
 			// hit count expired, keep running
-			doResume(event.thread(), target);
+			return true;
 		}
 	}
 	
@@ -381,25 +254,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		}
 		nameSignature[1]= aMethod.getSignature();
 		return nameSignature;
-	}	
-	
-	protected String[] getMethodEntryBreakpointInfo(MethodEntryRequest request, int index) throws CoreException {
-		List nameSignatures = (List)request.getProperty(BREAKPOINT_INFO);
-		if (nameSignatures.get(index) != null) {
-			return (String[])nameSignatures.get(index);
-		}
-		String[] nameSignature= new String[2];
-		IMethod aMethod= getMethod(); 
-		if (aMethod.isConstructor()) {
-			nameSignature[0]= "<init>";
-		} else {
-			 nameSignature[0]= aMethod.getElementName();
-		}
-		nameSignature[1]= aMethod.getSignature();
-		nameSignatures.add(index, nameSignature);
-		return nameSignature;
-	}
-		
+	}		
 
 }
 

@@ -1,8 +1,6 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -95,8 +93,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		String handle = exception.getHandleIdentifier();
 		Object[] values= new Object[]{new Boolean(checked), handle};
 		ensureMarker().setAttributes(fgExceptionBreakpointAttributes, values);
-	}	
-	
+	}
+			
 	public void setDefaultCaughtAndUncaught() throws CoreException {
 		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
 		String[] attributes= new String[]{IJavaDebugConstants.CAUGHT, IJavaDebugConstants.UNCAUGHT};
@@ -107,104 +105,76 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		changeForTarget(target);
-	}	
-	
-	/**
-	 * An exception breakpoint has changed
-	 */
-	public void changeForTarget(JDIDebugTarget target) throws CoreException {
-
-		boolean caught= isCaught();
-		boolean uncaught= isUncaught();
-
-		if (caught || uncaught) {
-			IType exceptionType = getType();
-			if (exceptionType == null) {
-//				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			String exceptionName = exceptionType.getFullyQualifiedName();
-			String topLevelName = getTopLevelTypeName();
-			if (topLevelName == null) {
-//				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			List classes= target.jdiClassesByName(exceptionName);
-			ReferenceType exClass= null;
-			if (classes != null && !classes.isEmpty()) {
-				exClass= (ReferenceType) classes.get(0);
-			}
-			if (exClass == null) {
-				// defer the exception
-				target.defer(this, topLevelName);
-			} else {
-				// new or changed - first delete the old request
-				if (null != target.getRequest(this))
-					removeFromTarget(target);
-				ExceptionRequest request= null;
-				try {
-					request= target.getEventRequestManager().createExceptionRequest(exClass, caught, uncaught);
-					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);
-				} catch (VMDisconnectedException e) {
-					return;
-				} catch (RuntimeException e) {
-					logError(e);
-					return;
-				}
-				request.setEnabled(isEnabled());
-				target.installBreakpoint(this, request);
-			}
-		} else {
-			removeFromTarget(target);
-		}
-	}
-
-	/**
-	 * An exception breakpoint has been removed
-	 */
-	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
-		IType type = getType();
-		if (type == null) {
+		
+		IType exceptionType = getType();
+		if (exceptionType == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
 			return;
 		}
-		String name = type.getFullyQualifiedName();
-		ExceptionRequest request= (ExceptionRequest) target.uninstallBreakpoint(this);
-		if (request != null) {
+		String exceptionName = exceptionType.getFullyQualifiedName();
+		String topLevelName = getTopLevelTypeName();
+		if (topLevelName == null) {
+//			internalError(ERROR_BREAKPOINT_NO_TYPE);
+			return;
+		}
+
+		// listen to class loads
+		registerRequest(target, target.createClassPrepareRequest(topLevelName));
+		
+		if (isCaught() || isUncaught()) {			
+			List classes= target.jdiClassesByName(exceptionName);
+			if (classes != null) {
+				Iterator iter = classes.iterator();
+				while (iter.hasNext()) {
+					ReferenceType exClass = (ReferenceType)iter.next();				
+					createRequest(target, exClass);
+				}
+			}
+		}	
+	}	
+	
+	protected ExceptionRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+			ExceptionRequest request= null;
 			try {
-				target.getEventRequestManager().deleteEventRequest(request);
+				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
+				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+				request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);
+				int hitCount= getHitCount();
+				if (hitCount > 0) {
+					request.addCountFilter(hitCount);
+					request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
+					request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
+				}
 			} catch (VMDisconnectedException e) {
-				return;
+				return null;
 			} catch (RuntimeException e) {
 				logError(e);
-				return;
+				return null;
 			}
-		}
-		List deferred = target.getDeferredBreakpointsByClass(name);
-		if (deferred != null)  {
-			deferred.remove(this);
-			if (deferred.isEmpty()) {
-				target.removeDeferredBreakpointByClass(name);
-			}
-		}
-	}		
+			request.setEnabled(isEnabled());	
+			return request;
+	}
 	
+	protected EventRequest createRequest(JDIDebugTarget target, ReferenceType type)  throws CoreException {
+			ExceptionRequest request= newRequest(target, type);
+			registerRequest(target, request);
+			return request;
+	}
+		
 	/**
 	 * @see JavaBreakpoint#handleEvent(Event)
 	 */
-	public void handleEvent(Event event, JDIDebugTarget target){
+	public boolean handleEvent(Event event, JDIDebugTarget target){
 		if (!(event instanceof ExceptionEvent)) {
-			return;
+			return true;
 		}
 		ThreadReference threadRef= ((ExceptionEvent)event).thread();
 		JDIThread thread= target.findThread(threadRef);
 		if (thread == null) {
-			target.resume(threadRef);
-			return;
+			return true;
 		} else {
 			thread.handleSuspendForBreakpoint(this);
+			return false;
 		}
 	}
 	
@@ -276,50 +246,37 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			setEnabled(false);
 		}
 	}
-		
-	/*
-	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
-		if (systemThread) {
-			return getFormattedString(EXCEPTION_SYS, new String[] {threadName, typeName});
-		}
-		return getFormattedString(EXCEPTION_USR, new String[] {threadName, typeName});		
-	}
 	
-	public String getMarkerText(boolean showQualified) {
-		String name;
-		if (showQualified) {
-			name= getType().getFullyQualifiedName();
-		} else {
-			name= getType().getElementName();
-		}
-
-		String state= null;
-		boolean c= isCaught();
-		boolean u= isUncaught();
-		if (c && u) {
-			state= BOTH;
-		} else if (c) {
-			state= CAUGHT;
-		} else if (u) {
-			state= UNCAUGHT;
-		}
-		String label= null;
-		if (state == null) {
-			label= name;
-		} else {
-			String format= DebugJavaUtils.getResourceString(FORMAT);
-			state= DebugJavaUtils.getResourceString(state);
-			label= MessageFormat.format(format, new Object[] {state, name});
-		}
-		return label;	
-	}
-	*/
-
 	/**
 	 * @see IJavaExceptionBreakpoint#isChecked()
 	 */
 	public boolean isChecked() throws CoreException {
 		return ensureMarker().getAttribute(IJavaDebugConstants.CHECKED, false);
 	}
+	
+	/**
+	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
+	 * the appropriate settings.
+	 */
+	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {		
+		
+		// if the hit count has changed, or the request has expired and is being re-enabled,
+		// create a new request
+		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
+			try {
+				// delete old request
+				//on JDK you cannot delete (disable) an event request that has hit its count filter
+				if (!isExpired(request)) {
+					target.getEventRequestManager().deleteEventRequest(request); // disable & remove
+				}
+				ReferenceType exClass = ((ExceptionRequest)request).exception();				
+				request = newRequest(target, exClass);
+			} catch (VMDisconnectedException e) {
+			} catch (RuntimeException e) {
+				logError(e);
+			}
+		}
+		return request;
+	}		
 }
 
