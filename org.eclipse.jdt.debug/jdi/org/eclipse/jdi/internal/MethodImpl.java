@@ -136,6 +136,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.ABSENT_INFORMATION:
 					throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_line_number_information_available_2")); //$NON-NLS-1$
+				case JdwpReplyPacket.NATIVE_METHOD:
+					throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_line_number_information_available_2")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
