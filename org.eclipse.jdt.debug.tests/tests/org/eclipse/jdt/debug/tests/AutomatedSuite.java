@@ -31,6 +31,7 @@ import org.eclipse.jdt.debug.tests.core.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.DirectorySourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.DirectorySourceLookupTests;
+import org.eclipse.jdt.debug.tests.core.EnvironmentTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ExternalArchiveSourceContainerTests;
@@ -159,6 +160,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RunToLineTests.class));
 		addTest(new TestSuite(MemoryRenderingTests.class));
 		addTest(new TestSuite(JavaLibraryPathTests.class));
+		addTest(new TestSuite(EnvironmentTests.class));
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 		
