@@ -401,22 +401,22 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		
 		public void valueToString(IJavaValue objectValue) throws DebugException {
 			StringBuffer result= new StringBuffer();
-			if (fValue.getSignature() == null) {
+			if (objectValue.getSignature() == null) {
 				// no need to spawn a thread for a null fValue
 				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.null")); //$NON-NLS-1$
-			} else if (fValue instanceof IJavaPrimitiveValue) {
+			} else if (objectValue instanceof IJavaPrimitiveValue) {
 				// no need to spawn a thread for a primitive value
-				appendJDIPrimitiveValueString(result, fValue);
+				appendJDIPrimitiveValueString(result, objectValue);
 			} else if (fThread == null || !fThread.isSuspended()) {
 				// no thread available
 				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.no_suspended_threads")); //$NON-NLS-1$
-				appendJDIValueString(result, fValue);
-			} else if (fValue instanceof IJavaArray) {
-				appendArrayDetail(result, (IJavaArray) fValue);
-			} else if (fValue instanceof IJavaObject) {
-				appendObjectDetail(result, (IJavaObject) fValue);
+				appendJDIValueString(result, objectValue);
+			} else if (objectValue instanceof IJavaArray) {
+				appendArrayDetail(result, (IJavaArray) objectValue);
+			} else if (objectValue instanceof IJavaObject) {
+				appendObjectDetail(result, (IJavaObject) objectValue);
 			} else {
-				appendJDIValueString(result, fValue);
+				appendJDIValueString(result, objectValue);
 			}
 			fListener.detailComputed(fValue, result.toString());
 		}
@@ -449,7 +449,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 
 		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
-			result.append(value.getValueString());
+			JDIModelPresentation modelPresentation= new JDIModelPresentation();
+			result.append(modelPresentation.getValueText(value));
+			modelPresentation.dispose();
 		}
 
 
