@@ -127,29 +127,32 @@ public class PacketReceiveManager extends PacketManager {
 	 * @return Returns a specified Reply Packet from the Virtual Machine.
 	 */
 	public JdwpReplyPacket getReply(int id, long timeToWait) {
-		JdwpReplyPacket packet = null;
-		
-		synchronized(fReplyPackets) {
-		    long remainingTime = timeToWait;
-		    long timeBeforeWait;
-		    long waitedTime;
-		    
-		    // Wait until reply is available.
-		    while (!VMIsDisconnected() && (timeToWait < 0 || remainingTime > 0)) {
-		        packet = removeReplyPacket(id);
-		        if (packet != null) {
-		            break;
-		        }
-		        
-		        timeBeforeWait = System.currentTimeMillis();
-		        try {
-		            waitForPacketAvailable(remainingTime, fReplyPackets);
-		        } catch (InterruptedException e) {
-		        }
-		        waitedTime = System.currentTimeMillis() - timeBeforeWait;
-		        remainingTime -= waitedTime;
-		    }
-		}
+	    JdwpReplyPacket packet = null;
+	    
+	    synchronized(fReplyPackets) {
+	        long remainingTime = timeToWait;
+	        long timeBeforeWait = System.currentTimeMillis();
+	        long waitedTime;
+	        
+	        // Wait until reply is available.
+	        while (!VMIsDisconnected() && remainingTime > 0) {
+	            packet = removeReplyPacket(id);
+	            if (packet != null) {
+	                break;
+	            }
+	            
+	            try {
+	                waitForPacketAvailable(remainingTime, fReplyPackets);
+	            } catch (InterruptedException e) {
+	            }
+	            waitedTime = System.currentTimeMillis() - timeBeforeWait;
+	            remainingTime = timeToWait - waitedTime;
+	        }
+	        
+	        if (packet == null && remainingTime <= 0) {
+	            packet = removeReplyPacket(id);
+	        }
+	    }
 		
 		// Check for an IO Exception.
 		if (VMIsDisconnected())
