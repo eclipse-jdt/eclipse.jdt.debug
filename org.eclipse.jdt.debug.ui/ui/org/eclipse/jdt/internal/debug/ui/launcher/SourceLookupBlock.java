@@ -220,6 +220,7 @@ public class SourceLookupBlock {
 			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
 			fPathViewer.setEntries(entries);
 			fPathViewer.setEnabled(!useDefault);
+			fPathViewer.setLaunchConfiguration(config);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}

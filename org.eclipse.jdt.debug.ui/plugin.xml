@@ -1020,7 +1020,7 @@
 
 <extension point = "org.eclipse.jdt.ui.classpathContainerPage">
 	<classpathContainerPage
-		id= "org.eclipse.jdt.debug.ui.jreContainerPage"
+		id= "org.eclipse.jdt.launching.JRE_CONTAINER"
 		name= "%jreSystemLibrary.name"
 		class= "org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"/>
 </extension>

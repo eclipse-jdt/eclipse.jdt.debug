@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,6 +26,11 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 * Whether enabled/editable.
 	 */
 	private boolean fEnabled = true;
+	
+	/**
+	 * The launch configuration context for this viewer, or <code>null</code>
+	 */
+	private ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
 	 * The runtime classpath entries displayed in this viewer
@@ -62,7 +68,9 @@ public class RuntimeClasspathViewer extends TableViewer {
 	public RuntimeClasspathViewer(Composite parent) {
 		super(parent);
 		setContentProvider(new ContentProvider());
-		setLabelProvider(new RuntimeClasspathEntryLabelProvider());
+		RuntimeClasspathEntryLabelProvider lp = new RuntimeClasspathEntryLabelProvider();
+		lp.setLaunchConfiguration(fLaunchConfiguration);
+		setLabelProvider(lp);
 		setInput(fEntries);
 	}	
 
@@ -130,5 +138,15 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 */
 	public boolean isEnabled() {
 		return fEnabled;
+	}
+	
+	/**
+	 * Sets the launch configuration context for this viewer, if any
+	 */
+	public void setLaunchConfiguration(ILaunchConfiguration configuration) {
+		fLaunchConfiguration = configuration;
+		if (getLabelProvider() != null) {
+			((RuntimeClasspathEntryLabelProvider)getLabelProvider()).setLaunchConfiguration(configuration);
+		}
 	}
 }

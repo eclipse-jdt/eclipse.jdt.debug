@@ -216,6 +216,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
 			fClasspathViewer.setEnabled(!useDefault);
 			fBootpathViewer.setEnabled(!useDefault);
+			fClasspathViewer.setLaunchConfiguration(configuration);
+			fBootpathViewer.setLaunchConfiguration(configuration);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}			

@@ -7,11 +7,17 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -22,7 +28,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 		
-		WorkbenchLabelProvider lp = new WorkbenchLabelProvider();
+		private WorkbenchLabelProvider lp = new WorkbenchLabelProvider();
+		
+		/**
+		 * Context in which to render containers, or <code>null</code>
+		 */
+		private ILaunchConfiguration fLaunchConfuration;
 		
 		/**
 		 * @see ILabelProvider#getImage(Object)
@@ -101,6 +112,17 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					}
 					return buf.toString();
 				case IRuntimeClasspathEntry.CONTAINER:
+					if (fLaunchConfuration != null) {
+						try {
+							IJavaProject project = JavaRuntime.getJavaProject(fLaunchConfuration);
+							if (project != null) {
+								IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+								return container.getDescription();
+							}
+						} catch (CoreException e) {
+							JDIDebugUIPlugin.log(e);
+						}
+					}
 					return entry.getPath().toString();
 			}	
 			return ""; //$NON-NLS-1$
@@ -112,6 +134,13 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 		public void dispose() {
 			super.dispose();
 			lp.dispose();
+		}
+		
+		/**
+		 * Sets the launch configuration context for this label provider
+		 */
+		public void setLaunchConfiguration(ILaunchConfiguration configuration) {
+			fLaunchConfuration = configuration;
 		}
 
 }
