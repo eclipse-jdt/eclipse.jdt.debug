@@ -12,7 +12,9 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
-import com.sun.jdi.*;
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.Value;
 
 /**
  * A sub-range of an array.
@@ -22,6 +24,7 @@ public class JDIArrayPartition extends JDIVariable {
 	private int fStart;
 	private int fEnd;
 	protected ArrayReference fArray;
+	
 	/**
 	 * Cache of value
 	 */
@@ -36,11 +39,11 @@ public class JDIArrayPartition extends JDIVariable {
 
 	public String getName() throws DebugException {
 		StringBuffer name = new StringBuffer();
-		name.append('[');
+		name.append('[');  //$NON-NLS-1$
 		name.append(fStart);
 		name.append(".."); //$NON-NLS-1$
 		name.append(fEnd);
-		name.append(']');
+		name.append(']');  //$NON-NLS-1$
 		return name.toString();
 	}
 	
@@ -53,7 +56,7 @@ public class JDIArrayPartition extends JDIVariable {
 	}
 
 	/**
-	 * @see IVariable
+	 * @see IVariable#getValue()
 	 */
 	public IValue getValue() {
 		if (fArrayPartitionValue == null) {
@@ -62,8 +65,6 @@ public class JDIArrayPartition extends JDIVariable {
 		return fArrayPartitionValue;
 	}
 
-	/**
-	 */
 	public static List splitArray(JDIDebugTarget target, ArrayReference array, int start, int end) {
 		ArrayList children= new ArrayList();
 		int perSlot = 1;
@@ -102,71 +103,7 @@ public class JDIArrayPartition extends JDIVariable {
 	}
 	
 	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isVolatile() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isTransient() throws DebugException {
-		return false;
-
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isSynthetic() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isPublic() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isPrivate() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isProtected() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isPackagePrivate() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isStatic() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable
-	 */
-	public boolean isFinal() throws DebugException {
-		return false;
-	}
-
-	/**
-	 * @see IVariable
+	 * @see IVariable#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
@@ -178,7 +115,7 @@ public class JDIArrayPartition extends JDIVariable {
 	}
 
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		try {
