@@ -257,7 +257,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException the exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public void jdiRequestFailed(String message, Throwable e) throws DebugException {
-		throwDebugException(message,	DebugException.TARGET_REQUEST_FAILED, e);
+		throwDebugException(message, DebugException.TARGET_REQUEST_FAILED, e);
 	}	
 	
 	/**
@@ -267,7 +267,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>NOT_SUPPORTED</code>.
 	 */
 	public void notSupported(String message) throws DebugException {
-		throwDebugException(message,	DebugException.NOT_SUPPORTED, null);
+		throwDebugException(message, DebugException.NOT_SUPPORTED, null);
 	}
 	
 	/**
