@@ -14,18 +14,13 @@ package org.eclipse.jdt.launching;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -45,7 +40,6 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -70,13 +64,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.jdt.debug", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
-	 * The project containing the class file being launched
-	 */
-	private IProject project;
-	/**
 	 * A list of prequisite projects ordered by their build order.
 	 */
-	private List orderedProjects;
+	private IProject[] orderedProjects;
 	
 	
 	/**
@@ -694,62 +684,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	}
 	
 	/**
-	 * Recursively creates a set of projects referenced by the current project
-	 * @param project The current project
-	 * @param referencedProjSet A set of referenced projects
-	 * @throws CoreException if an error occurs while getting referenced projects from the current project
-	 */
-	private void getReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException{
-		IProject[] projects = project.getReferencedProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject refProject= projects[i];
-			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
-				referencedProjSet.add(refProject);
-				getReferencedProjectSet(refProject, referencedProjSet);
-			}
-		}
-		
-	}
-	
-	/**
-	 * creates a list of project ordered by their build order from an unordered list of projects.
-	 * @param resourceCollection The list of projects to sort.
-	 * @return A new list of projects, ordered by build order.
-	 */
-	private List getBuildOrder(List resourceCollection) {
-		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
-		if (orderedNames != null) {
-			List orderedProjects = new ArrayList(resourceCollection.size());
-			//Projects may not be in the build order but should be built if selected
-			List unorderedProjects = new ArrayList(resourceCollection.size());
-			unorderedProjects.addAll(resourceCollection);
-		
-			for (int i = 0; i < orderedNames.length; i++) {
-				String projectName = orderedNames[i];
-				for (int j = 0; j < resourceCollection.size(); j++) {
-					IProject project = (IProject) resourceCollection.get(j);
-					if (project.getName().equals(projectName)) {
-						orderedProjects.add(project);
-						unorderedProjects.remove(project);
-						break;
-					}
-				}
-			}
-			//Add anything not specified before we return
-			orderedProjects.addAll(unorderedProjects);
-			return orderedProjects;
-		}
-
-		// Try the project prerequisite order then
-		IProject[] projects = new IProject[resourceCollection.size()];
-		projects = (IProject[]) resourceCollection.toArray(projects);
-		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
-		ArrayList orderedProjects = new ArrayList();
-		orderedProjects.addAll(Arrays.asList(po.projects));
-		return orderedProjects;		
-	}
-	
-	/**
 	 * Builds the current project and all of it's prerequisite projects if necessary. Respects 
 	 * specified build order if any exists.
 	 * 
@@ -763,16 +697,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		
 		if (orderedProjects != null) {
-			monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.22"), orderedProjects.size() + 1); //$NON-NLS-1$
+			monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.22"), orderedProjects.length + 1); //$NON-NLS-1$
 			
-			for (Iterator i = orderedProjects.iterator(); i.hasNext(); ) {
-				IProject proj = (IProject)i.next();
-				monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.23") + proj.getName()); //$NON-NLS-1$
-				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			for (int i = 0; i < orderedProjects.length; i++ ) {
+				monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.23") + orderedProjects[i].getName()); //$NON-NLS-1$
+				orderedProjects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 			}
-			
-			monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.24") + project.getName()); //$NON-NLS-1$
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		}
 		monitor.done();
 		return false; //don't build. I already did it or I threw an exception. 
@@ -795,24 +725,17 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		try {
 			boolean continueLaunch = true;
 			if (orderedProjects != null) {
-				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.25"), orderedProjects.size() + 1); //$NON-NLS-1$
+				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.25"), orderedProjects.length); //$NON-NLS-1$
 				
 				boolean compileErrorsInProjs = false;
 				
-				//check prerequisite projects for compile errors.
-				for(Iterator i = orderedProjects.iterator(); i.hasNext(); ) {
-					IProject proj = (IProject)i.next();
-					monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.26") + proj.getName()); //$NON-NLS-1$
-					compileErrorsInProjs = existsErrors(proj);
+				//check projects for compile errors.
+				for(int i = 0; i < orderedProjects.length; i++) {
+					monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.26") + orderedProjects[i].getName()); //$NON-NLS-1$
+					compileErrorsInProjs = existsProblems(orderedProjects[i], IMarker.SEVERITY_ERROR);
 					if (compileErrorsInProjs) {
 						break;
 					}
-				}
-				
-				//check current project, if prerequite projects were ok
-				if (!compileErrorsInProjs) {
-					monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.27") + project.getName()); //$NON-NLS-1$
-					compileErrorsInProjs = existsErrors(project);
 				}
 				
 				//if compile errors exist, ask the user before continuing.
@@ -828,25 +751,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			monitor.done();
 		}
 	}
-
-	/**
-	 * Searches for compile errors in the specified project
-	 * @param proj The project to search
-	 * @return true if compile errors exist, otherwise false
-	 */
-	private boolean existsErrors(IProject proj) throws CoreException {
-		IMarker[] markers = proj.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-		
-		if (markers.length > 0) {
-			for (int j = 0; j < markers.length; j++) {
-				if (((Integer)markers[j].getAttribute(IMarker.SEVERITY)).intValue() == IMarker.SEVERITY_ERROR) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
@@ -857,15 +761,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
 		}
 		orderedProjects = null;
-		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);		 
 		if (javaProject != null) {
-			project = javaProject.getProject();
-			HashSet projectSet = new HashSet();
-			getReferencedProjectSet(project, projectSet);
-			orderedProjects = getBuildOrder(new ArrayList(projectSet));
+			orderedProjects = getBuildOrder(new IProject[] {javaProject.getProject()});
 		}
+
 		// do generic launch checks
 		return super.preLaunchCheck(configuration, mode, monitor);
 	}
+
 }
 
