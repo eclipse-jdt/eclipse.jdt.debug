@@ -79,17 +79,17 @@ import org.eclipse.jdt.debug.tests.eval.TestsOperators1;
 import org.eclipse.jdt.debug.tests.eval.TestsOperators2;
 import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy1;
 import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy2;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_108_1;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_135_1;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_21_1;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_21_2;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_21_3;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_21_4;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_21_5;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_21_6;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_57_1;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_57_2;
-import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_57_3;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_119_1;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_146_1;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_1;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_2;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_3;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_4;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_5;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_6;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_1;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_2;
+import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_3;
 import org.eclipse.jdt.debug.tests.eval.XfixOperatorsTests;
 import org.eclipse.swt.widgets.Display;
 
@@ -117,98 +117,98 @@ public class EvalTestSuite extends TestSuite {
 	public EvalTestSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		// Tests included in the automated suite
-		addTest(new TestSuite(TestsOperators1.class));
-		addTest(new TestSuite(TestsOperators2.class));
-		addTest(new TestSuite(TestsArrays.class));
-		addTest(new TestSuite(TestsNestedTypes1.class));
-		addTest(new TestSuite(TestsNestedTypes2.class));
-		addTest(new TestSuite(TestsTypeHierarchy1.class));
-		addTest(new TestSuite(TestsTypeHierarchy2.class));
+//		addTest(new TestSuite(TestsOperators1.class));
+//		addTest(new TestSuite(TestsOperators2.class));
+//		addTest(new TestSuite(TestsArrays.class));
+//		addTest(new TestSuite(TestsNestedTypes1.class));
+//		addTest(new TestSuite(TestsNestedTypes2.class));
+//		addTest(new TestSuite(TestsTypeHierarchy1.class));
+//		addTest(new TestSuite(TestsTypeHierarchy2.class));
+//		
+//		// Extended evaluation tests
+//		addTest(new TestSuite(BooleanOperatorsTests.class));
+//		addTest(new TestSuite(ByteOperatorsTests.class));
+//		addTest(new TestSuite(CharOperatorsTests.class));
+//		addTest(new TestSuite(ShortOperatorsTests.class));
+//		addTest(new TestSuite(IntOperatorsTests.class));
+//		addTest(new TestSuite(LongOperatorsTests.class));
+//		addTest(new TestSuite(FloatOperatorsTests.class));
+//		addTest(new TestSuite(DoubleOperatorsTests.class));
+//		addTest(new TestSuite(StringPlusOpTests.class));
+//
+//		addTest(new TestSuite(LocalVarValueTests.class));
+//		addTest(new TestSuite(LocalVarAssignmentTests.class));
+//
+//		addTest(new TestSuite(BooleanAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(ByteAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(CharAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(ShortAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(IntAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(LongAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(FloatAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(DoubleAssignmentOperatorsTests.class));
+//		addTest(new TestSuite(StringPlusAssignmentOpTests.class));
+//
+//		addTest(new TestSuite(XfixOperatorsTests.class));
+//
+//		addTest(new TestSuite(NumericTypesCastTests.class));
+//
+//		addTest(new TestSuite(FieldValueTests.class));
+//		addTest(new TestSuite(QualifiedFieldValueTests.class));
+//		addTest(new TestSuite(StaticFieldValueTests.class));
+//		addTest(new TestSuite(StaticFieldValueTests2.class));
+//		addTest(new TestSuite(QualifiedStaticFieldValueTests.class));
+//		addTest(new TestSuite(QualifiedStaticFieldValueTests2.class));
+//
+//		addTest(new TestSuite(ArrayAllocationTests.class));
+//		addTest(new TestSuite(ArrayAssignementTests.class));
+//		addTest(new TestSuite(ArrayValueTests.class));
+//
+//		addTest(new TestSuite(NestedTypeFieldValue_54.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_58.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_83.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_109.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_134.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_144.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_168.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_192.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_203.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_241.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_268.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_293.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_304.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_343.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_370.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_395.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_406.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_444.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_470.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_495.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_506.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_518.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_555.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_581.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_605.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_615.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_653.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_679.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_703.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_713.class));
+//		addTest(new TestSuite(NestedTypeFieldValue_728.class));
+
+		addTest(new TestSuite(TypeHierarchy_32_1.class));
+		addTest(new TestSuite(TypeHierarchy_32_2.class));
+		addTest(new TestSuite(TypeHierarchy_32_3.class));
+		addTest(new TestSuite(TypeHierarchy_32_4.class));
+		addTest(new TestSuite(TypeHierarchy_32_5.class));
+		addTest(new TestSuite(TypeHierarchy_32_6.class));
+		addTest(new TestSuite(TypeHierarchy_68_1.class));
+		addTest(new TestSuite(TypeHierarchy_68_2.class));
+		addTest(new TestSuite(TypeHierarchy_68_3.class));
+		addTest(new TestSuite(TypeHierarchy_119_1.class));
+		addTest(new TestSuite(TypeHierarchy_146_1.class));
 		
-		// Extended evaluation tests
-		addTest(new TestSuite(BooleanOperatorsTests.class));
-		addTest(new TestSuite(ByteOperatorsTests.class));
-		addTest(new TestSuite(CharOperatorsTests.class));
-		addTest(new TestSuite(ShortOperatorsTests.class));
-		addTest(new TestSuite(IntOperatorsTests.class));
-		addTest(new TestSuite(LongOperatorsTests.class));
-		addTest(new TestSuite(FloatOperatorsTests.class));
-		addTest(new TestSuite(DoubleOperatorsTests.class));
-		addTest(new TestSuite(StringPlusOpTests.class));
-
-		addTest(new TestSuite(LocalVarValueTests.class));
-		addTest(new TestSuite(LocalVarAssignmentTests.class));
-
-		addTest(new TestSuite(BooleanAssignmentOperatorsTests.class));
-		addTest(new TestSuite(ByteAssignmentOperatorsTests.class));
-		addTest(new TestSuite(CharAssignmentOperatorsTests.class));
-		addTest(new TestSuite(ShortAssignmentOperatorsTests.class));
-		addTest(new TestSuite(IntAssignmentOperatorsTests.class));
-		addTest(new TestSuite(LongAssignmentOperatorsTests.class));
-		addTest(new TestSuite(FloatAssignmentOperatorsTests.class));
-		addTest(new TestSuite(DoubleAssignmentOperatorsTests.class));
-		addTest(new TestSuite(StringPlusAssignmentOpTests.class));
-
-		addTest(new TestSuite(XfixOperatorsTests.class));
-
-		addTest(new TestSuite(NumericTypesCastTests.class));
-
-		addTest(new TestSuite(FieldValueTests.class));
-		addTest(new TestSuite(QualifiedFieldValueTests.class));
-		addTest(new TestSuite(StaticFieldValueTests.class));
-		addTest(new TestSuite(StaticFieldValueTests2.class));
-		addTest(new TestSuite(QualifiedStaticFieldValueTests.class));
-		addTest(new TestSuite(QualifiedStaticFieldValueTests2.class));
-
-		addTest(new TestSuite(ArrayAllocationTests.class));
-		addTest(new TestSuite(ArrayAssignementTests.class));
-		addTest(new TestSuite(ArrayValueTests.class));
-
-		addTest(new TestSuite(NestedTypeFieldValue_54.class));
-		addTest(new TestSuite(NestedTypeFieldValue_58.class));
-		addTest(new TestSuite(NestedTypeFieldValue_83.class));
-		addTest(new TestSuite(NestedTypeFieldValue_109.class));
-		addTest(new TestSuite(NestedTypeFieldValue_134.class));
-		addTest(new TestSuite(NestedTypeFieldValue_144.class));
-		addTest(new TestSuite(NestedTypeFieldValue_168.class));
-		addTest(new TestSuite(NestedTypeFieldValue_192.class));
-		addTest(new TestSuite(NestedTypeFieldValue_203.class));
-		addTest(new TestSuite(NestedTypeFieldValue_241.class));
-		addTest(new TestSuite(NestedTypeFieldValue_268.class));
-		addTest(new TestSuite(NestedTypeFieldValue_293.class));
-		addTest(new TestSuite(NestedTypeFieldValue_304.class));
-		addTest(new TestSuite(NestedTypeFieldValue_343.class));
-		addTest(new TestSuite(NestedTypeFieldValue_370.class));
-		addTest(new TestSuite(NestedTypeFieldValue_395.class));
-		addTest(new TestSuite(NestedTypeFieldValue_406.class));
-		addTest(new TestSuite(NestedTypeFieldValue_444.class));
-		addTest(new TestSuite(NestedTypeFieldValue_470.class));
-		addTest(new TestSuite(NestedTypeFieldValue_495.class));
-		addTest(new TestSuite(NestedTypeFieldValue_506.class));
-		addTest(new TestSuite(NestedTypeFieldValue_518.class));
-		addTest(new TestSuite(NestedTypeFieldValue_555.class));
-		addTest(new TestSuite(NestedTypeFieldValue_581.class));
-		addTest(new TestSuite(NestedTypeFieldValue_605.class));
-		addTest(new TestSuite(NestedTypeFieldValue_615.class));
-		addTest(new TestSuite(NestedTypeFieldValue_653.class));
-		addTest(new TestSuite(NestedTypeFieldValue_679.class));
-		addTest(new TestSuite(NestedTypeFieldValue_703.class));
-		addTest(new TestSuite(NestedTypeFieldValue_713.class));
-		addTest(new TestSuite(NestedTypeFieldValue_728.class));
-
-		addTest(new TestSuite(TypeHierarchy_21_1.class));
-		addTest(new TestSuite(TypeHierarchy_21_2.class));
-		addTest(new TestSuite(TypeHierarchy_21_3.class));
-		addTest(new TestSuite(TypeHierarchy_21_4.class));
-		addTest(new TestSuite(TypeHierarchy_21_5.class));
-		addTest(new TestSuite(TypeHierarchy_21_6.class));
-		addTest(new TestSuite(TypeHierarchy_57_1.class));
-		addTest(new TestSuite(TypeHierarchy_57_2.class));
-		addTest(new TestSuite(TypeHierarchy_57_3.class));
-		addTest(new TestSuite(TypeHierarchy_108_1.class));
-		addTest(new TestSuite(TypeHierarchy_135_1.class));
-		
-		addTest(new TestSuite(TestsNumberLiteral.class));
+//		addTest(new TestSuite(TestsNumberLiteral.class));
 
 	}
 	

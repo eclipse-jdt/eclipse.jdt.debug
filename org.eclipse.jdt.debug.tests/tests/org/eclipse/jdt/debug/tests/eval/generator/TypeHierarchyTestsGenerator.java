@@ -29,10 +29,12 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	static int BC= 9;
 	static int ICC= 10;
 	static int CC= 11;
-	
 	static int N_A= 12;
 	static int N_B= 13;
 	static int N_C= 14;
+	
+	static int SUPER_A= 15;
+	static int SUPER_B= 16;
 	
 	static int M1= 0;
 	static int M2= 1;
@@ -46,17 +48,17 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 	
 	static String[] qualifiers= new String[] {
 		"iaa", "iab", "iac",     "aa",      "ab",      "ac", "ibb", "ibc", "bb", "bc",
-		"icc", "cc",  "new A()", "new B()", "new C()" };
+		"icc", "cc",  "new A()", "new B()", "new C()" ,"super" , "super"};
 		
 	static String[] methods= new String[] {"m1", "m2", "s2", "m3", "m4", "s4", "m5", "m6", "s6"};
 	
 	static int[] staticLevel= new int[] {
 		0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-		2, 2, 0, 1, 2};
+		2, 2, 0, 1, 2, 0, 1};
 
 	static int[] instanceLevel= new int[] {
 		0, 1, 2, 0, 1, 2, 1, 2, 1, 2,
-		2, 2, 0, 1, 2};
+		2, 2, 0, 1, 2, 0, 1};
 		
 	static int[][] values= new int[][] {
 		{ 1, 2, 9},
@@ -143,7 +145,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		createTestQualifier(N_C, M6, code);
 		createTestQualifier(N_C, S6, code);
 
-		createJavaFile(code, 135, 1, 1);
+		createJavaFile(code, 146, 1, 1);
 	}
 	
 	public static void gen_aa_testA() throws Exception {
@@ -151,7 +153,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestA(code, AA);
 		
-		createJavaFile(code, 21, 2, 1);
+		createJavaFile(code, 32, 2, 1);
 	}
 
 	public static void gen_ab_testA() throws Exception {
@@ -159,7 +161,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestA(code, AB);
 		
-		createJavaFile(code, 21, 2, 2);
+		createJavaFile(code, 32, 2, 2);
 	}
 
 	public static void gen_ac_testA() throws Exception {
@@ -167,7 +169,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestA(code, AC);
 		
-		createJavaFile(code, 21, 2, 3);
+		createJavaFile(code, 32, 2, 3);
 	}
 
 	public static void gen_bb_testA() throws Exception {
@@ -175,7 +177,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestA(code, BB);
 		
-		createJavaFile(code, 21, 2, 4);
+		createJavaFile(code, 32, 2, 4);
 	}
 
 	public static void gen_bc_testA() throws Exception {
@@ -183,7 +185,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestA(code, BC);
 		
-		createJavaFile(code, 21, 2, 5);
+		createJavaFile(code, 32, 2, 5);
 	}
 
 	public static void gen_cc_testA() throws Exception {
@@ -191,7 +193,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestA(code, CC);
 		
-		createJavaFile(code, 21, 2, 6);
+		createJavaFile(code, 32, 2, 6);
 	}
 
 	public static void gen_bb_testB() throws Exception {
@@ -199,7 +201,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestB(code, BB);
 		
-		createJavaFile(code, 57, 2, 1);
+		createJavaFile(code, 68, 2, 1);
 	}
 
 	public static void gen_bc_testB() throws Exception {
@@ -207,7 +209,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestB(code, BC);
 		
-		createJavaFile(code, 57, 2, 2);
+		createJavaFile(code, 68, 2, 2);
 	}
 
 	public static void gen_cc_testB() throws Exception {
@@ -215,7 +217,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestB(code, CC);
 		
-		createJavaFile(code, 57, 2, 3);
+		createJavaFile(code, 68, 2, 3);
 	}
 
 	public static void gen_cc_testC() throws Exception {
@@ -223,7 +225,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 
 		createTest_TestC(code, CC);
 		
-		createJavaFile(code, 108, 2, 1);
+		createJavaFile(code, 119, 2, 1);
 	}
 
 	//-------------	
@@ -241,6 +243,8 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		createTest(instanceLevel[qualifier], M3, code);
 		createTest(instanceLevel[qualifier], M4, code);
 		createTest(1, S4, code);
+		createTestQualifier(SUPER_A, M1, code);
+		createTestQualifier(SUPER_A, M2, code);
 	}
 
 	public static void createTest_TestC(StringBuffer code, int qualifier) {
@@ -253,6 +257,10 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		createTest(instanceLevel[qualifier], M5, code);
 		createTest(instanceLevel[qualifier], M6, code);
 		createTest(2, S6, code);
+		createTestQualifier(SUPER_B, M1, code);
+		createTestQualifier(SUPER_B, M2, code);
+		createTestQualifier(SUPER_B, M3, code);
+		createTestQualifier(SUPER_B, M4, code);
 	}
 
 	//-------------
@@ -295,6 +303,15 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		StringBuffer code= new StringBuffer();
 		
 		code.append("package org.eclipse.jdt.debug.tests.eval;\n\n");
+		code.append("/**********************************************************************\n");
+		code.append("Copyright (c) 2000, 2002 IBM Corp. and others.\n");
+		code.append("All rights reserved. This program and the accompanying materials\n");
+		code.append("are made available under the terms of the Common Public License v0.5\n");
+		code.append("which accompanies this distribution, and is available at\n");
+		code.append("http://www.eclipse.org/legal/cpl-v05.html\n\n");
+		code.append("Contributors:\n");
+		code.append("    IBM Corporation - Initial implementation\n");
+		code.append("*********************************************************************/\n\n");
 		code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n\n");
 		code.append("import org.eclipse.debug.core.model.IValue;\n");
 		code.append("import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n\n");
