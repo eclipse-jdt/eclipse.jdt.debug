@@ -5,34 +5,19 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
  
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
@@ -54,12 +39,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Launch configuration tab for local java launches that presents the various paths (bootpath,
@@ -328,87 +307,43 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	
 	protected void updateConfigFromPathList(List listWidget) {
 		if (getWorkingCopy() != null) {
-			try {
-				String xmlString = getListEntriesAsXML(listWidget);
-				String attributeID = (String) listWidget.getData();
-				getWorkingCopy().setAttribute(attributeID, xmlString);			
-				refreshStatus();
-			} catch (IOException ioe) {
-			}
+			String[] items = listWidget.getItems();
+			java.util.List listDataStructure = createListFromArray(items);
+			String attributeID = (String) listWidget.getData();
+			getWorkingCopy().setAttribute(attributeID, listDataStructure);			
+			refreshStatus();
 		}
 	}
 	
-	/**
-	 * Generate & return XML that marks up all of the entries in the specified List widget.
-	 */
-	protected String getListEntriesAsXML(List listWidget) throws IOException {
-		Document doc = new DocumentImpl();
-		Element configRootElement = doc.createElement(PATH_XML_ENTRIES); 
-		doc.appendChild(configRootElement);
-		
-		// add all children to the document
-		String[] listItems = listWidget.getItems();
-		for (int i = 0; i < listItems.length; i++) {
-			String item = listItems[i];
-			Element element = doc.createElement(PATH_XML_ENTRY); 
-			element.setAttribute(PATH_XML_PATH, item); 
-			configRootElement.appendChild(element);
+	protected java.util.List createListFromArray(Object[] array) {
+		java.util.List list = new ArrayList(array.length);
+		for (int i = 0; i < array.length; i++) {
+			list.add(array[i]);
 		}
-
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return writer.toString();							
+		return list;
 	}
-
+	
 	protected void updateConfigFromEnvTable(Table tableWidget) {
 		if (getWorkingCopy() != null) {
-			try {
-				String xmlString = getTableEntriesAsXML(tableWidget);
-				String attributeID = (String) tableWidget.getData();
-				getWorkingCopy().setAttribute(attributeID, xmlString);			
-				refreshStatus();
-			} catch (IOException ioe) {
-			}
+			TableItem[] items = tableWidget.getItems();
+			Map map = createMapFromTableItems(items);
+			String attributeID = (String) tableWidget.getData();
+			getWorkingCopy().setAttribute(attributeID, map);			
+			refreshStatus();
 		}
 	}
 	
-	/**
-	 * Generate & return XML that marks up all of the entries in the specified Table widget.
-	 */
-	protected String getTableEntriesAsXML(Table tableWidget) throws IOException {
-		Document doc = new DocumentImpl();
-		Element configRootElement = doc.createElement(ENV_XML_ENTRIES); 
-		doc.appendChild(configRootElement);
-		
-		// add all children to the document
-		TableItem[] tableItems = tableWidget.getItems();		
-		for (int i = 0; i < tableItems.length; i++) {
-			TableItem item = tableItems[i];
-			Element element = doc.createElement(ENV_XML_ENTRY); 
-			element.setAttribute(ENV_XML_NAME, item.getText(0)); 
-			element.setAttribute(ENV_XML_VALUE, item.getText(1)); 
-			configRootElement.appendChild(element);
-		}
-
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return writer.toString();							
+	protected Map createMapFromTableItems(TableItem[] items) {
+		Map map = new HashMap(items.length);
+		for (int i = 0; i < items.length; i++) {
+			TableItem item = items[i];
+			String key = item.getText(0);
+			String value = item.getText(1);
+			map.put(key, value);
+		}		
+		return map;
 	}
-
+	
 	/**
 	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
 	 */
@@ -436,170 +371,61 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	}
 	
 	protected void updateBootPathFromConfig(ILaunchConfiguration config) {
-		String bootpath = null;
+		java.util.List bootpath = null;
 		try {
-			bootpath = config.getAttribute(JavaDebugUI.BOOTPATH_ATTR, null);
-			Element root = getRootNodeFromAttributeString(bootpath);		
-			if (root != null) {
-				updatePathListFromXML(root, fBootPathList);
-			}
+			bootpath = config.getAttribute(JavaDebugUI.BOOTPATH_ATTR, (java.util.List)null);
+			updatePathList(bootpath, fBootPathList);
 		} catch (CoreException ce) {			
 		}
 	}
 	
 	protected void updateClassPathFromConfig(ILaunchConfiguration config) {
-		String classpath = null;
+		java.util.List classpath = null;
 		try {
-			classpath = config.getAttribute(JavaDebugUI.CLASSPATH_ATTR, null);
-			Element root = getRootNodeFromAttributeString(classpath);		
-			if (root != null) {
-				updatePathListFromXML(root, fClassPathList);
-			}
+			classpath = config.getAttribute(JavaDebugUI.CLASSPATH_ATTR, (java.util.List)null);
+			updatePathList(classpath, fClassPathList);
 		} catch (CoreException ce) {			
-		}		
+		}
 	}
 	
 	protected void updateExtensionPathFromConfig(ILaunchConfiguration config) {
-		String extpath = null;
+		java.util.List extpath = null;
 		try {
-			extpath = config.getAttribute(JavaDebugUI.EXTPATH_ATTR, null);
-			Element root = getRootNodeFromAttributeString(extpath);			
-			if (root != null) {
-				updatePathListFromXML(root, fExtensionPathList);					
-			}
+			extpath = config.getAttribute(JavaDebugUI.EXTPATH_ATTR, (java.util.List)null);
+			updatePathList(extpath, fExtensionPathList);
 		} catch (CoreException ce) {			
-		}				
+		}
 	}
 	
 	protected void updateEnvVarsFromConfig(ILaunchConfiguration config) {
-		String envVars = null;
+		Map envVars = null;
 		try {
-			envVars = config.getAttribute(JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR, null);
-			Element root = getRootNodeFromAttributeString(envVars);
-			if (root != null) {
-				updateEnvTableFromXML(root, fEnvTable);
-			}
+			envVars = config.getAttribute(JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR, (Map)null);
+			updateTable(envVars, fEnvTable);
 		} catch (CoreException ce) {
 		}
 	}
 	
-	/**
-	 * Parse the given String as an XML document and return its root node.
-	 */
-	protected Element getRootNodeFromAttributeString(String attString) throws CoreException {
-		if ((attString == null) || (attString.length() < 1)) {
-			return null;
+	protected void updatePathList(java.util.List listStructure, List listWidget) {
+		if (listStructure == null) {
+			return;
 		}
-
-		ByteArrayInputStream stream = null;
-		try {
-			stream = new ByteArrayInputStream(attString.getBytes());
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Element root = parser.parse(new InputSource(stream)).getDocumentElement();
-			return root;
-		} catch (ParserConfigurationException pce) {
-			throw createDebugException(MessageFormat.format("{0} occurred while reading attribute XML", new String[]{pce.toString()}), pce);
-		} catch (SAXException se) {
-			throw createDebugException(MessageFormat.format("{0} occurred while reading attribute XML", new String[]{se.toString()}), se);
-		} catch (IOException ioe) {
-			throw createDebugException(MessageFormat.format("{0} occurred while reading attribute XML", new String[]{ioe.toString()}), ioe);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException ioe) {
-					throw createDebugException(MessageFormat.format("{0} occurred while reading attribute XML", new String[]{ioe.toString()}), ioe);					
-				}
-			}
-		}
+		String[] stringArray = new String[listStructure.size()];
+		listStructure.toArray(stringArray);
+		listWidget.setItems(stringArray);
 	}
 	
-	/**
-	 * Set the items of the specified List widget to the path attributes contained in the 
-	 * child elements of the specified XML root node.
-	 */
-	protected void updatePathListFromXML(Element root, List listWidget) throws CoreException {
-		if (!root.getNodeName().equalsIgnoreCase(PATH_XML_ENTRIES)) { //$NON-NLS-1$
-			throw createDebugException("Invalid path specification - no 'pathEntries' root node",null);
+	protected void updateTable(Map map, Table tableWidget) {
+		if (map == null) {
+			return;
 		}
-		
-		NodeList nodeList = root.getChildNodes();
-		int length = nodeList.getLength();
-		ArrayList pathList = new ArrayList(length);
-		for (int i = 0; i < length; ++i) {
-			Node node = nodeList.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element) node;
-				String nodeName = entry.getNodeName();
-				if (!nodeName.equalsIgnoreCase(PATH_XML_ENTRY)) { //$NON-NLS-1$
-					throw createDebugException("Invalid path specification - " + nodeName + " unrecognized node", null);
-				}
-				String path = entry.getAttribute(PATH_XML_PATH); //$NON-NLS-1$
-				if (path == null) {
-					throw createDebugException("Invalid path specification - no 'path' attribute found", null);
-				}
-				pathList.add(path);
-			}
-		}
-		String[] pathArray = new String[pathList.size()];
-		pathList.toArray(pathArray);
-		listWidget.setItems(pathArray);
-	}
-	
-	/**
-	 * Set the items of the specified Table widget to the name value pairs contained in the
-	 * child elements of the specified XML root node.
-	 */
-	protected void updateEnvTableFromXML(Element root, Table tableWidget) throws CoreException {
-		if (!root.getNodeName().equalsIgnoreCase(ENV_XML_ENTRIES)) { //$NON-NLS-1$
-			throw createDebugException("Invalid env var specification - no 'envEntries' root node",null);
-		}
-		
-		NodeList nodeList = root.getChildNodes();
-		int length = nodeList.getLength();
-		HashMap envMap = new HashMap(length);
-		for (int i = 0; i < length; ++i) {
-			Node node = nodeList.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element) node;
-				String nodeName = entry.getNodeName();
-				if (!nodeName.equalsIgnoreCase(ENV_XML_ENTRY)) { //$NON-NLS-1$
-					throw createDebugException("Invalid env var specification - " + nodeName + " unrecognized node", null);
-				}
-				String name = entry.getAttribute(ENV_XML_NAME); //$NON-NLS-1$
-				if (name == null) {
-					throw createDebugException("Invalid env var specification - no 'name' attribute found", null);
-				}
-				String value = entry.getAttribute(ENV_XML_VALUE); //$NON-NLS-1$
-				if (value == null) {
-					throw createDebugException("Invalid env var specification - no 'value' attribute found", null);
-				}
-				envMap.put(name, value);
-			}
-		}
-		tableWidget.removeAll();
-		Iterator iterator = envMap.keySet().iterator();
+		Iterator iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
-			String value = (String) envMap.get(key);
+			String value = (String) map.get(key);
 			TableItem tableItem = new TableItem(tableWidget, SWT.NONE);
-			tableItem.setText(new String[] {key, value});
+			tableItem.setText(new String[] {key, value});			
 		}
-	}
-	
-	/**
-	 * Convenience method to return an instance of DebugException configured with the 
-	 * specified message and (possible <code>null</code>) wrappered exception.
-	 */
-	protected DebugException createDebugException(String message, Exception wrappedException) {
-		return new DebugException(
-					new Status(
-					 Status.ERROR, JDIDebugUIPlugin.getPluginId(),
-					 DebugException.REQUEST_FAILED, message, wrappedException 
-					)
-				);		
 	}
 	
 	protected void setBatchUpdate(boolean update) {

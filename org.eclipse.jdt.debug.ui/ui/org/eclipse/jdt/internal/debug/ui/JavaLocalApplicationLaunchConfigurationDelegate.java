@@ -8,6 +8,8 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -67,6 +69,10 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	private static final QualifiedName fgQualNameVMTypeId = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_INSTALL_TYPE_ATTR);
 	private static final QualifiedName fgQualNameVMId = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_INSTALL_ATTR);
 	private static final QualifiedName fgQualNameBuild = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR);
+	private static final QualifiedName fgQualNameBootpath = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.BOOTPATH_ATTR);
+	private static final QualifiedName fgQualNameClasspath = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.CLASSPATH_ATTR);
+	private static final QualifiedName fgQualNameExtpath = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.EXTPATH_ATTR);
+	private static final QualifiedName fgQualNameEnvVars = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR);
 
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -314,7 +320,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {
 		
 		// Java project
-		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, null);
+		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
 			abort("No project specified", null, JavaDebugUI.UNSPECIFIED_PROJECT);
 		}			
@@ -324,7 +330,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 		
 		// Main type
-		String mainTypeName = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, null);
+		String mainTypeName = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)null);
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_not_specified._1"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
@@ -339,7 +345,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 				
 		// VM install type
-		String vmInstallTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
+		String vmInstallTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, (String)null);
 		if (vmInstallTypeId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
 		}		
@@ -349,7 +355,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 		
 		// VM
-		String vmInstallId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, null);
+		String vmInstallId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, (String)null);
 		if (vmInstallId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$
 		}
@@ -363,7 +369,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 		
 		// Working directory
-		String workingDir = configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, null);
+		String workingDir = configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, (String)null);
 		if ((workingDir != null) && (workingDir.trim().length() > 0)) {
 			File dir = new File(workingDir);
 			if (!dir.isDirectory()) {
@@ -371,8 +377,8 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			}
 		}
 		
+		// If we were just verifying, we're done
 		if (!doLaunch) {
-			// just verify
 			return null;
 		}
 		
@@ -384,18 +390,33 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			}			
 		}
 		
+		// Program & VM args
 		String pgmArgs = configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, "");	//$NON-NLS-1$
 		String vmArgs = configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, ""); //$NON-NLS-1$
-		ExecutionArguments args = new ExecutionArguments(vmArgs, pgmArgs);			
-		String[] classpath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
-		String bootpath = configuration.getAttribute(JavaDebugUI.BOOTPATH_ATTR, null);
-
+		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
+		
+		// Classpath
+		List classpathList = configuration.getAttribute(JavaDebugUI.CLASSPATH_ATTR, (List)null);
+		String[] classpath;
+		if (classpathList == null) {
+			classpath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
+		} else {
+			classpath = new String[classpathList.size()];
+			classpathList.toArray(classpath);
+		}
+		
+		// Create VM config
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainType.getFullyQualifiedName(), classpath);
-		runConfig.setProgramArguments(args.getProgramArgumentsArray());
-		runConfig.setVMArguments(args.getVMArgumentsArray());
+		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
+		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(workingDir);
-		if (bootpath != null) {
-			runConfig.setBootClassPath(new String[]{bootpath});
+
+		// Bootpath
+		List bootpathList = configuration.getAttribute(JavaDebugUI.BOOTPATH_ATTR, (List)null);
+		if (bootpathList != null) {
+			String[] bootpath = new String[bootpathList.size()];
+			bootpathList.toArray(bootpath);
+			runConfig.setBootClassPath(bootpath);
 		}
 		
 		// Get the configuration's container as a String
@@ -403,9 +424,10 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		IPath containerPath = location.removeLastSegments(1);
 		
 		// Get the configuration's perspective id's
-		String runPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
-		String debugPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+		String runPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
+		String debugPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 				
+		// Launch the configuration
 		VMRunnerResult result = runner.run(runConfig);
 		
 		// Persist config info as default values on the launched resource

@@ -277,7 +277,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {
 		
 		// Java project
-		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, null);
+		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
 			abort("No project specified", null, JavaDebugUI.UNSPECIFIED_PROJECT);
 		}			
