@@ -37,6 +37,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -364,7 +365,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			try {
 				return handleConditionalBreakpointEvent(event, thread, target);
 			} catch (CoreException exception) {
-				// log error
+				JDIDebugPlugin.log(exception);
 				return !suspendForEvent(event, thread);
 			}
 		} else {
@@ -380,7 +381,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			String condition = getCondition();
 			return isConditionEnabled() && condition != null && (condition.length() > 0);
 		} catch (CoreException exception) {
-			// log error
+			JDIDebugPlugin.log(exception);
 			return false;
 		}
 	}
@@ -476,7 +477,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		Object sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement instanceof IJavaElement) {
 			return ((IJavaElement) sourceElement).getJavaProject();
-		}			
+		} else if (sourceElement instanceof IResource) {
+			IJavaProject project = JavaCore.create(((IResource)sourceElement).getProject());
+			if (project.exists()) {
+				return project;
+			}
+		}
 		return null;
 	}
 	
