@@ -72,8 +72,8 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#getMatchContext()
      */
-    public String getMatchContext() {
-        return "line";
+    public int getMatchContext() {
+        return IPatternMatchListener.LINE_MATCH;
     }
     
     /* (non-Javadoc)

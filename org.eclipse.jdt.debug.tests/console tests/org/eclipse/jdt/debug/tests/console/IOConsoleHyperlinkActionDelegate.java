@@ -56,8 +56,8 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
                 return 0;
             }
             
-            public String getMatchContext() {
-                return "line";
+            public int getMatchContext() {
+                return IPatternMatchListener.LINE_MATCH;
             }
 
             public void connect(IConsole console) {
