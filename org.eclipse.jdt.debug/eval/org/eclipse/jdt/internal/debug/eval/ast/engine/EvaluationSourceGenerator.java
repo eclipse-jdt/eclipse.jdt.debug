@@ -134,9 +134,9 @@ public class EvaluationSourceGenerator {
 		return fCodeSnippet;
 	}
 
-	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber) throws DebugException {
+	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAnInstanceMethod) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAnInstanceMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		
 		String sourceRes= visitor.getSource();
@@ -177,7 +177,7 @@ public class EvaluationSourceGenerator {
 				String baseSource= getSourceFromFrame(frame);
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true);
+					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true, false);
 				} 
 				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
@@ -203,7 +203,7 @@ public class EvaluationSourceGenerator {
 				String baseSource= getTypeSourceFromProject(thisObject.getJavaType().getName(), javaProject);
 				int lineNumber= getLineNumber((JDIObjectValue) thisObject);
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource, lineNumber, true);
+					createEvaluationSourceFromSource(baseSource, lineNumber, true, true);
 				}
 				if (fSource == null) {
 					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);

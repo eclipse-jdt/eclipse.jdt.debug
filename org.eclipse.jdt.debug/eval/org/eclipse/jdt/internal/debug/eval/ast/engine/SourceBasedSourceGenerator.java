@@ -92,6 +92,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private boolean fIsInAStaticMethod;
 	
+	private boolean fCreateInAnInstanceMethod;
+	
 	private boolean fEvaluateNextEndTypeDeclaration;
 	
 	private CompilationUnit fUnit;
@@ -110,7 +112,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private int fRunMethodStartOffset;
 	private int fRunMethodLength;
 	
-	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	/**
+	 * if the <code>createInAnInstanceMethod</code> flag is set, the method created
+	 * which contains the code snippet is an no-static method, even if <code>position</code>
+	 * is in a static method.
+	 */
+	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, boolean createInAnInstanceMethod, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
 		fPosition= position;
@@ -119,6 +126,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fCodeSnippet= codeSnippet;
 		fIsInAStaticMethod= false;
 		fIsLineNumber= isLineNumber;
+		fCreateInAnInstanceMethod= createInAnInstanceMethod;
 	}
 	
 	/**
@@ -166,7 +174,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	}
 	
 	private boolean isInAStaticMethod() {
-		return fIsInAStaticMethod;
+		return fIsInAStaticMethod && ! fCreateInAnInstanceMethod;
 	}
 	
 	private void setIsInAStaticMethod(boolean value) {
