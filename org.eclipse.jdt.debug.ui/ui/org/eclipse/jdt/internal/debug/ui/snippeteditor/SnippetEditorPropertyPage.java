@@ -22,12 +22,7 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
-import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -52,49 +47,49 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	private Proxy fProxy;
 
 	class Proxy implements ILaunchConfigurationDialog {
-		/**
-		 * @see ILaunchConfigurationDialog#generateName(String)
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
 		 */
 		public String generateName(String name) {
 			return null;
 		}
 
-		/**
-		 * @see ILaunchConfigurationDialog#getMode()
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getMode()
 		 */
 		public String getMode() {
 			return ILaunchManager.DEBUG_MODE;
 		}
 
-		/**
-		 * @see ILaunchConfigurationDialog#getTabs()
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getTabs()
 		 */
 		public ILaunchConfigurationTab[] getTabs() {
 			return new ILaunchConfigurationTab[] {fWorkingDirBlock};
 		}
 
-		/**
-		 * @see ILaunchConfigurationDialog#getActiveTab()
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getActiveTab()
 		 */
 		public ILaunchConfigurationTab getActiveTab() {
 			return fWorkingDirBlock;
 		}
 
-		/**
-		 * @see ILaunchConfigurationDialog#setName(String)
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setName(java.lang.String)
 		 */
 		public void setName(String name) {
 		}
 
-		/**
-		 * @see ILaunchConfigurationDialog#updateButtons()
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateButtons()
 		 */
 		public void updateButtons() {
 			
 		}
 
-		/**
-		 * @see ILaunchConfigurationDialog#updateMessage()
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateMessage()
 		 */
 		public void updateMessage() {
 			setValid(isValid());
@@ -102,27 +97,27 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 			setErrorMessage(getErrorMessage());
 		}
 
-		/**
-		 * @see IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 		 */
 		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) {
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
 		 */
 		public void setActiveTab(ILaunchConfigurationTab tab) {
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
 		 */
 		public void setActiveTab(int index) {
 		}
 	}
 		
-	/**
-	 * @see PreferencePage#createContents(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -178,8 +173,8 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		return (IFile)getElement();
 	}
 	
-	/**
-	 * @see PreferencePage#performDefaults()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
@@ -191,15 +186,15 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fVMArgumentsBlock.initializeFrom(fWorkingCopy);
 	}
 	
-	/**
-	 * @see IPreferencePage#isValid()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#isValid()
 	 */
 	public boolean isValid() {
 		return fWorkingDirBlock.isValid(fConfig);
 	}
 
-	/**
-	 * @see IDialogPage#getErrorMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
 	 */
 	public String getErrorMessage() {
 		String message = fWorkingDirBlock.getErrorMessage();
@@ -209,8 +204,8 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		return message;
 	}
 
-	/**
-	 * @see IMessageProvider#getMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
 	 */
 	public String getMessage() {
 		String message = fWorkingDirBlock.getMessage();
@@ -220,8 +215,8 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		return message;
 	}
 
-	/**
-	 * @see IPreferencePage#performOk()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		fWorkingDirBlock.performApply(fWorkingCopy);
