@@ -13,11 +13,7 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 * and the watchpoint is disabled, enable the watchpoint. If both access and 
 	 * modification are false, disable the watchpoint.
 	 */
-	public void setAccess(boolean access);	
-	/**
-	 * Toggle the access attribute of this watchpoint
-	 */
-	public void toggleAccess();
+	public void setAccess(boolean access);
 	/**
 	 * Returns whether this watchpoint is a modification watchpoint
 	 */		
@@ -28,10 +24,6 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 * modification are false, disable the watchpoint.
 	 */
 	public void setModification(boolean modification);	
-	/**
-	 * Toggle the modification attribute of this watchpoint
-	 */	
-	public void toggleModification();
 	/**
 	 * Generate the field associated with this watchpoint
 	 */

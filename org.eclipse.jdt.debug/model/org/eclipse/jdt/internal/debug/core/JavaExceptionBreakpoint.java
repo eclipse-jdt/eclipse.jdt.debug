@@ -228,18 +228,13 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * state (enabled with caught and uncaught both disabled)
 	 * is ambiguous.
 	 */
-	public void enable() {
-		if (!(isCaught() || isUncaught())) {
-			setDefaultCaughtAndUncaught();
+	public void setEnabled(boolean enabled) throws CoreException {
+		super.setEnabled(enabled);
+		if (isEnabled()) {
+			if (!(isCaught() || isUncaught())) {
+				setDefaultCaughtAndUncaught();
+			}
 		}
-		super.enable();
-	}	
-	
-	/**
-	 * @see IJavaExceptionBreakpoint#toggleCaught()
-	 */
-	public void toggleCaught() throws CoreException {
-		setCaught(!isCaught());
 	}
 	
 	/**
@@ -250,30 +245,23 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * Sets the <code>CAUGHT</code> attribute of the given breakpoint.
+	 * @see IJavaExceptionBreakpoint#setCaught(boolean)
 	 */
-	private void setCaught(boolean caught) throws CoreException {
+	public void setCaught(boolean caught) throws CoreException {
 		if (caught == isCaught()) {
 			return;
 		}
 		try {
 			setBooleanAttribute(IJavaDebugConstants.CAUGHT, caught);
 			if (caught && !isEnabled()) {
-				enable();
+				setEnabled(true);
 			} else if (!(caught || isUncaught())) {
-				disable();
+				setEnabled(false);
 			}
 		} catch (CoreException ce) {
 			logError(ce);
 		}			
 	}
-	
-	/**
-	 * @see IJavaExceptionBreakpoint#toggleUncaught()
-	 */
-	public void toggleUncaught() throws CoreException {
-		setUncaught(!isUncaught());
-	}	
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#isUncaught()
@@ -283,9 +271,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}	
 	
 	/**
-	 * Sets the <code>UNCAUGHT</code> attribute of the given breakpoint.
+	 * @see IJavaExceptionBreakpoint#setUncaught(boolean)
 	 */
-	private void setUncaught(boolean uncaught) throws CoreException {
+	public void setUncaught(boolean uncaught) throws CoreException {
 	
 		if (uncaught == isUncaught()) {
 			return;
@@ -293,9 +281,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		try {
 			setBooleanAttribute(IJavaDebugConstants.UNCAUGHT, uncaught);
 			if (uncaught && !isEnabled()) {
-				enable();
+				setEnabled(true);
 			} else if (!(uncaught || isCaught())) {
-				disable();
+				setEnabled(false);
 			}
 		} catch (CoreException ce) {
 			logError(ce);
@@ -310,17 +298,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * @see IJavaExceptionBreakpont#toggleChecked()
+	 * @see IJavaExceptionBreakpoint#setChecked(boolean)
 	 */
-	public void toggleChecked() throws CoreException {
-		setChecked(!isChecked());
-	}
-	
-	/**
-	 * Sets the <code>CHECKED</code> attribute of the given breakpoint.
-	 */
-	private void setChecked(boolean checked) throws CoreException {
-		setBooleanAttribute(IJavaDebugConstants.CHECKED, checked);	
+	public void setChecked(boolean checked) throws CoreException {
+		if (checked != isChecked()) {
+			setBooleanAttribute(IJavaDebugConstants.CHECKED, checked);	
+		}
 	}	
 	
 	/**

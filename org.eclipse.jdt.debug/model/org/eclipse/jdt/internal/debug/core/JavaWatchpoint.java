@@ -364,11 +364,13 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * state (enabled with access and modification both disabled)
 	 * is ambiguous.
 	 */
-	public void enable() {
-		if (!(isAccess() || isModification())) {
-			setDefaultAccessAndModification();
+	public void setEnabled(boolean enabled) throws CoreException {
+		super.setEnabled(enabled);
+		if (isEnabled()) {
+			if (!(isAccess() || isModification())) {
+				setDefaultAccessAndModification();
+			}
 		}
-		super.enable();
 	}
 	
 	/**
@@ -376,13 +378,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	public boolean isAccess() {
 		return getAttribute(IJavaDebugConstants.ACCESS, false);
-	}
-	
-	/**
-	 * @see IJavaWatchpoint#toggleAccess()
-	 */
-	public void toggleAccess() {
-		setAccess(!isAccess());
 	}
 	
 	/**
@@ -395,9 +390,9 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		try {
 			setAttribute(IJavaDebugConstants.ACCESS, access);
 			if (access && !isEnabled()) {
-				enable();
+				setEnabled(true);
 			} else if (!(access || isModification())) {
-				disable();
+				setEnabled(false);
 			}
 		} catch (CoreException ce) {
 			logError(ce);
@@ -412,13 +407,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#toggleModification()
-	 */
-	public void toggleModification() {
-		setModification(!isModification());
-	}
-	
-	/**
 	 * @see IJavaWatchpoint#setModification(boolean)
 	 */
 	public void setModification(boolean modification) {
@@ -428,9 +416,9 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		try {
 			setAttribute(IJavaDebugConstants.MODIFICATION, modification);
 			if (modification && !isEnabled()) {
-				enable();
+				setEnabled(true);
 			} else if (!(modification || isAccess())) {
-				disable();
+				setEnabled(false);
 			}
 		} catch (CoreException ce) {
 			logError(ce);

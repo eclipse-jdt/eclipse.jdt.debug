@@ -348,7 +348,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		if (requestCount != null) {
 			try {
 				request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.TRUE);
-				disable();
+				setEnabled(false);
 				// make a note that we auto-disabled this breakpoint.
 				setExpired(true);
 			} catch (CoreException ce) {

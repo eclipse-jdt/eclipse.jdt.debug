@@ -345,7 +345,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 					// make a note that we auto-disabled the breakpoint
 					// order is important here...see methodEntryChanged
 					setExpired(true);
-					disable();
+					setEnabled(false);
 				} catch (CoreException e) {
 					logError(e);
 				}

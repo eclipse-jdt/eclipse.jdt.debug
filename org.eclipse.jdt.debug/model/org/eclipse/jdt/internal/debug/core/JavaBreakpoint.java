@@ -137,28 +137,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Enable this breakpoint
-	 */
-	public void enable() {
-		try {
-			super.enable();
-		} catch (CoreException ce) {
-			logError(ce);
-		}
-	}
-	
-	/**
-	 * Disable this breakpoint
-	 */
-	public void disable() {
-		try {
-			super.disable();
-		} catch (CoreException ce) {
-			logError(ce);
-		}
-	}
-	
-	/**
 	 * @see IJavaBreakpoint#isInstalled()
 	 */
 	public boolean isInstalled() {
