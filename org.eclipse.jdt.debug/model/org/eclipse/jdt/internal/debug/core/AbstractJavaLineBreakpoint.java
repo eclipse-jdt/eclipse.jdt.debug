@@ -50,11 +50,6 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 	}
-	
-	/**
-	 * @see IJavaLineBreakpoint#addToTarget(JDIDebugTarget)
-	 */
-	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;		
 		
 	/**
 	 * Installs a line breakpoint in the given type, returning whether successful.

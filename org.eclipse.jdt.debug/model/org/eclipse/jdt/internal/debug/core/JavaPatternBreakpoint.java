@@ -1,5 +1,6 @@
 package org.eclipse.jdt.internal.debug.core;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,8 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.ReferenceType;
+import com.sun.jdi.*;
 
 public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements IJavaPatternBreakpoint {
 
@@ -49,7 +49,7 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
 		
 		// create request to listen to class loads
-		registerRequest(target, target.createClassPrepareRequest(getPattern() + "*")); //$NON-NLS-1$
+		registerRequest(target, target.createClassPrepareRequest(getPattern()));
 		
 		// create breakpoint requests for each class currently loaded
 		List classes= target.getVM().allClasses();
@@ -62,42 +62,35 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 				type= (ReferenceType) iter.next();
 				typeName= type.name();
 				if (typeName != null && typeName.startsWith(getPattern())) {
-					try {
-						sourceName= type.sourceName();
-					} catch (AbsentInformationException aie) {
-						continue;
-					}
-					if (!isJavaSourceName(sourceName)) {
-						createRequest(target, type);
-					}
+					createRequest(target, type);
 				}
 			}
 		}
 	}
 	
-	// Non-JavaDoc
-	// Returns whether the given sourceName is a Java
-	// source name without creating extra String objects. 
-	private boolean isJavaSourceName(String sourceName) {
-		int len= sourceName.length();
-		if (len < 6) {
-			// Need at least 6 chars for "*.java"
-			return false;
+	/**
+	 * Create a breakpoint request if the source name
+	 * debug attribute matches the resource name.
+	 */
+	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		String sourceName = null;
+		try {
+			sourceName = type.sourceName();
+		} catch (VMDisconnectedException e) {
+			// do nothing - the VM exited
+			return;
+		} catch (AbsentInformationException e) {
+			// do nothing - cannot install pattern breakpoint without source name debug attribtue
+			return;
+		} catch (RuntimeException e) {
+			target.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
 		}
-		if (sourceName.charAt(len-5) != '.') {
-			return false;
+		
+		// if the debug attribute matches the resource name, install a breakpoint
+		if (ensureMarker().getResource().getName().equalsIgnoreCase(sourceName)) {
+			super.createRequest(target, type);
 		}
-		int sourceIndex= len-4;
-		char currentChar= 0;
-		char[] javaLower= {'j', 'a', 'v', 'a'};
-		char[] javaUpper= {'J', 'A', 'V', 'A'};
-		for (int i=0; i<4; i++) {
-			currentChar= sourceName.charAt(sourceIndex++);
-			if (currentChar != javaLower[i] && currentChar != javaUpper[i]) {
-				return false;
-			}
-		}
-		return true;
+		
 	}
 	
 	/**
