@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
  
 /**
  * Locates source elements in an archive (zip) in the local file system. Returns
@@ -337,6 +338,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			Element root = null;
 			DocumentBuilder parser =
 				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();

@@ -75,6 +75,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
@@ -836,6 +837,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			try {
 				InputStream stream = new FileInputStream(file);
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
 				if(!root.getNodeName().equals("libraryInfos")) { //$NON-NLS-1$
 					return;
@@ -956,6 +958,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		if (fgXMLParser == null) {
 			try {
 				fgXMLParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				fgXMLParser.setErrorHandler(new DefaultHandler());
 			} catch (ParserConfigurationException e) {
 				abort(LaunchingMessages.getString("LaunchingPlugin.33"), e); //$NON-NLS-1$
 			} catch (FactoryConfigurationError e) {

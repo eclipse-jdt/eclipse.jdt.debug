@@ -43,6 +43,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This is a container for VM definitions such as the VM definitions that are
@@ -373,6 +374,7 @@ public class VMDefinitionsContainer {
 		Element config= null;		
 		try {
 			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser.setErrorHandler(new DefaultHandler());
 			config = parser.parse(new InputSource(reader)).getDocumentElement();
 		} catch (SAXException e) {
 			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
