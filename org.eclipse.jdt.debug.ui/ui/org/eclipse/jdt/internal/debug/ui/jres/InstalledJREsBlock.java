@@ -109,6 +109,16 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	// index of column used for sorting
 	private int fSortColumn = 0;
 	
+	/**
+	 * Default JRE descriptor or <code>null</code> if none.
+	 */
+	private DefaultJREDescriptor fDefaultDescriptor = null;
+	
+	/**
+	 * Default JRE checkbox or <code>null</code> if none
+	 */
+	private Button fDefaultButton = null;
+	
 	// Make sure that VMStandin ids are unique if multiple calls to System.currentTimeMillis()
 	// happen very quickly
 	private static String fgLastUsedID;	
@@ -182,6 +192,21 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		fControl = parent;	
 		
 		GridData data;
+		
+		// display a 'use default JRE' check box
+		if (fDefaultDescriptor != null) {
+			fDefaultButton = new Button(parent, SWT.CHECK);
+			fDefaultButton.setText(fDefaultDescriptor.getDescription());
+			fDefaultButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setUseDefaultJRE(fDefaultButton.getSelection());
+				}
+			});
+			data = new GridData();
+			data.horizontalSpan = 2;
+			fDefaultButton.setLayoutData(data);
+			fDefaultButton.setFont(font);
+		}
 		
 		Label tableLabel = new Label(parent, SWT.NONE);
 		tableLabel.setText(JREMessages.getString("InstalledJREsBlock.15")); //$NON-NLS-1$
@@ -820,5 +845,37 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 			}
 		}
 		setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));	
+	}
+	
+	/**
+	 * Sets the Default JRE Descriptor for this block. When non-null, a
+	 * 'use default JRE' check box is displayed, and the descriptor is
+	 * consulted for a default VM setting when required.
+	 * 
+	 * @param descriptor default JRE descriptor
+	 */
+	public void setDefaultJREDescriptor(DefaultJREDescriptor descriptor) {
+		fDefaultDescriptor = descriptor;
+	}
+	
+	/**
+	 * Sets this control to use the 'default' JRE, as specified by the
+	 * default JRE descriptor.
+	 * 
+	 * @param useDefault
+	 */
+	public void setUseDefaultJRE(boolean useDefault) {
+		if (fDefaultDescriptor != null) {
+			if (useDefault != fDefaultButton.getSelection()) {
+				fDefaultButton.setSelection(useDefault);
+			}
+			if (useDefault) {
+				IVMInstall def = fDefaultDescriptor.getDefaultJRE();
+				if (def != null) {
+					setCheckedJRE(def);	
+				}
+			}
+			fVMList.getTable().setEnabled(!useDefault);
+		}
 	}
 }

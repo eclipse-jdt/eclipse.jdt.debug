@@ -104,6 +104,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 					name = path.segment(2);
 				} else {
 					fJREBlock.setCheckedJRE(JavaRuntime.getDefaultVMInstall());
+					fJREBlock.setUseDefaultJRE(true);
 					return;
 				}
 			}
@@ -130,6 +131,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 */
 	public void createControl(Composite parent) {
 		fJREBlock = new InstalledJREsBlock();
+		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
 		fJREBlock.createControl(parent);
 		setControl(fJREBlock.getControl());
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), getClass().getName());
