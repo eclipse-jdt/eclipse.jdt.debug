@@ -26,10 +26,10 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaApplicationWizard;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.ui.util.SWTUtil;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -37,6 +37,7 @@ import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -128,6 +129,8 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 		try {
 			final IVMRunner runner= getVMRunner(jproject, mode);
 			if (runner == null) {
+				String message= LauncherMessages.getString("JavaApplicationLauncherDelegate.invalidConfiguration"); //$NON-NLS-1$
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.getString("JavaApplicationLauncherDelegate.Launching_failed._2"), message);	 //$NON-NLS-1$
 				return false;
 			}
 			
@@ -177,7 +180,8 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 			} catch (InterruptedException e) {
 				return true;
 			} catch (InvocationTargetException e) {
-				ExceptionHandler.handle(e, JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.getString("JavaApplicationLauncherDelegate.Java_Application_Launcher_1"), LauncherMessages.getString("JavaApplicationLauncherDelegate.Launching_failed._2")); //$NON-NLS-2$ //$NON-NLS-1$
+				ExceptionHandler.handle(e, JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.getString("JavaApplicationLauncherDelegate.Java_Application_Launcher_1"),//$NON-NLS-1$
+						 LauncherMessages.getString("JavaApplicationLauncherDelegate.Launching_failed._2")); //$NON-NLS-1$ 
 				return false;
 			}
 			if (result[0] != null) {
