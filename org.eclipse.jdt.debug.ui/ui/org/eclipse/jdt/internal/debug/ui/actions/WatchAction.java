@@ -12,7 +12,6 @@ import java.util.Iterator;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -37,12 +36,10 @@ public class WatchAction extends InspectAction {
 					return;
 				}
 			}
-			if (getTargetPart().getSite().getId().equals(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
-				return;
-			}
 			showExpressionView();
 		} else if (selectedObject instanceof String) {
 			createWatchExpression((String) selectedObject);
+			showExpressionView();
 		}
 	}
 

@@ -54,6 +54,9 @@ public class InspectAction extends EvaluateAction {
 	 * if required.
 	 */
 	protected void showExpressionView() {
+		if (getTargetPart().getSite().getId().equals(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
+			return;
+		}
 		IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 		if (page != null) {
 			IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
@@ -94,9 +97,6 @@ public class InspectAction extends EvaluateAction {
 			}
 		}
 	
-		if (part.getSite().getId().equals(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
-			return;
-		}
 		showExpressionView();
 	}
 	
