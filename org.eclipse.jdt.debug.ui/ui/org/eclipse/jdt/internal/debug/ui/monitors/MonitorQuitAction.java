@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -53,4 +54,29 @@ public class MonitorQuitAction extends MonitorAction {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	public void update() {
+		boolean enable= false;
+		if (fAction != null) {
+			IJavaDebugTarget target= getDebugTarget();
+			if (target != null) {
+				if (target.supportsMonitorInformation()) {
+					try {
+						IThread[] threads= target.getThreads();
+						for (int i = 0; i < threads.length; i++) {
+							IJavaThread thread = (IJavaThread)threads[i];
+							if (thread.isSuspended()) {
+								enable= true;
+								break;
+							}
+						} 
+					}catch (DebugException e) {
+					}
+				}
+			}
+			fAction.setEnabled(enable);
+		}
+	}
 }

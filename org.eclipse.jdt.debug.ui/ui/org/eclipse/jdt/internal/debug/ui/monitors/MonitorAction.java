@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.texteditor.IUpdate;
 
-public abstract class MonitorAction implements IViewActionDelegate {
+public abstract class MonitorAction implements IViewActionDelegate, IUpdate {
 
 	protected MonitorsView fView;
+	protected IAction fAction;
 	
 	/**
 	 * Returns the current selection in the debug view or <code>null</code>
@@ -59,11 +61,13 @@ public abstract class MonitorAction implements IViewActionDelegate {
 	 */
 	public void init(IViewPart view) {
 		fView= (MonitorsView)view;
+		fView.add(this);
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		fAction= action;
 	}
 }
