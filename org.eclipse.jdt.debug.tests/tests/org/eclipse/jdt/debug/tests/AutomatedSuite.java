@@ -53,7 +53,7 @@ import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy2;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Test all areas of the UI.
+ * Test all areas of the JDT Debugger.
  * 
  * To run this test suite:
  * <ol>
