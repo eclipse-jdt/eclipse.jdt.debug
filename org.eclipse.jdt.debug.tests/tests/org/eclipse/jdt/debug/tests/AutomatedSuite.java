@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
+
 import org.eclipse.jdt.debug.testplugin.TestPluginLauncher;
 import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
@@ -36,6 +37,13 @@ import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
+import org.eclipse.jdt.debug.tests.eval.TestsArrays;
+import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
+import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes2;
+import org.eclipse.jdt.debug.tests.eval.TestsOperators1;
+import org.eclipse.jdt.debug.tests.eval.TestsOperators2;
+import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy1;
+import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy2;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -80,6 +88,16 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ClasspathProviderTests.class));
 		addTest(new TestSuite(SourceLocationTests.class));
 		addTest(new TestSuite(ProcessTests.class));
+		
+		// Evaluation tests
+		addTest(new TestSuite(ProjectCreationDecorator.class));		
+		addTest(new TestSuite(TestsOperators1.class));
+		addTest(new TestSuite(TestsOperators2.class));
+		addTest(new TestSuite(TestsArrays.class));
+		addTest(new TestSuite(TestsNestedTypes1.class));
+		addTest(new TestSuite(TestsNestedTypes2.class));
+		addTest(new TestSuite(TestsTypeHierarchy1.class));
+		addTest(new TestSuite(TestsTypeHierarchy2.class));
 		
 		// This test suite is commented out because it references preferences
 		// in a UI plugin.  This causes the UI plugin to get loaded as soon

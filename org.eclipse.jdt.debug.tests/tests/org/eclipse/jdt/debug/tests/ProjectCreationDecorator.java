@@ -93,6 +93,11 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("MultiThreadedList");
 		createLaunchConfiguration("MethodLoop");
 				
+		createLaunchConfiguration("EvalArrayTests");
+		createLaunchConfiguration("EvalSimpleTests");
+		createLaunchConfiguration("EvalTypeTests");
+		createLaunchConfiguration("EvalNestedTypeTests");
+		createLaunchConfiguration("EvalTypeHierarchyTests");
 	}
 	
 	/**

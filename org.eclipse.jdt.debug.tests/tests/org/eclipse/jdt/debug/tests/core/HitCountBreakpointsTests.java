@@ -49,6 +49,8 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			IJavaThread thread2 = resumeToLineBreakpoint(thread, bp);
 			assertTrue("second suspended thread not the same as first", thread == thread2);			
 			
+			frame = (IJavaStackFrame)thread2.getTopStackFrame();
+			var = frame.findVariable("i");
 			value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			iValue = value.getIntValue();
