@@ -452,6 +452,38 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
+	 * Invokes a method in this thread, creating a new instance of the given
+	 * class using the specified constructor, and returns the result.
+	 */
+	protected ObjectReference newInstance(ClassType receiverClass, Method constructor, List args) throws DebugException {
+		if (fInEvaluation) {
+			requestFailed(IN_EVALUATION, null);
+		}
+		ObjectReference result= null;
+		int timeout= getReqeustTimeout();
+		try {
+			// set the request timeout to be infinite
+			setRequestTimeout(Integer.MAX_VALUE);
+			setRunning(true);
+			fInEvaluation = true;
+			result= receiverClass.newInstance(fThread, constructor, args, ClassType.INVOKE_SINGLE_THREADED);
+		} catch (InvalidTypeException e) {
+			invokeFailed(e, timeout);
+		} catch (ClassNotLoadedException e) {
+			invokeFailed(e, timeout);
+		} catch (IncompatibleThreadStateException e) {
+			invokeFailed(e, timeout);
+		} catch (InvocationException e) {
+			invokeFailed(e, timeout);
+		} catch (RuntimeException e) {
+			invokeFailed(e, timeout);
+		}
+
+		invokeComplete(timeout);
+		return result;
+	}
+	
+	/**
 	 * An invocation failed. Restore the JDI timeout value and
 	 * handle the exception.
 	 */

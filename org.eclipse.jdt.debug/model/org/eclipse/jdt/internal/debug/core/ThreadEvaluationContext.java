@@ -245,7 +245,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 
 			// Create a new code snippet
 			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0);
-			codeSnippet = codeSnippetClass.newInstance(jdiThread, constructor, new ArrayList(), ClassType.INVOKE_SINGLE_THREADED);
+			codeSnippet = getModelThread().newInstance(codeSnippetClass, constructor, new ArrayList());
 
 			// Get the method 'runCodeSnippet' and its arguments		
 			method = (Method)codeSnippetClass.methodsByName(RUN_METHOD).get(0);
@@ -259,14 +259,6 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			fResult = (ObjectReference)codeSnippet.getValue(resultField);
 			Field resultTypeField = codeSnippetClass.fieldByName(RESULT_TYPE_FIELD);
 			fResultType = (ClassObjectReference)codeSnippet.getValue(resultTypeField);
-		} catch (ClassNotLoadedException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
-		} catch (IncompatibleThreadStateException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
-		} catch (InvalidTypeException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
-		} catch (InvocationException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
 		} catch (DebugException e) {
 			throw e;
 		} catch (RuntimeException e) {

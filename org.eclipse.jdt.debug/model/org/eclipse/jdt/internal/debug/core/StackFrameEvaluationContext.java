@@ -145,7 +145,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 
 			// Create a new code snippet
 			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0);
-			codeSnippet = codeSnippetClass.newInstance(jdiThread, constructor, new ArrayList(), ClassType.INVOKE_SINGLE_THREADED);
+			codeSnippet = getModelThread().newInstance(codeSnippetClass, constructor, new ArrayList());
 
 			// Install local variables and "this" into generated fields
 			StackFrame stackFrame = getUnderlyingStackFrame();
@@ -173,11 +173,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			arguments = new ArrayList();
 		} catch (ClassNotLoadedException e) {
 			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
-		} catch (IncompatibleThreadStateException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
 		} catch (InvalidTypeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
-		} catch (InvocationException e) {
 			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
 		} catch (RuntimeException e) {
 			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
