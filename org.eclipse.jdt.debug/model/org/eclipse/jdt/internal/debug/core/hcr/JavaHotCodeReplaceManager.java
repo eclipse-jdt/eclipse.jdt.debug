@@ -350,11 +350,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
+			if (!target.isAvailable()) {
+				continue;
+			}
 			List poppedThreads= new ArrayList();
+			target.setIsPerformingHotCodeReplace(true);
 			try {
-				if (!target.isAvailable()) {
-					continue;
-				}
 				boolean framesPopped= false;
 				if (target.canPopFrames()) {
 					// JDK 1.4 drop to frame support:
@@ -398,6 +399,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				// target update failed
 				fireHCRFailed(target, de);
 			}
+			target.setIsPerformingHotCodeReplace(false);
 			target.fireChangeEvent(DebugEvent.CONTENT);
 		}
 		if (!ms.isOK()) {

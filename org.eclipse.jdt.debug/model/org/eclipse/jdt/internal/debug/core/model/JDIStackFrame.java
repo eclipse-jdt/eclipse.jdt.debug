@@ -160,7 +160,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepReturn() {
 		try {
-			if (!exists() || isObsolete()) {
+			if (!exists() || isObsolete() || !getThread().canStepReturn()) {
 				return false;
 			}
 			List frames = ((JDIThread)getThread()).computeStackFrames();
@@ -173,7 +173,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						aboveObsoleteFrame= true;
 					}
 				}
-				return !bottomFrame && !aboveObsoleteFrame && getThread().canStepReturn();
+				return !bottomFrame && !aboveObsoleteFrame;
 			}
 		} catch (DebugException e) {
 			logError(e);

@@ -197,6 +197,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Mask used to flip individual bit masks via XOR
 	 */
 	private static final int XOR_MASK = 0xFFF;
+	/**
+	 * Whether this debug target is currently performing a hot code replace
+	 */
+	private boolean fIsPerformingHotCodeReplace= false;
 	
 	 
 	/**
@@ -449,7 +453,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && isAvailable();
+		return isSuspended() && isAvailable() && !isPerformingHotCodeReplace();
 	}
 
 	/**
@@ -1866,6 +1870,21 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean supportsMonitorInformation() {
 		return getVM().canGetCurrentContendedMonitor() && getVM().canGetMonitorInfo() && getVM().canGetOwnedMonitorInfo();
+	}
+	
+	/**
+	 * Sets whether or not this debug target is currently performing a hot code
+	 * replace.
+	 */
+	public void setIsPerformingHotCodeReplace(boolean isPerformingHotCodeReplace) {
+		fIsPerformingHotCodeReplace= isPerformingHotCodeReplace;
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#isPerformingHotCodeReplace()
+	 */
+	public boolean isPerformingHotCodeReplace() {
+		return fIsPerformingHotCodeReplace;
 	}
 }
 
