@@ -564,7 +564,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (IncompatibleThreadStateException e) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 		} catch (IndexOutOfBoundsException e) {
-			computeNewStackFrames();
+			try {
+				computeNewStackFrames();
+			} catch (DebugException de) {
+			}
 			fireChangeEvent(DebugEvent.CONTENT);
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.41"), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
