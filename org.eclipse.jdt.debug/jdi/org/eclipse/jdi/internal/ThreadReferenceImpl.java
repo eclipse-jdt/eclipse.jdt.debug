@@ -497,7 +497,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 */
 	public String toString() {
 		try {
-			return MessageFormat.format(JDIMessages.getString("ThreadReferenceImpl.{0}_(name={1},_id={2})_8"), new String[]{type().toString(), name(), getObjectID().toString()}); //$NON-NLS-1$
+			return MessageFormat.format(JDIMessages.getString("ThreadReferenceImpl.8"), new String[]{type().toString(), name(), getObjectID().toString()}); //$NON-NLS-1$
 		} catch (ObjectCollectedException e) {
 			return JDIMessages.getString("ThreadReferenceImpl.(Garbage_Collected)_ThreadReference__9") + idString(); //$NON-NLS-1$
 		} catch (Exception e) {

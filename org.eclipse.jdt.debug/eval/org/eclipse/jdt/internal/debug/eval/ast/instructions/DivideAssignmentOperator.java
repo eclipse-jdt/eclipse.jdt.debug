@@ -11,7 +11,7 @@ public class DivideAssignmentOperator extends DivideOperator {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("DivideAssignmentOperator._/=___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("DivideAssignmentOperator.operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -11,7 +11,7 @@ public class XorAssignmentOperator extends XorOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("XorAssignmentOperator._^=___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("XorAssignmentOperator.operator_1"); //$NON-NLS-1$
 	}
 
 }

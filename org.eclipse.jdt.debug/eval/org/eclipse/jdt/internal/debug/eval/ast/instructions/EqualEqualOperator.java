@@ -80,7 +80,7 @@ public class EqualEqualOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("EqualEqualOperator._==___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("EqualEqualOperator.operator_1"); //$NON-NLS-1$
 	}
 
 }

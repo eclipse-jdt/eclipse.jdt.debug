@@ -2028,7 +2028,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String variableId = node.getIdentifier();
 		if (binding == null) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.binding_==_null_for__17") + variableId, node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.binding_null_for__17") + variableId, node.getStartPosition())); //$NON-NLS-1$
 			return true;
 		}
 		
