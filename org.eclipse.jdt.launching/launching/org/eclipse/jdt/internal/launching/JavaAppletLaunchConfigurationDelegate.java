@@ -59,6 +59,10 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 			
+		if (configuration == null) {
+			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.No_launch_configuration_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_LAUNCH_CONFIG); //$NON-NLS-1$
+		}
+		
 		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Starting_Applet_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
 		
@@ -251,13 +255,15 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 					if (eventSource != null) {
 						if (eventSource instanceof IProcess) {
 							IProcess runtimeProcess = (IProcess) eventSource;
-							if (runtimeProcess.getLaunch().getLaunchConfiguration().equals(fCurrentLaunchConfiguration)) {
+							ILaunchConfiguration config = runtimeProcess.getLaunch().getLaunchConfiguration();
+							if (fCurrentLaunchConfiguration.equals(config)) {
 								fEventSources.put(eventSource, fTempFile);
 								fLaunchesCounter++;
 							}
 						} else if (eventSource instanceof IDebugTarget) {
 							IDebugTarget debugTarget = (IDebugTarget) eventSource;
-							if (debugTarget.getLaunch().getLaunchConfiguration().equals(fCurrentLaunchConfiguration)) {
+							ILaunchConfiguration config = debugTarget.getLaunch().getLaunchConfiguration();
+							if (fCurrentLaunchConfiguration.equals(config)) {
 								fEventSources.put(eventSource, fTempFile);
 								fLaunchesCounter++;
 							}
