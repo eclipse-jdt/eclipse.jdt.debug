@@ -577,6 +577,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (receiverClass != null && receiverObject != null) {
 			throw new IllegalArgumentException(JDIDebugModelMessages.getString("JDIThread.can_only_specify_one_receiver_for_a_method_invocation")); //$NON-NLS-1$
 		}
+		// this is synchronized such that any other operation that
+		// might be resuming this thread has a chance to complete before
+		// we test if this thread is already runnnig. See bug 6518.
 		synchronized (this) {
 			if (!isSuspended()) {
 				requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null); //$NON-NLS-1$
@@ -1058,6 +1061,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
 	 * @see IStep#stepInto()
 	 */
 	public synchronized void stepInto() throws DebugException {
@@ -1069,6 +1075,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/** 
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
 	 * @see IStep#stepOver()
 	 */
 	public synchronized void stepOver() throws DebugException {
@@ -1080,6 +1089,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/**
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
 	 * @see IStep#stepReturn()
 	 */
 	public synchronized void stepReturn() throws DebugException {
