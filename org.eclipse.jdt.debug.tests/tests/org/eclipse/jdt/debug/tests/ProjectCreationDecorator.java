@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -157,4 +158,12 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
 				
 	}	
+	
+	/**
+	 * Sets the timeout preference to a high value, to avoid timeouts while testing
+	 *
+	 */
+	public void testSetJDITimeout() {
+		JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
+	}
 }
