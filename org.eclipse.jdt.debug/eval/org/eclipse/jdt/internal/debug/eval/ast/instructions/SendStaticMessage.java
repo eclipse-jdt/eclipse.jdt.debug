@@ -6,11 +6,12 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
  
 /**
  * Sends a message. The arguments are on the
@@ -33,15 +34,19 @@ public class SendStaticMessage extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		IValue[] args = new IValue[fArgCount];
+		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
 		for (int i= fArgCount - 1; i >= 0; i--) {
-			args[i] = (IValue)popValue();
+			args[i] = (IJavaValue)popValue();
 		}
 		
-		IClassType receiver= (IClassType)getType(Signature.toString(fTypeSignature));
-		
-		IValue result= receiver.sendMessage(fSelector, fSignature, args, getContext().getThread());
+		IJavaType receiver= getType(Signature.toString(fTypeSignature));
+		IJavaValue result;
+		if (receiver instanceof IJavaClassType) {
+			result= ((IJavaClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
+		} else {
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Cannot send a static message to a not class type object.", null));
+		}
 		
 		if (!fSignature.endsWith(")V")) {
 			// only push the result if not a void method

@@ -5,11 +5,10 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveType;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IType;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class Cast extends CompoundInstruction {
 
@@ -18,20 +17,22 @@ public class Cast extends CompoundInstruction {
 
 	private int fTypeTypeId;
 	
-	public Cast(int typeTypeId, int start) {
+	private String fTypeName;
+	
+	public Cast(int typeTypeId, String typeName, int start) {
 		super(start);
-		fTypeTypeId = typeTypeId;
+		fTypeTypeId= typeTypeId;
+		fTypeName= typeName;
 	}
 
 	/*
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IValue value= popValue();
-		IType type= (IType)pop();
+		IJavaValue value= popValue();
 		
-		if (type instanceof IPrimitiveType) {
-			IPrimitiveValue primitiveValue = (IPrimitiveValue) value;
+		if (value instanceof IJavaPrimitiveValue) {
+			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
 			switch (fTypeTypeId) {
 					case T_double:
 						push(newValue(primitiveValue.getDoubleValue()));
@@ -57,17 +58,20 @@ public class Cast extends CompoundInstruction {
 			}
 			
 		} else {
-			IObject object = (IObject) value;
-			IObject classObject= getClassObject(type);
+			IJavaObject classObject= getClassObject(getType(fTypeName));
+			IJavaObject objectValue= (IJavaObject)value;
 			if (classObject == null) {
 				throw new CoreException(null);
 			} else {
-				push(classObject);
-				push(object);
-				SendMessage send= new SendMessage(IS_INSTANCE,IS_INSTANCE_SIGNATURE,1,false, -1);
-				execute(send);
 				
-				IPrimitiveValue resultValue = (IPrimitiveValue)pop();
+				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)objectValue.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {classObject}, getContext().getThread(), false);
+				
+//				push(classObject);
+//				push(object);
+//				SendMessage send= new SendMessage(IS_INSTANCE,IS_INSTANCE_SIGNATURE,1,false, -1);
+//				execute(send);
+				
+//				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)pop();
 				if (!resultValue.getBooleanValue()) {
 					throw new CoreException(null);
 				}

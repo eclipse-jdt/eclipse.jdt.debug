@@ -5,7 +5,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 public class ConditionalJump extends Jump {
 	private boolean fJumpOnTrue;
@@ -18,7 +18,7 @@ public class ConditionalJump extends Jump {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IPrimitiveValue condition= (IPrimitiveValue)popValue();
+		IJavaPrimitiveValue condition= (IJavaPrimitiveValue)popValue();
 		
 		if (!(fJumpOnTrue ^ condition.getBooleanValue())) {
 			jump(fOffset);

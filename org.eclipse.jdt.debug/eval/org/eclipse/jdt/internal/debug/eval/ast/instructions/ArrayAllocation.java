@@ -5,10 +5,10 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IArray;
-import org.eclipse.jdt.internal.debug.eval.model.IArrayType;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IType;
+import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaType;
 
 public class ArrayAllocation extends ArrayInstruction {
 
@@ -18,7 +18,7 @@ public class ArrayAllocation extends ArrayInstruction {
 	
 	private boolean fHasInitializer;
 	
-	private IArrayType[] fCachedArrayTypes;
+	private IJavaArrayType[] fCachedArrayTypes;
 
 	/**
 	 * Constructor for ArrayAllocation.
@@ -36,7 +36,7 @@ public class ArrayAllocation extends ArrayInstruction {
 	 */
 	public void execute() throws CoreException {
 		if (fHasInitializer) {
-			IArray array = (IArray) popValue();
+			IJavaArray array = (IJavaArray) popValue();
 			pop(); // pop the type
 			push(array);
 		} else {
@@ -44,19 +44,19 @@ public class ArrayAllocation extends ArrayInstruction {
 			int[] exprDimensions = new int[fExprDimension];
 			
 			for (int i = fExprDimension - 1; i >= 0; i--) {
-				exprDimensions[i] = ((IPrimitiveValue)popValue()).getIntValue();
+				exprDimensions[i] = ((IJavaPrimitiveValue)popValue()).getIntValue();
 			}
 			
-			IType type = (IType) pop();
+			IJavaType type = (IJavaType) pop();
 			
-			fCachedArrayTypes = new IArrayType[fDimension + 1];
+			fCachedArrayTypes = new IJavaArrayType[fDimension + 1];
 			
 			for (int i =fDimension, lim = fDimension - fExprDimension ; i > lim; i--) {
-				fCachedArrayTypes[i] = (IArrayType) type;
-				type = ((IArrayType)type).getComponentType();
+				fCachedArrayTypes[i] = (IJavaArrayType) type;
+				type = ((IJavaArrayType)type).getComponentType();
 			}
 			
-			IArray array = createArray(fDimension, exprDimensions);
+			IJavaArray array = createArray(fDimension, exprDimensions);
 			
 			push(array);
 		}
@@ -65,9 +65,9 @@ public class ArrayAllocation extends ArrayInstruction {
 	/**
 	 * Create and populate an array.
 	 */
-	private IArray createArray(int dimension, int[] exprDimensions) throws CoreException {
+	private IJavaArray createArray(int dimension, int[] exprDimensions) throws CoreException {
 		
-		IArray array = fCachedArrayTypes[dimension].newArray(exprDimensions[0]);
+		IJavaArray array = fCachedArrayTypes[dimension].newInstance(exprDimensions[0]);
 		
 		if (exprDimensions.length > 1) {
 			int[] newExprDimension = new int[exprDimensions.length - 1];

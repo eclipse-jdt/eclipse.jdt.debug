@@ -6,11 +6,12 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IArray;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IInterfaceType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
  
 /**
  * Pops an object off the stack, and pushes the value
@@ -18,52 +19,48 @@ import org.eclipse.jdt.internal.debug.eval.model.IVariable;
  */
 public class PushFieldVariable extends CompoundInstruction {
 	
+	private String fDeclaringTypeSignature;
+	
 	private String fName;
 	
-	private String fTypeSignature;
-	
-	private boolean fSuperField;
+	private int  fSuperClassLevel;
 	
 	public static final String LENGTH= "length";
 	
-	public PushFieldVariable(String name, boolean superField, int start) {
+	public PushFieldVariable(String name, int superClassLevel, int start) {
 		super(start);
 		fName= name;
-		fSuperField= superField;
+		fSuperClassLevel= superClassLevel;
 	}
 	
-	public PushFieldVariable(String name, String typeSignature, int start) {
+	public PushFieldVariable(String name, String declaringTypeSignature, int start) {
 		super(start);
 		fName= name;
-		fTypeSignature= typeSignature;
+		fDeclaringTypeSignature= declaringTypeSignature;
 	}
 	
 	public void execute() throws CoreException {
 		Object receiver= pop();
 		
-		IVariable field= null;
+		IJavaVariable field= null;
 		
-		if (receiver instanceof IVariable) {
-			receiver = ((IVariable) receiver).getValue();
+		if (receiver instanceof IJavaVariable) {
+			receiver = ((IJavaVariable) receiver).getValue();
 		}
 		
-		if (receiver instanceof IArray && LENGTH.equals(fName)) {
-			int length= ((IArray)receiver).getLength();
+		if (receiver instanceof IJavaArray && LENGTH.equals(fName)) {
+			int length= ((IJavaArray)receiver).getLength();
 			pushNewValue(length);
 			return;
-		} else if (receiver instanceof IObject) {
-			if (fTypeSignature == null) {
-				field= ((IObject)receiver).getField(fName, fSuperField);
+		} else if (receiver instanceof IJavaObject) {
+			if (fDeclaringTypeSignature == null) {
+				field= ((JDIObjectValue)receiver).getField(fName, fSuperClassLevel);
 			} else {
-				field= ((IObject)receiver).getField(fName, fTypeSignature);
+				field= ((IJavaObject)receiver).getField(fName, fDeclaringTypeSignature);
 			}
-		} else if (receiver instanceof IInterfaceType) {
-			field= ((IInterfaceType)receiver).getField(fName);
-		} else if (receiver instanceof IClassType) {
-			field= ((IClassType)receiver).getField(fName);
 		}
 		if (field == null) {
-			throw new CoreException(null); // couldn't find the field
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Cannot find the field " + fName + " for the object " + receiver, null));
 		} else {
 			push(field);
 		}

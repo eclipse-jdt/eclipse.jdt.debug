@@ -6,15 +6,16 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.ast.engine.*;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IInterfaceType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IType;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
-import org.eclipse.jdt.internal.debug.eval.model.IVirtualMachine;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
  
 /**
  * Common behavoir for instructions.
@@ -43,19 +44,19 @@ public abstract class Instruction {
 		return fInterpreter.getContext();
 	}
 	
-	protected IVirtualMachine getVM() {
+	protected IJavaDebugTarget getVM() {
 		return getContext().getVM();
 	}
 
 	/**
 	 * Answers the instance of Class that the given type represents.
 	 */
-	protected IObject getClassObject(IType type) throws CoreException {
-		if (type instanceof IClassType) {
-			return ((IClassType)type).getClassObject();
+	protected IJavaObject getClassObject(IJavaType type) throws CoreException {
+		if (type instanceof IJavaClassType) {
+			return ((IJavaClassType)type).getClassObject();
 		}
-		if (type instanceof IInterfaceType) {
-			return ((IInterfaceType)type).getClassObject();
+		if (type instanceof IJavaInterfaceType) {
+			return ((IJavaInterfaceType)type).getClassObject();
 		}
 		return null;
 	}
@@ -72,19 +73,19 @@ public abstract class Instruction {
 		return fInterpreter.pop();
 	}
 	
-	protected IValue popValue() throws CoreException {
+	protected IJavaValue popValue() throws CoreException {
 		Object element = fInterpreter.pop();
-		if (element instanceof IVariable) {
-			return ((IVariable)element).getValue();
+		if (element instanceof IJavaVariable) {
+			return (IJavaValue)((IJavaVariable)element).getValue();
 		}
-		return (IValue)element;
+		return (IJavaValue)element;
 	}	
 	
 	protected void pushNewValue(boolean value) {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(boolean value) {
+	protected IJavaValue newValue(boolean value) {
 		return getVM().newValue(value);
 	}
 
@@ -92,7 +93,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(byte value) {
+	protected IJavaValue newValue(byte value) {
 		return getVM().newValue(value);
 	}
 
@@ -100,7 +101,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(short value) {
+	protected IJavaValue newValue(short value) {
 		return getVM().newValue(value);
 	}
 
@@ -108,7 +109,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(int value) {
+	protected IJavaValue newValue(int value) {
 		return getVM().newValue(value);
 	}
 
@@ -116,7 +117,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(long value) {
+	protected IJavaValue newValue(long value) {
 		return getVM().newValue(value);
 	}
 
@@ -124,7 +125,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(char value) {
+	protected IJavaValue newValue(char value) {
 		return getVM().newValue(value);
 	}
 
@@ -132,7 +133,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(float value) {
+	protected IJavaValue newValue(float value) {
 		return getVM().newValue(value);
 	}
 
@@ -140,7 +141,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(double value) {
+	protected IJavaValue newValue(double value) {
 		return getVM().newValue(value);
 	}
 
@@ -148,7 +149,7 @@ public abstract class Instruction {
 		fInterpreter.push(newValue(value));
 	}
 
-	protected IValue newValue(String value) {
+	protected IJavaValue newValue(String value) {
 		return getVM().newValue(value);
 	}
 
@@ -156,7 +157,7 @@ public abstract class Instruction {
 		fInterpreter.push(nullValue());
 	}
 
-	protected IValue nullValue() {
+	protected IJavaValue nullValue() {
 		return getVM().nullValue();
 	}
 
@@ -164,14 +165,14 @@ public abstract class Instruction {
 		return fTypeTable[typeId][T_int];
 	}
 
-	protected IType getType(String qualifiedName) throws CoreException {
+	protected IJavaType getType(String qualifiedName) throws CoreException {
 		// Force the class to be loaded, and record the class reference
 		// for later use if there are multiple classes with the same name.
-		IObject classReference= classForName(qualifiedName);
+		IJavaObject classReference= classForName(qualifiedName);
 		if (classReference == null) {
 			throw new CoreException(null); // could not resolve type
 		}
-		IType[] types= getVM().classesByName(qualifiedName);
+		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
 		checkTypes(types);
 		if (types.length == 1) {
 			// Found only one class.
@@ -179,7 +180,7 @@ public abstract class Instruction {
 		} else {
 			// Found many classes, look for the right one for this scope.
 			for(int i= 0, length= types.length; i < length; i++) {
-				IType type= types[i];
+				IJavaType type= types[i];
 				if (classReference.equals(getClassObject(type))) {
 					return type;
 				}
@@ -195,21 +196,19 @@ public abstract class Instruction {
 	}
 
 
-	protected IObject classForName(String qualifiedName) throws CoreException {
-		IType[] types= getVM().classesByName(CLASS);
+	protected IJavaObject classForName(String qualifiedName) throws CoreException {
+		IJavaType[] types= getVM().getJavaTypes(CLASS);
 		checkTypes(types);
 		if (types.length != 1) {
 			throw new CoreException(null);
 		}
-		push(types[0]);
-		pushNewValue(qualifiedName);
-		SendMessage send= new SendMessage(FOR_NAME, FOR_NAME_SIGNATURE, 1, false, -1);
-		execute(send);
-		return (IObject)pop();		
+		IJavaType receiver= types[0];
+		IJavaValue[] args = new IJavaValue[] {newValue(qualifiedName)};
+		return (IJavaObject)((IJavaClassType)receiver).sendMessage(FOR_NAME, FOR_NAME_SIGNATURE, args, getContext().getThread());
 	}
 
 
-	protected void checkTypes(IType[] types) throws CoreException {
+	protected void checkTypes(IJavaType[] types) throws CoreException {
 		if (types == null || types.length == 0) {
 			throw new CoreException(null); // unable to resolve type
 		}
@@ -247,8 +246,7 @@ public abstract class Instruction {
 	};
 
 	public static final String CLASS= "java.lang.Class";
-
-
+	
 	public static final String FOR_NAME= "forName";
 
 

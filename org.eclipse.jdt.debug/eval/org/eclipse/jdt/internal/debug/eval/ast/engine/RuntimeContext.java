@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.eval.model;
+package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -50,43 +50,33 @@ public class RuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getVM()
 	 */
-	public IVirtualMachine getVM() {
-		return new EvaluationVM((IJavaDebugTarget)getFrame().getDebugTarget());
+	public IJavaDebugTarget getVM() {
+		return (IJavaDebugTarget)getFrame().getDebugTarget();
 	}
 
 	/**
 	 * @see IRuntimeContext#getThis()
 	 */
-	public IObject getThis() throws CoreException {
-		IJavaObject jo = getFrame().getThis();
-		if (jo != null) {
-			return new EvaluationObject(getFrame().getThis());
-		}
-		return null;
+	public IJavaObject getThis() throws CoreException {
+		return getFrame().getThis();
 	}
 
 	/**
 	 * @see IRuntimeContext#getReceivingType()
 	 */
-	public IClassType getReceivingType() throws CoreException {
-		IObject rec = getThis();
+	public IJavaClassType getReceivingType() throws CoreException {
+		IJavaObject rec = getThis();
 		if (rec != null) {
-			return (IClassType)rec.getType();
+			return (IJavaClassType)rec.getJavaType();
 		}
-		IJavaClassType type = getFrame().getDeclaringType();
-		return (IClassType)EvaluationType.createType(type);
+		return getFrame().getDeclaringType();
 	}
 
 	/**
 	 * @see IRuntimeContext#getLocals()
 	 */
-	public IVariable[] getLocals() throws CoreException {
-		IJavaVariable[] locals = getFrame().getLocalVariables();
-		IVariable[] vars = new IVariable[locals.length];
-		for (int i = 0; i < locals.length; i++) {
-			vars[i] = new EvaluationVariable(locals[i]);
-		}
-		return vars;
+	public IJavaVariable[] getLocals() throws CoreException {
+		return getFrame().getLocalVariables();
 	}
 
 	/**
@@ -126,8 +116,8 @@ public class RuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getThread()
 	 */
-	public IThread getThread() {
-		return new EvaluationThread((IJavaThread)getFrame().getThread());
+	public IJavaThread getThread() {
+		return (IJavaThread)getFrame().getThread();
 	}
 
 	/**

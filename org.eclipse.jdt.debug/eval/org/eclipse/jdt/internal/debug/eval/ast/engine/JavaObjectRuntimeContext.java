@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.eval.model;
+package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -7,9 +7,11 @@ package org.eclipse.jdt.internal.debug.eval.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public class JavaObjectRuntimeContext implements IRuntimeContext {
 	
@@ -44,29 +46,29 @@ public class JavaObjectRuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getVM()
 	 */
-	public IVirtualMachine getVM() {
-		return new EvaluationVM((IJavaDebugTarget)fThisObject.getDebugTarget());
+	public IJavaDebugTarget getVM() {
+		return (IJavaDebugTarget)fThisObject.getDebugTarget();
 	}
 
 	/**
 	 * @see IRuntimeContext#getThis()
 	 */
-	public IObject getThis() throws CoreException {
-		return (IObject)EvaluationObject.createValue(fThisObject);
+	public IJavaObject getThis() throws CoreException {
+		return fThisObject;
 	}
 
 	/**
 	 * @see IRuntimeContext#getReceivingType()
 	 */
-	public IClassType getReceivingType() throws CoreException {
-		return (IClassType)getThis().getType();
+	public IJavaClassType getReceivingType() throws CoreException {
+		return (IJavaClassType)getThis().getJavaType();
 	}
 
 	/**
 	 * @see IRuntimeContext#getLocals()
 	 */
-	public IVariable[] getLocals() throws CoreException {
-		return new IVariable[0];
+	public IJavaVariable[] getLocals() throws CoreException {
+		return new IJavaVariable[0];
 	}
 
 	/**
@@ -79,8 +81,8 @@ public class JavaObjectRuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getThread()
 	 */
-	public IThread getThread() {
-		return new EvaluationThread(fThread);
+	public IJavaThread getThread() {
+		return fThread;
 	}
 
 	/**

@@ -6,13 +6,14 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
  
 /**
- * Sends a message. The arguments are on the
+ * Sends an message to an instance. The arguments are on the
  * stack in reverse order, followed by the receiver.
  * Pushes the result, if any, onto the stack
  */
@@ -32,24 +33,22 @@ public class SendMessage extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		IValue[] args = new IValue[fArgCount];
+		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
 		for (int i= fArgCount - 1; i >= 0; i--) {
-			args[i] = (IValue)popValue();
+			args[i] = (IJavaValue)popValue();
 		}
 		Object receiver = pop();
-		IValue result = null;
+		IJavaValue result = null;
 		
-		if (receiver instanceof IVariable) {
-			receiver = ((IVariable) receiver).getValue();	
+		if (receiver instanceof IJavaVariable) {
+			receiver = ((IJavaVariable) receiver).getValue();	
 		}
 		
-		if (receiver instanceof IObject) {
-			result = ((IObject)receiver).sendMessage(fSelector, fSignature, args, fSuperSend, getContext().getThread());
-		} else if (receiver instanceof IClassType) {
-			result = ((IClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
+		if (receiver instanceof IJavaObject) {
+			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fSuperSend);
 		} else {
-			throw new CoreException(null);
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Try to send an message to an not object value", null));
 		}
 		if (!fSignature.endsWith(")V")) {
 			// only push the result if not a void method

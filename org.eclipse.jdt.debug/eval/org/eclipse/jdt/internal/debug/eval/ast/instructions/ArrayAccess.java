@@ -6,8 +6,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.*;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationArrayVariable;
+import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
  
 /**
  * Resolves an array access - the top of the stack is
@@ -21,9 +21,9 @@ public class ArrayAccess extends ArrayInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		int index = ((IPrimitiveValue)popValue()).getIntValue();
-		IArray array = (IArray)popValue();
-		push(new EvaluationArrayVariable(array, index));
+		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
+		IJavaArray array = (IJavaArray)popValue();
+		push(array.getVariables()[index]);
 	}
 
 	public String toString() {

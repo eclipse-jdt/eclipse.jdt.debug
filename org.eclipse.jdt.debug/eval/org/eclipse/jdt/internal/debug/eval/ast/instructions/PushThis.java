@@ -6,21 +6,31 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
  
 /**
  * Pushes the 'this' object onto the stack.
  */
 public class PushThis extends SimpleInstruction {
 	
+	private int fEnclosingLevel;
+	
+	public PushThis(int enclosingLevel) {
+		fEnclosingLevel= enclosingLevel;
+	}
+	
 	public void execute() throws CoreException {
 		IRuntimeContext context= getContext();
-		IObject rec = context.getThis();
+		IJavaObject rec = context.getThis();
 		if (rec == null) {
 			// static context
 			push(context.getReceivingType());
 		} else {
+			if (fEnclosingLevel != 0) {
+				rec= ((JDIObjectValue)rec).getEnclosingObject(fEnclosingLevel);
+			}
 			push(rec);
 		}
 	}

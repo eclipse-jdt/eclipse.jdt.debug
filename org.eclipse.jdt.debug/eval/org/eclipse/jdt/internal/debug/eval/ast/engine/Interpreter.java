@@ -7,11 +7,9 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
-import org.eclipse.jdt.internal.debug.eval.model.IVirtualMachine;
 
 public class Interpreter {
 	private Instruction[] fInstructions;
@@ -74,19 +72,19 @@ public class Interpreter {
 		return fContext;
 	}
 	
-	public IValue getResult() {
+	public IJavaValue getResult() {
 		if (fStack.isEmpty())
 			return getContext().getVM().voidValue();
 		Object top= fStack.peek();
-		if (top instanceof IVariable) {
+		if (top instanceof IJavaVariable) {
 			try {
-				return ((IVariable)top).getValue();
+				return (IJavaValue)((IJavaVariable)top).getValue();
 			} catch (CoreException exception) {
 				return getContext().getVM().newValue(exception.getStatus().getMessage());
 			}
 		}
-		if (top instanceof IValue) {
-			return (IValue)top;
+		if (top instanceof IJavaValue) {
+			return (IJavaValue)top;
 		}
 		// XXX: exception
 		return null;		

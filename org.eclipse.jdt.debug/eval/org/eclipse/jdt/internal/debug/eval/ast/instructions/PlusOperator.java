@@ -5,11 +5,10 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
-import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
-import org.eclipse.jdt.internal.debug.eval.model.*;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationObject;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
 
 public class PlusOperator extends BinaryOperator {
 
@@ -23,26 +22,22 @@ public class PlusOperator extends BinaryOperator {
 		super(resultId, leftTypeId, rightTypeId, isAssignmentOperator, start);
 	}
 	
-	private String getString(IValue value, int typeId) {
+	private String getString(IJavaValue value, int typeId) {
 		
 		// test if value == null
-		EvaluationValue eValue = (EvaluationValue)value;
-		if (eValue.getJavaValue() instanceof JDINullValue) {
+		if (value instanceof JDINullValue) {
 			return NULL;
 		}
 		
-		if (value instanceof IObject) {
-			EvaluationObject object= (EvaluationObject)value;
-			JDIObjectValue javaValue= (JDIObjectValue)object.getJavaObject();
-
+		if (value instanceof IJavaObject) {
 			try {
-				return javaValue.getValueString();
+				return value.getValueString();
 			} catch (CoreException e) {
 				e.printStackTrace();
 				return null;
 			}		
 		} else {
-			IPrimitiveValue primitiveValue= (IPrimitiveValue)value;
+			IJavaPrimitiveValue primitiveValue= (IJavaPrimitiveValue)value;
 			switch (typeId) {
 				case T_boolean:
 					return new Boolean(primitiveValue.getBooleanValue()).toString();
@@ -66,44 +61,44 @@ public class PlusOperator extends BinaryOperator {
 	}	
 	
 	/*
-	 * @see BinaryOperator#getBooleanResult(IValue, IValue)
+	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IValue leftOperand, IValue rightOperand) {
+	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return false;
 	}
 
 	/*
-	 * @see BinaryOperator#getDoubleResult(IValue, IValue)
+	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue)leftOperand).getDoubleValue() + ((IPrimitiveValue)rightOperand).getDoubleValue();
+	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue)leftOperand).getDoubleValue() + ((IJavaPrimitiveValue)rightOperand).getDoubleValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getFloatResult(IValue, IValue)
+	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue)leftOperand).getFloatValue() + ((IPrimitiveValue)rightOperand).getFloatValue();
+	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue)leftOperand).getFloatValue() + ((IJavaPrimitiveValue)rightOperand).getFloatValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getIntResult(IValue, IValue)
+	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
-	protected int getIntResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue)leftOperand).getIntValue() + ((IPrimitiveValue)rightOperand).getIntValue();
+	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue)leftOperand).getIntValue() + ((IJavaPrimitiveValue)rightOperand).getIntValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getLongResult(IValue, IValue)
+	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
-	protected long getLongResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue)leftOperand).getLongValue() + ((IPrimitiveValue)rightOperand).getLongValue();
+	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue)leftOperand).getLongValue() + ((IJavaPrimitiveValue)rightOperand).getLongValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getStringResult(IValue, IValue)
+	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IValue leftOperand, IValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return getString(leftOperand, fLeftTypeId) + getString(rightOperand, fRightTypeId);
 	}
 

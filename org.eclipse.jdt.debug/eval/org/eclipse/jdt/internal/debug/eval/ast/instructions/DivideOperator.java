@@ -6,8 +6,9 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class DivideOperator extends BinaryOperator {
 	public DivideOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
@@ -19,52 +20,52 @@ public class DivideOperator extends BinaryOperator {
 	}
 
 	/*
-	 * @see BinaryOperator#getBooleanResult(IValue, IValue)
+	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IValue leftOperand, IValue rightOperand) {
+	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return false;
 	}
 
 	/*
-	 * @see BinaryOperator#getDoubleResult(IValue, IValue)
+	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue) leftOperand).getDoubleValue() / ((IPrimitiveValue) rightOperand).getDoubleValue();
+	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getDoubleValue() / ((IJavaPrimitiveValue) rightOperand).getDoubleValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getFloatResult(IValue, IValue)
+	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue) leftOperand).getFloatValue() / ((IPrimitiveValue) rightOperand).getFloatValue();
+	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getFloatValue() / ((IJavaPrimitiveValue) rightOperand).getFloatValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getIntResult(IValue, IValue)
+	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
-	protected int getIntResult(IValue leftOperand, IValue rightOperand) throws CoreException {
-		int divisor= ((IPrimitiveValue) rightOperand).getIntValue();
+	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
+		int divisor= ((IJavaPrimitiveValue) rightOperand).getIntValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(Status.ERROR, "", Status.OK, "Divide by zero", null));
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Divide by zero", null));
 		}
-		return ((IPrimitiveValue) leftOperand).getIntValue() / divisor;
+		return ((IJavaPrimitiveValue) leftOperand).getIntValue() / divisor;
 	}
 
 	/*
-	 * @see BinaryOperator#getLongResult(IValue, IValue)
+	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
-	protected long getLongResult(IValue leftOperand, IValue rightOperand) throws CoreException {
-		long divisor= ((IPrimitiveValue) rightOperand).getLongValue();
+	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
+		long divisor= ((IJavaPrimitiveValue) rightOperand).getLongValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(Status.ERROR, "", Status.OK, "Divide by zero", null));
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Divide by zero", null));
 		}
-		return ((IPrimitiveValue) leftOperand).getLongValue() / divisor;
+		return ((IJavaPrimitiveValue) leftOperand).getLongValue() / divisor;
 	}
 
 	/*
-	 * @see BinaryOperator#getStringResult(IValue, IValue)
+	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IValue leftOperand, IValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return null;
 	}
 

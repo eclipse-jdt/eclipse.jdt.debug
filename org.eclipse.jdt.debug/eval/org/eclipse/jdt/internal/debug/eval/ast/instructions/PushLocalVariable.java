@@ -7,53 +7,37 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
-
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
  
 /**
  * Pushes the value of a local, instance, or static
  * variable onto the stack.
  */
-public class PushVariable extends SimpleInstruction {
+public class PushLocalVariable extends SimpleInstruction {
 	
 	/**
 	 * Name of variable to push.
 	 */
 	private String fName;
 	
-	public PushVariable(String name) {
+	public PushLocalVariable(String name) {
 		fName = name;
 	}
 	
 	public void execute() throws CoreException {
 		IRuntimeContext context= getContext();
-		IVariable var = null;
-		IVariable[] locals = context.getLocals();
+		IJavaVariable var = null;
+		IJavaVariable[] locals = context.getLocals();
 		for (int i = 0; i < locals.length; i++) {
 			if (locals[i].getName().equals(getName())) {
 				push(locals[i]);
 				return;
 			}
 		}
-		IObject t = context.getThis();
-		if (t != null) {
-			var = t.getField(getName(), false);
-			if (var != null) {
-				push(var);
-				return;
-			}
-		}
-		IClassType ty = context.getReceivingType();
-		var = ty.getField(getName());
-		if (var != null) {
-			push(var);
-			return;
-		}
 
-		throw new CoreException(null);
+		throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Cannot find the variable : " + fName, null));
 	}
 	
 	/**

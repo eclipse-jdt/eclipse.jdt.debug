@@ -6,8 +6,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 /**
  * Invokes a constructor. The arguments are on the
@@ -26,13 +26,13 @@ public class Constructor extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		IValue[] args = new IValue[fArgCount];
+		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
 		for (int i= fArgCount - 1; i >= 0; i--) {
-			args[i] = (IValue)popValue();
+			args[i] = (IJavaValue)popValue();
 		}
-		IClassType clazz = (IClassType)pop();
-		IValue result = clazz.newInstance(fSignature, args, getContext().getThread());
+		IJavaClassType clazz = (IJavaClassType)pop();
+		IJavaValue result = clazz.newInstance(fSignature, args, getContext().getThread());
 		push(result);
 	}
 	

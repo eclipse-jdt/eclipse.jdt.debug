@@ -5,10 +5,8 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IInterfaceType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IType;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaType;
 
 public class InstanceOfOperator extends CompoundInstruction {
 	public static final String IS_INSTANCE= "isInstance";
@@ -22,10 +20,10 @@ public class InstanceOfOperator extends CompoundInstruction {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IType type= (IType)pop();
-		IObject object= (IObject)pop();
+		IJavaType type= (IJavaType)pop();
+		IJavaObject object= (IJavaObject)pop();
 
-		IObject classObject= getClassObject(type);
+		IJavaObject classObject= getClassObject(type);
 		if (classObject == null) {
 			throw new CoreException(null);
 		} else {

@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.eval.model;
+package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -7,6 +7,11 @@ package org.eclipse.jdt.internal.debug.eval.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
  
 /**
  * The context in which an evaluation is to be performed. An
@@ -31,7 +36,7 @@ public interface IRuntimeContext {
 	 * 
 	 * @return virtual machine
 	 */
-	IVirtualMachine getVM();
+	IJavaDebugTarget getVM();
 	
 	/**
 	 * Returns the receiving object context in which to perform
@@ -45,7 +50,7 @@ public interface IRuntimeContext {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
 	 */
-	IObject getThis() throws CoreException;
+	IJavaObject getThis() throws CoreException;
 	
 	/**
 	 * Returns the receiving type context in which to perform 
@@ -59,7 +64,7 @@ public interface IRuntimeContext {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
 	 */
-	IClassType getReceivingType() throws CoreException;
+	IJavaClassType getReceivingType() throws CoreException;
 	
 	/**
 	 * Returns the local variables visible for the evaluation.
@@ -73,7 +78,7 @@ public interface IRuntimeContext {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
 	 */
-	IVariable[] getLocals() throws CoreException;
+	IJavaVariable[] getLocals() throws CoreException;
 
 	/**
 	 * Returns the Java project context in which this expression
@@ -88,7 +93,7 @@ public interface IRuntimeContext {
 	 * 
 	 * @return thread
 	 */
-	IThread getThread();
+	IJavaThread getThread();
 	
 	/**
 	 * Returns whether the context of this evaluation is within

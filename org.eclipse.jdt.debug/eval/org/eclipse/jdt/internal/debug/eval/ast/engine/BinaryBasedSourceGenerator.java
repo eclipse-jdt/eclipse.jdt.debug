@@ -26,6 +26,7 @@ public class BinaryBasedSourceGenerator {
 	
 	private static final String RUN_METHOD_NAME= "___run";
 	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
+	private static final String ANONYMOUS_CLASS_NAME= "___EvalClass";
 	
 	private int[] fLocalModifiers;
 	
@@ -65,7 +66,7 @@ public class BinaryBasedSourceGenerator {
 			return;
 		}
 		ReferenceType refType= (ReferenceType)underlyingType;
-		fSource= buildTypeDeclaration(refType, buildRunMethod(refType), null);
+		fSource= buildTypeDeclaration(refType, buildRunMethod(refType), null, false);
 		String packageName = getPackageName(refType.name());
 		if (packageName != null) {
 			fSource.insert(0, "package " + packageName + ";\n");
@@ -117,8 +118,6 @@ public class BinaryBasedSourceGenerator {
 		
 		ReferenceType referenceType = object.referenceType();
 		
-		StringBuffer source = buildTypeDeclaration(referenceType, buffer, nestedTypeName);
-		
 		Field thisField= null;
 		
 		List fields= referenceType.visibleFields();
@@ -130,13 +129,19 @@ public class BinaryBasedSourceGenerator {
 			}
 		}
 		
+		StringBuffer source = buildTypeDeclaration(referenceType, buffer, nestedTypeName, thisField != null);
+		
 		if (thisField == null) {
 			String packageName = getPackageName(referenceType.name());
 			if (packageName != null) {
 				source.insert(0, "package " + packageName + ";\n");
 				fCodeSnippetPosition += 10 + packageName.length();
 			}
-			fCompilationUnitName= getSimpleName(referenceType.name());
+			if (isAnonymousTypeName(referenceType.name())) {
+				fCompilationUnitName= ANONYMOUS_CLASS_NAME;
+			} else {
+				fCompilationUnitName= getSimpleName(referenceType.name());
+			}
 		} else {
 			ObjectReference thisObject= (ObjectReference)object.getValue(thisField);
 			return buildTypeDeclaration(thisObject, source, referenceType.name());
@@ -145,7 +150,7 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 
-	private StringBuffer buildTypeDeclaration(ReferenceType referenceType, StringBuffer buffer, String nestedTypeName) {
+	private StringBuffer buildTypeDeclaration(ReferenceType referenceType, StringBuffer buffer, String nestedTypeName, boolean hasEnclosingInstance) {
 		StringBuffer source= new StringBuffer();
 		
 		String typeName= referenceType.name();
@@ -155,10 +160,26 @@ public class BinaryBasedSourceGenerator {
 		if (isAnonymousType) {
 			ClassType classType= (ClassType) referenceType;
 			
-			source.append("void ");
-			source.append(getUniqueMethodName(EVAL_METHOD_NAME, referenceType));
-			source.append("() {\n");
-			source.append("new ").append(getDotName(classType.superclass().name())).append("()");
+			List interfaceList= classType.interfaces();
+			String superClassName= classType.superclass().name();
+			if (hasEnclosingInstance) {
+				source.append("void ");
+				source.append(getUniqueMethodName(EVAL_METHOD_NAME, referenceType));
+				source.append("() {\nnew ");
+				if (interfaceList.size() != 0) {
+					source.append(getDotName(((InterfaceType)interfaceList.get(0)).name()));
+				} else {
+					source.append(getDotName(superClassName));
+				}
+				source.append("()");
+			} else {
+				source.append("public class ").append(ANONYMOUS_CLASS_NAME).append(" ");
+				if (interfaceList.size() != 0) {
+					source.append(" implements ").append(getDotName(((InterfaceType)interfaceList.get(0)).name()));
+				} else {
+					source.append(" implements ").append(getDotName(superClassName));
+				}
+			}
 			
 		} else {
 			if (referenceType.isFinal()) {
@@ -244,19 +265,19 @@ public class BinaryBasedSourceGenerator {
 			for (Iterator iterator = nestedTypes.iterator(); iterator.hasNext();) {
 				ReferenceType nestedType= (ReferenceType) iterator.next();
 				if (isADirectInnerType(typeName, nestedType.name())) {
-					source.append(buildTypeDeclaration(nestedType, null, null));
+					source.append(buildTypeDeclaration(nestedType, null, null, true));
 				}
 			}
 		} else {
 			for (Iterator iterator = nestedTypes.iterator(); iterator.hasNext();) {
 				ReferenceType nestedType= (ReferenceType) iterator.next();
 				if (!nestedTypeName.equals(nestedType.name()) && isADirectInnerType(typeName, nestedType.name())) {
-					source.append(buildTypeDeclaration(nestedType, null, null));
+					source.append(buildTypeDeclaration(nestedType, null, null, true));
 				}
 			}
 		}
 		
-		if (isAnonymousType) {
+		if (isAnonymousType & hasEnclosingInstance) {
 			source.append("};\n");
 		}
 		

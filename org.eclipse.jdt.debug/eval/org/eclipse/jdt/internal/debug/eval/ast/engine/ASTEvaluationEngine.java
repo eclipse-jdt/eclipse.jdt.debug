@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,18 +23,12 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationThread;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
-import org.eclipse.jdt.internal.debug.eval.model.JavaObjectRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.RuntimeContext;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
@@ -203,7 +198,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				return;
 			}
 	
-			final IValue[] valuez = new IValue[1];
+			final IJavaValue[] valuez = new IJavaValue[1];
 			final InstructionSequence instructionSet = (InstructionSequence)fExpression;
 			IEvaluationRunnable er = new IEvaluationRunnable() {
 				public void run(IJavaThread jt, IProgressMonitor pm) {
@@ -216,7 +211,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			} catch (DebugException e) {
 				exception = e;
 			}
-			IValue value = valuez[0];
+			IJavaValue value = valuez[0];
 			
 
 			if (exception == null) {
@@ -224,8 +219,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 			
 			if (value != null) {
-				IJavaValue jv = ((EvaluationValue)value).getJavaValue();
-				result.setValue(jv);
+				result.setValue(value);
 			}
 			if (exception != null) {
 				result.setException(new DebugException(exception.getStatus()));
@@ -247,14 +241,25 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		EvaluationSourceGenerator mapper = null;
 		CompilationUnit unit = null;
 		try {
-			IVariable[] locals = context.getLocals();
-			int numLocals= locals.length;
-			int[] localModifiers = new int[locals.length];
+			IJavaVariable[] localsVar = context.getLocals();
+			int numLocalsVar= localsVar.length;
+			// ******
+			// to hide problems with local variable declare as instance of Local Types
+			IJavaVariable[] locals= new IJavaVariable[numLocalsVar];
+			int numLocals= 0;
+			for (int i = 0; i < numLocalsVar; i++) {
+				if (!isLocalType(localsVar[i].getReferenceTypeName())) {
+					locals[numLocals++]= localsVar[i];
+				}
+			}
+			// to solve and remove
+			// ******
+			int[] localModifiers = new int[numLocals];
 			String[] localTypesNames= new String[numLocals];
 			String[] localVariables= new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
 				localVariables[i] = locals[i].getName();
-				localTypesNames[i] = locals[i].getType().getName();
+				localTypesNames[i] = locals[i].getReferenceTypeName();
 				localModifiers[i]= 0;
 			}
 			mapper = new EvaluationSourceGenerator(new String[0], localModifiers, localTypesNames, localVariables, snippet);
@@ -267,6 +272,22 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		
 		return createExpressionFromAST(snippet, mapper, unit);
 	}
+
+	// ******
+	// for hide problems with local variable declare as instance of Local Types
+	private boolean isLocalType(String typeName) {
+		StringTokenizer strTok= new StringTokenizer(typeName,"$");
+		strTok.nextToken();
+		while (strTok.hasMoreTokens()) {
+			char char0= strTok.nextToken().charAt(0);
+			if ('0' <= char0 && char0 <= '9') {
+				return true;
+			}
+		}
+		return false;
+	}
+	// ******
+	
 
 	/**
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)

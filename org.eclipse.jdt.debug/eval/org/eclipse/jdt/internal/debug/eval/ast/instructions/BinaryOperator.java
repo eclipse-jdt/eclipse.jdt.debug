@@ -5,9 +5,8 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public abstract class BinaryOperator extends CompoundInstruction {
 	protected int fResultTypeId;
@@ -35,9 +34,9 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	}
 	
 	private void executeAssignment() throws CoreException {
-		IValue value = (IValue) popValue();
-		IVariable variable = (IVariable) pop();
-		IValue variableValue = variable.getValue();
+		IJavaValue value = (IJavaValue) popValue();
+		IJavaVariable variable = (IJavaVariable) pop();
+		IJavaValue variableValue = (IJavaValue)variable.getValue();
 		
 		switch (fResultTypeId) {
 			case T_byte:
@@ -73,8 +72,8 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	}
 	
 	private void executeBinary() throws CoreException {
-		IValue right= (IValue)popValue();
-		IValue left= (IValue)popValue();
+		IJavaValue right= (IJavaValue)popValue();
+		IJavaValue left= (IJavaValue)popValue();
 
 		switch (fResultTypeId) {
 			case T_String:
@@ -98,7 +97,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}	
 	}
 	
-	private IValue getByteValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getByteValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((byte) getDoubleResult(leftOperand, rightOperand));
@@ -113,7 +112,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getShortValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getShortValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((short) getDoubleResult(leftOperand, rightOperand));
@@ -128,7 +127,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getCharValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getCharValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((char) getDoubleResult(leftOperand, rightOperand));
@@ -143,7 +142,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getIntValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getIntValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((int) getDoubleResult(leftOperand, rightOperand));
@@ -158,7 +157,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getLongValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getLongValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((long) getDoubleResult(leftOperand, rightOperand));
@@ -173,7 +172,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getFloatValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getFloatValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((float) getDoubleResult(leftOperand, rightOperand));
@@ -188,7 +187,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getDoubleValueResult(IValue leftOperand, IValue rightOperand) throws CoreException {
+	private IJavaValue getDoubleValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		switch (getInternResultType()) {
 			case T_double:
 				return newValue((double) getDoubleResult(leftOperand, rightOperand));
@@ -203,25 +202,25 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		}
 	}
 	
-	private IValue getBooleanValueResult(IValue leftOperand, IValue rightOperand) {
+	private IJavaValue getBooleanValueResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return newValue(getBooleanResult(leftOperand, rightOperand));
 	}
 	
-	private IValue getStringValueResult(IValue leftOperand, IValue rightOperand) {
+	private IJavaValue getStringValueResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return newValue(getStringResult(leftOperand, rightOperand));
 	}
 	
-	protected abstract int getIntResult(IValue leftOperand, IValue rightOperand) throws CoreException;
+	protected abstract int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException;
 	
-	protected abstract long getLongResult(IValue leftOperand, IValue rightOperand) throws CoreException;
+	protected abstract long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException;
 
-	protected abstract float getFloatResult(IValue leftOperand, IValue rightOperand);
+	protected abstract float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand);
 
-	protected abstract double getDoubleResult(IValue leftOperand, IValue rightOperand);
+	protected abstract double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand);
 
-	protected abstract boolean getBooleanResult(IValue leftOperand, IValue rightOperand);
+	protected abstract boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand);
 
-	protected abstract String getStringResult(IValue leftOperand, IValue rightOperand);
+	protected abstract String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand);
 
 	protected int getInternResultType() {
 		return getBinaryPromotionType(fLeftTypeId, fRightTypeId);

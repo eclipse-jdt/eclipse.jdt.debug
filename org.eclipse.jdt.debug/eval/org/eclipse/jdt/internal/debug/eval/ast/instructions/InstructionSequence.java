@@ -9,10 +9,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.Message;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
-import org.eclipse.jdt.internal.debug.eval.ast.engine.*;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
 
 public class InstructionSequence implements ICompiledExpression {
 
@@ -37,7 +37,7 @@ public class InstructionSequence implements ICompiledExpression {
 	 * 
 	 * @param context evaluation context
 	 */
-	public IValue evaluate(IRuntimeContext context) {
+	public IJavaValue evaluate(IRuntimeContext context) {
 		Interpreter interpreter= new Interpreter(getInstructions(), context);
 		try {
 			interpreter.execute();

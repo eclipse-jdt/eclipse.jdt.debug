@@ -9,8 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import  org.eclipse.jdt.core.dom.ITypeBinding;
+
+import  org.eclipse.jdt.core.dom.ITypeBinding;
+
+import  org.eclipse.jdt.core.dom.ClassInstanceCreation;
+
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
@@ -130,10 +137,11 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushFloat;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushInt;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLong;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushNull;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushStaticFieldVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushString;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushThis;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushType;
-import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushVariable;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLocalVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftAssignmentOperator;
@@ -287,6 +295,46 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return Signature.createTypeSignature(getTypeName(typeBinding), true).replace('.', '/');
 	}
 	
+	private int getEnclosingLevel(ASTNode node, ITypeBinding referenceTypeBinding) {
+		ASTNode parent= node;
+		do {
+			parent= parent.getParent();
+		} while (!(parent instanceof TypeDeclaration || parent instanceof AnonymousClassDeclaration));
+		if (parent == null) {
+			// throw an exception
+			return 9999;
+		}
+		ITypeBinding parentBinding;
+		if (parent instanceof TypeDeclaration) {
+			parentBinding= (ITypeBinding) ((TypeDeclaration)parent).resolveBinding();
+		} else {
+			parentBinding= (ITypeBinding) ((AnonymousClassDeclaration)parent).resolveBinding();
+		}
+		if (isInstanceOf(parentBinding, referenceTypeBinding)) {
+			return 0;
+		}
+		return getEnclosingLevel(parent, referenceTypeBinding) + 1;
+	}
+
+	private int getSuperLevel(ITypeBinding current, ITypeBinding reference) {
+		if (current.equals(reference)) {
+			return 0;
+		}
+		return getSuperLevel(current.getSuperclass(), reference);
+	}
+
+	private boolean isInstanceOf(ITypeBinding current, ITypeBinding reference) {
+		if (current.equals(reference)) {
+			return true;
+		}
+		ITypeBinding superClass= current.getSuperclass();
+		if (superClass == null) {
+			return false;
+		} else {
+			return isInstanceOf(current.getSuperclass(), reference);
+		}
+	}
+
 	/**
 	 * End visit methods
 	 * 
@@ -688,9 +736,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(PrimitiveType)
 	 */
 	public void endVisit(PrimitiveType node) {
-		if (!isActive() || hasErrors())
-			return;
-		storeInstruction();			
 	}
 
 	/**
@@ -924,7 +969,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ITypeBinding typeBinding= node.resolveTypeBinding();
 		
 		int dimension= typeBinding.getDimensions();
-		String signature= Signature.createTypeSignature(getQualifiedName(typeBinding.getElementType()), true);
+		String signature= getTypeSignature(typeBinding.getElementType());
 		
 		push(new ArrayInitializerInstruction(signature, node.expressions().size(), dimension, fCounter));
 		
@@ -941,7 +986,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ITypeBinding typeBinding= node.getElementType().resolveBinding();
 		
 		int dimension= node.getDimensions();
-		String signature= Signature.createTypeSignature(getQualifiedName(typeBinding), true);
+		String signature= getTypeSignature(typeBinding);
 
 		push(new PushArrayType(signature, dimension, fCounter));
 		
@@ -956,7 +1001,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Assert statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Assert statement cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -1086,9 +1131,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		int typeId = getTypeId(node.getType());
 		
-		push(new Cast(typeId, fCounter));
+		push(new Cast(typeId, getTypeName(node.getType().resolveBinding()), fCounter));
 		
-		return true;
+		node.getExpression().accept(this);
+		
+		return false;
 	}
 
 	/**
@@ -1099,7 +1146,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Catch clause is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Catch clause cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -1117,7 +1164,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * return false, visit name & arguments, don't visit expression & body declaration
+	 * return false, visit expression, type name & arguments, don't visit body declaration
 	 * @see ASTVisitor#visit(ClassInstanceCreation)
 	 */
 	public boolean visit(ClassInstanceCreation node) {
@@ -1129,37 +1176,53 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			setHasError(true);
 			addErrorMessage(new Message("Anonymous type declaration cannot be used in an evaluation expression", node.getStartPosition()));
 		}
-		if (node.getExpression() != null) {
+
+		IMethodBinding methodBinding= node.resolveConstructorBinding();
+		ITypeBinding typeBinding= methodBinding.getDeclaringClass();
+		ITypeBinding enclosingTypeBinding= typeBinding.getDeclaringClass();
+		
+		if (typeBinding.isLocal()) {
 			setHasError(true);
-			addErrorMessage(new Message("Class Instance Creation Expression  is not managed", node.getStartPosition()));
+			addErrorMessage(new Message("Constructor of a local type cannot be used in an evaluation expression", node.getStartPosition()));
 		}
 		
 		if (hasErrors()) {
 			return true;
 		}
 		
-		IMethodBinding methodBinding = node.resolveConstructorBinding();
+		boolean isInstanceMemberType= typeBinding.isMember() &&! Modifier.isStatic(typeBinding.getModifiers());
 
 		int argCount= methodBinding.getParameterTypes().length;
+		
+		String enclosingTypeSignature= null;
+		if (isInstanceMemberType) {
+			enclosingTypeSignature= getTypeSignature(enclosingTypeBinding);
+			argCount++;
+		}
 
-		String signature= getMethodSignature(methodBinding).replace('.','/');
+		String signature= getMethodSignature(methodBinding, enclosingTypeSignature).replace('.','/');
 
 		push(new Constructor(signature, argCount, fCounter));
  		
-//		node.getName().accept(this);
-		// TO DO: Use the method call above instead of the following code
-		push(new PushType(getTypeName(methodBinding.getDeclaringClass()), false));
+		push(new PushType(getTypeName(typeBinding)));
 		storeInstruction();
+
+		if (isInstanceMemberType) {
+			Expression optionalExpression= node.getExpression();
+			if (optionalExpression != null) {
+				optionalExpression.accept(this);
+			} else {
+				push(new PushThis(getEnclosingLevel(node, enclosingTypeBinding)));
+				storeInstruction();
+			}
+		}
 
 		Iterator iterator= node.arguments().iterator();
 		while (iterator.hasNext()) {
 			((Expression) iterator.next()).accept(this);
 		}
-
 		
-
 		return false;
-
 	}
 
 	/**
@@ -1262,11 +1325,21 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		String signature = getTypeSignature(node.getExpression().resolveTypeBinding());
+		SimpleName fieldName= node.getName();
+		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+		Expression expression = node.getExpression();
+		String fieldId = fieldName.getIdentifier();
 		
-		push(new PushFieldVariable(node.getName().getIdentifier(), signature, fCounter));
-		
-		node.getExpression().accept(this);
+		if (Modifier.isStatic(fieldBinding.getModifiers())) {
+			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+			expression.accept(this);
+			push(new Pop());
+			storeInstruction();
+		} else {
+			push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
+			expression.accept(this);
+		}
 		
 		return false;
 	}
@@ -1583,7 +1656,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(LabeledStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Labaled Statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message("Labeled Statement cannot be used in an evaluation expression", node.getStartPosition()));
 		return false;
 	}
 
@@ -1619,15 +1692,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		int argCount= parameterTypes.length;
 		String selector= methodBinding.getName();
 
-		String signature= getMethodSignature(methodBinding).replace('.','/');
+		String signature= getMethodSignature(methodBinding, null).replace('.','/');
 		
 		boolean isStatic= Flags.isStatic(methodBinding.getModifiers());
 		Expression expression= node.getExpression();
 		
+		String typeSignature= getTypeSignature(methodBinding.getDeclaringClass());
+		
 		if (isStatic) {
-			String typeSignature= Signature.createTypeSignature(getQualifiedName(methodBinding.getDeclaringClass()), true);
 			push(new SendStaticMessage(typeSignature, selector, signature, argCount, fCounter));
-
 			if (expression != null) {
 				node.getExpression().accept(this);
 				push(new Pop());
@@ -1635,9 +1708,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 		} else {
 			push(new SendMessage(selector, signature, argCount, false, fCounter));
-
 			if (expression == null) {
-				push(new PushThis());
+				push(new PushThis(getEnclosingLevel(node, methodBinding.getDeclaringClass())));
 				storeInstruction();	
 			} else {
 				node.getExpression().accept(this);
@@ -1820,8 +1892,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		push(new PushType(getPrimitiveTypeSignature(node.getPrimitiveTypeCode().toString()), true));
-		
 		return true;
 	}
 
@@ -1843,11 +1913,19 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				node.getName().accept(this);
 				break;
 			case IBinding.VARIABLE:
-				String signature = getTypeSignature(node.getQualifier().resolveTypeBinding());
-		
-				push(new PushFieldVariable(node.getName().getIdentifier(), signature, fCounter));
-				node.getQualifier().accept(this);
-				storeInstruction();
+				SimpleName fieldName= node.getName();
+				IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+				ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+				String fieldId = fieldName.getIdentifier();
+				
+				if (Modifier.isStatic(fieldBinding.getModifiers())) {
+					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+					storeInstruction();
+				} else {
+					Name qualifier = node.getQualifier();
+					push(new PushFieldVariable(fieldId, getSuperLevel(qualifier.resolveTypeBinding(), declaringTypeBinding), fCounter));
+					qualifier.accept(this);
+				}
 				break;
 		}
 		
@@ -1872,28 +1950,37 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
+		if (hasErrors()) {
+			return true;
+		}
+		
 		IBinding binding = node.resolveBinding();
 		
+		String variableId = node.getIdentifier();
 		if (binding == null) {
 			setHasError(true);
-			addErrorMessage(new Message("binding == null for " + node.getIdentifier(), node.getStartPosition()));
+			addErrorMessage(new Message("binding == null for " + variableId, node.getStartPosition()));
 			return true;
 		}
 		
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
 				ITypeBinding typeBinding= (ITypeBinding) binding;
-				push(new PushType(getTypeName(typeBinding), false));
+				push(new PushType(getTypeName(typeBinding)));
 				break;
 			case IBinding.VARIABLE:
 				IVariableBinding variableBinding= (IVariableBinding) binding;
-				if (variableBinding.isField() && Modifier.isStatic(variableBinding.getModifiers())) {
-					push(new PushFieldVariable(node.getIdentifier(), false, fCounter));
-					typeBinding= variableBinding.getDeclaringClass();
-					push(new PushType(getTypeName(typeBinding), false));
-					storeInstruction();
+				ITypeBinding declaringClassBinding= variableBinding.getDeclaringClass();
+				if (variableBinding.isField()) {
+					if (Modifier.isStatic(variableBinding.getModifiers())) {
+						push(new PushStaticFieldVariable(variableId, getTypeName(declaringClassBinding), fCounter));
+					} else {
+						push(new PushFieldVariable(variableId, 0, fCounter));
+						push(new PushThis(getEnclosingLevel(node, declaringClassBinding)));
+						storeInstruction();
+					}
 				} else {
-					push(new PushVariable(node.getIdentifier()));
+					push(new PushLocalVariable(variableId));
 				}
 				break;
 		}
@@ -1911,7 +1998,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		
 		ITypeBinding typeBinding  = node.resolveBinding();
-		push(new PushType(getTypeName(typeBinding), false));
+		push(new PushType(getTypeName(typeBinding)));
 		
 		return false;
 	}
@@ -1924,7 +2011,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Single variable declaration is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Single variable declaration cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -1961,11 +2048,26 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		push(new PushThis());
-		storeInstruction();
+		SimpleName fieldName= node.getName();
+		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+		String fieldId = fieldName.getIdentifier();
 		
-		push(new PushFieldVariable(node.getName().getIdentifier(), true, fCounter));
-		
+		if (Modifier.isStatic(fieldBinding.getModifiers())) {
+			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+		} else {
+			Name qualifier = node.getQualifier();
+			int superLevel= 1;
+			int enclosingLevel= 0;
+			if (qualifier != null) {
+				superLevel= getSuperLevel(qualifier.resolveTypeBinding(), declaringTypeBinding);
+				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+			}
+			push(new PushFieldVariable(fieldId, superLevel, fCounter));
+			push(new PushThis(enclosingLevel));
+			storeInstruction();
+		}
+
 		return false;
 	}
 
@@ -1979,12 +2081,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		if (node.getQualifier() != null) {
-			setHasError(true);
-			addErrorMessage(new Message("Qualifier for super method invocation is not implemented", node.getStartPosition()));
-			return true;
-		}
-		
 		if (hasErrors()) {
 			return true;
 		}
@@ -1994,12 +2090,21 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int argCount = parameterTypes.length;
 		String selector = methodBinding.getName();
-		String signature = getMethodSignature(methodBinding);
-		
-		push(new SendMessage(selector, signature, argCount, true, fCounter));
-		
-		push(new PushThis());
-		storeInstruction();
+		String signature = getMethodSignature(methodBinding, null);
+
+		Name qualifier= node.getQualifier();
+		if (Modifier.isStatic(methodBinding.getModifiers())) {
+			String typeSignature= getTypeSignature(methodBinding.getDeclaringClass());
+			push(new SendStaticMessage(typeSignature, selector, signature, argCount, fCounter));
+		} else {
+			push(new SendMessage(selector, signature, argCount, true, fCounter));
+			int enclosingLevel= 0;
+			if (qualifier != null) {
+				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+			}
+			push(new PushThis(enclosingLevel));
+			storeInstruction();
+		}
 		
 		Iterator iterator = node.arguments().iterator();
 		while (iterator.hasNext()) {
@@ -2017,7 +2122,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Switch case is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Switch case cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -2029,7 +2134,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Switch statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Switch statement cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -2050,8 +2155,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-				
-		push(new PushThis());
+		
+		Name qualifier= node.getQualifier();
+		int enclosingLevel= 0;
+		if (qualifier != null) {
+			enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+		}
+		push(new PushThis(enclosingLevel));
 		
 		return false;
 	}
@@ -2064,7 +2174,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Throw statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Throw statement cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -2076,7 +2186,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Try statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Try statement cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -2125,7 +2235,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Variable declaration expression is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Variable declaration cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -2136,8 +2246,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		setHasError(true);
-		addErrorMessage(new Message("Variable declaration fragment is not implemented", node.getStartPosition()));
+		// Don't add error here. A variable declaration fragment is always contained in a 
+		// variable declaraction expression or statement. These will add the appropriate error.
 		return true;
 	}
 
@@ -2149,7 +2259,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Variable declaration statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message("Variable declaration cannot be used in an evaluation expression", node.getStartPosition()));
 		return true;
 	}
 
@@ -2163,11 +2273,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 	
 	//--------------------------
-	
-	private String getQualifiedName(ITypeBinding typeBinding) {
-		IPackageBinding packageBinding = typeBinding.getPackage();
-		return ((packageBinding == null || packageBinding.isUnnamed())? "" : packageBinding.getName() + ".") + typeBinding.getName();
-	}
 	
 	private int getTypeId(Expression expression) {
 		ITypeBinding typeBinding = expression.resolveTypeBinding();
@@ -2199,14 +2304,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 	}
 
-	private String getMethodSignature(IMethodBinding methodBinding) {
+	private String getMethodSignature(IMethodBinding methodBinding, String enclosingTypeSignature) {
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
-		int argCount = parameterTypes.length;
-		String[] parameterSignatures = new String[argCount];
-		for (int i = 0; i < argCount; i++) {
-			parameterSignatures[i] = Signature.createTypeSignature(getQualifiedName(parameterTypes[i]), true);
+		int i;
+		int argCount;
+		String[] parameterSignatures;
+		if (enclosingTypeSignature == null) {
+			i= 0;
+			argCount= parameterTypes.length;
+			parameterSignatures= new String[argCount];
+		} else {
+			i= 1;
+			argCount= parameterTypes.length + 1;
+			parameterSignatures= new String[argCount];
+			parameterSignatures[0]= enclosingTypeSignature;
 		}
-		String signature = Signature.createMethodSignature(parameterSignatures, Signature.createTypeSignature(getQualifiedName(methodBinding.getReturnType()), true));
+		for (; i < argCount; i++) {
+			parameterSignatures[i]= getTypeSignature(parameterTypes[i]);
+		}
+		String signature= Signature.createMethodSignature(parameterSignatures, getTypeSignature(methodBinding.getReturnType()));
 		return signature;
 	}
 
