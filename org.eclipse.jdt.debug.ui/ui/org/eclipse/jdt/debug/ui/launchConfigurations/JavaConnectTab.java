@@ -111,7 +111,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CONNECT_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginHeight = 0;
-		comp.setLayout(topLayout);		
+		comp.setLayout(topLayout);
+		comp.setFont(font);
 		GridData gd;
 		
 		createVerticalSpacer(comp, 1);
@@ -203,9 +204,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		fArgumentComposite.setFont(font);
 		createVerticalSpacer(comp, 2);		
 		
-		fAllowTerminateButton = new Button(comp, SWT.CHECK);
-		fAllowTerminateButton.setText(LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
-		fAllowTerminateButton.setFont(font);
+		fAllowTerminateButton = createCheckButton(comp, LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
 		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();

@@ -100,7 +100,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		
 		Composite projComp= new Composite(comp, SWT.NONE);
 		GridLayout projLayout= new GridLayout();
-		projLayout.numColumns= 3;
+		projLayout.numColumns= 2;
 		projLayout.marginHeight= 0;
 		projLayout.marginWidth= 0;
 		projComp.setLayout(projLayout);
@@ -110,7 +110,8 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		
 		fProjLabel= new Label(projComp, SWT.NONE);
 		fProjLabel.setText(LauncherMessages.getString("appletlauncher.maintab.projectlabel.name")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
+		gd= new GridData();
+		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
 		fProjLabel.setFont(font);
 		
@@ -131,9 +132,12 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
+		createVerticalSpacer(projComp, 2);
+		
 		fMainLabel= new Label(projComp, SWT.NONE);
 		fMainLabel.setText(LauncherMessages.getString("appletlauncher.maintab.mainclasslabel.name")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
+		gd= new GridData();
+		gd.horizontalSpan = 2;
 		fMainLabel.setLayoutData(gd);
 		fMainLabel.setFont(font);
 
@@ -154,13 +158,24 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fAppletViewerClassLabel= new Label(projComp, SWT.NONE);
+		createVerticalSpacer(projComp, 2);
+		
+		// Need to create a new composite here or the end up getting
+		// divided evenly, which makes the push buttons huge
+		Composite classComposite= new Composite(comp, SWT.NONE);
+		classComposite.setFont(font);
+		classComposite.setLayout(new GridLayout());
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		classComposite.setLayoutData(gd);
+		
+		fAppletViewerClassLabel= new Label(classComposite, SWT.NONE);
 		fAppletViewerClassLabel.setText(LauncherMessages.getString("AppletMainTab.Name_of_appletviewer_class__1")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
+		gd= new GridData();
 		fAppletViewerClassLabel.setLayoutData(gd);		
 		fAppletViewerClassLabel.setFont(font);
 		
-		fAppletViewerClassText= new Text(projComp, SWT.SINGLE | SWT.BORDER);
+		fAppletViewerClassText= new Text(classComposite, SWT.SINGLE | SWT.BORDER);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fAppletViewerClassText.setLayoutData(gd);
 		fAppletViewerClassText.setFont(font);
@@ -169,12 +184,8 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		createVerticalSpacer(projComp, 1);
 		
-		createVerticalSpacer(projComp, 1);
-		fAppletViewerClassDefaultButton= new Button(projComp, SWT.CHECK);
-		fAppletViewerClassDefaultButton.setFont(font);
-		fAppletViewerClassDefaultButton.setText(LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
+		fAppletViewerClassDefaultButton= createCheckButton(classComposite, LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
 		fAppletViewerClassDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				setAppletViewerTextEnabledState();

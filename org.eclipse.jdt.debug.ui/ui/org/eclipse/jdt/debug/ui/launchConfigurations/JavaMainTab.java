@@ -120,24 +120,26 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 		GridLayout topLayout = new GridLayout();
-		comp.setLayout(topLayout);		
-		GridData gd;
+		topLayout.verticalSpacing = 0;
+		comp.setLayout(topLayout);
+		comp.setFont(font);
 		
 		createVerticalSpacer(comp, 1);
 		
 		Composite projComp = new Composite(comp, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 3;
+		projLayout.numColumns = 2;
 		projLayout.marginHeight = 0;
 		projLayout.marginWidth = 0;
 		projComp.setLayout(projLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		projComp.setLayoutData(gd);
 		projComp.setFont(font);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
 		fProjLabel.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
-		gd = new GridData(GridData.BEGINNING);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
 		fProjLabel.setFont(font);
 		
@@ -158,9 +160,12 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
+		createVerticalSpacer(projComp, 2);
+		
 		fMainLabel = new Label(projComp, SWT.NONE);
 		fMainLabel.setText(LauncherMessages.getString("JavaMainTab.Main_cla&ss__4")); //$NON-NLS-1$
-		gd = new GridData(GridData.BEGINNING);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
 		fMainLabel.setLayoutData(gd);
 		fMainLabel.setFont(font);
 
@@ -181,31 +186,21 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		createVerticalSpacer(projComp, 1);
-		fSearchExternalJarsCheckButton = new Button(projComp, SWT.CHECK);
-		fSearchExternalJarsCheckButton.setText(LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
-		fSearchExternalJarsCheckButton.setFont(font);
+		fSearchExternalJarsCheckButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
 		fSearchExternalJarsCheckButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		});	
-		createVerticalSpacer(projComp,1 );
-		
-		createVerticalSpacer(projComp,1 );
-		fConsiderInheritedMainButton = new Button(projComp, SWT.CHECK);
-		fConsiderInheritedMainButton.setText(LauncherMessages.getString("JavaMainTab.22")); //$NON-NLS-1$
-		fConsiderInheritedMainButton.setFont(font);
+		});
+
+		fConsiderInheritedMainButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.22")); //$NON-NLS-1$
 		fConsiderInheritedMainButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		});		
-		createVerticalSpacer(projComp,1 );
+		});	
 		
-		fStopInMainCheckButton = new Button(comp, SWT.CHECK);
-		fStopInMainCheckButton.setText(LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
-		fStopInMainCheckButton.setFont(font);
+		fStopInMainCheckButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
 		fStopInMainCheckButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
