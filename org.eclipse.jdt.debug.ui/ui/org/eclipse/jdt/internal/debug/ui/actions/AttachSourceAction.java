@@ -12,14 +12,13 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import java.util.Iterator;
+
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Attach source to an archive or variable.
@@ -41,7 +40,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	/**
 	 * Prompts source attachment.
 	 * 
-	 * @see IAction#run()
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
 	public void run() { 
 		IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(getShell(), fEntries[0].getClasspathEntry()); 
@@ -56,8 +55,8 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 		}
 	}
 
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		fEntries = new IRuntimeClasspathEntry[selection.size()];
