@@ -135,7 +135,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		createButton(pathButtonComp, new AddJarAction(fClasspathViewer));
 		createButton(pathButtonComp, new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX));
 
-		IAction action = new AddFolderAction(null);								
+		RuntimeClasspathAction action = new AddFolderAction(null);								
 		advancedActions.add(action);
 		
 		action = new AddExternalFolderAction(null, DIALOG_SETTINGS_PREFIX);								
@@ -150,7 +150,9 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
 		createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer, adv));
 
-		createButton(pathButtonComp, new RestoreDefaultEntriesAction(fClasspathViewer, this));
+		action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
+		createButton(pathButtonComp, action);
+		action.setEnabled(true);
 	}
 
 	/**
