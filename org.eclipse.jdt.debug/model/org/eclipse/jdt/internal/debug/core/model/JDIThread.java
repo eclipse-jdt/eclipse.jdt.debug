@@ -2417,6 +2417,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
+		} catch (VMDisconnectedException e) {
 		}
 		return null;
 	}
