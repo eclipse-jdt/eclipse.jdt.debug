@@ -70,20 +70,6 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
-	 */
-	public boolean isValid(ILaunchConfiguration config) {
-		return isValid();
-	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#isValid()
-	 */
-	public boolean isValid() {
-		return true;
-	}
-
-	/**
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
