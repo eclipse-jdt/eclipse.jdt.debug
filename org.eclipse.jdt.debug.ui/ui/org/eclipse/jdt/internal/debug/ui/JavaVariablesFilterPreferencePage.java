@@ -169,7 +169,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		setTitle("Java Variable Filter Preferences");
+		setTitle(DebugUIMessages.getString("JavaVariablesFilterPreferencePage.Java_Variable_Filter_Preferences_1")); //$NON-NLS-1$
 		setControl(getFieldEditorParent());
 		WorkbenchHelp.setHelp(
 			parent,
