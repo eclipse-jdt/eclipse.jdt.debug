@@ -88,21 +88,21 @@ LAUNCHER="$APP_NAME"
 #
 # Create the parent directory for the application bundle 
 #
-mkdir -p $TMP_APP_DIR
-cd $TMP_APP_DIR
+mkdir -p "$TMP_APP_DIR"
+cd "$TMP_APP_DIR"
 
 #
 # Create the application bundle 
 #
-rm -rf $APP_NAME.app
-mkdir -p $APP_NAME.app/Contents/MacOS
+rm -rf "$APP_NAME.app"
+mkdir -p "$APP_NAME.app/Contents/MacOS"
 
-cd $APP_NAME.app/Contents
+cd "$APP_NAME.app/Contents"
 
 #
 # Copy the JavaAppLauncher into the bundle 
 #
-cp $JAVASTUB MacOS/$APP_NAME
+cp "$JAVASTUB" "MacOS/$APP_NAME"
 
 #
 # Create the Info.plist file.
@@ -149,7 +149,7 @@ End_Of_Input
 # Start the JavaAppLauncher by replacing this shell script
 # to ensure that the process id is preserved.
 #
-exec $TMP_APP_DIR/$APP_NAME.app/Contents/MacOS/$APP_NAME
+exec "$TMP_APP_DIR/$APP_NAME.app/Contents/MacOS/$APP_NAME"
 
 #
 # not reached (as long as the exec from above succeeds).
