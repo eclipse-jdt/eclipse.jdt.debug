@@ -5,7 +5,6 @@ package org.eclipse.jdi.internal.jdwp;
  * All Rights Reserved.
  */
 
-import java.io.*;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 /**

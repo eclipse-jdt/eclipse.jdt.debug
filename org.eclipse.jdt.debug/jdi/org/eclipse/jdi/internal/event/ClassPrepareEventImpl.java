@@ -5,15 +5,17 @@ package org.eclipse.jdi.internal.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.request.*;
-import java.io.*;
-import java.util.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ReferenceTypeImpl;
+import org.eclipse.jdi.internal.ThreadReferenceImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.request.RequestID;
+
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.event.ClassPrepareEvent;
 
 /**
  * this class implements the corresponding interfaces

@@ -5,13 +5,16 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import java.net.*;
-import java.util.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Arrays;
 
 public class SocketTransportImpl extends TransportImpl {
 	public static final int MIN_PORTNR = 0;

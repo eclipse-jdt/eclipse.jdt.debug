@@ -5,8 +5,9 @@ package org.eclipse.jdi.internal.spy;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import java.io.*;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Vector;
 
 public class VerboseWriter extends BufWriter {
 	/** Length of verbose description. */

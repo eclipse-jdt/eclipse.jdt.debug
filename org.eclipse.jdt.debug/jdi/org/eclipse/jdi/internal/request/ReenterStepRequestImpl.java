@@ -5,14 +5,15 @@ package org.eclipse.jdi.internal.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.request.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.event.EventImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
 /**
  * this class implements the corresponding interfaces

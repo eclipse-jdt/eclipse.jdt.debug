@@ -5,15 +5,17 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import java.util.*;
-import java.io.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.jdwp.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
+
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.Transport;
 
 
 /**

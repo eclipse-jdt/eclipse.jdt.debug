@@ -5,15 +5,16 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
+import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 
-public interface WatchpointRequest extends com.sun.jdi.request.EventRequest {
+public interface WatchpointRequest extends EventRequest {
 	public void addClassExclusionFilter(String arg1);
-	public void addClassFilter(com.sun.jdi.ReferenceType arg1);
+	public void addClassFilter(ReferenceType arg1);
 	public void addClassFilter(String arg1);
-	public void addThreadFilter(com.sun.jdi.ThreadReference arg1);
-	public com.sun.jdi.Field field();
+	public void addThreadFilter(ThreadReference arg1);
+	public Field field();
 	public void addInstanceFilter(ObjectReference instance);
 }

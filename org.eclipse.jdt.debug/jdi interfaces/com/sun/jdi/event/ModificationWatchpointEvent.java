@@ -5,10 +5,8 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Value;
 
-public interface ModificationWatchpointEvent extends com.sun.jdi.event.WatchpointEvent {
-	public com.sun.jdi.Value valueToBe();
+public interface ModificationWatchpointEvent extends WatchpointEvent {
+	public Value valueToBe();
 }

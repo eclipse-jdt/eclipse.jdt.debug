@@ -5,13 +5,20 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
+import org.eclipse.jdi.internal.connect.ConnectorImpl.StringArgumentImpl;
+
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.IllegalConnectorArgumentsException;
+import com.sun.jdi.connect.LaunchingConnector;
+import com.sun.jdi.connect.VMStartException;
 
 
 public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements LaunchingConnector {

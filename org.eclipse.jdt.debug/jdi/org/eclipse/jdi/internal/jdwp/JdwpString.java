@@ -3,14 +3,18 @@ package org.eclipse.jdi.internal.jdwp;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */import java.io.*;
+ */
+ 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.UTFDataFormatException;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) ID
  * declared by the JDWP specification.
  *
  */
-
 public class JdwpString {
 	/**
 	 * Reads String from Jdwp stream.

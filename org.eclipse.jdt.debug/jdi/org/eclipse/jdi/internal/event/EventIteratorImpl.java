@@ -5,11 +5,10 @@ package org.eclipse.jdi.internal.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-import java.util.*;
+import java.util.ListIterator;
+
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventIterator;
 
 /**
  * this class implements the corresponding interfaces
@@ -17,7 +16,7 @@ import java.util.*;
  * for more information.
  *
  */
-public class EventIteratorImpl implements EventIterator, Iterator {
+public class EventIteratorImpl implements EventIterator {
 	/** List iterator implementation of iterator. */
 	private ListIterator fIterator;
 	

@@ -5,11 +5,11 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import com.sun.jdi.connect.Transport;
 
 /**
  * this class implements the corresponding interfaces

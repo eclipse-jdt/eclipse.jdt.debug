@@ -5,12 +5,7 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-
-public class DuplicateRequestException extends RuntimeException 
-{
+public class DuplicateRequestException extends RuntimeException {
 	public DuplicateRequestException() { }
 	public DuplicateRequestException(String arg1) { }
 }

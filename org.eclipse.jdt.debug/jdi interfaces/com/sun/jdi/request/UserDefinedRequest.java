@@ -5,9 +5,5 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-
-public interface UserDefinedRequest extends com.sun.jdi.request.EventRequest {
+public interface UserDefinedRequest extends EventRequest {
 }

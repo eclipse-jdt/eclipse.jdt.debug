@@ -5,14 +5,19 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.eclipse.jdi.internal.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
+import org.eclipse.jdi.internal.connect.ConnectorImpl.IntegerArgumentImpl;
+import org.eclipse.jdi.internal.connect.ConnectorImpl.StringArgumentImpl;
+
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.AttachingConnector;
+import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 
 public class SocketAttachingConnectorImpl extends ConnectorImpl implements AttachingConnector {
 	/** Hostname to which is attached. */

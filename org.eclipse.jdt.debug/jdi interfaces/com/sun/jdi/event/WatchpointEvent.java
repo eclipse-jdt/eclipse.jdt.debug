@@ -5,13 +5,14 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
 
-public interface WatchpointEvent extends com.sun.jdi.event.LocatableEvent {
-	public com.sun.jdi.Field field();
-	public com.sun.jdi.ObjectReference object();
-	public com.sun.jdi.ThreadReference thread();
-	public com.sun.jdi.Value valueCurrent();
+public interface WatchpointEvent extends LocatableEvent {
+	public Field field();
+	public ObjectReference object();
+	public ThreadReference thread();
+	public Value valueCurrent();
 }

@@ -5,10 +5,9 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Locatable;
+import com.sun.jdi.ThreadReference;
 
-public abstract interface LocatableEvent extends com.sun.jdi.event.Event, com.sun.jdi.Locatable {
+public abstract interface LocatableEvent extends Event, Locatable {
 	public abstract ThreadReference thread();
 }

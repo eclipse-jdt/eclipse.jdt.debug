@@ -5,11 +5,9 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Mirror;
 
-public interface EventQueue extends com.sun.jdi.Mirror {
+public interface EventQueue extends Mirror {
 	public EventSet remove() throws InterruptedException;
 	public EventSet remove(long arg1) throws InterruptedException;
 }

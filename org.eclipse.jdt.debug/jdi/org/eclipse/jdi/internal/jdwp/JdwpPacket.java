@@ -5,8 +5,13 @@ package org.eclipse.jdi.internal.jdwp;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Vector;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet

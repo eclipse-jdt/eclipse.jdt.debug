@@ -5,11 +5,7 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-
-public interface ClassUnloadEvent extends com.sun.jdi.event.Event {
+public interface ClassUnloadEvent extends Event {
 	public String className();
 	public String classSignature();
 }

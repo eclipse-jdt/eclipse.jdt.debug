@@ -5,10 +5,9 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Mirror;
+import com.sun.jdi.request.EventRequest;
 
-public interface Event extends com.sun.jdi.Mirror {
-	public com.sun.jdi.request.EventRequest request();
+public interface Event extends Mirror {
+	public EventRequest request();
 }

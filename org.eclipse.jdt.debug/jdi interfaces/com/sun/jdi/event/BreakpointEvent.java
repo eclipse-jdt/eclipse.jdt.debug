@@ -5,10 +5,8 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.ThreadReference;
 
-public interface BreakpointEvent extends com.sun.jdi.event.LocatableEvent {
-	public com.sun.jdi.ThreadReference thread();
+public interface BreakpointEvent extends LocatableEvent {
+	public ThreadReference thread();
 }

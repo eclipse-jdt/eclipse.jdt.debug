@@ -5,10 +5,6 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.jdi.internal.jdwp.*;
-
 /**
  * This class implements threads that receive/send packets from/to the Virtual Machine.
  *

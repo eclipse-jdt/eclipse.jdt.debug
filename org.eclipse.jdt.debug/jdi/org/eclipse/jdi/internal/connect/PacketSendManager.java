@@ -5,10 +5,15 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
-import com.sun.jdi.*;
-import org.eclipse.jdi.internal.jdwp.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.util.LinkedList;
+
+import org.eclipse.jdi.internal.jdwp.JdwpPacket;
+
+import com.sun.jdi.VMDisconnectedException;
 
 /**
  * This class implements a thread that sends available packets to the Virtual Machine.

@@ -5,12 +5,10 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
+import com.sun.jdi.ReferenceType;
 
-public interface ClassPrepareRequest extends com.sun.jdi.request.EventRequest {
+public interface ClassPrepareRequest extends EventRequest {
 	public void addClassExclusionFilter(String arg1);
-	public void addClassFilter(com.sun.jdi.ReferenceType arg1);
+	public void addClassFilter(ReferenceType arg1);
 	public void addClassFilter(String arg1);
 }

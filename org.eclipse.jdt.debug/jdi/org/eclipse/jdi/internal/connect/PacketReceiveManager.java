@@ -5,12 +5,19 @@ package org.eclipse.jdi.internal.connect;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
-import com.sun.jdi.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.util.LinkedList;
+import java.util.ListIterator;
+
 import org.eclipse.jdi.TimeoutException;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.jdwp.*;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
+import com.sun.jdi.VMDisconnectedException;
 
 /**
  * This class implements a thread that receives packets from the Virtual Machine.

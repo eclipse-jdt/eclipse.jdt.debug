@@ -5,11 +5,10 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 
-public interface ClassPrepareEvent extends com.sun.jdi.event.Event {
-	public com.sun.jdi.ReferenceType referenceType();
-	public com.sun.jdi.ThreadReference thread();
+public interface ClassPrepareEvent extends Event {
+	public ReferenceType referenceType();
+	public ThreadReference thread();
 }

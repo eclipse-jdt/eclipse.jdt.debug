@@ -5,9 +5,5 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-
-public interface AccessWatchpointEvent extends com.sun.jdi.event.WatchpointEvent {
+public interface AccessWatchpointEvent extends WatchpointEvent {
 }

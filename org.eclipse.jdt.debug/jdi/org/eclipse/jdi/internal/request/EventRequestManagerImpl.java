@@ -5,22 +5,53 @@ package org.eclipse.jdi.internal.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.Location;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.request.*;
-import com.sun.jdi.request.BreakpointRequest;
-import com.sun.jdi.request.StepRequest;
-import com.sun.jdi.request.VMDeathRequest;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.event.*;
-import java.io.*;
+
+import org.eclipse.jdi.internal.FieldImpl;
+import org.eclipse.jdi.internal.LocationImpl;
+import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ReferenceTypeImpl;
+import org.eclipse.jdi.internal.ThreadReferenceImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.event.AccessWatchpointEventImpl;
+import org.eclipse.jdi.internal.event.BreakpointEventImpl;
+import org.eclipse.jdi.internal.event.ClassPrepareEventImpl;
+import org.eclipse.jdi.internal.event.ClassUnloadEventImpl;
+import org.eclipse.jdi.internal.event.EventImpl;
+import org.eclipse.jdi.internal.event.ExceptionEventImpl;
+import org.eclipse.jdi.internal.event.MethodEntryEventImpl;
+import org.eclipse.jdi.internal.event.MethodExitEventImpl;
+import org.eclipse.jdi.internal.event.ModificationWatchpointEventImpl;
+import org.eclipse.jdi.internal.event.StepEventImpl;
+import org.eclipse.jdi.internal.event.ThreadDeathEventImpl;
+import org.eclipse.jdi.internal.event.ThreadStartEventImpl;
+
+import com.sun.jdi.Field;
+import com.sun.jdi.Location;
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMMismatchException;
+import com.sun.jdi.request.AccessWatchpointRequest;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.ClassUnloadRequest;
+import com.sun.jdi.request.DuplicateRequestException;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.ExceptionRequest;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.MethodExitRequest;
+import com.sun.jdi.request.ModificationWatchpointRequest;
+import com.sun.jdi.request.StepRequest;
+import com.sun.jdi.request.ThreadDeathRequest;
+import com.sun.jdi.request.ThreadStartRequest;
+import com.sun.jdi.request.VMDeathRequest;
 
 /**
  * this class implements the corresponding interfaces

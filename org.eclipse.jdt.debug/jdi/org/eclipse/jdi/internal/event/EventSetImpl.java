@@ -5,14 +5,22 @@ package org.eclipse.jdi.internal.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.request.*;
-import java.io.*;
-import java.util.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.request.EventRequestImpl;
+
+import com.sun.jdi.InternalException;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.event.EventIterator;
+import com.sun.jdi.event.EventSet;
+import com.sun.jdi.request.EventRequest;
 
 /**
  * this class implements the corresponding interfaces
@@ -22,7 +30,7 @@ import java.util.*;
  */
 public class EventSetImpl extends MirrorImpl implements EventSet {
 	/** Set that is used to store events. */
-	private ArrayList fEvents;
+	private List fEvents;
 	/** Which threads were suspended by this composite event. */
 	private byte fSuspendPolicy;
 

@@ -5,10 +5,8 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import java.util.Iterator;
 
-public interface EventIterator extends java.util.Iterator {
-	public com.sun.jdi.event.Event nextEvent();
+public interface EventIterator extends Iterator {
+	public Event nextEvent();
 }

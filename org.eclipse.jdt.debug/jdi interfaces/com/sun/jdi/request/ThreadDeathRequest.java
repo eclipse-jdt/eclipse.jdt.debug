@@ -5,10 +5,8 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
+import com.sun.jdi.ThreadReference;
 
-public interface ThreadDeathRequest extends com.sun.jdi.request.EventRequest {
-	public void addThreadFilter(com.sun.jdi.ThreadReference arg1);
+public interface ThreadDeathRequest extends EventRequest {
+	public void addThreadFilter(ThreadReference arg1);
 }

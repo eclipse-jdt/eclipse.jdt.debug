@@ -5,12 +5,12 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import java.util.Collection;
 
-public interface EventSet extends com.sun.jdi.Mirror , java.util.Collection {
-	public com.sun.jdi.event.EventIterator eventIterator();
+import com.sun.jdi.Mirror;
+
+public interface EventSet extends Mirror , Collection {
+	public EventIterator eventIterator();
 	public int suspendPolicy();
 	public void resume();
 }

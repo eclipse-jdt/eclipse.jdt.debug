@@ -5,11 +5,9 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
+import com.sun.jdi.Mirror;
 
-public interface EventRequest extends com.sun.jdi.Mirror {
+public interface EventRequest extends Mirror {
 	public static final int SUSPEND_NONE = 0;
 	public static final int SUSPEND_EVENT_THREAD = 1;
 	public static final int SUSPEND_ALL = 2;

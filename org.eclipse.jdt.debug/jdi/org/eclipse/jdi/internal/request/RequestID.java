@@ -5,8 +5,11 @@ package org.eclipse.jdi.internal.request;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.jdi.internal.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import org.eclipse.jdi.internal.MirrorImpl;
 
 public class RequestID {
 	/** Null request ID, returned by Virtual Machine in events that were not requested. */		

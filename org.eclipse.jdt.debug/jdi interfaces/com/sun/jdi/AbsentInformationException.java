@@ -5,8 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-public class AbsentInformationException extends Exception 
-{
+public class AbsentInformationException extends Exception {
 	public AbsentInformationException() { }
 	public AbsentInformationException(String arg1) {
 		super(arg1); 

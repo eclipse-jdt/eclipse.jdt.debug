@@ -5,16 +5,12 @@ package org.eclipse.jdi.internal.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.request.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import java.io.*;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.event.BreakpointEventImpl;
+
+import com.sun.jdi.Locatable;
+import com.sun.jdi.Location;
+import com.sun.jdi.request.BreakpointRequest;
 
 /**
  * this class implements the corresponding interfaces

@@ -5,8 +5,8 @@ package org.eclipse.jdi.internal.spy;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import java.io.*;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 public class BufWriter {
 	/** PrintWriter that is written to. */

@@ -1,5 +1,10 @@
 package org.eclipse.jdi.internal.request;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 import org.eclipse.jdi.internal.event.VMDeathEventImpl;
@@ -17,6 +22,5 @@ public class VMDeathRequestImpl extends EventRequestImpl implements VMDeathReque
 	protected byte eventKind() {
 		return VMDeathEventImpl.EVENT_KIND;
 	}
-
 }
 

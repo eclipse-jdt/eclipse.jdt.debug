@@ -5,11 +5,10 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Method;
+import com.sun.jdi.ThreadReference;
 
-public interface MethodEntryEvent extends com.sun.jdi.event.LocatableEvent {
-	public com.sun.jdi.Method method();
-	public com.sun.jdi.ThreadReference thread();
+public interface MethodEntryEvent extends LocatableEvent {
+	public Method method();
+	public ThreadReference thread();
 }

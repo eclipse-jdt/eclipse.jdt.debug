@@ -5,12 +5,12 @@ package com.sun.jdi.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Location;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ThreadReference;
 
-public interface ExceptionEvent extends com.sun.jdi.event.LocatableEvent {
-	public com.sun.jdi.Location catchLocation();
-	public com.sun.jdi.ObjectReference exception();
-	public com.sun.jdi.ThreadReference thread();
+public interface ExceptionEvent extends LocatableEvent {
+	public Location catchLocation();
+	public ObjectReference exception();
+	public ThreadReference thread();
 }

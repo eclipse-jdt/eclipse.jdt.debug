@@ -5,12 +5,13 @@ package com.sun.jdi.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
+import com.sun.jdi.Locatable;
+import com.sun.jdi.Location;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ThreadReference;
 
-public interface BreakpointRequest extends com.sun.jdi.request.EventRequest , com.sun.jdi.Locatable {
-	public void addThreadFilter(com.sun.jdi.ThreadReference arg1);
-	public com.sun.jdi.Location location();
+public interface BreakpointRequest extends EventRequest , Locatable {
+	public void addThreadFilter(ThreadReference arg1);
+	public Location location();
 	public void addInstanceFilter(ObjectReference instance);
 }

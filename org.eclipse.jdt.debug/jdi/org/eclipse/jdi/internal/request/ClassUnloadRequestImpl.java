@@ -5,14 +5,10 @@ package org.eclipse.jdi.internal.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.request.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import java.io.*;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.event.ClassUnloadEventImpl;
+
+import com.sun.jdi.request.ClassUnloadRequest;
 
 /**
  * this class implements the corresponding interfaces
