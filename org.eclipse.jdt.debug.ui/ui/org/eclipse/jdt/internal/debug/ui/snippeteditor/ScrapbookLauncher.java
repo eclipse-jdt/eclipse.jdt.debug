@@ -103,10 +103,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			jarURL = new URL(pluginInstallURL, "snippetsupport.jar"); //$NON-NLS-1$
 			jarURL = Platform.asLocalURL(jarURL);
 		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e); //$NON-NLS-1$
 			return null;
 		} catch (IOException e) {
-			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_2"), e); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -118,7 +118,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	private ILaunch doLaunch(IJavaProject p, IFile page, String[] classPath) {
 		try {
 			ILaunchConfigurationType lcType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-			String name = page.getName() + "-Scrapbook-" + System.currentTimeMillis();
+			String name = page.getName() + SnippetMessages.getString("ScrapbookLauncher.-Scrapbook-_3") + System.currentTimeMillis(); //$NON-NLS-1$
 			ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 			wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
 						
@@ -130,7 +130,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			try {
 				u = f.toURL();
 			} catch (MalformedURLException e) {
-				JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",e);				
+				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_4"),e);				 //$NON-NLS-1$
 				return null;
 			}
 			String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(p);
@@ -141,7 +141,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				try {
 					urls[i + 1] = f.toURL().toExternalForm();
 				} catch (MalformedURLException e) {
-					JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);				
+					JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_5"), e);				 //$NON-NLS-1$
 				 	return null;
 				}
 			}
@@ -179,7 +179,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				return launch;
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM.", e);
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e); //$NON-NLS-1$
 		}
 		return null;
 	}

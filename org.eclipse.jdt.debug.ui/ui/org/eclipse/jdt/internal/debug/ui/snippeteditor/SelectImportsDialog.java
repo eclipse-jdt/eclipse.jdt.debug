@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  * All Rights Reserved.
  */ 
  
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -178,8 +179,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setText("Add &Type...");
-		fAddTypeButton.setToolTipText("Choose a Type to Add as an Import");
+		fAddTypeButton.setText(SnippetMessages.getString("SelectImportsDialog.Add_&Type_1")); //$NON-NLS-1$
+		fAddTypeButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Choose_a_Type_to_Add_as_an_Import_2")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
@@ -192,8 +193,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
-		fAddPackageButton.setText("Add &Package...");
-		fAddPackageButton.setToolTipText("Choose a Package to Add as an Import");
+		fAddPackageButton.setText(SnippetMessages.getString("SelectImportsDialog.Add_&Package_3")); //$NON-NLS-1$
+		fAddPackageButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Choose_a_Package_to_Add_as_an_Import_4")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
@@ -206,8 +207,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		
 		// Remove button
 		fRemoveImportsButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveImportsButton.setText("&Remove");
-		fRemoveImportsButton.setToolTipText("Remove All Selected Imports");
+		fRemoveImportsButton.setText(SnippetMessages.getString("SelectImportsDialog.&Remove_5")); //$NON-NLS-1$
+		fRemoveImportsButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Remove_All_Selected_Imports_6")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveImportsButton);
 		fRemoveImportsButton.setLayoutData(gd);
 		fRemoveImportsButton.addSelectionListener(new SelectionListener() {
@@ -245,14 +246,14 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		try {
 			dialog = createAllPackagesDialog(shell);
 		} catch (JavaModelException jme) {
-			String title= "Add package as import";
-			String message= "Could not open package selection dialog"; 
+			String title= SnippetMessages.getString("SelectImportsDialog.Add_package_as_import_7"); //$NON-NLS-1$
+			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_package_selection_dialog_8");  //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;			
 		}
 	
-		dialog.setTitle("Add Package as Import"); 
-		dialog.setMessage("&Select a package to add as an Import");
+		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Package_as_Import_9"));  //$NON-NLS-1$
+		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_package_to_add_as_an_Import_10")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -261,7 +262,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
 			if (filter.length() < 1) {
-				filter = "(default package)"; 
+				filter = SnippetMessages.getString("SelectImportsDialog.(default_package)_11");  //$NON-NLS-1$
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}
@@ -276,14 +277,14 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_TYPES, false);
 		} catch (JavaModelException jme) {
-			String title= "Add Type as Import";
-			String message= "Could not open class selection dialog";
+			String title= SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_12"); //$NON-NLS-1$
+			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_class_selection_dialog_13"); //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle("Add Type as Import");
-		dialog.setMessage("&Select a type to add to add as an import");
+		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_14")); //$NON-NLS-1$
+		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_type_to_add_to_add_as_an_import_15")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -339,7 +340,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		topLayout.marginWidth = 0;
 		outer.setLayout(topLayout);
 		
-		setTitle("Manage the Java Snippet Editor Imports for \"" + fEditor.getPage().getName() + "\"");
+		setTitle(MessageFormat.format(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getPage().getName()})); //$NON-NLS-1$
 		
 		GridData gd = new GridData();
 		gd.verticalAlignment = GridData.FILL;
@@ -406,6 +407,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Java Snippet Imports");
+		shell.setText(SnippetMessages.getString("SelectImportsDialog.Java_Snippet_Imports_18")); //$NON-NLS-1$
 	}
 }
