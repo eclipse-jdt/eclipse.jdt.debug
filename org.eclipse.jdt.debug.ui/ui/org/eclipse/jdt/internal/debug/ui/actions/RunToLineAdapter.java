@@ -53,12 +53,6 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.IRunToLineTarget#canPerformRunToLine()
-	 */
-	public boolean canPerformRunToLine() {
-		return true;
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.IRunToLineTarget#runToLine()
 	 */
 	public void runToLine(ISuspendResume target) throws CoreException {
