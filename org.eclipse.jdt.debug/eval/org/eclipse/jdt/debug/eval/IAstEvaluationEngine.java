@@ -30,6 +30,8 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * The thread is resumed from the location at which it
 	 * is currently suspended to perform the evaluation. When the evaluation
 	 * completes, the thread will be suspened at this original location.
+	 * The thread runs the evaluation with the given evaluation detail
+	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param expression expression to evaluate
@@ -37,6 +39,8 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *   evaluation.
 	 * @param listener the listener that will receive notification
 	 *   when/if the evalaution completes
+	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
+	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -49,7 +53,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException;
 
 	/**
 	 * Asynchronously evaluates the given expression in the context of
@@ -60,6 +64,8 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * is evaluated in the thread associated with the given
 	 * stack frame. When the evaluation completes, the thread
 	 * will be suspened at this original location.
+	 * The thread runs the evaluation with the given evaluation detail
+	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param expression the expression to evaluate
@@ -68,6 +74,8 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
 	 *   when/if the evalaution completes
+	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
+	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -80,7 +88,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException;
 
 	/**
 	 * Synchronously generates a compiled expression from the given expression

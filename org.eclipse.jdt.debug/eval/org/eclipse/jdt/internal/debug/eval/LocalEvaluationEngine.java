@@ -393,7 +393,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
+	 * @see IClassFileEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
 	 */
 	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException {
 			checkDisposed();
@@ -433,9 +433,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener, int)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
@@ -503,9 +503,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 	
 	/**
-	 * @see IEvaluationEngine#evaluate(String, String, IJavaThread, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener, int)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {

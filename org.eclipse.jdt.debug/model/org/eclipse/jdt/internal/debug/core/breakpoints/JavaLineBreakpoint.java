@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IValue;
@@ -390,11 +391,11 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			// If no engine is available, suspend
 			return !suspendForEvent(event, thread);
 		}
-		thread.handleSuspendForBreakpointQuiet(this);
-		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
 		
 		EvaluationListener listener= new EvaluationListener();
 
+		thread.handleSuspendForBreakpointQuiet(this);
+		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
 		if (fCompiledExpression == null) {
 			fCompiledExpression= engine.getCompiledExpression(condition, frame);
 		}
@@ -403,7 +404,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return !suspendForEvent(event, thread);
 		}
 		fSuspendEvents.put(thread, event);
-		engine.evaluateExpression(fCompiledExpression, frame, listener);
+		engine.evaluateExpression(fCompiledExpression, frame, listener, DebugEvent.EVALUATION_IMPLICIT);
 
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.

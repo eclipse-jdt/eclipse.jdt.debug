@@ -774,15 +774,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	protected Image getDebugElementImage(Object element) {
 		ImageDescriptor image= null;
-		if (element instanceof IJavaStackFrame) {
-			IJavaStackFrame frame= (IJavaStackFrame)element;
-			IJavaThread thread= (IJavaThread) frame.getThread();
-			if (thread.isSuspended() && !thread.isPerformingEvaluation()) {
-				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME);
-			} else {
-				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING);					
-			}
-		} else if (element instanceof IJavaThread) {
+		if (element instanceof IJavaThread) {
 			IJavaThread thread = (IJavaThread)element;
 			if (thread.isSuspended() && !thread.isPerformingEvaluation()) {
 				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
@@ -1421,7 +1413,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 							}
 						};
 						try {
-							javaThread.runEvaluation(er, null, DebugEvent.EVALUATION_READ_ONLY);
+							javaThread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT);
 						} catch (DebugException e) {
 							JDIDebugUIPlugin.log(e);
 						}

@@ -222,9 +222,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					
 					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
 					if (object == null) {
-						engine.evaluate(expression, jFrame, this);
+						engine.evaluate(expression, jFrame, this, DebugEvent.EVALUATION);
 					} else {
-						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this);
+						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this, DebugEvent.EVALUATION);
 					}
 					
 				} catch (CoreException e) {

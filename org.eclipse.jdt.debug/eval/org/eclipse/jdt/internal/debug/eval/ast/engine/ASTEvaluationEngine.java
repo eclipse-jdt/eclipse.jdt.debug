@@ -54,40 +54,40 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
-		evaluateExpression(expression, frame, listener);
+		evaluateExpression(expression, frame, listener, evaluationDetail);
 	}
 	
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
-		evaluateExpression(expression, thisContext, thread, listener);
+		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail);
 	}
 	
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
-		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener);
+		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, evaluationDetail);
 	}
 
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
-		doEvaluation(expression, context, thread, listener);
+		doEvaluation(expression, context, thread, listener, evaluationDetail);
 	}
 	
 	/**
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) throws DebugException {		
-		getEvaluationThread().evaluate(expression, context, thread, listener);
+	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {		
+		getEvaluationThread().evaluate(expression, context, thread, listener, evaluationDetail);
 	}
 	
 	private EvaluationThread getEvaluationThread() {
@@ -139,6 +139,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		private IRuntimeContext fContext;
 		private IJavaThread fThread;
 		private IEvaluationListener fListener;
+		private int fEvaluationDetail;
 
 		private boolean fEvaluating= false;
 		private Thread fEvaluationThread;
@@ -156,11 +157,12 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 		}
 		
-		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener) {
+		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) {
 			fExpression= expression;
 			fContext= context;
 			fThread= thread;
 			fListener= listener;
+			fEvaluationDetail= evaluationDetail;
 			if (fEvaluationThread == null) {
 				// Create a new thread
 				fEvaluationThread= new Thread(new Runnable() {
@@ -207,7 +209,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			};
 			CoreException exception = null;
 			try {
-				fThread.runEvaluation(er, null, DebugEvent.EVALUATION);
+				fThread.runEvaluation(er, null, fEvaluationDetail);
 			} catch (DebugException e) {
 				exception = e;
 			}
