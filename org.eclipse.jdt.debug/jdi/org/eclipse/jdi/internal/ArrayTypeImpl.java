@@ -144,13 +144,6 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 		}
 		return mirror;
 	 }
-	
-	/** 
-	 * @return Returns the classloader object which loaded the class corresponding to this type.
-	 */
-	public ClassLoaderReference classLoader() {
-		return null;
-	}
 
 	/**
 	 * @return Returns modifier bits.
