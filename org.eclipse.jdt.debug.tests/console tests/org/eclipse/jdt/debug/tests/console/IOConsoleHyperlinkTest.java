@@ -52,8 +52,8 @@ public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindo
             }
         };
         
-        console.addPatternMatchNotifier(listener);
-        IOConsoleOutputStream stream = console.createOutputStream("OUTPUT");
+        console.addPatternMatchHandler(listener);
+        IOConsoleOutputStream stream = console.newOutputStream();
         stream.setFontStyle(SWT.ITALIC | SWT.BOLD);
         final PrintStream out = new PrintStream(stream);
         new Thread(new Runnable() {

@@ -48,7 +48,7 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
         IOConsole console = new IOConsole("Test IOConsole", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 		manager.addConsoles(new IConsole[]{console});
-		OutputStream out = console.createOutputStream("MyOutputStream"); //$NON-NLS-1$
+		OutputStream out = console.newOutputStream(); //$NON-NLS-1$
 		final PrintStream stream = new PrintStream(out);
 		Runnable r = new Runnable() {
 			public void run() {
