@@ -118,6 +118,8 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 		if (targetEditor instanceof ITextEditor) {
 			setEditor((ITextEditor)targetEditor);
 		}
+		update();
+		action.setEnabled(isEnabled());
 	}
 
 	/**

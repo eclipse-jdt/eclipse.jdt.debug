@@ -22,13 +22,20 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate {	
+public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate, IPartListener {	
+	
+	private IWorkbenchWindow fWorkbenchWindow= null;
+	private IAction fPluginAction;
 	
 	public RunToLineAction() {
 		setText(ActionMessages.getString("RunToLine.label")); //$NON-NLS-1$
@@ -143,14 +150,14 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		return null;
 	}
 
-
 	protected void errorDialog(IStatus status) {
 		Shell shell= getTextEditor().getSite().getShell();
 		ErrorDialog.openError(shell, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
-	 * @see IUpdate#update()
+	 * Updates the enabled state of this action and the plugin action
+	 * this action is the delegate for.
 	 */
 	public void update() {
 		try {
@@ -158,6 +165,14 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		} catch (DebugException de) {
 			setEnabled(false);
 			JDIDebugUIPlugin.logError(de);
+		}
+		updateAction();
+	}
+	
+	public void updateAction() {
+		IAction action= getPluginAction();
+		if (action != null) {
+			action.setEnabled(isEnabled());
 		}
 	}
 	
@@ -182,19 +197,79 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		setPluginAction(action);
 		update();
-		action.setEnabled(isEnabled());
 	}
 	
 	/**
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+		getWorkbenchWindow().getPartService().removePartListener(this);
 	}
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
+		setWorkbenchWindow(window);
+		IEditorPart part= window.getActivePage().getActiveEditor();
+		if (part instanceof ITextEditor) {
+			setEditor((ITextEditor)part);
+		}
+		window.getPartService().addPartListener(this);
+	}
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		if (part instanceof IEditorPart) {
+			setEditor((ITextEditor)part);
+			update();
+		}
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part == getTextEditor()) {
+			setEditor(null);
+			update();
+		}
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+	
+	protected IWorkbenchWindow getWorkbenchWindow() {
+		return fWorkbenchWindow;
+	}
+
+	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
+		fWorkbenchWindow = workbenchWindow;
+	}
+	
+	protected IAction getPluginAction() {
+		return fPluginAction;
+	}
+
+	protected void setPluginAction(IAction pluginAction) {
+		fPluginAction = pluginAction;
 	}
 }

@@ -32,6 +32,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -43,7 +44,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.texteditor.IUpdate;
 
 import com.sun.jdi.InvocationException;
@@ -52,13 +56,15 @@ import com.sun.jdi.ObjectReference;
 
 /**
  * Action to do simple code evaluation. The evaluation
- * is done in the UI thread and the result is inserted into the text
- * directly.
+ * is done in the UI thread and the expression and result are
+ * displayed using the IDataDisplay.
  */
-public abstract class EvaluateAction extends Action implements IUpdate, IEvaluationListener, IEditorActionDelegate {
+public abstract class EvaluateAction extends Action implements IUpdate, IEvaluationListener, IEditorActionDelegate, IWorkbenchWindowActionDelegate, IPartListener {
 		
-	protected IWorkbenchPart fWorkbenchPart;
-	protected String fExpression;
+	private IWorkbenchPart fWorkbenchPart;
+	private String fExpression;
+	private IWorkbenchWindow fWorkbenchWindow;
+	private IAction fAction;
 	
 	/**
 	 * Indicates whether this action is used from within an editor.  If so,
@@ -71,8 +77,8 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		
 	public EvaluateAction(IWorkbenchPart workbenchPart, boolean usedInEditor) {
 		super();
-		fWorkbenchPart= workbenchPart;
-		fUsedInEditor = usedInEditor;
+		setWorkbenchPart(workbenchPart);
+		setUsedInEditor(usedInEditor);
 	}
 	
 	/**
@@ -179,12 +185,13 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	/**
-	 * @see IUpdate#update()
+	 * Updates the enabled state of this action and the action that this is a
+	 * delegate for.
 	 */
 	public void update() {
 		boolean enabled = false;
-		if (fWorkbenchPart != null && isValidStackFrame()) {
-			ISelectionProvider provider = fWorkbenchPart.getSite().getSelectionProvider();
+		if (getWorkbenchPart() != null && isValidStackFrame()) {
+			ISelectionProvider provider = getWorkbenchPart().getSite().getSelectionProvider();
 			if (provider != null)  {
 				if (textHasContent(((ITextSelection)provider.getSelection()).getText())) {
 					enabled = true;
@@ -192,13 +199,23 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			}
 		}
 		setEnabled(enabled);
+		updateAction();
 	}
 	
+	protected void updateAction() {
+		IAction action= getAction();
+		if (action != null) {
+			action.setEnabled(isEnabled());
+		}
+	}
 	/**
 	 * Returns true if the current stack frame context can be used for an
-	 * evaluation, false otherwise.
+	 * evaluation, false otherwise.  For a Snippet editor, always returns true.
 	 */
 	protected boolean isValidStackFrame() {
+		if (getWorkbenchPart() instanceof JavaSnippetEditor) {
+			return true;
+		}
 		IStackFrame stackFrame = getContext();
 		if (stackFrame == null) {
 			return false;
@@ -228,19 +245,19 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.logError(jme);
 		}
-		if (fWorkbenchPart instanceof IEditorPart) {
-			return ((IEditorPart)fWorkbenchPart).getEditorInput().equals(sfEditorInput);
+		if (getWorkbenchPart() instanceof IEditorPart) {
+			return ((IEditorPart)getWorkbenchPart()).getEditorInput().equals(sfEditorInput);
 		}
 		return false;
 	}
 	
 	protected Shell getShell() {
-		return fWorkbenchPart.getSite().getShell();
+		return getWorkbenchPart().getSite().getShell();
 	}
 	
 	protected IDataDisplay getDataDisplay() {
 		
-		Object value= fWorkbenchPart.getAdapter(IDataDisplay.class);
+		Object value= getWorkbenchPart().getAdapter(IDataDisplay.class);
 		if (value instanceof IDataDisplay)
 			return (IDataDisplay) value;
 		
@@ -349,13 +366,17 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		return fUsedInEditor;
 	}
 	
+	protected void setUsedInEditor(boolean used) {
+		fUsedInEditor= used;
+	}
+	
 	/**
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		fWorkbenchPart = targetEditor;
+		setWorkbenchPart(targetEditor);
+		setAction(action);
 		update();
-		action.setEnabled(isEnabled());
 	}
 
 	/**
@@ -369,7 +390,85 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		setAction(action);
 		update();
-		action.setEnabled(isEnabled());
 	}	
+
+	/**
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/**
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+		setWorkbenchWindow(window);
+		setWorkbenchPart(window.getActivePage().getActiveEditor());
+		window.getPartService().addPartListener(this);
+	}
+	
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		if (part instanceof IEditorPart) {
+			setWorkbenchPart(part);
+			update();
+		}
+
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part == getWorkbenchPart()) {
+			setWorkbenchPart(part);
+			update();
+		}
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+	
+	protected IWorkbenchWindow getWorkbenchWindow() {
+		return fWorkbenchWindow;
+	}
+
+	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
+		fWorkbenchWindow = workbenchWindow;
+	}
+	
+	protected IAction getAction() {
+		return fAction;
+	}
+
+	protected void setAction(IAction action) {
+		fAction = action;
+	}
+	
+	protected IWorkbenchPart getWorkbenchPart() {
+		return fWorkbenchPart;
+	}
+
+	protected void setWorkbenchPart(IWorkbenchPart workbenchPart) {
+		fWorkbenchPart = workbenchPart;
+	}
 }

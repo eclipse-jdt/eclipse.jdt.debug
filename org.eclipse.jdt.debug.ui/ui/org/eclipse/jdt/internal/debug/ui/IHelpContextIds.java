@@ -19,11 +19,12 @@ public interface IHelpContextIds {
 	public static final String PREFIX= JavaDebugUI.PLUGIN_ID + '.';
 
 	// Actions
-	public static final String ADD_METHODBREAKPOINT_ACTION= PREFIX + "add_methodbreakpoint_action_context"; //$NON-NLS-1$
-	public static final String ADD_WATCHPOINT_ACTION= PREFIX + "add_watchpoint_action_context"; //$NON-NLS-1$
+	public static final String MANAGE_METHODBREAKPOINT_ACTION= PREFIX + "manage_methodbreakpoint_action_context"; //$NON-NLS-1$
+	public static final String MANAGE_WATCHPOINT_ACTION= PREFIX + "manage_watchpoint_action_context"; //$NON-NLS-1$
 	public static final String RUN_TO_LINE_ACTION= PREFIX + "run_to_line_action_context"; //$NON-NLS-1$
 	public static final String TOGGLE_PRESENTATION_ACTION= PREFIX + "toggle_presentation_action_context"; //$NON-NLS-1$
 	public static final String DISPLAY_ACTION= PREFIX + "display_action_context"; //$NON-NLS-1$
+	public static final String INSPECT_ACTION= PREFIX + "inspect_action_context"; //$NON-NLS-1$
 
 	// view parts
 	public static final String DISPLAY_VIEW= PREFIX + "display_view_context"; //$NON-NLS-1$

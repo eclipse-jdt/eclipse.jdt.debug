@@ -101,9 +101,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	private final static String TAG= "input_element"; //$NON-NLS-1$
 	
-	final static int RESULT_DISPLAY= 1;
-	final static int RESULT_RUN= 2;
-	final static int RESULT_INSPECT= 3;
+	public final static int RESULT_DISPLAY= 1;
+	public final static int RESULT_RUN= 2;
+	public final static int RESULT_INSPECT= 3;
 	
 	private IJavaProject fJavaProject;
 	private IEvaluationContext fEvaluationContext;

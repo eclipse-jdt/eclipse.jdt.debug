@@ -53,5 +53,4 @@ public class EditorDisplayAction extends DisplayAction {
 		
 		return null;
 	}
-
 }
