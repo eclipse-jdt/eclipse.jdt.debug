@@ -22,13 +22,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
@@ -41,7 +42,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  * <p>
  * Currently, replacing .jar files has no effect on running targets.
  */
-public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaunchListener {
+public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaunchListener, IDebugEventListener {
 
 	/**
 	 * Singleton 
@@ -90,6 +91,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	public void startup() {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
 	/**
@@ -99,6 +101,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	public void shutdown() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWorkspace().removeResourceChangeListener(this);
 		fHotCodeReplaceListeners.removeAll();
 		clearHotSwapTargets();
@@ -408,24 +411,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * to resource changes.
 	 */
 	public void launchDeregistered(ILaunch launch) {
-		if (!(launch instanceof JDIDebugTarget)) {
+		if (!(launch.getDebugTarget() instanceof JDIDebugTarget)) {
 			return;
 		}
-		JDIDebugTarget target= (JDIDebugTarget) launch.getDebugTarget();
-		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		// Remove the target from its hot swap target cache.
-		if (!fHotSwapTargets.remove(target)) {
-			fNoHotSwapTargets.remove(target);
-		}
-		// If there are no more JDIDebugTargets, stop
-		// listening to resource changes.
-		for (int i= 0; i < launches.length; i++) {
-			if (launches[i] instanceof JDIDebugTarget) {
-				return;
-			}
-		}
-		// To get here, there must be no JDIDebugTargets
-		getWorkspace().removeResourceChangeListener(this);
+		deregisterTarget((JDIDebugTarget) launch.getDebugTarget());
 	}
 
 	/**
@@ -446,6 +435,35 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			fNoHotSwapTargets.add(target);
 		}
 		getWorkspace().addResourceChangeListener(this);
+	}
+	
+	public void handleDebugEvent(DebugEvent event) {
+		if (event.getSource() instanceof JDIDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
+			deregisterTarget((JDIDebugTarget) event.getSource());
+		}	
+	}
+	
+	protected void deregisterTarget(JDIDebugTarget target) {
+		// Remove the target from its hot swap target cache.
+		if (!fHotSwapTargets.remove(target)) {
+			if (!fNoHotSwapTargets.remove(target)) {
+				// This target has already been removed.
+				return;
+			}
+		}
+		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();		
+		// If there are no more JDIDebugTargets, stop
+		// listening to resource changes.
+		for (int i= 0; i < launches.length; i++) {
+			if (launches[i].getDebugTarget() instanceof JDIDebugTarget) {
+				JDIDebugTarget launchTarget= (JDIDebugTarget) launches[i].getDebugTarget();
+				if (!launchTarget.isDisconnected() && !launchTarget.isTerminated()) {
+					return;
+				}
+			}
+		}
+		// To get here, there must be no JDIDebugTargets
+		getWorkspace().removeResourceChangeListener(this);
 	}
 
 }
