@@ -10,6 +10,7 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.eclipse.jdt.debug.testplugin.TestPluginLauncher;
+import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
@@ -59,6 +60,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(TargetPatternBreakpointTests.class));
 		addTest(new TestSuite(EventSetTests.class));
 		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
+		addTest(new TestSuite(ClasspathProviderTests.class));
 	}
 	
 	public static void main(String[] args) {

@@ -35,5 +35,11 @@
   </application>
 </extension>
 
+<extension point="org.eclipse.jdt.launching.classpathProviders">
+  <classpathProvider
+    id = "org.eclipse.jdt.debug.tests.EmptyClasspathProvider"
+    class ="org.eclipse.jdt.debug.testplugin.EmptyClasspathProvider">
+  </classpathProvider>
+</extension>
 
 </plugin>
