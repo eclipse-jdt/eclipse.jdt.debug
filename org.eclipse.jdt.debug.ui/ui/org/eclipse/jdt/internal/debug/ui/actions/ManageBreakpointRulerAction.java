@@ -77,8 +77,9 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 		
 		IResource resource= (IResource) input.getAdapter(IFile.class);
 		
-		if (resource == null)
+		if (resource == null) {
 			resource= (IResource) input.getAdapter(IResource.class);
+		}
 			
 		return resource;
 	}
