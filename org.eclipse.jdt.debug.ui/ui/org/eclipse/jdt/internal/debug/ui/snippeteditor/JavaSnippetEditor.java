@@ -1253,7 +1253,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		boolean success= false;
 		try {
 			getDocumentProvider().aboutToChange(newInput);
-			PlatformUI.getWorkbench().getProgressService().run(false, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 			success= true;
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {

@@ -404,7 +404,11 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			ExceptionHandler.handle(jme, title, message);
 			return;			
 		}
-	
+		
+		if (dialog == null) {
+			return;
+		}
+		
 		dialog.setTitle(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_package_to_step_filters_24")); //$NON-NLS-1$
 		dialog.setMessage(DebugUIMessages.getString("JavaStepFilterPreferencePage.Select_a_package_to_filter_when_stepping_27")); //$NON-NLS-1$
 		dialog.setMultipleSelection(true);

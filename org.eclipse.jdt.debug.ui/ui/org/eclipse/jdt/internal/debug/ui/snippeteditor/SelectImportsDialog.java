@@ -230,7 +230,9 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			ExceptionHandler.handle(jme, title, message);
 			return;			
 		}
-	
+		if (dialog == null) {
+			return;
+		}
 		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_package_as_import_7"));  //$NON-NLS-1$
 		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_package_to_add_as_an_Import_10")); //$NON-NLS-1$
 		dialog.setMultipleSelection(true);

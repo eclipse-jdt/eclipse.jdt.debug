@@ -432,7 +432,9 @@ public class ExceptionFilterEditor {
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
-
+		if (dialog == null) {
+			return;
+		}
 		dialog.setTitle(PropertyPageMessages.getString("ExceptionFilterEditor.15")); //$NON-NLS-1$
 		dialog.setMessage(PropertyPageMessages.getString("ExceptionFilterEditor.18")); //$NON-NLS-1$
 		dialog.setMultipleSelection(true);

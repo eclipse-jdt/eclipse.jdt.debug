@@ -436,6 +436,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		final IJavaProject[] projects= originals;
 		final JavaModelException[] exception= new JavaModelException[1];
+		final boolean[] monitorCanceled = new boolean[] {false};
 		IRunnableWithProgress r= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
@@ -444,6 +445,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 					for (int i = 0; i < projects.length; i++) {						
 						IPackageFragment[] pkgs= projects[i].getPackageFragments();	
 						for (int j = 0; j < pkgs.length; j++) {
+							if (monitor.isCanceled()) {
+								monitorCanceled[0] = true;
+								return;
+							}
 							IPackageFragment pkg = pkgs[j];
 							if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
 								continue;
@@ -465,7 +470,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(false, false, r);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(r);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {
@@ -474,6 +479,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (exception[0] != null) {
 			throw exception[0];
 		}
+		if (monitorCanceled[0]) {
+			return null;
+		}
+		
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
 		PackageSelectionDialog dialog= new PackageSelectionDialog(shell, new JavaElementLabelProvider(flags));
 		dialog.setIgnoreCase(false);
