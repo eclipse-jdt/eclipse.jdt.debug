@@ -16,24 +16,24 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.jdt.core.IType;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
+
 import org.eclipse.jdt.internal.corext.refactoring.CompositeChange;
 import org.eclipse.jdt.internal.corext.refactoring.base.Change;
-import org.eclipse.jdt.internal.corext.refactoring.base.ChangeAbortException;
-import org.eclipse.jdt.internal.corext.refactoring.base.ChangeContext;
-import org.eclipse.jdt.internal.corext.refactoring.base.IChange;
+import org.eclipse.jdt.internal.corext.refactoring.base.RefactoringStatus;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 public class LaunchConfigurationMainTypeNameChange extends Change {
 	
-	public static IChange createChangesFor(IType type, String newName) throws CoreException {
+	public static Change createChangesFor(IType type, String newName) throws CoreException {
 		List changes= new ArrayList();
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		// Java application launch configurations
@@ -49,9 +49,9 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		if (nbChanges == 0) {
 			return null;
 		} else if (nbChanges == 1) {
-			return (IChange) changes.get(0);
+			return (Change) changes.get(0);
 		} else {
-			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.1"), (IChange[])changes.toArray(new IChange[changes.size()])); //$NON-NLS-1$
+			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.1"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
 		}
 	}
 	
@@ -142,36 +142,37 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#getModifiedLanguageElement()
 	 */
-	public Object getModifiedLanguageElement() {
+	public Object getModifiedElement() {
 		return fLaunchConfiguration;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#perform(org.eclipse.jdt.internal.corext.refactoring.base.ChangeContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void perform(ChangeContext context, IProgressMonitor pm) throws JavaModelException, ChangeAbortException {
-		try {
-			// update the configuration
-			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-			launchManager.addLaunchConfigurationListener(configurationListener);
-			ILaunchConfigurationWorkingCopy copy = fLaunchConfiguration.getWorkingCopy();
-			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fNewTypeName);
-			if (fNewLaunchConfigurationName != null) {
-				copy.rename(fNewLaunchConfigurationName);
-			}
-			copy.doSave();
-			launchManager.removeLaunchConfigurationListener(configurationListener);
-			// create the undo change
-			fUndo = new LaunchConfigurationMainTypeNameChange(fNewLaunchConfiguration, fOldName);
-		} catch (CoreException e) {
-			throw new JavaModelException(e);
+	public Change perform(IProgressMonitor pm) throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		launchManager.addLaunchConfigurationListener(configurationListener);
+		ILaunchConfigurationWorkingCopy copy = fLaunchConfiguration.getWorkingCopy();
+		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fNewTypeName);
+		if (fNewLaunchConfigurationName != null) {
+			copy.rename(fNewLaunchConfigurationName);
 		}
+		copy.doSave();
+		launchManager.removeLaunchConfigurationListener(configurationListener);
+		// create the undo change
+		return new LaunchConfigurationMainTypeNameChange(fNewLaunchConfiguration, fOldName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#getUndoChange()
-	 */
-	public IChange getUndoChange() {
-		return fUndo;
+	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+		// must be implemented to decide correct value of isValid
+	}
+
+	public RefactoringStatus isValid(IProgressMonitor pm) {
+		// TODO
+		// This method must ensure that the change object is still valid.
+		// This is in particular interesting when performing an undo change
+		// since the workspace could have changed since the undo change has
+		// been created.
+		return new RefactoringStatus();
 	}
 }

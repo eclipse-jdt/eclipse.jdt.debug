@@ -16,18 +16,18 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.jdt.core.IJavaProject;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
+
 import org.eclipse.jdt.internal.corext.refactoring.CompositeChange;
 import org.eclipse.jdt.internal.corext.refactoring.base.Change;
-import org.eclipse.jdt.internal.corext.refactoring.base.ChangeAbortException;
-import org.eclipse.jdt.internal.corext.refactoring.base.ChangeContext;
-import org.eclipse.jdt.internal.corext.refactoring.base.IChange;
+import org.eclipse.jdt.internal.corext.refactoring.base.RefactoringStatus;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
@@ -38,14 +38,12 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	
 	private String fNewProjectName;
 	
-	private IChange fUndo;
-	
 	/**
 	 * @param javaProject
 	 * @param string
 	 * @return
 	 */
-	public static IChange createChangesFor(IJavaProject javaProject, String newProjectName) throws CoreException {
+	public static Change createChangesFor(IJavaProject javaProject, String newProjectName) throws CoreException {
 		List changes= new ArrayList();
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
@@ -62,9 +60,9 @@ public class LaunchConfigurationProjectNameChange extends Change {
 		if (nbChanges == 0) {
 			return null;
 		} else if (nbChanges == 1) {
-			return (IChange) changes.get(0);
+			return (Change) changes.get(0);
 		} else {
-			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.0"), (IChange[])changes.toArray(new IChange[changes.size()])); //$NON-NLS-1$
+			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.0"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
 		}
 	}
 	
@@ -76,29 +74,18 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#perform(org.eclipse.jdt.internal.corext.refactoring.base.ChangeContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void perform(ChangeContext context, IProgressMonitor pm) throws JavaModelException, ChangeAbortException {
-		try {
-			String currentProjectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-			ILaunchConfigurationWorkingCopy copy = fLaunchConfiguration.getWorkingCopy();
-			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
-			copy.doSave();
-			fUndo= new LaunchConfigurationProjectNameChange(fLaunchConfiguration, currentProjectName);
-		} catch (CoreException e) {
-			throw new JavaModelException(e);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#getUndoChange()
-	 */
-	public IChange getUndoChange() {
-		return fUndo;
+	public Change perform(IProgressMonitor pm) throws CoreException {
+		String currentProjectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+		ILaunchConfigurationWorkingCopy copy = fLaunchConfiguration.getWorkingCopy();
+		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
+		copy.doSave();
+		return new LaunchConfigurationProjectNameChange(fLaunchConfiguration, currentProjectName);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#getModifiedLanguageElement()
 	 */
-	public Object getModifiedLanguageElement() {
+	public Object getModifiedElement() {
 		return fLaunchConfiguration;
 	}
 	
@@ -107,5 +94,18 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	 */
 	public String getName() {
 		return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.1"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
+	}
+
+	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+		// must be implemented to decide correct value of isValid
+	}
+
+	public RefactoringStatus isValid(IProgressMonitor pm) {
+		// TODO
+		// This method must ensure that the change object is still valid.
+		// This is in particular interesting when performing an undo change
+		// since the workspace could have changed since the undo change has
+		// been created.
+		return new RefactoringStatus();
 	}
 }
