@@ -45,7 +45,6 @@ import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RefreshTabTests;
-import org.eclipse.jdt.debug.tests.core.RemoteAttachTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.SourceLookupTests;
@@ -64,15 +63,7 @@ import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Test all areas of the JDT Debugger.
- * 
- * To run this test suite:
- * <ol>
- * <li>Create a new Run-time Workbench launch configuration</li>
- * <li>Append "org.eclipse.jdt.debug.tests.AutomatedSuite" to the Program Arguments</li>
- * <li>Set the Application Name to "org.eclipse.jdt.debug.tests.app"</li>
- * <li>Run the launch configuration. Output from the tests will be written to the debug console</li>
- * </ol>
+ * Tests for integration and nightly builds.
  */
 public class AutomatedSuite extends TestSuite {
 	
@@ -128,21 +119,11 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(BreakpointListenerTests.class));
 		addTest(new TestSuite(JavaBreakpointListenerTests.class));
 		
-		// Evaluation tests
-//		addTest(new TestSuite(TestsOperators1.class));
-//		addTest(new TestSuite(TestsOperators2.class));
-//		addTest(new TestSuite(TestsArrays.class));
-//		addTest(new TestSuite(TestsNestedTypes1.class));
-//		addTest(new TestSuite(TestsNestedTypes2.class));
-//		addTest(new TestSuite(TestsTypeHierarchy1.class));
-//		addTest(new TestSuite(TestsTypeHierarchy2.class));
-		
 		addTest(new TestSuite(SourceLookupTests.class));
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
-		addTest(new TestSuite(RemoteAttachTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
 		addTest(new TestSuite(StringSubstitutionTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
