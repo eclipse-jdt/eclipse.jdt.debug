@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 import org.eclipse.jface.action.Action;
 
 /**
- * A Base class for evaluation state dependent actions.
+ * A base class for evaluation state dependent actions.
  */
 public abstract class SnippetAction extends Action implements ISnippetStateChangedListener {
 		

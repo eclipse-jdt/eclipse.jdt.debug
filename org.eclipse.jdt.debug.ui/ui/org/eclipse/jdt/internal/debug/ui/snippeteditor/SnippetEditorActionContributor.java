@@ -35,8 +35,8 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		super();
 	}
 	
-	/**
-	 * @see EditorActionBarContributor#contributeToToolBar(IToolBarManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		
@@ -49,8 +49,8 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		toolBarManager.update(false);
 	}
 			
-	/**
-	 *	@see EditorActionBarContributor#contributeToMenu(IMenuManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void contributeToMenu(IMenuManager menu) {
 		if (fOpenOnSelectionAction == null) {
@@ -66,8 +66,8 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		}
 	}
 	
-	/**
-	 *	@see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		
@@ -97,7 +97,11 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		fOpenOnSelectionAction= new SnippetOpenOnSelectionAction(fSnippetEditor);
 		fOpenOnTypeSelectionAction= new SnippetOpenHierarchyOnSelectionAction(fSnippetEditor);
 		fStopAction= new StopAction(fSnippetEditor);
+		
 		fSelectImportsAction= new SelectImportsAction(fSnippetEditor);
+		if (fSnippetEditor.getFile() == null) {
+			fSelectImportsAction.setEnabled(false);
+		}
 	}	
 	
 	protected void updateStatus(JavaSnippetEditor editor) {
