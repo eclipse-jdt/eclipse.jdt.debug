@@ -79,6 +79,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 	private FilterContentProvider fFilterContentProvider;
 	
+	protected static final String DEFAULT_PACKAGE= "(default package)"; //$NON-NLS-1$
+	
 	/**
 	 * Content provider for the table.  Content consists of instances of Filter.
 	 */	
@@ -103,6 +105,9 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			fFilters= new ArrayList(1);
 			for (int i = 0; i < filters.length; i++) {
 				String name = filters[i];
+				if (name.length() == 0) {
+					name= DEFAULT_PACKAGE;
+				}
 				addFilter(name);
 			}
 		}
@@ -485,7 +490,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 				IJavaElement pkg = (IJavaElement)packages[i];
 				String filter = pkg.getElementName();
 				if (filter.length() < 1) {
-					filter = "(default package)";  //$NON-NLS-1$
+					filter = DEFAULT_PACKAGE;  
 				} else {
 					filter += ".*"; //$NON-NLS-1$
 				}
@@ -574,7 +579,11 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		String[] stringFilters= new String[filters.length];
 		for (int i = 0; i < filters.length; i++) {
 			Filter filter = (Filter)filters[i];
-			stringFilters[i]= filter.getName();
+			String name= filter.getName();
+			if (name.equals(DEFAULT_PACKAGE)) {
+				name= "";
+			}
+			stringFilters[i]= name;
 		}
 		try {
 			fBreakpoint.setFilters(stringFilters, true);

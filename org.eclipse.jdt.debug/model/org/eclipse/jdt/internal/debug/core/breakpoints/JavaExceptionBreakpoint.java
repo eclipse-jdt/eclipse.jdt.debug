@@ -314,14 +314,23 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected boolean isExceptionEventExcluded(ExceptionEvent event) {
 		Location location= event.location();
 		String fullyQualifiedName= location.declaringType().name();
+		boolean defaultPackage= fullyQualifiedName.indexOf('.') == -1;
 		String[] filters= getClassFilters();
 		
 		try {
 			boolean inclusive= isInclusiveFiltered();
-			for (int i= 0; i < filters.length; i++) {
-				StringMatcher matcher= new StringMatcher(filters[i], false, false);
-				if (matcher.match(fullyQualifiedName)) {
-					return !inclusive;
+			if (defaultPackage) {
+				for (int i= 0; i < filters.length; i++) {
+					if (filters[i].length() == 0){
+						return !inclusive;
+					}	
+				}
+			} else {
+				for (int i= 0; i < filters.length; i++) {			
+					StringMatcher matcher= new StringMatcher(filters[i], false, false);
+					if (matcher.match(fullyQualifiedName)) {
+						return !inclusive;
+					}
 				}
 			} 
 		} catch (CoreException ce) {

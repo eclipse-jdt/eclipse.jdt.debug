@@ -87,6 +87,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Sets the filters that will define the scope for the associated exception.
 	 * Filters are a collection of strings of type name prefixes.
+	 * Default packages should be specified as the empty string.
 	 * 
 	 * @param filters the array of filters to apply
 	 * @param inclusive whether or not to apply the filters as inclusive or exclusive
