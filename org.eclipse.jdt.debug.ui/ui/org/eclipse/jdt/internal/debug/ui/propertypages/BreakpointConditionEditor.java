@@ -145,9 +145,7 @@ public class BreakpointConditionEditor {
 		document.set(condition);
 		valueChanged();
 		
-		IWorkbench workbench = PlatformUI.getWorkbench();
-			
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		
 		IHandler handler = new AbstractHandler() {
 			public Object execute(Map parameter) throws ExecutionException {
 			    if (fViewer.isEditable()) {
@@ -156,9 +154,7 @@ public class BreakpointConditionEditor {
 				return null;
 			}
 		};
-		
-		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
-		commandSupport.addHandlerSubmission(submission);	
+		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$	
 	}
 
 	/**
@@ -220,9 +216,16 @@ public class BreakpointConditionEditor {
 		if (enabled) {
 			fViewer.updateViewerColors();
 			fViewer.getTextWidget().setFocus();
+			
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+			commandSupport.addHandlerSubmission(submission);
 		} else {
 			Color color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			fViewer.getTextWidget().setBackground(color);
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+			commandSupport.removeHandlerSubmission(submission);
 		}
 		valueChanged();
 	}
@@ -244,9 +247,11 @@ public class BreakpointConditionEditor {
 	}
 	
 	public void dispose() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmission(submission); 
+	    if (fViewer.isEditable()) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+			commandSupport.removeHandlerSubmission(submission);
+	    }
 		fViewer.dispose();
 	}
 }
