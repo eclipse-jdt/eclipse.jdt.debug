@@ -6,6 +6,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  */
  
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -55,6 +56,11 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected Label fJRELabel;
 	protected Combo fJRECombo;
 	protected Button fJREAddButton;
+	
+	// unknown JRE
+	protected String fUnknownVMType;
+	protected String fUnknownVMName;
+	protected boolean fOkToClearUnknownVM = true;
 
 	// Collections used to populate the JRE Combo box
 	protected IVMInstallType[] fVMTypes;
@@ -152,35 +158,43 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		fOkToClearUnknownVM = false;
+		if (getLaunchConfiguration() != null && !configuration.equals(getLaunchConfiguration())) {
+			fUnknownVMName = null;
+			fUnknownVMType = null;
+		}
 		setLaunchConfiguration(configuration);
 		updateJREFromConfig(configuration);
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.initializeFrom(configuration);
-		}
+		}		
+		fOkToClearUnknownVM = true;
 	}
 
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		int selectedIndex = fJRECombo.getSelectionIndex();
-		if (selectedIndex > -1) {
-			String vmName = null;
-			String vmTypeID = null;
-			if (selectedIndex > 0) {
-				VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - 1);
-				vmName = vmStandin.getName();
-				vmTypeID = vmStandin.getVMInstallType().getId();
-			} 
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-		}	
-		ILaunchConfigurationTab dynamicTab = getDynamicTab();
-		if (dynamicTab == null) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
-		} else {
-			dynamicTab.performApply(configuration);
+		if (fUnknownVMName == null) {
+			int selectedIndex = fJRECombo.getSelectionIndex();
+			if (selectedIndex > -1) {
+				String vmName = null;
+				String vmTypeID = null;
+				if (selectedIndex > 0) {
+					VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - 1);
+					vmName = vmStandin.getName();
+					vmTypeID = vmStandin.getVMInstallType().getId();
+				} 
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
+			}	
+			ILaunchConfigurationTab dynamicTab = getDynamicTab();
+			if (dynamicTab == null) {
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+			} else {
+				dynamicTab.performApply(configuration);
+			}
 		}
 	}
 
@@ -191,6 +205,11 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		
 		setErrorMessage(null);
 		setMessage(null);
+		
+		if (fUnknownVMName != null) {
+			setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaJRETab.Configuration_specifies_undefined_JRE_-_{0}_1"), new String[]{fUnknownVMName}));			 //$NON-NLS-1$
+			return false;
+		}
 		
 		// Don't do any validation if the default VM was chosen
 		int selectedIndex = fJRECombo.getSelectionIndex();
@@ -289,6 +308,11 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * Notification that the user changed the selection in the JRE combo box.
 	 */
 	protected void handleJREComboBoxModified() {
+		if (fOkToClearUnknownVM) {
+			fUnknownVMName = null;
+			fUnknownVMType = null;
+		}
+		
 		loadDynamicJREArea();
 		
 		// always set the newly created area with defaults
@@ -366,12 +390,18 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected void selectJREComboBoxEntry(String typeID, String vmName) {
 		int index = 0;
 		if (typeID != null && vmName != null) {
+			boolean found = false;
 			for (int i = 0; i < fVMStandins.size(); i++) {
 				VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
 				if (vmStandin.getVMInstallType().getId().equals(typeID) && vmStandin.getName().equals(vmName)) {
 					index = i + 1;
+					found = true;
 					break;
 				}
+			}
+			if (!found) {
+				fUnknownVMName = vmName;
+				fUnknownVMType = typeID;
 			}
 		}
 
