@@ -83,6 +83,25 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	
+	private ModifyListener fModifyListener= new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			updateLaunchConfigurationDialog();
+		}
+	};
+	
+	private SelectionAdapter fSelectionListener= new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			Object source= e.getSource();
+			if (source == fSearchButton) {
+				handleSearchButtonSelected();
+			} else if (source == fProjButton) {
+				handleProjectButtonSelected();
+			} else if (source == fAppletViewerClassDefaultButton) {
+				handleAppletViewerClassDefaultSelected();
+			}
+		}
+	};
+	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -119,18 +138,10 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
 		fProjText.setFont(font);
-		this.fProjText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fProjText.addModifyListener(fModifyListener);
 		
 		fProjButton= createPushButton(projComp, LauncherMessages.getString("appletlauncher.maintab.browselabel.name"), null); //$NON-NLS-1$
-		fProjButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleProjectButtonSelected();
-			}
-		});
+		fProjButton.addSelectionListener(fSelectionListener);
 		
 		createVerticalSpacer(projComp, 2);
 		
@@ -145,18 +156,10 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fMainText.setLayoutData(gd);
 		fMainText.setFont(font);
-		this.fMainText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fMainText.addModifyListener(fModifyListener);
 				
 		fSearchButton= createPushButton(projComp,LauncherMessages.getString("appletlauncher.maintab.searchlabel.name"), null); //$NON-NLS-1$
-		fSearchButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleSearchButtonSelected();
-			}
-		});
+		fSearchButton.addSelectionListener(fSelectionListener);
 		
 		createVerticalSpacer(projComp, 2);
 		
@@ -179,23 +182,10 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fAppletViewerClassText.setLayoutData(gd);
 		fAppletViewerClassText.setFont(font);
-		fAppletViewerClassText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fAppletViewerClassText.addModifyListener(fModifyListener);
 		
 		fAppletViewerClassDefaultButton= createCheckButton(classComposite, LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
-		fAppletViewerClassDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				setAppletViewerTextEnabledState();
-				if (isDefaultAppletViewerClassName()) {
-					fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
-				} else {
-					fAppletViewerClassText.setText(EMPTY_STRING);
-				}
-			}
-		});
+		fAppletViewerClassDefaultButton.addSelectionListener(fSelectionListener);
 	}
 		
 	/**
@@ -341,6 +331,18 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		
 		String projectName= project.getElementName();
 		fProjText.setText(projectName);	
+	}
+	
+	/**
+	 * When the "use default" button is selected, update the "applet viewer class" text.
+	 */
+	private void handleAppletViewerClassDefaultSelected() {
+		setAppletViewerTextEnabledState();
+		if (isDefaultAppletViewerClassName()) {
+			fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
+		} else {
+			fAppletViewerClassText.setText(EMPTY_STRING);
+		}
 	}
 	
 	/**
