@@ -124,6 +124,15 @@
              	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
             </enablement> 
   	    </action>
+  	  	<action id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+  			label="%stepIntoSelectionAction.label"
+  			helpContextId="step_into_selection_action_context"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
+  			menubarPath="org.eclipse.ui.run/jdtGroup">
+  			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
+  	    </action>  	    
   	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
   			label="%runToLineAction.label"
   			icon="icons/full/elcl16/runtoline_co.gif"
@@ -938,6 +947,12 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
+    		label="%stepIntoSelectionAction.label"
+    		menubarPath="additions"
+    		helpContextId="step_into_selection_action_context"
+    		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"> 
+		</action>
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
     		label="%runToLineAction.label"
     		icon="icons/full/clcl16/runtoline_co.gif"
@@ -963,6 +978,12 @@
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
     	targetID="#ClassFileEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
+    		label="%stepIntoSelectionAction.label"
+    		menubarPath="additions"
+    		helpContextId="step_into_selection_action_context"
+    		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"> 
+		</action>    	
     	<action id="org.eclipse.jdt.debug.ui.cfPopup.RunToLine"
  		   	icon="icons/full/clcl16/runtoline_co.gif"
     		label="%runToLineAction.label"
