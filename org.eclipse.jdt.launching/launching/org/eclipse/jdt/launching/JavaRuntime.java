@@ -692,7 +692,7 @@ public final class JavaRuntime {
 					if (!project.getProject().isOpen()) {
 						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_closed_project__{0}_2"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
 					}
-					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project);
+					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty());
 					if (entries != null) {
 						return entries;
 					}
@@ -776,10 +776,12 @@ public final class JavaRuntime {
 				}
 				// now resolve the archive (recursively)
 				IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, entry.getClasspathEntry().isExported());
+				IRuntimeClasspathEntry runtimeArchEntry = newRuntimeClasspathEntry(archEntry);
+				runtimeArchEntry.setClasspathProperty(entry.getClasspathProperty());
 				if (configuration == null) {
-					return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), project);
+					return resolveRuntimeClasspathEntry(runtimeArchEntry, project);
 				} else {
-					return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), configuration);
+					return resolveRuntimeClasspathEntry(runtimeArchEntry, configuration);
 				}
 			}		
 		}
@@ -792,10 +794,11 @@ public final class JavaRuntime {
 	 * output location.
 	 * 
 	 * @param project
+	 * @param classpathProperty the type of classpath entries to create
 	 * @return IRuntimeClasspathEntry[] or <code>null</code>
 	 * @throws CoreException
 	 */
-	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project) throws CoreException {
+	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty) throws CoreException {
 		List nonDefault = new ArrayList();
 		if (project.exists() && project.getProject().isOpen()) {
 			IClasspathEntry entries[] = project.getRawClasspath();
@@ -821,6 +824,7 @@ public final class JavaRuntime {
 			for (int i = 0; i < locations.length; i++) {
 				IClasspathEntry newEntry = JavaCore.newLibraryEntry((IPath)nonDefault.get(i), null, null);
 				locations[i] = new RuntimeClasspathEntry(newEntry);
+				locations[i].setClasspathProperty(classpathProperty);
 			}
 			return locations;						
 		}
@@ -856,7 +860,7 @@ public final class JavaRuntime {
 				if (resource instanceof IProject) {
 					IJavaProject jp = JavaCore.create((IProject)resource);
 					if (jp.exists() && jp.getProject().isOpen()) {
-						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp);
+						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty());
 						if (entries != null) {
 							return entries;
 						}

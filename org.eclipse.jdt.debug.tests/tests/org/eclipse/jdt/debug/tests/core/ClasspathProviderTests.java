@@ -12,9 +12,11 @@ package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -79,5 +81,368 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-	}	
+	}
+
+	// BOOTPATH TESTS
+		
+	/**
+	 * Test that a variable added to the bootpath is resolved to be on the bootpath.
+	 */
+	public void testBootpathVariableResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		assertTrue("Archive does not exist", archive.exists());
+		String varName = "bootpathVar";
+		JavaCore.setClasspathVariable(varName, archive.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName));
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());			
+	}
+	
+	/**
+	 * Test that an extended variable added to the bootpath is resolved to be on the bootpath.
+	 */	
+	public void testBootpathVariableExtensionResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		IProject root = getJavaProject().getProject();
+		String varName = "bootpathVarRoot";
+		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());			
+	}
+	
+	/**
+	 * Test that a project added to the bootpath is resolved to be on the bootpath.
+	 */
+	public void testBootpathProjectResolution() throws Exception {
+		IJavaProject project = getJavaProject();
+		IResource outputFolder = ResourcesPlugin.getWorkspace().getRoot().findMember(project.getOutputLocation());
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newProjectRuntimeClasspathEntry(project);
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", outputFolder.getLocation().toOSString(), resolved[0].getLocation());
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a container added to the bootpath is resolved to have all entries on
+	 * the boothpath.
+	 */
+	public void testBootpathContainerResolution() throws Exception {
+		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
+		// each resovled entry should be on the bootpath
+		for (int i = 0; i < resolved.length; i++) {
+			IRuntimeClasspathEntry entry2 = resolved[i];
+			assertEquals("Entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[i].getClasspathProperty());
+		}
+	}
+	
+	/**
+	 * Test that a jar added to the bootpath is resolved to be on the bootpath.
+	 */
+	public void testBootpathJarResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		assertTrue("Archive does not exist", archive.exists());
+
+		IRuntimeClasspathEntry jarEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(archive.getFullPath());
+		jarEntry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(jarEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a folder added to the bootpath is resolved to be on the bootpath.
+	 */	
+	public void testBootpathFolderResolution() throws Exception {
+		IResource folder = getJavaProject().getProject().getFolder("src");
+		assertTrue("Folder does not exist", folder.exists());
+
+		IRuntimeClasspathEntry folderEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(folder.getFullPath());
+		folderEntry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(folderEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", folder.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", folder.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a project with non-default output locations placed on the bootpath
+	 * resolves to entries on the bootpath.
+	 */
+	public void testBootpathProjectNonDefaultOutputLocationsResolution() throws Exception {
+		IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("MultiOutput");
+		IJavaProject project = JavaCore.create(p);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newProjectRuntimeClasspathEntry(project);
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be 3 resolved entries", 3, resolved.length); // two specific entries & default entry
+		for (int i = 0; i < resolved.length; i++) {
+			IRuntimeClasspathEntry entry = resolved[i];
+			assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, entry.getClasspathProperty());
+		}
+				
+	}
+	
+	// USER CLASSES TESTS
+		
+	/**
+	 * Test that a variable added to the user application classpath is resolved to be on
+	 * the user application classpath.
+	 */
+	public void testUserClassesVariableResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		assertTrue("Archive does not exist", archive.exists());
+		String varName = "bootpathVar";
+		JavaCore.setClasspathVariable(varName, archive.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName));
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());			
+	}
+	
+	/**
+	 * Test that an extended variable added to the user classpath is resolved to be
+	 * on the user classpath.
+	 */	
+	public void testUserClassesVariableExtensionResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		IProject root = getJavaProject().getProject();
+		String varName = "bootpathVarRoot";
+		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());			
+	}
+	
+	/**
+	 * Test that a project added to the user classpath is resolved to be on the
+	 * user classpath.
+	 */
+	public void testUserClassesProjectResolution() throws Exception {
+		IJavaProject project = getJavaProject();
+		IResource outputFolder = ResourcesPlugin.getWorkspace().getRoot().findMember(project.getOutputLocation());
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newProjectRuntimeClasspathEntry(project);
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", outputFolder.getLocation().toOSString(), resolved[0].getLocation());
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a container added to the user classpath is resolved to have all
+	 * entries on the user classpath.
+	 */
+	public void testUserClassesContainerResolution() throws Exception {
+		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
+		// each resovled entry should be on the bootpath
+		for (int i = 0; i < resolved.length; i++) {
+			IRuntimeClasspathEntry entry2 = resolved[i];
+			assertEquals("Entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[i].getClasspathProperty());
+		}
+	}
+	
+	/**
+	 * Test that a jar added to the user classpath is resolved to be on the user classpath.
+	 */
+	public void testUserClassesJarResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		assertTrue("Archive does not exist", archive.exists());
+
+		IRuntimeClasspathEntry jarEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(archive.getFullPath());
+		jarEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(jarEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a folder added to the user classpath is resolved to be on the
+	 * user classpath.
+	 */	
+	public void testUserClassesFolderResolution() throws Exception {
+		IResource folder = getJavaProject().getProject().getFolder("src");
+		assertTrue("Folder does not exist", folder.exists());
+
+		IRuntimeClasspathEntry folderEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(folder.getFullPath());
+		folderEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(folderEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", folder.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", folder.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a project with non-default output locations placed on the user classpath
+	 * resolves to entries on the user classpath.
+	 */
+	public void testUserClassesProjectNonDefaultOutputLocationsResolution() throws Exception {
+		IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("MultiOutput");
+		IJavaProject project = JavaCore.create(p);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newProjectRuntimeClasspathEntry(project);
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be 3 resolved entries", 3, resolved.length); // two specific entries & default entry
+		for (int i = 0; i < resolved.length; i++) {
+			IRuntimeClasspathEntry entry = resolved[i];
+			assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, entry.getClasspathProperty());
+		}
+				
+	}
+	
+	// STANDARD CLASSES TESTS
+		
+	/**
+	 * Test that a variable added to the default bootpath is resolved to be on
+	 * the default bootpath.
+	 */
+	public void testStandardClassesVariableResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		assertTrue("Archive does not exist", archive.exists());
+		String varName = "bootpathVar";
+		JavaCore.setClasspathVariable(varName, archive.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName));
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());			
+	}
+	
+	/**
+	 * Test that an extended variable added to the default bootpath is resolved to be
+	 * on the default bootpath.
+	 */	
+	public void testStandardClassesVariableExtensionResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		IProject root = getJavaProject().getProject();
+		String varName = "bootpathVarRoot";
+		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());			
+	}
+	
+	/**
+	 * Test that a project added to the default bootpath is resolved to be on the
+	 * default bootpath.
+	 */
+	public void testStandardClassesProjectResolution() throws Exception {
+		IJavaProject project = getJavaProject();
+		IResource outputFolder = ResourcesPlugin.getWorkspace().getRoot().findMember(project.getOutputLocation());
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newProjectRuntimeClasspathEntry(project);
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", outputFolder.getLocation().toOSString(), resolved[0].getLocation());
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a container added to the default bootpath is resolved to have all
+	 * entries on the default bootpath.
+	 */
+	public void testStandardClassesContainerResolution() throws Exception {
+		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
+		// each resovled entry should be on the bootpath
+		for (int i = 0; i < resolved.length; i++) {
+			IRuntimeClasspathEntry entry2 = resolved[i];
+			assertEquals("Entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[i].getClasspathProperty());
+		}
+	}
+	
+	/**
+	 * Test that a jar added to the default bootpath is resolved to be on the
+	 * default bootpath.
+	 */
+	public void testStandardClassesJarResolution() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		assertTrue("Archive does not exist", archive.exists());
+
+		IRuntimeClasspathEntry jarEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(archive.getFullPath());
+		jarEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(jarEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a folder added to the default bootpath is resolved to be on the
+	 * default bootpath.
+	 */	
+	public void testStandardClassesFolderResolution() throws Exception {
+		IResource folder = getJavaProject().getProject().getFolder("src");
+		assertTrue("Folder does not exist", folder.exists());
+
+		IRuntimeClasspathEntry folderEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(folder.getFullPath());
+		folderEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(folderEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", folder.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", folder.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());		
+	}
+	
+	/**
+	 * Test that a project with non-default output locations placed on the default bootpath
+	 * resolves to entries on the default bootpath.
+	 */
+	public void testStandardClassesProjectNonDefaultOutputLocationsResolution() throws Exception {
+		IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("MultiOutput");
+		IJavaProject project = JavaCore.create(p);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newProjectRuntimeClasspathEntry(project);
+		runtimeClasspathEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be 3 resolved entries", 3, resolved.length); // two specific entries & default entry
+		for (int i = 0; i < resolved.length; i++) {
+			IRuntimeClasspathEntry entry = resolved[i];
+			assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, entry.getClasspathProperty());
+		}
+				
+	}			
 }

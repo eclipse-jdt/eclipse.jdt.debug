@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
@@ -120,4 +121,27 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.doSave();
 	}
+	
+	/**
+	 * Create a project with non-default, mulitple output locations.
+	 * 
+	 * @throws Exception
+	 */
+	public void testMultipleOutputProjectCreation() throws Exception {
+		// delete any pre-existing project
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("MultiOutput");
+		if (pro.exists()) {
+			pro.delete(true, true, null);
+		}
+		// create project with two src folders and output locations
+		IJavaProject project = JavaProjectHelper.createJavaProject("MultiOutput");
+		IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(project, "src1", "bin1");
+		IPackageFragmentRoot src2 = JavaProjectHelper.addSourceContainer(project, "src2", "bin2");
+		
+		// add rt.jar
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		assertNotNull("No default JRE", vm);
+		JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+				
+	}	
 }

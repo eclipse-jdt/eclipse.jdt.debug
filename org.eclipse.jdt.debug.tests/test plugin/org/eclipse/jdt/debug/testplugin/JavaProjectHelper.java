@@ -92,6 +92,33 @@ public class JavaProjectHelper {
 	}
 	
 	/**
+	 * Creates a IJavaProject.
+	 */	
+	public static IJavaProject createJavaProject(String projectName) throws CoreException {
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IProject project= root.getProject(projectName);
+		if (!project.exists()) {
+			project.create(null);
+		} else {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+		
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+				
+		if (!project.hasNature(JavaCore.NATURE_ID)) {
+			addNatureToProject(project, JavaCore.NATURE_ID, null);
+		}
+		
+		IJavaProject jproject= JavaCore.create(project);
+		
+		jproject.setRawClasspath(new IClasspathEntry[0], null);
+		
+		return jproject;	
+	}	
+	
+	/**
 	 * Removes a IJavaProject.
 	 */		
 	public static void delete(IJavaProject jproject) throws CoreException {
@@ -121,6 +148,37 @@ public class JavaProjectHelper {
 		addToClasspath(jproject, cpe);		
 		return root;
 	}
+	
+	/**
+	 * Adds a source container to a IJavaProject.
+	 */		
+	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName, String outputName) throws CoreException {
+		IProject project= jproject.getProject();
+		IContainer container= null;
+		if (containerName == null || containerName.length() == 0) {
+			container= project;
+		} else {
+			IFolder folder= project.getFolder(containerName);
+			if (!folder.exists()) {
+				folder.create(false, true, null);
+			}
+			container= folder;
+		}
+		IPackageFragmentRoot root= jproject.getPackageFragmentRoot(container);
+
+		IFolder output = null;
+		if (outputName!= null) {
+			output = project.getFolder(outputName);
+			if (!output.exists()) {
+				output.create(false, true, null);
+			}
+		}
+				
+		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath(), new IPath[0], output.getFullPath());
+		
+		addToClasspath(jproject, cpe);		
+		return root;
+	}	
 
 	/**
 	 * Adds a source container to a IJavaProject and imports all files contained
