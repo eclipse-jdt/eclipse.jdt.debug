@@ -73,6 +73,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		ITextSelection textSelection= getTextSelection();
 		IMethod method= getMethod();
+		if (method == null) {
+			return;
+		}
 		try {
 			int lineNumber = frame.getLineNumber();
 			// debug line numbers are 1 based, document line numbers are 0 based
@@ -227,7 +230,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		
 		IMethod method = null;
 		try {
-			IJavaElement[] resolve = codeAssist.codeSelect(textSelection.getOffset(), textSelection.getLength());
+			IJavaElement[] resolve = codeAssist.codeSelect(textSelection.getOffset(), 0);
 			for (int i = 0; i < resolve.length; i++) {
 				IJavaElement javaElement = resolve[i];
 				if (javaElement instanceof IMethod) {
