@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -691,16 +690,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * @throws CoreException if an exception occurrs while building
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		
 		if (orderedProjects != null) {
-			monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.22"), orderedProjects.length + 1); //$NON-NLS-1$
-			
-			for (int i = 0; i < orderedProjects.length; i++ ) {
-				monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.23") + orderedProjects[i].getName()); //$NON-NLS-1$
-				orderedProjects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
-			}
+			buildProjects(orderedProjects, monitor);
 		}
-		monitor.done();
 		return false; //don't build. I already did it or I threw an exception. 
 	}
 	
