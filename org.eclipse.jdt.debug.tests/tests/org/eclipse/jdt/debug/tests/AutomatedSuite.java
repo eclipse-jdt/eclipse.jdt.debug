@@ -48,6 +48,7 @@ import org.eclipse.jdt.debug.tests.core.LaunchTests;
 import org.eclipse.jdt.debug.tests.core.LaunchesTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
+import org.eclipse.jdt.debug.tests.core.MemoryRenderingTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
@@ -155,6 +156,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ArrayTests.class));
 		addTest(new TestSuite(IOConsoleTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
+		addTest(new TestSuite(MemoryRenderingTests.class));
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 		

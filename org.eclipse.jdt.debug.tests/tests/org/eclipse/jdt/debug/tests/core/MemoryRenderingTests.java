@@ -1,0 +1,80 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jdt.debug.tests.core;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
+import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.jdt.debug.testplugin.MemoryBlockOne;
+import org.eclipse.jdt.debug.testplugin.MemoryBlockTwo;
+import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+
+/**
+ * Tests memory rendering manager
+ */
+public class MemoryRenderingTests extends AbstractDebugTest {
+	
+	public MemoryRenderingTests(String name) {
+		super(name);
+	}
+
+	public void testRenderingTypes() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryRenderingType[] types = manager.getRenderingTypes();
+		assertEquals("Should be 2 types contributed", 2, types.length);
+		List list = new ArrayList();
+		for (int i = 0; i < types.length; i++) {
+			IMemoryRenderingType type = types[i];
+			list.add(types[i].getId());
+		}
+		assertTrue("Missing type 1", list.contains("rendering_type_1"));
+		assertTrue("Missing type 2", list.contains("rendering_type_2"));
+	}
+	
+	public void testRenderingTypeNames() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryRenderingType type = manager.getRenderingType("rendering_type_1");
+		assertEquals("Wrong name", "Rendering One", type.getLabel());
+		type = manager.getRenderingType("rendering_type_2");
+		assertEquals("Wrong name", "Rendering Two", type.getLabel());
+	}
+
+	public void testSingleBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockOne();
+		IMemoryRenderingType[] types = manager.getRenderingTypes(block);
+		assertEquals("Wrong number of bindings", 1, types.length);
+		assertEquals("Wrong binding", "rendering_type_1", types[0].getId());
+	}
+	
+	public void testDoubleBinding() {
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		IMemoryBlock block = new MemoryBlockTwo();
+		IMemoryRenderingType[] types = manager.getRenderingTypes(block);
+		assertEquals("Wrong number of bindings", 2, types.length);
+		assertTrue("Missing binding", indexOf(manager.getRenderingType("rendering_type_1"), types) >= 0);
+		assertTrue("Missing binding", indexOf(manager.getRenderingType("rendering_type_2"), types) >= 0);
+	}	
+	
+	protected int indexOf(Object thing, Object[] list) {
+		for (int i = 0; i < list.length; i++) {
+			Object object2 = list[i];
+			if (object2.equals(thing)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+}

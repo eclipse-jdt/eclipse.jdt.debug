@@ -192,4 +192,29 @@
       </statusHandler>
    </extension>
 
+   <extension point="org.eclipse.debug.ui.memoryRenderings">
+      <memoryRenderingType
+            id="rendering_type_1"
+            name="Rendering One"
+            class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
+      </memoryRenderingType>
+      <memoryRenderingType
+            id="rendering_type_2"
+            name="Rendering Two"
+            class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
+      </memoryRenderingType>
+      <defaultRenderings
+      		renderingIds="rendering_type_1">
+      		<enablement>
+      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockOne"/>
+      		</enablement>
+      </defaultRenderings>
+      <renderingBindings
+      		renderingIds="rendering_type_1, rendering_type_2">
+      		<enablement>
+      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockTwo"/>
+      		</enablement>
+      </renderingBindings>      
+   </extension>
+
 </plugin>
