@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdi;
 
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
@@ -25,7 +26,11 @@ public class Bootstrap
 			return fVirtualMachineManager;
 		
 		try {
-			String className= Platform.getExtensionRegistry().getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), "jdiclient").getLabel(); //$NON-NLS-1$
+			IExtensionRegistry extensionRegistry= Platform.getExtensionRegistry();
+			String className= null;
+			if (extensionRegistry != null) { // is null if the platform was not started
+				className= extensionRegistry.getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), "jdiclient").getLabel(); //$NON-NLS-1$
+			}
 			Class clazz= null;
 			if (className != null) {
 				clazz= Class.forName(className);
@@ -33,7 +38,7 @@ public class Bootstrap
 			if (clazz != null) {
 				fVirtualMachineManager = (com.sun.jdi.VirtualMachineManager)clazz.newInstance();
 			}
-		} catch (ClassNotFoundException e) { // fall through
+		} catch (ClassNotFoundException e) {
 		} catch (NoClassDefFoundError e) {
 		} catch (InstantiationException e) {
 		} catch (IllegalAccessException e) {

@@ -81,7 +81,7 @@ public class LocationTest extends AbstractJDITest {
 	 * Test JDI lineNumber().
 	 */
 	public void testJDILineNumber() {
-		assertEquals("1", 117, fLocation.lineNumber());
+		assertEquals("1", 120, fLocation.lineNumber());
 	}
 	/**
 	 * Test JDI method().
