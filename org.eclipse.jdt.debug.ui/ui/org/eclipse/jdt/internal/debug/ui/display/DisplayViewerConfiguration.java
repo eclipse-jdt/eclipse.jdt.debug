@@ -30,7 +30,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 		
 	public DisplayViewerConfiguration() {
-		super(JavaPlugin.getDefault().getJavaTextTools(), null);
+		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null);
 	}
 
 	public IContentAssistProcessor getContentAssistantProcessor() {
