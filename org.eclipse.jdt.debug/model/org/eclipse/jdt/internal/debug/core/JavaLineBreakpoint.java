@@ -112,7 +112,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) {
-		fTarget= target;
 		String topLevelName= getTopLevelTypeName();
 		if (topLevelName == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
@@ -179,7 +178,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			logError(e);
 			return null;
 		}
-		request.setEnabled(isEnabled());
 		target.installBreakpoint(this, request);	
 		return request;
 	}
@@ -292,8 +290,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * <li><code>IDebugConstants.BREAKPOINT_MARKER</code></li>
 	 * <li><code>IJavaDebugConstants.HIT_COUNT</code></li>
 	 * <li><code>IJavaDebugConstants.EXPIRED</code></li>
+	 * <li><code>IDebugConstants.ENABLED</code></li>
 	 * </ul>
-	 * and sets the suspend policy of the request to suspend the event thread.
+	 * and sets the suspend policy of the request to suspend 
+	 * the event thread.
 	 */
 	protected void configureRequest(EventRequest request) {
 		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
@@ -304,6 +304,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
 			request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
 		}
+		// Important: only enable a request after it has been configured
+		request.setEnabled(isEnabled());		
 	}	
 	
 	/**

@@ -28,9 +28,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * JavaBreakpoint attributes
 	 */	
-	protected static final String[] fgExpiredEnabledAttributes= new String[]{IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED};			
-
-	protected JDIDebugTarget fTarget= null;
+	protected static final String[] fgExpiredEnabledAttributes= new String[]{IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED};
 	
 	public JavaBreakpoint() {
 	}	
@@ -299,17 +297,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public static String getFormattedString(String key, String[] args) {
 		return DebugJavaUtils.getFormattedString(key, args);
-	}
-
-	/**
-	 * Returns the VM this breakpoint is contained in
-	 * or <code>null</code> if it is not installed.
-	 */
-	public VirtualMachine getVM() {
-		if (fTarget == null) {
-			return null;
-		}
-		return fTarget.getVM();
 	}
 	
 	/**

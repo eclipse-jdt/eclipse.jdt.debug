@@ -111,12 +111,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * potentially add.
 	 */	
 	protected void selectiveAdd(JDIDebugTarget target, boolean accessCheck, boolean modificationCheck) {
-		fTarget= target;
 		String topLevelName= getTopLevelTypeName();
-		if (topLevelName == null) {
-//			internalError(ERROR_BREAKPOINT_NO_TYPE);
-			return;
-		}
 		
 		List classes= target.jdiClassesByName(topLevelName);
 		if (classes == null || classes.isEmpty()) {
@@ -208,8 +203,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (request == null) {
 			request= createAccessWatchpoint(target, field);
 		}
-		// Important: Enable only after request has been configured
-		request.setEnabled(isEnabled());
 		return request;
 	}
 	
@@ -239,8 +232,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (request == null) {
 			request= createModificationWatchpoint(target, field);
 		}
-		// Important: only enable a request after it has been configured
-		request.setEnabled(isEnabled());
 		return request;
 	}
 	
@@ -333,10 +324,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				return;
 			}
 			String name= getTopLevelTypeName();
-			if (name == null) {
-//				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
 			List breakpoints= (List) target.getDeferredBreakpointsByClass(name);
 			if (breakpoints == null) {
 				return;
@@ -359,18 +346,14 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				try {
 					decrementInstallCount();
 				} catch (CoreException e) {
-					fTarget= null;
 					logError(e);
 				}			
 			} catch (VMDisconnectedException e) {
-				fTarget= null;
 				return;
 			} catch (RuntimeException e) {
-				fTarget= null;
 				logError(e);
 			}
 		}
-		fTarget= null;
 	}
 
 	/**

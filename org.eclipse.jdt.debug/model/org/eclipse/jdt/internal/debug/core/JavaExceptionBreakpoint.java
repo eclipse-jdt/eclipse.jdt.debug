@@ -112,7 +112,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) {
-		fTarget= target;
 		changeForTarget(target);
 	}	
 	
@@ -266,11 +265,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			}
 		} catch (CoreException ce) {
 			logError(ce);
-		}
-		if (fTarget != null) {
-			// Notify the target that this watchpoint has changed
-			changeForTarget(fTarget);
-		}				
+		}			
 	}
 	
 	/**
@@ -304,11 +299,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			}
 		} catch (CoreException ce) {
 			logError(ce);
-		}
-		if (fTarget != null) {
-			// Notify the target that this watchpoint has changed
-			changeForTarget(fTarget);
-		}				
+		}			
 	}
 	
 	/**
