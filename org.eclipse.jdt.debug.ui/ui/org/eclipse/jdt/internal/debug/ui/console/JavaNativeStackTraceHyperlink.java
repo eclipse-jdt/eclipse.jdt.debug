@@ -18,8 +18,8 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 	/**
      * @see JavaStackTraceHyperlink#JavaStackTraceHyperlink(IConsole, int, int)
 	 */
-	public JavaNativeStackTraceHyperlink(IConsole console, int offset, int length) {
-		super(console, offset, length);
+	public JavaNativeStackTraceHyperlink(IConsole console) {
+		super(console);
 	}
 
 	/**

@@ -21,8 +21,8 @@ public class J9StackTraceHyperlink extends JavaStackTraceHyperlink {
 	/**
      * @see JavaStackTraceHyperlink#JavaStackTraceHyperlink(IConsole, int, int)
 	 */
-	public J9StackTraceHyperlink(IConsole console, int offset, int length) {
-		super(console, offset, length);
+	public J9StackTraceHyperlink(IConsole console) {
+		super(console);
 	}
 
 	/**

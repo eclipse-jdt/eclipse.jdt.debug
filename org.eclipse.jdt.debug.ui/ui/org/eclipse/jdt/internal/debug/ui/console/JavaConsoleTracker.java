@@ -58,11 +58,11 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 				int linkLength = length - index - 1;
 				IConsoleHyperlink link = null;
 				if (standardMatch) {
-					link = new JavaStackTraceHyperlink(fConsole, linkOffset, linkLength);
+					link = new JavaStackTraceHyperlink(fConsole);
 				} else {
-					link = new JavaNativeStackTraceHyperlink(fConsole, linkOffset, linkLength);
+					link = new JavaNativeStackTraceHyperlink(fConsole);
 				}	
-				fConsole.addLink(link);			
+				fConsole.addLink(link, linkOffset, linkLength);			
 			}
 		} catch (BadLocationException e) {
 		}

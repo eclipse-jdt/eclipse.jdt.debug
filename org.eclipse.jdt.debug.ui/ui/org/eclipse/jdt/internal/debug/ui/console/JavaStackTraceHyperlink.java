@@ -39,16 +39,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 	
-	private int fOffset;
-	private int fLength;
 	private IConsole fConsole;
 
 	/**
 	 * Constructor for JavaStackTraceHyperlink.
 	 */
-	public JavaStackTraceHyperlink(IConsole console, int offset, int length) {
-		fOffset = offset;
-		fLength = length;
+	public JavaStackTraceHyperlink(IConsole console) {
 		fConsole = console;
 	}
 
@@ -191,20 +187,6 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 			throw new CoreException(status);			
 		}
 	}
-
-	/**
-	 * @see org.eclipse.jface.text.IRegion#getLength()
-	 */
-	public int getLength() {
-		return fLength;
-	}
-
-	/**
-	 * @see org.eclipse.jface.text.IRegion#getOffset()
-	 */
-	public int getOffset() {
-		return fOffset;
-	}
 	
 	/**
 	 * Returns the console this link is contained in.
@@ -222,7 +204,8 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 	 */
 	protected String getLinkText() throws CoreException {
 		try {
-			return getConsole().getDocument().get(getOffset(), getLength());
+			IRegion region = getConsole().getRegion(this);
+			return getConsole().getDocument().get(region.getOffset(), region.getLength());
 		} catch (BadLocationException e) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, "Unable to retrieve hyperlink text.", e);
 			throw new CoreException(status);

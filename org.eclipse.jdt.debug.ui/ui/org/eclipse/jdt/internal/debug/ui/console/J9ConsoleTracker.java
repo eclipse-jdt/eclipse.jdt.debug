@@ -49,8 +49,8 @@ public class J9ConsoleTracker implements IConsoleLineTracker {
 					int linkOffset = offset + index + 1;
 					int linkLength = length - index - 1;
 					IConsoleHyperlink link = null;
-					link = new J9StackTraceHyperlink(fConsole, linkOffset, linkLength);
-					fConsole.addLink(link);
+					link = new J9StackTraceHyperlink(fConsole);
+					fConsole.addLink(link, linkOffset, linkLength);
 				}				
 			}
 		} catch (BadLocationException e) {
