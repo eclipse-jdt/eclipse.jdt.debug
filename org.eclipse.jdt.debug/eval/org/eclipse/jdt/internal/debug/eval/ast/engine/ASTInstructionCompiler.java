@@ -1499,6 +1499,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ITypeBinding typeBinding= methodBinding.getDeclaringClass();
 		ITypeBinding enclosingTypeBinding= typeBinding.getDeclaringClass();
 		
+		boolean isInstanceMemberType= typeBinding.isMember() && ! Modifier.isStatic(typeBinding.getModifiers());
+
 		if (isALocalType(typeBinding)) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8"), node.getStartPosition())); //$NON-NLS-1$
@@ -1509,12 +1511,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_30"), node.getStartPosition())); //$NON-NLS-1$
 		}
 		
+		
 		if (hasErrors()) {
 			return true;
 		}
 		
-		boolean isInstanceMemberType= typeBinding.isMember() &&! Modifier.isStatic(typeBinding.getModifiers());
-
 		int argCount= methodBinding.getParameterTypes().length;
 		
 		String enclosingTypeSignature= null;
@@ -1535,6 +1536,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			if (optionalExpression != null) {
 				optionalExpression.accept(this);
 			} else {
+				// for a non-static inner class, check if we are not in a static context (method)
+				ASTNode parent= node;
+				do {
+					parent= parent.getParent();
+				} while (! (parent instanceof MethodDeclaration));
+				if (Modifier.isStatic(((MethodDeclaration)parent).getModifiers())) {
+					setHasError(true);
+					addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Must_explicitly_qualify_the_allocation_with_an_instance_of_the_enclosing_type_33"), node.getStartPosition())); //$NON-NLS-1$
+					return true;
+				}
+				
 				push(new PushThis(getEnclosingLevel(node, enclosingTypeBinding)));
 				storeInstruction();
 			}
