@@ -45,6 +45,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		dialog.setTitle(ActionMessages.getString("AddProjectAction.Project_Selection_2")); //$NON-NLS-1$
 		dialog.setMessage(ActionMessages.getString("AddProjectAction.Choose_&project(s)_to_add__3")); //$NON-NLS-1$
 		dialog.setElements(projects.toArray());
+		dialog.setMultipleSelection(true);
 		
 		if (dialog.open() == dialog.OK) {			
 			Object[] selections = dialog.getResult();
