@@ -26,6 +26,7 @@ import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,12 +52,12 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), e); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getMessage());
 				return;
 			}
 			IType type = null;
 			if (types.length == 0) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), (Throwable)null); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"));
 			} else if (types.length > 1) {
 				type = chooseType(types, mode);
 			} else {
