@@ -5,8 +5,13 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import java.lang.ref.*;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * This class is used to cache values.
@@ -81,14 +86,17 @@ public class ValueCache {
 	public Collection values() {
 		cleanup();
 		Vector returnValues = new Vector();
-		Iterator iter = cacheTable.values().iterator();
-		SoftReference ref;
-		Object value;
-		while (iter.hasNext()) {
-			ref = (SoftReference)iter.next();
-			value = (Object)ref.get();
-			if (value != null)
-				returnValues.add(value);
+		synchronized (cacheTable) {
+			Iterator iter = cacheTable.values().iterator();
+			SoftReference ref;
+			Object value;
+			while (iter.hasNext()) {
+				ref = (SoftReference)iter.next();
+				value = ref.get();
+				if (value != null) {
+					returnValues.add(value);
+				}
+			}
 		}
 		return returnValues;
 	}
@@ -100,14 +108,17 @@ public class ValueCache {
 	public Collection valuesWithType(Class type) {
 		cleanup();
 		Vector returnValues = new Vector();
-		Iterator iter = cacheTable.values().iterator();
-		SoftReference ref;
-		Object value;
-		while (iter.hasNext()) {
-			ref = (SoftReference)iter.next();
-			value = (Object)ref.get();
-			if (value != null && value.getClass().equals(type))
-				returnValues.add(value);
+		synchronized (cacheTable) {
+			Iterator iter = cacheTable.values().iterator();
+			SoftReference ref;
+			Object value;
+			while (iter.hasNext()) {
+				ref = (SoftReference)iter.next();
+				value = ref.get();
+				if (value != null && value.getClass().equals(type)) {
+					returnValues.add(value);
+				}
+			}
 		}
 		return returnValues;
 	}
