@@ -23,6 +23,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.swt.SWT;
@@ -182,6 +183,11 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 			});
 		}
 	}
+
+    protected IRegion getRegion() {
+        Point point = viewer.getSelectedRange();
+        return new Region(point.x, point.y);
+    }
 
 
 }
