@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
@@ -18,6 +19,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.ui.actions.BreakpointFieldLocator;
 import org.eclipse.jdt.internal.debug.ui.actions.BreakpointMethodLocator;
 import org.eclipse.jdt.internal.debug.ui.actions.ValidBreakpointLocationLocator;
+import org.eclipse.jface.text.Document;
 
 /**
  * Tests breakpoint location locator.
@@ -65,10 +67,12 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		testLocation(160, -1, null);
 	}
 	
-	public void testField(int offset, String expectedFieldName, String expectedTypeName) throws Exception {
+	public void testField(int line, int offsetInLine, String expectedFieldName, String expectedTypeName) throws Exception {
 		IType type= getJavaProject().findType("WatchItemTests");
 		assertNotNull("Cannot find type", type);
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(type.getCompilationUnit(), false);
+		ICompilationUnit unit= type.getCompilationUnit();
+		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false);
+		int offset= new Document(unit.getSource()).getLineOffset(line - 1) + offsetInLine;
 		BreakpointFieldLocator locator= new BreakpointFieldLocator(offset);
 		compilationUnit.accept(locator);
 		String fieldName= locator.getFieldName();
@@ -78,17 +82,19 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testFieldLocationOnField() throws Exception {
-		testField(722, "fVector", "WatchItemTests");
+		testField(22, 19, "fVector", "WatchItemTests");
 	}
 	
 	public void testFieldLocationNotOnField() throws Exception {
-		testField(900, null, null);
+		testField(26, 16, null, null);
 	}
 	
-	public void testMethod(int offset, String expectedMethodName, String expectedTypeName, String expectedMethodSignature) throws Exception {
+	public void testMethod(int line, int offsetInLine, String expectedMethodName, String expectedTypeName, String expectedMethodSignature) throws Exception {
 		IType type= getJavaProject().findType("WatchItemTests");
 		assertNotNull("Cannot find type", type);
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(type.getCompilationUnit(), false);
+		ICompilationUnit unit= type.getCompilationUnit();
+		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false);
+		int offset= new Document(unit.getSource()).getLineOffset(line - 1) + offsetInLine;
 		BreakpointMethodLocator locator= new BreakpointMethodLocator(offset);
 		compilationUnit.accept(locator);
 		String methodName= locator.getMethodName();
@@ -100,18 +106,18 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testMethodOnSignature() throws Exception {
-		testMethod(946, "fillVector", "WatchItemTests", "()V");
+		testMethod(34, 20, "fillVector", "WatchItemTests", "()V");
 	}
 		
 	public void testMethodOnCode() throws Exception {
-		testMethod(968, "fillVector", "WatchItemTests", "()V");
+		testMethod(36, 19, "fillVector", "WatchItemTests", "()V");
 	}
 	
 	public void testMethodNotOnMethod() throws Exception {
-		testMethod(730, null, null, null);
+		testMethod(30, 1, null, null, null);
 	}
 	
 	public void testMethodOnMethodSignatureNotAvailable() throws Exception {
-		testMethod(784, "main", "WatchItemTests", null);
+		testMethod(25, 23, "main", "WatchItemTests", null);
 	}
 }
