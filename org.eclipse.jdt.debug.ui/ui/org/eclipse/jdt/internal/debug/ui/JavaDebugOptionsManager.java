@@ -105,6 +105,11 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	private static ILabelProvider fLabelProvider= DebugUITools.newDebugModelPresentation();
 	
 	/**
+	 * Whether problem handling has been initialized.
+	 */
+	private boolean fProblemHandlingInitialized = false;
+	
+	/**
 	 * Constants indicating whether a breakpoint
 	 * is added, removed, or changed.
 	 */
@@ -154,6 +159,12 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		
+		if (!fProblemHandlingInitialized) {
+			// do nothing if problem handling has not yet been initialized.
+			// initialization is performed on first launch.
+			return;
+		}
+		
 		IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true); //$NON-NLS-1$
 		if (deltas != null) {
 			for (int i = 0; i < deltas.length; i++) {
@@ -197,7 +208,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JDIDebugModel.addJavaBreakpointListener(this);
-		initialize();
+		updateActiveFilters();
 	}
 	
 	/**
@@ -212,14 +223,15 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		fProblemMap.clear();
 		fLocationMap.clear();
 	}	
-	
+
 	/**
-	 * Notes existing compilation problems, creates exception
-	 * breakpoints for copmilation problems and uncaught exceptions.
-	 * 
-	 * @exception CoreException if unable to initialize
+	 * Initializes compilation error handling and suspending
+	 * on uncaught exceptions.
 	 */
-	protected void initialize() throws CoreException {
+	protected void initializeProblemHandling() {
+		if (fProblemHandlingInitialized) {
+			return;
+		}
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// compilation error breakpoint
@@ -229,35 +241,32 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 				// disabled until there are errors
 				bp.setEnabled(false);
 				setSuspendOnCompilationErrorsBreakpoint(bp);
-			}
-		};
-		fork(wr);
-		
-		// note compilation errors
-		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
-		if (problems != null) {
-			for (int i = 0; i < problems.length; i++) {
-				problemAdded(problems[i]);
-			}
-		}
-		
-		wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+				
 				// uncaught exception breakpoint
-				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
+				bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
 				bp.setPersisted(false);
 				bp.setRegistered(false);
 				bp.setEnabled(isSuspendOnUncaughtExceptions());
 				setSuspendOnUncaughtExceptionBreakpoint(bp);
+				
+				// note existing compilation errors
+				IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
+				if (problems != null) {
+					for (int i = 0; i < problems.length; i++) {
+						problemAdded(problems[i]);
+					}
+				}				
 			}
 		};
-		fork(wr);
-
 		
-		// step filters
-		updateActiveFilters();
+		try {
+			ResourcesPlugin.getWorkspace().run(wr, null);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		fProblemHandlingInitialized = true;
 	}
-	
+		
 	/**
 	 * The given problem has been added. Cross
 	 * reference the problem with its location.
@@ -416,6 +425,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * @param enabled whether to suspend on compilation errors
 	 */
 	protected void setSuspendOnCompilationErrors(boolean enabled) {
+		initializeProblemHandling();
 		IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
 		setEnabled(breakpoint, enabled);
 	}
@@ -426,6 +436,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * @param enabled whether or not to suspend on uncaught exceptions
 	 */
 	protected void setSuspendOnUncaughtExceptions(boolean enabled) {
+		initializeProblemHandling();
 		IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
 		setEnabled(breakpoint, enabled);
 	}	
@@ -703,6 +714,8 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
 	public void launchAdded(ILaunch launch) {
+		
+		initializeProblemHandling();
 		
 		if (launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
 			// do not use UI source locator for scrapbook
