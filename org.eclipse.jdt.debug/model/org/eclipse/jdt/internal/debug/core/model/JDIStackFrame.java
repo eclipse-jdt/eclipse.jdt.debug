@@ -958,7 +958,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * an underlying stack frame needs to be disposed, stack frames are equal if
 	 * the frames are equal and the locations are equal.
 	 */
-	private boolean equalFrame(StackFrame frameOne, StackFrame frameTwo) {
+	protected static boolean equalFrame(StackFrame frameOne, StackFrame frameTwo) {
 		if (frameOne.thread().equals(frameTwo.thread()) &&  frameOne.location().method().equals(frameTwo.location().method())) {
 			return true;
 		}

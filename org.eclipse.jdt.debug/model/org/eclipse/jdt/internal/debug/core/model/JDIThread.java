@@ -377,6 +377,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					} else {
 						if (frames.isEmpty()) {
 							fStackFrames = Collections.EMPTY_LIST;
+						} else {
+							// same number of frames - if top frames are in different
+							// method, replace all frames
+							StackFrame newTop = (StackFrame)frames.get(0);
+							StackFrame oldTop = ((JDIStackFrame)fStackFrames.get(0)).getLastUnderlyingStackFrame();
+							if (!JDIStackFrame.equalFrame(newTop, oldTop)) {
+								fStackFrames = createAllStackFrames();
+								offset = fStackFrames.size();
+							}
 						}
 					}
 				// update preserved frames
