@@ -73,9 +73,14 @@ public class LaunchingPlugin extends Plugin {
 		
 		//exclude launch configurations from being copied to the output directory
 		Hashtable optionsMap = JavaCore.getOptions();
-		String filters= (String)optionsMap.get("org.eclipse.jdt.core.builder.resourceCopyExclusionFilters"); //$NON-NLS-1$
-		filters= filters + ",*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
-		optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilters", filters);  //$NON-NLS-1$
+		String filters= (String)optionsMap.get("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter"); //$NON-NLS-1$
+		if (filters == null || filters.length() ==0) {
+			filters= "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$;;
+		} else {
+			filters= filters + ",*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$;
+		}
+
+		optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter", filters);  //$NON-NLS-1$
 		JavaCore.setOptions(optionsMap);
 	}
 	
