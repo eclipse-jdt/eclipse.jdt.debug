@@ -41,7 +41,9 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextSelection;
@@ -73,7 +75,7 @@ import com.sun.jdi.ObjectReference;
  * is done in the UI thread and the expression and result are
  * displayed using the IDataDisplay.
  */
-public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, IViewActionDelegate {
+public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, IViewActionDelegate, ISnippetStateChangedListener {
 
 	private IAction fAction;
 	private IWorkbenchPart fTargetPart;
@@ -145,11 +147,17 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context != null) {
 			if (context instanceof IStackFrame) {
-				return (IStackFrame)context;
+				IStackFrame frame= (IStackFrame)context;
+				if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
+					return frame;
+				}
 			}
 			if (context instanceof IThread) {
 				try {
-					return ((IThread)context).getTopStackFrame();
+					IThread thread= (IThread)context;
+					if (thread.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
+						return thread.getTopStackFrame();
+					}
 				} catch (DebugException e) {
 					JDIDebugUIPlugin.log(e);
 				}
@@ -611,7 +619,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 
 	protected void setTargetPart(IWorkbenchPart part) {
+		if (fTargetPart instanceof JavaSnippetEditor) {
+			((JavaSnippetEditor)fTargetPart).removeSnippetStateChangedListener(this);
+		}
 		fTargetPart = part;
+		if (part instanceof JavaSnippetEditor) {
+			((JavaSnippetEditor)part).addSnippetStateChangedListener(this);
+		}
 	}
 
 	protected IWorkbenchWindow getWindow() {
@@ -621,6 +635,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void setWindow(IWorkbenchWindow window) {
 		fWindow = window;
 	}
+	
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
@@ -636,5 +651,16 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	
 	protected void setSelectedObject(Object selection) {
 		fSelection = selection;
+	}
+	
+	/**
+	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
+	 */
+	public void snippetStateChanged(JavaSnippetEditor editor) {
+		if (editor != null && !editor.isEvaluating()) {
+			update();
+		} else {
+			getAction().setEnabled(false);
+		}
 	}
 }
