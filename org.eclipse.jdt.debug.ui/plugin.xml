@@ -376,6 +376,7 @@
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
                relative="org.eclipse.ui.console.ConsoleView"
+               visible="false"
                relationship="stack"
                id="org.eclipse.jdt.debug.ui.DisplayView">
          </view>
@@ -2349,4 +2350,33 @@
          </enablement>
       </renameParticipant> 
 	</extension>  -->
+<!-- Context support -->
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="Debugging Java"
+            description="Debugging Java programs"
+            id="org.eclipse.jdt.debug.ui.debugging"
+            parentId="org.eclipse.debug.ui.debugging">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugModelContextBindings">
+      <modelContextBinding
+            contextId="org.eclipse.jdt.debug.ui.debugging"
+            debugModelId="org.eclipse.jdt.debug">
+      </modelContextBinding>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+      <contextViewBinding
+            viewId="org.eclipse.jdt.debug.ui.DisplayView"
+            contextId="org.eclipse.jdt.debug.ui.debugging"
+            autoClose="false">
+      </contextViewBinding>
+      <contextViewBinding
+            viewId="org.eclipse.jdt.debug.ui.MonitorsView"
+            contextId="org.eclipse.jdt.debug.ui.debugging">
+      </contextViewBinding>
+   </extension>
 </plugin>
