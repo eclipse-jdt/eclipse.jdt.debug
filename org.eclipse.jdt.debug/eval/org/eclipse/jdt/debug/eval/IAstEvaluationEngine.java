@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.eval;
  
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
@@ -137,6 +138,26 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * </ul>
 	 */
 	public ICompiledExpression getCompiledExpression(String expression, IJavaObject object) throws DebugException;
+
+	/**
+	 * Synchronously generates a compiled expression from the given expression
+	 * in the context of the specified type. The generated expression
+	 * can be stored and evaluated later in a valid runtime context.
+	 * Compilation errors are reported in the returned compiled expression.
+	 * 
+	 * @param expression expression to compile
+	 * @param type the context in which to compile the expression
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The associated thread is not currently suspended</li>
+	 * <li>The stack frame is not contained in the debug target
+	 *   associated with this evaluation engine</li>
+	 * </ul>
+	 * @since 3.1
+	 */
+	public ICompiledExpression getCompiledExpression(String expression, IJavaReferenceType type) throws DebugException;
 
 	
 }

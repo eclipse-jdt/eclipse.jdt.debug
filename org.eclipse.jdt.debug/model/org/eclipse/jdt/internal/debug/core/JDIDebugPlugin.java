@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdi.Bootstrap;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -32,8 +33,10 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.eval.JavaEvaluationEngineManager;
 import org.osgi.framework.BundleContext;
 
 import com.sun.jdi.VirtualMachineManager;
@@ -44,6 +47,8 @@ import com.sun.jdi.VirtualMachineManager;
 
 public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChangeListener {
 	
+	public static final String EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES= "javaLogicalStructures"; //$NON-NLS-1$
+
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
@@ -76,6 +81,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	private static int[] fJDIVersion = null;
 	
+	private JavaEvaluationEngineManager fEvaluationEngineManager;
+
 	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
@@ -155,6 +162,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		super.start(context);
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
+		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 	}
 	
 	/**
@@ -183,6 +191,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			getPluginPreferences().removePropertyChangeListener(this); //added in the preference initializer
 			savePluginPreferences();
 			JavaHotCodeReplaceManager.getDefault().shutdown();
+			fEvaluationEngineManager.dispose();
 			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 			IDebugTarget[] targets= launchManager.getDebugTargets();
 			for (int i= 0 ; i < targets.length; i++) {
@@ -524,4 +533,18 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 					(fSuspend & IJavaBreakpointListener.DONT_SUSPEND) == 0;
 		}
 	}
+	
+	/**
+	 * Returns an evaluation engine for the given project in the given debug target.
+	 * 
+	 * @see JavaEvaluationEngineManager#getEvaluationEngine(IJavaProject, IJavaDebugTarget)
+	 * 
+	 * @param project java project
+	 * @param target the debug target
+	 * @return evalaution engine
+	 */
+	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
+		return fEvaluationEngineManager.getEvaluationEngine(project, target);
+	}
+	
 }

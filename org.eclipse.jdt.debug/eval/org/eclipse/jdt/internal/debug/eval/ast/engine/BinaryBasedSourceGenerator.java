@@ -15,14 +15,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
-import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
-import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 
@@ -56,15 +56,15 @@ public class BinaryBasedSourceGenerator {
 	/**
 	 * Build source for an object value (instance context)
 	 */
-	public void buildSource(JDIObjectValue object) {
-		ObjectReference reference= object.getUnderlyingObject();
-		fSource= buildTypeDeclaration(reference, buildRunMethod(reference.referenceType()), null);
+	public void buildSource(JDIReferenceType referenceType) {
+		ReferenceType reference= (ReferenceType)referenceType.getUnderlyingType();
+		fSource= buildTypeDeclaration(reference, buildRunMethod(reference), null);
 	}
 	
 	/**
 	 * Build source for a class type (static context)
 	 */
-	public void buildSource(JDIClassType type) {
+	public void buildSourceStatic(JDIClassType type) {
 		Type underlyingType= type.getUnderlyingType();
 		if (!(underlyingType instanceof ReferenceType)) {
 			return;
@@ -116,9 +116,7 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 	
-	private StringBuffer buildTypeDeclaration(ObjectReference object, StringBuffer buffer, String nestedTypeName) {
-		
-		ReferenceType referenceType = object.referenceType();
+	private StringBuffer buildTypeDeclaration(ReferenceType referenceType, StringBuffer buffer, String nestedTypeName) {
 		
 		Field thisField= null;
 		
@@ -145,8 +143,10 @@ public class BinaryBasedSourceGenerator {
 				fCompilationUnitName= getSimpleName(referenceType.name());
 			}
 		} else {
-			ObjectReference thisObject= (ObjectReference)object.getValue(thisField);
-			return buildTypeDeclaration(thisObject, source, referenceType.name());
+			try {
+				return buildTypeDeclaration((ReferenceType) thisField.type(), source, referenceType.name());
+			} catch (ClassNotLoadedException e) {
+			}
 		}
 		
 		return source;
@@ -226,6 +226,14 @@ public class BinaryBasedSourceGenerator {
 			} else if (referenceType instanceof InterfaceType) {
 				InterfaceType interfaceType= (InterfaceType) referenceType;
 				
+				if (buffer != null) {
+					source.append("abstract class "); //$NON-NLS-1$
+					source.append(getSimpleName(typeName)).append("___ implements "); //$NON-NLS-1$
+					source.append(getSimpleName(typeName)).append(" {\n"); //$NON-NLS-1$
+					fCodeSnippetPosition += source.length();
+					source.append(buffer).append("}\n"); //$NON-NLS-1$
+				}
+				
 				source.append("interface "); //$NON-NLS-1$
 				
 				source.append(getSimpleName(typeName)).append(' ');
@@ -251,7 +259,7 @@ public class BinaryBasedSourceGenerator {
 		
 		source.append(" {\n"); //$NON-NLS-1$
 		
-		if (buffer != null) {
+		if (buffer != null && !(referenceType instanceof InterfaceType)) {
 			fCodeSnippetPosition += source.length();
 			source.append(buffer);
 		}

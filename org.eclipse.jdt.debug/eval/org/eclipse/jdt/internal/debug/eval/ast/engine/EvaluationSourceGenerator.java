@@ -31,11 +31,12 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
 import com.sun.jdi.AbsentInformationException;
@@ -177,15 +178,15 @@ public class EvaluationSourceGenerator {
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
-	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) {
+	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIReferenceType referenceType, boolean isInStaticMethod) {
 		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
-		objectToEvaluationSourceMapper.buildSource(objectValue);
+		objectToEvaluationSourceMapper.buildSource(referenceType);
 		return objectToEvaluationSourceMapper;
 	}
 	
 	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) {
 		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
-		objectToEvaluationSourceMapper.buildSource(classType);
+		objectToEvaluationSourceMapper.buildSourceStatic(classType);
 		return objectToEvaluationSourceMapper;
 	}
 			
@@ -208,7 +209,7 @@ public class EvaluationSourceGenerator {
 					BinaryBasedSourceGenerator mapper;
 					if (object != null) {
 						// Class instance context
-						mapper= getInstanceSourceMapper(object, ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
+						mapper= getInstanceSourceMapper((JDIReferenceType)object.getJavaType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
 					} else {
 						// Static context
 						mapper= getStaticSourceMapper((JDIClassType)frame.getDeclaringType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
@@ -222,10 +223,10 @@ public class EvaluationSourceGenerator {
 		return fSource;
 	}
 	
-	public String getSource(IJavaObject thisObject, IJavaProject javaProject) throws DebugException  {
+	public String getSource(IJavaReferenceType type, IJavaProject javaProject) throws DebugException {
 		if (fSource == null) {
-				String baseSource= getTypeSourceFromProject(thisObject.getJavaType().getName(), javaProject);
-				int lineNumber= getLineNumber((JDIObjectValue) thisObject);
+				String baseSource= getTypeSourceFromProject(type.getName(), javaProject);
+				int lineNumber= getLineNumber((JDIReferenceType)type);
 				if (baseSource != null && lineNumber != -1) {
 					int apiLevel;
 					if ("1.5".equals(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true))) { //$NON-NLS-1$
@@ -236,15 +237,15 @@ public class EvaluationSourceGenerator {
 					createEvaluationSourceFromSource(baseSource, lineNumber, true, false, apiLevel);
 				}
 				if (fSource == null) {
-					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
+					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, false);
 					createEvaluationSourceFromJDIObject(mapper);
 				}
 		}
 		return fSource;
 	}
 
-	private int getLineNumber(JDIObjectValue objectValue) {
-		ReferenceType referenceType= objectValue.getUnderlyingObject().referenceType();
+	private int getLineNumber(JDIReferenceType type) {
+		ReferenceType referenceType= (ReferenceType) type.getUnderlyingType();
 		String referenceTypeName= referenceType.name();
 		Location location;
 		Hashtable lineNumbers= new Hashtable();

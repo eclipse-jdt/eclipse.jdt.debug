@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.text.MessageFormat;
 import java.util.Iterator;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -43,6 +44,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
@@ -75,6 +77,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
+
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -233,7 +236,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					String expression= (String)selection;
 					
-					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
+					engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
 					setEvaluating(true);
 					boolean hitBreakpoints= JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION);
 					if (object == null) {

@@ -29,15 +29,17 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
-import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
+import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -198,7 +200,20 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
-		if (thisContext instanceof IJavaArray) {
+		try {
+			return getCompiledExpression(snippet, (IJavaReferenceType)thisContext.getJavaType());
+		} catch (DebugException e) {
+			InstructionSequence expression= new InstructionSequence(snippet);
+			expression.addError(e.getStatus().getMessage());
+			return expression;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression(java.lang.String, org.eclipse.jdt.debug.core.IJavaType)
+	 */
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaReferenceType type) {
+		if (type instanceof IJavaArrayType) {
 			InstructionSequence errorExpression= new InstructionSequence(snippet);
 			errorExpression.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1")); //$NON-NLS-1$
 		}
@@ -210,7 +225,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		mapper = new EvaluationSourceGenerator(new String[0], new String[0], snippet);
 
 		try {
-			unit = parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			unit = parseCompilationUnit(mapper.getSource(type, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());

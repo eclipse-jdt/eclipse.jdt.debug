@@ -116,7 +116,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 				fListener.watchEvaluationFinished(null);
 				return;
 			}
-			IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) fStackFrame.getDebugTarget());
+			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) fStackFrame.getDebugTarget());
 			// the evaluation listener
 			IEvaluationListener listener= new IEvaluationListener() {
 				public void evaluationComplete(final IEvaluationResult result) {

@@ -48,6 +48,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -151,7 +152,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			if (project != null) {
 				// get the evaluation engine
 				JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
-				IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, debugTarget);
+				IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
 				// get the compiled expression to use
 				try {
 					compiledExpression= getCompiledExpression(objectValue, debugTarget, evaluationEngine);

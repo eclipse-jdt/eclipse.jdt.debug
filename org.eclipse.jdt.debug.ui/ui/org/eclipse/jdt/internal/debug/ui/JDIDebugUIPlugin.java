@@ -39,13 +39,11 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
@@ -85,8 +83,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private IDocumentProvider fSnippetDocumentProvider;
 	
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
-	
-	private JavaEvaluationEngineManager fEvaluationEngineManager;
 	
 	private ActionFilterAdapterFactory fActionFilterAdapterFactory;
 	private JavaSourceLocationWorkbenchAdapterFactory fSourceLocationAdapterFactory;
@@ -299,7 +295,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		fBreakpointAdapterFactory= new JavaBreakpointWorkbenchAdapterFactory();
 		manager.registerAdapters(fBreakpointAdapterFactory, IJavaBreakpoint.class);
 		
-		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
 	}
@@ -315,7 +310,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			if (fImageDescriptorRegistry != null) {
 				fImageDescriptorRegistry.dispose();
 			}
-			fEvaluationEngineManager.dispose();
 			IAdapterManager manager= Platform.getAdapterManager();
 			manager.unregisterAdapters(fActionFilterAdapterFactory);
 			manager.unregisterAdapters(fSourceLocationAdapterFactory);
@@ -371,19 +365,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (display == null)
 			display= Display.getDefault();
 		return display;		
-	}
-	
-	/**
-	 * Returns an evaluation engine for the given project in the given debug target.
-	 * 
-	 * @see JavaEvaluationEngineManager#getEvaluationEngine(IJavaProject, IJavaDebugTarget)
-	 * 
-	 * @param project java project
-	 * @param target the debug target
-	 * @return evalaution engine
-	 */
-	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
-		return fEvaluationEngineManager.getEvaluationEngine(project, target);
 	}
 	
 	/**

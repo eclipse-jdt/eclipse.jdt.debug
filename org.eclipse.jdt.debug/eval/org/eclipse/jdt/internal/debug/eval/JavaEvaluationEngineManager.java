@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui;
+package org.eclipse.jdt.internal.debug.eval;
 
 
 import java.util.HashMap;

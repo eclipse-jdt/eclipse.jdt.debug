@@ -29,6 +29,7 @@
 
 <!-- Not to be extended com.sun.tools.jdi.VirtualMachineManagerImpl or org.eclipse.jdi.internal.VirtualMachineManagerImpl -->
    <extension-point id="jdiclient" name="org.eclipse.jdi.internal.VirtualMachineManagerImpl"  schema="schema/jdiclient.exsd"/>
+   <extension-point id="javaLogicalStructures" name="Java Logical Structures" schema="schema/javaLogicalStructures.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -273,29 +274,10 @@
 
    <extension point="org.eclipse.debug.core.logicalStructureTypes">
       <logicalStructureType
+            class="org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures"
+            description="plugin provided java logical structures"
             modelIdentifier="org.eclipse.jdt.debug"
-            description="%descriptionMap"
-            class="org.eclipse.jdt.internal.debug.core.logicalstructures.MapStructureType"
-            id="java.util.Map">
-      </logicalStructureType>
-      <logicalStructureType
-            modelIdentifier="org.eclipse.jdt.debug"
-            description="%descriptionCollection"
-            class="org.eclipse.jdt.internal.debug.core.logicalstructures.CollectionStructureType"
-            id="java.util.Collection">
-      </logicalStructureType> 
-      <logicalStructureType
-            modelIdentifier="org.eclipse.jdt.debug"
-            description="%descriptionMapEntry"
-            class="org.eclipse.jdt.internal.debug.core.logicalstructures.MapEntryStructureType"
-            id="java.util.MapEntry">
-      </logicalStructureType>
-      <logicalStructureType
-            modelIdentifier="org.eclipse.jdt.debug"
-            description="%descriptionSWTComposite"
-            class="org.eclipse.jdt.internal.debug.core.logicalstructures.CompositeStructureType"
-            id="org.eclipse.swt.widgets.Composite">
-      </logicalStructureType>           
+            id="org.eclipse.jdt.debug.javaLogicalStructures"/>           
    </extension>
    
    <extension point="org.eclipse.core.expressions.propertyTesters">
@@ -311,5 +293,30 @@
   	<extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.eclipse.jdt.internal.debug.core.JDIDebugPluginPreferenceInitializer"/>
 	</extension>
+   <extension
+         point="org.eclipse.jdt.debug.javaLogicalStructures">
+      <javaLogicalStructure
+            subtypes="true"
+            value="return entrySet().toArray();"
+            type="java.util.Map"/>
+      <javaLogicalStructure
+            subtypes="true"
+            value="return toArray();"
+            type="java.util.Collection"/>
+      <javaLogicalStructure
+            subtypes="true"
+            type="java.util.Map$Entry">
+         <variable
+               value="return getKey();"
+               name="key"/>
+         <variable
+               value="return getValue();"
+               name="value"/>
+      </javaLogicalStructure>
+      <javaLogicalStructure
+            subtypes="true"
+            value="return getChildren();"
+            type="org.eclipse.swt.widgets.Composite"/>
+   </extension>
    
 </plugin>
