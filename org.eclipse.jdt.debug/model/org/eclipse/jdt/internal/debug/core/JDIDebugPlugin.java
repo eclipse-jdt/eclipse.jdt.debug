@@ -435,7 +435,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		private IJavaBreakpoint fBreakpoint;
 		private IJavaType fType;
 		private IJavaBreakpointListener fListener;
-		private boolean fInstall;
+		private int fInstall;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -447,7 +447,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fInstall = fListener.installingBreakpoint(fTarget, fBreakpoint, fType);		
+			fInstall = fInstall | fListener.installingBreakpoint(fTarget, fBreakpoint, fType);		
 		}
 		
 		private void dispose() {
@@ -471,18 +471,15 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			fTarget = target;
 			fBreakpoint = breakpoint;
 			fType = type;
-			fInstall = true;
+			fInstall = IJavaBreakpointListener.DONT_CARE;
 			Object[] listeners = fBreakpointListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
 				fListener = (IJavaBreakpointListener)listeners[i];
 				Platform.run(this);
-				if (!fInstall) {
-					dispose();
-					return false;
-				}
 			}
 			dispose();
-			return true;
+			// If any listener voted to not install, return false
+			return (fInstall & IJavaBreakpointListener.DONT_INSTALL) == 0;
 		}
 	}	
 	
@@ -495,7 +492,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		private IJavaThread fThread;
 		private IJavaBreakpoint fBreakpoint;
 		private IJavaBreakpointListener fListener;
-		private boolean fSuspend;
+		private int fSuspend;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -507,7 +504,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fSuspend = fSuspend | fListener.breakpointHit(fThread, fBreakpoint);		
+			fSuspend = fSuspend | fListener.breakpointHit(fThread, fBreakpoint);
 		}
 
 		/**
@@ -522,7 +519,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			fThread = thread;
 			fBreakpoint = breakpoint;
 			Object[] listeners = fBreakpointListeners.getListeners();
-			fSuspend = listeners.length == 0;
+			fSuspend = IJavaBreakpointListener.DONT_CARE;
 			for (int i = 0; i < listeners.length; i++) {
 				fListener = (IJavaBreakpointListener)listeners[i];
 				Platform.run(this);
@@ -530,7 +527,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			fThread = null;
 			fBreakpoint = null;
 			fListener = null;
-			return fSuspend;
+			// Suspend if any listener voted to suspend or no one voted "don't suspend"
+			return (fSuspend & IJavaBreakpointListener.SUSPEND) != 0 || (fSuspend & IJavaBreakpointListener.DONT_SUSPEND) == 0;
 		}
 	}	
 }

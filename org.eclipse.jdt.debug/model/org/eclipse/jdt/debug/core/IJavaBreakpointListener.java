@@ -25,6 +25,44 @@ import org.eclipse.jdt.core.dom.Message;
 public interface IJavaBreakpointListener {
 	
 	/**
+	 * Return code in response to a "breakpoint hit" notification, indicating
+	 * that this listener thinks the breakpoint should suspend the given
+	 * thread.
+	 * 
+	 * @since 3.0
+	 */
+	public static int SUSPEND= 0x0000;
+	/**
+	 * Return code in response to a "breakpoint hit" notification, indicating
+	 * that this listener thinks the breakpoint should not suspend the given
+	 * thread.
+	 * 
+	 * @since 3.0
+	 */
+	public static int DONT_SUSPEND= 0x0001;
+	/**
+	 * Return code in response to an "installing" notification, indicating
+	 * that this listener thinks the breakpoint should be installed.
+	 * 
+	 * @since 3.0
+	 */
+	public static int INSTALL= 0x0000;
+	/**
+	 * Return code in response to an "installing" notification, indicating
+	 * that this listener does not think the breakpoint should be installed.
+	 * 
+	 * @since 3.0
+	 */
+	public static int DONT_INSTALL= 0x0001;
+	/**
+	 * Return code indicating that this listener does not care about the
+	 * notification.
+	 * 
+	 * @since 3.0
+	 */
+	public static int DONT_CARE= 0x0002;
+	
+	/**
 	 * Notification that the given breakpoint is about to be added to
 	 * the specified target. This message is sent before the breakpoint
 	 * is actually added to the debut target (i.e. this is a
@@ -39,7 +77,7 @@ public interface IJavaBreakpointListener {
 	 * Notification that the given breakpoint is about to be installed in
 	 * the specified target, in the specified type. Returns whether the
 	 * installation should proceed. If any registered listener returns
-	 * <code>false</code> the breakpoint is not installed in the given
+	 * <code>DONT_INSTALL</code> the breakpoint is not installed in the given
 	 * target for the given type.
 	 * 
 	 * @param target Java debug target
@@ -48,9 +86,11 @@ public interface IJavaBreakpointListener {
 	 *  or <code>null</code> if the given breakpoint is not installed in a specific type
 	 *  (one of <code>IJavaClassType</code>, <code>IJavaInterfaceType</code>, or 
 	 *  <code>IJavaArrayType</code>)
-	 * @return whether the the breakpoint should be installed in the given type and target
+	 * @return whether the the breakpoint should be installed in the given type and target,
+	 *  or whether this listener doesn't care.
+	 * @since 3.0
 	 */
-	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type);
+	public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type);
 		
 	/**
 	 * Notification that the given breakpoint has been installed in
@@ -66,14 +106,17 @@ public interface IJavaBreakpointListener {
 	 * in the specified thread - returns whether the thread
 	 * should suspend. This allows the listener to override
 	 * default thread suspension when a breakpoint is hit.
-	 * If at least one listener returns <code>true</code>,
-	 * the breakpoint will cause the thread to suspend.
+	 * The breakpoint will cause the thread to suspend if
+	 * at least one listener returns <code>SUSPEND</code>
+	 * or if all listeners vote <code>DONT_CARE</code>.
 	 * 
 	 * @param thread Java thread
 	 * @param breakpoint Java breakpoint
-	 * @return whether the thread should suspend
+	 * @return whether the thread should suspend or whether this
+	 *  listener doesn't care.
+	 * @since 3.0
 	 */
-	public boolean breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint);	
+	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint);	
 	
 	/**
 	 * Notification that the given breakpoint has been removed

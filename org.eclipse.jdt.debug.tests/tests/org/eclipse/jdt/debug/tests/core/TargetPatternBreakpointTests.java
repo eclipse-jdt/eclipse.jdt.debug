@@ -126,8 +126,8 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 	/**
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */
-	public boolean breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
-		return true;
+	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+		return DONT_CARE;
 	}
 
 	/**
@@ -149,11 +149,11 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 	/**
 	 * @see IJavaBreakpointListener#installingBreakpoint(IJavaDebugTarget, IJavaBreakpoint, IJavaType)
 	 */
-	public boolean installingBreakpoint(
+	public int installingBreakpoint(
 		IJavaDebugTarget target,
 		IJavaBreakpoint breakpoint,
 		IJavaType type) {
-		return true;
+		return DONT_CARE;
 	}
 
 	/**

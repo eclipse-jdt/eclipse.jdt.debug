@@ -238,10 +238,10 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
-	public boolean breakpointHit(
+	public int breakpointHit(
 		IJavaThread thread,
 		IJavaBreakpoint breakpoint) {
-		return true;
+		return DONT_CARE;
 	}
 
 	/* (non-Javadoc)
@@ -269,11 +269,11 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 	 */
-	public boolean installingBreakpoint(
+	public int installingBreakpoint(
 		IJavaDebugTarget target,
 		IJavaBreakpoint breakpoint,
 		IJavaType type) {
-			return true;
+			return DONT_CARE;
 	}
 
 	/* (non-Javadoc)

@@ -596,16 +596,16 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	/**
 	 * @see IJavaBreakpointListener#installingBreakpoint(IJavaDebugTarget, IJavaBreakpoint, IJavaType)
 	 */
-	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
-		return true;
+	public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
+		return DONT_CARE;
 	}
 	
 	/**
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */
-	public boolean breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		if (breakpoint == getSuspendOnCompilationErrorBreakpoint()) {
-			return  getProblem(thread) != null;
+			return getProblem(thread) != null ? SUSPEND : DONT_CARE;
 		}
 		if (breakpoint == getSuspendOnUncaughtExceptionBreakpoint()) {
 			// the "uncaught" exceptions breakpoint subsumes the "compilation error" breakpoint
@@ -614,10 +614,10 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			// resume (i.e. do not suspend)
 			if (!isSuspendOnCompilationErrors()) {
 				// only suspend if there is no compilation error
-				return getProblem(thread) == null;
+				return getProblem(thread) == null ? SUSPEND : DONT_CARE;
 			}
 		}
-		return true;
+		return DONT_CARE;
 	}
 	
 	private IMarker getProblem(IJavaThread thread) {
