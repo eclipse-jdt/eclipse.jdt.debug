@@ -782,6 +782,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 		if (interrupted) {
 			fireSuspendEvent(-1);
+		} else {
+			// fire a change event for the top stack frame
+			// to update any variables that may have changed
+			// value
+			try {
+				((JDIStackFrame)getTopStackFrame()).fireChangeEvent();
+			} catch (DebugException e) {
+				logError(e);
+			}
 		}
 	}
 	
