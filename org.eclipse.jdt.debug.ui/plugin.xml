@@ -2212,16 +2212,14 @@
 <!-- Roles and Activities -->
    <extension
          point="org.eclipse.ui.activities">
-      <patternBinding
-            inclusive="true"
+      <activityPatternBinding
             activityId="org.eclipse.javaDevelopment"
             pattern="org.eclipse.jdt.debug.*">
-      </patternBinding>
-      <patternBinding
-            inclusive="true"
+      </activityPatternBinding>
+      <activityPatternBinding
             activityId="org.eclipse.javaDevelopment"
             pattern="org.eclipse.jdt.launching.*">
-      </patternBinding>
+      </activityPatternBinding>
    </extension>
 
 </plugin>
