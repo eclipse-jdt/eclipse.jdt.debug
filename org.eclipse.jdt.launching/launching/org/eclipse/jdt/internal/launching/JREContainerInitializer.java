@@ -11,6 +11,7 @@ package org.eclipse.jdt.internal.launching;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
+import java.awt.Container;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
@@ -42,30 +43,11 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		int size = containerPath.segmentCount();
 		if (size > 0) {
 			if (containerPath.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-				IVMInstall vm = null;
-				if (size > 1) {
-					// specific JRE
-					String vmTypeId = containerPath.segment(1);
-					String vmName = containerPath.segment(2);
-					IVMInstallType vmType = JavaRuntime.getVMInstallType(vmTypeId);
-					if (vmType != null) {
-						IVMInstall[] vms = vmType.getVMInstalls();
-						for (int i = 0; i < vms.length; i++) {
-							if (vmName.equals(vms[i].getName())) {
-								vm = vms[i];
-								break;
-							}
-						}
-					}
-					if (vm == null) {
-						handleResolutionError(containerPath, project);
-						return;
-					}					
-				} else {
-					// workspace default JRE
-					vm = JavaRuntime.getDefaultVMInstall();
-				}
-				
+				IVMInstall vm = resolveVM(containerPath);
+				if (vm == null) {
+					handleResolutionError(containerPath, project);
+					return;
+				}					
 				if (vm != null) {
 					JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, containerPath)}, null);
 				}
@@ -114,4 +96,30 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 	}
 
+	/**
+	 * Returns the VM install associated with the container path, or <code>null</code>
+	 * if it does not exist.
+	 */
+	public static IVMInstall resolveVM(IPath containerPath) {
+		IVMInstall vm = null;
+		if (containerPath.segmentCount() > 1) {
+			// specific JRE
+			String vmTypeId = containerPath.segment(1);
+			String vmName = containerPath.segment(2);
+			IVMInstallType vmType = JavaRuntime.getVMInstallType(vmTypeId);
+			if (vmType != null) {
+				IVMInstall[] vms = vmType.getVMInstalls();
+				for (int i = 0; i < vms.length; i++) {
+					if (vmName.equals(vms[i].getName())) {
+						vm = vms[i];
+						break;
+					}
+				}
+			}
+		} else {
+			// workspace default JRE
+			vm = JavaRuntime.getDefaultVMInstall();
+		}		
+		return vm;
+	}
 }
