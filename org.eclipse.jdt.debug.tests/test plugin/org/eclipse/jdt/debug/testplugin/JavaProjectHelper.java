@@ -40,7 +40,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  */
 public class JavaProjectHelper {
 	
-	public static final IPath TEST_SRC_DIR= new Path("test programs");	
+	public static final IPath TEST_SRC_DIR= new Path("testprograms");	
 
 	/**
 	 * Creates a IJavaProject.

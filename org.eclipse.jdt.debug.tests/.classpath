@@ -16,6 +16,6 @@
     <classpathentry kind="src" path="/org.eclipse.jdt.debug"/>
     <classpathentry kind="src" path="/org.eclipse.debug.ui"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
-    <classpathentry kind="src" path="test programs"/>
+    <classpathentry kind="src" path="testprograms"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
