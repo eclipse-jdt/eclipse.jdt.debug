@@ -1,9 +1,12 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -83,10 +86,16 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	private IEditorPart fTargetEditor;
 	private IWorkbenchWindow fWindow;
 	private Object fSelection;
+	
 	/**
-	 * Used in evaluationTimedOut
+	 * Is the action waiting for an evaluation.
 	 */
-	private boolean fKeepWaiting;
+	private boolean fEvaluating;
+	
+	/**
+	 * The new target part to use with the evaluation completes.
+	 */
+	private IWorkbenchPart fNewTargetPart= null;
 	
 	/**
 	 * Used to resolve editor input for selected stack frame
@@ -191,6 +200,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 							return;
 						}
 						reportErrors(result);
+						evaluationCleanup();
 					}
 				});
 			} else if (value != null) {
@@ -199,6 +209,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 	}
 	
+	protected void evaluationCleanup() {
+		setEvaluating(false);
+		setTargetPart(fNewTargetPart);
+		setNewTargetPart(null);
+		update();
+	}
 	/**
 	 * Display the given evaluation result.
 	 */
@@ -236,6 +252,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					
 					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
+					setEvaluating(true);
+					setNewTargetPart(getTargetPart());
 					if (object == null) {
 						engine.evaluate(expression, jFrame, this, DebugEvent.EVALUATION, true);
 					} else {
@@ -244,12 +262,15 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					
 				} catch (CoreException e) {
 					reportError(getExceptionMessage(e));
+					evaluationCleanup();
 				}
 			} else {
 				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
+				evaluationCleanup();
 			}
 		} else {
 			reportError(ActionMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
+			evaluationCleanup();
 		}
 	}
 		
@@ -383,11 +404,25 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	protected IDataDisplay getDataDisplay() {
-		IDataDisplay display;
 		IWorkbenchPart part= getTargetPart();
 		if (part != null) {
-			display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
+			IDataDisplay display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
+			if (display == null) {
+				ITextViewer viewer = (ITextViewer)part.getAdapter(ITextViewer.class);
+				if (viewer != null) {
+					display= new DataDisplay(viewer);
+				}
+			}
 			if (display != null) {
+				IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+				if (page != null) {
+					IWorkbenchPart activePart= page.getActivePart();
+					if (activePart != null) {
+						if (activePart != part) {
+							page.activate(part);
+						}
+					}
+				}
 				return display;
 			}
 		}
@@ -395,7 +430,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
-				display= (IDataDisplay)activePart.getAdapter(IDataDisplay.class);
+				IDataDisplay display= (IDataDisplay)activePart.getAdapter(IDataDisplay.class);
 				if (display != null) {
 					return display;
 				}	
@@ -550,7 +585,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	
 	/**
 	 * Returns a debug model presentation (creating one
-	 * if neccesary).
+	 * if necessary).
 	 * 
 	 * @return debug model presentation
 	 */
@@ -600,6 +635,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (part == getTargetPart()) {
 			setTargetPart(null);
 		}
+		if (part == getNewTargetPart()) {
+			setNewTargetPart(null);
+		}
 	}
 
 	/**
@@ -626,12 +664,18 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 
 	protected void setTargetPart(IWorkbenchPart part) {
-		if (fTargetPart instanceof JavaSnippetEditor) {
-			((JavaSnippetEditor)fTargetPart).removeSnippetStateChangedListener(this);
-		}
-		fTargetPart = part;
-		if (part instanceof JavaSnippetEditor) {
-			((JavaSnippetEditor)part).addSnippetStateChangedListener(this);
+		if (isEvaluating()) {
+			//do not want to change the target part while evaluating
+			//see bug 8334
+			setNewTargetPart(part);
+		} else {
+			if (getTargetPart() instanceof JavaSnippetEditor) {
+				((JavaSnippetEditor)getTargetPart()).removeSnippetStateChangedListener(this);
+			}
+			fTargetPart= part;
+			if (part instanceof JavaSnippetEditor) {
+				((JavaSnippetEditor)part).addSnippetStateChangedListener(this);
+			}
 		}
 	}
 
@@ -669,5 +713,21 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		} else {
 			getAction().setEnabled(false);
 		}
+	}
+
+	protected IWorkbenchPart getNewTargetPart() {
+		return fNewTargetPart;
+	}
+
+	protected void setNewTargetPart(IWorkbenchPart newTargetPart) {
+		fNewTargetPart = newTargetPart;
+	}
+	
+	protected boolean isEvaluating() {
+		return fEvaluating;
+	}
+
+	protected void setEvaluating(boolean evaluating) {
+		fEvaluating = evaluating;
 	}
 }

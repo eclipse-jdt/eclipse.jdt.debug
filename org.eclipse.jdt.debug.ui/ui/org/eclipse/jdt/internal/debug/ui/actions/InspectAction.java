@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.Iterator;
 
@@ -37,12 +39,12 @@ public class InspectAction extends EvaluateAction {
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				if (display.isDisposed()) {
-					return;
+				if (!display.isDisposed()) {				
+					showExpressionView();
+					JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
+					DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
 				}
-				showExpressionView();
-				JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
-				DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+				evaluationCleanup();
 			}
 		});
 	}
@@ -71,6 +73,7 @@ public class InspectAction extends EvaluateAction {
 	 * @see EvaluateAction#getDataDisplay()
 	 */
 	protected IDataDisplay getDataDisplay() {
+		//always uses the ExpressionsView
 		return null;
 	}
 	
@@ -99,14 +102,14 @@ public class InspectAction extends EvaluateAction {
 			}
 		}
 	
-		if (part.getSite().getId().equals("IDebugUIConstants.ID_EXPRESSION_VIEW")) { //$NON-NLS-1$
+		if (part.getSite().getId().equals(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
 			return;
 		}
 		IWorkbenchPage page = part.getSite().getPage();
 		if (page != null) {
 			part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 			if (part != null) {
-				page.activate(part);
+				page.bringToTop(part);
 			}
 		}
 	}
