@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -28,6 +29,8 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+
+import com.sun.jdi.VirtualMachineManager;
 
 /**
  * The plugin class for the JDI Debug Model plug-in.
@@ -63,7 +66,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	/**
 	 * Detected (speculated) JDI interface version
 	 */
-	private static float fJDIVersion;
+	private static int[] fJDIVersion = null;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -114,10 +117,26 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * is intended to distinguish between clients that support
 	 * JDI 1.4 methods like hot code replace.
 	 * 
+	 * @return an array of version numbers, major followed by minor
 	 * @since 2.1
 	 */
-	public static float getJDIVersion() {
+	public static int[] getJDIVersion() {
+		if (fJDIVersion == null) {
+			fJDIVersion = new int[2];
+			VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
+			fJDIVersion[0] = mgr.majorInterfaceVersion();
+			fJDIVersion[1] = mgr.minorInterfaceVersion();
+		}
 		return fJDIVersion;
+	}
+	
+	/**
+	 * Reutrns if the JDI version being used is greater than or equal to the
+	 * given version (major, minor).
+	 * 	 * @param version	 * @return boolean	 */
+	public static boolean isJdiVersionGreaterThanOrEqual(int[] version) {
+		int[] runningVersion = getJDIVersion();
+		return runningVersion[0] >= version[0] && runningVersion[1] >= version[1];
 	}
 		
 	public JDIDebugPlugin(IPluginDescriptor descriptor) {
@@ -129,16 +148,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
-		fJDIVersion= (float)1.4;
-		try {
-			// JDI clients before version 1.4 do not support
-			// hot code replace.
-			Class clazz = Class.forName("com.sun.jdi.VirtualMachine"); //$NON-NLS-1$
-			clazz.getMethod("canRedefineClasses", new Class[0]); //$NON-NLS-1$
-		} catch (NoSuchMethodException e) {
-			fJDIVersion= (float)1.3;
-		} catch (ClassNotFoundException e) {
-		}	
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
 		getPluginPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);

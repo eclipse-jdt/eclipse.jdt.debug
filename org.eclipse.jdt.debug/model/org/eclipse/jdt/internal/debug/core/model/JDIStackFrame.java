@@ -852,7 +852,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#isObsolete()
 	 */
 	public boolean isObsolete() throws DebugException {
-		if (JDIDebugPlugin.getJDIVersion() < (float)1.4 || !((JDIDebugTarget)getDebugTarget()).hasHCROccurred()) {
+		if (!JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4}) || !((JDIDebugTarget)getDebugTarget()).hasHCROccurred()) {
 			// If no hot code replace has occurred, this frame
 			// cannot be obsolete.
 			return false;

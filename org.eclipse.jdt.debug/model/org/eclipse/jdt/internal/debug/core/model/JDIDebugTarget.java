@@ -534,7 +534,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IJavaDebugTarget#supportsInstanceBreakpoints()
 	 */
 	public boolean supportsInstanceBreakpoints() {
-		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= (float)1.4) {
+		if (isAvailable() && JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4})) {
 			return getVM().canUseInstanceFilters();
 		}
 		return false;
@@ -563,7 +563,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports JDK hot code replace
 	 */
 	public boolean supportsJDKHotCodeReplace() {
-		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= (float)1.4) {
+		if (isAvailable() && JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4})) {
 			return getVM().canRedefineClasses();
 		}
 		return false;
@@ -575,7 +575,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports popping stack frames.
 	 */
 	public boolean canPopFrames() {
-		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= (float)1.4) {
+		if (isAvailable() && JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4})) {
 			return getVM().canPopFrames();
 		}
 		return false;
