@@ -51,7 +51,7 @@ public class JDIThisVariable extends JDIVariable {
 	 */
 	public String getSignature() throws DebugException {
 		try {
-			return fObject.type().signature();
+			return retrieveValue().type().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
