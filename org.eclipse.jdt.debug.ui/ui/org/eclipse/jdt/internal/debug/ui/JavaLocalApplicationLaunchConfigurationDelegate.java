@@ -57,6 +57,15 @@ import org.eclipse.ui.IEditorInput;
 public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
 	/**
+	 * Create the helper class that handles deleting configs whose underlying main type gets deleted
+	 */
+	/*
+	static {
+		new JavaLocalApplicationLaunchConfigurationHelper();
+	}
+	*/
+
+	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
 	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException {
@@ -210,6 +219,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 */
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {
 		
+		/*
 		// Java project
 		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
@@ -227,13 +237,20 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 		IType mainType = null;
 		try {
-			mainType = findType(javaProject, mainTypeName);
+			mainType = JavaLocalApplicationLaunchConfigurationHelper.findType(javaProject, mainTypeName);
 		} catch (JavaModelException jme) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_does_not_exist"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		if (mainType == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_does_not_exist"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
+		*/
+		
+		// Java project
+		IJavaProject javaProject = JavaLocalApplicationLaunchConfigurationHelper.getJavaProject(configuration);
+		
+		// Main type
+		IType mainType = JavaLocalApplicationLaunchConfigurationHelper.getMainType(configuration, javaProject);
 				
 		// VM install type
 		String vmInstallTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, (String)null);
@@ -354,47 +371,31 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	}
 	
 	/**
-	 * Find the specified (fully-qualified) type name in the specified java project.
-	 */
-	private IType findType(IJavaProject javaProject, String mainTypeName) throws JavaModelException {
-		String pathStr= mainTypeName.replace('.', '/') + ".java"; //$NON-NLS-1$
-		IJavaElement javaElement= javaProject.findElement(new Path(pathStr));
-		if (javaElement == null) {
-			// try to find it as inner type
-			String qualifier= Signature.getQualifier(mainTypeName);
-			if (qualifier.length() > 0) {
-				IType type= findType(javaProject, qualifier); // recursive!
-				if (type != null) {
-					IType res= type.getType(Signature.getSimpleName(mainTypeName));
-					if (res.exists()) {
-						return res;
-					}
-				}
-			}
-		} else if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
-			String simpleName= Signature.getSimpleName(mainTypeName);
-			return ((ICompilationUnit) javaElement).getType(simpleName);
-		} else if (javaElement.getElementType() == IJavaElement.CLASS_FILE) {
-			return ((IClassFile) javaElement).getType();
-		}
-		return null;		
-	}
-	
-	/**
 	 * Construct a new config name using the name of the given config as a starting point.
 	 * The new name is guaranteed not to collide with any existing config name.
 	 */
 	protected String generateUniqueNameFrom(String startingName) {
-		String newName = startingName;
 		int index = 1;
+		String baseName = startingName;
+		int underscoreIndex = baseName.lastIndexOf('_');
+		if (underscoreIndex > -1) {
+			String trailer = baseName.substring(underscoreIndex + 1);
+			try {
+				index = Integer.parseInt(trailer);
+				baseName = startingName.substring(0, underscoreIndex);
+			} catch (NumberFormatException nfe) {
+			}
+		} 
+		String newName = baseName;
 		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
-			StringBuffer buffer = new StringBuffer(startingName);
+			StringBuffer buffer = new StringBuffer(baseName);
 			buffer.append('_');
 			buffer.append(String.valueOf(index));
 			index++;
 			newName = buffer.toString();		
 		}		
 		return newName;
+		
 	}
 	
 	/**
