@@ -965,6 +965,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
+		fFilteredThreadsByTarget.remove(target);
 		recreate(target);
 		fireChanged();
 	}
