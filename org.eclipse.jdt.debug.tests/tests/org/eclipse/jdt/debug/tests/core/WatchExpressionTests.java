@@ -18,7 +18,6 @@ import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -45,7 +44,7 @@ public class WatchExpressionTests extends AbstractDebugTest {
 	 * Test a watch expression that is created before a program is executed.
 	 */
 	public void testDeferredExpression() throws Exception {
-		IWatchExpression expression = getExpressionManager().newWatchExpression("fVector.get(3)");
+		IWatchExpression expression = getExpressionManager().newWatchExpression("((Integer)fVector.get(3)).intValue()");
 		getExpressionManager().addExpression(expression);
 		String typeName = "WatchItemTests";
 		createLineBreakpoint(42, typeName);
@@ -57,13 +56,11 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread); 
 			Object source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
-			IJavaObject value = (IJavaObject)expression.getValue();
-			// retrieve primitive value
-			IJavaValue prim = value.sendMessage("intValue", "()I", null, thread, false);
+			IValue value = expression.getValue();
 			// create comparison value
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			IJavaValue compare = target.newValue(3);
-			assertEquals("Watch expression should be Integer(3)", compare, prim);
+			assertEquals("Watch expression should be Integer(3)", compare, value);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -84,19 +81,17 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			// create the expression, waiter, and then add it (to be evaluated)
-			expression = getExpressionManager().newWatchExpression("fVector.get(3)");
+			expression = getExpressionManager().newWatchExpression("((Integer)fVector.get(3)).intValue()");
 			DebugElementEventWaiter waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			getExpressionManager().addExpression(expression);
 			 
 			Object source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
-			IJavaObject value = (IJavaObject)expression.getValue();
-			// retrieve primitive value
-			IJavaValue prim = value.sendMessage("intValue", "()I", null, thread, false);
+			IValue value = expression.getValue();
 			// create comparison value
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			IJavaValue compare = target.newValue(3);
-			assertEquals("Watch expression should be Integer(3)", compare, prim);
+			assertEquals("Watch expression should be Integer(3)", compare, value);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
