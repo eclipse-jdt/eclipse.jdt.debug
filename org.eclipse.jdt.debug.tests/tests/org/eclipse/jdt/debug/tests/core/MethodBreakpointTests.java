@@ -13,8 +13,11 @@ import java.util.List;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -219,4 +222,61 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+	
+	public void testThreadFilterInclusive() throws Exception {
+		String typeName = "MethodLoop";
+		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
+		IJavaLineBreakpoint lineBp = createLineBreakpoint(18, typeName);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("breakpoint not hit within timeout period", thread);
+			
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			
+			// set a thread filter (to the main thread)
+			methodBp.setThreadFilter(thread);
+			
+			thread = resume(thread);
+			assertNotNull("breakpoint not hit", thread);
+			
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
+			assertEquals("should be in 'calucateSum'", "calculateSum", frame.getMethodName());
+			
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	public void testThreadFilterExclusive() throws Exception {
+		String typeName = "MethodLoop";
+		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
+		IJavaLineBreakpoint lineBp = createLineBreakpoint(18, typeName);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("breakpoint not hit within timeout period", thread);
+			
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			
+			// set a thread filter (*not* the main thread)
+			IThread[] threads = thread.getDebugTarget().getThreads();
+			for (int i = 0; i < threads.length; i++) {
+				IThread thread2 = threads[i];
+				if (!thread2.equals(thread)) {
+					methodBp.setThreadFilter((IJavaThread)thread2);
+					break;
+				}
+			}
+			assertNotNull("Did not set thread filter",methodBp.getThreadFilter((IJavaDebugTarget)thread.getDebugTarget()));
+			
+			IDebugTarget target = resumeAndExit(thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
 }
