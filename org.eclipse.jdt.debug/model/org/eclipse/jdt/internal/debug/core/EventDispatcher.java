@@ -5,11 +5,12 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.IDebugConstants;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.*;
@@ -61,11 +62,12 @@ class EventDispatcher implements Runnable {
 			if (event instanceof StepEvent) {
 				dispatchStepEvent((StepEvent)event);
 			} else
-				if (event instanceof BreakpointEvent) {
-					dispatchLocatableEvent((LocatableEvent) event);
-				} else
-					if (event instanceof ExceptionEvent) {
-						dispatchExceptionEvent((ExceptionEvent) event);
+				if ((event instanceof BreakpointEvent) ||
+				(event instanceof LocatableEvent) ||
+				(event instanceof ExceptionEvent) ||
+				(event instanceof WatchpointEvent) ||
+				(event instanceof MethodEntryEvent)) {
+					dispatchBreakpointEvent(event);
 					} else
 						if (event instanceof ThreadStartEvent) {
 							fTarget.handleThreadStart((ThreadStartEvent) event);
@@ -76,55 +78,28 @@ class EventDispatcher implements Runnable {
 								if (event instanceof ClassPrepareEvent) {
 									fTarget.handleClassLoad((ClassPrepareEvent) event);
 								} else
-									if (event instanceof WatchpointEvent) {
-										dispatchLocatableEvent((LocatableEvent) event);
+									if (event instanceof VMDeathEvent) {
+										fTarget.handleVMDeath((VMDeathEvent) event);
+										fKeepReading= false; // stop listening for events
 									} else
-										if (event instanceof MethodEntryEvent) {
-											fTarget.handleMethodEntry((MethodEntryEvent) event);
-										} else
-											if (event instanceof VMDeathEvent) {
-												fTarget.handleVMDeath((VMDeathEvent) event);
-												fKeepReading= false; // stop listening for events
-											} else
-												if (event instanceof VMDisconnectEvent) {
-													fTarget.handleVMDisconnect((VMDisconnectEvent) event);
-													fKeepReading= false; // stop listening for events
-												} else if (event instanceof VMStartEvent) {
-													fTarget.handleVMStart((VMStartEvent)event);
-												} else {
-													// Unknown Event Type
-												}
+										if (event instanceof VMDisconnectEvent) {
+											fTarget.handleVMDisconnect((VMDisconnectEvent) event);
+											fKeepReading= false; // stop listening for events
+										} else if (event instanceof VMStartEvent) {
+											fTarget.handleVMStart((VMStartEvent)event);
+										} else {
+											// Unknown Event Type
+										}
 		}
 	}
 
-	protected void dispatchLocatableEvent(LocatableEvent event) {
+	protected void dispatchBreakpointEvent(Event event) {
 		if (!fKeepReading) {
 			return;
 		}
-		ThreadReference threadRef= event.thread();
-		JDIThread thread= findThread(threadRef);
-		if (thread == null) {
-			fTarget.resume(threadRef);
-			return;
-		} else {
-			thread.handleLocatableEvent(event);
-		}
+		IJavaBreakpoint breakpoint= (IJavaBreakpoint)event.request().getProperty(IDebugConstants.BREAKPOINT);
+		breakpoint.handleEvent(event, fTarget);		
 	}
-
-	protected void dispatchExceptionEvent(ExceptionEvent event) {
-		if (!fKeepReading) {
-			return;
-		}
-		ThreadReference threadRef= event.thread();
-		JDIThread thread= findThread(threadRef);
-		if (thread == null) {
-			fTarget.resume(threadRef);
-			return;
-		} else {
-			thread.handleException((ExceptionEvent) event);
-		}
-	}
-
 
 	protected void dispatchStepEvent(StepEvent event) {
 		ThreadReference threadRef= event.thread();

@@ -21,6 +21,12 @@ package org.eclipse.jdt.debug.core;
 public interface IJavaDebugConstants {
 	
 	/**
+	 * Java breakpoint marker type
+	 * (value <code>"org.eclipse.jdt.debug.javaBreakpoint"</code>).
+	 */
+	public static final String JAVA_BREAKPOINT= "org.eclipse.jdt.debug.javaBreakpoint";
+	
+	/**
 	 * Java line breakpoint marker type
 	 * (value <code>"org.eclipse.jdt.debug.javaLineBreakpoint"</code>).
 	 */
@@ -49,6 +55,12 @@ public interface IJavaDebugConstants {
 	 * (value <code>"org.eclipse.jdt.debug.javaMethodEntryBreakpoint"</code>).
 	 */
 	public static final String JAVA_METHOD_ENTRY_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodEntryBreakpoint";
+	
+	/**
+	 * Snippet support line breakpoint marker type
+	 * (value <code>"org.eclipse.jdt.debug.snippetSupportLineBreakpoint"</code>).
+	 */
+	public static final String SNIPPET_SUPPORT_LINE_BREAKPOINT= "org.eclipse.jdt.debug.snippetSupportLineBreakpoint";
 	
 	/**
 	 * Breakpoint attribute storing the handle identifier of the Java element

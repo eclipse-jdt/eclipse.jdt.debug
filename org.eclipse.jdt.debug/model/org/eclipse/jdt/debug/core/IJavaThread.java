@@ -54,7 +54,7 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 *
 	 * @return breakpoint that caused suspend, or <code>null</code> if none
 	 */
-	IMarker getBreakpoint();
+	IJavaBreakpoint getBreakpoint();
 	
 	/**
 	 * Returns a variable with the given name, or <code>null</code> if
