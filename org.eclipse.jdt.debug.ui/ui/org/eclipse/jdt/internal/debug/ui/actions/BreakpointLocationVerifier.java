@@ -31,6 +31,9 @@ public class BreakpointLocationVerifier {
 				char[] txt= doc.get(start, length).toCharArray();
 				scanner.setSourceBuffer(txt);
 				token= scanner.getNextToken();
+				if (token == TerminalSymbols.TokenNameEQUAL) {
+					break;
+				}
 				lastToken= 0;
 
 				while (token != TerminalSymbols.TokenNameEOF) {
@@ -41,17 +44,14 @@ public class BreakpointLocationVerifier {
 					if (token == TerminalSymbols.TokenNameIdentifier) {
 						if (lastToken == TerminalSymbols.TokenNameIdentifier || isPrimitiveTypeToken(lastToken)
 						|| lastToken == TerminalSymbols.TokenNameRBRACKET) {
-							//var declaration..is there initialization
+							//var declaration..is there initialization 
+							//OR method parameters on a line all by themselves
 							lastToken= token;
 							token= scanner.getNextToken();
-							if (token == TerminalSymbols.TokenNameSEMICOLON) {
-								//no init
-								break;
-							} else if (token == TerminalSymbols.TokenNameEQUAL) {
+							if (token == TerminalSymbols.TokenNameEQUAL) {
 								found= true;
 								break;
 							}
-							continue;
 						}
 						if (lastToken == TerminalSymbols.TokenNameMULTIPLY) {
 							//internal comment line starting with '*'
@@ -89,22 +89,23 @@ public class BreakpointLocationVerifier {
 			} catch (BadLocationException ble) {
 				return -1;
 			} catch (InvalidInputException ie) {
+				//start of a comment "/**" or "/*"
 				lineNumber++;
 			}
 		}
 		// add 1 to the line number - Document is 0 based, JDI is 1 based
-		return lineNumber + 1;
+		return lineNumber++;
 	}
 	
 	
 	protected boolean isPrimitiveTypeToken(int token) {
 		switch(token) {
 			case TerminalSymbols.TokenNameboolean:
-			case TerminalSymbols.TokenNameint:
-			case TerminalSymbols.TokenNamechar:
 			case TerminalSymbols.TokenNamebyte:
-			case TerminalSymbols.TokenNamefloat:
+			case TerminalSymbols.TokenNamechar:
 			case TerminalSymbols.TokenNamedouble:
+			case TerminalSymbols.TokenNamefloat:
+			case TerminalSymbols.TokenNameint:			
 			case TerminalSymbols.TokenNamelong:
 			case TerminalSymbols.TokenNameshort:
 				return true;
