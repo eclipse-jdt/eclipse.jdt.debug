@@ -64,8 +64,8 @@ public abstract class BreakpointToggleAction extends Action implements IViewActi
 				IJavaBreakpoint breakpoint= (IJavaBreakpoint) enum.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
-				String title= ActionMessages.getString("WatchPointAction.Watchpoint_configuration_1"); //$NON-NLS-1$
-				String message= ActionMessages.getString("WatchPointAction.Exceptions_occurred_attempting_to_modify_watchpoint._2"); //$NON-NLS-1$
+				String title= ActionMessages.getString("BreakpointAction.Breakpoint_configuration_1"); //$NON-NLS-1$
+				String message= ActionMessages.getString("BreakpointAction.Exceptions_occurred_attempting_to_modify_breakpoint._2"); //$NON-NLS-1$
 				ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, e.getStatus());
 			}			
 		}
