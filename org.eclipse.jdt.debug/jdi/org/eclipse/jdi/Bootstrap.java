@@ -7,7 +7,7 @@ package org.eclipse.jdi;
 
 public class Bootstrap
 {
-	private static org.eclipse.jdi.internal.VirtualMachineManagerImpl fVirtualMachineManager;
+	private static com.sun.jdi.VirtualMachineManager fVirtualMachineManager;
 
 	public Bootstrap() { }
 	
