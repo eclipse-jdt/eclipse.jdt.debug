@@ -260,7 +260,7 @@
 		<action id="org.eclipse.jdt.ui.actions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
-			icon="icons/full/elcl16/qnames_co.gif"
+			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
@@ -288,7 +288,7 @@
 			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
-			icon="icons/full/elcl16/qnames_co.gif"
+			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
@@ -307,7 +307,7 @@
 			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
-			icon="icons/full/elcl16/qnames_co.gif"
+			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
@@ -319,7 +319,7 @@
 			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
-			icon="icons/full/elcl16/qnames_co.gif"
+			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
