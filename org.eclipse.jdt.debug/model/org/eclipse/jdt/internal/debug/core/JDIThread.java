@@ -757,7 +757,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					fireResumeEvent(detail);
 				}
 			} else {
-				if (detail == DebugEvent.STEP_END) {
+				if (detail == DebugEvent.STEP_END && fStepCount != 0) {
 					fStepCount--;
 				}
 				if (fStepCount == 0) {
