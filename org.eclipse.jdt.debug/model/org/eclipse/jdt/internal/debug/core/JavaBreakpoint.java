@@ -374,8 +374,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * XXX Comment
-	 * Local types (types defined in methods).
+	 * Local types (types defined in methods) are handled specially due to the
+	 * different types that the local type is associated with as well as the 
+	 * performance problems of using ReferenceType#nestedTypes.  From the Java 
+	 * model perspective a local type is defined within a method of a type.  
+	 * Therefore the type of a breakpoint set in a local type is actually the type
+	 * of that defined the method where the local type was defined (and where the breakpoint
+	 * was positioned).  The local type is enclosed within the top level type according
+	 * to the VM.  So if "normal" attempts to create a request when a breakpoint is
+	 * being added to a target, we must be dealing with a local type and therefore resort
+	 * to looking up all of the nested types of the top level enclosing type.
 	 */
 	protected void addToTargetForLocalType(JDIDebugTarget target, String enclosingTypeName) throws CoreException {
 		List classes= target.jdiClassesByName(enclosingTypeName);
