@@ -80,6 +80,10 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 	private IType getReceivingType(IJavaProject project, Object element) throws DebugException {
 		String originalTypeName= getReceivingTypeName(element);
 		String typeName= originalTypeName;
+		int dollarIndex= typeName.indexOf('$');
+		if (dollarIndex >= 0) {
+			typeName= typeName.substring(0, dollarIndex);
+		}
 		int index = typeName.lastIndexOf('.');
 		if (index >= 0) {
 			typeName = typeName.replace('.', IPath.SEPARATOR);

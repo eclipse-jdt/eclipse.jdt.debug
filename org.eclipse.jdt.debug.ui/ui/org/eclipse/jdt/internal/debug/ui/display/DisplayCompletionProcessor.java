@@ -329,10 +329,14 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 
 	protected IType getType(IJavaProject project, String originalTypeName, String typeName) throws DebugException {
 		
+		int dollarIndex= typeName.indexOf('$');
+		if (dollarIndex > 0) {
+			typeName= typeName.substring(0, dollarIndex);
+		}
 		IPath sourcePath =  new Path(typeName);
 		IType type = null;
 		try {
-			IJavaElement result = project.findElement(sourcePath);
+			IJavaElement result= project.findElement(sourcePath);
 			String[] typeNames = getNestedTypeNames(originalTypeName);
 			if (result != null) {
 				if (result instanceof IClassFile) {
