@@ -12,18 +12,14 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -48,11 +44,30 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 * and displays a failed evaluation message in the display view.
 	 */
 	protected void reportErrors(IEvaluationResult result) {
-		super.reportErrors(result);
+		String message= getErrorMessage(result);
 		IDataDisplay dataDisplay= getDataDisplay();
 		if (dataDisplay != null) {
-			dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
+			if (message.length() != 0) {
+				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.getString("DisplayAction.(evaluation_failed)_Reason"), new String[] {message})); //$NON-NLS-1$
+			} else {
+				dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
+			}
 		}
+	}
+	
+	protected String getErrorMessage(Message[] errors) {
+		String message= ""; //$NON-NLS-1$
+		for (int i= 0; i < errors.length; i++) {
+			Message error= errors[i];
+			//more than a warning
+			String msg= error.getMessage();
+			if (i == 0) {
+				message= "\t\t" + msg; //$NON-NLS-1$
+			} else {
+				message= MessageFormat.format(ActionMessages.getString("DisplayAction.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
+			}
+		}
+		return message;
 	}
 	
 	/**
@@ -62,6 +77,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 		IJavaValue value= result.getValue();
 		IJavaThread thread= result.getThread();
 		String resultString= " "; //$NON-NLS-1$
+		IDataDisplay dataDisplay= getDataDisplay();
 		try {
 			String sig= null;
 			IJavaType type= value.getJavaType();
@@ -77,10 +93,9 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value) }); //$NON-NLS-1$
 			}
 		} catch(DebugException x) {
-			reportError(x);
+			dataDisplay.displayExpressionValue(getExceptionMessage(x));
 		}
 		
-		IDataDisplay dataDisplay= getDataDisplay();
 		if (dataDisplay != null) {
 			dataDisplay.displayExpressionValue(resultString);
 		}

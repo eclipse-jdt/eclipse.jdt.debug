@@ -52,7 +52,7 @@ public class InspectAction extends EvaluateAction {
 				try {
 					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 				} catch (PartInitException e) {
-					reportError(e.getStatus());
+					reportError(e.getStatus().getMessage());
 				}
 			} else {
 				page.bringToTop(part);

@@ -228,7 +228,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					
 				} catch (CoreException e) {
-					reportError(e);
+					reportError(getExceptionMessage(e));
 				}
 			} else {
 				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
@@ -424,48 +424,49 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	
 	protected void reportError(String message) {
 		Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, message, null);
-		reportError(status);
-	}
-	
-	protected void reportError(IStatus status) {
 		ErrorDialog.openError(getShell(), ActionMessages.getString("Evaluate.error.title.eval_problems"), null, status); //$NON-NLS-1$
 	}
 	
-	protected void reportError(Throwable exception) {
+	protected String getExceptionMessage(Throwable exception) {
 		if (exception instanceof DebugException) {
 			DebugException de = (DebugException)exception;
 			Throwable t= de.getStatus().getException();
 			if (t != null) {
 				JDIDebugUIPlugin.log(t);
-				reportWrappedException(t);
-				return;
+				return getWrappedExceptionMessage(t);
 			}
 		}
 		
 		if (exception instanceof CoreException) {
 			CoreException ce= (CoreException) exception;
 			JDIDebugUIPlugin.log(ce);
-			reportError(ce.getStatus());
-			return;
+			return ce.getStatus().getMessage();
 		}
 		JDIDebugUIPlugin.log(exception);
 		String message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
 		if (exception.getMessage() != null) {
 			message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
 		}
-		reportError(message);
+		return message;
 	}
 	
 	protected void reportErrors(IEvaluationResult result) {
-		Message[] errors= result.getErrors();
-		if (errors.length == 0) {
-			reportError(result.getException());
-		} else {
-			reportErrors(errors);
+		String message= getErrorMessage(result);
+		if (message.length() != 0) {
+			reportError(message);
 		}
 	}
 	
-	protected void reportErrors(Message[] errors) {
+	protected String getErrorMessage(IEvaluationResult result) {
+		Message[] errors= result.getErrors();
+		if (errors.length == 0) {
+			return getExceptionMessage(result.getException());
+		} else {
+			return getErrorMessage(errors);
+		}
+	}
+	
+	protected String getErrorMessage(Message[] errors) {
 		String message= ""; //$NON-NLS-1$
 		for (int i= 0; i < errors.length; i++) {
 			Message error= errors[i];
@@ -477,19 +478,16 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				message= MessageFormat.format(ActionMessages.getString("Evaluate.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
 			}
 		}
-		
-		if (message.length() != 0) {
-			reportError(message);
-		}
+		return message;
 	}
 	
-	protected void reportWrappedException(Throwable exception) {
+	protected String getWrappedExceptionMessage(Throwable exception) {
 		if (exception instanceof com.sun.jdi.InvocationException) {
 			InvocationException ie= (InvocationException) exception;
 			ObjectReference ref= ie.exception();
-			reportError(MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() })); //$NON-NLS-1$
+			return MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
 		} else
-			reportError(exception);
+			return getExceptionMessage(exception);
 	}
 	
 	/**
