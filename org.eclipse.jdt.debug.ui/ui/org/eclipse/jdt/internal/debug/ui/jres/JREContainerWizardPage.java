@@ -63,7 +63,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		JREsUpdater updater = new JREsUpdater(getShell());
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
 		IVMInstall vm = fJREBlock.getCheckedJRE();
-		if (!vm.equals(JavaRuntime.getDefaultVMInstall())) {
+		if (vm != null && !vm.equals(JavaRuntime.getDefaultVMInstall())) {
 			path = path.append(vm.getVMInstallType().getId());
 			path = path.append(vm.getName());
 		}
@@ -71,7 +71,11 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		updater.updateJRESettings(fJREBlock.getJREs(), JavaRuntime.getDefaultVMInstall());
 		// save table settings
 		fJREBlock.saveColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), getClass().getName());
-		fSelection = JavaCore.newContainerEntry(path);		
+		if (vm == null) {
+			fSelection = null;	
+		} else {
+			fSelection = JavaCore.newContainerEntry(path);
+		}		
 		return true;
 	}
 
