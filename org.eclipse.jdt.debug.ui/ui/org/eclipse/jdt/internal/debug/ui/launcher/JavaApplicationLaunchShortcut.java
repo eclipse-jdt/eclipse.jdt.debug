@@ -60,11 +60,21 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		if (search != null) {
 			try {
 				IJavaElement[] elements = getJavaElements(search);
+				boolean searchSubtypes = false; // only search subtypes if a container is selected 
+				for (int i = 0; i < elements.length; i++) {
+                    switch (elements[i].getElementType()) {
+                    	case IJavaElement.JAVA_PROJECT:
+                    	case IJavaElement.PACKAGE_FRAGMENT:
+                    	case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+                    	    searchSubtypes = true;
+                    		break;
+                    }
+                }
 				MainMethodSearchEngine engine = new MainMethodSearchEngine();
 				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements, false);
 				types = engine.searchMainMethods(PlatformUI.getWorkbench().getProgressService(),
 						scope, IJavaElementSearchConstants.CONSIDER_BINARIES | IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS,
-						true);
+						searchSubtypes);
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
