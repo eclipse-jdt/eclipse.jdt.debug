@@ -566,6 +566,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 			} catch (CoreException ce) {			
 			}
 		}
+		setPathButtonsEnableState();
 		refreshStatus();
 	}
 	
@@ -589,32 +590,22 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	 */
 	protected void setPathButtonsEnableState() {
 		List listWidget = getActiveListWidget();
+		boolean useDefault = isUseDefaultClasspath();
+		
 		int selectCount = listWidget.getSelectionIndices().length;
-		if (selectCount < 1) {
-			fPathRemoveButton.setEnabled(false);
-			fPathMoveUpButton.setEnabled(false);
-			fPathMoveDownButton.setEnabled(false);
-		} else {
-			fPathRemoveButton.setEnabled(true);
-			if (selectCount == 1) {
-				int selectedIndex = listWidget.getSelectionIndex();
-				if (selectedIndex == 0) {
-					fPathMoveUpButton.setEnabled(false);
-				} else {
-					fPathMoveUpButton.setEnabled(true);					
-				}
-				if (selectedIndex == (listWidget.getItemCount() - 1)) {
-					fPathMoveDownButton.setEnabled(false);			
-				} else {
-					fPathMoveDownButton.setEnabled(true);			
-				}
-			} else {
-				fPathMoveUpButton.setEnabled(false);
-				fPathMoveDownButton.setEnabled(false);			
-			}		
-		} 
-		fPathAddArchiveButton.setEnabled(true);
-		fPathAddDirectoryButton.setEnabled(true);
+		boolean selection = selectCount > 0;
+		boolean singleSelection = selectCount == 1;
+		
+		int selectedIndex = listWidget.getSelectionIndex();
+		boolean firstSelected = selectedIndex == 0;
+		boolean lastSelcted = selectedIndex == (listWidget.getItemCount() - 1);
+		
+		fPathRemoveButton.setEnabled(!useDefault && selection);
+		fPathMoveUpButton.setEnabled(!useDefault && singleSelection && !firstSelected);
+		fPathMoveDownButton.setEnabled(!useDefault && singleSelection && !lastSelcted);
+		fPathAddArchiveButton.setEnabled(!useDefault);
+		fPathAddDirectoryButton.setEnabled(!useDefault);
+	
 	}
 	
 	protected void handleEnvAddButtonSelected() {
