@@ -153,20 +153,70 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	/**
 	 * Converts a class name to a JNI signature.
 	 */
-	public static String classNameToSignature(String name) {
+	public static String classNameToSignature(String qualifiedName) {
 		// L<classname>;  : fully-qualified-class
+		/* JNI signature examples:
+		 * int[][]             -> [[I
+		 * long[]              -> [J
+		 * java.lang.String    -> Ljava/lang/String;
+		 * java.lang.String[]  -> [Ljava/lang/String;
+		 */
 		StringBuffer signature= new StringBuffer();
-		int length= name.length();
-		if (name.charAt(length - 1) == ']') {
-			// Array type
-			signature.append('[').append('L');
-			signature.append(name.substring(0, length-2).replace('.','/'));
-			signature.append(';');
-		} else {
+
+		int firstBrace= qualifiedName.indexOf('[');
+		if (firstBrace < 0) {
+			// Not an array type. Must be class type.
 			signature.append('L');
-			signature.append(name.replace('.','/'));
+			signature.append(qualifiedName.replace('.','/'));
 			signature.append(';');
+			return signature.toString();
 		}
+		
+		int index= 0;
+		while ((index= (qualifiedName.indexOf('[', index) + 1)) > 0) {
+			signature.append('[');
+		}
+
+		String name= qualifiedName.substring(0, firstBrace);
+		switch (name.charAt(0)) {
+			// Check for primitive array type
+			case 'b':
+				if (name.equals("byte")) {
+					signature.append('B');
+					return signature.toString();
+				} else if (name.equals("boolean")) {
+					signature.append('Z');
+					return signature.toString();
+				}
+			case 'i':
+				if (name.equals("int")) {
+					signature.append('I');
+					return signature.toString();
+				}
+			case 'd':
+				if (name.equals("double")) {
+					signature.append('D');
+					return signature.toString();
+				}
+			case 's':
+				if (name.equals("short")) {
+					signature.append('S');
+					return signature.toString();
+				}
+			case 'c':
+				if (name.equals("char")) {
+					signature.append('C');
+					return signature.toString();
+				}
+			case 'l':			
+				if (name.equals("long")) {
+					signature.append('J');
+					return signature.toString();
+				}
+		}
+		// Class type array
+		signature.append(name.replace('.','/'));
+		signature.append(';');
 		return signature.toString();
 	}
 
@@ -183,6 +233,20 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	 */
 	public static String arraySignatureToName(String signature) {
 		// [<type> : array of type <type>
+		if (signature.indexOf('[') < 0) {
+			return signature;
+		}
+		StringBuffer name= new StringBuffer();
+		String type= signature.substring(signature.lastIndexOf('[') + 1);
+		if (type.length() == 1 && isPrimitiveSignature(type)) {
+			name.append(getPrimitiveSignatureToName(type.charAt(0)));
+		} else {
+			name.append(classSignatureToName(type));
+		}
+		int index= 0;
+		while ((index= (signature.indexOf('[', index) + 1)) > 0) {
+			name.append('[').append(']');
+		}
 		return signatureToName(signature.substring(1)) + "[]";
 	}
 
@@ -191,7 +255,25 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	 */
 	public static String signatureToName(String signature) {
 		// See JNI 1.1 Specification, Table 3-2 Java VM Type Signatures.
+		String primitive= getPrimitiveSignatureToName(signature.charAt(0));
+		if (primitive != null) {
+			return primitive;
+		}
 		switch (signature.charAt(0)) {
+			case 'V':
+				return "void";
+			case 'L':
+				return classSignatureToName(signature);
+			case '[':
+				return arraySignatureToName(signature);
+			case '(':
+				throw new InternalError("Can't covert method signature to name.");
+		}
+		throw new InternalError("Invalid signature: \"" + signature + "\"");
+	}
+	
+	private static String getPrimitiveSignatureToName(char signature) {
+		switch (signature) {
 			case 'Z':
 				return "boolean";
 			case 'B':
@@ -208,16 +290,9 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 				return "float";
 			case 'D':
 				return "double";
-			case 'V':
-				return "void";
-			case 'L':
-				return classSignatureToName(signature);
-			case '[':
-				return arraySignatureToName(signature);
-			case '(':
-				throw new InternalError("Can't covert method signature to name.");
+			default:
+				return null;
 		}
-		throw new InternalError("Invalid signature: \"" + signature + "\"");
 	}
 	
 	/**
