@@ -164,7 +164,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		// Start VM.
 		Process proc = Runtime.getRuntime().exec(execString);
 
-		// The accept times out it the VM does not connect.
+		// The accept times out if the VM does not connect.
 		VirtualMachineImpl virtualMachine;
 		try {
 			virtualMachine = (VirtualMachineImpl)listenConnector.accept(args);
