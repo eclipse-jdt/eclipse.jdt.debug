@@ -46,7 +46,7 @@ public class JavaInspectExpressionActionFilter implements IActionFilter {
 		if (target instanceof JavaInspectExpression) {
 			JavaInspectExpression exp= (JavaInspectExpression) target;
 			if (name.equals("PrimitiveVariableActionFilter") && value.equals("isNotPrimitive")) { //$NON-NLS-1$ //$NON-NLS-2$
-				return isNotPrimitiveType(exp);
+				return !isPrimitiveType(exp);
 			} else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					IValue varValue= exp.getValue();
@@ -59,12 +59,15 @@ public class JavaInspectExpressionActionFilter implements IActionFilter {
 		return false;
 	}
 	
-	private boolean isNotPrimitiveType(JavaInspectExpression exp) {
+	private boolean isPrimitiveType(JavaInspectExpression exp) {
+		if (exp == null) {
+			return false;
+		}
 		try {
 			IValue value = exp.getValue();
 			if (value != null) {
 				String refType = OpenVariableTypeAction.removeArray(value.getReferenceTypeName());
-				return !fgPrimitiveTypes.contains(refType);
+				return fgPrimitiveTypes.contains(refType);
 			}
 		} catch (DebugException e) {
 		}
