@@ -20,10 +20,11 @@
 			jarfile="${dest}/jdimodel.jar"
 			basedir="bin"
 		/>
-		<!-- Create the source jar -->
-		<jar jarfile="${dest}/jdimodelsrc.jar">
+		<!-- Create the source zip -->
+		<zip zipfile="${dest}/jdimodelsrc.zip">
 			<fileset dir="Eclipse Java Core Debug"/>
-		</jar>
+			<fileset dir="Eclipse JDI"/>
+		</zip>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.jars" todir="${dest}"/>
 		<copy file="jdi.jar" todir="${dest}"/>
