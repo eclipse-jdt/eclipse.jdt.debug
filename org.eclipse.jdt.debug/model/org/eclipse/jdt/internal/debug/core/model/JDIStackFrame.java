@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import com.sun.jdi.AbsentInformationException;
@@ -907,7 +908,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// could have been set via a call to JDIThread#updateStackFrames
 			((JDIThread)getThread()).computeStackFrames();
 			if (fStackFrame == null) {
-				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Thread_not_suspended,_stack_frame_unavailable._3"), null); //$NON-NLS-1$
+				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Thread_not_suspended,_stack_frame_unavailable._3"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 			}
 		}
 		return fStackFrame;

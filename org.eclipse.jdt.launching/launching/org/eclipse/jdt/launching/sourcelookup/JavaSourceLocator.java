@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -177,7 +178,10 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 				}
 			} catch (CoreException e) {
-				LaunchingPlugin.log(e);
+				// if the thread has since resumed, return null
+				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+					LaunchingPlugin.log(e);
+				}
 			}
 		}
 		return null;
