@@ -106,10 +106,13 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 				IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
 				if (element != null) {
 					if (element instanceof IMember) {
-						list.add(((IMember)element).getDeclaringType());
-					} else {
-						list.add(element);
+						// Use the declaring type if available
+						IJavaElement type= ((IMember)element).getDeclaringType();
+						if (type != null) {
+							element= type;
+						}
 					}
+					list.add(element);
 				}
 			}
 		}
