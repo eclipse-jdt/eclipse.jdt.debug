@@ -192,7 +192,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 					List projectList= new ArrayList();
 					for (int i= 0, numProjects= projects.length; i < numProjects; i++) {
 						project= projects[i];
-						if (project.hasNature(JavaCore.NATURE_ID)) {
+						if (project.isAccessible() && project.hasNature(JavaCore.NATURE_ID)) {
 							projectList.add(JavaCore.create(project));
 						}
 					}
