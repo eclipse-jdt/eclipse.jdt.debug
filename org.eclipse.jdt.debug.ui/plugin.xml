@@ -392,7 +392,7 @@
                id="org.eclipse.jdt.ui.TypeHierarchy">
          </view>
          <view
-               relative="org.eclipse.debug.ui.ConsoleView"
+               relative="org.eclipse.ui.console.ConsoleView"
                visible="false"
                relationship="stack"
                id="org.eclipse.search.SearchResultView">
