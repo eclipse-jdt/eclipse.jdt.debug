@@ -278,6 +278,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
+	 * Returns an iterator over the collection of threads. The
+	 * returned iterator is made on a copy of the thread list
+	 * so that it is thread safe. This method should always be
+	 * used instead of getThreadList().iterator()
+	 * @return an iterator over the collection of threads
+	 */
+	protected Iterator getThreadIterator() {
+		List threadList= (List) getThreadList().clone();
+		Iterator threads = threadList.iterator();
+		return threads;
+	}
+	
+	/**
 	 * Sets the list of threads contained in this debug target.
 	 * Set to an empty collection on creation. Threads are
 	 * added and removed as they start and end. On termination
@@ -692,8 +705,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IJavaDebugTarget#isOutOfSynch()
 	 */
 	public boolean isOutOfSynch() throws DebugException {
-		List threadList= (List) getThreadList().clone();
-		Iterator threads= threadList.iterator();
+		Iterator threads= getThreadIterator();
 		while (threads.hasNext()) {
 			JDIThread thread= (JDIThread)threads.next();
 			if (thread.isOutOfSynch()) {
@@ -707,8 +719,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IJavaDebugTarget#mayBeOutOfSynch()
 	 */
 	public boolean mayBeOutOfSynch() {
-		List threadList= (List) getThreadList().clone();
-		Iterator threads= threadList.iterator();
+		Iterator threads= getThreadIterator();
 		while (threads.hasNext()) {
 			JDIThread thread= (JDIThread)threads.next();
 			if (thread.mayBeOutOfSynch()) {
@@ -769,11 +780,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return the associated model thread
 	 */
 	public JDIThread findThread(ThreadReference tr) {
-		List threads = getThreadList();
-		for (int i= 0; i < threads.size(); i++) {
-			JDIThread t= (JDIThread) threads.get(i);
-			if (t.getUnderlyingThread().equals(tr))
-				return t;
+		Iterator iter= getThreadIterator();
+		while (iter.hasNext()) {
+			JDIThread thread = (JDIThread) iter.next();
+			if (thread.getUnderlyingThread().equals(tr))
+				return thread;
 		}
 		return null;
 	}
@@ -1084,7 +1095,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			try {
 				((JavaBreakpoint)breakpoint).removeFromTarget(this);
 				getBreakpoints().remove(breakpoint);
-				Iterator threads = getThreadList().iterator();
+				Iterator threads = getThreadIterator();
 				while (threads.hasNext()) {
 					((JDIThread)threads.next()).removeCurrentBreakpoint(breakpoint);
 				}
@@ -1121,21 +1132,21 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Notifies threads that they have been suspended
 	 */
 	protected void suspendThreads() {
-		Iterator threads = getThreadList().iterator();
+		Iterator threads = getThreadIterator();
 		while (threads.hasNext()) {
 			((JDIThread)threads.next()).suspendedByVM();
 		}
 	}
-	
+
 	/**
 	 * Notifies threads that they have been resumed
 	 */
 	protected void resumeThreads() {
-		Iterator threads = getThreadList().iterator();
+		Iterator threads = getThreadIterator();
 		while (threads.hasNext()) {
 			((JDIThread)threads.next()).resumedByVM();
 		}
-	}	
+	}
 	
 	/**
 	 * Notifies this VM to update its state in preparation
@@ -1274,7 +1285,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * of threads, firing a terminate event for each.
 	 */
 	protected void removeAllThreads() {
-		Iterator itr= getThreadList().iterator();
+		Iterator itr= getThreadIterator();
 		setThreadList(new ArrayList(0));
 		while (itr.hasNext()) {
 			JDIThread child= (JDIThread) itr.next();
