@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -153,8 +154,13 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.ALWAYS);
 		
 		preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		// Don't warn about HCR failures
+		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, false);
+		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, false);
+		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, false);
 		// Set the timeout preference to a high value, to avoid timeouts while testing
 		JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
+		
 	}
 	
 	/**
