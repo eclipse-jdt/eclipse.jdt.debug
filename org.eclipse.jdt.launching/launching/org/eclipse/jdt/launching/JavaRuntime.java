@@ -51,11 +51,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
+import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
-import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
@@ -998,12 +998,28 @@ public final class JavaRuntime {
 						property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
 						break;
 				}			
-				IRuntimeClasspathEntry[] resolved = new IRuntimeClasspathEntry[cpes.length];
-				for (int i = 0; i < resolved.length; i++) {
-					resolved[i] = newRuntimeClasspathEntry(cpes[i]);
-					resolved[i].setClasspathProperty(property);
+				List resolved = new ArrayList(cpes.length);
+				for (int i = 0; i < cpes.length; i++) {
+					IClasspathEntry cpe = cpes[i];
+					if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+						IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
+						IJavaProject jp = JavaCore.create(p);
+						IRuntimeClasspathEntry classpath = new DefaultProjectClasspathEntry(jp);
+						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
+						for (int j = 0; j < entries.length; j++) {
+							resolved.add(entries[j]);
+						}
+					} else {
+						resolved.add(newRuntimeClasspathEntry(cpe));
+					}
 				}
-				return resolved;
+				// set classpath property
+				IRuntimeClasspathEntry[] result = new IRuntimeClasspathEntry[resolved.size()];
+				for (int i = 0; i < result.length; i++) {
+					result[i] = (IRuntimeClasspathEntry) resolved.get(i);
+					result[i].setClasspathProperty(property);
+				}
+				return result;
 			}
 		}
 	}
