@@ -310,16 +310,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (frame != null) {
 					problem = JavaDebugOptionsManager.getDefault().getProblem(frame);
 				}
-				String message = null;
-				if (problem == null) {
-					message = DebugUIMessages.getString("JDIModelPresentation.Compilation_error_1"); //$NON-NLS-1$
-				} else {
-					message = problem.getAttribute(IMarker.MESSAGE, DebugUIMessages.getString("JDIModelPresentation.Compilation_error_1")); //$NON-NLS-1$
-				}
-				if (thread.isSystemThread()) {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_({1}))_2"), new String[] {thread.getName(), message}); //$NON-NLS-1$
-				} else {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_({1}))_3"), new String[] {thread.getName(), message}); //$NON-NLS-1$
+				if (problem != null) {
+					String message = problem.getAttribute(IMarker.MESSAGE, DebugUIMessages.getString("JDIModelPresentation.Compilation_error_1")); //$NON-NLS-1$
+					if (thread.isSystemThread()) {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_({1}))_2"), new String[] {thread.getName(), message}); //$NON-NLS-1$
+					} else {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_({1}))_3"), new String[] {thread.getName(), message}); //$NON-NLS-1$
+					}
 				}
 			}			
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {

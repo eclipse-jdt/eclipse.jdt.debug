@@ -306,13 +306,14 @@ public class BreakpointUtils {
 	
 	/**
 	 * Returns whether the given breakpoint is a compilation
-	 * problem breakpoint
+	 * problem breakpoint or uncaught exception breakpoint
 	 * 
 	 * @param breakpoint breakpoint
-	 * @return whether the given breakpoint is a run to line
-	 *  breakpoint
+	 * @return whether the given breakpoint is a compilation error breakpoint or
+	 *  uncaught exception breakpoint
 	 */
 	public static boolean isProblemBreakpoint(IBreakpoint breakpoint) {
-		return breakpoint == JavaDebugOptionsManager.getDefault().getSuspendOnCompilationErrorBreakpoint();
+		return breakpoint == JavaDebugOptionsManager.getDefault().getSuspendOnCompilationErrorBreakpoint() ||
+			breakpoint == JavaDebugOptionsManager.getDefault().getSuspendOnUncaughtExceptionBreakpoint();
 	}	
 }
