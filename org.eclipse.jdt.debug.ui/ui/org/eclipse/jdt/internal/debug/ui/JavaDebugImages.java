@@ -56,10 +56,11 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= NAME_PREFIX + "entry_ovr_disabled.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT= NAME_PREFIX + "exit_ovr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= NAME_PREFIX + "exit_ovr_disabled.gif";	//$NON-NLS-1$
-		
+	
+	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT= NAME_PREFIX + "conditional_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= NAME_PREFIX + "conditional_ovr_disabled.gif";	//$NON-NLS-1$
+
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_UP_NAV= NAME_PREFIX + "up_nav.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_DOWN_NAV= NAME_PREFIX + "down_nav.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -89,13 +90,13 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_EXIT= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_EXIT);
 	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED);
 	
+	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT);
+	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED);
+	
 	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
 	
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
-	
-	public static final ImageDescriptor DESC_OBJS_UP_NAV= createManaged(T_OBJ, IMG_OBJS_UP_NAV);
-	public static final ImageDescriptor DESC_OBJS_DOWN_NAV= createManaged(T_OBJ, IMG_OBJS_DOWN_NAV);
-	
+		
 	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
 			
