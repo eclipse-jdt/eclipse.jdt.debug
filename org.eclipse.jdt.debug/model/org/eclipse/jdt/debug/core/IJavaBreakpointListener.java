@@ -89,7 +89,8 @@ public interface IJavaBreakpointListener {
 	 *  (one of <code>IJavaClassType</code>, <code>IJavaInterfaceType</code>, or 
 	 *  <code>IJavaArrayType</code>)
 	 * @return whether the the breakpoint should be installed in the given type and target,
-	 *  or whether this listener doesn't care.
+	 *  or whether this listener doesn't care - one of <code>INSTALL</code>,
+	 *  <code>DONT_INSTALL</code>, or <code>DONT_CARE</code>
 	 * @since 3.0
 	 */
 	public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type);
@@ -116,7 +117,8 @@ public interface IJavaBreakpointListener {
 	 * @param thread Java thread
 	 * @param breakpoint Java breakpoint
 	 * @return whether the thread should suspend or whether this
-	 *  listener doesn't care.
+	 *  listener doesn't care - one of <code>SUSPEND</code>, 
+	 *  <code>DONT_SUSPEND</code>, or <code>DONT_CARE</code>
 	 * @since 3.0
 	 */
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint);	
