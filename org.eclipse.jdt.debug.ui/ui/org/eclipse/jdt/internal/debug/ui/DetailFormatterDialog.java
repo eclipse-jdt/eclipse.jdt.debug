@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Dialog for edit detail formatter.
@@ -125,6 +126,10 @@ public class DetailFormatterDialog extends StatusDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		WorkbenchHelp.setHelp(
+			parent,
+			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);			
+		
 		Font font = parent.getFont();
 		
 		Composite container = new Composite(parent, SWT.NONE);

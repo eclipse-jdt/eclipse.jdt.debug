@@ -29,19 +29,52 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action to associate an object with one or more breakpoints.
  */
 public class InstanceFiltersAction extends ObjectActionDelegate {
+	
+	class InstanceFilterDialog extends ListSelectionDialog {
+		
+		public InstanceFilterDialog(
+			Shell parentShell,
+			Object input,
+			IStructuredContentProvider contentProvider,
+			ILabelProvider labelProvider,
+			String message) {
+			super(parentShell, input, contentProvider, labelProvider, message);
+		}
+		
+		
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+		 */
+		protected Control createDialogArea(Composite parent) {
+			Control control = super.createDialogArea(parent);
+			WorkbenchHelp.setHelp(
+				parent,
+				IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG);				
+			return control;
+			
+		}
+
+}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
@@ -70,7 +103,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 						public void inputChanged(Viewer viewer, Object a, Object b) {};
 					};
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
-					ListSelectionDialog dialog = new ListSelectionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.Restrict_selected_breakpoint(s)_to_object___{0}__1"), new String[] {var.getName()})){ //$NON-NLS-1$
+					ListSelectionDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.Restrict_selected_breakpoint(s)_to_object___{0}__1"), new String[] {var.getName()})){ //$NON-NLS-1$
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.
 							Object[] checkBreakpoint= getViewer().getCheckedElements();
