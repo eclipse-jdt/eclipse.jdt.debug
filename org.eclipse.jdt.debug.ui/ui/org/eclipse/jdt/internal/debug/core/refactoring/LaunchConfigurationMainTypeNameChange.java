@@ -72,8 +72,6 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 	private String fNewTypeName;
 	
 	private String fNewLaunchConfigurationName;
-	
-	private LaunchConfigurationMainTypeNameChange fUndo;
 
 	/**
 	 * New launch configuration object if the launch configuration has been renamed, the original
