@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.jdt.debug"/>
       <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
