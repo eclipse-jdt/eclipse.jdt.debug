@@ -59,9 +59,9 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 		}
 
 		if (!lastLaunchSuccessful[0]) {
-			String string= "Launch attempt failed: {0}";
+			String string= DebugUIMessages.getString("JavaApplicationWizard.Launch_attempt_failed__{0}_1"); //$NON-NLS-1$
 			String message= MessageFormat.format(string, new String[] {fLauncher.getLabel()});
-			MessageDialog.openError(getShell(), "Launch failed", message);
+			MessageDialog.openError(getShell(), DebugUIMessages.getString("JavaApplicationWizard.Launch_failed_2"), message); //$NON-NLS-1$
 		}
 		return lastLaunchSuccessful[0];
 	}
