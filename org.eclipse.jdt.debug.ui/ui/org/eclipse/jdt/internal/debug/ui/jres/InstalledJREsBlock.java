@@ -609,8 +609,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	
 	private void editVM() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
-		// assume it's length one, otherwise this will not be called
 		IVMInstall vm= (IVMInstall)selection.getFirstElement();
+		if (vm == null) {
+			return;
+		}
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), vm);
 		dialog.setTitle(JREMessages.getString("InstalledJREsBlock.8")); //$NON-NLS-1$
 		if (dialog.open() != Window.OK) {
