@@ -33,19 +33,17 @@ public class NameValuePairDialog extends Dialog {
 	private String fTitle;
 	private String[] fFieldLabels;
 	private String[] fInitialValues;
-	private boolean fNameEnabled;
 	
 	private Label fNameLabel;
 	private Text fNameText;
 	private Label fValueLabel;
 	private Text fValueText;
 
-	public NameValuePairDialog(Shell shell, String title, String[] fieldLabels, String[] initialValues, boolean nameEnabled) {
+	public NameValuePairDialog(Shell shell, String title, String[] fieldLabels, String[] initialValues) {
 		super(shell);
 		fTitle = title;
 		fFieldLabels = fieldLabels;
 		fInitialValues = initialValues;
-		fNameEnabled = nameEnabled;
 	}
 
 	/**
@@ -64,21 +62,19 @@ public class NameValuePairDialog extends Dialog {
 		fNameLabel.setText(fFieldLabels[0]);
 		fNameLabel.setFont(font);
 		
+		ModifyListener listener= new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateButtons();
+			}
+		};
+		
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fNameText.setText(fInitialValues[0]);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(font);
-		if (fNameEnabled) {
-			fNameText.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					updateButtons();
-				}
-			});
-		} else {
-			fNameText.setEnabled(false);
-		}
+		fNameText.addModifyListener(listener);
 		
 		fValueLabel = new Label(comp, SWT.NONE);
 		fValueLabel.setText(fFieldLabels[1]);
@@ -90,11 +86,7 @@ public class NameValuePairDialog extends Dialog {
 		gd.widthHint = 300;
 		fValueText.setLayoutData(gd);
 		fValueText.setFont(font);
-		fValueText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateButtons();
-			}
-		});		
+		fValueText.addModifyListener(listener);		
 		
 		applyDialogFont(comp);
 		return comp;

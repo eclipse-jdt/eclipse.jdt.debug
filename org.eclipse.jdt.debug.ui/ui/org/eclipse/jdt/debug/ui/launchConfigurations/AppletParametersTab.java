@@ -257,8 +257,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 			new NameValuePairDialog(getShell(), 
 				LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.add.title"),  //$NON-NLS-1$
 				new String[] {LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.add.name.text"), LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.add.value.text")},  //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] {EMPTY_STRING, EMPTY_STRING},
-				true); 
+				new String[] {EMPTY_STRING, EMPTY_STRING}); 
 		openNewParameterDialog(dialog, null);
 		setParametersButtonsEnableState();
 	}
@@ -271,8 +270,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 			new NameValuePairDialog(getShell(), 
 				LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.edit.title"),  //$NON-NLS-1$
 				new String[] {LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.edit.name.text"), LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.edit.value.text")},  //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] {name, value},
-				false);
+				new String[] {name, value});
 		openNewParameterDialog(dialog, selectedItem);		
 	}
 
