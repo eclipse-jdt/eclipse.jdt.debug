@@ -8,8 +8,8 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A Java pattern breakpoint is a Java line breakpoint which is installed in 
- * types with a specific source file name (debug attribute) and whose fully
+ * A line breakpoint installed in types associated with a specific source file
+ * (based on source file name debug attribute) and whose fully
  * qualified name matches a specified pattern.
  * <p>
  * This interface is not intended to be implemented.
@@ -19,23 +19,25 @@ import org.eclipse.core.runtime.CoreException;
 public interface IJavaPatternBreakpoint extends IJavaLineBreakpoint {
 
 	/**
-	 * Returns the type name pattern in which this breakpoint is installed
+	 * Returns the type name pattern this breakpoint uses to identify types
+	 * in which to install itself.
 	 * 
-	 * @return the pattern in which this breakpoint is installed
-	 * @exception CoreException is a <code>CoreException</code> is
-	 * thrown accessing this breakpoint's underlying marker
+	 * @return the type name pattern this breakpoint uses to identify types
+	 *  in which to install itself
+	 * @exception CoreException if unable to access the property from
+	 *  this breakpoint's underlying marker
 	 */
 	public String getPattern() throws CoreException;
 	
 	/**
-	 * Returns the simple source file name in which this breakpoint is set.
+	 * Returns the source file name in which this breakpoint is set.
 	 * When this breakpoint specifies a source file name, this breakpoint is
 	 * only installed in types whose source file name debug attribute
 	 * match this value.
 	 * 
-	 * @return the simple source file name in which this breakpoint is set
-	 * @exception CoreException is a <code>CoreException</code> is
-	 * thrown accessing this breakpoint's underlying marker
+	 * @return the source file name in which this breakpoint is set
+	 * @exception CoreException if unable to access the property from
+	 *  this breakpoint's underlying marker
 	 */
 	public String getSourceName() throws CoreException;	
 
