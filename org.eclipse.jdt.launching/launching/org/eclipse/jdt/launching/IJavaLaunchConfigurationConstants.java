@@ -163,7 +163,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * identifier of a source path provider extension used to compute the source lookup path
 	 * for a launch configuration.
 	 */
-	public static final String ATTR_SOURCE_PATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_PROVIDER";	 //$NON-NLS-1$
+	public static final String ATTR_SOURCE_PATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH_PROVIDER";	 //$NON-NLS-1$
 			
 	/**
 	 * Allow termination launch configuration attribute name.
