@@ -62,16 +62,8 @@ public class Cast extends CompoundInstruction {
 			IJavaObject objectValue= (IJavaObject)value;
 			if (classObject == null) {
 				throw new CoreException(null);
-			} else {
-				
-				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)objectValue.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {classObject}, getContext().getThread(), false);
-				
-//				push(classObject);
-//				push(object);
-//				SendMessage send= new SendMessage(IS_INSTANCE,IS_INSTANCE_SIGNATURE,1,false, -1);
-//				execute(send);
-				
-//				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)pop();
+			} else {				
+				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {objectValue}, getContext().getThread(), false);
 				if (!resultValue.getBooleanValue()) {
 					throw new CoreException(null);
 				}
