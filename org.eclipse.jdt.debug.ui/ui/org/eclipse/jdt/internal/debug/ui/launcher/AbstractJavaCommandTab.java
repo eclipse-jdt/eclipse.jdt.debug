@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Text;
 public abstract class AbstractJavaCommandTab extends AbstractLaunchConfigurationTab {
 	
 	protected Text fJavaCommandText;
-	protected Label fJavaCommandLabel;
 	protected Button fDefaultButton;
 	
 	protected static final Map EMPTY_MAP = new HashMap(1);
@@ -56,8 +55,8 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 		
 		createVerticalSpacer(comp, 2);
 		
-		fJavaCommandLabel= new Label(comp, SWT.NONE);
-		fJavaCommandLabel.setText(LauncherMessages.getString("AbstractJavaCommandTab.Name_of_Java_e&xecutable__1"));  //$NON-NLS-1$
+		Label javaCommandLabel= new Label(comp, SWT.NONE);
+		javaCommandLabel.setText(LauncherMessages.getString("AbstractJavaCommandTab.Name_of_Java_e&xecutable__1"));  //$NON-NLS-1$
 		
 		fJavaCommandText= new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -87,7 +86,6 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 			fJavaCommandText.setText(getCommand());
 		} 
 		fJavaCommandText.setEnabled(!useDefault);
-		fJavaCommandLabel.setEnabled(!useDefault);
 	}
 	
 	protected abstract String getCommand();
