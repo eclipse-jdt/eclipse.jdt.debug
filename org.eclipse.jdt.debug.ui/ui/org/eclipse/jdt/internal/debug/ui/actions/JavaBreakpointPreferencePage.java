@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -167,13 +168,16 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	 */
 	protected void createFieldEditors() {
 		IJavaBreakpoint breakpoint = getBreakpoint();
-		String type = ""; //$NON-NLS-1$
 		try {
-			type = BreakpointUtils.getType(breakpoint).getFullyQualifiedName();
+			IType iType= BreakpointUtils.getType(breakpoint);
+			if (iType != null) {
+				String type = iType.getFullyQualifiedName();
+				addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), type)); //$NON-NLS-1$
+			}
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
-		addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), type)); //$NON-NLS-1$
+
 		if (breakpoint instanceof ILineBreakpoint) {
 			ILineBreakpoint lBreakpoint = (ILineBreakpoint) breakpoint;
 			StringBuffer lineNumber = new StringBuffer(4);

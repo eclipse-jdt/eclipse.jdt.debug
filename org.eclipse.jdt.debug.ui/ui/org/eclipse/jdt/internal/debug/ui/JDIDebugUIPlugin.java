@@ -16,15 +16,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.ILauncherDelegate;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
@@ -34,7 +32,6 @@ import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -232,7 +229,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 				}
 				breakpoint= (IJavaBreakpoint)breakpoints[i];
 				try {
-					check(breakpoint, e.getDelta());
+					IType type= BreakpointUtils.getType(breakpoint);
+					if (type != null) {
+						IJavaElement parent= type.getPackageFragment().getParent();
+						check(breakpoint, parent, e.getDelta());
+					}
 				} catch (CoreException exception) {
 					logError(exception);
 				}
@@ -242,10 +243,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		 * Recursively check whether the class file has been deleted. 
 		 * Returns true if delta processing can be stopped.
 		 */
-		protected boolean check(IJavaBreakpoint breakpoint, IJavaElementDelta delta) throws CoreException {
+		protected boolean check(IJavaBreakpoint breakpoint, IJavaElement parent, IJavaElementDelta delta) throws CoreException {
 			IJavaElement element= delta.getElement();
-			IJavaElement parent= BreakpointUtils.getType(breakpoint).getPackageFragment().getParent();
-
 			if ((delta.getKind() & IJavaElementDelta.REMOVED) != 0 || (delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0) { 
 				if (element.equals(parent)) {
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
@@ -260,7 +259,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 
 			IJavaElementDelta[] subdeltas= delta.getAffectedChildren();
 			for (int i= 0; i < subdeltas.length; i++) {
-				if (check(breakpoint, subdeltas[i]))
+				if (check(breakpoint, parent, subdeltas[i]))
 					return true;
 			}
 
