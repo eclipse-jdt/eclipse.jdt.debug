@@ -88,7 +88,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 					 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 
-				return order(getCollector().getResults());	
+				return order(getCollector().getJavaCompletionProposals());	
 			} catch (JavaModelException x) {
 				handle(viewer, x);
 			} catch (DebugException de) {

@@ -35,13 +35,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.ResultCollector;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.JavaCompletionProposalComparator;
+import org.eclipse.jdt.ui.text.java.ResultCollector;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -70,7 +70,6 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	private JavaCompletionProposalComparator fComparator;
 		
 	public DisplayCompletionProcessor() {
-		fCollector= new ResultCollector();
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
@@ -152,7 +151,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 					 localVariableTypeNames, localVariableNames,
 					 localModifiers, stackFrame.isStatic(), fCollector);
 				
-				IJavaCompletionProposal[] results= fCollector.getResults();
+				IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
 				
 				if (fTemplateEngine != null) {
 					fTemplateEngine.reset();
@@ -300,7 +299,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * Configures the display result collection for the current code assist session
 	 */
 	protected void configureResultCollector(IJavaProject project, ITextSelection selection) {
-		fCollector.reset(selection.getOffset(), project, null);
+		fCollector = new ResultCollector(project);
 		if (selection.getLength() != 0) {
 			fCollector.setReplacementLength(selection.getLength());
 		} 

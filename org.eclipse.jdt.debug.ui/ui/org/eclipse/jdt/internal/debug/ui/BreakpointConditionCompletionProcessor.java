@@ -49,7 +49,7 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 				 new char[0][], new char[0][],
 				 new int[0], false, getCollector());
 				 
-			IJavaCompletionProposal[] results= getCollector().getResults();
+			IJavaCompletionProposal[] results= getCollector().getJavaCompletionProposals();
 			
 			// Generate selections from the template engine
 			TemplateEngine templateEngine= getTemplateEngine();

@@ -15,13 +15,13 @@ import java.util.Arrays;
 
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.ResultCollector;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.JavaCompletionProposalComparator;
+import org.eclipse.jdt.ui.text.java.ResultCollector;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -45,7 +45,6 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	private char[] fProposalAutoActivationSet;
 			
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
-		fCollector= new ResultCollector();
 		fEditor= editor;
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
@@ -91,7 +90,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		try {
-			fCollector.reset(position, fEditor.findJavaProject(), null);
+			fCollector = new ResultCollector(fEditor.getJavaProject());
 			fEditor.codeComplete(fCollector);
 		} catch (JavaModelException x) {
 			Shell shell= viewer.getTextWidget().getShell();
@@ -99,7 +98,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			JDIDebugUIPlugin.log(x);
 		}
 		
-		IJavaCompletionProposal[] results= fCollector.getResults();
+		IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
 		
 		if (fTemplateEngine != null) {
 			fTemplateEngine.reset();
