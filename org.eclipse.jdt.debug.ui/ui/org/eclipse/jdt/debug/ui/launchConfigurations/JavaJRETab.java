@@ -1,5 +1,10 @@
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui.launchConfigurations;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,6 +15,11 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.launcher.AddVMDialog;
+import org.eclipse.jdt.internal.debug.ui.launcher.IAddVMDialogRequestor;
+import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.VMStandin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -26,6 +36,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+
+/**
+ * A launch configuration tab that displays and edits the VM install 
+ * launch configuration attributes.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed.
+ * </p>
+ * @since 2.0
+ */
 
 public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDialogRequestor {
 

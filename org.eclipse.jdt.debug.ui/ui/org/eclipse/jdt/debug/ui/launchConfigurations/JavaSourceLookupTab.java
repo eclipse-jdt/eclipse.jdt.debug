@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -11,18 +11,24 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
- * <b>THIS CLASS IS EXPERIMENTAL AND STILL UNDER CONSTRUCTION</b>
- * 
- * Tab for setting classpath and bootpath.
+ * A launch configuration tab that displays and edits source lookup
+ * path launch configuration attributes.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed.
+ * </p>
+ * @since 2.0
  */
+
 public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 
 	protected SourceLookupBlock fSourceLookupBlock;

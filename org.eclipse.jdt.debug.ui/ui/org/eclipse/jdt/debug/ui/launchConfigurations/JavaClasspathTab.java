@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -24,6 +24,9 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -39,9 +42,13 @@ import org.eclipse.swt.widgets.TabItem;
 
 
 /**
- * <b>THIS CLASS IS EXPERIMENTAL AND STILL UNDER CONSTRUCTION</b>
- * 
- * Tab for setting classpath and bootpath.
+ * A launch configuration tab that displays and edits the user and
+ * bootstrap classes comprising the classpath launch configuration
+ * attribute.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed.
+ * </p>
+ * @since 2.0
  */
 public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 
