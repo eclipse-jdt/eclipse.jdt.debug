@@ -1,0 +1,19 @@
+<project default="export">
+
+<!-- Set the timestamp and important properties -->
+	<target name="init">
+		<tstamp/>
+		<property name="destdir" value="../../../../plugin-export" />
+		<property name="plugins" value="org.eclipse.ant.core, org.eclipse.ant.ui, org.eclipse.debug.core, org.eclipse.debug.ui, org.eclipse.jdt.debug, org.eclipse.jdt.debug.ui, org.eclipse.jdt.launching, org.eclipse.jdt.launching.j9, org.eclipse.ui.console, org.eclipse.ui.externaltools" />
+	</target>
+	
+	<target name="export" depends="init">
+		<!--destination: fully qualifed path for exported artifacts (required)-->
+		<!--plugins: comma delineated listing of plugins to export (if a plugin does not exist, it is ignored) (defaults to all shared plugins)-->
+		<!--exportType: can be dir, jar or zip (defaults to dir if not supplied)-->
+		<!--exportSource: whether or not to export source with the plugin (defaults to false if not supplied)-->
+		<eclipse.exportPlugins 
+			plugins= "${plugins}"
+			destination= "${destdir}" />
+	</target>
+</project>
