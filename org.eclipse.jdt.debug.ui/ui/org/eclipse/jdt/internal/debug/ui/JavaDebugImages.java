@@ -171,19 +171,20 @@ public class JavaDebugImages {
 	}
 	
 	/**
-	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
-	 * are retrieved from the *tool16 folders.
-	 */
-	public static void setToolImageDescriptors(IAction action, String iconName) {
-		setImageDescriptors(action, "tool16", iconName); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
+	 * Sets the two image descriptors for enabled, disabled. The actions
 	 * are retrieved from the *lcl16 folders.
 	 */
-	public static void setLocalImageDescriptors(IAction action, String iconName) {
-		setImageDescriptors(action, "lcl16", iconName); //$NON-NLS-1$
+	public static void setLocalImageDescriptors(IAction action, String relPath) {
+		String type= "lcl16"; //$NON-NLS-1$
+		try {
+			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
+			if (id != null)
+				action.setDisabledImageDescriptor(id);
+		} catch (MalformedURLException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+	
+		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
 	
 	/*
@@ -199,29 +200,6 @@ public class JavaDebugImages {
 			fgAvoidSWTErrorMap= null;
 		}
 		return fgImageRegistry;
-	}
-
-	//---- Helper methods to access icons on the file system --------------------------------------
-
-	private static void setImageDescriptors(IAction action, String type, String relPath) {
-		
-		try {
-			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
-			if (id != null)
-				action.setDisabledImageDescriptor(id);
-		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-	
-		try {
-			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("c" + type, relPath)); //$NON-NLS-1$
-			if (id != null)
-				action.setHoverImageDescriptor(id);
-		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-	
-		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
 	
 	private static ImageDescriptor createManaged(String prefix, String name) {
