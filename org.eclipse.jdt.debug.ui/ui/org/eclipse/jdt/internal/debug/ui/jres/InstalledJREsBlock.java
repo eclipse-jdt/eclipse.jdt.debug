@@ -718,7 +718,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		for (int i = 0; i < 3; i++) {
 			saveColumn(settings, qualifier, i);
 		}
-		settings.put(qualifier + ".sortColumn", fSortColumn);
+		settings.put(qualifier + ".sortColumn", fSortColumn); //$NON-NLS-1$
 	}
 	
 	private void saveColumn(IDialogSettings settings, String qualifier, int col) {
@@ -745,7 +745,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		fWeight3 = restoreColumnWeight(settings, qualifier, 2);
 		fVMList.getTable().layout(true);
 		try {
-			fSortColumn = settings.getInt(qualifier + ".sortColumn");
+			fSortColumn = settings.getInt(qualifier + ".sortColumn"); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			fSortColumn = 1;
 		}
