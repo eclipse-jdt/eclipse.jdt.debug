@@ -914,7 +914,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IMarker) {
 				item = getBreakpoint((IMarker)item);
 			}
-			if (item instanceof IJavaBreakpoint) {
+			if (item instanceof IJavaPatternBreakpoint || item instanceof IJavaTargetPatternBreakpoint) {
+				item = ((IJavaBreakpoint)item).getMarker().getResource();
+			} else if (item instanceof IJavaBreakpoint) {
 				item= BreakpointUtils.getType((IJavaBreakpoint)item);
 			}
 			if (item instanceof LocalFileStorage) {
