@@ -711,8 +711,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	private static Element infoAsElement(Document doc, LibraryInfo info) {
 		Element libraryElement = doc.createElement("libraryInfo"); //$NON-NLS-1$
+		libraryElement.setAttribute("version", info.getVersion()); //$NON-NLS-1$
 		appendPathElements(doc, "bootpath", libraryElement, info.getBootpath()); //$NON-NLS-1$
 		appendPathElements(doc, "extensionDirs", libraryElement, info.getExtensionDirs()); //$NON-NLS-1$
+		appendPathElements(doc, "endorsedDirs", libraryElement, info.getEndorsedDirs()); //$NON-NLS-1$
 		return libraryElement;
 	}
 	
@@ -784,11 +786,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 						Element element = (Element) node;
 						String nodeName = element.getNodeName();
 						if (nodeName.equalsIgnoreCase("libraryInfo")) { //$NON-NLS-1$
+							String version = element.getAttribute("version"); //$NON-NLS-1$
 							String location = element.getAttribute("home"); //$NON-NLS-1$
 							String[] bootpath = getPathsFromXML(element, "bootpath"); //$NON-NLS-1$
 							String[] extDirs = getPathsFromXML(element, "extensionDirs"); //$NON-NLS-1$
+							String[] endDirs = getPathsFromXML(element, "endorsedDirs"); //$NON-NLS-1$
 							if (location != null) {
-								LibraryInfo info = new LibraryInfo(bootpath, extDirs);
+								LibraryInfo info = new LibraryInfo(version, bootpath, extDirs, endDirs);
 								fgLibraryInfoMap.put(location, info);										
 							}
 						}
