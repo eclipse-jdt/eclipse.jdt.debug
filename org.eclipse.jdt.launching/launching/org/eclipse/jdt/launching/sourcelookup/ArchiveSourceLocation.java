@@ -64,12 +64,14 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * 	file
 	 */
 	private static ZipFile getZipFile(String name) throws IOException {
-		ZipFile zip = (ZipFile)fZipFileCache.get(name);
-		if (zip == null) {
-			zip = new ZipFile(name);
-			fZipFileCache.put(name, zip);
+		synchronized (fZipFileCache) {
+			ZipFile zip = (ZipFile)fZipFileCache.get(name);
+			if (zip == null) {
+				zip = new ZipFile(name);
+				fZipFileCache.put(name, zip);
+			}
+			return zip;
 		}
-		return zip;
 	}
 	
 	/**
@@ -79,16 +81,20 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * plug-in.
 	 */
 	public static void closeArchives() {
-		Iterator iter = fZipFileCache.values().iterator();
-		while (iter.hasNext()) {
-			ZipFile file = (ZipFile)iter.next();
-			try {
-				file.close();
-			} catch (IOException e) {
-				LaunchingPlugin.log(e);
+		synchronized (fZipFileCache) {
+			Iterator iter = fZipFileCache.values().iterator();
+			while (iter.hasNext()) {
+				ZipFile file = (ZipFile)iter.next();
+				synchronized (file) {
+					try {
+						file.close();
+					} catch (IOException e) {
+						LaunchingPlugin.log(e);
+					}
+				}
 			}
+			fZipFileCache.clear();
 		}
-		fZipFileCache.clear();
 	}
 	
 	/**
@@ -165,28 +171,37 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Automatically detect the root path, if required.
 	 * 
 	 * @param path source file name, excluding root path
+	 * @exception if unable to detect the root path for this source archive
 	 */
-	private void autoDetectRoot(IPath path) {
+	private void autoDetectRoot(IPath path) throws CoreException {
 		if (!fRootDetected) {
-			Enumeration entries = null;
+			ZipFile zip = null;
 			try {
-				entries = getArchive().entries();
+				zip = getArchive();
 			} catch (IOException e) {
-				LaunchingPlugin.log(e);
-				return;
+				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+					MessageFormat.format(LaunchingMessages.getString("ArchiveSourceLocation.Exception_occurred_while_detecting_root_source_directory_in_archive_{0}_1"), new String[] {getName()}), e)); //$NON-NLS-1$
 			}
-			String fileName = path.toString();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry)entries.nextElement();
-				String entryName = entry.getName();
-				if (entryName.endsWith(fileName)) {
-					int rootLength = entryName.length() - fileName.length();
-					if (rootLength > 0) {
-						String root = entryName.substring(0, rootLength);
-						setRootPath(root);
+			synchronized (zip) {
+				Enumeration entries = zip.entries();
+				String fileName = path.toString();
+				try {
+					while (entries.hasMoreElements()) {
+						ZipEntry entry = (ZipEntry)entries.nextElement();
+						String entryName = entry.getName();
+						if (entryName.endsWith(fileName)) {
+							int rootLength = entryName.length() - fileName.length();
+							if (rootLength > 0) {
+								String root = entryName.substring(0, rootLength);
+								setRootPath(root);
+							}
+							fRootDetected = true;
+							return;
+						}
 					}
-					fRootDetected = true;
-					return;
+				} catch (IllegalStateException e) {
+					throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+						MessageFormat.format(LaunchingMessages.getString("ArchiveSourceLocation.Exception_occurred_while_detecting_root_source_directory_in_archive_{0}_2"), new String[] {getName()}), e)); //$NON-NLS-1$
 				}
 			}
 		}

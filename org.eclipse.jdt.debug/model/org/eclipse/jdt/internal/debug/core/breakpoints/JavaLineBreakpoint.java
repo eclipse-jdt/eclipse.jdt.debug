@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
@@ -432,6 +433,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
 		IJavaProject project= getJavaProject(frame);
+		if (project == null) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
+				JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Unable_to_compile_conditional_breakpoint_-_missing_Java_project_context._1"), null)); //$NON-NLS-1$
+		}
 		IAstEvaluationEngine engine = getEvaluationEngine(target, project);
 		if (engine == null) {
 			// If no engine is available, suspend
