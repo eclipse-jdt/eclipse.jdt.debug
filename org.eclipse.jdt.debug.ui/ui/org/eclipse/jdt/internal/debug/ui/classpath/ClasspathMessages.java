@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class ClasspathMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.launchConfigurations.ClassPathMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.classpath.ClassPathMessages";//$NON-NLS-1$
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private ClasspathMessages() {
