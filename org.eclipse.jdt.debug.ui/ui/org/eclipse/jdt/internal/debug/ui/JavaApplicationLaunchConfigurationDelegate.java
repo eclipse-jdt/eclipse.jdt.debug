@@ -8,17 +8,25 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
@@ -52,6 +60,16 @@ import org.eclipse.ui.IEditorInput;
  */
 public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
+	// QualifiedName constants used in writing and retrieving persisted default attribute values
+	private static final QualifiedName fgQualNameContainer = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_CONTAINER);
+	private static final QualifiedName fgQualNameRunPerspId = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE);
+	private static final QualifiedName fgQualNameDebugPerspId = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE);
+	private static final QualifiedName fgQualNameWorkingDir = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.WORKING_DIRECTORY_ATTR);
+	private static final QualifiedName fgQualNamePgmArgs = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.PROGRAM_ARGUMENTS_ATTR);
+	private static final QualifiedName fgQualNameVMArgs = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_ARGUMENTS_ATTR);
+	private static final QualifiedName fgQualNameVMTypeId = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_INSTALL_TYPE_ATTR);
+	private static final QualifiedName fgQualNameVMId = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_INSTALL_ATTR);
+
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
@@ -67,6 +85,10 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 	}
 
 	/**
+	 * This delegate can initialize defaults for context objects that are IJavaElements
+	 * (ICompilationUnits or IClassFiles), IFiles, and IEditorInputs.  The job of this method
+	 * is to get an IJavaElement for the context then call the method that does the real work.
+	 * 
 	 * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
 	 */
 	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object) {
@@ -82,18 +104,67 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 	}
 	
 	/**
-	 * Initialize defaults in the specified working copy for ICompilationUnits & IClassFiles
+	 * Attempt to initialize default attribute values on the specified working copy by
+	 * retrieving the values from persistent storage on the resource associated with the
+	 * specified IJavaElement.  If any of the required attributes cannot be found in
+	 * persistent storage, this is taken to mean that there is no persisted defaults for 
+	 * the IResource, and the working copy is initialized entirely from the IJavaElement.
 	 */
 	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		
-		// Java project
+		// The java project & main type are ALWAYS initialized from context (it wouldn't make
+		// sense to persist these)
+		initializeFromContextJavaProject(workingCopy, javaElement);
+		initializeFromContextMainTypeAndName(workingCopy, javaElement);
+		
+		// Retrieve the IResource for the java element
+		boolean initializeFromPersisted = true;
+		IResource resource = null;
+		try {
+			resource = javaElement.getUnderlyingResource();
+		} catch (CoreException ce) {
+		}
+		if (resource == null) {
+			initializeFromPersisted = false;
+		}
+		
+		// The VM attributes are 'required' in the sense that if any launch config attributes 
+		// were persisted for this resource, these must be also.  
+		if (initializeFromPersisted) {
+			initializeFromPersisted = initializeFromPersistedVM(workingCopy, resource);
+		}
+		
+		// If we have so far successfully initialized the working copy from persisted information,
+		// initialize the rest of the working copy attributes from persisted info, otherwise
+		// initialize the working copy from contextual and 'hard-coded' defaults
+		if (initializeFromPersisted) {
+			initializeFromPersistedContainer(workingCopy, resource);
+			initializeFromPersistedPerspectives(workingCopy, resource);
+			initializeFromPersistedPgmArgs(workingCopy, resource);
+			initializeFromPersistedVMArgs(workingCopy, resource);
+			initializeFromPersistedWorkingDir(workingCopy, resource);
+		} else {
+			initializeFromDefaultVM(workingCopy);
+			initializeFromDefaultContainer(workingCopy);
+			initializeFromDefaultPerspectives(workingCopy);			
+		}
+	}
+	
+	/**
+	 * Set the java project attribute on the working copy based on the IJavaElement.
+	 */
+	protected void initializeFromContextJavaProject(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		IJavaProject javaProject = javaElement.getJavaProject();
 		if ((javaProject == null) || !javaProject.exists()) {
 			return;
 		}
-		workingCopy.setAttribute(JavaDebugUI.PROJECT_ATTR, javaProject.getElementName());
-		
-		// Main type
+		workingCopy.setAttribute(JavaDebugUI.PROJECT_ATTR, javaProject.getElementName());		
+	}
+	
+	/**
+	 * Set the main type & name attributes on the working copy based on the IJavaElement
+	 */
+	protected void initializeFromContextMainTypeAndName(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		String name = "";
 		try {
 			IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {javaElement});
@@ -104,28 +175,110 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 			workingCopy.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, name);
 		} catch (InterruptedException ie) {
 		} catch (InvocationTargetException ite) {
-		}	
-		
-		// Name
+		}			
 		workingCopy.rename(generateUniqueNameFrom(name));	
-		
-		// VM install type
+	}
+	
+	/**
+	 * Set the VM attributes on the working copy based on the workbench default VM.
+	 */
+	protected void initializeFromDefaultVM(ILaunchConfigurationWorkingCopy workingCopy) {
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
 		IVMInstallType vmInstallType = vmInstall.getVMInstallType();
 		String vmInstallTypeID = vmInstallType.getId();
 		workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmInstallTypeID);
 
-		// VM
 		String vmInstallID = vmInstall.getId();
-		workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmInstallID);
-		
-		// Local/shared
-		workingCopy.setContainer(null);
-		
-		// Perspectives 
+		workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmInstallID);		
+	}
+	
+	/**
+	 * Set the default storage location of the working copy to local.
+	 */
+	protected void initializeFromDefaultContainer(ILaunchConfigurationWorkingCopy workingCopy) {
+		workingCopy.setContainer(null);		
+	}
+	
+	/**
+	 * Set the default perspectives for Run & Debug to the DebugPerspective.
+	 */
+	protected void initializeFromDefaultPerspectives(ILaunchConfigurationWorkingCopy workingCopy) {
 		String debugPerspID = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
 		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, debugPerspID);
-		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPerspID);
+		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPerspID);				
+	}
+	
+	/**
+	 * Attempt to retrieve the VM-related attributes that were persisted for the specified resource.
+	 * If successful, set these on the working copy and return true, otherwise return false.
+	 */
+	protected boolean initializeFromPersistedVM(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
+		try {
+			String installTypeId = resource.getPersistentProperty(fgQualNameVMTypeId);
+			if (installTypeId == null) {
+				return false;
+			}
+			workingCopy.setAttribute(JavaDebugUI.PLUGIN_ID, installTypeId);
+			
+			String installId = resource.getPersistentProperty(fgQualNameVMId);
+			if (installId == null) {
+				return false;
+			}
+			workingCopy.setAttribute(JavaDebugUI.PLUGIN_ID, installId);
+		} catch (CoreException ce) {
+			return false;
+		}	
+			
+		return true;
+	}
+	
+	protected void initializeFromPersistedContainer(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
+		try {
+			String containerName = resource.getPersistentProperty(fgQualNameContainer);
+			if (containerName == null) {
+				workingCopy.setContainer(null);
+			} else {
+				Path containerPath = new Path(containerName);
+				IContainer container = getWorkspaceRoot().getContainerForLocation(containerPath);
+				workingCopy.setContainer(container);
+			}
+		} catch (CoreException ce) {			
+		}		
+	}
+	
+	protected void initializeFromPersistedPerspectives(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
+		try {
+			String runPersp = resource.getPersistentProperty(fgQualNameRunPerspId);
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, runPersp);
+			String debugPersp = resource.getPersistentProperty(fgQualNameDebugPerspId);
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPersp);
+		} catch (CoreException ce) {			
+		}
+		
+	}
+	
+	protected void initializeFromPersistedPgmArgs(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
+		try {
+			String pgmArgs = resource.getPersistentProperty(fgQualNamePgmArgs);
+			workingCopy.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, pgmArgs);
+		} catch (CoreException ce) {			
+		}
+	}
+	
+	protected void initializeFromPersistedVMArgs(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
+		try {
+			String vmArgs = resource.getPersistentProperty(fgQualNameVMArgs);
+			workingCopy.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, vmArgs);
+		} catch (CoreException ce) {			
+		}		
+	}
+	
+	protected void initializeFromPersistedWorkingDir(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
+		try {
+			String workingDir = resource.getPersistentProperty(fgQualNameWorkingDir);
+			workingCopy.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, workingDir);
+		} catch (CoreException ce) {			
+		}				
 	}
 	
 	/**
@@ -169,35 +322,35 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 		}
 				
 		// VM install type
-		String installTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
-		if (installTypeId == null) {
+		String vmInstallTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
+		if (vmInstallTypeId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
 		}		
-		IVMInstallType type = JavaRuntime.getVMInstallType(installTypeId);
+		IVMInstallType type = JavaRuntime.getVMInstallType(vmInstallTypeId);
 		if (type == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.VM_Install_type_does_not_exist"), new String[] {installTypeId}), null, JavaDebugUI.VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.VM_Install_type_does_not_exist"), new String[] {vmInstallTypeId}), null, JavaDebugUI.VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
 		// VM
-		String installId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, null);
-		if (installId == null) {
+		String vmInstallId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, null);
+		if (vmInstallId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$
 		}
-		IVMInstall install = type.findVMInstall(installId);
+		IVMInstall install = type.findVMInstall(vmInstallId);
 		if (install == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_{0}_does_not_exist._4"), new String[]{installId}), null, JavaDebugUI.VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_{0}_does_not_exist._4"), new String[]{vmInstallId}), null, JavaDebugUI.VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}		
 		IVMRunner runner = install.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{installId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{vmInstallId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
 		// Working directory
-		String path = configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, null);
-		if ((path != null) && (path.trim().length() > 0)) {
-			File dir = new File(path);
+		String workingDir = configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, null);
+		if ((workingDir != null) && (workingDir.trim().length() > 0)) {
+			File dir = new File(workingDir);
 			if (!dir.isDirectory()) {
-				abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfiguration.Working_directory_does_not_exist"), new String[] {path}), null, JavaDebugUI.WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+				abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfiguration.Working_directory_does_not_exist"), new String[] {workingDir}), null, JavaDebugUI.WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 			}
 		}
 		
@@ -206,28 +359,62 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 			return null;
 		}
 		
-		ExecutionArguments args = new ExecutionArguments(
-			configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, ""), //$NON-NLS-1$
-			configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, "")); //$NON-NLS-1$
-			
+		String pgmArgs = configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, "");	//$NON-NLS-1$
+		String vmArgs = configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, ""); //$NON-NLS-1$
+		ExecutionArguments args = new ExecutionArguments(vmArgs, pgmArgs);			
 		String[] classpath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
 		String bootpath = configuration.getAttribute(JavaDebugUI.BOOTPATH_ATTR, null);
 
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainType.getFullyQualifiedName(), classpath);
 		runConfig.setProgramArguments(args.getProgramArgumentsArray());
 		runConfig.setVMArguments(args.getVMArgumentsArray());
-		runConfig.setWorkingDirectory(path);
+		runConfig.setWorkingDirectory(workingDir);
 		if (bootpath != null) {
 			runConfig.setBootClassPath(new String[]{bootpath});
 		}
 		
+		// Get the configuration's container as a String
+		IPath location = configuration.getLocation();
+		IPath containerPath = location.removeLastSegments(1);
+		
+		// Get the configuration's perspective id's
+		String runPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
+		String debugPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+				
 		VMRunnerResult result = runner.run(runConfig);
 		
+		// Persist config info as default values on the launched resource
+		IResource resource = null;
+		try {
+			resource = mainType.getUnderlyingResource();
+		} catch (CoreException ce) {			
+		}		
+		if (resource != null) {
+			persistAttribute(fgQualNameContainer, resource, containerPath.toString());
+			persistAttribute(fgQualNameRunPerspId, resource, runPerspID);
+			persistAttribute(fgQualNameDebugPerspId, resource, debugPerspID);			
+			persistAttribute(fgQualNameWorkingDir, resource, workingDir);
+			persistAttribute(fgQualNamePgmArgs, resource, pgmArgs);
+			persistAttribute(fgQualNameVMArgs, resource, vmArgs);
+			persistAttribute(fgQualNameVMTypeId, resource, vmInstallTypeId);
+			persistAttribute(fgQualNameVMId, resource, vmInstallId);
+		}
+
 		ISourceLocator sourceLocator = new JavaUISourceLocator(javaProject);
 		Launch launch = new Launch(configuration, mode, sourceLocator, result.getProcesses(), result.getDebugTarget());
 		return launch;
 	}	
-
+	
+	/**
+	 * Convenience method to set a persistent property on the specified IResource
+	 */
+	protected void persistAttribute(QualifiedName qualName, IResource resource, String value) {
+		try {
+			resource.setPersistentProperty(qualName, value);
+		} catch (CoreException ce) {	
+		}
+	}
+	
 	/**
 	 * Throws a core exception with the given message and optional
 	 * exception. The exception's status code will indicate an error.
@@ -292,7 +479,7 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 	 * 
 	 * @return the launch manager
 	 */
-	protected ILaunchManager getLaunchManager() {
+	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
