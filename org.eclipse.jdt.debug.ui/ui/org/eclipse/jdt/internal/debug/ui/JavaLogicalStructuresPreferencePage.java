@@ -373,8 +373,8 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         });
         table.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent event) {
-                if (event.character == SWT.DEL && event.stateMask == 0) {
-                    removeLogicalStrutures();
+                if (event.character == SWT.DEL && event.stateMask == 0 && fRemoveLogicalStructureButton.isEnabled()) {
+                	removeLogicalStrutures();
                 }
             }
         }); 
