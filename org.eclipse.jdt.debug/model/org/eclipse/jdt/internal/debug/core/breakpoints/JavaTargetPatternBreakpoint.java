@@ -17,16 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIType;
-import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ReferenceType;
-import com.sun.jdi.request.EventRequest;
 
 public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements IJavaTargetPatternBreakpoint {
 
@@ -41,7 +37,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 	}
 	
 	/**
-	 * @see JDIDebugModel#createPatternBreakpoint(IResource, String, int, int, int, int, boolean, Map)
+	 * @see JDIDebugModel#createTargetPatternBreakpoint(IResource, String, int, int, int, int, boolean, Map)
 	 */	
 	public JavaTargetPatternBreakpoint(IResource resource, String sourceName, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, Map attributes) throws DebugException {
 		this(resource, sourceName, lineNumber, charStart, charEnd, hitCount, add, attributes, TARGET_PATTERN_BREAKPOINT);
@@ -161,7 +157,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 	}	
 	
 	/**
-	 * Adds the source name and hit count attributes to the gvien map.
+	 * Adds the source name and hit count attributes to the given map.
 	 */
 	protected void addSourceNameAndHitCount(Map attributes, String sourceName, int hitCount) throws CoreException {
 		if (sourceName != null) {
@@ -169,7 +165,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 		}		
 		if (hitCount > 0) {
 			attributes.put(HIT_COUNT, new Integer(hitCount));
-			attributes.put(EXPIRED, new Boolean(false));
+			attributes.put(EXPIRED, Boolean.FALSE);
 		}
 	}
 	
@@ -200,11 +196,10 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 	}		
 	
 	/**
-	 * @see IJavaPatternBreakpoint#getSourceName()
+	 * @see IJavaTargetPatternBreakpoint#getSourceName()
 	 */
 	public String getSourceName() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_NAME);		
 	}		
-
 }
 
