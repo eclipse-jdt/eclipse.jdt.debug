@@ -227,6 +227,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	
 	/**
 	 * Validates the current state of the hit count editor.
+	 * Hit count value must be a positive integer.
 	 */
 	private void hitCountChanged() {
 		if (!fHitCountButton.getSelection()) {
