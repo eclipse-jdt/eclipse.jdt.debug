@@ -143,8 +143,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	private static HashMap fgDetailQueue = new HashMap(5);
 	
 	static final Point BIG_SIZE= new Point(22, 16);
-	protected ImageDescriptorRegistry fJavaElementImageRegistry= JavaPlugin.getImageDescriptorRegistry();
-	protected org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
+	
+	private ImageDescriptorRegistry fJavaElementImageRegistry;
+	private org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry;
 
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
 	
@@ -159,7 +160,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	private static final String fgToString = "toString"; //$NON-NLS-1$
 
-	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+	private JavaElementLabelProvider fJavaLabelProvider;
 	
 	public JDIModelPresentation() {
 		super();
@@ -700,7 +701,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else {
 			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ERROR, flags);
 		}
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 
 	protected Image getJavaBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
@@ -721,7 +722,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else {
 				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 			}
-			return fDebugImageRegistry.get(descriptor);
+			return getDebugImageRegistry().get(descriptor);
 		}
 	}
 
@@ -734,7 +735,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 		}
 			
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 	
 	protected Image getJavaMethodEntryBreakpointImage(IJavaMethodEntryBreakpoint mBreakpoint) throws CoreException {
@@ -746,7 +747,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 		}
 			
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}	
 	
 	protected Image getJavaWatchpointImage(IJavaWatchpoint watchpoint) throws CoreException {
@@ -778,14 +779,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			//neither access nor modification
 			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_WATCHPOINT_DISABLED, flags);
 		}
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 	
 	protected Image getVariableImage(IAdaptable element) {
 		JavaElementImageDescriptor descriptor= new JavaElementImageDescriptor(
 			computeBaseImageDescriptor(element), computeAdornmentFlags(element), BIG_SIZE);
 
-		return fJavaElementImageRegistry.get(descriptor);			
+		return getJavaElementImageRegistry().get(descriptor);			
 	}
 	
 	/**
@@ -811,7 +812,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		int flags= computeJDIAdornmentFlags(element);
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(image, flags);
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 	
 	/**
@@ -829,7 +830,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return null;
 		}
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(image, 0);
-		return fDebugImageRegistry.get(descriptor);
+		return getDebugImageRegistry().get(descriptor);
 	}
 
 	/**
@@ -1263,7 +1264,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					
 		if (member != null) {
 			label.append(" - "); //$NON-NLS-1$
-			label.append(fJavaLabelProvider.getText(member));
+			label.append(getJavaLabelProvider().getText(member));
 		}
 		
 		return label.toString();
@@ -1306,7 +1307,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					
 		if (member != null) {
 			label.append(" - "); //$NON-NLS-1$
-			label.append(fJavaLabelProvider.getText(member));
+			label.append(getJavaLabelProvider().getText(member));
 		}
 		
 		return label.toString();
@@ -1322,7 +1323,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					
 		if (member != null) {
 			label.append(" - "); //$NON-NLS-1$
-			label.append(fJavaLabelProvider.getText(member));
+			label.append(getJavaLabelProvider().getText(member));
 		}
 		
 		return label.toString();
@@ -1801,5 +1802,26 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				buffer.append(MessageFormat.format(DebugUIMessages.getString("JDIModelPresentation.instance_1"), new String[] {instanceText})); //$NON-NLS-1$
 			}				
 		}
+	}
+	
+	protected ImageDescriptorRegistry getJavaElementImageRegistry() {
+		if (fJavaElementImageRegistry == null) {
+			fJavaElementImageRegistry = JavaPlugin.getImageDescriptorRegistry();		
+		}
+		return fJavaElementImageRegistry;
+	}
+
+	protected org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
+		if (fDebugImageRegistry == null) {
+			fDebugImageRegistry = JDIDebugUIPlugin.getImageDescriptorRegistry();		
+		}
+		return fDebugImageRegistry;
+	}
+
+	protected JavaElementLabelProvider getJavaLabelProvider() {
+		if (fJavaLabelProvider == null) {
+			fJavaLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);		
+		}
+		return fJavaLabelProvider;
 	}
 }
