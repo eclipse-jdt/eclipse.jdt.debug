@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
@@ -48,8 +48,8 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	 */
 	public void run(IAction action) {
 		try {
-			IDebugTarget target= getContext();
-			if (target == null) {
+			IThread thread= getContext();
+			if (thread == null) {
 				if (getTextEditor() != null) {
 					getTextEditor().getSite().getShell().getDisplay().beep();
 				}
@@ -73,18 +73,11 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 				ExceptionHandler.handle(ce, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			} 
-			target.breakpointAdded(breakpoint);
-			IThread[] threads= target.getThreads(); 
-			for (int i= 0; i < threads.length; i++) {
-				IThread thread= threads[i];
-				if (thread.canResume()) {
-					try {
-						thread.resume();
-					} catch (DebugException de) {
-						JDIDebugUIPlugin.log(de);
-					}
-					break;
-				}
+			thread.getDebugTarget().breakpointAdded(breakpoint);
+			try {
+				thread.resume();
+			} catch (DebugException de) {
+				JDIDebugUIPlugin.log(de);
 			}
 		} catch(DebugException de) {
 			ExceptionHandler.handle(de, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -93,39 +86,26 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	/**
 	 * Resolves the debug target context to set the run to line
 	 */
-	protected IDebugTarget getContext() throws DebugException{
-		IDebugTarget target= getContextFromUI();
-		if (target == null) {
-			target= getContextFromModel();
-			//target has already been checked for suspended thread
-			return target;
+	protected IThread getContext() throws DebugException{
+		IThread thread= getContextFromUI();
+		if (thread == null) {
+			thread= getContextFromModel();
 		}
-		if (target == null) {
-			return null;
-		}
-		if (target.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
+		if (thread != null && thread.getDebugTarget().getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
 			//can't set run to line in scrapbook context
 			return null;
 		}
-		IThread[] threads= target.getThreads();
-		for (int i= 0; i < threads.length; i++) {
-			IThread thread= threads[i];
-			if (thread.canResume()) {
-				return target;
-			}
-		}
-		
-		return null;
+		return thread;
 	}
 	/**
 	 * Resolves a debug target context from the model
 	 */
-	protected IDebugTarget getContextFromModel() throws DebugException {
+	protected IThread getContextFromModel() throws DebugException {
 		IDebugTarget[] dts= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 		for (int i= 0; i < dts.length; i++) {
-			IDebugTarget dt= dts[i];
-			if (getContextFromDebugTarget(dt) != null) {
-				return dt;
+			IThread thread= getContextFromDebugTarget(dts[i]);
+			if (thread != null) {
+				return thread;
 			}
 		}
 		return null;
@@ -142,16 +122,19 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	/**
 	 * Resolves a stack frame context from the UI
 	 */
-	protected IDebugTarget getContextFromUI() throws DebugException {
+	protected IThread getContextFromUI() throws DebugException {
 		IAdaptable de= DebugUITools.getDebugContext();
 		if (de != null) {
+			IThread thread= null;
 			if (de instanceof IThread) {
-				return getContextFromThread((IThread) de);
-			} else if (de instanceof IDebugElement) {
-				return ((IDebugElement)de).getDebugTarget();
+				thread= (IThread) de;
+			} else if (de instanceof IStackFrame) {
+				thread= ((IStackFrame)de).getThread();
+			}
+			if (thread != null && thread.canResume()) {
+				return thread;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -166,7 +149,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	/**
 	 * Resolves a stack frame context from the model.
 	 */
-	protected IDebugTarget getContextFromDebugTarget(IDebugTarget dt) throws DebugException {
+	protected IThread getContextFromDebugTarget(IDebugTarget dt) throws DebugException {
 		if (dt.isTerminated() || dt.isDisconnected()) {
 			return null;
 		}
@@ -174,7 +157,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		for (int i= 0; i < threads.length; i++) {
 			IThread thread= threads[i];
 			if (thread.isSuspended()) {
-				return dt;
+				return thread;
 			}
 		}
 		return null;
