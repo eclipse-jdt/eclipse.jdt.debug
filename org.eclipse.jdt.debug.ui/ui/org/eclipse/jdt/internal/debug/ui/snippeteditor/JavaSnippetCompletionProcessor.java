@@ -42,7 +42,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	};
 		
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
-		fCollector= new ResultCollector();
+		fCollector= new JavaSnippetResultCollector();
 		fEditor= editor;
 		fTemplateEngine= new TemplateEngine(TemplateContext.JAVA);
 	}

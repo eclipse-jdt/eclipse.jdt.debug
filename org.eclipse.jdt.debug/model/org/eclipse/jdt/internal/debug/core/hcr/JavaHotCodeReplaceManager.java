@@ -246,7 +246,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			project= (IProject) iter.next();
 			buildTime= (ProjectBuildTime)fProjectBuildTimes.get(project);
 			if (buildTime == null) {
-				fProjectBuildTimes.put(project, new ProjectBuildTime());
+				buildTime= new ProjectBuildTime();
+				fProjectBuildTimes.put(project, buildTime);
 			}
 			buildTime.setCurrentBuildDate(currentDate);
 		}
@@ -669,7 +670,14 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public IMethod getMethod(JDIStackFrame frame, IResource[] resources) throws CoreException {
 		String declaringTypeName= frame.getDeclaringTypeName();
 		String methodName= frame.getMethodName();
-		String[] arguments= Signature.getParameterTypes(frame.getSignature());
+		String[] arguments= null;
+		try {
+			arguments= Signature.getParameterTypes(frame.getSignature());
+		} catch (IllegalArgumentException exception) {
+			// If Signature can't parse the signature, we can't
+			// create the method
+			return null;
+		}
 		ICompilationUnit compilationUnit= getCompilationUnit(frame);
 		IType type= compilationUnit.getType(getUnqualifiedName(declaringTypeName));;
 		if (type != null) {

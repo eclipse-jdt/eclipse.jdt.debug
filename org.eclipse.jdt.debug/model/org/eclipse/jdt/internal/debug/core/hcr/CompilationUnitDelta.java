@@ -190,6 +190,7 @@ public class CompilationUnitDelta {
 		};
 		
 		fRoot= (SimpleJavaElement) differencer.findDifferences(false, null, null, null, oldStructure, newStructure);
+		fHasHistory= (fRoot != null); // if no changes pretend that we had no history
 
 		if (DEBUG) {
 			if (fRoot != null)
@@ -327,7 +328,7 @@ public class CompilationUnitDelta {
 				if (i > 0)
 					sb.append(", "); //$NON-NLS-1$
 				if (types != null)
-					sb.append(Signature.getSimpleName(Signature.toString(types[i])));
+					sb.append(unqualifyName(Signature.getSimpleName(Signature.toString(types[i]))));
 			}
 			sb.append(')');
 			break;
@@ -351,6 +352,14 @@ public class CompilationUnitDelta {
 			return null;
 		}
 		return sb.toString();
+	}
+	
+	private static String unqualifyName(String qualifiedName) {
+		int index= qualifiedName.lastIndexOf('/');
+		if (index > -1) {
+			return qualifiedName.substring(index + 1);
+		}
+		return qualifiedName;
 	}
 
 	/**

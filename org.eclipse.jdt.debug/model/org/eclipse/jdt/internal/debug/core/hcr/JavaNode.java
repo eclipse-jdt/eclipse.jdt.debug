@@ -243,6 +243,7 @@ class JavaNode {
 							break;
 						default:
 							buf.append(b, scanner.startPosition, scanner.currentPosition - scanner.startPosition);
+							buf.append(' ');
 							break;
 					}
 				}
