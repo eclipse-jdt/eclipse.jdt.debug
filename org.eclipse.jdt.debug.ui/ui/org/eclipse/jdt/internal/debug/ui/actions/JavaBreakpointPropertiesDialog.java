@@ -320,9 +320,10 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		layout.horizontalSpacing = 0;
 		layout.numColumns = 2;
 		
-		// Get the background color for the title area
+		// Get the colors for the title area
 		Display display = parent.getDisplay();
 		Color bg = JFaceColors.getBannerBackground(display);
+		Color fg = JFaceColors.getBannerForeground(display);
 		
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		fTitleArea.setLayout(layout);
@@ -332,6 +333,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		// Message label
 		fMessageLabel = new CLabel(fTitleArea, SWT.LEFT);
 		fMessageLabel.setBackground(bg);
+		fMessageLabel.setForeground(fg);
 		fMessageLabel.setText(" ");//$NON-NLS-1$
 		fMessageLabel.setFont(JFaceResources.getBannerFont());
 		
