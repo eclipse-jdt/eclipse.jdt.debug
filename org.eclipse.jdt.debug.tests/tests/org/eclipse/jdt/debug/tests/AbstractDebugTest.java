@@ -11,6 +11,8 @@
 package org.eclipse.jdt.debug.tests;
 
 import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -80,6 +82,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		// set error dialog to non-blocking to avoid hanging the UI during test
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
+		if (!(this.getClass() == ProjectCreationDecorator.class) && !getJavaProject().exists()) {
+			new TestSuite(ProjectCreationDecorator.class).run(new TestResult());
+		}
 	}
 	
 	/**
