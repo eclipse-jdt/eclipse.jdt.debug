@@ -86,6 +86,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(combinedPath));
 		}
+		arguments.add(config.getClassToLaunch());
 		
 		String[] programArgs= config.getProgramArguments();
 		addArguments(programArgs, arguments);
