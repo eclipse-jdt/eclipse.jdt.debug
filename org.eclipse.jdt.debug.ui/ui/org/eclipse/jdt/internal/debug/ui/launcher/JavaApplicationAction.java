@@ -167,6 +167,7 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 		try { 
 			ILaunchConfiguration config = findLaunchConfiguration(type);
 			if (config != null) {
+				DebugUITools.saveAndBuildBeforeLaunch();
 				config.launch(getMode(), null);
 			}			
 		} catch (CoreException e) {
