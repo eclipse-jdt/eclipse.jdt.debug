@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -41,21 +42,17 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelMarker;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.JDIDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -288,7 +285,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	private void doHotCodeReplace(final List resources) {
 		final List hotSwapTargets= getHotSwapTargets();
 		final List noHotSwapTargets= getNoHotSwapTargets();
-		final List qualifiedNames= JDIDebugUtils.getQualifiedNames(resources);
+		final List qualifiedNames= getQualifiedNames(resources);
 		if (!hotSwapTargets.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
@@ -955,6 +952,57 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!fNoHotSwapTargets.contains(target)) {
 			fNoHotSwapTargets.add(target);
 		}
-	}	
+	}
+	
+	/**
+	 * Returns a collection of <code>String</code>s representing
+	 * the qualified type names of the given resources. The qualified
+	 * names are returned dot separated.
+	 * <p>
+	 * This method takes into account the output directory of 
+	 * Java projects.
+	 */
+	public static List getQualifiedNames(List resources) {
+		List qualifiedNames= new ArrayList(resources.size());
+		Iterator itr= resources.iterator();
+		IProject project = null;
+		IPath outputPath = null;
+		IJavaProject javaProject = null;
+		while (itr.hasNext()) {
+			IResource resource= (IResource) itr.next();
+			if (project == null || !resource.getProject().equals(project)) {
+				project= resource.getProject();
+				javaProject= JavaCore.create(project);
+				try {
+					outputPath= javaProject.getOutputLocation();
+				} catch (JavaModelException e) {
+					JDIDebugPlugin.logError(e);
+					project = null;
+					continue;
+				}
+			}
+			IPath resourcePath= resource.getFullPath();
+			int count= resourcePath.matchingFirstSegments(outputPath);
+			resourcePath= resourcePath.removeFirstSegments(count);
+			String pathString= resourcePath.toString();
+			pathString= translateResourceName(pathString);
+			qualifiedNames.add(pathString);
+		}
+		return qualifiedNames;
+	}
+	
+	/**
+	 * Translates the given resourceName, which is of the form:
+	 * 	foo/bar/baz.class
+	 * the form:
+	 * 	foo.bar.baz
+	 */
+	private static String translateResourceName(String resourceName) {
+		// get rid of ".class"
+		resourceName= resourceName.substring(0, resourceName.length() - 6);
+		// switch to dot separated
+		return resourceName.replace(IPath.SEPARATOR, '.');
+	}
+
 }
 

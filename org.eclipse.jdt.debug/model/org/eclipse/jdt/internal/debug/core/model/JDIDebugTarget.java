@@ -56,7 +56,6 @@ import org.eclipse.jdt.internal.core.Util;
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.JDIDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
@@ -682,7 +681,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				typesFailedHCR(typesToBytes.keySet());
 				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception); //$NON-NLS-1$
 			}
-			reinstallBreakpointsIn(resources);
+			reinstallBreakpointsIn(resources, qualifiedNames);
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
 		}
@@ -772,14 +771,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * Reinstall all breakpoints installed in the given resources
 	 */
-	protected void reinstallBreakpointsIn(List resources) {
+	protected void reinstallBreakpointsIn(List resources, List classNames) {
 		List breakpoints= getBreakpoints();
 		IJavaBreakpoint[] copy= new IJavaBreakpoint[breakpoints.size()];
 		breakpoints.toArray(copy);
 		IJavaBreakpoint breakpoint= null;
 		String installedType= null;
-		
-		List classNames= JDIDebugUtils.getQualifiedNames(resources);
 		
 		for (int i= 0; i < copy.length; i++) {
 			breakpoint= copy[i];
