@@ -114,6 +114,7 @@ public class WatchExpressionDialog extends StatusDialog {
 		fCheckBox.setFont(font);
 
 		applyDialogFont(container);
+		fSnippetViewer.getControl().setFocus();
 		return container;
 	}
 
