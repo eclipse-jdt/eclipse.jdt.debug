@@ -50,6 +50,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -380,7 +381,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					// After redefining classes, drop to frame
 					attemptDropToFrame(target, resources, qualifiedNames);
 				}
-				fireHCRSucceeded();
+				fireHCRSucceeded(target);
 			} catch (DebugException de) {
 				// target update failed
 				fireHCRFailed(target, de);
@@ -395,10 +396,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * Notifies listeners that a hot code replace attempt succeeded
 	 */
-	private void fireHCRSucceeded() {
+	private void fireHCRSucceeded(IJavaDebugTarget target) {
 		Object[] listeners= fHotCodeReplaceListeners.getListeners();
 		for (int i=0; i<listeners.length; i++) {
-			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceSucceeded();
+			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceSucceeded(target);
 		}		
 	}
 	

@@ -20,9 +20,9 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 	private ILabelProvider fLabelProvider= new DelegatingModelPresentation();
 
 	/**
-	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded()
+	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded(IJavaDebugTarget)
 	 */
-	public void hotCodeReplaceSucceeded() {
+	public void hotCodeReplaceSucceeded(IJavaDebugTarget target) {
 	}
 
 	/**
