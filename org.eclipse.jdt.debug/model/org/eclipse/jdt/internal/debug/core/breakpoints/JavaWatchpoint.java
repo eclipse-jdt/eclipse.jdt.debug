@@ -6,13 +6,10 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -89,26 +86,25 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	/**
 	 * @see JDIDebugModel#createWatchpoint(IResource, String, String, int, int, int, int, boolean, Map)
 	 */
-	public JavaWatchpoint(final IResource resource, final String typeName, final String fieldName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes) throws DebugException {
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {		
-				setMarker(resource.createMarker(JAVA_WATCHPOINT));
+	public JavaWatchpoint(IResource resource, String typeName, String fieldName, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, Map attributes) throws DebugException {
+		try {
+			setMarker(resource.createMarker(JAVA_WATCHPOINT));
 				
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				// configure the field handle
-				addFieldName(attributes, fieldName);
-				// configure the access and modification flags to defaults
-				addDefaultAccessAndModification(attributes);			
-				
-				// set attributes
-				ensureMarker().setAttributes(attributes);
-				
-				register(add);
-			}
-		};
-		run(wr);
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+			addTypeNameAndHitCount(attributes, typeName, hitCount);
+			// configure the field handle
+			addFieldName(attributes, fieldName);
+			// configure the access and modification flags to defaults
+			addDefaultAccessAndModification(attributes);			
+			
+			// set attributes
+			setAttributes(attributes);
+			
+			register(add);
+		} catch (CoreException ce) {
+			throw new DebugException(ce.getStatus());
+		}
 	}
 
 	/**
@@ -283,7 +279,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (access == isAccess()) {
 			return;
 		}		
-		ensureMarker().setAttribute(ACCESS, access);
+		setAttribute(ACCESS, access);
 		if (access && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(access || isModification())) {
@@ -305,7 +301,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (modification == isModification()) {
 			return;
 		}
-		ensureMarker().setAttribute(MODIFICATION, modification);
+		setAttribute(MODIFICATION, modification);
 		if (modification && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(modification || isAccess())) {
@@ -324,7 +320,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	protected void setDefaultAccessAndModification() throws CoreException {
 		Object[] values= new Object[]{Boolean.FALSE, Boolean.TRUE};
 		String[] attributes= new String[]{ACCESS, MODIFICATION};
-		ensureMarker().setAttributes(attributes, values);
+		setAttributes(attributes, values);
 	}
 
 

@@ -10,9 +10,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -23,7 +22,6 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.MethodEntryEvent;
@@ -121,28 +119,26 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * @see JDIDebugModel#createMethodBreakpoint(IResource, String, String, String, boolean, boolean, boolean, int, boolean, Map)
 	 */
-	public JavaMethodBreakpoint(final IResource resource, final String typeName, final String methodName, final String methodSignature, final boolean entry, final boolean exit, final boolean nativeOnly, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) throws CoreException {
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(JAVA_METHOD_BREAKPOINT));
-				
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
-				addMethodNameAndSignature(attributes, methodName, methodSignature);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				attributes.put(ENTRY, new Boolean(entry));
-				attributes.put(EXIT, new Boolean(exit));
-				attributes.put(NATIVE, new Boolean(nativeOnly));
-				
-				//set attributes
-				ensureMarker().setAttributes(attributes);
-				
-				register(register);
-			}
-
-		};
-		run(wr);
+	public JavaMethodBreakpoint(IResource resource, String typeName, String methodName, String methodSignature, boolean entry, boolean exit, boolean nativeOnly, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		try {
+			// create the marker
+			setMarker(resource.createMarker(JAVA_METHOD_BREAKPOINT));
+			
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+			addMethodNameAndSignature(attributes, methodName, methodSignature);
+			addTypeNameAndHitCount(attributes, typeName, hitCount);
+			attributes.put(ENTRY, new Boolean(entry));
+			attributes.put(EXIT, new Boolean(exit));
+			attributes.put(NATIVE, new Boolean(nativeOnly));
+			
+			//set attributes
+			setAttributes(attributes);
+			
+			register(register);
+		} catch (CoreException e) {
+			throw new DebugException(e.getStatus());
+		}	
 	}
 	
 	/**
@@ -510,7 +506,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 */
 	public void setEntry(boolean entry) throws CoreException {
 		if (isEntry() != entry) {
-			ensureMarker().setAttribute(ENTRY, entry);
+			setAttribute(ENTRY, entry);
 			if (entry && !isEnabled()) {
 				setEnabled(true);
 			} else if (!(entry || isExit())) {
@@ -524,7 +520,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 */
 	public void setExit(boolean exit) throws CoreException {
 		if (isExit() != exit) {
-			ensureMarker().setAttribute(EXIT, exit);
+			setAttribute(EXIT, exit);
 			if (exit && !isEnabled()) {
 				setEnabled(true);
 			} else if (!(exit || isEntry())) {
@@ -538,7 +534,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 */
 	public void setNativeOnly(boolean nativeOnly) throws CoreException {
 		if (isNativeOnly() != nativeOnly) {
-			ensureMarker().setAttribute(NATIVE, nativeOnly);
+			setAttribute(NATIVE, nativeOnly);
 		}
 	}
 		
@@ -556,7 +552,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * @see IBreakpoint#setEnabled(boolean)
 	 * 
-	 * If this breakpoing is not entry or exit enabled,
+	 * If this breakpoint is not entry or exit enabled,
 	 * set the default (entry)
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {

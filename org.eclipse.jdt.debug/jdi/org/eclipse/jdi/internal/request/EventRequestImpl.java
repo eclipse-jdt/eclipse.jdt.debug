@@ -5,16 +5,34 @@ package org.eclipse.jdi.internal.request;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.request.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.event.*;
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.jdi.internal.FieldImpl;
+import org.eclipse.jdi.internal.LocationImpl;
+import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ObjectReferenceImpl;
+import org.eclipse.jdi.internal.ReferenceTypeImpl;
+import org.eclipse.jdi.internal.ThreadReferenceImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.event.EventImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
+import com.sun.jdi.InternalException;
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMMismatchException;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.InvalidRequestStateException;
+import com.sun.jdi.request.StepRequest;
 
 
 /**

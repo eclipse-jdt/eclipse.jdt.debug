@@ -5,15 +5,12 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -43,29 +40,27 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * @see JDIDebugModel#createLineBreakpoint(IResource, String, int, int, int, int, boolean, Map)
 	 */
-	public JavaLineBreakpoint(final IResource resource, final String typeName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, boolean add, Map attributes) throws DebugException {
+	public JavaLineBreakpoint(IResource resource, String typeName, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, Map attributes) throws DebugException {
 		this(resource, typeName,lineNumber, charStart, charEnd, hitCount, add, attributes, JAVA_LINE_BREAKPOINT);
 	}
 	
-	protected JavaLineBreakpoint(final IResource resource, final String typeName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes, final String markerType) throws DebugException {
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-	
-				// create the marker
-				setMarker(resource.createMarker(markerType));
-				
-				// add attributes
-				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				
-				// set attributes
-				ensureMarker().setAttributes(attributes);
-				
-				// add to breakpoint manager if requested
-				register(add);
-			}
-		};
-		run(wr);
+	protected JavaLineBreakpoint(IResource resource, String typeName, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, Map attributes, String markerType) throws DebugException {
+		try {
+			// create the marker
+			setMarker(resource.createMarker(markerType));
+			
+			// add attributes
+			addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+			addTypeNameAndHitCount(attributes, typeName, hitCount);
+			
+			// set attributes
+			setAttributes(attributes);
+			
+			// add to breakpoint manager if requested
+			register(add);
+		} catch (CoreException ce) {
+			throw new DebugException(ce.getStatus());
+		}
 	}
 	
 	/**

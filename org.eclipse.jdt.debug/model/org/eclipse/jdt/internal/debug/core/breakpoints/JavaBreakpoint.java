@@ -128,15 +128,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		configureAtStartup();
 	}
 
-	protected IMarker ensureMarker() throws DebugException {
-		IMarker m = getMarker();
-		if (m == null || !m.exists()) {
-			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
-				JDIDebugBreakpointMessages.getString("JavaBreakpoint.no_associated_marker"),null)); //$NON-NLS-1$
-		}
-		return m;
-	}
-	
 	/**
 	 * Add this breakpoint to the breakpoint manager,
 	 * or sets it as unregistered.
@@ -678,7 +669,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void incrementInstallCount() throws CoreException {
 		int count = getInstallCount();
-		ensureMarker().setAttribute(INSTALL_COUNT, count + 1);
+		setAttribute(INSTALL_COUNT, count + 1);
 	}	
 	
 	/**
@@ -695,12 +686,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected void decrementInstallCount() throws CoreException {
 		int count= getInstallCount();
 		if (count > 0) {
-			ensureMarker().setAttribute(INSTALL_COUNT, count - 1);	
+			setAttribute(INSTALL_COUNT, count - 1);	
 		}
 		if (count == 1) {
 			if (isExpired()) {
 				// if breakpoint was auto-disabled, re-enable it
-				ensureMarker().setAttributes(fgExpiredEnabledAttributes,
+				setAttributes(fgExpiredEnabledAttributes,
 						new Object[]{Boolean.FALSE, Boolean.TRUE});
 			}
 		}
@@ -710,7 +701,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Sets the type name in which to install this breakpoint.
 	 */
 	protected void setTypeName(String typeName) throws CoreException {
-		ensureMarker().setAttribute(TYPE_NAME, typeName);
+		setAttribute(TYPE_NAME, typeName);
 	}	
 
 	/**
@@ -760,7 +751,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		if (attributes != null) {
 			String[] strAttributes= new String[attributes.size()];
-			ensureMarker().setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
+			setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
 		}
 	}	
 
@@ -776,10 +767,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setHitCount(int count) throws CoreException {	
 		if (!isEnabled() && count > -1) {
-			ensureMarker().setAttributes(new String []{HIT_COUNT, EXPIRED, ENABLED},
+			setAttributes(new String []{HIT_COUNT, EXPIRED, ENABLED},
 				new Object[]{new Integer(count), Boolean.FALSE, Boolean.TRUE});
 		} else {
-			ensureMarker().setAttributes(new String[]{HIT_COUNT, EXPIRED},
+			setAttributes(new String[]{HIT_COUNT, EXPIRED},
 				new Object[]{new Integer(count), Boolean.FALSE});
 		}
 	}	
@@ -788,7 +779,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Sets whether or not this breakpoint's hit count has expired.
 	 */
 	public void setExpired(boolean expired) throws CoreException {
-		ensureMarker().setAttribute(EXPIRED, expired);	
+		setAttribute(EXPIRED, expired);	
 	}	
 
 	/**
@@ -803,7 +794,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setSuspendPolicy(int suspendPolicy) throws CoreException {
 		if (getSuspendPolicy() != suspendPolicy) {
-			ensureMarker().setAttribute(SUSPEND_POLICY, suspendPolicy);
+			setAttribute(SUSPEND_POLICY, suspendPolicy);
 		}
 	}
 	
@@ -838,7 +829,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 	
 	/**
-	 * @see IJavaBreakpoint#addThreadFilter(IJavaThread)
+	 * @see IJavaBreakpoint#setThreadFilter(IJavaThread)
 	 */
 	public void setThreadFilter(IJavaThread thread) throws CoreException {
 		if (!(thread.getDebugTarget() instanceof JDIDebugTarget) || !(thread instanceof JDIThread)) {

@@ -7,11 +7,6 @@ package org.eclipse.jdt.internal.debug.core;
 
 import java.util.HashMap;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.VMDisconnectedException;
@@ -35,10 +30,10 @@ import com.sun.jdi.request.EventRequest;
  * registered to handle the specific events are notified.
  * </p>
  * <p>
- * Events are processed in event sets. It is poissble that one
+ * Events are processed in event sets. It is possible that one
  * event can trigger more than one event request to be processed.
  * In such cases all event requests triggered by that one event are
- * processed, and each event listener votes on whehter the thread
+ * processed, and each event listener votes on whether the thread
  * in which the event occurred should be resumed. A thread is only
  * resumed in if all event handlers agree that the thread should be
  * resumed.
@@ -137,13 +132,6 @@ public class EventDispatcher implements Runnable {
 	 */
 	public void run() {
 		EventQueue q= fTarget.getVM().eventQueue();
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
-					dispatch(fEventSet);	
-				}
-			};
-			
 		while (!isShutdown()) {
 			try {
 				try {
@@ -156,12 +144,7 @@ public class EventDispatcher implements Runnable {
 				}
 								
 				if(!isShutdown()) {
-					try {
-						workspace.run(runnable, null);
-					} catch (CoreException e) {
-						JDIDebugPlugin.logError(e);
-						break;
-					}
+					dispatch(fEventSet);
 				}
 			} catch (InterruptedException e) {
 				break;

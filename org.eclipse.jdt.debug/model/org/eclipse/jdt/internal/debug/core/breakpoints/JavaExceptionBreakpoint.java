@@ -5,15 +5,18 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -23,6 +26,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ExceptionEvent;
+import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ExceptionRequest;
 
@@ -52,6 +56,19 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected static final String CHECKED = "org.eclipse.jdt.debug.core.checked"; //$NON-NLS-1$	
 	
 	/**
+	 * Exception breakpoint attribute storing the inclusive value (value <code>"org.eclipse.jdt.debug.core.inclusive_filters"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether class
+	 * filters are inclusive or exclusive.
+	 */
+	protected static final String INCLUSIVE_FILTERS = "org.eclipse.jdt.debug.core.inclusive_filters"; //$NON-NLS-1$	
+	/**
+	 * Exception breakpoint attribute storing the String value (value <code>"org.eclipse.jdt.debug.core.filters"</code>).
+	 * This attribute is stored as a <code>String</code>, a comma delimited list
+	 * of class filters.  The filters are applied as inclusion or exclusion depending on 
+	 * INCLUSIVE_FILTERS.
+	 */
+	protected static final String FILTERS = "org.eclipse.jdt.debug.core.filters"; //$NON-NLS-1$	
+	/**
 	 * Name of the exception that was actually hit (could be a
 	 * subtype of the type that is being caught).
 	 */
@@ -77,29 +94,25 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @exception DebugException if unable to create the associated marker due
 	 *  to a lower level exception.
 	 */	
-	public JavaExceptionBreakpoint(final IResource resource, final String exceptionName, final boolean caught, final boolean uncaught, final boolean checked, final boolean add, final Map attributes) throws DebugException {
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {				
-				// create the marker
-				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
-				
-				// add attributes
-				attributes.put(IBreakpoint.ID, getModelIdentifier());
-				attributes.put(TYPE_NAME, exceptionName);
-				attributes.put(ENABLED, new Boolean(true));
-				attributes.put(CAUGHT, new Boolean(caught));
-				attributes.put(UNCAUGHT, new Boolean(uncaught));
-				attributes.put(CHECKED, new Boolean(checked));
-				
-				ensureMarker().setAttributes(attributes);
-				
-				register(add);
-			}
-
-		};
-		run(wr);
-
+	public JavaExceptionBreakpoint(IResource resource, String exceptionName, boolean caught, boolean uncaught, boolean checked, boolean add, Map attributes) throws DebugException {
+		try {
+			// create the marker
+			setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
+					
+			// add attributes
+			attributes.put(IBreakpoint.ID, getModelIdentifier());
+			attributes.put(TYPE_NAME, exceptionName);
+			attributes.put(ENABLED, new Boolean(true));
+			attributes.put(CAUGHT, new Boolean(caught));
+			attributes.put(UNCAUGHT, new Boolean(uncaught));
+			attributes.put(CHECKED, new Boolean(checked));
+			
+			setAttributes(attributes);
+			
+			register(add);
+		} catch (CoreException e) {
+			throw new DebugException(e.getStatus());
+		}	
 	}
 		
 	/**
@@ -148,12 +161,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	/**
 	 * Sets the values for whether this breakpoint will
 	 * suspend execution when the associated exception is thrown
-	 * and caught or not caught..
+	 * and caught or not caught.
 	 */
 	public void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
 		Object[] values= new Object[]{new Boolean(caught), new Boolean(uncaught)};
 		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
-		ensureMarker().setAttributes(attributes, values);
+		setAttributes(attributes, values);
 	}
 		
 	/**
@@ -170,7 +183,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (caught == isCaught()) {
 			return;
 		}
-		ensureMarker().setAttribute(CAUGHT, caught);
+		setAttribute(CAUGHT, caught);
 		if (caught && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(caught || isUncaught())) {
@@ -189,11 +202,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#setUncaught(boolean)
 	 */
 	public void setUncaught(boolean uncaught) throws CoreException {
-	
 		if (uncaught == isUncaught()) {
 			return;
 		}
-		ensureMarker().setAttribute(UNCAUGHT, uncaught);
+		setAttribute(UNCAUGHT, uncaught);
 		if (uncaught && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(uncaught || isCaught())) {
@@ -214,14 +226,15 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		EventRequest newRequest = updateHitCount(request, target);
-		newRequest= updateCaughtState(newRequest,target);
-		if (newRequest != null && newRequest != request) {
+		if (newRequest == request) {
+			newRequest= updateCaughtState(newRequest, target);
+		} else {
 			replaceRequest(target, request, newRequest);
 			return newRequest;
 		}
 		return request;
 	}
-	
+		
 	/**
 	 * Return a request that will suspend execution when a caught and/or uncaught
 	 * exception is thrown as is appropriate for the current state of this breakpoint.
@@ -287,6 +300,107 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	public String getExceptionTypeName() {
 		return fExceptionName;
 	}
+	
+	public String[] getFilters() throws CoreException {
+		return parseList(ensureMarker().getAttribute(FILTERS, ""));
+	}
+	
+	/**
+	 * @see IJavaExceptionBreakpoint#setFilters(String[], boolean)
+	 */
+	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
+		String serializedFilters= serializeList(filters);
+		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, false)) {
+			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) {
+				//no change
+				return;
+			}
+		}
+		if (inclusive) {
+			setAttribute(INCLUSIVE_FILTERS, true);
+		} else {
+			//exclusion
+			setAttribute(INCLUSIVE_FILTERS, false);
+		}
 
+		setAttribute(FILTERS, serializedFilters);
+		
+		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
+		for (int i = 0; i < targets.length; i++) {
+			IDebugTarget t = targets[i];
+			if (!(t instanceof JDIDebugTarget)) {
+				continue;
+			}
+			JDIDebugTarget target= (JDIDebugTarget)t;
+			List requests= getRequests(target);
+			ListIterator iter= requests.listIterator();
+			EventRequest request= null;
+			while (iter.hasNext()) {
+				request= (EventRequest)iter.next();
+				if (request instanceof ClassPrepareRequest) {
+					continue;
+				}
+				EventRequest newRequest = recreateRequest(request, target);
+				if (newRequest != request) {
+					replaceRequest(target, request, newRequest);
+					iter.set(newRequest);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Adds the filtering to the exception request
+	 */
+	protected void configureRequest(EventRequest eRequest, JDIDebugTarget target) throws CoreException {
+		ExceptionRequest request= (ExceptionRequest)eRequest;
+		String[] filters= getFilters();
+		boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
+		for (int i = 0; i < filters.length; i++) {
+			if (inclusive) {
+				request.addClassFilter(filters[i]);
+			} else {
+				request.addClassExclusionFilter(filters[i]);
+			}
+		}
+		super.configureRequest(request, target);
+	}
+	
+	/**
+	 * Serializes the array of strings into one comma
+	 * separated string.
+	 */
+	protected String serializeList(String[] list) {
+		if (list == null) {
+			return ""; //$NON-NLS-1$
+		}
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < list.length; i++) {
+			if (i > 0) {
+				buffer.append(',');
+			}
+			buffer.append(list[i]);
+		}
+		return buffer.toString();
+	}	
+	
+	/**
+	 * Parses the comma separated String into an array of Strings
+	 */
+	protected String[] parseList(String listString) {
+		List list = new ArrayList(10);
+		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			list.add(token);
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+	/**
+	 * @see IJavaExceptionBreakpoint#isInclusiveFiltered()
+	 */
+	public boolean isInclusiveFiltered() throws CoreException {
+		return ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
+	}
 }
 
