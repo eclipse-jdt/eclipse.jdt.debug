@@ -136,6 +136,9 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 						return new VMRunnerResult(debugTarget, new IProcess[] { process });
 					} catch (InterruptedIOException e) {
 						String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
+						if (errorMessage.length() == 0) {
+							errorMessage= process.getStreamsProxy().getOutputStreamMonitor().getContents();
+						}
 						if (errorMessage.length() != 0) {
 							reportError(errorMessage);
 						} else {
