@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -25,10 +24,11 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener2;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -46,52 +46,31 @@ public class RunToLineTests extends AbstractDebugTest {
 	private Object fLock = new Object();
 	private IEditorPart fEditor = null;
 	
-	class MyPartListener implements IPartListener {
+	class MyListener implements IPerspectiveListener2 {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-         */
-        public void partActivated(IWorkbenchPart part) {
-        	partOpened(part);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-         */
-        public void partBroughtToTop(IWorkbenchPart part) {
-        	partOpened(part);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-         */
-        public void partClosed(IWorkbenchPart part) {            
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-         */
-        public void partDeactivated(IWorkbenchPart part) {
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-         */
-        public void partOpened(IWorkbenchPart part) {
-            if (part instanceof IEditorPart) {
-                IEditorPart editorPart = (IEditorPart) part;
-                IEditorInput editorInput = editorPart.getEditorInput();
-                IResource resource = (IResource) editorInput.getAdapter(IResource.class);
-                if (resource != null) {
-                    if (resource.getFullPath().lastSegment().equals("Breakpoints.java")) {
-                        synchronized (fLock) {
-                            fEditor = editorPart;
-                            fLock.notifyAll();
-                        }
-                    }
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
+		 */
+		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+            if (partRef.getTitle().equals("Breakpoints.java") && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) {
+                synchronized (fLock) {
+                    fEditor = (IEditorPart) partRef.getPart(true);
+                    fLock.notifyAll();
                 }
             }
-        }
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
+		 */
+		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
+		 */
+		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {			
+		}
 	    
 	}
 
@@ -141,14 +120,14 @@ public class RunToLineTests extends AbstractDebugTest {
 		boolean restore = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
 		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, skipBreakpoints);
 		IJavaThread thread= null;
-		final IPartListener listener = new MyPartListener();
+		final IPerspectiveListener2 listener = new MyListener();
 		try {
 		    // close all editors
 		    Runnable closeAll = new Runnable() {
                 public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     activeWorkbenchWindow.getActivePage().closeAllEditors(false);
-                    activeWorkbenchWindow.getActivePage().addPartListener(listener);
+                    activeWorkbenchWindow.addPerspectiveListener(listener);
                 }
             };
             Display display = DebugUIPlugin.getStandardDisplay();
@@ -161,6 +140,16 @@ public class RunToLineTests extends AbstractDebugTest {
 			        fLock.wait(30000);
 			    }
             }
+			if (fEditor == null) {
+				Runnable r = new Runnable() {				
+					public void run() {
+						IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	                    IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
+	                    System.out.println("ACTIVE: " + activeEditor.getTitle());
+					}
+				};
+				display.syncExec(r);
+			}
 			assertNotNull("Editor did not open", fEditor);
 			
 			final Exception[] exs = new Exception[1];
@@ -199,7 +188,7 @@ public class RunToLineTests extends AbstractDebugTest {
 		    Runnable cleanup = new Runnable() {
                 public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                    activeWorkbenchWindow.getActivePage().removePartListener(listener);
+                    activeWorkbenchWindow.removePerspectiveListener(listener);
                 }
             };
             Display display = DebugUIPlugin.getStandardDisplay();
