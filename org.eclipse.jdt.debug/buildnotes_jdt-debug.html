@@ -18,6 +18,7 @@ What's new in this drop</h3>
 <h3>
 Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=1628">1628</a>: README: packages appear when doing eval (1GEYFPN)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=6389">6389</a>: System threads show suspended at startup <br>
 <h3>
 Problem Reports Closed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5290">5290</a>: Source does not show up on debug<br>
@@ -33,6 +34,14 @@ What's new in this drop</h3>
 	Can be configured using the Java Debug Options preference page.
 	@see  <A HREF="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5653">5653</A> for
 	details and on step filtering settings migration.
+<li> Stack frames, threads, and debug targets will now display when code in
+	the VM is out of synch with the code in the workspace. This can occur
+	when a hot code replace fails or when a hot code replace succeeds but the
+	VM is unable to pop old stack frames from the call stack.
+	@see  <A HREF="http://bugs/eclipse/org/bugs/show_bug.cgi?id=1558">1558</A> for
+	details.
+<li> Stepping performance improvement. By increasing the amount of data cached in
+	our stack frame model, stepping is now dramatically faster in many cases.
 </ul>
 
 <h3>
