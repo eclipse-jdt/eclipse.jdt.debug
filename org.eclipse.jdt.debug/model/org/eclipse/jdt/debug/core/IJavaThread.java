@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IFilteredStep;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -18,7 +19,7 @@ import org.eclipse.debug.core.model.IThread;
  * </p>
  * @see org.eclipse.debug.core.model.IThread
  */
-public interface IJavaThread extends IThread {
+public interface IJavaThread extends IThread, IFilteredStep {
 	
 	/**
 	 * Status code indicating a request failed because a thread

@@ -331,7 +331,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		target.setFilterConstructors(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
 		target.setFilterStaticInitializers(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		target.setFilterSynthetics(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
-		target.setStepFiltersEnabled(store.getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS));
 		target.setStepFilters(getActiveStepFilters());
 
 	}	
@@ -399,8 +398,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	private boolean isUseFilterProperty(String property) {
 		return property.equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS) ||
 			property.equals(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS) ||
-			property.equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS) ||
-			property.equals(IJDIPreferencesConstants.PREF_USE_FILTERS);
+			property.equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS);
 	}
 	
 	/**

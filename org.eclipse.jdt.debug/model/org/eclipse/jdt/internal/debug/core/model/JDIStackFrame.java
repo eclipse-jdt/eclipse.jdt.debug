@@ -1087,4 +1087,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return getVariables0().size() > 0;
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.model.IFilteredStep#canStepWithFilters()
+	 */
+	public boolean canStepWithFilters() {
+		return canStepInto() && getJavaDebugTarget().getStepFilters().length > 0;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IFilteredStep#stepWithFilters()
+	 */
+	public void stepWithFilters() throws DebugException {
+		((IJavaThread)getThread()).stepWithFilters();
+	}
+
 }

@@ -287,7 +287,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		//JavaStepFilterPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.PREF_USE_FILTERS, true);
 		
 		initializeDefaultJavaVariablesPreferences(store);
 	}

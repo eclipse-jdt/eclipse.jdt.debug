@@ -8,6 +8,7 @@ package org.eclipse.jdt.debug.core;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IFilteredStep;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
@@ -18,7 +19,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * @see org.eclipse.debug.core.model.IStackFrame
  */
 
-public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
+public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredStep {
 			
 	/**
 	 * Drops to this stack frame by popping frames in this 

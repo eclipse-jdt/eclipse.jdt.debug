@@ -36,8 +36,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -65,7 +63,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	// Step filter widgets
 	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
-	private Button fUseFiltersCheckbox;
 	private Button fAddPackageButton;
 	private Button fAddTypeButton;
 	private Button fRemoveFilterButton;
@@ -169,22 +166,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 		container.setFont(font);
-		
-		// use filters checkbox
-		fUseFiltersCheckbox = new Button(container, SWT.CHECK);
-		fUseFiltersCheckbox.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Use_&step_filters_7")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fUseFiltersCheckbox.setLayoutData(gd);
-		fUseFiltersCheckbox.setFont(font);
-		fUseFiltersCheckbox.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent se) {
-				toggleStepFilterWidgetsEnabled(fUseFiltersCheckbox.getSelection());
-			}
-			public void widgetDefaultSelected(SelectionEvent se) {
-			}
-		});	
-		
+				
 		//table label
 		fTableLabel= new Label(container, SWT.NONE);
 		fTableLabel.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Defined_step_fi&lters__8")); //$NON-NLS-1$
@@ -267,9 +249,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
 		fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
-		boolean enabled = getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);
-		fUseFiltersCheckbox.setSelection(enabled);
-		toggleStepFilterWidgetsEnabled(enabled);
 	}
 	private void createStepFilterButtons(Composite container) {
 		Font font = container.getFont();
@@ -356,21 +335,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		});
 		
 	}
-	private void toggleStepFilterWidgetsEnabled(boolean enabled) {
-		fFilterViewer.getTable().setEnabled(enabled);
-		fAddPackageButton.setEnabled(enabled);
-		fAddTypeButton.setEnabled(enabled);
-		fAddFilterButton.setEnabled(enabled);
-		fFilterSyntheticButton.setEnabled(enabled);
-		fFilterStaticButton.setEnabled(enabled);
-		fFilterConstructorButton.setEnabled(enabled);
-		if (!enabled) {
-			fRemoveFilterButton.setEnabled(enabled);
-		} else if (!fFilterViewer.getSelection().isEmpty()) {
-			fRemoveFilterButton.setEnabled(true);
-		}
-	}
-	
+		
 	private void checkAllFilters(boolean check) {
 		
 		Object[] filters= fStepFilterContentProvider.getElements(null);
@@ -678,9 +643,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
 			fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 			fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
-			boolean useStepFilters = getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);
-			fUseFiltersCheckbox.setSelection(useStepFilters);
-			toggleStepFilterWidgetsEnabled(useStepFilters);
 		}
 		
 		protected void populateFilters(List activeList, List inactiveList) {
@@ -710,7 +672,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		public void saveFilters() {
 			
-			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_USE_FILTERS, fUseFiltersCheckbox.getSelection());
 			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS, fFilterConstructorButton.getSelection());
 			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS, fFilterStaticButton.getSelection());
 			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS, fFilterSyntheticButton.getSelection());

@@ -431,25 +431,6 @@
 	 </action>
 	</objectContribution>
 	<viewerContribution
-		id="org.eclipse.jdt.debug.ToggleStepFilterActions"
-		targetID="org.eclipse.debug.ui.DebugView">
-		<action
-			id="org.eclipse.jdt.ui.actions.ToggleStepFilter"
-			label="%toggleStepFilterAction.label"
-			icon="icons/full/elcl16/stepfilter_co.gif"
-			disabledIcon="icons/full/dlcl16/stepfilter_co.gif"
-			hoverIcon="icons/full/clcl16/stepfilter_co.gif"
-			tooltip="%toggleStepFilter.tooltip"
-			menubarPath="additions"
-			helpContextId="toggle_step_filter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ToggleStepFilterAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jdt.debug.core.IJavaDebugTarget"/>
-			<selection class="org.eclipse.jdt.debug.core.IJavaThread"/>
-			<selection class="org.eclipse.jdt.debug.core.IJavaStackFrame"/>
-		</action>
-	</viewerContribution>
-	<viewerContribution
 		id="org.eclipse.jdt.debug.DebugViewPopupActions"
 		targetID="org.eclipse.debug.ui.DebugView">
 		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"

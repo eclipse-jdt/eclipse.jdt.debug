@@ -153,6 +153,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * undesired 'nudging' in recursive methods.
 	 */
 	private int fOriginalStepStackDepth;
+	
+	/**
+	 * Whether step filters should be used for the next step request.
+	 */
+	private boolean fUseStepFilters = false;
 
 	/**
 	 * Whether or not this thread is currently suspending (user-requested).
@@ -1747,7 +1752,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void attachFiltersToStepRequest(StepRequest request) {
 			
-			if (applyStepFilters() && getJavaDebugTarget().isStepFiltersEnabled()) {
+			if (applyStepFilters() && (getJavaDebugTarget().isStepFiltersEnabled() || fUseStepFilters)) {
 				Location currentLocation= getOriginalStepLocation();
 				if (currentLocation == null) {
 					return;
@@ -1836,17 +1841,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * filtered.  Returns <code>false</code> otherwise.
 		 */
 		protected boolean locationIsFiltered(Method method) {
-			boolean filterStatics = getJavaDebugTarget().isFilterStaticInitializers();
-			boolean filterSynthetics = getJavaDebugTarget().isFilterSynthetics();
-			boolean filterConstructors = getJavaDebugTarget().isFilterConstructors();
-			if (!(filterStatics || filterSynthetics || filterConstructors)) {
-				return false;
-			}			
-			
-			if ((filterStatics && method.isStaticInitializer()) ||
-				(filterSynthetics && method.isSynthetic()) ||
-				(filterConstructors && method.isConstructor()) ) {
-				return true;	
+			if (getJavaDebugTarget().isStepFiltersEnabled() || fUseStepFilters) {
+				boolean filterStatics = getJavaDebugTarget().isFilterStaticInitializers();
+				boolean filterSynthetics = getJavaDebugTarget().isFilterSynthetics();
+				boolean filterConstructors = getJavaDebugTarget().isFilterConstructors();
+				if (!(filterStatics || filterSynthetics || filterConstructors)) {
+					return false;
+				}			
+				
+				if ((filterStatics && method.isStaticInitializer()) ||
+					(filterSynthetics && method.isSynthetic()) ||
+					(filterConstructors && method.isConstructor()) ) {
+					return true;	
+				}
 			}
 			
 			return false;
@@ -1863,6 +1870,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected void stepEnd() {
+			fUseStepFilters = false;
 			setRunning(false);
 			deleteStepRequest();
 			setPendingStepHandler(null);
@@ -2281,4 +2289,22 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		
 		return null;
 	}
+	/**
+	 * @see org.eclipse.debug.core.model.IFilteredStep#canStepWithFilters()
+	 */
+	public boolean canStepWithFilters() {
+		return canStepInto() && getJavaDebugTarget().getStepFilters().length > 0;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IFilteredStep#stepWithFilters()
+	 */
+	public void stepWithFilters() throws DebugException {
+		if (!canStepWithFilters()) {
+			return;
+		}
+		fUseStepFilters = true;
+		stepInto();
+	}
+
 }

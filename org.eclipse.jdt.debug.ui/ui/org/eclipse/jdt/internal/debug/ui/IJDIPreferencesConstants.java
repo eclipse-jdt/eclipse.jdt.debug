@@ -42,13 +42,7 @@ public interface IJDIPreferencesConstants {
 	 * (while debugging).
 	 */
 	public static final String PREF_SUSPEND_ON_COMPILATION_ERRORS= IJavaDebugUIConstants.PLUGIN_ID + ".suspend_on_compilation_errors"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference controlling whether step filters
-	 * are currently used in Java debug sessions.
-	 */
-	public static final String PREF_USE_FILTERS = IJavaDebugUIConstants.PLUGIN_ID + ".use_filters"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Boolean preference controlling whether synthetic
 	 * methods are to be filtered when stepping (and step

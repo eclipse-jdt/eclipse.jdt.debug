@@ -44,7 +44,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-			thread = stepInto(stackFrame);
+			thread = stepWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
@@ -67,7 +67,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-			thread = stepInto(stackFrame);
+			thread = stepWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterTwo' but was " + recTypeName, recTypeName.equals("StepFilterTwo"));
@@ -90,7 +90,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-			thread = stepInto(stackFrame);
+			thread = stepWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterThree' but was " + recTypeName, recTypeName.equals("StepFilterThree"));
