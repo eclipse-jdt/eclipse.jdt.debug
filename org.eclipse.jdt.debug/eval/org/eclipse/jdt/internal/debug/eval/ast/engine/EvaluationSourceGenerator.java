@@ -80,8 +80,36 @@ public class EvaluationSourceGenerator {
 		return codeSnippet;
 	}
 	
+	/**
+	 * Returns whether the given snippet represents an expression.
+	 * This is determined by examining the snippet for non-quoted semicolons.
+	 * 
+	 * Returns <code>true</code> if the snippet is an expression, or
+	 * <code>false</code> if the expresssion contains a statement.
+	 */
 	protected boolean isExpression(String codeSnippet) {
-		return codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
+		boolean inString= false;
+		byte[] chars= codeSnippet.getBytes();
+		char ch;
+		for (int i= 0, numChars= chars.length; i < numChars; i++) {
+			switch (chars[i]) {
+				case '\\':
+					if (inString) { // skip the char after an escape char
+						i++;
+					}
+					break;
+				case '\"':
+				case '\'':
+					inString= !inString;
+					break;
+				case ';':
+					if (!inString) {
+						return false;
+					}
+					break;
+			}
+		}
+		return true;
 	}
 	
 	public String getCompilationUnitName() {
