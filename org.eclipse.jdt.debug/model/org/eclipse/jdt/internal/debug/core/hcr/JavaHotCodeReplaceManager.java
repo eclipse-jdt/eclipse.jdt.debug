@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core.hcr;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -57,10 +59,13 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.core.Util;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+
+import com.sun.jdi.ReferenceType;
 
 /**
  * The hot code replace manager listens for changes to
@@ -300,7 +305,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	
 	protected void notifyFailedHCR(JDIDebugTarget target, List resources, List qualifiedNames) {
 		if (target.isAvailable()) {
-			target.typesFailedHCR(qualifiedNames);
+			target.addOutOfSynchTypes(qualifiedNames);
 			target.fireChangeEvent(DebugEvent.STATE);
 		}
 	}	
@@ -364,7 +369,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						ms.merge(de.getStatus());
 					}
 				}
-				target.typesHaveChanged(resources, qualifiedNames);
+				target.removeOutOfSynchTypes(qualifiedNames);
+				if (target.supportsJDKHotCodeReplace()) {
+					redefineTypesJDK(target, resources, qualifiedNames);
+				} else if (target.supportsJ9HotCodeReplace()) {
+					redefineTypesJ9(target, resources, qualifiedNames);
+				}
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
 				}
@@ -393,6 +403,136 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!ms.isOK()) {
 			JDIDebugPlugin.log(ms);
 		}
+	}
+
+	/**
+	 * Replaces the given types in the given J9 debug target.
+	 * A fully qualified name of each type must be supplied.
+	 *
+	 * Breakpoints are reinstalled automatically when the new
+	 * types are loaded.
+	 *
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The target VM was unable to reload a type due to a shape
+	 * change</li>
+	 * </ul>
+	 */
+	private void redefineTypesJ9(JDIDebugTarget target, List resources, List qualifiedNames) throws DebugException {
+		String[] typeNames = (String[]) qualifiedNames.toArray(new String[qualifiedNames.size()]);					
+		if (target.supportsJ9HotCodeReplace()) {
+			target.setHCROccurred(true);
+			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) target.getVM();
+			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
+			try {
+				result= vm.classesHaveChanged(typeNames);
+			} catch (RuntimeException e) {
+				target.targetRequestFailed(MessageFormat.format(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.exception_replacing_types"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
+			switch (result) {
+				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS:
+					break;
+				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_IGNORED:
+					target.targetRequestFailed(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_ignored"), null); //$NON-NLS-1$
+					break;
+				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
+					target.targetRequestFailed(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_failed"), null); //$NON-NLS-1$
+					target.addOutOfSynchTypes(qualifiedNames);
+					break;
+			}
+		} else {
+			target.notSupported(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.does_not_support_hcr")); //$NON-NLS-1$
+			target.addOutOfSynchTypes(qualifiedNames);
+		}
+	}
+	
+	/**
+	 * Replaces the given types in the given JDK-compliant debug target.
+	 * 
+	 * This method is to be used for JDK hot code replace.
+	 */
+	private void redefineTypesJDK(JDIDebugTarget target, List resources, List qualifiedNames) throws DebugException {
+		if (target.supportsJDKHotCodeReplace()) {
+			target.setHCROccurred(true);
+			Map typesToBytes= getTypesToBytes(target, resources, qualifiedNames);
+			try {
+				target.getVM().redefineClasses(typesToBytes);
+			} catch (UnsupportedOperationException exception) {
+				String detail= exception.getMessage();
+				if (detail != null) {
+					redefineTypesFailedJDK(target, qualifiedNames, MessageFormat.format(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_unsupported_operation"), new String[] {detail}), exception); //$NON-NLS-1$
+				} else {
+					redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_unsupported_redefinition"), exception); //$NON-NLS-1$
+				}				
+			} catch (NoClassDefFoundError exception) {
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_bad_bytes"), exception); //$NON-NLS-1$
+			} catch (VerifyError exception) {
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_verify_error"), exception); //$NON-NLS-1$
+			} catch (UnsupportedClassVersionError exception) {
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_unsupported_class_version"), exception); //$NON-NLS-1$
+			} catch (ClassFormatError exception) {
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_class_format_error"), exception); //$NON-NLS-1$
+			} catch (ClassCircularityError exception) {
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_class_circularity_error"), exception); //$NON-NLS-1$
+			} catch (RuntimeException exception) {
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.hcr_failed"), exception); //$NON-NLS-1$
+			}
+			target.reinstallBreakpointsIn(resources, qualifiedNames);
+		} else {
+			target.notSupported(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.does_not_support_hcr")); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Error handling for JDK hot code replace.
+	 * 
+	 * The given exception occurred when redefinition was attempted
+	 * for the given types.
+	 */
+	private void redefineTypesFailedJDK(JDIDebugTarget target, List qualifiedNames, String message, Throwable exception) throws DebugException {
+		target.addOutOfSynchTypes(qualifiedNames);
+		target.jdiRequestFailed(message, exception);
+	}
+	
+	/**
+	 * Returns a mapping of class files to the bytes that make up those
+	 * class files.
+	 * 
+	 * @param target the debug target to query
+	 * @param resources the classfiles
+	 * @param qualifiedNames the fully qualified type names corresponding to the
+	 *  classfiles. The typeNames correspond to the resources on a one-to-one
+	 *  basis.
+	 * @return a mapping of class files to bytes
+	 *  key: class file
+	 *  value: the bytes which make up that classfile
+	 */
+	private Map getTypesToBytes(JDIDebugTarget target, List resources, List qualifiedNames) {
+		Map typesToBytes= new HashMap(resources.size());
+		Iterator resourceIter= resources.iterator();
+		Iterator nameIter= qualifiedNames.iterator();
+		IResource resource;
+		String name;
+		while (resourceIter.hasNext()) {
+			resource= (IResource) resourceIter.next();
+			name= (String) nameIter.next();
+			List classes= target.jdiClassesByName(name);
+			byte[] bytes= null;
+			try {
+				bytes= Util.getResourceContentsAsByteArray((IFile) resource);
+			} catch (JavaModelException jme) {
+				continue;
+			}
+			Iterator classIter= classes.iterator();
+			while (classIter.hasNext()) {
+				ReferenceType type= (ReferenceType) classIter.next();
+				typesToBytes.put(type, bytes);
+			}
+		}
+		return typesToBytes;
 	}
 	
 	/**
