@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
+import java.text.MessageFormat;
+
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -96,6 +98,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, false);
+		
+		store.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
+		store.setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
 	}
 	/**
 	 * @see PreferencePage#createContents(Composite)
@@ -137,12 +142,16 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalSpan = 2;
 		spacingComposite.setLayoutData(data);
 		
+		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		int minValue;
+		
 		fTimeoutText = new IntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), spacingComposite); //$NON-NLS-1$
-		fTimeoutText.setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		fTimeoutText.setPreferenceStore(store);
 		fTimeoutText.setPreferencePage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		fTimeoutText.setValidRange(50, Integer.MAX_VALUE);
-		fTimeoutText.setErrorMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Value_must_be_a_valid_integer_greater_than_50_ms_1")); //$NON-NLS-1$
+		minValue= store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
+		fTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.getString("JavaDebugPreferencePage.Value_must_be_a_valid_integer_greater_than_{0}_ms_1"), new Object[] {new Integer(minValue)})); //$NON-NLS-1$
 		fTimeoutText.load();
 		fTimeoutText.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -151,9 +160,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});
 		fConnectionTimeoutText = new IntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), spacingComposite); //$NON-NLS-1$
-		fConnectionTimeoutText.setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		fConnectionTimeoutText.setPreferenceStore(store);
 		fConnectionTimeoutText.setPreferencePage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		minValue= store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
+		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.getString("JavaDebugPreferencePage.Value_must_be_a_valid_integer_greater_than_{0}_ms_1"), new Object[] {new Integer(minValue)})); //$NON-NLS-1$
 		fConnectionTimeoutText.load();
 		fConnectionTimeoutText.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -242,8 +254,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
-		fTimeoutText.setStringValue(new Integer(JDIDebugModel.DEF_REQUEST_TIMEOUT).toString());
-		fConnectionTimeoutText.setStringValue(new Integer(JavaRuntime.DEF_CONNECT_TIMEOUT).toString());
+		fTimeoutText.setStringValue(new Integer(store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
+		fConnectionTimeoutText.setStringValue(new Integer(store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 	}
 	
 	/**
