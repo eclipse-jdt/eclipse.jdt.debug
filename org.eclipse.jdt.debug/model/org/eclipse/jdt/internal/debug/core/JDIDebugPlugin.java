@@ -1,13 +1,17 @@
 package org.eclipse.jdt.internal.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
@@ -56,6 +60,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	private static final int ADDING = 1;
 	private static final int INSTALLED = 2;
 	private static final int REMOVED = 3;
+	private static final int COMPILATION_ERRORS = 4;
+	private static final int RUNTIME_EXCEPTION = 5;
 	
 	/**
 	 * Whether this plug-in is in trace mode.
@@ -67,6 +73,13 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * Detected (speculated) JDI interface version
 	 */
 	private static int[] fJDIVersion = null;
+	
+	/**
+	 * Notifiers using safe runnables to guard against exceptions
+	 */
+	private BreakpointNotifier fBreakpointNotifier = null;
+	private InstallingNotifier fInstallingNotifier = null;
+	private HitNotifier fHitNotifier = null;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -239,20 +252,14 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @see IJavaBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, DebugException)
 	 */
 	public void fireBreakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
-		Object listeners[]= fBreakpointListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IJavaBreakpointListener)listeners[i]).breakpointHasCompilationErrors(breakpoint, errors);
-		}
+		getBreakpointNotifier().notify(null, breakpoint, COMPILATION_ERRORS, errors, null);
 	}
 	
 	/**
 	 * @see IJavaBreakpointListener#breakpointHasCompilationErrors(IJavaLineBreakpoint, Message[])
 	 */
 	public void fireBreakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
-		Object listeners[]= fBreakpointListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IJavaBreakpointListener)listeners[i]).breakpointHasRuntimeException(breakpoint, exception);
-		}
+		getBreakpointNotifier().notify(null, breakpoint, RUNTIME_EXCEPTION, null, exception);
 	}
 	
 	/**
@@ -281,7 +288,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @param breakpoint Java breakpoint
 	 */
 	public void fireBreakpointAdding(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
-		notify(target, breakpoint, ADDING);
+		getBreakpointNotifier().notify(target, breakpoint, ADDING, null, null);
 	}
 	
 	/**
@@ -291,7 +298,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @param breakpoint Java breakpoint
 	 */
 	public void fireBreakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
-		notify(target, breakpoint, INSTALLED);
+		getBreakpointNotifier().notify(target, breakpoint, INSTALLED, null, null);
 	}	
 	
 	/**
@@ -301,33 +308,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @param breakpoint Java breakpoint
 	 */
 	public void fireBreakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
-		notify(target, breakpoint, REMOVED);
-	}
-		
-	/**
-	 * Notifies listeners of the given addition, install, or
-	 * remove.
-	 * 
-	 * @param target debug target
-	 * @param breakpoint the associated breakpoint
-	 * @param kind one of ADDED, REMOVED, INSTALLED
-	 */
-	protected void notify(IJavaDebugTarget target, IJavaBreakpoint breakpoint, int kind) {
-		Object[] listeners = fBreakpointListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
-			switch (kind) {
-				case ADDING:
-					jbpl.addingBreakpoint(target, breakpoint);
-					break;
-				case INSTALLED:
-					jbpl.breakpointInstalled(target, breakpoint);
-					break;
-				case REMOVED:
-					jbpl.breakpointRemoved(target, breakpoint);
-					break;					
-			}
-		}
+		getBreakpointNotifier().notify(target, breakpoint, REMOVED, null, null);
 	}
 	
 	/**
@@ -338,13 +319,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @param breakpoint Java breakpoint
 	 */
 	public boolean fireBreakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
-		Object[] listeners = fBreakpointListeners.getListeners();
-		boolean suspend = listeners.length == 0;
-		for (int i = 0; i < listeners.length; i++) {
-			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
-			suspend = suspend | jbpl.breakpointHit(thread, breakpoint);
-		}	
-		return suspend;
+		return getHitNotifier().notifyHit(thread, breakpoint);
 	}
 	
 	/**
@@ -358,14 +333,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @return whether the breakpoint should be installed
 	 */
 	public boolean fireInstalling(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
-		Object[] listeners = fBreakpointListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
-			if (!jbpl.installingBreakpoint(target, breakpoint, type)) {
-				return false;
-			}
-		}	
-		return true;
+		return getInstallingNotifier().notifyInstalling(target, breakpoint, type);
 	}	
 	
 	/**
@@ -385,5 +353,176 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			}
 		}
 	}
+	
+	private BreakpointNotifier getBreakpointNotifier() {
+		if (fBreakpointNotifier == null) {
+			fBreakpointNotifier = new BreakpointNotifier();
+		}
+		return fBreakpointNotifier;
+	}
 
+	class BreakpointNotifier implements ISafeRunnable {
+		
+		private IJavaDebugTarget fTarget;
+		private IJavaBreakpoint fBreakpoint;
+		private int fKind;
+		private Message[] fErrors;
+		private DebugException fException;
+		private IJavaBreakpointListener fListener;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fKind) {
+				case ADDING:
+					fListener.addingBreakpoint(fTarget, fBreakpoint);
+					break;
+				case INSTALLED:
+					fListener.breakpointInstalled(fTarget, fBreakpoint);
+					break;
+				case REMOVED:
+					fListener.breakpointRemoved(fTarget, fBreakpoint);
+					break;		
+				case COMPILATION_ERRORS:
+					fListener.breakpointHasCompilationErrors((IJavaLineBreakpoint)fBreakpoint, fErrors);
+					break;
+				case RUNTIME_EXCEPTION:
+					fListener.breakpointHasRuntimeException((IJavaLineBreakpoint)fBreakpoint, fException);
+					break;	
+			}			
+		}
+
+		/**
+		 * Notifies listeners of the given addition, install, or
+		 * remove.
+		 * 
+		 * @param target debug target
+		 * @param breakpoint the associated breakpoint
+		 * @param kind one of ADDED, REMOVED, INSTALLED
+		 * @param errors associated errors, or <code>null</code> if none
+		 * @param exception associated exception, or <code>null</code> if none
+		 */
+		public void notify(IJavaDebugTarget target, IJavaBreakpoint breakpoint, int kind, Message[] errors, DebugException exception) {
+			fTarget = target;
+			fBreakpoint = breakpoint;
+			fKind = kind;
+			fErrors = errors;
+			fException = exception;
+			Object[] listeners = fBreakpointListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				fListener = (IJavaBreakpointListener)listeners[i];
+				Platform.run(this);
+			}
+		}
+	}
+	
+	private InstallingNotifier getInstallingNotifier() {
+		if (fInstallingNotifier == null) {
+			fInstallingNotifier = new InstallingNotifier();
+		}
+		return fInstallingNotifier;
+	}
+		
+	class InstallingNotifier implements ISafeRunnable {
+		
+		private IJavaDebugTarget fTarget;
+		private IJavaBreakpoint fBreakpoint;
+		private IJavaType fType;
+		private IJavaBreakpointListener fListener;
+		private boolean fInstall;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			fInstall = fListener.installingBreakpoint(fTarget, fBreakpoint, fType);		
+		}
+
+		/**
+		 * Notifies listeners that the given breakpoint is about to be installed
+		 * in the given type. Returns whether the breakpoint should be
+		 * installed.
+		 * 
+		 * @param target Java debug target
+		 * @param breakpoint Java breakpoint
+		 * @param type the type the breakpoint is about to be installed in
+		 * @return whether the breakpoint should be installed
+		 */
+		public boolean notifyInstalling(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
+			fTarget = target;
+			fBreakpoint = breakpoint;
+			fType = type;
+			fInstall = true;
+			Object[] listeners = fBreakpointListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				fListener = (IJavaBreakpointListener)listeners[i];
+				Platform.run(this);
+				if (!fInstall) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}	
+	
+	private HitNotifier getHitNotifier() {
+		if (fHitNotifier == null) {
+			fHitNotifier = new HitNotifier();
+		}
+		return fHitNotifier;
+	}
+		
+	class HitNotifier implements ISafeRunnable {
+		
+		private IJavaThread fThread;
+		private IJavaBreakpoint fBreakpoint;
+		private IJavaBreakpointListener fListener;
+		private boolean fSuspend;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			fSuspend = fSuspend | fListener.breakpointHit(fThread, fBreakpoint);		
+		}
+
+		/**
+		 * Notifies listeners that the given breakpoint has been hit.
+		 * Returns whether the thread should suspend.
+		 * 
+		 * @param thread thread in which the breakpoint was hit
+		 * @param breakpoint Java breakpoint
+		 * @return whether the thread should suspend
+		 */
+		public boolean notifyHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+			fThread = thread;
+			fBreakpoint = breakpoint;
+			Object[] listeners = fBreakpointListeners.getListeners();
+			fSuspend = listeners.length == 0;
+			for (int i = 0; i < listeners.length; i++) {
+				fListener = (IJavaBreakpointListener)listeners[i];
+				Platform.run(this);
+			}
+			return fSuspend;
+		}
+	}	
 }
