@@ -49,14 +49,21 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List all = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
-				// a project resolves to itself for source lookup (rather than the class file output locations)
-				all.add(entries[i]);
-			} else {
-				IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
-				for (int j = 0; j < resolved.length; j++) {
-					all.add(resolved[j]);
-				}				
+			switch (entries[i].getType()) {
+				case IRuntimeClasspathEntry.PROJECT:
+					all.add(entries[i]);
+					break;
+				case IRuntimeClasspathEntry.CONTAINER:
+					IRuntimeClasspathEntry[] resolved= JavaRuntime.computeDefaultContainerEntries(entries[i], configuration);
+					for (int j = 0; j < resolved.length; j++) {
+						all.add(resolved[j]);
+					}				
+					break;
+				default:
+					resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
+					for (int j = 0; j < resolved.length; j++) {
+						all.add(resolved[j]);
+					}				
 			}
 		}
 		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
