@@ -135,8 +135,8 @@ public class VMDefinitionsContainer {
 	 * 			file system, <code>false</code> otherwise.	 */
 	private boolean verifyInstallLocation(IVMInstall vm) {
 		File installLocation = vm.getInstallLocation();
-		if (installLocation.exists()) {
-			return true;
+		if (installLocation != null) {
+			return installLocation.exists();
 		}
 		return false;
 	}
