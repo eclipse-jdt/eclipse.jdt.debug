@@ -211,8 +211,8 @@ public class DetailFormatterDialog extends StatusDialog {
 		if (command != null) {
 			List keyBindings = command.getKeySequenceBindings();
 			if (keyBindings != null && keyBindings.size() > 0) {
-				IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
-				labelText = MessageFormat.format(DebugUIMessages.getString("DetailFormatterDialog.17"), new String[] {lastBinding.getKeySequence().format()});  //$NON-NLS-1$
+				IKeySequenceBinding binding = (IKeySequenceBinding)keyBindings.get(0);
+				labelText = MessageFormat.format(DebugUIMessages.getString("DetailFormatterDialog.17"), new String[] {binding.getKeySequence().format()});  //$NON-NLS-1$
 			} 
 		}
 		if (labelText == null) {

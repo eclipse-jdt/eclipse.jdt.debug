@@ -214,8 +214,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			if (command != null) {
 				List keyBindings = command.getKeySequenceBindings();
 				if (keyBindings != null && keyBindings.size() > 0) {
-					IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
-					label = MessageFormat.format(PropertyPageMessages.getString("JavaLineBreakpointPage.12"), new String[] {lastBinding.getKeySequence().format()}); //$NON-NLS-1$
+					IKeySequenceBinding binding = (IKeySequenceBinding)keyBindings.get(0);
+					label = MessageFormat.format(PropertyPageMessages.getString("JavaLineBreakpointPage.12"), new String[] {binding.getKeySequence().format()}); //$NON-NLS-1$
 				} 
 			}
 		}
