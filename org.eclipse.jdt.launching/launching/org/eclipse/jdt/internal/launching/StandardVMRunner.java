@@ -139,6 +139,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		arguments.add(program);
 				
+		// VM args are the first thing after the java program so that users can specify
+		// options like '-client' & '-server' which are required to be the first options
+		String[] vmArgs= config.getVMArguments();
+		addArguments(vmArgs, arguments);
+		
 		String[] bootCP= config.getBootClassPath();
 		if (bootCP.length > 0) {
 			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
@@ -149,9 +154,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
 		}
-		String[] vmArgs= config.getVMArguments();
-		addArguments(vmArgs, arguments);
-		
 		arguments.add(config.getClassToLaunch());
 		
 		String[] programArgs= config.getProgramArguments();

@@ -71,6 +71,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		arguments.add(program);
 
+		// VM args are the first thing after the java program so that users can specify
+		// options like '-client' & '-server' which are required to be the first options
+		addArguments(config.getVMArguments(), arguments);
+
 		String[] bootCP= config.getBootClassPath();
 		if (bootCP.length > 0) {
 			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
@@ -81,8 +85,6 @@ public class StandardVMDebugger extends StandardVMRunner {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
 		}
-		addArguments(config.getVMArguments(), arguments);
-
 		arguments.add("-Xdebug"); //$NON-NLS-1$
 		arguments.add("-Xnoagent"); //$NON-NLS-1$
 		arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
