@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
@@ -34,6 +33,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
@@ -147,11 +147,11 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		setSuspendOnUncaughtExceptionsPreference(false);
 		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't prompt for perspective switching
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.ALWAYS);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.ALWAYS);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.NEVER);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.ALWAYS);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
 		
 		preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't warn about HCR failures
