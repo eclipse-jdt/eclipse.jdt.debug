@@ -36,13 +36,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(byte) byte : wrong type : ", "byte", typeName);
 		byte byteValue = ((IJavaPrimitiveValue)value).getByteValue();
-		assertEquals("(byte) byte : wrong result : ", ( byte) xByteValue, byteValue);
+		assertEquals("(byte) byte : wrong result : ", xByteValue, byteValue);
 
 		value = eval("(byte)" + yByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(byte) byte : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
-		assertEquals("(byte) byte : wrong result : ", ( byte) yByteValue, byteValue);
+		assertEquals("(byte) byte : wrong result : ", yByteValue, byteValue);
 		} finally {
 		end();
 		}
@@ -55,13 +55,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(byte) char : wrong type : ", "byte", typeName);
 		byte byteValue = ((IJavaPrimitiveValue)value).getByteValue();
-		assertEquals("(byte) char : wrong result : ", ( byte) xCharValue, byteValue);
+		assertEquals("(byte) char : wrong result : ", xCharValue, byteValue);
 
 		value = eval("(byte)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(byte) char : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
-		assertEquals("(byte) char : wrong result : ", ( byte) yCharValue, byteValue);
+		assertEquals("(byte) char : wrong result : ", yCharValue, byteValue);
 		} finally {
 		end();
 		}
@@ -190,13 +190,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(char) char : wrong type : ", "char", typeName);
 		char charValue = ((IJavaPrimitiveValue)value).getCharValue();
-		assertEquals("(char) char : wrong result : ", ( char) xCharValue, charValue);
+		assertEquals("(char) char : wrong result : ", xCharValue, charValue);
 
 		value = eval("(char)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(char) char : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
-		assertEquals("(char) char : wrong result : ", ( char) yCharValue, charValue);
+		assertEquals("(char) char : wrong result : ", yCharValue, charValue);
 		} finally {
 		end();
 		}
@@ -306,13 +306,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(short) byte : wrong type : ", "short", typeName);
 		short shortValue = ((IJavaPrimitiveValue)value).getShortValue();
-		assertEquals("(short) byte : wrong result : ", ( short) xByteValue, shortValue);
+		assertEquals("(short) byte : wrong result : ", xByteValue, shortValue);
 
 		value = eval("(short)" + yByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(short) byte : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
-		assertEquals("(short) byte : wrong result : ", ( short) yByteValue, shortValue);
+		assertEquals("(short) byte : wrong result : ", yByteValue, shortValue);
 		} finally {
 		end();
 		}
@@ -325,13 +325,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(short) char : wrong type : ", "short", typeName);
 		short shortValue = ((IJavaPrimitiveValue)value).getShortValue();
-		assertEquals("(short) char : wrong result : ", ( short) xCharValue, shortValue);
+		assertEquals("(short) char : wrong result : ", xCharValue, shortValue);
 
 		value = eval("(short)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(short) char : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
-		assertEquals("(short) char : wrong result : ", ( short) yCharValue, shortValue);
+		assertEquals("(short) char : wrong result : ", yCharValue, shortValue);
 		} finally {
 		end();
 		}
@@ -344,13 +344,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(short) short : wrong type : ", "short", typeName);
 		short shortValue = ((IJavaPrimitiveValue)value).getShortValue();
-		assertEquals("(short) short : wrong result : ", ( short) xShortValue, shortValue);
+		assertEquals("(short) short : wrong result : ", xShortValue, shortValue);
 
 		value = eval("(short)" + yShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(short) short : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
-		assertEquals("(short) short : wrong result : ", ( short) yShortValue, shortValue);
+		assertEquals("(short) short : wrong result : ", yShortValue, shortValue);
 		} finally {
 		end();
 		}
@@ -441,13 +441,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(int) byte : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) byte : wrong result : ", ( int) xByteValue, intValue);
+		assertEquals("(int) byte : wrong result : ", xByteValue, intValue);
 
 		value = eval("(int)" + yByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(int) byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) byte : wrong result : ", ( int) yByteValue, intValue);
+		assertEquals("(int) byte : wrong result : ", yByteValue, intValue);
 		} finally {
 		end();
 		}
@@ -460,13 +460,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(int) char : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) char : wrong result : ", ( int) xCharValue, intValue);
+		assertEquals("(int) char : wrong result : ", xCharValue, intValue);
 
 		value = eval("(int)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(int) char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) char : wrong result : ", ( int) yCharValue, intValue);
+		assertEquals("(int) char : wrong result : ", yCharValue, intValue);
 		} finally {
 		end();
 		}
@@ -479,13 +479,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(int) short : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) short : wrong result : ", ( int) xShortValue, intValue);
+		assertEquals("(int) short : wrong result : ", xShortValue, intValue);
 
 		value = eval("(int)" + yShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(int) short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) short : wrong result : ", ( int) yShortValue, intValue);
+		assertEquals("(int) short : wrong result : ", yShortValue, intValue);
 		} finally {
 		end();
 		}
@@ -498,13 +498,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(int) int : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) int : wrong result : ", ( int) xIntValue, intValue);
+		assertEquals("(int) int : wrong result : ", xIntValue, intValue);
 
 		value = eval("(int)" + yInt);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(int) int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("(int) int : wrong result : ", ( int) yIntValue, intValue);
+		assertEquals("(int) int : wrong result : ", yIntValue, intValue);
 		} finally {
 		end();
 		}
@@ -576,13 +576,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(long) byte : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) byte : wrong result : ", ( long) xByteValue, longValue);
+		assertEquals("(long) byte : wrong result : ", xByteValue, longValue);
 
 		value = eval("(long)" + yByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(long) byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) byte : wrong result : ", ( long) yByteValue, longValue);
+		assertEquals("(long) byte : wrong result : ", yByteValue, longValue);
 		} finally {
 		end();
 		}
@@ -595,13 +595,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(long) char : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) char : wrong result : ", ( long) xCharValue, longValue);
+		assertEquals("(long) char : wrong result : ", xCharValue, longValue);
 
 		value = eval("(long)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(long) char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) char : wrong result : ", ( long) yCharValue, longValue);
+		assertEquals("(long) char : wrong result : ", yCharValue, longValue);
 		} finally {
 		end();
 		}
@@ -614,13 +614,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(long) short : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) short : wrong result : ", ( long) xShortValue, longValue);
+		assertEquals("(long) short : wrong result : ", xShortValue, longValue);
 
 		value = eval("(long)" + yShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(long) short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) short : wrong result : ", ( long) yShortValue, longValue);
+		assertEquals("(long) short : wrong result : ", yShortValue, longValue);
 		} finally {
 		end();
 		}
@@ -633,13 +633,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(long) int : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) int : wrong result : ", ( long) xIntValue, longValue);
+		assertEquals("(long) int : wrong result : ", xIntValue, longValue);
 
 		value = eval("(long)" + yInt);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(long) int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) int : wrong result : ", ( long) yIntValue, longValue);
+		assertEquals("(long) int : wrong result : ", yIntValue, longValue);
 		} finally {
 		end();
 		}
@@ -652,13 +652,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(long) long : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) long : wrong result : ", ( long) xLongValue, longValue);
+		assertEquals("(long) long : wrong result : ", xLongValue, longValue);
 
 		value = eval("(long)" + yLong);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(long) long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
-		assertEquals("(long) long : wrong result : ", ( long) yLongValue, longValue);
+		assertEquals("(long) long : wrong result : ", yLongValue, longValue);
 		} finally {
 		end();
 		}
@@ -711,13 +711,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(float) byte : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) byte : wrong result : ", ( float) xByteValue, floatValue, 0);
+		assertEquals("(float) byte : wrong result : ", xByteValue, floatValue, 0);
 
 		value = eval("(float)" + yByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(float) byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) byte : wrong result : ", ( float) yByteValue, floatValue, 0);
+		assertEquals("(float) byte : wrong result : ", yByteValue, floatValue, 0);
 		} finally {
 		end();
 		}
@@ -730,13 +730,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(float) char : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) char : wrong result : ", ( float) xCharValue, floatValue, 0);
+		assertEquals("(float) char : wrong result : ", xCharValue, floatValue, 0);
 
 		value = eval("(float)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(float) char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) char : wrong result : ", ( float) yCharValue, floatValue, 0);
+		assertEquals("(float) char : wrong result : ", yCharValue, floatValue, 0);
 		} finally {
 		end();
 		}
@@ -749,13 +749,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(float) short : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) short : wrong result : ", ( float) xShortValue, floatValue, 0);
+		assertEquals("(float) short : wrong result : ", xShortValue, floatValue, 0);
 
 		value = eval("(float)" + yShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(float) short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) short : wrong result : ", ( float) yShortValue, floatValue, 0);
+		assertEquals("(float) short : wrong result : ", yShortValue, floatValue, 0);
 		} finally {
 		end();
 		}
@@ -768,13 +768,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(float) int : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) int : wrong result : ", ( float) xIntValue, floatValue, 0);
+		assertEquals("(float) int : wrong result : ", xIntValue, floatValue, 0);
 
 		value = eval("(float)" + yInt);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(float) int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) int : wrong result : ", ( float) yIntValue, floatValue, 0);
+		assertEquals("(float) int : wrong result : ", yIntValue, floatValue, 0);
 		} finally {
 		end();
 		}
@@ -787,13 +787,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(float) long : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) long : wrong result : ", ( float) xLongValue, floatValue, 0);
+		assertEquals("(float) long : wrong result : ", xLongValue, floatValue, 0);
 
 		value = eval("(float)" + yLong);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(float) long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) long : wrong result : ", ( float) yLongValue, floatValue, 0);
+		assertEquals("(float) long : wrong result : ", yLongValue, floatValue, 0);
 		} finally {
 		end();
 		}
@@ -806,13 +806,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(float) float : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) float : wrong result : ", ( float) xFloatValue, floatValue, 0);
+		assertEquals("(float) float : wrong result : ", xFloatValue, floatValue, 0);
 
 		value = eval("(float)" + yFloat);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(float) float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
-		assertEquals("(float) float : wrong result : ", ( float) yFloatValue, floatValue, 0);
+		assertEquals("(float) float : wrong result : ", yFloatValue, floatValue, 0);
 		} finally {
 		end();
 		}
@@ -846,13 +846,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) byte : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) byte : wrong result : ", ( double) xByteValue, doubleValue, 0);
+		assertEquals("(double) byte : wrong result : ", xByteValue, doubleValue, 0);
 
 		value = eval("(double)" + yByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) byte : wrong result : ", ( double) yByteValue, doubleValue, 0);
+		assertEquals("(double) byte : wrong result : ", yByteValue, doubleValue, 0);
 		} finally {
 		end();
 		}
@@ -865,13 +865,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) char : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) char : wrong result : ", ( double) xCharValue, doubleValue, 0);
+		assertEquals("(double) char : wrong result : ", xCharValue, doubleValue, 0);
 
 		value = eval("(double)" + yChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) char : wrong result : ", ( double) yCharValue, doubleValue, 0);
+		assertEquals("(double) char : wrong result : ", yCharValue, doubleValue, 0);
 		} finally {
 		end();
 		}
@@ -884,13 +884,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) short : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) short : wrong result : ", ( double) xShortValue, doubleValue, 0);
+		assertEquals("(double) short : wrong result : ", xShortValue, doubleValue, 0);
 
 		value = eval("(double)" + yShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) short : wrong result : ", ( double) yShortValue, doubleValue, 0);
+		assertEquals("(double) short : wrong result : ", yShortValue, doubleValue, 0);
 		} finally {
 		end();
 		}
@@ -903,13 +903,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) int : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) int : wrong result : ", ( double) xIntValue, doubleValue, 0);
+		assertEquals("(double) int : wrong result : ", xIntValue, doubleValue, 0);
 
 		value = eval("(double)" + yInt);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) int : wrong result : ", ( double) yIntValue, doubleValue, 0);
+		assertEquals("(double) int : wrong result : ", yIntValue, doubleValue, 0);
 		} finally {
 		end();
 		}
@@ -922,13 +922,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) long : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) long : wrong result : ", ( double) xLongValue, doubleValue, 0);
+		assertEquals("(double) long : wrong result : ", xLongValue, doubleValue, 0);
 
 		value = eval("(double)" + yLong);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) long : wrong result : ", ( double) yLongValue, doubleValue, 0);
+		assertEquals("(double) long : wrong result : ", yLongValue, doubleValue, 0);
 		} finally {
 		end();
 		}
@@ -941,13 +941,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) float : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) float : wrong result : ", ( double) xFloatValue, doubleValue, 0);
+		assertEquals("(double) float : wrong result : ", xFloatValue, doubleValue, 0);
 
 		value = eval("(double)" + yFloat);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) float : wrong result : ", ( double) yFloatValue, doubleValue, 0);
+		assertEquals("(double) float : wrong result : ", yFloatValue, doubleValue, 0);
 		} finally {
 		end();
 		}
@@ -960,13 +960,13 @@ public class NumericTypesCastTests extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("(double) double : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) double : wrong result : ", ( double) xDoubleValue, doubleValue, 0);
+		assertEquals("(double) double : wrong result : ", xDoubleValue, doubleValue, 0);
 
 		value = eval("(double)" + yDouble);
 		typeName = value.getReferenceTypeName();
 		assertEquals("(double) double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
-		assertEquals("(double) double : wrong result : ", ( double) yDoubleValue, doubleValue, 0);
+		assertEquals("(double) double : wrong result : ", yDoubleValue, doubleValue, 0);
 		} finally {
 		end();
 		}

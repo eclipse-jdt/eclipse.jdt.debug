@@ -23,6 +23,26 @@ public class TestGenerator {
 	static protected int getUnaryPromotionType(int type) {
 		return fTypeTable[type][T_int];
 	}
+	
+	static protected boolean needCast(int type1, int type2) {
+		if (type1 == type2) {
+			return false;
+		}
+		switch (type1) {
+			case T_char:
+				return true;
+			case T_int:
+				return type2 >= T_long;
+			case T_long:
+				return type2 == T_float || type2 == T_double;
+			case T_float:
+				return type2 == T_double;
+			case T_double:
+				return false;
+			default:
+				return type1 < type2;
+		}
+	}
 
 	static final int T_undefined = 0;
 	static final int T_object = 1;
@@ -1115,9 +1135,9 @@ public class TestGenerator {
 		genCodeEval("\"(" + t1Name + ")\" + " + iName + t2UName, first, code);
 		genCodeReturnTypeCheck("(" + t1Name + ") " + t2Name, t1Name, first, code);
 		if (type1 == T_float || type1 == T_double) {
-			genCodeReturnValueCheckFloatDoubleType("(" + t1Name + ") " + t2Name, t1Name, t1UName, "( " + t1Name + ") " + iName + t2UName + "Value", first, code);
+			genCodeReturnValueCheckFloatDoubleType("(" + t1Name + ") " + t2Name, t1Name, t1UName, (needCast(type1, type2) ? "( " + t1Name + ") " : "") + iName + t2UName + "Value", first, code);
 		} else {
-			genCodeReturnValueCheckPrimitiveType("(" + t1Name + ") " + t2Name, t1Name, t1UName, "( " + t1Name + ") " + iName + t2UName + "Value", first, code);
+			genCodeReturnValueCheckPrimitiveType("(" + t1Name + ") " + t2Name, t1Name, t1UName, (needCast(type1, type2) ? "( " + t1Name + ") " : "") + iName + t2UName + "Value", first, code);
 		}
 	}
 	
