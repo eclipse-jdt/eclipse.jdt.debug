@@ -31,7 +31,6 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.AppletParametersTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -121,14 +120,10 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 	 * Launches a configuration for the given type
 	 */
 	protected void launch(IType type, String mode) {
-		try { 
-			ILaunchConfiguration config = findLaunchConfiguration(type, mode);
-			if (config != null) {
-				config.launch(mode, null);
-			}			
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), LauncherMessages.getString("appletlauncher.launching.error.failure"), e.getMessage(), e.getStatus());   //$NON-NLS-1$
-		}
+		ILaunchConfiguration config = findLaunchConfiguration(type, mode);
+		if (config != null) {
+			DebugUITools.launch(config, mode);
+		}			
 	}
 	
 	/**
