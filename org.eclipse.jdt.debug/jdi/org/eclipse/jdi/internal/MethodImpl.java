@@ -188,17 +188,19 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 
 		Long lineCodeIndexObj;
 		Integer lineNrObj;
+		long index= lineCodeIndex;
 		// Search for the line where this code index is located.
 		do {
-			lineCodeIndexObj = new Long(lineCodeIndex);
+			lineCodeIndexObj = new Long(index);
 			lineNrObj = (Integer)codeIndexToLine().get(lineCodeIndexObj);
-		} while (lineNrObj == null && --lineCodeIndex >= fLowestValidCodeIndex);
+		} while (lineNrObj == null && --index >= fLowestValidCodeIndex);
 		if (lineNrObj == null) {
 			if (lineCodeIndex >= fLowestValidCodeIndex) {
+				index= lineCodeIndex;
 				do {
-					lineCodeIndexObj = new Long(lineCodeIndex);
+					lineCodeIndexObj = new Long(index);
 					lineNrObj = (Integer)codeIndexToLine().get(lineCodeIndexObj);
-				} while (lineNrObj == null && ++lineCodeIndex <= fHighestValidCodeIndex);
+				} while (lineNrObj == null && ++index <= fHighestValidCodeIndex);
 				if (lineNrObj != null) {
 					return lineNrObj.intValue();
 				}
