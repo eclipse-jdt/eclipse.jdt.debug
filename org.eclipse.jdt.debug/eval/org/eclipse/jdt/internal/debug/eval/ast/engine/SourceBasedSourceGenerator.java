@@ -263,7 +263,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private StringBuffer buildMethodDeclaration(MethodDeclaration methodDeclaration) {
 		StringBuffer source = new StringBuffer();
-		source.append(Flags.toString(methodDeclaration.getModifiers()));
+		int modifiers= methodDeclaration.getModifiers();
+		source.append(Flags.toString(modifiers));
 		source.append(' ');
 		
 		boolean isConstructor= methodDeclaration.isConstructor();
@@ -303,23 +304,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			source.append(getQualifiedIdentifier(name));
 		}
 		
-//		if (isConstructor) {
-//			Statement statement= methodDeclaration.getBody().statements().get(0);
-//			if (statement instanceof ConstructorInvocation) {
-//				statement.getAST().
-//				ConstructorInvocation constructorInvocation= (ConstructorInvocation) statement;
-//				source.append(constructorInvocation.)
-//			} else if (statement instanceof SuperConstructorInvocation) {
-//				SuperConstructorInvocation constructorInvocation= (SuperConstructorInvocation) statement;
-//			}
-//		}
-		
-
-		source.append('{').append('\n');
-
-		source.append(getReturnExpression(methodDeclaration.getReturnType())); 
-
-		source.append('}').append('\n');
+		if (Flags.isAbstract(modifiers) || Flags.isNative(modifiers)) {
+			// No body for abstract and native methods
+			source.append(";\n");
+		} else {
+			source.append('{').append('\n');
+			source.append(getReturnExpression(methodDeclaration.getReturnType())); 
+			source.append('}').append('\n');
+		}
 		
 		return source;
 	}

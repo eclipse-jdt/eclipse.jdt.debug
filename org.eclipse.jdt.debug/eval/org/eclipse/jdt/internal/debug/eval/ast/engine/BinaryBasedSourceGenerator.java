@@ -300,6 +300,12 @@ public class BinaryBasedSourceGenerator {
 			source.append("static ");
 		}
 		
+		if (method.isNative()) {
+			source.append("native ");
+		} else if (method.isAbstract()) {
+			source.append("abstract ");
+		}
+		
 		if (method.isPublic()) {
 			source.append("public ");
 		} else if (method.isPrivate()) {
@@ -319,11 +325,16 @@ public class BinaryBasedSourceGenerator {
 				source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++);
 			}
 		}
-		source.append(") {\n");
+		source.append(')');
 		
-		source.append(getReturnStatement(method.returnTypeName()));
-		
-		source.append("}\n");
+		if (method.isAbstract() || method.isNative()) {
+			// No body for abstract and native methods
+			source.append(";\n");
+		} else {
+			source.append('{').append('\n');
+			source.append(getReturnStatement(method.returnTypeName()));
+			source.append('}').append('\n');
+		}
 
 		return source;
 	}

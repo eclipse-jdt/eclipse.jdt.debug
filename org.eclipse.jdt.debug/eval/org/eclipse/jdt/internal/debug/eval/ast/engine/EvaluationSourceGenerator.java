@@ -129,7 +129,15 @@ public class EvaluationSourceGenerator {
 				IType type= getTypeFromProject(thisObject.getJavaType().getName() ,javaProject);
 				String baseSource= null;
 				if (type != null) {
-					baseSource= type.getSource();
+					ICompilationUnit compilationUnit= type.getCompilationUnit();
+					if (compilationUnit != null) {
+						baseSource= compilationUnit.getSource();
+					} else {
+						IClassFile  classFile= type.getClassFile();
+						if (classFile != null) {
+							baseSource= classFile.getSource();
+						}
+					}
 				}
 				if (baseSource == null) {
 					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
