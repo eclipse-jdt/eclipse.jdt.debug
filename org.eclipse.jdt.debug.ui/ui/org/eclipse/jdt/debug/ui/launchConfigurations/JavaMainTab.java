@@ -60,7 +60,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -144,35 +143,16 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.verticalSpacing = 0;
-		topLayout.numColumns = 2;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
 		
-		Label projLabel = new Label(comp, SWT.NONE);
-		projLabel.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		projLabel.setLayoutData(gd);
-		projLabel.setFont(font);
-		
-		fProjText = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fProjText.setLayoutData(gd);
-		fProjText.setFont(font);
-		fProjText.addModifyListener(fListener);
-		
-		fProjButton = createPushButton(comp, LauncherMessages.getString("JavaMainTab.&Browse_3"), null); //$NON-NLS-1$
-		fProjButton.addSelectionListener(fListener);
-		
-		createVerticalSpacer(comp, 2);
-		
+		createProjectEditor(comp);
+		createVerticalSpacer(comp, 1);
 		createMainTypeEditor(comp);
-		
-		createVerticalSpacer(comp, 2);
+		createVerticalSpacer(comp, 1);
 		
 		fStopInMainCheckButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
+		GridData gd = new GridData();
 		fStopInMainCheckButton.setLayoutData(gd);
 		fStopInMainCheckButton.addSelectionListener(fListener);		
 		
@@ -187,8 +167,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		Font font= parent.getFont();
 		Group mainGroup= new Group(parent, SWT.NONE);
 		mainGroup.setText(LauncherMessages.getString("JavaMainTab.Main_cla&ss__4")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainGroup.setLayoutData(gd);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -216,6 +195,32 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		fConsiderInheritedMainButton.setLayoutData(gd);
 		fConsiderInheritedMainButton.addSelectionListener(fListener);
 	}
+	
+	/**
+	 * Creates the widgets for specifying a main type.
+	 * 
+	 * @param parent the parent composite
+	 */
+	private void createProjectEditor(Composite parent) {
+		Font font= parent.getFont();
+		Group group= new Group(parent, SWT.NONE);
+		group.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(gd);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
+		group.setFont(font);
+
+		fProjText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fProjText.setLayoutData(gd);
+		fProjText.setFont(font);
+		fProjText.addModifyListener(fListener);
+		
+		fProjButton = createPushButton(group, LauncherMessages.getString("JavaMainTab.&Browse_3"), null); //$NON-NLS-1$
+		fProjButton.addSelectionListener(fListener);
+	}	
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
