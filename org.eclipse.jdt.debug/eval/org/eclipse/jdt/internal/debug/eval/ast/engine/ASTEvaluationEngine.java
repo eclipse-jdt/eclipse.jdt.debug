@@ -196,7 +196,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			} else {
 				// Use the existing thread
 				synchronized (fLock) {
-					fLock.notify();
+					fLock.notifyAll();
 				}
 			}
 		}
