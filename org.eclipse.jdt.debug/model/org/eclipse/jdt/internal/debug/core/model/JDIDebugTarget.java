@@ -32,6 +32,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -1139,6 +1140,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		} catch (VMDisconnectedException e) {
 			// if the VM disconnects while exiting, perform 
 			// normal termination processing
+			terminated();
+		} catch (TimeoutException exception) {
 			terminated();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
