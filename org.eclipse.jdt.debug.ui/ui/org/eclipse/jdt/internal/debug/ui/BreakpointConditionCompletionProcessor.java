@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
+import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -47,7 +48,7 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 			configureResultCollector(project, textSelection);	
 			fType.codeComplete(viewer.getDocument().get().toCharArray(), fPosition, documentOffset,
 				 new char[0][], new char[0][],
-				 new int[0], false, getCollector());
+				 new int[0], false, (CompletionRequestor)getCollector());
 				 
 			IJavaCompletionProposal[] results= getCollector().getResults();
 			

@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -84,7 +85,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 				int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
 				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
 					 new char[0][], new char[0][],
-					 new int[0], false, getCollector());
+					 new int[0], false, (CompletionRequestor)getCollector());
 					 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 

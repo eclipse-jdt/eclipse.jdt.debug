@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -147,7 +148,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				
 				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
 					 localVariableTypeNames, localVariableNames,
-					 localModifiers, stackFrame.isStatic(), fCollector);
+					 localModifiers, stackFrame.isStatic(), (CompletionRequestor)fCollector);
 				
 				IJavaCompletionProposal[] results= fCollector.getResults();
 				
