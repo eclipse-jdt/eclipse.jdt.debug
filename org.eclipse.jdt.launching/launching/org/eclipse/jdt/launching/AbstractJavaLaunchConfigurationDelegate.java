@@ -7,6 +7,7 @@ package org.eclipse.jdt.launching;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -213,22 +214,57 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	protected String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
-		List classpathList = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (List)null);
-		String[] classpath;
-		if (classpathList == null) {
-			IJavaProject project = getJavaProject(configuration);
-			if (project == null) {
-				classpath = new String[0];
-			} else {
-				classpath = JavaRuntime.computeDefaultRuntimeClassPath(project);
-			}
+		if (configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false)) {
+			return getDefaultClasspath(configuration);
 		} else {
-			classpath = new String[classpathList.size()];
-			classpathList.toArray(classpath);
+			String[] classpath;
+			List classpathList = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (List)null);
+			if (classpathList == null) {
+				classpath = getDefaultClasspath(configuration);
+			} else {
+				classpath = new String[classpathList.size()];
+				classpathList.toArray(classpath);
+			}
+			return classpath;
 		}
-		return classpath;
+	}
+	
+	/**
+	 * Return the default classpath computed for the specified configuration.  Remove any
+	 * 'rt.jar' entry from this classpath before returning it.
+	 * 
+	 * @param configuration the launch configuration to compute the default classpath for
+	 * @exception CoreException if unable to compute the default classpath
+	 */
+	private String[] getDefaultClasspath(ILaunchConfiguration configuration) throws CoreException {
+		IJavaProject javaProject = getJavaProject(configuration);
+		if (javaProject == null) {
+			return new String[0];
+		}
+		String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);		
+		return removeRtJarFromClasspath(defaultClasspath);
 	}
 
+	/**
+	 * Remove any entry in the String array argument that corresponds to an 'rt.jar' file.
+	 */
+	private String[] removeRtJarFromClasspath(String[] classpath) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < classpath.length; i++) {
+			if (classpath[i].endsWith("rt.jar")) { //$NON-NLS-1$
+				File file = new File(classpath[i]);
+				if ("rt.jar".equals(file.getName())) { //$NON-NLS-1$
+					continue;
+				}
+			}
+			list.add(classpath[i]);
+		}
+		list.trimToSize();
+		String[] stringArray = new String[list.size()];
+		list.toArray(stringArray);
+		return stringArray;
+	}
+	
 	/**
 	 * Returns the Java project specified by the given 
 	 * launch configuration, or <code>null</code> if none.

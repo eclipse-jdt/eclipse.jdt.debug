@@ -106,14 +106,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 	protected String convertClassPath(String[] cp) {
 		int pathCount= 0;
 		StringBuffer buf= new StringBuffer();
-		if (cp.length == 0)
-			return ""; //$NON-NLS-1$
+		if (cp.length == 0) {
+			return "";    //$NON-NLS-1$
+		}
 		for (int i= 0; i < cp.length; i++) {
-			if (cp[i].endsWith("rt.jar")) { //$NON-NLS-1$
-				File f= new File(cp[i]);
-				if ("rt.jar".equals(f.getName())) //$NON-NLS-1$
-					continue;
-			}
 			if (pathCount > 0) {
 				buf.append(File.pathSeparator);
 			}

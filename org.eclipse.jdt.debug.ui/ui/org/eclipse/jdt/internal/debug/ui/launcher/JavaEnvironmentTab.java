@@ -601,6 +601,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 				String[] defaultClassPath = new String[0];
 				if (javaProject != null) {
 					defaultClassPath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
+					defaultClassPath = removeRtJarFromClasspath(defaultClassPath);
 				}
 				fClassPathList.setItems(defaultClassPath);
 			} catch (CoreException ce) {			
@@ -608,6 +609,26 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		}
 		setPathButtonsEnableState();
 		updateLaunchConfigurationDialog();
+	}
+	
+	/**
+	 * Remove any entry in the argument that corresponds to an 'rt.jar' file.
+	 */
+	protected String[] removeRtJarFromClasspath(String[] classpath) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < classpath.length; i++) {
+			if (classpath[i].endsWith("rt.jar")) { //$NON-NLS-1$
+				File file = new File(classpath[i]);
+				if ("rt.jar".equals(file.getName())) { //$NON-NLS-1$
+					continue;
+				}
+			}
+			list.add(classpath[i]);
+		}
+		list.trimToSize();
+		String[] stringArray = new String[list.size()];
+		list.toArray(stringArray);
+		return stringArray;
 	}
 	
 	/**
@@ -702,21 +723,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		updateLaunchConfigurationDialog();	
 	}
 
-	/**
-	 * Helper method that indicates whether the specified env var name is already present 
-	 * in the env var table.
-	 */
-	protected TableItem getTableItemForName(String candidateName) {
-		TableItem[] items = fEnvTable.getItems();
-		for (int i = 0; i < items.length; i++) {
-			String name = items[i].getText(0);
-			if (name.equals(candidateName)) {
-				return items[i];
-			}
-		}
-		return null;
-	}
-	
 	protected void handleEnvRemoveButtonSelected() {
 		int[] selectedIndices = fEnvTable.getSelectionIndices();
 		fEnvTable.remove(selectedIndices);
@@ -743,6 +749,21 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fEnvAddButton.setEnabled(true);
 	}
 	
+	/**
+	 * Helper method that indicates whether the specified env var name is already present 
+	 * in the env var table.
+	 */
+	protected TableItem getTableItemForName(String candidateName) {
+		TableItem[] items = fEnvTable.getItems();
+		for (int i = 0; i < items.length; i++) {
+			String name = items[i].getText(0);
+			if (name.equals(candidateName)) {
+				return items[i];
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Return the List widget that is currently visible in the paths tab folder.
 	 */
