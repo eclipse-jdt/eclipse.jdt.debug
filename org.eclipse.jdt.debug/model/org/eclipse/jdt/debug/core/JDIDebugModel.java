@@ -296,18 +296,17 @@ public class JDIDebugModel {
 	}	
 	
 	/**
-	 * Creates and returns a pattern breakpoint for the given resource at the
-	 * given line number, which is installed in all classes whose fully 
-	 * qualified name matches the given pattern.
-	 * If hitCount > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. 
+	 * Creates and returns a line breakpoint associated with the given resource,
+	 * at the given line number in the specified stratum (see JSR045). The breakpoint
+	 * is installed in classes that have a matching stratum, source name, source path,
+	 * and class name pattern. 
 	 * 
 	 * @param resource the resource on which to create the associated breakpoint
 	 *  marker
 	 * @param stratum the stratum in which the source name, source path and line number
 	 *  are relative.
-	 * @param sourceName the name of the source file in which the breakpoint is
-	 *  set. The pattern breakpoint will install itself in classes that have a source
+	 * @param sourceName the simple name of the source file in which the breakpoint is
+	 *  set. The breakpoint will install itself in classes that have a source
 	 *  file name debug attribute that matches this value in the specified stratum,
 	 *  and satisfies the class name pattern.
 	 * @param sourcePath the path in the project of the source file in which the breakpoint is
@@ -315,10 +314,10 @@ public class JDIDebugModel {
 	 *  install itself in classes that have a source file path in the specified stratum
 	 *  that matches this value, and satisfies the class name pattern.
 	 * @param pattern the class name pattern in which the pattern breakpoint should
-	 *   be installed. The pattern breakpoint will install itself in every class which
-	 *   matches the pattern.
+	 *   be installed. The pattern breakpoint will install itself in each class that
+	 *   matches this class name pattern, with a satisfying source name and source path.
 	 * @param lineNumber the lineNumber on which the breakpoint is set - line
-	 *   numbers are 1 based, associated with the source file in which
+	 *   numbers are 1 based, associated with the source file (stratum) in which
 	 *   the breakpoint is set
 	 * @param charStart the first character index associated with the breakpoint,
 	 *   or -1 if unspecified, in the source file in which the breakpoint is set
@@ -329,7 +328,7 @@ public class JDIDebugModel {
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @param attributes a map of client defined attributes that should be assigned
 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
-	 * @return a pattern breakpoint
+	 * @return a stratum breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
