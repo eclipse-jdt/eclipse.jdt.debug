@@ -59,7 +59,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 public class ScrapbookLauncher implements IDebugEventListener {
 	
 	private IJavaLineBreakpoint fMagicBreakpoint;
-	private DebugException fDebugException;
 	
 	
 	private HashMap fScrapbookToVMs = new HashMap(10);
