@@ -147,11 +147,9 @@ public class BreakpointConditionEditor {
 		
 		
 		IHandler handler = new AbstractHandler() {
-			public Object execute(Map parameter) throws ExecutionException {
-			    if (fViewer.isEditable()) {
-			        fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-			    }
-				return null;
+		    public Object execute(Map parameter) throws ExecutionException {
+		        fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+		        return null;
 			}
 		};
 		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$	
