@@ -6,35 +6,56 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A generic Toggle view action delegate, meant to be subclassed to provide
  * a specific filter.
  */
-public abstract class ToggleDelegateAction implements IViewActionDelegate {
+public abstract class ToggleDelegateAction implements IViewActionDelegate, IPropertyChangeListener, IPartListener{
 
 	/**
 	 * The viewer that this action works for
 	 */
 	private StructuredViewer fViewer;
 	
+	private IViewPart fView;
+	
+	protected String fId= "";
+	
 	private IAction fAction;
 	private boolean fNeedsInitialization= true;
 
+	protected void dispose() {
+		if (fView != null) {
+			fView.getViewSite().getPage().removePartListener(this);
+		}
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+	}
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
+		setView(view);
+		initActionId();
 		IDebugView adapter= (IDebugView) view.getAdapter(IDebugView.class);
 		if (adapter != null && adapter.getViewer() instanceof StructuredViewer) {
 			setViewer((StructuredViewer)adapter.getViewer());
 		}
+		view.getViewSite().getPage().addPartListener(this);
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
+
+	protected abstract void initActionId();
 
 	/**
 	 * Returns the appropriate tool tip text depending on
@@ -51,7 +72,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate {
 		valueChanged(action.isChecked());
 		String label= getToolTipText(action.isChecked());
 		action.setToolTipText(label);
-		action.setText(label);
 	}
 
 	protected abstract String getShowText();
@@ -60,7 +80,9 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate {
 	
 	protected abstract void valueChanged(boolean on);
 	
-	protected abstract String getActionId();
+	protected String getActionId() {
+		return fId;
+	}
 	
 	protected StructuredViewer getViewer() {
 		return fViewer;
@@ -86,5 +108,58 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate {
 
 	protected void setAction(IAction action) {
 		fAction = action;
+		action.addPropertyChangeListener(this);
+	}
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(getActionId())) {
+			boolean checked= ((Boolean)event.getNewValue()).booleanValue();
+			getAction().setChecked(checked);
+			getAction().setToolTipText(getToolTipText(checked));
+		} else if (event.getProperty().equals(IAction.CHECKED)) {
+			JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(getActionId(), getAction().isChecked());
+		}
+	}
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part.equals(getView())) {
+			dispose();
+		}
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+	
+	protected IViewPart getView() {
+		return fView;
+	}
+
+	protected void setView(IViewPart view) {
+		fView = view;
 	}
 }

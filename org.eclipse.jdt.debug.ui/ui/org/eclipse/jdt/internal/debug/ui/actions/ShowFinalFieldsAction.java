@@ -20,51 +20,17 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	/**
 	 * The filter this action applies to the viewer
 	 */
-	private FinalFilter fFinalFilter;
-
-	class FinalFilter extends ViewerFilter {
-		
-		/**
-		 * @see ViewerFilter#select(Viewer, Object, Object)
-		 */
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof IAdaptable) {
-				IJavaVariable var= (IJavaVariable) ((IAdaptable) element).getAdapter(IJavaVariable.class);
-				if (var != null) {
-					if (element.equals(getViewer().getInput())) {
-						//never filter out the root
-						return true;
-					}
-					try {
-						return !var.isFinal();
-					} catch (DebugException e) {
-						JDIDebugUIPlugin.log(e);
-						return true;
-					}
-				}
-			}
-			return true;
-		}
-
-	}
+	private static final ViewerFilter fgFinalFilter= new FinalFilter();
 
 	public ShowFinalFieldsAction() {
-		setViewerFilter(new FinalFilter());
 	}
 	
-	protected String getActionId() {
-		return JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowFinalFieldsAction"; //$NON-NLS-1$
-	}
 
 	/**
 	 * @see ToggleFilterAction#getViewerFilter()
 	 */
 	protected ViewerFilter getViewerFilter() {
-		return fFinalFilter;
-	}
-	
-	protected void setViewerFilter(FinalFilter filter) {
-		fFinalFilter= filter;
+		return fgFinalFilter;
 	}
 
 	/**
@@ -79,5 +45,37 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	 */
 	protected String getHideText() {
 		return ActionMessages.getString("ShowFinalFieldsAction.Hide_Final_Fields_2"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see ToggleDelegateAction#initActionId()
+	 */
+	protected void initActionId() {
+		fId= JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + getView().getSite().getId() + ".ShowFinalFieldsAction"; //$NON-NLS-1$
+	}
+}
+
+class FinalFilter extends ViewerFilter {
+		
+	/**
+	 * @see ViewerFilter#select(Viewer, Object, Object)
+	 */
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		if (element instanceof IAdaptable) {
+			IJavaVariable var= (IJavaVariable) ((IAdaptable) element).getAdapter(IJavaVariable.class);
+			if (var != null) {
+				if (element.equals(viewer.getInput())) {
+					//never filter out the root
+					return true;
+				}
+				try {
+					return !var.isFinal();
+				} catch (DebugException e) {
+					JDIDebugUIPlugin.log(e);
+					return true;
+				}
+			}
+		}
+		return true;
 	}
 }

@@ -16,10 +16,6 @@ import org.eclipse.swt.custom.BusyIndicator;
  * show/hide qualified names.
  */
 public class ShowQualifiedAction extends ToggleDelegateAction {
-	
-	protected String getActionId() {
-		return JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowQualifiedAction"; //$NON-NLS-1$
-	}
 
 	protected void valueChanged(final boolean on) {
 		if (getViewer().getControl().isDisposed()) {
@@ -50,6 +46,13 @@ public class ShowQualifiedAction extends ToggleDelegateAction {
 	 */
 	protected String getHideText() {
 		return ActionMessages.getString("ShowQualifiedAction.Hide_&Qualified_Names_3"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see ToggleDelegateAction#initActionId()
+	 */
+	protected void initActionId() {
+		fId= JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + getView().getSite().getId() + ".ShowQualifiedAction"; //$NON-NLS-1$
 	}
 }
 
