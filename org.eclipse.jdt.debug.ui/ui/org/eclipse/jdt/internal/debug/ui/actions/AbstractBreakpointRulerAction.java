@@ -20,8 +20,11 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -42,7 +45,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 				IJavaLineBreakpoint jBreakpoint= (IJavaLineBreakpoint)breakpoint;
 				boolean match= false;
 				try {
-					match= breakpointAtRulerLine(jBreakpoint.getLineNumber());
+					match= breakpointAtRulerLine(jBreakpoint);
 				} catch (CoreException ce) {
 					JDIDebugUIPlugin.log(ce);
 					continue;
@@ -91,10 +94,26 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 		return resource;
 	}
 
-	protected boolean breakpointAtRulerLine(int breakpointLineNumber) {
+	protected boolean breakpointAtRulerLine(IJavaLineBreakpoint jBreakpoint) throws CoreException {
+		int lineNumber= jBreakpoint.getLineNumber();
+		if (lineNumber == -1) {
+			int charStart= jBreakpoint.getCharStart();
+			if (charStart != -1) {
+				IDocumentProvider provider= fTextEditor.getDocumentProvider();
+				IDocument doc=  provider.getDocument(fTextEditor.getEditorInput());
+				try {
+					//must add one
+					lineNumber= doc.getLineOfOffset(jBreakpoint.getCharStart()) + 1;
+				} catch(BadLocationException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		}
+		//document line numbers 0 based; breakpoints 1 based
 		int line= getInfo().getLineOfLastMouseButtonActivity();
-		return (line + 1) == breakpointLineNumber;
-	}	
+		return (line + 1) == lineNumber;
+	}
+		
 	protected IBreakpoint getBreakpoint() {
 		return fBreakpoint;
 	}
@@ -102,5 +121,4 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	protected void setBreakpoint(IBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
-
 }
