@@ -27,7 +27,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * 
+ * A preference page for collecting values that govern how Java variables are
+ * presented.  The main part of this pref page is a grid of checkboxes.  The
+ * rows represent access types (public, protected, etc.) and the columns
+ * represent 'modes' (static, final, etc.).  A check mark means that the
+ * corresponding access/mode pair will be shown.
  */
 public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage {
 
@@ -67,7 +71,10 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	}
 	
 	/**
-	 * 
+	 * This listener responds to selection events for the +/- buttons at the top
+	 * of each column and the beginning of each row of the filter grid.  The +
+	 * buttons select all of the checkboxes in the corresponding row/column, and
+	 * the - button deselects all of the checkboxes.
 	 */
 	private class PlusMinusButtonListener implements SelectionListener {
 				
@@ -87,14 +94,14 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		}
 		
 		private void processRow(boolean select, int row) {
-			for (int j = 0; j < fAccessModifierNames.length; j++) {
+			for (int j = 0; j < JDIDebugUIPlugin.fgAccessModifierNames.length; j++) {
 				CenterAlignedBooleanFieldEditor bfe = fCheckboxes[row][j];
 				bfe.getCheckbox(getFieldEditorParent()).setSelection(select);
 			}
 		}
 		
 		private void processCol(boolean select, int col) {
-			for (int i = 0; i < fModeModifierNames.length; i++) {
+			for (int i = 0; i < JDIDebugUIPlugin.fgModeModifierNames.length; i++) {
 				CenterAlignedBooleanFieldEditor bfe = fCheckboxes[i][col];
 				bfe.getCheckbox(getFieldEditorParent()).setSelection(select);
 			}			
@@ -119,39 +126,16 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 
 	private StructuredViewer fViewer;
 
-	/**
-	 * The prefix used in forming the names of the individual preferences used
-	 * for filtering variables.
-	 */
-	public static final String fgVariableFilterPreferencePrefix = JDIDebugUIPlugin.getUniqueIdentifier() + "variable_filter_pref_"; //$NON-NLS-1$
-
-	/**
-	 * The names of the allowable Java access modifiers.
-	 */
-	public static final String[] fAccessModifierNames = new String[] {"public", //$NON-NLS-1$
-															"package", //$NON-NLS-1$
-															"protected", //$NON-NLS-1$
-															"private", //$NON-NLS-1$
-															"local"}; //$NON-NLS-1$
-
-	/**
-	 * The names of the allowable Java 'mode' modifiers.
-	 */													
-	public static final String[] fModeModifierNames = new String[] {"static", //$NON-NLS-1$
-															"final", //$NON-NLS-1$
-															"normal", //$NON-NLS-1$
-															"synthetic"}; //$NON-NLS-1$
-
 	public static final Image fgPlusSignImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_PLUS_SIGN);
 	public static final Image fgMinusSignImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_MINUS_SIGN);
 	
 	private static Image[] fgAccessImages;
 	
 	private CenterAlignedBooleanFieldEditor[][] fCheckboxes =
-			new CenterAlignedBooleanFieldEditor[fModeModifierNames.length][fAccessModifierNames.length];
+			new CenterAlignedBooleanFieldEditor[JDIDebugUIPlugin.fgModeModifierNames.length][JDIDebugUIPlugin.fgAccessModifierNames.length];
 	
 	static {
-		fgAccessImages = new Image[fAccessModifierNames.length];
+		fgAccessImages = new Image[JDIDebugUIPlugin.fgAccessModifierNames.length];
 		fgAccessImages[0] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PUBLIC);
 		fgAccessImages[1] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_DEFAULT);
 		fgAccessImages[2] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PROTECTED);
@@ -185,7 +169,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		
 		// Create header images
 		createSpacer(getFieldEditorParent(), 1);
-		for (int i = 0; i < fAccessModifierNames.length; i++) {
+		for (int i = 0; i < JDIDebugUIPlugin.fgAccessModifierNames.length; i++) {
 			label = new Label(getFieldEditorParent(), SWT.NONE);
 			label.setImage(fgAccessImages[i]);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
@@ -194,9 +178,9 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 				
 		// Create column headers for the checkbox table
 		createSpacer(getFieldEditorParent(), 1);
-		for (int i = 0; i < fAccessModifierNames.length; i++) {
+		for (int i = 0; i < JDIDebugUIPlugin.fgAccessModifierNames.length; i++) {
 			label = new Label(getFieldEditorParent(), SWT.NONE);
-			label.setText(fAccessModifierNames[i]);
+			label.setText(JDIDebugUIPlugin.fgAccessModifierNames[i]);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			label.setLayoutData(gd);
 		}
@@ -206,14 +190,14 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		
 		// Create the +/- buttons for the columns
 		createSpacer(getFieldEditorParent(), 1);
-		for (int i = 0; i < fAccessModifierNames.length; i++) {
+		for (int i = 0; i < JDIDebugUIPlugin.fgAccessModifierNames.length; i++) {
 			Composite buttonComp = createPlusMinusButtons(getFieldEditorParent(), true, buttonListener, i);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			buttonComp.setLayoutData(gd);
 		}
 		
 		// Create the rows of the checkbox table
-		for (int i = 0; i < fModeModifierNames.length; i++) {
+		for (int i = 0; i < JDIDebugUIPlugin.fgModeModifierNames.length; i++) {
 			
 			// Create a container for the row label and +/- buttons
 			Composite rowComp = new Composite(getFieldEditorParent(), SWT.NONE);
@@ -227,7 +211,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			
 			// Create the row label
 			label = new Label(rowComp, SWT.NONE);
-			label.setText(fModeModifierNames[i]);
+			label.setText(JDIDebugUIPlugin.fgModeModifierNames[i]);
 			
 			// Create the +/- buttons
 			Composite buttonComp = createPlusMinusButtons(rowComp, false, buttonListener, i);
@@ -235,22 +219,22 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			buttonComp.setLayoutData(gd);
 			
 			// Create the checkboxes for the row
-			for (int j = 0; j < fAccessModifierNames.length; j++) {
-				String prefName = JavaVariablesViewerFilter.generateVariableFilterPreferenceName(i, j);
+			for (int j = 0; j < JDIDebugUIPlugin.fgAccessModifierNames.length; j++) {
+				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(i, j);
 				CenterAlignedBooleanFieldEditor bfe = new CenterAlignedBooleanFieldEditor(prefName, EMPTY_STRING, getFieldEditorParent());
 				addField(bfe);
 				fCheckboxes[i][j] = bfe;
 			}
 		}	
 		
-		createSpacer(getFieldEditorParent(), fAccessModifierNames.length + 1);
+		createSpacer(getFieldEditorParent(), JDIDebugUIPlugin.fgAccessModifierNames.length + 1);
 		
 		// Create a group for the 3 primitive display options
 		Group primitiveGroup = new Group(getFieldEditorParent(), SWT.NONE);
 		GridLayout primitiveLayout = new GridLayout();
 		primitiveGroup.setLayout(primitiveLayout);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = fAccessModifierNames.length + 1;
+		gd.horizontalSpan = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
 		primitiveGroup.setLayoutData(gd);
 		primitiveGroup.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2")); //$NON-NLS-1$
 
@@ -262,7 +246,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		BooleanFieldEditor unsignedCheckbox = new BooleanFieldEditor(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5"), primitiveGroup); //$NON-NLS-1$
 		addField(unsignedCheckbox);
 
-		createSpacer(getFieldEditorParent(), fAccessModifierNames.length + 1);
+		createSpacer(getFieldEditorParent(), JDIDebugUIPlugin.fgAccessModifierNames.length + 1);
 	}
 	
 	/**
@@ -312,7 +296,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void adjustGridLayout() {
 		GridLayout gridLayout = (GridLayout)getFieldEditorParent().getLayout();
-		gridLayout.numColumns = fAccessModifierNames.length + 1;
+		gridLayout.numColumns = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
 		gridLayout.horizontalSpacing = HORIZONTAL_GRID_SPACING;
 		gridLayout.verticalSpacing = VERTICAL_GRID_SPACING;
 	}
@@ -328,9 +312,9 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	 * By default, ALL filter options are set on.
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		for (int row = 0; row < fModeModifierNames.length; row++) {
-			for (int col = 0; col < fAccessModifierNames.length; col++) {
-				String prefName = JavaVariablesViewerFilter.generateVariableFilterPreferenceName(row, col);
+		for (int row = 0; row < JDIDebugUIPlugin.fgModeModifierNames.length; row++) {
+			for (int col = 0; col < JDIDebugUIPlugin.fgAccessModifierNames.length; col++) {
+				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(row, col);
 				store.setDefault(prefName, true);
 			}
 		}

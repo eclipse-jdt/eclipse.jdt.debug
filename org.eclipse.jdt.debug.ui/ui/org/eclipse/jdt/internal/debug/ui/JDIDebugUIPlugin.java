@@ -100,6 +100,25 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private boolean fShuttingDown= false;
 
 	/**
+	 * The names of the allowable Java access modifiers.
+	 */
+	public static final String[] fgAccessModifierNames = new String[] {"public", //$NON-NLS-1$
+															"package", //$NON-NLS-1$
+															"protected", //$NON-NLS-1$
+															"private", //$NON-NLS-1$
+															"local"}; //$NON-NLS-1$
+
+	/**
+	 * The names of the allowable Java 'mode' modifiers.
+	 */
+	public static final String[] fgModeModifierNames = new String[] {"static", //$NON-NLS-1$
+															"final", //$NON-NLS-1$
+															"normal", //$NON-NLS-1$
+															"synthetic"}; //$NON-NLS-1$
+
+	public static final String VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + "variables_filter";
+
+	/**
 	 * @see Plugin(IPluginDescriptor)
 	 */
 	public JDIDebugUIPlugin(IPluginDescriptor descriptor) {
@@ -270,9 +289,52 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_USE_FILTERS, true);
 		
-		JavaVariablesFilterPreferencePage.initDefaults(store);
+		initializeDefaultJavaVariablesPreferences(store);
 	}
 	
+	/**
+	 * Set the default values for all variable filtering combinations.
+	 */
+	private void initializeDefaultJavaVariablesPreferences(IPreferenceStore store) {
+		// static
+		initializeDefaultJavaVariablesPreferences(store, 0, 0, 3, false);
+		initializeDefaultJavaVariablesPreferences(store, 0, 4, 4, true);
+
+		// final
+		initializeDefaultJavaVariablesPreferences(store, 1, 0, 3, false);
+		initializeDefaultJavaVariablesPreferences(store, 1, 4, 4, true);
+
+		// normal
+		initializeDefaultJavaVariablesPreferences(store, 2, 0, 4, true);
+
+		// synthetic
+		initializeDefaultJavaVariablesPreferences(store, 3, 0, 4, true);
+	}
+
+	/**
+	 * Set the specified default pref. value for the given row and range of
+	 * columns.
+	 */
+	private void initializeDefaultJavaVariablesPreferences(IPreferenceStore store, int row, int firstCol, int lastCol, boolean value) {
+		for (int col = firstCol; col <= lastCol; col++) {
+			String prefName = generateVariableFilterPreferenceName(row, col);
+			store.setDefault(prefName, value);
+		}
+	}
+
+	/**
+	 * Use the specified row & column indices to generate preference names that
+	 * have the specified prefix.
+	 */
+	public static String generateVariableFilterPreferenceName(int rowIndex, int colIndex) {
+		StringBuffer buffer = new StringBuffer(VARIABLES_FILTER_PREFIX);
+		buffer.append('_');
+		buffer.append(fgModeModifierNames[rowIndex]);
+		buffer.append('_');
+		buffer.append(fgAccessModifierNames[colIndex]);
+		return buffer.toString();
+	}
+
 	/**
 	 * @see AbstractUIPlugin#startup()
 	 */

@@ -29,7 +29,7 @@ public class JavaVariablesViewerFilter extends ViewerFilter {
 	 * A table containing the current preferences that relate to variable
 	 * filtering.
 	 */
-	private boolean[][] fFilterGrid = new boolean[JavaVariablesFilterPreferencePage.fModeModifierNames.length][JavaVariablesFilterPreferencePage.fAccessModifierNames.length];																									
+	private boolean[][] fFilterGrid = new boolean[JDIDebugUIPlugin.fgModeModifierNames.length][JDIDebugUIPlugin.fgAccessModifierNames.length];																									
 
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -134,9 +134,9 @@ public class JavaVariablesViewerFilter extends ViewerFilter {
 
 	private void loadFilterPreferences() {
 		IPreferenceStore prefStore = getPreferenceStore();
-		for (int i = 0; i < JavaVariablesFilterPreferencePage.fModeModifierNames.length; i++) {
-			for (int j = 0; j < JavaVariablesFilterPreferencePage.fAccessModifierNames.length; j++) {
-				String prefName = generateVariableFilterPreferenceName(i, j);
+		for (int i = 0; i < JDIDebugUIPlugin.fgModeModifierNames.length; i++) {
+			for (int j = 0; j < JDIDebugUIPlugin.fgAccessModifierNames.length; j++) {
+				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(i, j);
 				boolean value = prefStore.getBoolean(prefName);
 				fFilterGrid[i][j] = value;
 			}
@@ -148,12 +148,4 @@ public class JavaVariablesViewerFilter extends ViewerFilter {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();
 	}
 	
-	public static String generateVariableFilterPreferenceName(int rowIndex, int colIndex) {
-		StringBuffer buffer = new StringBuffer(JavaVariablesFilterPreferencePage.fgVariableFilterPreferencePrefix);
-		buffer.append(JavaVariablesFilterPreferencePage.fModeModifierNames[rowIndex]);
-		buffer.append('_');
-		buffer.append(JavaVariablesFilterPreferencePage.fAccessModifierNames[colIndex]);
-		return buffer.toString();
-	}
-
 }
