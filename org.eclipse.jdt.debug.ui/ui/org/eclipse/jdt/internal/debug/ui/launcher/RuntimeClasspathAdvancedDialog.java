@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
-import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
