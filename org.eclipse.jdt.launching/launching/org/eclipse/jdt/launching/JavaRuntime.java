@@ -419,21 +419,21 @@ public final class JavaRuntime {
 	 * 
 	 * @return the list of registered VM types
 	 */
-	public static IVMInstallType[] getVMInstallTypes() {
+	public static synchronized IVMInstallType[] getVMInstallTypes() {
 		if (fgVMTypes == null) {
 			initializeVMTypes();
 		}
 		return fgVMTypes; 
 	}
 	
-	private static String getDefaultVMId() {
+	private static synchronized String getDefaultVMId() {
 		if (fgVMTypes == null) {
 			initializeVMTypes();
 		}
 		return fgDefaultVMId;
 	}
 	
-	private static String getDefaultVMConnectorId() {
+	private static synchronized String getDefaultVMConnectorId() {
 		if (fgVMTypes == null) {
 			initializeVMTypes();
 		}
