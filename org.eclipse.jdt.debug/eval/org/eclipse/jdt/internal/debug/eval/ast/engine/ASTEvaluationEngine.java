@@ -258,7 +258,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			int runMethodEnd= runMethodStart + mapper.getRunMethodLength();
 			for (int i = 0; i < messages.length; i++) {
 				Message message= messages[i];
-				int errorOffset= message.getSourcePosition();
+				int errorOffset= message.getStartPosition();
 				// TO DO: Internationalize "void method..." error message check
 				if (codeSnippetStart <= errorOffset && errorOffset <= codeSnippetEnd && !fVoidMessageError.equals(message.getMessage())) {
 					errorSequence.addError(message);
