@@ -66,7 +66,12 @@ public class JavaBreakpointPage extends PropertyPage {
 	public boolean performOk() {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				getBreakpoint().getMarker().setAttribute(ATTR_DELETE_ON_CANCEL, (String)null);
+				IJavaBreakpoint breakpoint = getBreakpoint();
+				boolean delOnCancel = breakpoint.getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null;
+				if (delOnCancel) {
+					breakpoint.getMarker().setAttribute(ATTR_DELETE_ON_CANCEL, (String)null);
+					breakpoint.setRegistered(true);
+				}
 				doStore();
 			}
 		};

@@ -92,7 +92,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 				}
 				Map map = new HashMap();
 				map.put(JavaBreakpointPage.ATTR_DELETE_ON_CANCEL, JavaBreakpointPage.ATTR_DELETE_ON_CANCEL);
-				IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, checked, true, map);
+				IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, checked, false, map);
 				showProperties(breakpoint);
 			}
 		} catch (CoreException e) {
