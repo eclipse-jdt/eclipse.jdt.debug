@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build Lanuching Support JAR" default="build" basedir="..">
+<project name="Build Launching Support JAR" default="build" basedir="..">
 
 	<target name="build" description="Cleans, builds and refreshes">
 		<antcall target="clean"/>
