@@ -49,7 +49,7 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
 		
 		// create request to listen to class loads
-		registerRequest(target, target.createClassPrepareRequest(getPattern() + "*"));
+		registerRequest(target, target.createClassPrepareRequest(getPattern() + "*")); //$NON-NLS-1$
 		
 		// create breakpoint requests for each class currently loaded
 		List classes= target.getVM().allClasses();

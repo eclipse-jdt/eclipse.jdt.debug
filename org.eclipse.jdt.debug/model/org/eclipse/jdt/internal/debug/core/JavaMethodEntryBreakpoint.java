@@ -255,7 +255,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		String[] nameSignature= new String[2];
 		IMethod aMethod= getMethod(); 
 		if (aMethod.isConstructor()) {
-			nameSignature[0]= "<init>";
+			nameSignature[0]= "<init>"; //$NON-NLS-1$
 		} else {
 			 nameSignature[0]= aMethod.getElementName();
 		}

@@ -5,9 +5,10 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.debug.core.model.IDebugElement;
+
 import com.sun.jdi.*;
 
 /**
@@ -52,7 +53,7 @@ public class JDIFieldVariable extends JDIModificationVariable {
 			return fField.name();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_NAME, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -65,12 +66,12 @@ public class JDIFieldVariable extends JDIModificationVariable {
 				fObject.setValue(fField, value);
 			}
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
@@ -153,7 +154,7 @@ public class JDIFieldVariable extends JDIModificationVariable {
 			return fField.signature();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} 
 		return getUnknownMessage();
 	}

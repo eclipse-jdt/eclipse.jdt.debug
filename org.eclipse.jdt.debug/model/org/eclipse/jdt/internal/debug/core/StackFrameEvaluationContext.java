@@ -5,18 +5,22 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import java.util.*;import org.eclipse.core.runtime.IPath;import org.eclipse.core.runtime.Path;import org.eclipse.debug.core.DebugException;import org.eclipse.jdt.core.*;import org.eclipse.jdt.core.eval.IEvaluationContext;
+import java.text.MessageFormat;
+import java.util.*;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.eval.IEvaluationContext;
+
+import com.sun.jdi.*;
 /**
  * An evaluation context for a stack frame.
  */
 
 public class StackFrameEvaluationContext extends ThreadEvaluationContext {
-		
-	protected static final String ERROR_NO_TYPE = ERROR+ "no_type";
-	protected static final String ERROR_BINARY_TYPE = ERROR+ "binary_type";
-	protected static final String ERROR_INNER_TYPE = ERROR+ "inner_type";
-	
+			
 	/**
 	 * The stack frame context
 	 */
@@ -57,7 +61,6 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			String[] typeNames = computeNestedTypes();
 			if (result != null) {
 				if (result instanceof IClassFile) {
-					//fModelFrame.requestFailed(ERROR_BINARY_TYPE, null);
 					type = ((IClassFile)result).getType();
 				} else if (result instanceof ICompilationUnit) {
 					type = ((ICompilationUnit)result).getType(typeNames[0]);
@@ -71,11 +74,11 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		}
 		
 		if (type == null) {
-			fModelFrame.requestFailed(ERROR_NO_TYPE, null);
+			fModelFrame.requestFailed(JDIDebugModelMessages.getString("StackFrameEvaluationContext.unable_to_determine_type"), null); //$NON-NLS-1$
 		}
 		
 		if (type.getParent() instanceof IType) {
-			fModelFrame.requestFailed(ERROR_INNER_TYPE, null);
+			fModelFrame.requestFailed(JDIDebugModelMessages.getString("StackFrameEvaluationContext.context_of_inner_type_not_supported"), null); //$NON-NLS-1$
 		}
 		
 		try {
@@ -94,14 +97,14 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			if (dollarIndex >= 0)
 				typeName= typeName.substring(0, dollarIndex);
 			typeName.replace('.', IPath.SEPARATOR);
-			typeName+= ".java";			
+			typeName+= ".java";			 //$NON-NLS-1$
 		} else {
 			int index = typeName.lastIndexOf('.');
 			if (index >= 0) {
 				typeName = typeName.substring(0, index + 1);
 				typeName = typeName.replace('.', IPath.SEPARATOR);
 			} else {
-				typeName = "";
+				typeName = ""; //$NON-NLS-1$
 			}
 			typeName+=sourceName;
 		}
@@ -151,7 +154,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			}
 
 			// Create a new code snippet
-			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0);
+			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0); //$NON-NLS-1$
 			codeSnippet = getModelThread().newInstance(codeSnippetClass, constructor, new ArrayList());
 
 			// Install local variables and "this" into generated fields
@@ -179,11 +182,11 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			method = (Method)codeSnippetClass.methodsByName(RUN_METHOD).get(0);
 			arguments = new ArrayList();
 		} catch (ClassNotLoadedException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		} catch (InvalidTypeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		} catch (RuntimeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		}
 
 		try {
@@ -213,11 +216,11 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			Field resultTypeField = codeSnippetClass.fieldByName(RESULT_TYPE_FIELD);
 			fResultType = (ClassObjectReference)codeSnippet.getValue(resultTypeField);
 		} catch (ClassNotLoadedException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		} catch (InvalidTypeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		} catch (RuntimeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		}
 	}
 			
@@ -267,7 +270,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			fLocalVariableNames = new String[0];
 			fLocalVariableModifiers = new int[0];
 		} catch (RuntimeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION ,e);
+			evaluationFailed(e);
 		}
 
 		try {
@@ -275,7 +278,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			fDeclaringTypeName = method.declaringType().name();
 			fIsStatic = method.isStatic();
 		} catch (RuntimeException e) {
-			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+			evaluationFailed(e);
 		}
 	}
 	
@@ -298,4 +301,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		}
 	}
 
+	protected void evaluationFailed(Throwable e) throws DebugException {
+		fModelFrame.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("StackFrameEvaluationContext.exception_performing_evaluation"), new String[] {e.toString()}), e); //$NON-NLS-1$
+	}
 }

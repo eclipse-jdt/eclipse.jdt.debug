@@ -5,10 +5,11 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.Value;
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
+
+import com.sun.jdi.*;
 
 /**
  * Represents the receiver in a stack frame.
@@ -38,7 +39,7 @@ public class JDIThisVariable extends JDIVariable {
 	 * @see IDebugElement
 	 */
 	public String getName() {
-		return "this";
+		return "this"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -49,7 +50,7 @@ public class JDIThisVariable extends JDIVariable {
 			return fObject.type().signature();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -62,7 +63,7 @@ public class JDIThisVariable extends JDIVariable {
 			return getValue().getReferenceTypeName();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}

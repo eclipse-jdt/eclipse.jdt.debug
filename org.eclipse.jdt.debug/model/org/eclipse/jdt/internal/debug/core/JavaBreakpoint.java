@@ -15,14 +15,6 @@ import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
-
-// Thread and marker label resource String keys
-	protected static final String THREAD_PREFIX= "jdi_thread.";
-	protected static final String MARKER_PREFIX= "jdi_marker.";
-	protected static final String LABEL= "label.";	
-	protected static final String THREAD_LABEL= THREAD_PREFIX + LABEL;
-	protected static final String MARKER_LABEL= MARKER_PREFIX + LABEL;
-	protected static final String NO_MARKER="java_breakpoint.error.no_marker";
 	
 	protected HashMap fRequestsByTarget;
 	
@@ -48,7 +40,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		IMarker m = getMarker();
 		if (m == null) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IDebugStatusConstants.REQUEST_FAILED,
-				DebugJavaUtils.getResourceString(NO_MARKER),null));
+				JDIDebugModelMessages.getString("JavaBreakpoint.no_asscoiated_marker"),null)); //$NON-NLS-1$
 		}
 		return m;
 	}

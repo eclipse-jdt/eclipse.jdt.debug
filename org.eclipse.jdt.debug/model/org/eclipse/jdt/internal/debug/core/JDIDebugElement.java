@@ -8,11 +8,7 @@ package org.eclipse.jdt.internal.debug.core;
 import com.sun.jdi.*;import com.sun.jdi.request.*;import java.util.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.jdi.TimeoutException;import org.eclipse.jdi.hcr.OperationRefusedException;import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 public abstract class JDIDebugElement extends PlatformObject implements IDebugElement {
-	
-	// Resource String keys
-	protected static final String UNKNOWN= "jdi.common.unknown";
-	protected static final String ERROR_GET_CHILDREN= "jdi.common.error.get_children";
-		
+			
 	/**
 	 * Collection of possible JDI exceptions
 	 */
@@ -147,23 +143,20 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>REQUEST_FAILED</code>.
-	 * The message in the status is derived from the given key for this
-	 * plug-in's resource bundle. A lower level exception is optional.
+	 * A lower level exception is optional.
 	 */
-	public void requestFailed(String key,  Exception e) throws DebugException {
+	public void requestFailed(String message,  Exception e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.REQUEST_FAILED, DebugJavaUtils.getResourceString(key), e));	
+			IDebugStatusConstants.REQUEST_FAILED, message, e));	
 	}
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
-	 * The message in the status is derived from the given key for this
-	 * plug-in's resource bundle.
 	 */
-	public void targetRequestFailed(String key, RuntimeException e) throws DebugException {
+	public void targetRequestFailed(String message, RuntimeException e) throws DebugException {
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugJavaUtils.getResourceString(key), e));
+				IDebugStatusConstants.TARGET_REQUEST_FAILED, message, e));
 		} else {
 			throw e;
 		}
@@ -171,22 +164,18 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
-	 * The message in the status is derived from the given key for this
-	 * plug-in's resource bundle.
 	 */
-	public void targetRequestFailed(String key, Throwable e) throws DebugException {
+	public void targetRequestFailed(String message, Throwable e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugJavaUtils.getResourceString(key), e));
+			IDebugStatusConstants.TARGET_REQUEST_FAILED, message, e));
 	}
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>NOT_SUPPORTED</code>.
-	 * The message in the status is derived from the given key for this
-	 * plug-in's resource bundle.
 	 */
-	public void notSupported(String key) throws DebugException {
+	public void notSupported(String message) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.NOT_SUPPORTED, DebugJavaUtils.getResourceString(key), null));
+			IDebugStatusConstants.NOT_SUPPORTED, message, null));
 	}
 	
 	
@@ -209,12 +198,12 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * Logs a debug exception with a message based on the given key,
+	 * Logs a debug exception with the given message,
 	 * with a status code of <code>INTERNAL_ERROR</code>.
 	 */
-	public void internalError(String key) {
+	public void internalError(String message) {
 		logError(new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.INTERNAL_ERROR, DebugJavaUtils.getResourceString(key), null)));
+			IDebugStatusConstants.INTERNAL_ERROR, message, null)));
 	}
 
 	
@@ -222,7 +211,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * Returns the common "<unknown>" message
 	 */
 	public String getUnknownMessage() {
-		return DebugJavaUtils.getResourceString(UNKNOWN);
+		return "<unknown>";
 	}
 	
 	protected boolean hasPendingEvents() {

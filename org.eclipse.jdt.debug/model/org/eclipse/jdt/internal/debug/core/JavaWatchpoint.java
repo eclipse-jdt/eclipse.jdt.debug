@@ -18,23 +18,6 @@ import com.sun.jdi.request.*;
 
 public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoint {
 	
-	// Thread label String keys
-	private static final String ACCESS_SYS= THREAD_LABEL + "access_sys";
-	private static final String ACCESS_USR= THREAD_LABEL + "access_usr";
-	private static final String MODIFICATION_SYS= THREAD_LABEL + "modification_sys";
-	private static final String MODIFICATION_USR= THREAD_LABEL + "modification_usr";
-	// Error String keys
-	private final static String PREFIX= "jdi_breakpoint.";
-	private final static String ERROR = PREFIX + "error.";	
-	private final static String ERROR_ACCESS_WATCHPOINT_NOT_SUPPORTED = ERROR + "access.not_supported";
-	private final static String ERROR_MODIFICATION_WATCHPOINT_NOT_SUPPORTED = ERROR + "modification.net_supported";
-	// Marker label String keys
-	protected final static String WATCHPOINT= MARKER_LABEL + "watchpoint.";
-	protected final static String FORMAT= WATCHPOINT + "format";	
-	protected final static String ACCESS= WATCHPOINT + "access";
-	protected final static String MODIFICATION= WATCHPOINT + "modification";
-	protected final static String BOTH= WATCHPOINT + "both";		
-
 	static String fMarkerType= IJavaDebugConstants.JAVA_WATCHPOINT;
 	
 	private final static int ACCESS_EVENT= 0;
@@ -120,13 +103,13 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			accessRequest= createAccessWatchpoint(target, field);
 			registerRequest(target, accessRequest);
 		} else {
-			notSupported(ERROR_ACCESS_WATCHPOINT_NOT_SUPPORTED);				
+			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_access_watchpoints"));				 //$NON-NLS-1$
 		}
 		if (modificationSupportedBy(target.getVM())) {
 			modificationRequest= createModificationWatchpoint(target, field);
 			registerRequest(target, modificationRequest);
 		} else {
-			notSupported(ERROR_MODIFICATION_WATCHPOINT_NOT_SUPPORTED);
+			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
 		}
 
 	}
@@ -157,7 +140,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	/**
 	 * This watchpoint is not supported for some reason. Alert the user.
 	 */
-	protected void notSupported(String error_key) {
+	protected void notSupported(String message) {
 	}
 	
 	/**
@@ -358,7 +341,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	public IField getField() throws CoreException {
 		String handle= getFieldHandleIdentifier();
-		if (handle != null && handle != "") {
+		if (handle != null && handle != "") { //$NON-NLS-1$
 			return (IField)JavaCore.create(handle);
 		}
 		return null;

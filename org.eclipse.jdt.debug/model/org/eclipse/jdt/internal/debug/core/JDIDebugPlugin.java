@@ -22,7 +22,7 @@ public class JDIDebugPlugin extends Plugin {
 	/**
 	 * Propery identifier for a breakpoint object on an event request
 	 */
-	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint";
+	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
 	
 	protected static JDIDebugPlugin fgPlugin;
 	

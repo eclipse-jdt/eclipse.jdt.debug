@@ -5,20 +5,23 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.*;import java.util.*;import org.eclipse.core.resources.IMarker;import org.eclipse.debug.core.DebugException;import org.eclipse.jdt.core.JavaModelException;import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;import org.eclipse.jdt.core.eval.IEvaluationContext;import org.eclipse.jdt.debug.core.*;
+import java.text.MessageFormat;
+import java.util.*;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
+import org.eclipse.jdt.core.eval.IEvaluationContext;
+import org.eclipse.jdt.debug.core.*;
+
+import com.sun.jdi.*;
 
 /**
  * An evaluation context for a stack frame.
  */
 
-public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable, IJavaEvaluationResult {
-	
-	//NLS
-	protected static final String PREFIX = "jdi_evaluation.";
-	protected static final String ERROR = PREFIX + "error.";
-	protected static final String ERROR_EVALUATION = ERROR+ "evaluation";
-	protected static final String ERROR_THREAD_NOT_SUSPENDED = ERROR+ "thread_not_suspended";
-	 
+public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable, IJavaEvaluationResult {	 
 	
 	/**
 	 * The evaluation context for the associated java project
@@ -88,7 +91,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			Thread t = new Thread(this);
 			t.start();
 		} else {
-			getModelThread().requestFailed(ERROR_THREAD_NOT_SUSPENDED, null);
+			getModelThread().requestFailed(JDIDebugModelMessages.getString("ThreadEvaluationContext.thread_not_suspended"), null); //$NON-NLS-1$
 		}
 	}
 	
@@ -134,7 +137,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 						fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), v);
 						return;
 					} catch (RuntimeException e) {
-						getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
+						getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result"), new String[] {e.toString()}), e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -145,13 +148,13 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				try {
 					ReferenceType ref= fResultType.reflectedType();
 					String sig = ref.signature();
-					if (sig.equals("V") || sig.equals("Lvoid;")) {
+					if (sig.equals("V") || sig.equals("Lvoid;")) { //$NON-NLS-2$ //$NON-NLS-1$
 						// void
 						fValue = new JDIVoidValue((JDIDebugTarget)getModelThread().getDebugTarget());
 						return;
 					}
 				} catch (RuntimeException e) {
-					getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
+					getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				}
 			}
 			if (hasProblems()) {
@@ -177,7 +180,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				}
 			}
 		} catch (RuntimeException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
+			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -206,7 +209,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 					ObjectReference theException = ((InvocationException)underlyingException).exception();
 					if (theException != null) {
 						try {
-							List methods = theException.referenceType().methodsByName("printStackTrace", "()V");
+							List methods = theException.referenceType().methodsByName("printStackTrace", "()V"); //$NON-NLS-2$ //$NON-NLS-1$
 							if (!methods.isEmpty()) {
 								try {
 									getModelThread().invokeMethod(null, theException, (Method)methods.get(0), Collections.EMPTY_LIST);
@@ -254,7 +257,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				// Load the class
 				codeSnippetClass = classForName(codeSnippetClassName);
 				if (codeSnippetClass == null) {
-					getModelThread().requestFailed(DebugJavaUtils.getResourceString("jdi_evaluation.error.evaluation"), null);
+					getModelThread().requestFailed(JDIDebugModelMessages.getString("ThreadEvaluationContext.unable_to_load_code_snippet"), null); //$NON-NLS-1$
 					return;
 				}
 			} else {
@@ -262,7 +265,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			}
 
 			// Create a new code snippet
-			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0);
+			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0); //$NON-NLS-1$
 			codeSnippet = getModelThread().newInstance(codeSnippetClass, constructor, new ArrayList());
 
 			// Get the method 'runCodeSnippet' and its arguments		
@@ -280,7 +283,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 		} catch (DebugException e) {
 			throw e;
 		} catch (RuntimeException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
+			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_performing_evaluation"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -303,12 +306,12 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 		try {
 			// get java.lang.Class
 			VirtualMachine jdiVM = getVM();
-			List classes = jdiVM.classesByName("java.lang.Class");
+			List classes = jdiVM.classesByName("java.lang.Class"); //$NON-NLS-1$
 			if (classes.size() == 0) {
 				return null;
 			}
 			ClassType classClass= (ClassType)classes.get(0);
-			List methods= classClass.methodsByName("forName", "(Ljava/lang/String;)Ljava/lang/Class;");
+			List methods= classClass.methodsByName("forName", "(Ljava/lang/String;)Ljava/lang/Class;"); //$NON-NLS-2$ //$NON-NLS-1$
 			if (methods.isEmpty()) {
 				return null;
 			}
@@ -327,7 +330,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			}		
 			return loadedClass;
 		} catch (RuntimeException e) {
-			getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
+			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_attempting_to_load_class"), new String[] {e.toString(), className}), e); //$NON-NLS-1$
 		}
 		return null;
 	}

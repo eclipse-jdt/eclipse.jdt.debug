@@ -26,14 +26,14 @@ public class JDIVoidValue extends JDIValue {
 	 * @see IValue
 	 */
 	public String getReferenceTypeName() {
-		return "void";
+		return "void"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * @see IValue
 	 */
 	public String getValueString() {
-		return "null";
+		return "null"; //$NON-NLS-1$
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class JDIVoidValue extends JDIValue {
 	 * @see IJavaValue
 	 */
 	public String getSignature() {
-		return "V";
+		return "V"; //$NON-NLS-1$
 	}
 
 	/**

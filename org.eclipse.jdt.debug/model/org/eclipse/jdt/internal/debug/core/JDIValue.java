@@ -5,11 +5,14 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.*;
+import java.text.MessageFormat;
 import java.util.*;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.debug.core.*;
+
+import com.sun.jdi.*;
 
 /**
  * The value of a variable
@@ -20,20 +23,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	public Value fValue;
 	protected List fVariables;
 	
-	protected static final String PREFIX = "jdi_value.";
-	protected static final String NULL= PREFIX + "null";
-	protected static final String ERROR = PREFIX + "error.";
-	protected static final String ERROR_IS_ALLOCATED = ERROR + "is_allocated";
-	protected static final String ERROR_GET_LENGTH = ERROR + "get_length";
-	protected static final String ERROR_GET_DESCRIPTION = ERROR + "get_description";
-	protected static final String ERROR_TO_STRING = ERROR + "to_string";
-	protected static final String ERROR_TO_STRING_NOT_SUSPENDED = ERROR + "to_string.not_suspended";
-	protected static final String ERROR_TO_STRING_NOT_IMPLEMENTED = ERROR + "to_string.not_implemented";
-	protected static final String ERROR_TO_STRING_TIMEOUT = ERROR + "to_string.timeout";
-	private final static String DEALLOCATED= PREFIX + "deallocated";	
-	private final static String ID= PREFIX + "id";	
-	private static final String fgToStringSignature = "()Ljava/lang/String;";
-	private static final String fgToString = "toString";
+	private static final String fgToStringSignature = "()Ljava/lang/String;"; //$NON-NLS-1$
+	private static final String fgToString = "toString"; //$NON-NLS-1$
 	
 	/**
 	 * If a value is the result of an expression, we keep track
@@ -67,18 +58,18 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 */
 	public String getValueString() throws DebugException {
 		if (!isAllocated()) {
-			return DebugJavaUtils.getResourceString(DEALLOCATED);
+			return JDIDebugModelMessages.getString("JDIValue.deallocated"); //$NON-NLS-1$
 		}
 		if (fValue == null) {
-			return DebugJavaUtils.getResourceString(NULL);
+			return JDIDebugModelMessages.getString("JDIValue.null_4"); //$NON-NLS-1$
 		}
 		if (fValue instanceof StringReference) {
 			try {
 				return ((StringReference) fValue).value();
 			} catch (VMDisconnectedException e) {
-				return "";
+				return ""; //$NON-NLS-1$
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_DESCRIPTION, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 		if (fValue instanceof ObjectReference) {
@@ -88,14 +79,14 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				name.append(((ClassObjectReference)fValue).reflectedType());
 				name.append(')');
 			}
-			name.append(" (");
-			name.append(DebugJavaUtils.getResourceString(ID));
+			name.append(" ("); //$NON-NLS-1$
+			name.append(JDIDebugModelMessages.getString("JDIValue.id_8")); //$NON-NLS-1$
 			name.append('=');
 			try {
 				name.append(((ObjectReference)fValue).uniqueID());
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_DESCRIPTION, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_unique_id"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 			name.append(')');
 			return name.toString();
@@ -110,12 +101,12 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			if (fValue == null) {
-				return DebugJavaUtils.getResourceString(NULL);
+				return JDIDebugModelMessages.getString("JDIValue.null_10"); //$NON-NLS-1$
 			}
 			return fValue.type().name();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIVariable.ERROR_GET_REFERENCE_TYPE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -178,7 +169,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 					} catch (VMDisconnectedException e) {
 						return Collections.EMPTY_LIST;
 					} catch (RuntimeException e) {
-						targetRequestFailed(ERROR_GET_CHILDREN, e);
+						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_fields"), new String[] {e.toString()}), e); //$NON-NLS-1$
 					}
 					Iterator list= fields.iterator();
 					while (list.hasNext()) {
@@ -251,7 +242,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				} catch (VMDisconnectedException e) {
 					fAllocated = false;
 				} catch (RuntimeException e) {
-					targetRequestFailed(ERROR_IS_ALLOCATED, e);
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_is_collected"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				}
 			} else {
 				IDebugTarget dt = getDebugTarget();
@@ -273,7 +264,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIVariable.ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -287,7 +278,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				return getArrayReference().length();
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_LENGTH, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_length_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 		return -1;
@@ -306,7 +297,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	public synchronized String evaluateToString(final IJavaThread thread) throws DebugException {
 		String sig = getSignature();
 		if (sig == null) {
-			return DebugJavaUtils.getResourceString(NULL);
+			return JDIDebugModelMessages.getString("JDIValue.null_15"); //$NON-NLS-1$
 		}
 		if (sig.length() == 1) {
 			// primitive
@@ -314,7 +305,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}
 
 		if (!thread.isSuspended()) {
-			requestFailed(ERROR_TO_STRING_NOT_SUSPENDED, null);
+			requestFailed(JDIDebugModelMessages.getString("JDIValue.thread_not_suspended"), null); //$NON-NLS-1$
 		}
 		
 		final String[] toString = new String[1];
@@ -349,7 +340,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}	
 		
 		((JDIThread)fJavaThread).abortEvaluation();
-		requestFailed(ERROR_TO_STRING_TIMEOUT, null);
+		requestFailed(JDIDebugModelMessages.getString("JDIValue.timeout_performing_toString()"), null); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -361,7 +352,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			ReferenceType type = object.referenceType();
 			List methods = type.methodsByName(fgToString, fgToStringSignature);
 			if (methods.size() == 0) {
-				requestFailed(ERROR_TO_STRING_NOT_IMPLEMENTED, null);
+				requestFailed(JDIDebugModelMessages.getString("JDIValue.toString()_not_implemented"), null); //$NON-NLS-1$
 			}
 			Method method = (Method)methods.get(0);
 			StringReference string = (StringReference)thread.invokeMethod(null, object, method, Collections.EMPTY_LIST);
@@ -369,7 +360,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		} catch (VMDisconnectedException e) {
 			toString = getUnknownMessage();
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_TO_STRING, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_evaluating_toString()"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		
 		return toString;		

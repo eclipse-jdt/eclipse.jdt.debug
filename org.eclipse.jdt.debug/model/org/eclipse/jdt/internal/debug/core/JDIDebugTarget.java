@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core;
  */
 
 import java.io.ByteArrayInputStream;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -26,25 +27,6 @@ import com.sun.jdi.request.*;
  */
 
 public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget {
-	
-	private final static String PREFIX= "jdi_debug_target.";
-	
-	private final static String ERROR = PREFIX + "error.";
-	private final static String ERROR_GET_NAME = ERROR + "get_name";
-	private final static String ERROR_DISCONNECT_NOT_SUPPORTED = ERROR + "disconnect_not_supported";
-	private final static String ERROR_DISCONNECT = ERROR + "disconnect";
-	private final static String ERROR_HCR = ERROR + "hcr.exception";
-	private final static String ERROR_HCR_NOT_SUPPORTED = ERROR + "hcr.not_supported";
-	private final static String ERROR_HCR_FAILED = ERROR + "hcr.failed";
-	private final static String ERROR_HCR_IGNORED = ERROR + "hcr.ignored";
-	private final static String ERROR_BREAKPOINT_NO_TYPE = ERROR + "breakpoint.no_type";	
-	private final static String ERROR_RESUME_NOT_SUPPORTED = ERROR + "resume.not_supported";
-	private final static String ERROR_SUSPEND_NOT_SUPPORTED = ERROR + "suspend.not_supported";
-	private final static String ERROR_TERMINATE_NOT_SUPPORTED = ERROR + "terminate.not_supported";
-	private final static String ERROR_ACCESS_WATCHPOINT_NOT_SUPPORTED = ERROR + "access.not_supported";
-	private final static String ERROR_MODIFICATION_WATCHPOINT_NOT_SUPPORTED = ERROR + "modification.net_supported";
-	private final static String ERROR_TERMINATE = ERROR + "terminate.exception";
-	private static final String ERROR_GET_CRC= ERROR + "get_crc";
 	
 	private static final int MAX_THREAD_DEATH_ATTEMPTS = 1;
 	
@@ -174,7 +156,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	public synchronized void initialize() {
 		initializeRequests();
 		fEventDispatcher= new EventDispatcher(this);
-		new Thread(fEventDispatcher, JDIDebugModel.getPluginIdentifier() + ": JDI Event Dispatcher").start();
+		new Thread(fEventDispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
 		initializeState();
 		fireCreationEvent();
 		initializeBreakpoints();
@@ -226,7 +208,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		// Once the first ClassPrepareEvent is seen and the ThreadDeath instance created, this request 
 		// is deleted.  Note this has no effect on more selective ClassPrepareRequests for deferred 
 		// breakpoints or exceptions.  
-		fUniversalClassPrepareReq= listenForClassLoad("*");
+		fUniversalClassPrepareReq= listenForClassLoad("*"); //$NON-NLS-1$
 	}
 
 	/**
@@ -324,7 +306,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			if (fUniversalClassPrepareReq != null) {
 				try {
 					getEventRequestManager().deleteEventRequest(fUniversalClassPrepareReq);
-					fClassPrepareRequestsByClass.remove("*");
+					fClassPrepareRequestsByClass.remove("*"); //$NON-NLS-1$
 				} catch (RuntimeException e) {
 					internalError(e);
 				}
@@ -342,12 +324,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				return;
 			}
 			//non NLS
-			List classes= jdiClassesByName("java.lang.ThreadDeath");
+			List classes= jdiClassesByName("java.lang.ThreadDeath"); //$NON-NLS-1$
 			if (classes != null && classes.size() != 0) {
 				ClassType threadDeathClass= (ClassType) classes.get(0);
 				Method constructor= null;
 				try {
-					constructor= threadDeathClass.concreteMethodByName("<init>", "()V");
+					constructor= threadDeathClass.concreteMethodByName("<init>", "()V"); //$NON-NLS-2$ //$NON-NLS-1$
 				} catch (RuntimeException e) {
 					internalError(e);
 					return;
@@ -372,7 +354,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						// remove the "*" ClassPrepareRequest since it's no longer needed
 						if (fUniversalClassPrepareReq != null) {
 							getEventRequestManager().deleteEventRequest(fUniversalClassPrepareReq);
-							fClassPrepareRequestsByClass.remove("*");
+							fClassPrepareRequestsByClass.remove("*"); //$NON-NLS-1$
 						}
 					} catch (RuntimeException e) {
 						fThreadDeath= null;
@@ -394,7 +376,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 
 		if (!canDisconnect()) {
-			notSupported(ERROR_DISCONNECT_NOT_SUPPORTED);
+			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_disconnect")); //$NON-NLS-1$
 		}
 
 		try {
@@ -402,7 +384,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} catch (VMDisconnectedException e) {
 			terminate0();
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_DISCONNECT, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_disconnecting"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
@@ -427,20 +409,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			try {
 				result= vm.classesHaveChanged(typeNames);
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_HCR, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_replacing_types"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 			switch (result) {
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS:
 					break;
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_IGNORED:
-					targetRequestFailed(ERROR_HCR_IGNORED, null);
+					targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_ignored"), null); //$NON-NLS-1$
 					break;
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
-					targetRequestFailed(ERROR_HCR_FAILED, null);
+					targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_failed"), null); //$NON-NLS-1$
 					break;
 			}
 		} else {
-			notSupported(ERROR_HCR_NOT_SUPPORTED);
+			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
 		}
 		
 	}
@@ -468,7 +450,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			} catch (VMDisconnectedException e) {
 				return getUnknownMessage();
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_NAME, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 		return fName;
@@ -620,7 +602,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see ISuspendResume
 	 */
 	public void resume() throws DebugException {
-		notSupported(ERROR_RESUME_NOT_SUPPORTED);
+		notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_resume")); //$NON-NLS-1$
 	}
 
 	/**
@@ -690,7 +672,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Not supported
 	 */
 	public void suspend() throws DebugException {
-		notSupported(ERROR_SUSPEND_NOT_SUPPORTED);
+		notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_suspend")); //$NON-NLS-1$
 	}
 
 	/**
@@ -701,14 +683,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return;
 		}
 		if (!canTerminate()) {
-			notSupported(ERROR_TERMINATE_NOT_SUPPORTED);
+			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_termination")); //$NON-NLS-1$
 		}
 		try {
 			fVirtualMachine.exit(1);
 		} catch (VMDisconnectedException e) {
 			terminate0();
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_TERMINATE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
 
@@ -876,7 +858,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 							}
 							parent = folder;
 						}
-						String name = compoundName[compoundName.length - 1] + ".class";
+						String name = compoundName[compoundName.length - 1] + ".class"; //$NON-NLS-1$
 						IPath path = new Path(name);
 						if (fTempFiles.get(path) == null) {
 							IFile file = parent.getFile(path);
@@ -969,7 +951,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						}
 					} catch (VMDisconnectedException e) {
 					} catch (RuntimeException e) {
-						targetRequestFailed(ERROR_GET_CRC, e);
+						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_version_information"), new String[] {e.toString(), type.name()}), e); //$NON-NLS-1$
 					}
 				}
 			}

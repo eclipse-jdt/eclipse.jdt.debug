@@ -7,11 +7,7 @@ import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaRunToLineBreakpoint;
 
 public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJavaRunToLineBreakpoint {
-	
-	// Thread label String keys
-	private static final String RUN_TO_LINE_SYS= THREAD_LABEL + "run_to_line_sys";
-	private static final String RUN_TO_LINE_USR= THREAD_LABEL + "run_to_line_usr";
-		
+			
 	static String fMarkerType= IJavaDebugConstants.JAVA_RUN_TO_LINE_BREAKPOINT;		
 
 	/**

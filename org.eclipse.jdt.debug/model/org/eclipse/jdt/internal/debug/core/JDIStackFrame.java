@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.debug.core.DebugException;
@@ -20,19 +21,6 @@ import com.sun.jdi.*;
  */
 
 public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
-
-	// Resource String keys
-	private static final String PREFIX= "jdi_stack_frame.";
-	private static final String ERROR= PREFIX + "error.";
-	private static final String ERROR_GET_NAME= ERROR + "get_name";
-	private static final String ERROR_DROP_NOT_SUPPORTED= ERROR + "drop_not_supported";
-	private static final String ERROR_GET_ARGUMENTS= ERROR + "get_arguments";
-	private static final String ERROR_GET_DECLARING_TYPE= ERROR + "get_declaring_type";
-	private static final String ERROR_GET_RECEIVING_TYPE= ERROR + "get_receiving_type";
-	private static final String ERROR_GET_LINE_NUMBER= ERROR + "get_line_number";
-	private static final String ERROR_GET_SIGNATURE= ERROR + "get_signature";
-	private static final String ERROR_GET_METHOD= ERROR + "get_method";
-	private static final String ERROR_GET_SOURCE_NAME= ERROR + "get_source_name";
 
 	/**
 	 * Underlying stack frame
@@ -141,7 +129,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			try {
 				fMethod= fStackFrame.location().method();
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_METHOD, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 		return fMethod;
@@ -168,7 +156,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				} catch (VMDisconnectedException e) {
 					return Collections.EMPTY_LIST;
 				} catch (RuntimeException e) {
-					targetRequestFailed(ERROR_GET_CHILDREN, e);
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
 				}
 				if (allFields != null) {
 					Iterator fields= allFields.iterator();
@@ -186,14 +174,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				}
 			} else {
 				// add "this"
-				ObjectReference t= null;
-				try {
-					t= fStackFrame.thisObject();
-				} catch (VMDisconnectedException e) {
-					return Collections.EMPTY_LIST;
-				} catch (RuntimeException e) {
-					targetRequestFailed(ERROR_GET_CHILDREN, e);
-				}
+				ObjectReference t= getUnderlyingThisObject();
 				if (t != null) {
 					fVariables.add(new JDIThisVariable((JDIDebugTarget)getDebugTarget(), t));
 				}
@@ -239,7 +220,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().argumentTypeNames();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_ARGUMENTS, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_argument_type_names"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -256,7 +237,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				}
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_LINE_NUMBER, e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 		return -1;
@@ -358,14 +339,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 		} else {
 			// update "this"
-			ObjectReference thisObject= null;
-			try {
-				thisObject= fStackFrame.thisObject();
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
-				targetRequestFailed(ERROR_GET_CHILDREN, e);
-			}
+			ObjectReference thisObject= getUnderlyingThisObject();
 			JDIThisVariable oldThisObject= null;
 			if (!fVariables.isEmpty() && fVariables.get(0) instanceof JDIThisVariable) {
 				oldThisObject= (JDIThisVariable) fVariables.get(0);
@@ -399,7 +373,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (VMDisconnectedException e) {
 			return;
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_CHILDREN, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables"),new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		int localIndex= -1;
 		while (index < fVariables.size()) {
@@ -465,7 +439,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (supportsDropToFrame()) {
 			((JDIThread) getThread()).dropToFrame(this);
 		} else {
-			notSupported(ERROR_DROP_NOT_SUPPORTED);
+			notSupported(JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported")); //$NON-NLS-1$
 		}
 	}
 
@@ -513,12 +487,24 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (NativeMethodException e) {
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_CHILDREN, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 		return variables;
 	}
 
+	/**
+	 * Helper method that retrievs 'this' from the stack frame
+	 */
+	ObjectReference getUnderlyingThisObject() throws DebugException {
+		try {
+			return fStackFrame.thisObject();
+		} catch (VMDisconnectedException e) {
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		return null;
+	}
 	/**
 	 * Returns the underlying JDI StackFrame
 	 */
@@ -581,7 +567,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().signature();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -594,7 +580,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().declaringType().name();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_DECLARING_TYPE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -612,7 +598,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_RECEIVING_TYPE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -625,7 +611,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().name();	
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_NAME, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -719,7 +705,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (AbsentInformationException e) {
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SOURCE_NAME, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}

@@ -5,8 +5,11 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
+
+import com.sun.jdi.*;
 
 /**
  * A <code>JDILocalVariable</code> represents a local variable in a stack
@@ -49,7 +52,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 			return fLocal.name();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_NAME, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -61,12 +64,12 @@ public class JDILocalVariable extends JDIModificationVariable {
 		try {
 			fStackFrame.getUnderlyingStackFrame().setValue(fLocal, value);
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -78,7 +81,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 			return fLocal.typeName();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_REFERENCE_TYPE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -91,7 +94,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 			return fLocal.signature();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}

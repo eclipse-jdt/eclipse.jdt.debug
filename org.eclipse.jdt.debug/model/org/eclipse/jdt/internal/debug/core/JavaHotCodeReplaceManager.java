@@ -23,11 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
  */
 public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 
-	// Resource String keys
-	private static final String PREFIX= "jdi_hcr.";
-	private static final String NO_OUTPUT_LOC= PREFIX + "error.no_output_loc";
-	private static final String DELTAS_CHANGED= PREFIX + "error.deltas_changed";
-
 	/**
 	 * Singleton 
 	 */
@@ -36,7 +31,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	/**
 	 * The class file extension
 	 */
-	private static final String CLASS_FILE_EXTENSION= "class";
+	private static final String CLASS_FILE_EXTENSION= "class"; //$NON-NLS-1$
 
 	/**
 	 * Visitor for resource deltas.

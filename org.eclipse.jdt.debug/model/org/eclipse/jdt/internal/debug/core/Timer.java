@@ -1,5 +1,8 @@
 package org.eclipse.jdt.internal.debug.core;
 
+import org.eclipse.jdt.debug.core.JDIDebugModel;
+
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -46,7 +49,7 @@ public class Timer {
 				}
 			}
 		};
-		fThread = new Thread(r, "Step Timer");
+		fThread = new Thread(r, JDIDebugModel.getPluginIdentifier() +JDIDebugModelMessages.getString("Timer.label")); //$NON-NLS-1$
 		fThread.setDaemon(true);
 		fThread.start();
 	}

@@ -5,27 +5,17 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.Value;
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.Value;
+
 public abstract class JDIVariable extends JDIDebugElement implements IJavaVariable {
-	
-	// NLS
-	protected final static String PREFIX= "jdi_variable.";
-	protected static final String ERROR = PREFIX + "error.";
-	protected static final String ERROR_GET_NAME = ERROR + "get_name";
-	protected static final String ERROR_GET_REFERENCE_TYPE = ERROR + "get_reference_type";
-	protected static final String ERROR_GET_SIGNATURE = ERROR + "get_signature";
-	protected static final String ERROR_GET_VALUE= ERROR + "get_value";
-	protected static final String ERROR_SET_VALUE= ERROR + "set_value";
-	protected static final String ERROR_SET_VALUE_NOT_SUPPORTED= ERROR + "set_value.not_supported";
 	
 	/**
 	 * Cache of current value - see #getValue().
@@ -33,7 +23,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	protected JDIValue fValue;
 	
 	//non NLS
-	protected final static String jdiStringSignature= "Ljava/lang/String;";
+	protected final static String jdiStringSignature= "Ljava/lang/String;"; //$NON-NLS-1$
 	
 	public JDIVariable(JDIDebugTarget target) {
 		super(target);
@@ -70,7 +60,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 			return retrieveValue();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIVariable.exception_retrieving"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -116,7 +106,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 * @see IValueModification
 	 */
 	public void setValue(String expression) throws DebugException {
-		notSupported(ERROR_SET_VALUE_NOT_SUPPORTED);
+		notSupported(JDIDebugModelMessages.getString("JDIVariable.does_not_support_value_modification")); //$NON-NLS-1$
 	}
 
 	/**

@@ -5,13 +5,12 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import com.sun.jdi.*;
 
@@ -39,7 +38,7 @@ public class JDIArrayPartition extends JDIVariable {
 		StringBuffer name = new StringBuffer();
 		name.append('[');
 		name.append(fStart);
-		name.append("..");
+		name.append(".."); //$NON-NLS-1$
 		name.append(fEnd);
 		name.append(']');
 		return name.toString();
@@ -174,7 +173,7 @@ public class JDIArrayPartition extends JDIVariable {
 			return getArrayReference().referenceType().name();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_REFERENCE_TYPE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -187,7 +186,7 @@ public class JDIArrayPartition extends JDIVariable {
 			return getArrayReference().type().signature();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}

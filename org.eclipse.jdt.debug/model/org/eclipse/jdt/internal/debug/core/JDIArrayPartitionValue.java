@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -33,15 +34,15 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	}
 	
 	public String getReferenceTypeName() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public String getValueString(boolean qualified) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public String getValueString() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public String evaluateToString(IJavaThread thread) {
@@ -83,7 +84,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 			return !getArrayReference().isCollected();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIValue.ERROR_IS_ALLOCATED, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartitionValue.exception_is_garbage_collected"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return false;
 	}

@@ -5,13 +5,12 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IValue;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+
+import org.eclipse.debug.core.DebugException;
+
+import com.sun.jdi.*;
  
 /**
  * Common functionality for variables that support value modification
@@ -20,14 +19,14 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	
 	private final static ArrayList fgValidSignatures = new ArrayList (9);
 	{
-		fgValidSignatures.add("B");  // byte
- 		fgValidSignatures.add("C");  // char
-		fgValidSignatures.add("D");  // double
-		fgValidSignatures.add("F");  // float
-		fgValidSignatures.add("I");  // int
-		fgValidSignatures.add("J");  // long
-		fgValidSignatures.add("S");  // short
-		fgValidSignatures.add("Z");  // boolean
+		fgValidSignatures.add("B");  // byte //$NON-NLS-1$
+ 		fgValidSignatures.add("C");  // char //$NON-NLS-1$
+		fgValidSignatures.add("D");  // double //$NON-NLS-1$
+		fgValidSignatures.add("F");  // float //$NON-NLS-1$
+		fgValidSignatures.add("I");  // int //$NON-NLS-1$
+		fgValidSignatures.add("J");  // long //$NON-NLS-1$
+		fgValidSignatures.add("S");  // short //$NON-NLS-1$
+		fgValidSignatures.add("Z");  // boolean //$NON-NLS-1$
 		fgValidSignatures.add(jdiStringSignature); // String
 	};
 
@@ -174,7 +173,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 	Value value= generateVMValue(expression);
 
 		if (value == null) {
-			requestFailed(ERROR_SET_VALUE, null);
+			requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIModificationVariable.value_modification_failed"), new String[] {expression}), null); //$NON-NLS-1$
 		} 
 
 		setValue(value);

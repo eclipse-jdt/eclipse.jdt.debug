@@ -19,15 +19,6 @@ import com.sun.jdi.request.ExceptionRequest;
 
 public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExceptionBreakpoint {
 	
-	// Thread label String keys
-	private static final String EXCEPTION_SYS= THREAD_LABEL + "exception_sys";
-	private static final String EXCEPTION_USR= THREAD_LABEL + "exception_usr";
-	// Marker label String keys
-	protected final static String EXCEPTION= MARKER_LABEL + "exception.";
-	protected final static String FORMAT= EXCEPTION + "format";
-	protected final static String CAUGHT= EXCEPTION + "caught";
-	protected final static String UNCAUGHT= EXCEPTION + "uncaught";
-	protected final static String BOTH= EXCEPTION + "both";	
 	// Attribute strings
 	protected static final String[] fgExceptionBreakpointAttributes= new String[]{IJavaDebugConstants.CHECKED, IJavaDebugConstants.TYPE_HANDLE};	
 	

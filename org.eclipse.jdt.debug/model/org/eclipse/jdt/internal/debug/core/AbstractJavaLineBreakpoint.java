@@ -17,12 +17,9 @@ import com.sun.jdi.request.*;
 
 public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	
-	// Thread label String keys
-	private static final String LINE_BREAKPOINT_SYS= THREAD_LABEL + "line_breakpoint_sys";
-	private static final String LINE_BREAKPOINT_USR= THREAD_LABEL + "line_breakpoint_usr";
 	// Marker label String keys
-	private static final String LINE= "line";
-	private static final String HITCOUNT= "hitCount";
+	private static final String LINE= "line"; //$NON-NLS-1$
+	private static final String HITCOUNT= "hitCount"; //$NON-NLS-1$
 	
 	/**
 	 * Sets of attributes used to configure a line breakpoint

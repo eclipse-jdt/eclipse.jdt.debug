@@ -5,10 +5,11 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.debug.core.model.IDebugElement;
+
+import com.sun.jdi.*;
 
 /**
  * An entry in an array.
@@ -50,23 +51,23 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * @see IDebugElement
 	 */
 	public String getName() {
-		return "[" + fIndex + "]";
+		return "[" + fIndex + "]"; //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	public void setValue(Value value) throws DebugException {
 		ArrayReference ar= getArrayReference();
 		if (ar == null) {
-			requestFailed(ERROR_SET_VALUE, null);
+			requestFailed(JDIDebugModelMessages.getString("JDIArrayEntryVariable.value_modification_failed"), null); //$NON-NLS-1$
 		}
 		try {
 			ar.setValue(fIndex, value);
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_SET_VALUE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
@@ -83,7 +84,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			return stripBrackets(getArrayReference().referenceType().name());
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_REFERENCE_TYPE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}
@@ -93,12 +94,12 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * return the result.  Example:  "int[][][]" becomes "int[][]".
 	 */
 	protected String stripBrackets(String typeName) {
-		int lastLeft= typeName.lastIndexOf("[]");
+		int lastLeft= typeName.lastIndexOf("[]"); //$NON-NLS-1$
 		if (lastLeft < 0) {
 			return typeName;
 		}
 		StringBuffer buffer= new StringBuffer(typeName);
-		buffer.replace(lastLeft, lastLeft + 2, "");
+		buffer.replace(lastLeft, lastLeft + 2, ""); //$NON-NLS-1$
 		return buffer.toString();
 	}
 	
@@ -110,7 +111,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			return getArrayReference().type().signature();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			targetRequestFailed(ERROR_GET_SIGNATURE, e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return getUnknownMessage();
 	}

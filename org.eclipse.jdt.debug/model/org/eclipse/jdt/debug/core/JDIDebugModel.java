@@ -373,13 +373,13 @@ public class JDIDebugModel {
 		} catch (IOException ioe) {			
 		}
 		
-		fUseStepFilters = parseBoolean(fStepFilterProperties.getProperty(USE_FILTERS_KEY, "true"));
-		fActiveStepFilterList = parseList(fStepFilterProperties.getProperty(ACTIVE_FILTERS_KEY, ""));
-		fInactiveStepFilterList = parseList(fStepFilterProperties.getProperty(INACTIVE_FILTERS_KEY, ""));
+		fUseStepFilters = parseBoolean(fStepFilterProperties.getProperty(USE_FILTERS_KEY, "true")); //$NON-NLS-1$
+		fActiveStepFilterList = parseList(fStepFilterProperties.getProperty(ACTIVE_FILTERS_KEY, "")); //$NON-NLS-1$
+		fInactiveStepFilterList = parseList(fStepFilterProperties.getProperty(INACTIVE_FILTERS_KEY, "")); //$NON-NLS-1$
 	}
 	
 	private static boolean parseBoolean(String booleanString) {
-		if (booleanString.toLowerCase().startsWith("f")) {
+		if (booleanString.toLowerCase().startsWith("f")) { //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -387,7 +387,7 @@ public class JDIDebugModel {
 	
 	private static List parseList(String listString) {
 		List list = new ArrayList(listString.length() + 1);
-		StringTokenizer tokenizer = new StringTokenizer(listString, ",");
+		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
 			list.add(token);
@@ -422,7 +422,7 @@ public class JDIDebugModel {
 	
 	private static String serializeList(List list) {
 		if (list == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		StringBuffer buffer = new StringBuffer();
 		Iterator iterator = list.iterator();
