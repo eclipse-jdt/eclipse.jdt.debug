@@ -59,4 +59,19 @@ public class JDINullValue extends JDIValue {
 	public IJavaType getJavaType() throws DebugException {
 		return null;
 	}
+	
+	/**
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		return obj instanceof JDINullValue;
+	}
+
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		return getClass().hashCode();
+	}
+
 }

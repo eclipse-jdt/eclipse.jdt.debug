@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IClassFile;
@@ -34,6 +35,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
+import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -47,6 +49,7 @@ import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.InvocationException;
@@ -56,7 +59,7 @@ import com.sun.jdi.ObjectReference;
  * An evaluation engine that deploys class files locally
  */
 
-public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor {	 
+public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor , IEvaluationRunnable {	 
 	
 	/**
 	 * The Java project context in which to compile snippets.
@@ -148,6 +151,11 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	private int fEvaluationCount = 0;
 	
 	/**
+	 * The name of the code snippet class to instantiate
+	 */
+	private String fCodeSnippetClassName = null;
+	
+	/**
 	 * Constant for empty array of <code>java.lang.String</code>
 	 */
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -188,53 +196,59 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				return false;
 			}
 			if (codeSnippetClassName != null) {
-				// create a new instance of the code snippet class
-				// and invoke its 'run' method
-				IJavaObject codeSnippetInstance = null;
+				setCodeSnippetClassName(codeSnippetClassName);
 				try {
-					codeSnippetInstance = newInstance(codeSnippetClassName);
-					initializeLocals(codeSnippetInstance);	
-					codeSnippetInstance.sendMessage(RUN_METHOD, "()V", null, getThread(), false); //$NON-NLS-1$
-					restoreLocals(codeSnippetInstance);
-					
-					// now retrieve the description of the result
-					IVariable[] fields = codeSnippetInstance.getVariables();
-					IJavaVariable resultValue = null;
-					IJavaVariable resultType = null;
-					for (int i = 0; i < fields.length; i++) {
-						if (fields[i].getName().equals(RESULT_TYPE_FIELD)) {
-							resultType = (IJavaVariable)fields[i];
-						}
-						if (fields[i].getName().equals(RESULT_VALUE_FIELD)) {
-							resultValue = (IJavaVariable)fields[i];
-						}
-					}
-					IJavaValue result = convertResult((IJavaClassObject)resultType.getValue(), (IJavaValue)resultValue.getValue());
-					getResult().setValue(result);
+					getThread().runEvaluation(this, null, DebugEvent.EVALUATION);
 				} catch (DebugException e) {
-					getResult().setException(e);
-					
-					Throwable underlyingException = e.getStatus().getException();
-					if (underlyingException instanceof InvocationException) {
-						ObjectReference theException = ((InvocationException)underlyingException).exception();
-						if (theException != null) {
-							try {
-								try {
-									IJavaObject v = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), theException);
-									v.sendMessage("printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
-								} catch (DebugException de) {
-									JDIDebugPlugin.logError(de);
-								}
-							} catch (RuntimeException re) {
-								JDIDebugPlugin.logError(re);
-							}
-						}
-					}
-										
-					return false;
+					// exception handling is in evaluation runnable
 				}
 			}
 			return true;
+	}
+	
+	public void run(IJavaThread thread, IProgressMonitor monitor) {
+		IJavaObject codeSnippetInstance = null;
+		try {
+			codeSnippetInstance = newInstance(getCodeSnippetClassName());
+			initializeLocals(codeSnippetInstance);	
+			codeSnippetInstance.sendMessage(RUN_METHOD, "()V", null, getThread(), false); //$NON-NLS-1$
+			restoreLocals(codeSnippetInstance);
+			
+			// now retrieve the description of the result
+			IVariable[] fields = codeSnippetInstance.getVariables();
+			IJavaVariable resultValue = null;
+			IJavaVariable resultType = null;
+			for (int i = 0; i < fields.length; i++) {
+				if (fields[i].getName().equals(RESULT_TYPE_FIELD)) {
+					resultType = (IJavaVariable)fields[i];
+				}
+				if (fields[i].getName().equals(RESULT_VALUE_FIELD)) {
+					resultValue = (IJavaVariable)fields[i];
+				}
+			}
+			IJavaValue result = convertResult((IJavaClassObject)resultType.getValue(), (IJavaValue)resultValue.getValue());
+			getResult().setValue(result);
+		} catch (DebugException e) {
+			getResult().setException(e);
+			
+			Throwable underlyingException = e.getStatus().getException();
+			if (underlyingException instanceof InvocationException) {
+				ObjectReference theException = ((InvocationException)underlyingException).exception();
+				if (theException != null) {
+					try {
+						try {
+							IJavaObject v = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), theException);
+							v.sendMessage("printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
+						} catch (DebugException de) {
+							JDIDebugPlugin.logError(de);
+						}
+					} catch (RuntimeException re) {
+						JDIDebugPlugin.logError(re);
+					}
+				}
+			}
+		}
+		
 	}
 	
 	/**
@@ -1328,5 +1342,27 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	public void setPackageName(String packageName) {
 		getEvaluationContext().setPackageName(packageName);
+	}
+	
+	/**
+	 * Sets the name of the code snippet to instantiate
+	 * to run the current evaluation.
+	 * 
+	 * @param name the name of the deployed code snippet
+	 *  to instantiate and run
+	 */
+	private void setCodeSnippetClassName(String name) {
+		fCodeSnippetClassName = name;
+	}
+
+	/**
+	 * Returns the name of the code snippet to instantiate
+	 * to run the current evaluation.
+	 * 
+	 * @return the name of the deployed code snippet
+	 *  to instantiate and run
+	 */	
+	protected String getCodeSnippetClassName() {
+		return fCodeSnippetClassName;
 	}
 }

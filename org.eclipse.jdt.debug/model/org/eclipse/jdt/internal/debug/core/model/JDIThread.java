@@ -12,11 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -182,6 +184,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private int fOriginalStepStackDepth;
 
+	/**
+	 * The detail for the suspend event that should be fire
+	 * when an evaluation completes. This indicates if the
+	 * evaluation had any side effects in the VM.
+	 */
+	private int fEvaluationDetail;
+	
 	/**
 	 * Creates a new thread on the underlying thread reference
 	 * in the given debug target.
@@ -567,6 +576,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// return or exception will be thrown
 		return -1;
 	}
+	
+	/**
+	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
+	 */
+	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException {
+		fireResumeEvent(evaluationDetail);
+		try {
+			evaluation.run(this, monitor);
+		} catch (DebugException e) {
+			throw e;
+		} finally {
+			fireSuspendEvent(evaluationDetail);
+		}
+	}
+	
 
 	/**
 	 * Invokes a method on the target, in this thread, and returns the result. Only
@@ -637,6 +661,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setPerformingEvaluation(true);
 			preserveStackFrames();
 			resetInterrupted();
+			
+//			if (method.name().equals("toString")) {
+//				setEvaluationDetail(DebugEvent.EVALUATION_READ_ONLY);
+//			} else {
+//				setEvaluationDetail(DebugEvent.EVALUATION);
+//			}
+//			fireResumeEvent(getEvaluationDetail());
+			
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
 			} else {
@@ -839,23 +871,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (DebugException e) {
 			logError(e);
 		}
-		if (interrupted) {
-			fireSuspendEvent(-1);
-		} else {
-			// fire a change event for the top stack frame
-			// to update any variables that may have changed
-			// value
-			try {
-				JDIStackFrame sf = (JDIStackFrame)getTopStackFrame();
-				// if the invoke failed, we may not have a top
-				// stack frame
-				if (sf != null) {
-					sf.fireChangeEvent();
-				}
-			} catch (DebugException e) {
-				logError(e);
-			}
-		}
+		//if (interrupted) {
+			//fireSuspendEvent(DebugEvent.UNSPECIFIED);
+		//} else {
+			// fire a suspend event indicating whether
+			// any updates may have occurred in the target
+			//fireSuspendEvent(getEvaluationDetail());
+		//}
 	}
 	
 	/**
@@ -1409,7 +1431,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see JDIDebugElement#fireSuspendEvent(int)
 	 */
-	protected void fireSuspendEvent(int detail) {
+	public void fireSuspendEvent(int detail) {
 		fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
 		super.fireSuspendEvent(detail);
 	}
@@ -1497,6 +1519,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected void setPerformingEvaluation(boolean evaluating) {
 		fInEvaluation= evaluating;
 	}
+	
+	/**
+	 * Sets the kind of evalaution being performed.
+	 * 
+	 * @param detail one of <code>DebugEvent.EVALUATION</code>
+	 *  or <code>DebugEvent.EVALUATION_READ_ONLY</code>
+	 */
+	protected void setEvaluationDetail(int detail) {
+		fEvaluationDetail = detail;
+	}
+	
+	/**
+	 * Returns the last kind of evalaution performed.
+	 * 
+	 * @return one of <code>DebugEvent.EVALUATION</code>
+	 *  or <code>DebugEvent.EVALUATION_READ_ONLY</code>
+	 */
+	protected int getEvaluationDetail() {
+		return fEvaluationDetail;
+	}	
 	
 	/**
 	 * Sets the step handler currently handling a step
@@ -2133,4 +2175,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return null;
 		}
 	}
+	
+
 }

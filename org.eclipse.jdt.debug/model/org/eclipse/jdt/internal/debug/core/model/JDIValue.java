@@ -160,7 +160,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object o) {
-		if (fValue == o) {
+		if (this == o) {
 			return true;
 		}
 		if (o instanceof JDIValue) {

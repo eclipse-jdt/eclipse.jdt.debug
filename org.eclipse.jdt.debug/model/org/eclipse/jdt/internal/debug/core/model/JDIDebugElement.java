@@ -132,7 +132,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param detail The int detail of the event
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	protected void fireResumeEvent(int detail) {
+	public void fireResumeEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.RESUME, detail));
 	}
 
@@ -143,7 +143,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param detail The int detail of the event
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	protected void fireSuspendEvent(int detail) {
+	public void fireSuspendEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}
 	

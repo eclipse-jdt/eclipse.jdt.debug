@@ -9,6 +9,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
@@ -99,5 +100,23 @@ public interface IJavaThread extends IThread {
 	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
+	
+	/**
+	 * Invokes the given evaluation with the specfied progress
+	 * monitor. This thread fires a resume event
+	 * when the evaluation begins, and a suspend event when the evaluation
+	 * completes or throws an exception. The events are given a detail
+	 * as specified by <code>evaluationDetail</code> (one of
+	 * <code>DebugEvent.EVALUATION</code> or
+	 * <code>DebugEvent.EVALUATION_READ_ONLY</code>).
+	 * 
+	 * @param evaluation the evalation to perform
+	 * @param monitor progress monitor (may be <code>null</code>
+	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
+	 *  <code>DebugEvent.EVALUATION_READ_ONLY</code>
+	 * @exception DebugException if an exception occurrs performing
+	 *  the evaluation
+	 */
+	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException; 
 
 }
