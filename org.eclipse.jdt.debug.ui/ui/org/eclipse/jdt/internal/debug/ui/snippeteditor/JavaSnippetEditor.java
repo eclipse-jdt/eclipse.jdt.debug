@@ -1309,7 +1309,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected IClassFileEvaluationEngine getEvaluationEngine() {
 		if (fEngine == null) {
-			IPath outputLocation =	getJavaProject().getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
+			IPath outputLocation =	getJavaProject().getProject().getWorkingLocation(JDIDebugUIPlugin.getUniqueIdentifier());
 			java.io.File f = new java.io.File(outputLocation.toOSString());
 			fEngine = EvaluationManager.newClassFileEvaluationEngine(getJavaProject(), (IJavaDebugTarget)getThread().getDebugTarget(), f);
 		}

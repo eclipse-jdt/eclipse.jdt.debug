@@ -230,6 +230,9 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	 * @return the Java UI preferences
 	 */
 	protected IPreferenceStore getPreferenceStore() {
+		// TODO need and API way of getting the Java UI plugin.  Here we cannot go to the 
+		// general preference store mechanism as getPreferenceStore() is part of a different
+		// preference mechanism.
 		AbstractUIPlugin p= (AbstractUIPlugin)Platform.getPlugin(JavaUI.ID_PLUGIN);
 		return p.getPreferenceStore();
 	}

@@ -115,10 +115,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		
 		IJavaProject javaProject= JavaCore.create(page.getProject());
 			
-		URL pluginInstallURL= JDIDebugUIPlugin.getDefault().getDescriptor().getInstallURL();
 		URL jarURL = null;
 		try {
-			jarURL = new URL(pluginInstallURL, "snippetsupport.jar"); //$NON-NLS-1$
+			jarURL = JDIDebugUIPlugin.getDefault().getBundle().getEntry("snippetsupport.jar"); //$NON-NLS-1$
 			jarURL = Platform.asLocalURL(jarURL);
 		} catch (MalformedURLException e) {
 			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e); //$NON-NLS-1$
@@ -172,8 +171,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				wc = config.getWorkingCopy();
 			}							
 			
-						
-			IPath outputLocation =	p.getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
+			IPath outputLocation =	p.getProject().getWorkingLocation(JDIDebugUIPlugin.getUniqueIdentifier());
 			File f = outputLocation.toFile();
 			URL u = null;
 			try {

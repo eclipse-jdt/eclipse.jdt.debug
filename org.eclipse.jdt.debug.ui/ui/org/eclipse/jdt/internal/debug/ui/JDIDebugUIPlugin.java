@@ -18,13 +18,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -64,12 +64,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * Plug-in class for the org.eclipse.jdt.debug.ui plug-in.
  */
 public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
+	/**
+	 * Unique identifier constant (value <code>"org.eclipse.jdt.debug.ui"</code>)
+	 * for the JDI Debug plug-in.
+	 */
+	private static final String PI_JDI_DEBUG = "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
+	
 	/**
 	 * Java Debug UI plug-in instance
 	 */
@@ -102,10 +110,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private boolean fShuttingDown= false;
 
 	/**
-	 * @see Plugin(IPluginDescriptor)
+	 * @see Plugin()
 	 */
-	public JDIDebugUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public JDIDebugUIPlugin() {
+		super();
 		setDefault(this);
 	}
 	
@@ -131,13 +139,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return PI_JDI_DEBUG;
 	}
 	
 	/**
@@ -257,8 +259,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		if (plugin.isPluginActivated()) {
+		Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} else {
 			final Object [] ret = new Object[1];
@@ -313,10 +315,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		JavaDebugOptionsManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
@@ -337,9 +339,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws Exception {
 		setShuttingDown(true);
 		JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
 		JavaDebugOptionsManager.getDefault().shutdown();
@@ -354,7 +356,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (fUtilPresentation != null) {
 			fUtilPresentation.dispose();
 		}
-		super.shutdown();
+		super.stop(context);
 	}
 	
 	/**
@@ -499,8 +501,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	protected void initializeVMInstallTypePageMap() {
 		fVmInstallTypePageMap = new HashMap(10);
 
-		IPluginDescriptor descriptor= JDIDebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_TYPE_PAGE);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(getUniqueIdentifier(), IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_TYPE_PAGE);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < infos.length; i++) {
 			String id = infos[i].getAttribute("vmInstallTypeID"); //$NON-NLS-1$

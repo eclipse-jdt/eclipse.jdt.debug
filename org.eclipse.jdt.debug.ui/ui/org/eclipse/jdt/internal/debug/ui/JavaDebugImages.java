@@ -33,11 +33,7 @@ public class JavaDebugImages {
 	
 	static {
 		String pathSuffix= "icons/full/"; //$NON-NLS-1$
-		try {
-			fgIconBaseURL= new URL(JDIDebugUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.log(e);
-		}
+		fgIconBaseURL= JDIDebugUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 	
 	// The plugin registry

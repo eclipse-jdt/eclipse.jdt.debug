@@ -225,6 +225,8 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
+		// TODO need an API way of getting the JDT UI plugin or access the preferences
+		// via the new preferences API
 		if (Platform.getPlugin("org.eclipse.jdt.ui").getPluginPreferences().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) { //$NON-NLS-1$
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
