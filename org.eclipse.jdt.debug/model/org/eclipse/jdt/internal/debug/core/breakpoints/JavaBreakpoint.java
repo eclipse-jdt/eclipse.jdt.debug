@@ -592,7 +592,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		List requests = getRequests(target);
-		Iterator iter = requests.iterator();
+		Iterator iter = requests.listIterator();
 		EventRequest req;
 		while (iter.hasNext()) {
 			req = (EventRequest)iter.next();
