@@ -152,11 +152,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		} catch (VMDisconnectedException e) {
 			fTerminated = true;
 			fRunning = false;
+			if (getDebugTarget().isDisconnected() || getDebugTarget().isTerminated()) {
+				return;
+			}
+			logError(e);
 		} catch (RuntimeException e) {
 			logError(e);
 			fRunning= false;
 		}
-
 	}
 	
 	/**

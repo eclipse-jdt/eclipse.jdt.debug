@@ -137,6 +137,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 					request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
 				}
 			} catch (VMDisconnectedException e) {
+				if (target.isTerminated() || target.isDisconnected()) {
+					return null;
+				}
+				JDIDebugPlugin.logError(e);
 				return null;
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
@@ -245,6 +249,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				ReferenceType exClass = ((ExceptionRequest)request).exception();				
 				request = newRequest(target, exClass);
 			} catch (VMDisconnectedException e) {
+				if (target.isTerminated() || target.isDisconnected()) {
+					return request;
+				}
+				JDIDebugPlugin.logError(e);
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
 			}

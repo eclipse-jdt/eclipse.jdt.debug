@@ -66,10 +66,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		if (fValue instanceof StringReference) {
 			try {
 				return ((StringReference) fValue).value();
-			} catch (VMDisconnectedException e) {
-				return ""; //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				return "";
 			}
 		}
 		if (fValue instanceof ObjectReference) {
@@ -84,9 +83,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			name.append('=');
 			try {
 				name.append(((ObjectReference)fValue).uniqueID());
-			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_unique_id"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				return "";
 			}
 			name.append(')');
 			return name.toString();
@@ -104,7 +103,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				return JDIDebugModelMessages.getString("JDIValue.null_10"); //$NON-NLS-1$
 			}
 			return fValue.type().name();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -166,10 +164,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 					try {
 						ReferenceType refType= object.referenceType();
 						fields= refType.allFields();
-					} catch (VMDisconnectedException e) {
-						return Collections.EMPTY_LIST;
 					} catch (RuntimeException e) {
 						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_fields"), new String[] {e.toString()}), e); //$NON-NLS-1$
+						return Collections.EMPTY_LIST;
 					}
 					Iterator list= fields.iterator();
 					while (list.hasNext()) {
@@ -239,10 +236,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			if (fValue instanceof ObjectReference) {
 				try {
 					fAllocated = !((ObjectReference)fValue).isCollected();
-				} catch (VMDisconnectedException e) {
-					fAllocated = false;
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_is_collected"), new String[] {e.toString()}), e); //$NON-NLS-1$
+					fAllocated = false;
 				}
 			} else {
 				IDebugTarget dt = getDebugTarget();
@@ -262,7 +258,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			} else {
 				return null;
 			}
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -276,7 +271,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		if (isArray()) {
 			try {
 				return getArrayReference().length();
-			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_length_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
@@ -357,10 +351,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			Method method = (Method)methods.get(0);
 			StringReference string = (StringReference)thread.invokeMethod(null, object, method, Collections.EMPTY_LIST);
 			toString = string.value();
-		} catch (VMDisconnectedException e) {
-			toString = getUnknownMessage();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_evaluating_toString()"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			toString = getUnknownMessage();
 		}
 		
 		return toString;		

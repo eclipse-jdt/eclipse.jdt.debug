@@ -76,14 +76,12 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 		String sourceName = null;
 		try {
 			sourceName = type.sourceName();
-		} catch (VMDisconnectedException e) {
-			// do nothing - the VM exited
-			return;
 		} catch (AbsentInformationException e) {
 			// do nothing - cannot install pattern breakpoint without source name debug attribtue
 			return;
 		} catch (RuntimeException e) {
 			target.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
+			return;
 		}
 		
 		// if the debug attribute matches the resource name, install a breakpoint

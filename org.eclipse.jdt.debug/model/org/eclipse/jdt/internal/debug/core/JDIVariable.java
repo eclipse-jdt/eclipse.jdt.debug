@@ -12,7 +12,6 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 public abstract class JDIVariable extends JDIDebugElement implements IJavaVariable {

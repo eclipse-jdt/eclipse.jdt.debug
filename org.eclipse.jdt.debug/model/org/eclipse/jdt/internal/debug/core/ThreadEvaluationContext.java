@@ -6,16 +6,32 @@ package org.eclipse.jdt.internal.debug.core;
  */
  
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
+import org.eclipse.jdt.debug.core.IJavaEvaluationResult;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
-import com.sun.jdi.*;
+import com.sun.jdi.ClassObjectReference;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.StringReference;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
 
 /**
  * An evaluation context for a stack frame.
@@ -138,6 +154,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 						return;
 					} catch (RuntimeException e) {
 						getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result"), new String[] {e.toString()}), e); //$NON-NLS-1$
+						return;
 					}
 				}
 			}
@@ -155,6 +172,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 					}
 				} catch (RuntimeException e) {
 					getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+					return;
 				}
 			}
 			if (hasProblems()) {
@@ -181,6 +199,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			}
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return null;
 		}
 		return null;
 	}
@@ -284,6 +303,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			throw e;
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_performing_evaluation"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return;
 		}
 	}
 	
@@ -331,8 +351,8 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			return loadedClass;
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_attempting_to_load_class"), new String[] {e.toString(), className}), e); //$NON-NLS-1$
+			return null;
 		}
-		return null;
 	}
 		
 	/**

@@ -152,6 +152,10 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				request= target.getEventRequestManager().createAccessWatchpointRequest(field);
 				configureRequest(request);
 			} catch (VMDisconnectedException e) {
+				if (target.isTerminated() || target.isDisconnected()) {
+					return null;
+				}
+				target.internalError(e);
 				return null;
 			} catch (RuntimeException e) {
 				target.internalError(e);
@@ -169,6 +173,10 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			request= target.getEventRequestManager().createModificationWatchpointRequest(field);
 			configureRequest(request);
 		} catch (VMDisconnectedException e) {
+			if (target.isTerminated() || target.isDisconnected()) {
+				return null;
+			}
+			target.internalError(e);
 			return null;
 		} catch (RuntimeException e) {
 			target.internalError(e);
@@ -199,6 +207,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 					request= createModificationWatchpoint(target, field);
 				}
 			} catch (VMDisconnectedException e) {
+				if (target.isTerminated() || target.isDisconnected()) {
+					return request;
+				}
+				target.internalError(e);
+				return request;
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
 			}

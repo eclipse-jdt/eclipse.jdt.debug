@@ -99,6 +99,10 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			}		
 			request.setEnabled(isEnabled());
 		} catch (VMDisconnectedException e) {
+			if (target.isTerminated() || target.isDisconnected()) {
+				return;
+			}
+			JDIDebugPlugin.logError(e);
 			return;
 		} catch (RuntimeException e) {
 			JDIDebugPlugin.logError(e);
@@ -122,6 +126,11 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				}
 				request.putProperty(IJavaDebugConstants.HIT_COUNT, hc);
 			} catch (VMDisconnectedException e) {
+				if (target.isTerminated() || target.isDisconnected()) {
+					return request;
+				}
+				JDIDebugPlugin.logError(e);
+				return request;
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
 			}

@@ -77,6 +77,8 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	/**
 	 * Creates a JDI debug element associated with the
 	 * specified debug target.
+	 * 
+	 * @param target The associated debug target
 	 */
 	public JDIDebugElement(JDIDebugTarget target) {
 		setDebugTarget(target);
@@ -90,7 +92,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @see org.eclipse.core.runtime.IAdaptable
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDebugElement.class) {
@@ -100,7 +102,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @see org.eclipse.debug.core.model.IDebugElement
+	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
@@ -172,13 +174,19 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
+	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+	 * if the exception is not expected.
 	 * 
 	 * @param message Failure message
 	 * @param e Runtime exception that has occurred
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	protected void targetRequestFailed(String message, RuntimeException e) throws DebugException {
+		if (e instanceof VMDisconnectedException) {
+			if (getDebugTarget().isTerminated() || getDebugTarget().isDisconnected()) {
+				return;
+			}
+		}
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 				IDebugStatusConstants.TARGET_REQUEST_FAILED, message, e));
@@ -253,7 +261,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @see org.eclipse.debug.core.model.IDebugElement
+	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
 		return fDebugTarget;
@@ -264,7 +272,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @see org.eclipse.debug.core.model.IDebugElement
+	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();

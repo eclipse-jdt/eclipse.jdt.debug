@@ -77,7 +77,10 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 			request= target.getEventRequestManager().createBreakpointRequest(location);
 			configureRequest(request);
 		} catch (VMDisconnectedException e) {
-			return null;
+			if (target.isDisconnected() || target.isTerminated()) {			
+				return null;
+			} 
+			JDIDebugPlugin.logError(e);
 		} catch (RuntimeException e) {
 			JDIDebugPlugin.logError(e);
 			return null;
@@ -153,6 +156,10 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 				}				
 				request = createLineBreakpointRequest(location, target);
 			} catch (VMDisconnectedException e) {
+				if (target.isDisconnected() || target.isTerminated()) {
+					return request;
+				}
+				JDIDebugPlugin.logError(e);
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
 			}

@@ -171,7 +171,6 @@ public class JDIArrayPartition extends JDIVariable {
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			return getArrayReference().referenceType().name();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -184,7 +183,6 @@ public class JDIArrayPartition extends JDIVariable {
 	public String getSignature() throws DebugException {
 		try {
 			return getArrayReference().type().signature();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}

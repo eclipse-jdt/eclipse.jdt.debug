@@ -65,7 +65,6 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -82,7 +81,6 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			return stripBrackets(getArrayReference().referenceType().name());
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -109,7 +107,6 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public String getSignature() throws DebugException {
 		try {
 			return getArrayReference().type().signature();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}

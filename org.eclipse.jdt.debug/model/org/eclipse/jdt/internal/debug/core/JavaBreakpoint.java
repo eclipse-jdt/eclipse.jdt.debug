@@ -208,6 +208,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
 				}
 			} catch (VMDisconnectedException e) {
+				if (target.isDisconnected() || target.isTerminated()) {
+					return;
+				}
+				JDIDebugPlugin.logError(e);
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
 			}

@@ -34,6 +34,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
@@ -335,10 +336,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 		try {
 			fVirtualMachine.dispose();
-		} catch (VMDisconnectedException e) {
-			terminate0();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_disconnecting"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			terminate0();
 		}
 
 	}
@@ -401,10 +401,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (fName == null) {
 			try {
 				fName = fVirtualMachine.name();
-			} catch (VMDisconnectedException e) {
-				return getUnknownMessage();
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				return getUnknownMessage();
 			}
 		}
 		return fName;
@@ -598,7 +597,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * @see ITerminate
+	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
 		if (isTerminated() || isDisconnected()) {
@@ -609,10 +608,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		try {
 			fVirtualMachine.exit(1);
-		} catch (VMDisconnectedException e) {
-			terminate0();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			terminate0();
 		}
 	}
 
@@ -677,6 +675,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		try {
 			return type.name();
 		} catch (VMDisconnectedException e) {
+			if (isDisconnected() || isTerminated()) {
+				return getUnknownMessage();
+			}
+			logError(e);
 		} catch (RuntimeException e) {
 			logError(e);
 		}
@@ -692,6 +694,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		try {
 			return fVirtualMachine.classesByName(className);
 		} catch (VMDisconnectedException e) {
+			if (isDisconnected() || isTerminated()) {
+				return null;
+			}
+			logError(e);
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
@@ -871,9 +877,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						if (rt.isVersionKnown()) {
 							return new Integer(rt.getClassFileVersion());
 						}
-					} catch (VMDisconnectedException e) {
 					} catch (RuntimeException e) {
 						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_version_information"), new String[] {e.toString(), type.name()}), e); //$NON-NLS-1$
+						return null;
 					}
 				}
 			}

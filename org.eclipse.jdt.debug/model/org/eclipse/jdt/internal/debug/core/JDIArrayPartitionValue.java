@@ -15,7 +15,6 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.sun.jdi.ArrayReference;
-import com.sun.jdi.VMDisconnectedException;
 
 /**
  * The value for an array partition.
@@ -82,7 +81,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	public boolean isAllocated() throws DebugException {
 		try {
 			return !getArrayReference().isCollected();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartitionValue.exception_is_garbage_collected"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
