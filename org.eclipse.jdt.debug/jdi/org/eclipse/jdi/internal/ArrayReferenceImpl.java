@@ -85,9 +85,9 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			// length == -1 means all elements to the end.
 			length = arrayLength - firstIndex;
 		} else if (length < -1) {
-			throw new IndexOutOfBoundsException("Invalid number of value to get from array");
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_number_of_value_to_get_from_array_1")); //$NON-NLS-1$
 		} else if (firstIndex + length > arrayLength) {
-			throw new IndexOutOfBoundsException("Attempted to get more values from array than length of array");
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Attempted_to_get_more_values_from_array_than_length_of_array_2")); //$NON-NLS-1$
 		}
 			
 		// Note that this information should not be cached.

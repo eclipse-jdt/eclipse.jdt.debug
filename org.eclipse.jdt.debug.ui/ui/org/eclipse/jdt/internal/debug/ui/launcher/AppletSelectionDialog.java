@@ -27,7 +27,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	private IRunnableContext fRunnableContext;
 	private IJavaProject fProject;
 	
-	private static final String fgAppletClass = "java.applet.Applet";
+	private static final String fgAppletClass = "java.applet.Applet"; //$NON-NLS-1$
 	
 	private static class PackageRenderer extends JavaElementLabelProvider {
 		public PackageRenderer() {

@@ -47,7 +47,7 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 		} else if (item instanceof DeadLocksViewContentProvider.ContentMonitorWrapper) {
 			StringBuffer res= new StringBuffer();
 			res.append(((DeadLocksViewContentProvider.ContentMonitorWrapper)item).fMonitor.toString());
-			res.append(" owned by...");
+			res.append(MonitorMessages.getString("MonitorModelPresentation._owned_by..._1")); //$NON-NLS-1$
 			return res.toString();
 		} else if (item instanceof IJavaObject) {
 			return getMonitorText((IJavaObject)item);
@@ -77,7 +77,7 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 		if(thread.caughtInADeadLock){
 			res.append(MonitorMessages.getString("MonitorModelPresentation._(caught_in_the_deadlock)_2")); //$NON-NLS-1$
 		} else {
-			res.append(" waiting for...");
+			res.append(MonitorMessages.getString("MonitorModelPresentation._waiting_for..._2")); //$NON-NLS-1$
 		}
 		return res.toString();
 	}

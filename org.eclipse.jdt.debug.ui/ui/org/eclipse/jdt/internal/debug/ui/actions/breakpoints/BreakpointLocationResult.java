@@ -30,7 +30,7 @@ public class BreakpointLocationResult {
 	
 	/**
 	 * Singleton "ok" status	 */
-	private static final IStatus fgOK = new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(),0, "", null);
+	private static final IStatus fgOK = new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(),0, "", null); //$NON-NLS-1$
 
 	/**
 	 * Constructs a new breakpoint location result at the given offset.

@@ -109,7 +109,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		StringBuffer buff= new StringBuffer(getJDKLocation());
 		buff.append(File.separatorChar);
 		String jdkRootString = buff.toString();
-		File jdkBinFile = new File(jdkRootString + "jre" + File.separatorChar + "bin"); //$NON-NLS-2$ $NON-NLS-1$		
+		File jdkBinFile = new File(jdkRootString + "jre" + File.separatorChar + "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isExistingDirectory(jdkBinFile)) {
 			jdkLocation = jdkBinFile.getAbsolutePath();
 		} else {

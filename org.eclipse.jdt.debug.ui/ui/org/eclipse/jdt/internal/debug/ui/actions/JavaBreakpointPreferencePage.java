@@ -189,8 +189,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			super(name, labelText, parent);
 			setDefaults();
 			
-			fErrorMessage= ActionMessages.getString("JavaBreakpointPreferencePage.Invalid_condition");
-			fOldValue= "";
+			fErrorMessage= ActionMessages.getString("JavaBreakpointPreferencePage.Invalid_condition"); //$NON-NLS-1$
+			fOldValue= ""; //$NON-NLS-1$
 		}
 
 		protected void doStore() {
