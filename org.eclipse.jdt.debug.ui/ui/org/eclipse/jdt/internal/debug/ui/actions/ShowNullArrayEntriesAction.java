@@ -21,14 +21,14 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Shows non-final static variables
  */
-public class ShowNullArrayEntriesAction extends VariableFilterAction {
+public class ShowNullArrayEntriesAction extends ViewFilterAction {
 
 	public ShowNullArrayEntriesAction() {
 		super();
 	}
 
 	/**
-	 * @see VariableFilterAction#getPreferenceKey()
+	 * @see ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES; 

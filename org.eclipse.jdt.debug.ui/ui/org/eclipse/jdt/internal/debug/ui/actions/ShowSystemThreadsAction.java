@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.Viewer;
  * An action delegate that toggles the state of its viewer to
  * show/hide System Threads.
  */
-public class ShowSystemThreadsAction extends ThreadFilterAction {
+public class ShowSystemThreadsAction extends ViewFilterAction {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ThreadFilterAction#getPreferenceKey()
@@ -32,7 +32,7 @@ public class ShowSystemThreadsAction extends ThreadFilterAction {
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (!fAction.isChecked() && (element instanceof IJavaThread)) {
+		if (!getValue() && (element instanceof IJavaThread)) {
 			try {
 				IJavaThread thread = (IJavaThread) element;
 				// Show only non-system threads and suspended threads.

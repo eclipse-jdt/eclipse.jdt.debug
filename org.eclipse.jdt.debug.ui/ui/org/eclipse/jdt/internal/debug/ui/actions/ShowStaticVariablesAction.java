@@ -20,14 +20,14 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Shows non-final static variables
  */
-public class ShowStaticVariablesAction extends VariableFilterAction {
+public class ShowStaticVariablesAction extends ViewFilterAction {
 
 	public ShowStaticVariablesAction() {
 		super();
 	}
 
 	/**
-	 * @see VariableFilterAction#getPreferenceKey()
+	 * @see ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIALBES; 

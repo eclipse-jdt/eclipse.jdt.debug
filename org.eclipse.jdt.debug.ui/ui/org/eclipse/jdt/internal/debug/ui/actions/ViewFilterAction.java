@@ -23,22 +23,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * 
  */
-public abstract class VariableFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2, IUpdate {
-	
-	/**
-	 * Current value of this filter - on/off.
-	 */
-	private boolean fValue;
-	
+public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
+		
 	private IViewPart fView;
 	private IAction fAction;
 
-	public VariableFilterAction() {
+	public ViewFilterAction() {
 		super();
 	}
 
@@ -47,13 +41,8 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 	 */
 	public void init(IViewPart view) {
 		fView = view;
-		setValue(getPreferenceValue(view));
-		fAction.setChecked(getValue());
+		fAction.setChecked(getPreferenceValue(view));
 		run(fAction);
-		IDebugView debugView = (IDebugView)view.getAdapter(IDebugView.class);
-		if (debugView != null) {
-			debugView.add(this);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +69,6 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		setValue(action.isChecked());
 		StructuredViewer viewer = getStructuredViewer();
 		ViewerFilter[] filters = viewer.getFilters();
 		ViewerFilter filter = null;
@@ -96,7 +84,7 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 		viewer.refresh();
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-		store.setValue(key, getValue());
+		store.setValue(key, action.isChecked());
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 	}
 
@@ -137,20 +125,7 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 	 * @return String
 	 */
 	protected abstract String getPreferenceKey(); 
-	
-	protected void setValue(boolean value) {
-		fValue = value;
-	}
-	
-	/**
-	 * Returns the current value of this toggle - on/off.
-	 * 
-	 * @return boolean
-	 */
-	protected boolean getValue() {
-		return fValue;
-	}
-	
+
 	protected IViewPart getView() {
 		return fView;
 	}
@@ -167,9 +142,11 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 	}
 	
 	/**
-	 * @see IUpdate#update()
+	 * Returns whether this action is seleted/checked.
+	 * 
+	 * @return whether this action is seleted/checked
 	 */
-	public void update() {
-		fAction.setChecked(getValue());
+	protected boolean getValue() {
+		return fAction.isChecked();
 	}
 }

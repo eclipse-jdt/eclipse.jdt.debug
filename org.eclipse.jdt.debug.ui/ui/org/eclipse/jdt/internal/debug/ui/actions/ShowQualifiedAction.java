@@ -27,10 +27,10 @@ import org.eclipse.swt.custom.BusyIndicator;
  * An action delegate that toggles the state of its viewer to
  * show/hide qualified names.
  */
-public class ShowQualifiedAction extends VariableFilterAction {
+public class ShowQualifiedAction extends ViewFilterAction {
 	
 	/**
-	 * @see VariableFilterAction#getPreferenceKey()
+	 * @see ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES; 
@@ -50,8 +50,6 @@ public class ShowQualifiedAction extends VariableFilterAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		setValue(action.isChecked());
-		
 		final StructuredViewer viewer = getStructuredViewer();
 		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
 		if (view != null) {
