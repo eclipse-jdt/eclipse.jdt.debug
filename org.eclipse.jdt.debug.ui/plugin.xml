@@ -295,6 +295,9 @@
 		<action
 			id="org.eclipse.jdt.ui.actions.ToggleStepFilter"
 			label="%toggleStepFilterAction.label"
+			icon="icons/full/clc116/stepfilter_co.gif"
+			disabledIcon="icons/full/dlc116/stepfilter_co.gif"
+			hoverIcon="icons/full/elc116/stepfilter_co.gif"
 			tooltip="%toggleStepFilter.tooltip"
 			menubarPath="additions"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ToggleStepFilterAction">
