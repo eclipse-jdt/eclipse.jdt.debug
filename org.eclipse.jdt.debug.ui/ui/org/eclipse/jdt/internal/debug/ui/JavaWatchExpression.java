@@ -173,16 +173,7 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	/**
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent)
 	 */
-	public void handleDebugEvents(final DebugEvent[] events) {
-		Runnable r= new Runnable() {
-			public void run() {
-				doHandleDebugEvents(events);
-			}
-		};
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);			
-	}
-	
-	protected void doHandleDebugEvents(DebugEvent[] events) {
+	public void handleDebugEvents(DebugEvent[] events) {
 		// if more than one suspended thread ?
 		for (int i= 0, length= events.length; i < length; i ++) {
 			DebugEvent event= events[i];
@@ -277,12 +268,7 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 		setPending(true);
 		refresh();
 		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
-		Runnable r = new Runnable() {
-			public void run() {
-				DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame));
-			}
-		};
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
+		DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame));
 	}
 
 	/**
