@@ -1378,7 +1378,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see JDIDebugElement#fireSuspendEvent(int)
 	 */
 	public void fireSuspendEvent(int detail) {
-		fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
+		if (detail != DebugEvent.EVALUATION && detail != DebugEvent.EVALUATION_IMPLICIT) {
+			fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
+		}
 		super.fireSuspendEvent(detail);
 	}
 		

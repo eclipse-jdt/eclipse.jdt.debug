@@ -1401,7 +1401,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					break;
 			}
 			fResultBuffer = new StringBuffer(reason);
-			appendJDIValueString(value);
 		}
 
 		protected void appendArrayDetail(IJavaArray arrayValue, IJavaThread thread) {
