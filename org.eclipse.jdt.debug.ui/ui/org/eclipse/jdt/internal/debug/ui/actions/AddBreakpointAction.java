@@ -8,9 +8,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IClassFile;
@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -34,26 +33,24 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Action for setting breakpoints for a given text selection.
  */
-public class AddBreakpointAction extends TextEditorAction implements IEditorActionDelegate, IBreakpointListener {
+public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointListener, IPartListener {
 	
 	private IAction fAction= null;
 	private int fLineNumber;
 	private IType fType= null;
+	private ITextEditor fTextEditor= null;
 	
 	public AddBreakpointAction() {
-		super(ActionMessages.getResourceBundle(), "AddBreakpoint.", null); //$NON-NLS-1$
 	}
 	
-	/**
-	 * @see Action#run()
-	 */
-	public void run() {
+	protected void run() {
 		if (getTextEditor() != null) {
 			createBreakpoint(getTextEditor().getEditorInput());
 		}
@@ -138,11 +135,12 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setPluginAction(action);
 		if (targetEditor instanceof ITextEditor) {
-			setEditor((ITextEditor)targetEditor);
+			setTextEditor((ITextEditor)targetEditor);
+			targetEditor.getSite().getPage().addPartListener(this);
 			//see Bug 7012
-			//DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+			DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 		} else {
-			//DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		}
 		update();
 	}
@@ -160,17 +158,12 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 		setPluginAction(action);
 		update();
 	}
-	
-	public void updatePluginAction() {
-		IAction action= getPluginAction();
-		if (action != null) {
-			action.setEnabled(isEnabled());
-		}
-	}
 		
 	public void update() {
-		setEnabled(getTextEditor()!= null); //@see bug 7012 && breakpointCanBeCreated(getTextEditor().getEditorInput()));
-		updatePluginAction();
+		IAction action= getPluginAction();
+		if (action != null) {
+			action.setEnabled(getTextEditor()!= null && breakpointCanBeCreated(getTextEditor().getEditorInput()));
+		}
 	}
 	
 	protected int getLineNumber() {
@@ -210,4 +203,44 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 	
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part.equals(getTextEditor())) {
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		}
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+	
+	protected ITextEditor getTextEditor() {
+		return fTextEditor;
+	}
+
+	protected void setTextEditor(ITextEditor editor) {
+		fTextEditor = editor;
+	}
 }
