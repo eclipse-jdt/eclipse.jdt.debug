@@ -173,7 +173,10 @@ public class EventDispatcher implements Runnable {
 		fireEvents();
 		
 		if (vote && resume) {
-			eventSet.resume();
+			try {
+				eventSet.resume();
+			} catch (VMDisconnectedException e) {
+			}
 		}
 	}
 
