@@ -96,13 +96,14 @@
   			helpContextId="manage_watchpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
-  			<enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+  			<enablement>
+  				<or>
+	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+            		<objectClass name="org.eclipse.jdt.core.IField"/>
+            		<objectClass name="org.eclipse.jdt.debug.core.IJavaFieldVariable"/>
+            	</or>
             </enablement>
-            <selection class="org.eclipse.jface.text.ITextSelection"/>
-            <selection class="org.eclipse.jdt.core.IField"/>
-            <selection class="org.eclipse.jdt.debug.core.IJavaFieldVariable"/>
-  	    </action>
+        </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
 	      	definitionId="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
   			label="%manageMethodBreakpointAction.label"
@@ -110,11 +111,12 @@
   			helpContextId="manage_method_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
-  			<enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
-            </enablement>
-            <selection class="org.eclipse.jface.text.ITextSelection"/>
-            <selection class="org.eclipse.jdt.core.IMethod"/>
+  			<enablement>
+  				<or>
+	         		<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	            	<objectClass name="org.eclipse.jdt.core.IMethod"/>
+	            </or>
+			</enablement>
   	    </action>
   	    <action id="org.eclipse.jdt.debug.ui.actionSet.AddException"
   	    	definitionId="org.eclipse.jdt.debug.ui.actionSet.AddException"
@@ -123,9 +125,6 @@
 			helpContextId="add_exception_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
 			menubarPath="org.eclipse.ui.run/breakpointGroup">
-			<enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
-            </enablement> 
 		</action>
       	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
       		definitionId="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
@@ -134,10 +133,6 @@
   			helpContextId="manage_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
-			<enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
-            </enablement>
-  			<selection class="org.eclipse.jface.text.ITextSelection"/>
   	    </action>
   	  	<action id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
   	  		definitionId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
@@ -145,12 +140,12 @@
   			helpContextId="step_into_selection_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
   			menubarPath="org.eclipse.ui.run/jdtGroup"
-  			enablesFor= "+">
+  			enablesFor="+">
   			<enablement>
   				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+  					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
+	  				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+  				</and>
             </enablement>
   	    </action>  	    
   	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
@@ -162,8 +157,11 @@
   			helpContextId="run_to_line_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
   			menubarPath="org.eclipse.ui.run/jdtGroup">
-  			<enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+  			<enablement>
+  				<and>
+	  				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
+		  			<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	  			</and>
             </enablement>
   	    </action>
   		<action id="org.eclipse.jdt.debug.ui.Execute"
@@ -175,10 +173,10 @@
   		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<enablement> 
              	<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
+	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
 	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
 	             </and>
             </enablement>
@@ -192,10 +190,10 @@
   		 	hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<enablement>
 				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
 					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
 	             </and>
             </enablement>
@@ -209,10 +207,10 @@
   		 	hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<enablement> 
              	<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
 					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
 	             </and>
             </enablement>
@@ -556,13 +554,16 @@
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DetailsEvaluationActions"
 		targetID="org.eclipse.debug.ui.VariableView.detail">
+		<visibility>
+			<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+		</visibility>
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute" 
 			label="%Execute.label" 
 			menubarPath="variableGroup" 
 			icon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 	
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display" 
@@ -571,7 +572,7 @@
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect" 
@@ -580,20 +581,23 @@
 			icon="icons/full/ctool16/insp_sbook.gif" 
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/> 
 		</action>
 	</viewerContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DisplayEvaluationActions"
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
+		<visibility>
+			<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+		</visibility>
 		<action id="org.eclipse.jdt.debug.ui.displayView.Execute" 
 			label="%Execute.label" 
 			menubarPath="evaluationGroup"
 			icon="icons/full/ctool16/run_sbook.gif" 
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayView.Display" 
@@ -602,7 +606,7 @@
 			icon="icons/full/ctool16/disp_sbook.gif" 
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayView.Inspect" 
@@ -611,7 +615,7 @@
 			icon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 
 	</viewerContribution>
@@ -734,7 +738,7 @@
   		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display" 
@@ -746,7 +750,7 @@
 			hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect" 
@@ -758,7 +762,7 @@
 			hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 
 	</viewContribution>
@@ -1021,7 +1025,7 @@
 			icon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 	
     	<action id="org.eclipse.jdt.debug.ui.Display" 
@@ -1030,7 +1034,7 @@
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
@@ -1039,11 +1043,10 @@
 			icon="icons/full/ctool16/insp_sbook.gif" 
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action>
      </viewerContribution>
-
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.ClassFileRulerPopupActions" 
     	targetID="#ClassFileRulerContext">
@@ -1097,18 +1100,25 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
+    	<visibility>
+  			<and>
+				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+			</and>
+		</visibility>
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
     		label="%stepIntoSelectionAction.label"
     		menubarPath="additions"
+    		icon="icons/full/ctool16/run_sbook.gif"
     		helpContextId="step_into_selection_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-    		enablesFor= "+">
-            <enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+    		enablesFor="+">
+    		<enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action>
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
     		label="%runToLineAction.label"
@@ -1116,12 +1126,12 @@
     		menubarPath="additions"
     		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate">
-  			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+    		<enablement>
+    		<and>
+				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
+				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action>
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.Execute" 
 			label="%Execute.label" 
@@ -1129,13 +1139,13 @@
 			icon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+"> 
+			enablesFor="+">
 			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action> 	
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.Display" 
 			label="%Display.label" 
@@ -1143,13 +1153,13 @@
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+"> 
+			enablesFor="+">
 			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.cuPopup.Inspect" 
 			label="%Inspect.label" 
@@ -1159,28 +1169,34 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
 			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action>
      </viewerContribution>
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
     	targetID="#ClassFileEditorContext">
+    	<visibility>
+  			<and>
+				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+			</and>
+		</visibility>
     	<action id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection"
     		label="%stepIntoSelectionAction.label"
     		menubarPath="additions"
     		helpContextId="step_into_selection_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-    		enablesFor= "+"> 
+    		enablesFor="+">
     		<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action>    	
     	<action id="org.eclipse.jdt.debug.ui.cfPopup.RunToLine"
  		   	icon="icons/full/clcl16/runtoline_co.gif"
@@ -1188,12 +1204,12 @@
     		menubarPath="additions"
      		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate">
-			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             </and>
-            </enablement>
-    		<selection class="org.eclipse.debug.core.model.IDebugElement"/>
+    		<enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action> 
     	<action id="org.eclipse.jdt.debug.ui.cfPopup.Execute" 
 			label="%Execute.label" 
@@ -1201,13 +1217,13 @@
 			icon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+"> 
+			enablesFor="+">
 			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action> 	
     	<action id="org.eclipse.jdt.debug.ui.cfPopup.Display" 
 			label="%Display.label" 
@@ -1215,13 +1231,13 @@
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.cfPopup.Inspect" 
 			label="%Inspect.label" 
@@ -1229,14 +1245,14 @@
 			icon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<enablement>
-  				<and>
-	             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>
-		</action> 
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
+		</action>
      </viewerContribution>
      <objectContribution 
      	id="org.eclipse.jdt.debug.ui.MethodBreakpointActions"
@@ -1299,7 +1315,7 @@
 			hoverIcon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.SnippetDisplay" 
@@ -1311,7 +1327,7 @@
 			hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.SnippetInspect" 
@@ -1323,7 +1339,7 @@
 			hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor= "+">
+			enablesFor="+">
 			<selection class="org.eclipse.jface.text.ITextSelection"/>
 		</action>
       </editorContribution> 
