@@ -1594,7 +1594,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void step() throws DebugException {
 			setOriginalStepKind(getStepKind());
-			setOriginalStepLocation(((JDIStackFrame)getTopStackFrame()).getUnderlyingStackFrame().location());
+			JDIStackFrame top = (JDIStackFrame)getTopStackFrame();
+			Location location = null;
+			if (top != null) {
+				location = top.getUnderlyingStackFrame().location();
+			} 
+			setOriginalStepLocation(location);
 			setOriginalStepStackDepth(computeStackFrames().size());
 			setStepRequest(createStepRequest());
 			setPendingStepHandler(this);
@@ -1716,6 +1721,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			
 			if (applyStepFilters() && getJavaDebugTarget().isStepFiltersEnabled()) {
 				Location currentLocation= getOriginalStepLocation();
+				if (currentLocation == null) {
+					return;
+				}
 				//check if the user has already stopped in a filtered location
 				//is so do not filter @see bug 5587
 				ReferenceType type= currentLocation.declaringType();
@@ -1788,7 +1796,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected boolean locationShouldBeFiltered(Location location) throws DebugException {
 			if (applyStepFilters()) {
 				Location origLocation= getOriginalStepLocation();
-				return !locationIsFiltered(origLocation.method()) && locationIsFiltered(location.method());
+				if (origLocation != null) {
+					return !locationIsFiltered(origLocation.method()) && locationIsFiltered(location.method());
+				}
 			}
 			return false;
 		}
