@@ -109,11 +109,24 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (command == null) {
 			buff.append("java"); //$NON-NLS-1$
 			return adjustProgramString(buff.toString());
-		} else {
-			buff.append(command);
-			
+		} 
+		
+		buff.append(command);
+		String program= buff.toString();
+		File exe= new File(program + ".exe"); //$NON-NLS-1$
+		File javaCommand= new File(program); 
+		File java= new File("java.exe"); //$NON-NLS-1$
+		if (!exe.isFile() && !javaCommand.isFile()) {
+			if (java.isFile()) {
+				program= java.getAbsolutePath();
+			} else {
+				java= new File("java"); //$NON-NLS-1$
+				if (java.isFile()) {
+					program= java.getAbsolutePath();
+				}
+			}
 		}
-		return buff.toString();
+		return program;
 	}	
 
 	protected String convertClassPath(String[] cp) {
