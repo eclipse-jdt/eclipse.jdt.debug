@@ -848,6 +848,7 @@
 		configTypeID="org.eclipse.jdt.launching.localJavaApplication">
 		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
 		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+		<perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
 		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
 	</shortcut>
 	<shortcut
@@ -855,6 +856,7 @@
 		configTypeID="org.eclipse.jdt.launching.remoteJavaApplication">
 		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
 		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+		<perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
 		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
 	</shortcut>
 </extension>
