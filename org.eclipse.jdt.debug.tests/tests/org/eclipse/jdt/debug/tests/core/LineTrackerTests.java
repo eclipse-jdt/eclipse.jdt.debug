@@ -46,13 +46,10 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	
 	protected List fExceptions = new ArrayList();
 	
+	protected Object fLock = new Object();
+	
 	public LineTrackerTests(String name) {
 		super(name);
-	}
-	
-	protected void setUp() {
-		fStarted = false;
-		fStopped = false;
 	}
 	
 	public void testSimpleLineCounter() throws Exception {
@@ -60,12 +57,13 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 		fTarget = null;
 		try {
 			fTarget = launchAndTerminate("OneToTen");
-			int attempts = 0;
-			while (!fStopped) {
-				assertTrue("did not get output within 30 seconds", attempts < 300);
-				attempts++;
-				Thread.sleep(100);
+			synchronized (fLock) {
+			    if (!fStopped) {
+			        fLock.wait(30000);
+			    }
 			}
+			assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Never received 'stopped' notification", fStopped);
 			// there are 10 lines and one "empty line" (i.e. the last "new line")
 			assertEquals("Wrong number of lines output", 11, fLinesRead.size());
 			for (int i = 0; i < 10; i++) {
@@ -87,13 +85,13 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 		fTarget = null;
 		try {
 			fTarget = launchAndTerminate("OneToTenPrint");
-			int attempts = 0;
-			while (!fStopped) {
-				assertTrue("did not get output within 30 seconds", attempts < 300);
-				attempts++;
-				Thread.sleep(100);
-			}
-			// just 10 lines this time
+			synchronized (fLock) {
+			    if (!fStopped) {
+			        fLock.wait(30000);
+			    }
+            }
+			assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Did not receive 'stopped' notification", fStopped);
 			assertEquals("Wrong number of lines", 10, fLinesRead.size());
 			for (int i = 0; i < 10; i++) {
 				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));			
@@ -117,21 +115,20 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			assertNotNull("Could not locate launch configuration", config);
 			launch = config.launch(ILaunchManager.RUN_MODE, null);
 			
-			int attempts = 0;
-			while (!fStopped) {
-				if (attempts == 480) {
-					if (!fExceptions.isEmpty()) {
-						StringBuffer message= new StringBuffer();
-						message.append(fExceptions.size()).append(" BadLocationExceptions occurred after ");
-						message.append(fLinesRead.size()).append(" lines read. First exception: ");
-						message.append(fExceptions.get(0));
-						assertTrue(message.toString(), false);
-					}
-					assertTrue("did not get output within 8 minutes. " + fLinesRead.size() + " lines read.", false);
-				}
-				attempts++;
-				Thread.sleep(1000);
+			synchronized (fLock) {
+			    if (!fStopped) {
+			        fLock.wait(60000);
+			    }
 			}
+			if (!fStopped && !fExceptions.isEmpty()) {
+				StringBuffer message= new StringBuffer();
+				message.append(fExceptions.size()).append(" BadLocationExceptions occurred after ");
+				message.append(fLinesRead.size()).append(" lines read. First exception: ");
+				message.append(fExceptions.get(0));
+				assertTrue(message.toString(), false);
+			}
+			assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Never received 'stopped' notification", fStopped);
 			// Should be 10,000 lines
 			assertEquals("Wrong number of lines", 10000, fLinesRead.size());
 		} finally {
@@ -142,9 +139,14 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	} 	
 	
 	public void testHyperLink() throws Exception {
-		ConsoleLineTracker.setDelegate(this);
-		launchAndTerminate("ThrowsNPE");
-		getHyperlink(0, ConsoleLineTracker.getDocument());
+	    try {
+			ConsoleLineTracker.setDelegate(this);
+			fTarget = launchAndTerminate("ThrowsNPE");
+			getHyperlink(0, ConsoleLineTracker.getDocument());
+	    } finally {
+	        ConsoleLineTracker.setDelegate(null);
+	        terminateAndRemove(fTarget);
+	    }
 	}
 
 	/**
@@ -179,9 +181,10 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
 	public void consoleClosed() {
-		if (fStarted) {
+	    synchronized (fLock) {
 			fStopped = true;
-		}		
+			fLock.notifyAll();
+        }
 	}
 
 }
