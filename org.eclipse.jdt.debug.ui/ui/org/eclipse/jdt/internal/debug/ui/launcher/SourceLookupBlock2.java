@@ -212,6 +212,7 @@ public class SourceLookupBlock2 {
 			fDefaultButton.setSelection(useDefault);
 			IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(config);
 			fPathViewer.setEntries(entries);
+			fPathViewer.setEnabled(!useDefault);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}

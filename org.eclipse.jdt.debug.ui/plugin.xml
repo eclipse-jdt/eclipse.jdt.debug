@@ -745,19 +745,6 @@
 <extension
 	point="org.eclipse.ui.propertyPages">
 	<page
-		id="org.eclipse.jdt.debug.ui.launching.SourceLookupPage" 
-		name="%debugSourcePageName"
-		objectClass="org.eclipse.core.resources.IProject"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupPropertyPage"> 
-		<filter name="nature" value="org.eclipse.jdt.core.javanature"/>
-    </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.launching.SourceLookupPage" 
-		name="%debugSourcePageName"
-		objectClass="org.eclipse.jdt.core.IJavaProject"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupPropertyPage"> 
-    </page>
-	<page
 		id="org.eclipse.jdt.debug.ui.launching.ProcessPage" 
 		name="%processInfoPageName"
 		objectClass="org.eclipse.debug.core.model.IProcess"

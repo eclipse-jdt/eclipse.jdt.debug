@@ -8,6 +8,7 @@ package org.eclipse.jdt.debug.ui;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IJavaProject;
@@ -16,9 +17,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
+import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock2;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
-import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -102,7 +102,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 */
 	public JavaUISourceLocator(IJavaProject project) throws CoreException {
 		fJavaProject= project;
-		IJavaSourceLocation[] sls = ProjectSourceLocator.getPersistedSourceLocations(project);
+		IJavaSourceLocation[] sls = JavaSourceLocator.getDefaultSourceLocations(project);
 		fSourceLocator= new JavaSourceLocator(project);
 		if (sls != null) {
 			fSourceLocator.setSourceLocations(sls);
@@ -118,12 +118,8 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		if (res == null && fAllowedToAsk) {
 			IJavaStackFrame frame= (IJavaStackFrame)stackFrame.getAdapter(IJavaStackFrame.class);
 			if (frame != null) {
-				try {
-					showDebugSourcePage(frame.getDeclaringTypeName());
-					res= fSourceLocator.getSourceElement(stackFrame);
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e); 											
-				}
+				showDebugSourcePage(frame);
+				res= fSourceLocator.getSourceElement(stackFrame);
 			}
 		}
 		return res;
@@ -135,32 +131,36 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * @param typeName the name of the type for which source
 	 *  could not be located
 	 */
-	private void showDebugSourcePage(String typeName) {
-		if (fJavaProject != null) {
-			SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), fJavaProject, typeName, this);
+	private void showDebugSourcePage(IJavaStackFrame frame) {
+		try {
+			SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), frame.getDeclaringTypeName(), frame.getLaunch().getLaunchConfiguration(), this);
 			dialog.open();
 			fAllowedToAsk= !dialog.isNotAskAgain();
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 	
 	/**
-	 * Dialog that prompts for source.
+	 * Dialog that prompts for source lookup path.
 	 */
 	private static class SourceLookupDialog extends Dialog {
 		
-		private SourceLookupBlock fSourceLookupBlock;
+		private SourceLookupBlock2 fSourceLookupBlock;
 		private JavaUISourceLocator fLocator;
+		private ILaunchConfiguration fConfiguration;
 		private String fTypeName;
 		private boolean fNotAskAgain;
 		private Button fAskAgainCheckBox;
 		
-		public SourceLookupDialog(Shell shell, IJavaProject project, String typeName, JavaUISourceLocator locator) {
+		public SourceLookupDialog(Shell shell, String typeName, ILaunchConfiguration configuration, JavaUISourceLocator locator) {
 			super(shell);
-			fSourceLookupBlock= new SourceLookupBlock(project);
+			fSourceLookupBlock= new SourceLookupBlock2();
 			fTypeName= typeName;
 			fNotAskAgain= false;
 			fAskAgainCheckBox= null;
 			fLocator = locator;
+			fConfiguration = configuration;
 		}
 		
 		public boolean isNotAskAgain() {
@@ -181,6 +181,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 			message.setLayoutData(data);
 
 			Control inner= fSourceLookupBlock.createControl(composite);
+			fSourceLookupBlock.initializeFrom(fConfiguration);
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 			fAskAgainCheckBox= new Button(composite, SWT.CHECK + SWT.WRAP);
 			data= new GridData();
@@ -207,8 +208,12 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				if (fAskAgainCheckBox != null) {
 					fNotAskAgain= fAskAgainCheckBox.getSelection();
 				}
-				fSourceLookupBlock.applyChanges();
-				fLocator.setSourceLocations(fSourceLookupBlock.getSourceLocations());
+				ILaunchConfigurationWorkingCopy wc = fConfiguration.getWorkingCopy();
+				fSourceLookupBlock.performApply(wc);
+				if (!fConfiguration.contentsEqual(wc)) {
+					fConfiguration = wc.doSave();
+					fLocator.initializeDefaults(fConfiguration);
+				}
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}

@@ -8,10 +8,13 @@ package org.eclipse.jdt.launching.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -20,6 +23,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -27,6 +31,7 @@ import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -229,44 +234,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 *  the classpath of the given or any required project
 	 */
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
-		IVMInstall runtimeJRE = JavaRuntime.getVMInstall(project);
-		IVMInstall defaultJRE = JavaRuntime.getDefaultVMInstall();
-		ArrayList list = new ArrayList();
-		collectRequiredProjects(project,list);
-		int size = list.size();
-		int offset = 0;
-		ArchiveSourceLocation jreSource = null;
-		if (runtimeJRE != null && !runtimeJRE.equals(defaultJRE)) {
-			LibraryLocation library = runtimeJRE.getLibraryLocation();
-			if (library == null) {
-				library = runtimeJRE.getVMInstallType().getDefaultLibraryLocation(runtimeJRE.getInstallLocation());
-			}
-			if (library != null) {
-				IPath path = library.getSystemLibrarySourcePath();
-				if (!path.isEmpty()) {
-					try {
-						String OSPath= path.toOSString();
-						File zip= new File(OSPath);
-						if (zip.exists()) {
-							jreSource = new ArchiveSourceLocation(OSPath, library.getPackageRootPath().toString());
-							size++;
-							offset++;
-						}
-					} catch (IOException e) {
-						throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
-					}			
-				}
-			}
-		}
-		IJavaSourceLocation[] locations = new IJavaSourceLocation[size];
-		if (jreSource != null) {
-			locations[0] = jreSource;
-		}		
-		for (int i = 0; i < list.size(); i++) {
-			locations[offset] = new JavaProjectSourceLocation((IJavaProject)list.get(i));
-			offset++;
-		}
-		return locations;
+		return getSourceLocations(JavaRuntime.computeRuntimeClasspath(project));
 	}
 	
 	/**
@@ -287,8 +255,13 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		IJavaProject jp = JavaLaunchConfigurationUtils.getJavaProject(configuration);
-		if (jp != null) {
-			setSourceLocations(getDefaultSourceLocations(jp));
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(configuration);
+		if (entries == null || entries.length == 0) {
+			if (jp != null) {
+				setSourceLocations(getDefaultSourceLocations(jp));
+			}
+		} else {
+			setSourceLocations(getSourceLocations(entries));
 		}
 	}
 
@@ -304,6 +277,41 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_restoring___JavaSourceLocator___from_a_memento_3"), e)); //$NON-NLS-1$
 		}
 		setSourceLocations(locations);
+	}
+	
+	/**
+	 * Returns source locations that are associted with the given runtime classpath
+	 * entries.
+	 */
+	private static IJavaSourceLocation[] getSourceLocations(IRuntimeClasspathEntry[] entries) {
+		List locations = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			IRuntimeClasspathEntry entry = entries[i];
+			IJavaSourceLocation location = null;
+			switch (entry.getType()) {
+				case IRuntimeClasspathEntry.PROJECT:
+					IProject project = (IProject)entry.getResource();
+					if (project.exists() && project.isOpen()) {
+						location = new JavaProjectSourceLocation(JavaCore.create(project));
+					}
+					break;
+				case IRuntimeClasspathEntry.ARCHIVE:
+					break;
+				case IRuntimeClasspathEntry.VARIABLE:
+					try {
+						location = new ArchiveSourceLocation(entry.getResolvedSourceAttachmentPath(), entry.getResolvedSourceAttachmentRootPath());
+					} catch (IOException e) {
+						LaunchingPlugin.log(e);
+					}
+					break;
+				case IRuntimeClasspathEntry.CONTAINER:
+					break;
+			}
+			if (location != null) {
+				locations.add(location);
+			}
+		}
+		return (IJavaSourceLocation[])locations.toArray(new IJavaSourceLocation[locations.size()]);		
 	}
 
 }
