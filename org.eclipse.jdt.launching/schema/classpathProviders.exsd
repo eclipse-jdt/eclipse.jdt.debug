@@ -13,6 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="classpathProvider" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
                  <attribute name="point" type="string" use="required">
             <annotation>
@@ -38,7 +39,7 @@
       </complexType>
    </element>
 
-	<element name="classpathProviders">
+	<element name="classpathProvider">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -77,7 +78,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.jdt.launching.classpathProvider"&gt;
+ &lt;extension point="org.eclipse.jdt.launching.classpathProviders"&gt;
   &lt;classpathProvider
    class="com.example.ProviderImplementation"
    id="com.example.ProviderId"&gt;
