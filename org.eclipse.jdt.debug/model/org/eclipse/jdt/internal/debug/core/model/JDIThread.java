@@ -511,7 +511,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * the failure.</li>
 	 * </ul>
 	 */	
-	public List computeStackFrames() throws DebugException {
+	public synchronized List computeStackFrames() throws DebugException {
 		return computeStackFrames(fRefreshChildren);
 	}
 	
