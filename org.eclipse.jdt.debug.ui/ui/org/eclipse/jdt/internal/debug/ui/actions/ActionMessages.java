@@ -26,4 +26,8 @@ public class ActionMessages {
 			return '!' + key + '!';
 		}
 	}
+	
+	public static ResourceBundle getResourceBundle() {
+		return RESOURCE_BUNDLE;
+	}
 }

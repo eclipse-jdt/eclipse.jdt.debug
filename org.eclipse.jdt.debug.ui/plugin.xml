@@ -330,7 +330,7 @@
 		</action>
 	</objectContribution>
 	<viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CUEvaluateActions" 
+    	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext"> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
@@ -343,10 +343,15 @@
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+		</action>
+		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
+			label="%addBreakpointAction.label" 
+			menubarPath="group.add/add" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddBreakpointAction"> 
 		</action> 
      </viewerContribution>
      <viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CFEvaluateActions" 
+    	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
     	targetID="#ClassFileEditorContext"> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
@@ -359,6 +364,11 @@
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+		</action> 
+		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
+			label="%addBreakpointAction.label" 
+			menubarPath="group.add/add" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddBreakpointAction"> 
 		</action> 
      </viewerContribution> 
 </extension>
