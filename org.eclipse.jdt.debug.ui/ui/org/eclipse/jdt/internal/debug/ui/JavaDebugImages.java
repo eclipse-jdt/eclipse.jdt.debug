@@ -75,6 +75,13 @@ public class JavaDebugImages {
 	
 	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_obj.gif";  //$NON-NLS-1$
 	
+	public static final String IMG_OBJS_EXCEPTION_BRKPT_TYPE = NAME_PREFIX + "jexcept_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_LINE_BRKPT_TYPE = NAME_PREFIX + "jline_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_CLASSLOAD_BRKPT_TYPE = NAME_PREFIX + "jload_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_WATCHPOINT_TYPE = NAME_PREFIX + "jwatch_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_JSP_BRKPT_TYPE = NAME_PREFIX + "jspbrkpt_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_BRKPT_TYPE = NAME_PREFIX + "jmeth_obj.gif";  //$NON-NLS-1$
+	
 	public static final String IMG_OBJS_PLUS_SIGN = NAME_PREFIX + "plus_sign.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_MINUS_SIGN = NAME_PREFIX + "minus_sign.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_CLASSPATH = NAME_PREFIX + "classpath_obj.gif"; //$NON-NLS-1$
@@ -149,6 +156,14 @@ public class JavaDebugImages {
 
 	public static final ImageDescriptor DESC_OBJ_JAVA_INSPECT_EXPRESSION= create(T_OBJ, "insp_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLASSPATH= createManaged(T_OBJ, IMG_OBJS_CLASSPATH);
+	
+	public static final ImageDescriptor DESC_OBJS_EXCEPTION_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_BRKPT_TYPE);
+	public static final ImageDescriptor DESC_OBJS_LINE_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_LINE_BRKPT_TYPE);
+	public static final ImageDescriptor DESC_OBJS_CLASSLOAD_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_CLASSLOAD_BRKPT_TYPE);
+	public static final ImageDescriptor DESC_OBJS_METHOD_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_METHOD_BRKPT_TYPE);
+	public static final ImageDescriptor DESC_OBJS_JSP_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_JSP_BRKPT_TYPE);
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_TYPE= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_TYPE);
+	
 	/**
 	 * Returns the image managed under the given key in this registry.
 	 * 
