@@ -417,53 +417,55 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * the thread should resume.
 	 */
 	protected boolean handleConditionalBreakpointEvent(Event event, JDIThread thread, JDIDebugTarget target) throws CoreException {
-		if (thread.isPerformingEvaluation()) {
-			// If an evaluation is already being computed for this thread,
-			// we can't perform another
-			return !suspendForEvent(event, thread);
+		synchronized (thread) {
+			if (thread.isPerformingEvaluation()) {
+				// If an evaluation is already being computed for this thread,
+				// we can't perform another
+				return !suspendForEvent(event, thread);
+			}
+			final String condition= getCondition();
+			if (!hasCondition()) {
+				return !suspendForEvent(event, thread);
+			}
+			EvaluationListener listener= new EvaluationListener();
+	
+			int suspendPolicy= SUSPEND_THREAD;
+			try {
+				suspendPolicy= getSuspendPolicy();
+			} catch (CoreException e) {
+			}
+			if (suspendPolicy == SUSPEND_VM) {
+				((JDIDebugTarget)thread.getDebugTarget()).prepareToSuspendByBreakpoint(this);
+			} else {
+				thread.handleSuspendForBreakpointQuiet(this);
+			}
+			JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
+			IJavaProject project= getJavaProject(frame);
+			if (project == null) {
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
+					JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Unable_to_compile_conditional_breakpoint_-_missing_Java_project_context._1"), null)); //$NON-NLS-1$
+			}
+			IAstEvaluationEngine engine = getEvaluationEngine(target, project);
+			if (engine == null) {
+				// If no engine is available, suspend
+				return !suspendForEvent(event, thread);
+			}
+			ICompiledExpression expression= (ICompiledExpression)fCompiledExpressions.get(thread);
+			if (expression == null) {
+				expression= engine.getCompiledExpression(condition, frame);
+				fCompiledExpressions.put(thread, expression);
+			}
+			if (conditionHasErrors(expression)) {
+				fireConditionHasErrors(expression);
+				return !suspendForEvent(event, thread);
+			}
+			fSuspendEvents.put(thread, event);
+			engine.evaluateExpression(expression, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+	
+			// Do not resume. When the evaluation returns, the evaluation listener
+			// will resume the thread if necessary or update for suspension.
+			return false;
 		}
-		final String condition= getCondition();
-		if (!hasCondition()) {
-			return !suspendForEvent(event, thread);
-		}
-		EvaluationListener listener= new EvaluationListener();
-
-		int suspendPolicy= SUSPEND_THREAD;
-		try {
-			suspendPolicy= getSuspendPolicy();
-		} catch (CoreException e) {
-		}
-		if (suspendPolicy == SUSPEND_VM) {
-			((JDIDebugTarget)thread.getDebugTarget()).prepareToSuspendByBreakpoint(this);
-		} else {
-			thread.handleSuspendForBreakpointQuiet(this);
-		}
-		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
-		IJavaProject project= getJavaProject(frame);
-		if (project == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
-				JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Unable_to_compile_conditional_breakpoint_-_missing_Java_project_context._1"), null)); //$NON-NLS-1$
-		}
-		IAstEvaluationEngine engine = getEvaluationEngine(target, project);
-		if (engine == null) {
-			// If no engine is available, suspend
-			return !suspendForEvent(event, thread);
-		}
-		ICompiledExpression expression= (ICompiledExpression)fCompiledExpressions.get(thread);
-		if (expression == null) {
-			expression= engine.getCompiledExpression(condition, frame);
-			fCompiledExpressions.put(thread, expression);
-		}
-		if (conditionHasErrors(expression)) {
-			fireConditionHasErrors(expression);
-			return !suspendForEvent(event, thread);
-		}
-		fSuspendEvents.put(thread, event);
-		engine.evaluateExpression(expression, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-
-		// Do not resume. When the evaluation returns, the evaluation listener
-		// will resume the thread if necessary or update for suspension.
-		return false;
 	}
 	
 	private IJavaProject getJavaProject(JDIStackFrame stackFrame) {

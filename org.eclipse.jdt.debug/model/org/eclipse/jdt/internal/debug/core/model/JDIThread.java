@@ -1032,7 +1032,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @param breakpoint the breakpoint that caused the suspend
 	 * @return whether this thread suspended
 	 */
-	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
+	public synchronized boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
 		addCurrentBreakpoint(breakpoint);
 		setSuspendedQuiet(false);
 		try {
@@ -1080,7 +1080,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * of the suspend. Do no abort the current step as the program
 	 * may be resumed quietly and the step may still finish.
 	 */
-	public boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
+	public synchronized boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
 		addCurrentBreakpoint(breakpoint);
 		setSuspendedQuiet(true);
 		setRunning(false);
@@ -1182,7 +1182,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see ISuspendResume#resume()
 	 */
-	public void resume() throws DebugException {
+	public synchronized void resume() throws DebugException {
 		if (getDebugTarget().isSuspended()) {
 			getDebugTarget().resume();
 		} else {
@@ -1196,8 +1196,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Updates the state of this thread to resumed,
 	 * but does not fire notification of the resumption.
 	 */
-	public void resumeQuiet() throws DebugException {
-		resumeThread(false);
+	public synchronized void resumeQuiet() throws DebugException {
+		if (isSuspendedQuiet()) {
+			resumeThread(false);
+		}
 	}
 	
 	/**
@@ -1207,7 +1209,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * notification to listeners if <code>fireNotification</code>
 	 * is <code>true</code>.
 	 */
-	private void resumeThread(boolean fireNotification) throws DebugException {
+	private synchronized void resumeThread(boolean fireNotification) throws DebugException {
 		if (!isSuspended() || (isPerformingEvaluation() && !isInvokingMethod())) {
 			return;
 		}
@@ -1381,7 +1383,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see ISuspendResume#suspend()
 	 */
-	public void suspend() throws DebugException {
+	public synchronized void suspend() throws DebugException {
 		try {
 			// Abort any pending step request
 			abortStep();
@@ -1398,10 +1400,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Suspends the underlying thread asynchronously and fires notification when
 	 * the underlying thread is suspended.
 	 */
-	protected void suspendUnderlyingThread() {
+	protected synchronized void suspendUnderlyingThread() {
 		if (fIsSuspending) {
 			return;
-		}		
+		}
+		if (isSuspended()) {
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			return;
+		}
 		fIsSuspending= true;
 		Thread thread= new Thread(new Runnable() {
 			public void run() {
@@ -1449,7 +1455,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Notifies this thread that it has been suspended due
 	 * to a VM suspend.
 	 */	
-	protected void suspendedByVM() {
+	protected synchronized void suspendedByVM() {
 		setRunning(false);
 		setSuspendedQuiet(false);
 	}
@@ -1458,7 +1464,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Notifies this thread that is about to be resumed due
 	 * to a VM resume.
 	 */
-	protected void resumedByVM() {
+	protected synchronized void resumedByVM() {
 		setRunning(true);
 		preserveStackFrames();
 		// This method is called *before* the VM is actually resumed.
