@@ -71,7 +71,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 				return null;
 			}
 		} else {
-			abort("Shared memory attaching connector not available", null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
+			abort("Socket attaching connector not available", null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
 		}
 		
 		// Create & return Launch:
