@@ -23,35 +23,35 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformanceTest {
 
-    public OpenLaunchConfigurationDialogTests(String name) {
-        super(name);
-    }
+	public OpenLaunchConfigurationDialogTests(String name) {
+		super(name);
+	}
 
-    public static String fgIdentifier= "org.eclipse.jdt.launching.localJavaApplication";
+	public static String fgIdentifier= "org.eclipse.jdt.launching.localJavaApplication";
     
-    public void testOpenJavaProgramLaunchConfigurationDialog1() {
-        // cold run
-        ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
+	public void testOpenJavaProgramLaunchConfigurationDialog1() {
+		// cold run
+		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		IStructuredSelection selection= new StructuredSelection(config);
 		for (int i = 0; i < 100; i++) {
-		    openLCD(selection, fgIdentifier); 
-        }
+			openLCD(selection, fgIdentifier); 
+		}
 		
 		commitMeasurements();
 		assertPerformance();
-    }
+	}
     
-    public void testOpenJavaProgramLaunchConfigurationDialog2() {
-        // warm run..depends on testOpenJavaProgramLaunchConfigurationDialog1 for cold start
-        ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
+	public void testOpenJavaProgramLaunchConfigurationDialog2() {
+		// warm run..depends on testOpenJavaProgramLaunchConfigurationDialog1 for cold start
+		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		IStructuredSelection selection = new StructuredSelection(config);
 		openLCD(selection, fgIdentifier);
-    }
+	}
 
-    private void openLCD(final IStructuredSelection selection, final String groupIdentifier) {
+	private void openLCD(final IStructuredSelection selection, final String groupIdentifier) {
        
-        //set a status to go to the classpath tab
-	    IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, "", null); //$NON-NLS-1$
+		//set a status to go to the classpath tab
+		IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, "", null); //$NON-NLS-1$
 		LaunchConfigurationsDialog dialog= new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
 		dialog.setBlockOnOpen(false);
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
@@ -61,5 +61,5 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
 		dialog.open();
 		dialog.close();
 		stopMeasuring();
-    }
+	}
 }

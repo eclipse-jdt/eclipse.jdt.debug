@@ -20,6 +20,7 @@
 	  <import plugin="org.eclipse.debug.core"/>
 	  <import plugin="org.eclipse.debug.ui"/>
 	  <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
 <runtime>
@@ -48,5 +49,15 @@
 		variable="NULL_VARIALBE"
 		class="org.eclipse.jdt.debug.testplugin.NullVariableInitializer"/>
 </extension>	
+
+ <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            code="1000"
+            plugin="org.eclipse.jdt.debug.tests"
+            class="org.eclipse.jdt.debug.tests.ui.performance.JavaApplicationStatusHandler"
+            id="org.eclipse.jdt.debug.tests.performance.statusHandler.JavaApplication">
+      </statusHandler>
+   </extension>
 
 </plugin>

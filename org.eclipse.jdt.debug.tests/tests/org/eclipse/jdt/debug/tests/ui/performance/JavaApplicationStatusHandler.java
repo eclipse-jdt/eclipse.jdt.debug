@@ -17,12 +17,12 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 
 public class JavaApplicationStatusHandler implements IStatusHandler {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
-     */
-    public Object handleStatus(IStatus status, Object source) throws CoreException {
-        ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog)source;
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
+	 */
+	public Object handleStatus(IStatus status, Object source) throws CoreException {
+		ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog)source;
 		dialog.setActiveTab(3);
 		return null;
-    }
+	}
 }

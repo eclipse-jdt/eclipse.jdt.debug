@@ -47,8 +47,8 @@ public abstract class DebugSuite extends TestSuite {
 			Runnable r = new Runnable() {
 				public void run() {
 					for (Enumeration e= tests(); e.hasMoreElements(); ) {
-				  		if (result.shouldStop() )
-				  			break;
+						if (result.shouldStop() )
+							break;
 						Test test= (Test)e.nextElement();
 						runTest(test, result);
 					}					
@@ -71,6 +71,4 @@ public abstract class DebugSuite extends TestSuite {
 			}			
 		}		
 	}
-
 }
-

@@ -26,54 +26,54 @@ import org.eclipse.test.performance.Dimension;
  * Tests performance of conditional breakpoints.
  */
 public class PerfConditionalBreakpointsTests extends
-        AbstractDebugPerformanceTest {
+		AbstractDebugPerformanceTest {
 
-    public PerfConditionalBreakpointsTests(String name) {
-        super(name);
-    }
+	public PerfConditionalBreakpointsTests(String name) {
+		super(name);
+	}
 
-    public void testConditionalBreakpoint() throws Exception {
-        String typeName = "PerfLoop";
-        IJavaLineBreakpoint bp = createConditionalLineBreakpoint(22, typeName, "i == 99", true);
+	public void testConditionalBreakpoint() throws Exception {
+		String typeName = "PerfLoop";
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(22, typeName, "i == 99", true);
 
-        List threads= new ArrayList();
-        try {
+		List threads= new ArrayList();
+		try {
             
-            //cold launch, open editor etc.
-            IJavaThread thread  = launchToLineBreakpoint(typeName, bp);
-            threads.add(thread);
-            tagAsGlobalSummary("Conditional Breakpoint", Dimension.CPU_TIME);
-            for (int i = 0; i < 5; i++) {
-                try {
-                    startMeasuring();
-                    thread = launchToLineBreakpoint(typeName, bp);
-                    stopMeasuring();
-                } finally {
-                   threads.add(thread);
-                }
-            }
+			//cold launch, open editor etc.
+			IJavaThread thread  = launchToLineBreakpoint(typeName, bp);
+			threads.add(thread);
+			tagAsGlobalSummary("Conditional Breakpoint", Dimension.CPU_TIME);
+			for (int i = 0; i < 5; i++) {
+				try {
+					startMeasuring();
+					thread = launchToLineBreakpoint(typeName, bp);
+					stopMeasuring();
+				} finally {
+				   threads.add(thread);
+				}
+			}
 
-            commitMeasurements();
-            assertPerformance();
+			commitMeasurements();
+			assertPerformance();
 
-            //verify actually stopping at the correct location
-            IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
-            IVariable var = frame.findVariable("i");
-            assertNotNull("Could not find variable 'i'", var);
+			//verify actually stopping at the correct location
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			IVariable var = frame.findVariable("i");
+			assertNotNull("Could not find variable 'i'", var);
 
-            IJavaPrimitiveValue value = (IJavaPrimitiveValue) var.getValue();
-            assertNotNull("variable 'i' has no value", value);
-            int iValue = value.getIntValue();
-            assertEquals("value of 'i' incorrect", 99, iValue);
-            bp.delete();
-        } finally {
-            Iterator iter= threads.iterator();
-            while (iter.hasNext()) {
-                IJavaThread thread = (IJavaThread) iter.next();
-                terminateAndRemove(thread);    
-            }
+			IJavaPrimitiveValue value = (IJavaPrimitiveValue) var.getValue();
+			assertNotNull("variable 'i' has no value", value);
+			int iValue = value.getIntValue();
+			assertEquals("value of 'i' incorrect", 99, iValue);
+			bp.delete();
+		} finally {
+			Iterator iter= threads.iterator();
+			while (iter.hasNext()) {
+				IJavaThread thread = (IJavaThread) iter.next();
+				terminateAndRemove(thread);    
+			}
             
-            removeAllBreakpoints();
-        }
-    }
+			removeAllBreakpoints();
+		}
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.jdt.debug.tests;
 
 import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -78,6 +80,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		// set error dialog to non-blocking to avoid hanging the UI during test
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
+		if (!(this.getClass() == ProjectCreationDecorator.class) && !getJavaProject().exists()) {
+			new TestSuite(ProjectCreationDecorator.class).run(new TestResult());
+		}
 	}
 	
 	/**
@@ -136,7 +141,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return Object the source of the event
 	 * @exception Exception if the event is never received.
 	 */
-	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws Exception {
+	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws CoreException {
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
@@ -203,7 +208,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param config the configuration to launch
 	 * @return thread in which the first suspend event occurred
 	 */	
-	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws Exception {
+	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
@@ -293,10 +298,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Resumes the given thread, and waits for another breakpoint-caused suspend event.
-	 * Returns the thread in which the suspend event occurrs.
+	 * Returns the thread in which the suspend event occurs.
 	 * 
 	 * @param thread thread to resume
-	 * @return thread in which the first suspend event occurrs
+	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resume(IJavaThread thread) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
@@ -312,10 +317,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Resumes the given thread, and waits for a suspend event caused by the specified
-	 * line breakpoint.  Returns the thread in which the suspend event occurrs.
+	 * line breakpoint.  Returns the thread in which the suspend event occurs.
 	 * 
 	 * @param thread thread to resume
-	 * @return thread in which the first suspend event occurrs
+	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resumeToLineBreakpoint(IJavaThread resumeThread, ILineBreakpoint bp) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);

@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -11,6 +11,8 @@
 package org.eclipse.jdt.debug.tests;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -109,6 +111,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("VariableChanges");		
 		createLaunchConfiguration("DefPkgReturnType");
 		createLaunchConfiguration("InstanceFilterObject");
+		
+		createLaunchConfiguration("PerfLoop");
 	}
 	
 	/**
@@ -120,6 +124,10 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), mainTypeName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
+		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
+		Map map = new HashMap(1);
+		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
 		config.doSave();
 	}
 	

@@ -34,7 +34,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			for (int i = 0; i < 100; i++) {
-			    startMeasuring();
+				startMeasuring();
 				stepOver(frame);
 				stopMeasuring();
 			}
