@@ -491,7 +491,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	protected void reportError(String message) {
-		IDataDisplay dataDisplay= getDataDisplay();
+		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
 				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.getString("EvaluateAction.(evaluation_failed)_Reason"), new String[] {message})); //$NON-NLS-1$
