@@ -55,7 +55,7 @@ public interface IJavaModifiers {
 	public boolean isProtected() throws DebugException;
 	/**
 	 * Returns whether the associated Java construct is declared with
-	 * no protection modifier (i.e. package private protection).
+	 * no protection modifier (package private protection).
 	 *
 	 * @return whether the associated Java construct is declared as package private
 	 * @exception DebugException if this method fails.  Reasons include:

@@ -61,6 +61,11 @@ public class JDIDebugModel {
 	 * Preference key for default JDI request timeout value.
 	 */
 	public static final String PREF_REQUEST_TIMEOUT = getPluginIdentifier() + ".PREF_REQUEST_TIMEOUT"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key for specifying if hot code replace should be performed
+	 * when a replacement class file contains compilation errors.
+	 */
 	public static final String PREF_HCR_WITH_COMPILATION_ERRORS= getPluginIdentifier() + ".PREF_HCR_WITH_COMPILATION_ERRORS"; //$NON-NLS-1$
 	
 	/**
