@@ -53,7 +53,16 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
          */
         public String getText(Object element) {
         	JavaLogicalStructure logicalStructure= (JavaLogicalStructure) element;
-        	return logicalStructure.getQualifiedTypeName() + " - " + logicalStructure.getDescription(); //$NON-NLS-1$
+            String qualifiedName= logicalStructure.getQualifiedTypeName();
+            StringBuffer buffer= new StringBuffer();
+            int index= qualifiedName.lastIndexOf('.') + 1;
+            String simpleName= qualifiedName.substring(index);
+            buffer.append(simpleName);
+            buffer.append(" - ").append(logicalStructure.getDescription()); //$NON-NLS-1$
+            if (index > 0) {
+                buffer.append(" (").append(logicalStructure.getQualifiedTypeName()).append(')'); //$NON-NLS-1$
+            }
+        	return buffer.toString();
         }
 
 		/* (non-Javadoc)
