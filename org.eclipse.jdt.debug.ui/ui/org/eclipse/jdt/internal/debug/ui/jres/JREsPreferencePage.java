@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -39,8 +37,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 /**
- * An experimental replacement for the Installed JREs preference page.
+ * The Installed JREs preference page.
  * 
  * @since 3.0
  */
@@ -58,8 +57,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		setDescription(JREMessages.getString("JREsPreferencePage.2")); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IWorkbenchPreferencePage#init(IWorkbench)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
@@ -81,25 +80,22 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 	}
 	
-	/**
-	 * @see PreferencePage#createContents(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite ancestor) {
-		Font font= ancestor.getFont();
 		initializeDialogUnits(ancestor);
 		
 		noDefaultAndApplyButton();
 		
-		Composite parent= new Composite(ancestor, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		parent.setLayout(layout);
-		parent.setFont(font);
+		ancestor.setLayout(layout);
 					
 		fJREBlock = new InstalledJREsBlock();
-		fJREBlock.createControl(parent);
+		fJREBlock.createControl(ancestor);
 		Control control = fJREBlock.getControl();
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 1;
@@ -107,7 +103,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 						
-		WorkbenchHelp.setHelp(parent, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
+		WorkbenchHelp.setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
 		initDefaultVM();
 		fJREBlock.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -121,11 +117,12 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				}
 			}
 		});
-		return parent;
+		applyDialogFont(ancestor);
+		return ancestor;
 	}
 			
-	/**
-	 * @see IPreferencePage#performOk()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -187,8 +184,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		return fJREBlock.getCheckedJRE();
 	}	
 	
-	/**
-	 * @see IDialogPage#setVisible(boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -196,5 +193,4 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			setTitle(JREMessages.getString("JREsPreferencePage.12")); //$NON-NLS-1$
 		}
 	}
-	
 }
