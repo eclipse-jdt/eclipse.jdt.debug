@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -26,10 +27,12 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -67,6 +70,8 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 				IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), getLineNumber(), -1, -1, 0, true, attributes);
 				return bp;
 			} catch (CoreException ce) {
+				errorDialog(ce.getStatus());
+				JDIDebugUIPlugin.logError(ce);
 			}
 		}
 		return null;
@@ -242,5 +247,10 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 
 	protected void setTextEditor(ITextEditor editor) {
 		fTextEditor = editor;
+	}
+	
+	protected void errorDialog(IStatus status) {
+		Shell shell= getTextEditor().getSite().getShell();
+		ErrorDialog.openError(shell, ActionMessages.getString("AddBreakpoint.error.title1"), ActionMessages.getString("AddBreakpoint.error.message1"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
