@@ -310,11 +310,16 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Utility method to create and return a selection dialog that allows
 	 * selection of a specific Java package.  Empty packages are not returned.
+	 * If Java Projects are provided, only packages found within those projects
+	 * are included.  If no Java projects are provided, all Java projects in the
+	 * workspace are considered.
 	 */
-	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell) throws JavaModelException{
-		IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
-		IJavaModel model= JavaCore.create(wsroot);
-		IJavaProject[] projects= model.getJavaProjects();
+	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] projects) throws JavaModelException{
+		if (projects == null) {
+			IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
+			IJavaModel model= JavaCore.create(wsroot);
+			projects= model.getJavaProjects();
+		}
 		Set packageNameSet= new HashSet(); 
 		List packageList = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {						

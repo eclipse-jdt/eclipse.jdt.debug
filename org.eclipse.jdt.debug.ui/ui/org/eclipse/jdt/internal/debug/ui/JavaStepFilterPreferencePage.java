@@ -552,7 +552,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Shell shell= getShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null);
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_24"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_package_selection_dialog_for_step_filters_25"); //$NON-NLS-1$

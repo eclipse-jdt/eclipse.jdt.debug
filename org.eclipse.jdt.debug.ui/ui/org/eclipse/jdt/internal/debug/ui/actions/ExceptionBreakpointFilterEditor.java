@@ -464,7 +464,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null);
 		} catch (JavaModelException jme) {
 			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_package_to_scope_12"); //$NON-NLS-1$
 			String message= ActionMessages.getString("ExceptionBreakpointFilterEditor.Could_not_open_package_selection_dialog_for_scope_definition_13");  //$NON-NLS-1$

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -206,7 +208,15 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell);
+			IJavaProject project= fEditor.getJavaProject();
+			List projects= new ArrayList();
+			projects.add(project);
+			IPackageFragmentRoot[] roots= project.getAllPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				IPackageFragmentRoot root = roots[i];
+				projects.add(root.getParent());
+			}
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, (IJavaProject[])projects.toArray(new IJavaProject[projects.size()]));
 		} catch (JavaModelException jme) {
 			String title= SnippetMessages.getString("SelectImportsDialog.Add_package_as_import_7"); //$NON-NLS-1$
 			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_package_selection_dialog_8");  //$NON-NLS-1$
@@ -237,7 +247,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
-				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_TYPES, false);
+				SearchEngine.createJavaSearchScope(new IJavaElement[]{fEditor.getJavaProject()}, true), IJavaElementSearchConstants.CONSIDER_TYPES, false);
 		} catch (JavaModelException jme) {
 			String title= SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_12"); //$NON-NLS-1$
 			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_class_selection_dialog_13"); //$NON-NLS-1$
