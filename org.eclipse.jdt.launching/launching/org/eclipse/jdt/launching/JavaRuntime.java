@@ -984,6 +984,7 @@ public final class JavaRuntime {
 						if (!expandedPath.contains(r)) {
 							expandedPath.add(r);
 						}	
+						break;
 					case IClasspathEntry.CPE_VARIABLE:
 						if (entry.getPath().segment(0).equals(JRELIB_VARIABLE)) {
 							r = newVariableRuntimeClasspathEntry(JRELIB_VARIABLE);
