@@ -834,7 +834,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public String getSourceName() throws DebugException {
 		if (fStackFrame == null || fSourceName == null) {
 			try {
-				fSourceName = getUnderlyingMethod().location().sourceName();
+				fSourceName = getUnderlyingStackFrame().location().sourceName();
 			} catch (AbsentInformationException e) {
 				fSourceName = null;
 			} catch (NativeMethodException e) {
@@ -1146,7 +1146,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public String getSourceName(String stratum) throws DebugException {
 		try {
-			return getUnderlyingMethod().location().sourceName(stratum);
+			return getUnderlyingStackFrame().location().sourceName(stratum);
 		} catch (AbsentInformationException e) {
 		} catch (NativeMethodException e) {
 		} catch (RuntimeException e) {
