@@ -24,7 +24,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 public class InterpreterVariable implements IJavaVariable {
 
 	/**
-	 * The reference type  of this variable.
+	 * The reference type of this variable.
 	 */
 	private IJavaType fReferenceType;
 	
@@ -38,14 +38,8 @@ public class InterpreterVariable implements IJavaVariable {
 	 */
 	private IValue fValue;
 	
-	/**
-	 * 
-	 */
 	private IDebugTarget fDebugTarget;
 
-	/**
-	 * Constructor for LocalVariable.
-	 */
 	public InterpreterVariable(String name, IJavaType referenceType, IDebugTarget debugTarget) {
 		fName= name;
 		fReferenceType= referenceType;
@@ -105,7 +99,7 @@ public class InterpreterVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(String)
 	 */
 	public void setValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, "setValue(String) not supported for interpreter variable", null));
+		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.getString("InterpreterVariable.setValue(String)_not_supported_for_interpreter_variable_1"), null)); //$NON-NLS-1$
 	}
 
 	/**
@@ -126,14 +120,14 @@ public class InterpreterVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(IValue)
 	 */
 	public boolean verifyValue(IValue value) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, "verifyValue(IValue) not supported for interpreter variable", null));
+		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.getString("InterpreterVariable.verifyValue(IValue)_not_supported_for_interpreter_variable_2"), null)); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(String)
 	 */
 	public boolean verifyValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, "verifyValue(String) not supported for interpreter variable", null));
+		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.getString("InterpreterVariable.verifyValue(String)_not_supported_for_interpreter_variable_3"), null)); //$NON-NLS-1$
 	}
 
 	/**
@@ -205,5 +199,4 @@ public class InterpreterVariable implements IJavaVariable {
 	public boolean isSynthetic() throws DebugException {
 		return true;
 	}
-
 }
