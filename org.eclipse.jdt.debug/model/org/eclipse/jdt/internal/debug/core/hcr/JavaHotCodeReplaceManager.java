@@ -29,12 +29,10 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
@@ -283,20 +281,20 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		final List hotSwapTargets= getHotSwapTargets();
 		final List noHotSwapTargets= getNoHotSwapTargets();
 		if (!hotSwapTargets.isEmpty()) {
-			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
+			Runnable runnable= new Runnable() {
+				public void run() {
 					doHotCodeReplace(hotSwapTargets, resources, qualifiedNames);
 				}
 			};
-			fork(wRunnable);	
+			DebugPlugin.getDefault().asyncExec(runnable);	
 		}
 		if (!noHotSwapTargets.isEmpty()) {
-			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
+			Runnable runnable= new Runnable() {
+				public void run() {
 					notifyUnsupportedHCR(noHotSwapTargets, qualifiedNames);
 				}
 			};
-			fork(wRunnable);
+			DebugPlugin.getDefault().asyncExec(runnable);
 		}
 	}
 	
@@ -1102,18 +1100,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		fHotCodeReplaceListeners.remove(listener);
 	}
 	
-	protected void fork(final IWorkspaceRunnable wRunnable) {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				try {
-					getWorkspace().run(wRunnable, null);
-				} catch (CoreException ce) {
-					JDIDebugPlugin.log(ce);
-				}
-			}
-		};
-		new Thread(runnable).start();
-	}
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
