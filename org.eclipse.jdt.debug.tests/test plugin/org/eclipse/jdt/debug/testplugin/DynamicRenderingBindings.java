@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.testplugin;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 
@@ -41,5 +42,11 @@ public class DynamicRenderingBindings implements IMemoryRenderingBindingsProvide
     public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
         return DebugUITools.getMemoryRenderingManager().getRenderingType("rendering_type_1");
     }
+
+	public void addListener(IMemoryRenderingBindingsListener listener) {
+	}
+
+	public void removeListener(IMemoryRenderingBindingsListener listener) {
+	}
 
 }
