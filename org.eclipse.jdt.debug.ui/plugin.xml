@@ -2211,28 +2211,16 @@
 <!-- Roles and Activities -->
    <extension
          point="org.eclipse.ui.activities">
-      <activity
-            name="%debuggingJavaActivityName"
-            description=""
-            id="org.eclipse.debugging.java">
-      </activity>
       <patternBinding
             inclusive="true"
-            activityId="org.eclipse.debugging.java"
+            activityId="org.eclipse.javaDevelopment"
             pattern="org.eclipse.jdt.debug.*">
       </patternBinding>
       <patternBinding
             inclusive="true"
-            activityId="org.eclipse.debugging.java"
+            activityId="org.eclipse.javaDevelopment"
             pattern="org.eclipse.jdt.launching.*">
       </patternBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.roles"> 
-      <activityBinding
-            activityId="org.eclipse.debugging.java"
-            roleId="org.eclipse.roles.javaRole">
-      </activityBinding>
    </extension>
 
 </plugin>
