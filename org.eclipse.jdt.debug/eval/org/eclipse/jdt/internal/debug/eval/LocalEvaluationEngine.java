@@ -459,9 +459,11 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				Arrays.fill(modifiers, 0);
 				setLocalVariableModifiers(modifiers);
 				
-				setThis(frame.getThis());
-				
 				final boolean isStatic = frame.isStatic();
+				if (!isStatic) {
+					setThis(frame.getThis());
+				}
+				
 				final boolean isConstructor = frame.isConstructor();
 				final IType receivingType = getReceivingType(frame);
 				
