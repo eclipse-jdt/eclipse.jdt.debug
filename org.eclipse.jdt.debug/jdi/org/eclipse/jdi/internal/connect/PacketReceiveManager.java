@@ -95,7 +95,12 @@ public class PacketReceiveManager extends PacketManager {
 			if (getDisconnectException() == null) {
 				message= ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_1"); //$NON-NLS-1$
 			} else {
-				message= MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.Got_{0}_from_Virtual_Machine_1"), new String[] {getDisconnectException().getClass().getName()}); //$NON-NLS-1$
+				String exMessage = getDisconnectException().getMessage();
+				if (exMessage == null) {
+					message= MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.Got_{0}_from_Virtual_Machine_1"), new String[] {getDisconnectException().getClass().getName()}); //$NON-NLS-1$
+				} else {
+					message = MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.Got_{0}_from_Virtual_Machine__{1}_1"), new String[]{getDisconnectException().getClass().getName(), exMessage}); //$NON-NLS-1$
+				}
 			}
 			throw new VMDisconnectedException(message);
 		}
