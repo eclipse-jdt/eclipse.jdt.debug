@@ -374,48 +374,51 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			} else if (fRefreshChildren) {
 				if (fStackFrames.isEmpty()) {
 					fStackFrames = createAllStackFrames();
-				} else {
-					// compute new or removed stack frames
-					List frames= getUnderlyingFrames();
-					int offset= 0, length= frames.size();
-					if (length > fStackFrames.size()) {
-						// compute new frames
-						offset= length - fStackFrames.size();
-						for (int i= offset - 1; i >= 0; i--) {
-							JDIStackFrame newStackFrame= new JDIStackFrame(this, (StackFrame) frames.get(i));
-							fStackFrames.add(0, newStackFrame);
-						}
-						length= fStackFrames.size() - offset;
-					} else
-						if (length < fStackFrames.size()) {
-							// compute removed children
-							int removed= fStackFrames.size() - length;
-							for (int i= 0; i < removed; i++) {
-								fStackFrames.remove(0);
-							}
-						} else {
-							if (frames.isEmpty()) {
-								fStackFrames = Collections.EMPTY_LIST;
-							} else {
-								// same number of stack frames - if the TOS is different, remove/replace all stack frames
-								Method oldMethod= ((JDIStackFrame) fStackFrames.get(0)).getUnderlyingMethod();
-								StackFrame newTOS= (StackFrame) frames.get(0);
-								Method newMethod= getUnderlyingMethod(newTOS);
-								if (!oldMethod.equals(newMethod)) {
-									// remove & replace all stack frames
-									fStackFrames= createAllStackFrames();
-									// no stack frames to update
-									offset= fStackFrames.size();
-								}
-							}
-						}
-					// update preserved frames
-					if (offset < fStackFrames.size()) {
-						updateStackFrames(frames, offset, fStackFrames, length);
+					if (!fStackFrames.isEmpty()) {	
+						fRefreshChildren = false;
 					}
+					return fStackFrames;
+				} 
+				// compute new or removed stack frames
+				List frames= getUnderlyingFrames();
+				int offset= 0, length= frames.size();
+				if (length > fStackFrames.size()) {
+					// compute new frames
+					offset= length - fStackFrames.size();
+					for (int i= offset - 1; i >= 0; i--) {
+						JDIStackFrame newStackFrame= new JDIStackFrame(this, (StackFrame) frames.get(i));
+						fStackFrames.add(0, newStackFrame);
+					}
+					length= fStackFrames.size() - offset;
+				} else
+					if (length < fStackFrames.size()) {
+						// compute removed children
+						int removed= fStackFrames.size() - length;
+						for (int i= 0; i < removed; i++) {
+							fStackFrames.remove(0);
+						}
+					} else {
+						if (frames.isEmpty()) {
+							fStackFrames = Collections.EMPTY_LIST;
+						} else {
+							// same number of stack frames - if the TOS is different, remove/replace all stack frames
+							Method oldMethod= ((JDIStackFrame) fStackFrames.get(0)).getUnderlyingMethod();
+							StackFrame newTOS= (StackFrame) frames.get(0);
+							Method newMethod= getUnderlyingMethod(newTOS);
+							if (!oldMethod.equals(newMethod)) {
+								// remove & replace all stack frames
+								fStackFrames= createAllStackFrames();
+								// no stack frames to update
+								offset= fStackFrames.size();
+							}
+						}
+					}
+				// update preserved frames
+				if (offset < fStackFrames.size()) {
+					updateStackFrames(frames, offset, fStackFrames, length);
 				}
-				fRefreshChildren = false;
 			}
+			fRefreshChildren = false;
 		} else {
 			return Collections.EMPTY_LIST;
 		}
