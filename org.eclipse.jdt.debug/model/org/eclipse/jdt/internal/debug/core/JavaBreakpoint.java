@@ -423,9 +423,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * @see IJavaBreakpoint#setHitCount(int)
 	 */
-	public void setHitCount(int count) throws CoreException {
-		ensureMarker().setAttributes(new String[]{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED},
-						new Object[]{new Integer(count), Boolean.FALSE});
+	public void setHitCount(int count) throws CoreException {	
+		if (!isEnabled() && count > -1) {
+			ensureMarker().setAttributes(new String []{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED},
+				new Object[]{new Integer(count), Boolean.FALSE, Boolean.TRUE});
+		} else {
+			ensureMarker().setAttributes(new String[]{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED},
+				new Object[]{new Integer(count), Boolean.FALSE});
+		}
 	}	
 	
 	/**

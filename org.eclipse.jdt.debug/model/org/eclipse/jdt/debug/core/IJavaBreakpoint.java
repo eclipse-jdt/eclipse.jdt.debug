@@ -36,6 +36,8 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * Sets the hit count attribute of this breakpoint,
 	 * and resets the expired attribute to false (since, if
 	 * the hit count is changed, the breakpoint should no longer be expired).
+	 * If the breakpoint is currently disabled and the hit count
+	 * is set greater than -1, the breakpoint is enabled.
 	 * 
 	 * @param count the new hit count
 	 * @exception CoreException if a <code>CoreException</code> is
