@@ -66,7 +66,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 	}
 
 	/**
-	 * @returns Returns a list of all loaded classes that were defined by this class loader.
+	 * @returns Returns a list of all loaded classes that are visible by this class loader.
 	 */
 	public List visibleClasses() {
 		// Note that this information should not be cached.
