@@ -7,8 +7,6 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
@@ -203,15 +201,15 @@ public interface IJavaThread extends IThread {
 	public boolean hasContendedMonitors() throws DebugException;
 	
 	/**
-	 * Returns a list of all of the monitors owned by this thread.
-	 * An empty list is returned if this thread owns no monitors.
+	 * Returns the monitors owned by this thread or <code>null</code>
+	 * if this thread owns no monitors.
 	 * 
-	 * @return List the list of monitors owned by this thread
+	 * @return the owned monitors
 	 * @exception DebugException if an exception occurs while retrieving
 	 * the owned monitors of this thread.
 	 * @since 2.1
 	 */
-	public List getOwnedMonitors() throws DebugException;
+	public IJavaObject[] getOwnedMonitors() throws DebugException;
 	
 	/**
 	 * Returns whether this threads owns at least one monitor.

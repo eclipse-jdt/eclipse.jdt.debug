@@ -2203,27 +2203,29 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#hasOwnedMonitors()
 	 */
 	public boolean hasOwnedMonitors() throws DebugException {
-		return isSuspended() && getOwnedMonitors().size() > 0;
+		return isSuspended() && getOwnedMonitors().length > 0;
 	}
 	
 	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#getOwnedMonitors()
 	 */
-	public List getOwnedMonitors() throws DebugException {
+	public IJavaObject[] getOwnedMonitors() throws DebugException {
 		try {
 			JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
 			List ownedMonitors= getUnderlyingThread().ownedMonitors();
-			List javaOwnedMonitors= new ArrayList(ownedMonitors.size());
+			IJavaObject[] javaOwnedMonitors= new IJavaObject[ownedMonitors.size()];
 			Iterator itr= ownedMonitors.iterator();
+			int i= 0;
 			while (itr.hasNext()) {
 				ObjectReference element = (ObjectReference) itr.next();
-				javaOwnedMonitors.add(new JDIObjectValue(target, element));
+				javaOwnedMonitors[i]= new JDIObjectValue(target, element);
+				i++;
 			}
 			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
 		}
-		return Collections.EMPTY_LIST;
+		return null;
 	}
 	
 	

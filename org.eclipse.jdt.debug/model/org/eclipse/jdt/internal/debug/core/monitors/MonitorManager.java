@@ -75,12 +75,12 @@ public class MonitorManager implements IMonitorManager {
 	}
 	
 	/**
-	 * Adds the list of the monitors owned by the thread
+	 * Adds the the monitors owned by the thread
 	 * If the list is <code>null</code>, remove the thread from the mappings
 	 * @param thread The thread
-	 * @param monitors The list of monitors owned by the thread
+	 * @param monitors The monitors owned by the thread
 	 */
-	protected void addThreadWithOwnedMonitors(IJavaThread thread, List monitors) {
+	protected void addThreadWithOwnedMonitors(IJavaThread thread, IJavaObject[] monitors) {
 		if (monitors == null) {
 			fThreadToOwnedMonitors.remove(thread);
 		} else {
@@ -208,7 +208,7 @@ public class MonitorManager implements IMonitorManager {
 			//suspend all the non system threads
 			suspend(threads);
 			
-			List ownedMonitors;
+			IJavaObject[] ownedMonitors;
 			IJavaObject currentContendedMonitors, monitor;
 			//updating data on 
 			//owning threads / owned monitors and contending threads / contended monitors
@@ -220,8 +220,8 @@ public class MonitorManager implements IMonitorManager {
 				if(thread.hasOwnedMonitors()){
 					addThreadWithOwnedMonitors(thread, ownedMonitors);
 					
-					for(int j=0; j < thread.getOwnedMonitors().size(); j++) {
-						monitor = (IJavaObject)ownedMonitors.get(j);
+					for(int j=0; j < ownedMonitors.length; j++) {
+						monitor = ownedMonitors[j];
 						addMonitorWithOwningThread(monitor, thread);
 					}
 				}
@@ -269,7 +269,7 @@ public class MonitorManager implements IMonitorManager {
 			}
 			IJavaThread[] threads= (IJavaThread[]) threadsList.toArray(new IJavaThread[threadsList.size()]);
 			
-			List ownedMonitors;
+			IJavaObject[] ownedMonitors;
 			IJavaObject currentContendedMonitors, monitor;		
 			for (int i = 0; i < threads.length; i++) {
 				thread = threads[i];
@@ -280,8 +280,8 @@ public class MonitorManager implements IMonitorManager {
 				if(thread.hasOwnedMonitors()){
 					addThreadWithOwnedMonitors(thread, ownedMonitors);
 					
-					for(int j=0; j<thread.getOwnedMonitors().size(); j++){
-						monitor = (IJavaObject)ownedMonitors.get(j);
+					for(int j=0; j < ownedMonitors.length; j++){
+						monitor = ownedMonitors[j];
 						addMonitorWithOwningThread(monitor, thread);
 					}
 				}
