@@ -563,7 +563,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		if (launch.getSourceLocator() == null) {
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (id == null) {
-				IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+				IJavaProject javaProject = getJavaProject(configuration);
 				if (javaProject != null) {
 					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
 					launch.setSourceLocator(sourceLocator);					
