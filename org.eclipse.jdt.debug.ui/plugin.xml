@@ -611,6 +611,14 @@
    </launchConfigurationType>
 </extension>
 
+<extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+	<launchConfigurationTypeImage
+		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.localJavaApplication"
+		configTypeID="org.eclipse.jdt.debug.ui.localJavaApplication"
+		icon="icons/full/obj16/lcl_java_app.gif">
+	</launchConfigurationTypeImage>	
+</extension>
+
 <extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.Main"
