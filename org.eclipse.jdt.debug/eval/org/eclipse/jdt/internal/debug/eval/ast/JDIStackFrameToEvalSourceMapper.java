@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.eval.ast;
 
+/*
+ * (c) Copyright IBM Corp. 2002.
+ * All Rights Reserved.
+ */
+ 
 import java.util.Iterator;
 import java.util.List;
 
@@ -211,8 +216,6 @@ public class JDIStackFrameToEvalSourceMapper {
 			fCodeSnippetPosition += source.length();
 			source.append(buffer);
 		}
-		
-		Field thisField = null;
 		
 		List fields= referenceType.fields();
 		for (Iterator iterator= fields.iterator(); iterator.hasNext();) {
