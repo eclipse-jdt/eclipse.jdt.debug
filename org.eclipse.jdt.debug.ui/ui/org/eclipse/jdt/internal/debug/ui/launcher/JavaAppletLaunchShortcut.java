@@ -43,6 +43,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	protected void searchAndLaunch(Object[] search, String mode) {
 		IType[] types= null;
 
@@ -184,6 +186,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, AppletArgumentsTab.DEFAULT_APPLET_WIDTH);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, AppletArgumentsTab.DEFAULT_APPLET_HEIGHT);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, EMPTY_STRING);
 			config = wc.doSave();		
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);			
