@@ -34,8 +34,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -43,6 +45,7 @@ import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
@@ -50,6 +53,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
@@ -477,7 +481,23 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		if (locator == null)
 			return null;
 		
-		Object sourceElement = locator.getSourceElement(stackFrame);
+		Object sourceElement= null;
+		try {
+			if (locator instanceof ISourceLookupDirector && !stackFrame.isStatic()) {
+				IJavaType thisType = stackFrame.getThis().getJavaType();
+				if (thisType instanceof JDIReferenceType) {
+					String[] sourcePaths= ((JDIReferenceType) thisType).getSourcePaths(null);
+					if (sourcePaths.length > 0) {
+						sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
+					}
+				}
+			}
+		} catch (DebugException e) {
+			DebugPlugin.log(e);
+		}
+		if (sourceElement == null) {
+			sourceElement = locator.getSourceElement(stackFrame);
+		}
 		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
 			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
 		}
