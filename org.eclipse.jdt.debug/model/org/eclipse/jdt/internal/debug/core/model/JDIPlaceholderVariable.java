@@ -204,4 +204,25 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof JDIPlaceholderVariable) {
+			JDIPlaceholderVariable var = (JDIPlaceholderVariable)obj;
+			try {
+				return var.getName().equals(getName()) && var.getValue().equals(getValue());
+			} catch (DebugException e) {
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fName.hashCode() + fValue.hashCode();
+	}
+
 }
