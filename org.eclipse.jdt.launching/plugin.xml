@@ -113,6 +113,11 @@
             variable="JRE_LIB"
             class="org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver"
             id="org.eclipse.jdt.launching.JRE_RESOLVER">
+      </runtimeClasspathEntryResolver>      
+      <runtimeClasspathEntryResolver
+      		runtimeClasspathEntryId="org.eclipse.jdt.launching.classpathentry.variableClasspathEntry"
+            class="org.eclipse.jdt.internal.launching.VariableClasspathResolver"
+            id="org.eclipse.jdt.launching.variableClasspathResolver">
       </runtimeClasspathEntryResolver>
    </extension>
    <extension
@@ -120,6 +125,10 @@
       <runtimeClasspathEntry
             id="org.eclipse.jdt.launching.classpathentry.defaultClasspath"
             class="org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry">
+      </runtimeClasspathEntry>
+      <runtimeClasspathEntry
+            id="org.eclipse.jdt.launching.classpathentry.variableClasspathEntry"
+            class="org.eclipse.jdt.internal.launching.VariableClasspathEntry">
       </runtimeClasspathEntry>
    </extension>   
    <extension

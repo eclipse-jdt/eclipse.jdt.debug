@@ -61,6 +61,7 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
+import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -479,6 +480,11 @@ public final class JavaRuntime {
 		return null;
 	}
 
+	
+	public static IRuntimeClasspathEntry newStringVariableClasspathEntry(String variableString) {
+		return new VariableClasspathEntry(variableString);
+	}
+	
 	/**
 	 * Returns a new runtime classpath entry for the given project.
 	 * 

@@ -12,7 +12,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerDescriptor;
@@ -21,12 +23,13 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -35,12 +38,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.jdt.internal.debug.ui.*;
 
 /**
  * Dialog of radio buttons/actions for advanced classpath options.
  */
 public class RuntimeClasspathAdvancedDialog extends Dialog {
-	
+
 	private IAction[] fActions;
 	private Button[] fButtons;	
 	
@@ -48,6 +53,8 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	private Combo fContainerCombo;
 	private ClasspathContainerDescriptor[] fDescriptors;
 	private IClasspathViewer fViewer;
+	private Button fAddVariableStringButton;
+	private Text fVariableString;
 
 	/**
 	 * Constructs a new dialog on the given shell, with the specified
@@ -58,6 +65,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	 */
 	public RuntimeClasspathAdvancedDialog(Shell parentShell, IAction[] actions, IClasspathViewer viewer) {
 		super(parentShell);
+		setShellStyle(SWT.RESIZE | getShellStyle());
 		fActions = actions;
 		fViewer = viewer;
 	}
@@ -66,28 +74,17 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Font font = parent.getFont();
-		
-		initializeDialogUnits(parent);
-		
-		Composite composite= (Composite) super.createDialogArea(parent);
-		Composite inner= new Composite(composite, SWT.NONE);
+		Composite inner= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
-		layout.makeColumnsEqualWidth = false;
-		layout.numColumns = 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
 		inner.setLayout(layout);
 		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		inner.setLayoutData(gd);
 		
 		Label l = new Label(inner, SWT.NONE);
 		l.setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_an_advanced_option__1")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
-		l.setFont(font);
 		
 		fButtons = new Button[fActions.length];
 		for (int i = 0; i < fActions.length; i++) {
@@ -96,18 +93,29 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 			fButtons[i].setText(action.getText());
 			fButtons[i].setData(action);
 			fButtons[i].setEnabled(action.isEnabled());
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			fButtons[i].setLayoutData(gd);
-			fButtons[i].setFont(font);
+			fButtons[i].setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
 		
-		fAddContainerButton = new Button(inner, SWT.RADIO);
+		addVariableStringComposite(inner);
+		addContainerComposite(inner);
+
+		getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Advanced_Options_1")); //$NON-NLS-1$
+		
+		Dialog.applyDialogFont(parent);
+		return inner;
+	}
+
+	private void addContainerComposite(Composite composite) {
+		fAddContainerButton = new Button(composite, SWT.RADIO);
 		fAddContainerButton.setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Add_&Container__1")); //$NON-NLS-1$
-		fAddContainerButton.setFont(font);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fAddContainerButton.setLayoutData(gd);
+		
+		Composite inner = new Composite(composite, SWT.NONE);
+		inner.setLayout(new GridLayout());
+		inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fContainerCombo = new Combo(inner, SWT.READ_ONLY);
-		fContainerCombo.setFont(font);
 		fDescriptors= ClasspathContainerDescriptor.getDescriptors();
 		String[] names= new String[fDescriptors.length];
 		int maxLength = 0;
@@ -129,16 +137,58 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 			}
 		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		gd.widthHint = convertWidthInCharsToPixels(maxLength + 5);
-		fContainerCombo.setLayoutData(gd);
+		fContainerCombo.setLayoutData(gd);	
 		
-		new Label(inner, SWT.NONE);
-		
-		getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Advanced_Options_1")); //$NON-NLS-1$
-		
-		return composite;
+		fAddContainerButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fContainerCombo.setEnabled(fAddContainerButton.getSelection());
+			}
+		});
+		//set initial state
+		fContainerCombo.setEnabled(fAddContainerButton.getSelection());
+	}
 
+	private void addVariableStringComposite(Composite composite) {
+		fAddVariableStringButton = new Button(composite, SWT.RADIO);
+		fAddVariableStringButton.setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.6")); //$NON-NLS-1$
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		fAddVariableStringButton.setLayoutData(gd);
+		
+		final Composite inner = new Composite(composite, SWT.NONE);
+		inner.setLayout(new GridLayout(2, false));
+		inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fVariableString = new Text(inner, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessHorizontalSpace = true;
+		fVariableString.setLayoutData(gd);
+		
+		final Button fVariablesButton = createButton(inner, IDialogConstants.IGNORE_ID, LauncherMessages.getString("RuntimeClasspathAdvancedDialog.7"), false); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fVariablesButton.setLayoutData(gd);
+		
+		fVariablesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+				dialog.open();
+				String variable = dialog.getVariableExpression();
+				if (variable != null) {
+					fVariableString.append(variable);
+				}
+			}
+		});
+		
+		fAddVariableStringButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled = fAddVariableStringButton.getSelection();
+				fVariableString.setEnabled(enabled);
+				fVariablesButton.setEnabled(enabled);
+			}
+		});
+		//set initial state
+		boolean enabled = fAddVariableStringButton.getSelection();
+		fVariableString.setEnabled(enabled);
+		fVariablesButton.setEnabled(enabled);
 	}
 
 	/**
@@ -154,6 +204,12 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 				if (pos == -1) {
 					fViewer.addEntries(new IRuntimeClasspathEntry[]{entry});
 				}
+			}
+		} else if (fAddVariableStringButton.getSelection()) {
+			String varString = fVariableString.getText().trim();
+			if (varString.length() > 0) {
+				IRuntimeClasspathEntry entry = JavaRuntime.newStringVariableClasspathEntry(varString);
+				fViewer.addEntries(new IRuntimeClasspathEntry[] {entry});
 			}
 		} else {
 			for (int i = 0; i < fButtons.length; i++) {
@@ -195,4 +251,32 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		}			
 		return null;
 	}	
+	
+	protected String getDialogSettingsSectionName() {
+		return IJavaDebugUIConstants.PLUGIN_ID + ".RUNTIME_CLASSPATH_ADVANCED_DIALOG"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), super.getInitialSize());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+	 */
+	protected Point getInitialLocation(Point initialSize) {
+		Point point = DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		return point != null ? point : super.getInitialLocation(initialSize);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
+		return super.close();
+	}
+
 }
