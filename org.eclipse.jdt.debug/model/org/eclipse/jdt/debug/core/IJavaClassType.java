@@ -37,6 +37,12 @@ public interface IJavaClassType  extends IJavaType {
 	 * the failure.</li>
 	 * <li>This type does not implement the specified constructor</li>
 	 * <li>An exception occurs while invoking the specified constructor</li>
+	 * <li>The given thread is already performing a message send,
+	 * 	(status code <code>IJavaThread.ERR_NESTED_METHOD_INVOCATION</code>)</li>
+	 * <li>The given thread is not currently suspended
+	 *  (status code <code>IJavaThread.ERR_THREAD_NOT_SUSPENDED</code>)</li>
+	 * <li>The given thread was explicitly suspended
+	 *  (status code <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
 	 * </ul>
 	 */
 	public IJavaObject newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException;	
@@ -62,6 +68,12 @@ public interface IJavaClassType  extends IJavaType {
 	 * the failure.</li>
 	 * <li>This object does not implement the specified method</li>
 	 * <li>An exception occurs while invoking the specified method</li>
+	 * <li>The given thread is already performing a message send,
+	 * 	(status code <code>IJavaThread.ERR_NESTED_METHOD_INVOCATION</code>)</li>
+	 * <li>The given thread is not currently suspended
+	 *  (status code <code>IJavaThread.ERR_THREAD_NOT_SUSPENDED</code>)</li>
+	 * <li>The given thread was explicitly suspended
+	 *  (status code <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
 	 * </ul>
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread) throws DebugException;		

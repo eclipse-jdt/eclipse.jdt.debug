@@ -590,6 +590,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * <li>This thread is not suspended
+	 * 	(status code <code>IJavaThread.ERR_THREAD_NOT_SUSPENDED</code>)</li>
+	 * <li>This thread is already invoking a method
+	 * 	(status code <code>IJavaThread.ERR_NESTED_METHOD_INVOCATION</code>)</li>
+	 * <li>This thread is not suspended by a JDI request
+	 * 	(status code <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
 	 * </ul>
 	 */
 	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args) throws DebugException {
@@ -609,7 +615,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 				if (isInvokingMethod()) {
 					requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$
-				}				
+				}
+				if (!fEventSuspend) {
+					requestFailed(JDIDebugModelMessages.getString("JDIThread.Thread_must_be_suspended_by_step_or_breakpoint_to_perform_method_invocation_1"), null, IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE); //$NON-NLS-1$
+				}
 				// set the request timeout to be infinite
 				setRequestTimeout(Integer.MAX_VALUE);
 				setRunning(true);

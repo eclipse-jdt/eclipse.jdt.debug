@@ -6,9 +6,7 @@ package org.eclipse.jdt.internal.debug.ui;
  */
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,9 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -74,7 +70,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @see IDebugModelPresentation
  */
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IDebugEventSetListener {
+public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation {
 
 	/**
 	 * Qualified names presentation property (value <code>"org.eclipse.debug.ui.displayQualifiedNames"</code>).
@@ -113,65 +109,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	
-	/**
-	 * A pool of threads per VM that are suspended. The
-	 * table is updated as threads suspend/resume. Used
-	 * to perform 'toString' evaluations. Keys are debug
-	 * targets, and values are <code>List</code>s of
-	 * threads.
-	 */
-	private Hashtable fThreadPool; 
 
 	public JDIModelPresentation() {
 		super();
 	}
-	
-	/**
-	 * @see IBaseLabelProvider#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		disposeThreadPool();
-	}
-	
-	/**
-	 * If the thread pool was used, it is disposed, and this
-	 * presentation is removed as a debug event listener.
-	 */
-	protected void disposeThreadPool() {
-		if (fThreadPool != null) {
-			DebugPlugin.getDefault().removeDebugEventListener(this);
-			fThreadPool.clear();
-		}
-	}
-
-	/**
-	 * Initializes the thread pool with all suspended Java
-	 * threads. Registers this presentation as a debug event
-	 * handler.
-	 */
-	protected void initializeThreadPool() {
-		fThreadPool = new Hashtable();
-		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			if (targets[i] instanceof IJavaDebugTarget) {
-				List suspended = new ArrayList();
-				fThreadPool.put(targets[i], suspended);
-				try {
-					IThread[] threads = targets[i].getThreads();
-					for (int j = 0; j < threads.length; j++) {
-						if (threads[j].isSuspended()) {
-							suspended.add(threads[j]);
-						}
-					}
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
-				}
-			}
-		}
-		DebugPlugin.getDefault().addDebugEventListener(this);
-	}
-	
+			
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
@@ -189,26 +131,39 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Returns a thread from the specified VM that can be
 	 * used for an evaluationm or <code>null</code> if
 	 * none.
-	 * <p>
-	 * This presentation maintains a pool of suspended
-	 * threads per VM. Any suspended thread in the same
-	 * VM may be used. The pool is lazily initialized on
-	 * the first call to this method.
-	 * </p>
 	 * 
 	 * @param debug target the target in which a thread is 
 	 * 	required
 	 * @return thread or <code>null</code>
 	 */
 	protected IJavaThread getEvaluationThread(IJavaDebugTarget target) {
-		if (fThreadPool == null) {
-			initializeThreadPool();
+		IAdaptable context = DebugUITools.getDebugContext();
+		IJavaThread thread = null;
+		if (context != null) {
+			if (context instanceof IJavaStackFrame) {
+				thread = (IJavaThread)((IJavaStackFrame)context).getThread();		
+			} else if (context instanceof IJavaThread) {
+				thread = (IJavaThread)context;
+			}
+			if (thread != null && !thread.getDebugTarget().equals(target)) {
+				// can only use threads in the same target
+				thread = null;
+			}
 		}
-		List threads = (List)fThreadPool.get(target);
-		if (threads != null && !threads.isEmpty()) {
-			return (IJavaThread)threads.get(0);
+		if (thread == null) {
+			try {
+				IThread[] threads = target.getThreads();
+				for (int i = 0; i < threads.length; i++) {
+					if (threads[i].isSuspended()) {
+						thread = (IJavaThread)threads[i];
+						break;
+					}
+				}
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
-		return null;
+		return thread;
 	}
 			
 	/**
@@ -1333,35 +1288,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return MessageFormat.format(string, args);
 	}
 	
-	/**
-	 * When a thread suspends, add it to the thread pool for that
-	 * VM. When a thread resumes, remove it from the thread pool.
-	 * 
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getSource() instanceof IJavaThread) {
-				IJavaThread thread = (IJavaThread)event.getSource();
-				if (event.getKind() == DebugEvent.RESUME) {
-					List threads = (List)fThreadPool.get(thread.getDebugTarget());
-					if (threads != null) {
-						threads.remove(thread);
-					}
-				} else if (event.getKind() == DebugEvent.SUSPEND) {
-					IDebugTarget target = thread.getDebugTarget();
-					List threads = (List)fThreadPool.get(target);
-					if (threads == null) {
-						threads = new ArrayList();
-						fThreadPool.put(target, threads);
-					}
-					threads.add(thread);	
-				}
-			}
-		}
-	}
-
 	interface IValueDetailProvider {
 		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException;
 	}
@@ -1466,6 +1392,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					break;
 				case IJavaThread.ERR_NESTED_METHOD_INVOCATION:
 					reason = DebugUIMessages.getString("JDIModelPresentation.evaluation_in_progress_3"); //$NON-NLS-1$
+					break;
+				case IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE:
+					reason = DebugUIMessages.getString("JDIModelPresentation.thread_must_be_suspended_by_breakpoint_or_step_1"); //$NON-NLS-1$
 					break;
 				default:
 					reason = de.getStatus().getMessage();

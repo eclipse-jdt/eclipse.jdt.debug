@@ -36,7 +36,20 @@ public interface IJavaThread extends IThread {
 	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
 	 */
 	public static final int ERR_NESTED_METHOD_INVOCATION = 101;	
-	
+
+	/**
+	 * Status code indicating a request to perform a message send
+	 * failed because a thread was not suspended by a step or
+	 * breakpoint event. When a thread is suspended explicitly via
+	 * the <code>suspend()</code> method, it is not able to perform
+	 * method invocations (this is a JDI limitation).
+	 * 
+	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread, boolean)
+	 * @see IJavaClassType#sendMessage(String, String, IJavaValue[], IJavaThread)
+	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
+	 */
+	public static final int ERR_INCOMPATIBLE_THREAD_STATE = 102;
+		
 	/**
 	 * Returns whether this thread is a system thread.
 	 *
