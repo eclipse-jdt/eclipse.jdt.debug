@@ -627,9 +627,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getExpressionImage(item);
 			}
 		} catch (CoreException e) {
-			if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {
-				JDIDebugUIPlugin.log(e);
-			}
+		    // no need to log errors - elements may no longer exist by the time we render them
 		}
 		return null;
 	}
@@ -836,9 +834,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (DebugException e) {
-			if (!(e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED)) {
-				JDIDebugUIPlugin.log(e);
-			}
+		    // no need to log errors - elements may no longer exist by the time we render them
 		}
 		return 0;
 	}
@@ -903,7 +899,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (javaVariable.isPrivate())
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PRIVATE);
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.log(e);
+			    // no need to log errors - elements may no longer exist by the time we render them
 			}
 		}
 		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_DEFAULT);
@@ -922,7 +918,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch(DebugException e) {
-			JDIDebugUIPlugin.log(e);
+			// no need to log errors - elements may no longer exist by the time we render them
 		}
 		return flags;
 	}
