@@ -364,7 +364,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			try {
 				return handleConditionalBreakpointEvent(event, thread, target);
 			} catch (CoreException exception) {
-				// log error
+				JDIDebugPlugin.log(exception);
 				return !suspendForEvent(event, thread);
 			}
 		} else {
@@ -380,7 +380,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			String condition = getCondition();
 			return isConditionEnabled() && condition != null && (condition.length() > 0);
 		} catch (CoreException exception) {
-			// log error
+			JDIDebugPlugin.log(exception);
 			return false;
 		}
 	}
