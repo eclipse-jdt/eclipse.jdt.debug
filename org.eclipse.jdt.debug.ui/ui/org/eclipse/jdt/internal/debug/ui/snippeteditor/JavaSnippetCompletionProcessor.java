@@ -47,7 +47,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fCollector= new ResultCollector();
 		fEditor= editor;
-		ContextType contextType= JavaPlugin.getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
+		ContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
@@ -102,14 +102,8 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 		IJavaCompletionProposal[] results= fCollector.getResults();
 		
 		if (fTemplateEngine != null) {
-			try {
-				fTemplateEngine.reset();
-				fTemplateEngine.complete(viewer, position, null);
-			} catch (JavaModelException x) {
-				JDIDebugUIPlugin.log(x);
-				Shell shell= viewer.getTextWidget().getShell();
-				ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
-			}			
+			fTemplateEngine.reset();
+			fTemplateEngine.complete(viewer, position, null);			
 		
 			TemplateProposal[] templateResults= fTemplateEngine.getResults();
 

@@ -66,7 +66,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
 	public DisplayCompletionProcessor() {
 		fCollector= new ResultCollector();
-		ContextType contextType= JavaPlugin.getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
+		ContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
@@ -150,19 +150,15 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				IJavaCompletionProposal[] results= fCollector.getResults();
 				
 				if (fTemplateEngine != null) {
-					try {
-						fTemplateEngine.reset();
-						fTemplateEngine.complete(viewer, documentOffset, null);
-						TemplateProposal[] templateResults= fTemplateEngine.getResults();
+					fTemplateEngine.reset();
+					fTemplateEngine.complete(viewer, documentOffset, null);
+					TemplateProposal[] templateResults= fTemplateEngine.getResults();
 
-						// concatenate arrays
-						IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
-						System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-						System.arraycopy(results, 0, total, templateResults.length, results.length);
-						results= total;
-					} catch (JavaModelException x) {
-						JDIDebugUIPlugin.log(x);
-					}					
+					// concatenate arrays
+					IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
+					System.arraycopy(templateResults, 0, total, 0, templateResults.length);
+					System.arraycopy(results, 0, total, templateResults.length, results.length);
+					results= total;					
 				}	 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 

@@ -54,19 +54,15 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 			// Generate selections from the template engine
 			TemplateEngine templateEngine= getTemplateEngine();
 			if (templateEngine != null) {
-				try {
-					templateEngine.reset();
-					templateEngine.complete(viewer, documentOffset, null);
-					TemplateProposal[] templateResults= templateEngine.getResults();
+				templateEngine.reset();
+				templateEngine.complete(viewer, documentOffset, null);
+				TemplateProposal[] templateResults= templateEngine.getResults();
 
-					// concatenate arrays
-					IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
-					System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-					System.arraycopy(results, 0, total, templateResults.length, results.length);
-					results= total;
-				} catch (JavaModelException x) {
-					JDIDebugUIPlugin.log(x);
-				}					
+				// concatenate arrays
+				IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
+				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
+				System.arraycopy(results, 0, total, templateResults.length, results.length);
+				results= total;					
 			}	 
 			 //Order here and not in result collector to make sure that the order
 			 //applies to all proposals and not just those of the compilation unit. 
