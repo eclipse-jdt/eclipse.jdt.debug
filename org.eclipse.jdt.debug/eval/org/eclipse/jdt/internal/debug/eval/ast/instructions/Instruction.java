@@ -11,7 +11,10 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
@@ -21,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
 
@@ -202,14 +206,14 @@ public abstract class Instruction {
 		// for later use if there are multiple classes with the same name.
 		IJavaObject classReference= classForName(qualifiedName);
 		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
-		checkTypes(types);
+		checkTypes(types, qualifiedName);
 		if (types.length == 1) {
 			// Found only one class.
 			return types[0];
 		} else {
 			// Found many classes, look for the right one for this scope.
 			if (classReference == null) {
-				throw new CoreException(null); // could not resolve type
+				throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 			}
 			for(int i= 0, length= types.length; i < length; i++) {
 				IJavaType type= types[i];
@@ -223,7 +227,7 @@ public abstract class Instruction {
 			// call, but none of them were the class that was returned in
 			// the classForName call.
 
-			throw new CoreException(null);
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 		}
 	}
 
@@ -240,10 +244,10 @@ public abstract class Instruction {
 		// for later use if there are multiple classes with the same name.
 		IJavaObject classReference= classForName(signature);
 		if (classReference == null) {
-			throw new CoreException(null); // could not resolve type
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 		}
 		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
-		checkTypes(types);
+		checkTypes(types, qualifiedName);
 		if (types.length == 1) {
 			// Found only one class.
 			return (IJavaArrayType)types[0];
@@ -261,15 +265,15 @@ public abstract class Instruction {
 			// call, but none of them were the class that was returned in
 			// the classForName call.
 
-			throw new CoreException(null);
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 		}
 	}
 	
 	protected IJavaObject classForName(String qualifiedName) throws CoreException {
 		IJavaType[] types= getVM().getJavaTypes(CLASS);
-		checkTypes(types);
+		checkTypes(types, qualifiedName);
 		if (types.length != 1) {
-			throw new CoreException(null);
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 		}
 		IJavaType receiver= types[0];
 		IJavaValue[] args = new IJavaValue[] {newValue(qualifiedName)};
@@ -287,9 +291,9 @@ public abstract class Instruction {
 	}
 
 
-	protected void checkTypes(IJavaType[] types) throws CoreException {
+	protected void checkTypes(IJavaType[] types, String qualifiedName) throws CoreException {
 		if (types == null || types.length == 0) {
-			throw new CoreException(null); // unable to resolve type
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 		}
 	}
 
