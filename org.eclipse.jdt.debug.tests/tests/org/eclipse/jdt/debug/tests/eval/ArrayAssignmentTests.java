@@ -14,9 +14,9 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
-public class ArrayAssignementTests extends Tests {
+public class ArrayAssignmentTests extends Tests {
 
-	public ArrayAssignementTests(String arg) {
+	public ArrayAssignmentTests(String arg) {
 		super(arg);
 	}
 

@@ -17,7 +17,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.jdt.debug.tests.eval.ArrayAllocationTests;
-import org.eclipse.jdt.debug.tests.eval.ArrayAssignementTests;
+import org.eclipse.jdt.debug.tests.eval.ArrayAssignmentTests;
 import org.eclipse.jdt.debug.tests.eval.ArrayValueTests;
 import org.eclipse.jdt.debug.tests.eval.BooleanAssignmentOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.BooleanOperatorsTests;
@@ -168,7 +168,7 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(QualifiedStaticFieldValueTests2.class));
 
 		addTest(new TestSuite(ArrayAllocationTests.class));
-		addTest(new TestSuite(ArrayAssignementTests.class));
+		addTest(new TestSuite(ArrayAssignmentTests.class));
 		addTest(new TestSuite(ArrayValueTests.class));
 
 		addTest(new TestSuite(NestedTypeFieldValue_65.class));

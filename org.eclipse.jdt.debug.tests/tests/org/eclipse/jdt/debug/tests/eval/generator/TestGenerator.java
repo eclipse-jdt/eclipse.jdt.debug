@@ -491,7 +491,7 @@ public class TestGenerator {
 	public static void genTestsArrayAssignment() throws Exception {
 		StringBuffer code = new StringBuffer();
 		
-		String className = "ArrayAssignementTests";
+		String className = "ArrayAssignmentTests";
 		
 		genTestArrayAssignment(T_byte, code);
 		genTestArrayAssignment(T_char, code);
