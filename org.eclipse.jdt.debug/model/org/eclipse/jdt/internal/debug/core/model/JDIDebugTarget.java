@@ -1569,6 +1569,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				}
 			} catch (VMDisconnectedException exception) {
 				return false;
+			} catch (ObjectCollectedException e) {
+				return false;
+			} catch (TimeoutException e) {
+				// log the error and attempt to create the thread
+				JDIDebugPlugin.log(e);
 			}
 			JDIThread jdiThread= findThread(thread);
 			if (jdiThread == null) {
