@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 
@@ -34,9 +33,8 @@ public class MonitorQuitAction extends MonitorAction {
 		}
 		try {
 			IThread[] threads= target.getThreads();
-			
 			for (int i = 0; i < threads.length; i++) {
-				IJavaThread thread = (IJavaThread)threads[i];
+				IThread thread= threads[i];
 				if (thread.isSuspended()) {
 					thread.resume();
 					while (thread.isSuspended()) {
@@ -65,7 +63,7 @@ public class MonitorQuitAction extends MonitorAction {
 					try {
 						IThread[] threads= target.getThreads();
 						for (int i = 0; i < threads.length; i++) {
-							IJavaThread thread = (IJavaThread)threads[i];
+							IThread thread= threads[i];
 							if (thread.isSuspended()) {
 								enable= true;
 								break;
