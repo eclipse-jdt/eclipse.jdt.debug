@@ -1154,18 +1154,6 @@
 <extension
 	point="org.eclipse.ui.propertyPages">
 	<page
-		id="org.eclipse.jdt.debug.ui.launching.ProcessPage" 
-		name="%processInfoPageName"
-		objectClass="org.eclipse.debug.core.model.IProcess"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.ProcessPropertyPage"> 
-    </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.launching.ProcessPage" 
-		name="%processInfoPageName"
-		objectClass="org.eclipse.debug.core.model.IDebugTarget"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.ProcessPropertyPage"> 
-    </page>
-	<page
 		id="org.eclipse.jdt.debug.ui.snippeteditor.SnippetEditorPage" 
 		name="%snippetEditorPageName"
 		objectClass="org.eclipse.core.resources.IFile"

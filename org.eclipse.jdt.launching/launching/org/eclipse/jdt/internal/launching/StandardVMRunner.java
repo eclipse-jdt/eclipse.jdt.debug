@@ -6,12 +6,12 @@ package org.eclipse.jdt.internal.launching;
  */
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.text.DateFormat;
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +22,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 public class StandardVMRunner extends AbstractVMRunner {
@@ -238,7 +237,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}		
 		
 		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine));
-		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 	}
 
 	protected String adjustProgramString(String program) {

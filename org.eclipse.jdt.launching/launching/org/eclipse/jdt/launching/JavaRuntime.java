@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -157,8 +158,10 @@ public final class JavaRuntime {
 	 * The value of this attribute is the command line a process
 	 * was launched with. Implementers of <code>IVMRunner</code> should use
 	 * this attribute key to attach the command lines to the processes they create.
+	 * 
+	 * @deprecated - use <code>IProcess.ATTR_CMDLINE</code>
 	 */
-	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
+	public final static String ATTR_CMDLINE= IProcess.ATTR_CMDLINE;
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
