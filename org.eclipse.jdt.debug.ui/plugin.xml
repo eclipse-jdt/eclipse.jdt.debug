@@ -229,7 +229,7 @@
                 relationship="stack"
                 visible="false"/>
          <view id="org.eclipse.search.SearchResultView" 
-                relative="org.eclipse.debug.ui.DebugView" 
+                relative="org.eclipse.debug.ui.ConsoleView" 
                 relationship="stack"
                 visible="false"/> 
     	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
