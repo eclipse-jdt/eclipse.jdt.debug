@@ -7,7 +7,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -115,7 +117,7 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 		fgAccessImages[1] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_DEFAULT);
 		fgAccessImages[2] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PROTECTED);
 		fgAccessImages[3] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PRIVATE);
-		fgAccessImages[4] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_DEFAULT);		
+		fgAccessImages[4] = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_VARIABLE);		
 	}
 	
 	public JavaVariablesFilterPreferencePage() {

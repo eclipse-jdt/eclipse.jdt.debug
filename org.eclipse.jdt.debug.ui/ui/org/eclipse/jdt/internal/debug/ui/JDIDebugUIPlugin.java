@@ -113,7 +113,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String[] fgModeModifierNames = new String[] {"static", //$NON-NLS-1$
 															"final", //$NON-NLS-1$
-															"normal", //$NON-NLS-1$
+															"none", //$NON-NLS-1$
 															"synthetic"}; //$NON-NLS-1$
 
 	/**
@@ -122,7 +122,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String[] fgAccessibleModeModifierNames = new String[] {"&static", //$NON-NLS-1$
 															"&final", //$NON-NLS-1$
-															"&normal", //$NON-NLS-1$
+															"&none", //$NON-NLS-1$
 															"s&ynthetic"}; //$NON-NLS-1$
 
 	public static final String DEFAULT_VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + ".default_variables_filters"; //$NON-NLS-1$
