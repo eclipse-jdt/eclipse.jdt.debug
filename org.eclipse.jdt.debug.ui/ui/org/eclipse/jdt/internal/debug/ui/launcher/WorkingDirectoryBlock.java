@@ -16,9 +16,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -56,6 +58,11 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		
 	// use default button
 	protected Button fUseDefaultWorkingDirButton;
+	
+	/**
+	 * The last launch config this tab was initialized from
+	 */
+	protected ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -229,10 +236,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 */
 	protected void handleUseDefaultWorkingDirButtonSelected() {
 		if (isDefaultWorkingDirectory()) {
-			fLocalDirButton.setSelection(true);
-			fWorkspaceDirButton.setSelection(false);
+			setDefaultWorkingDir();
 			fLocalDirButton.setEnabled(false);
-			fWorkingDirText.setText(getDefaultWorkingDir());
 			fWorkingDirText.setEnabled(false);
 			fWorkingDirBrowseButton.setEnabled(false);
 			fWorkspaceDirButton.setEnabled(false);
@@ -246,10 +251,26 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Returns the default working directory
+	 * Sets the default working directory
 	 */
-	protected String getDefaultWorkingDir() {
-		return System.getProperty("user.dir"); //$NON-NLS-1$
+	protected void setDefaultWorkingDir() {
+		try {
+			ILaunchConfiguration config = getLaunchConfiguration();
+			if (config != null) {
+				IJavaProject javaProject = JavaRuntime.getJavaProject(config);
+				if (javaProject != null) {
+					fWorkspaceDirText.setText(javaProject.getPath().makeRelative().toOSString());
+					fLocalDirButton.setSelection(false);
+					fWorkspaceDirButton.setSelection(true);
+					return;
+				}
+			}
+		} catch (CoreException ce) {
+		}
+		
+		fWorkingDirText.setText(System.getProperty("user.dir"));
+		fLocalDirButton.setSelection(true);
+		fWorkspaceDirButton.setSelection(false);		
 	}
 
 	/**
@@ -298,6 +319,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		setLaunchConfiguration(configuration);
 		try {			
 			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
 			fWorkspaceDirText.setText(""); //$NON-NLS-1$
@@ -374,5 +396,21 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	protected boolean isLocalWorkingDirectory() {
 		return fLocalDirButton.getSelection();
 	}
+
+	/**
+	 * Sets the java project currently specified by the
+	 * given launch config, if any.
+	 */
+	protected void setLaunchConfiguration(ILaunchConfiguration config) {
+		fLaunchConfiguration = config;
+	}	
+	
+	/**
+	 * Returns the current java project context
+	 */
+	protected ILaunchConfiguration getLaunchConfiguration() {
+		return fLaunchConfiguration;
+	}
+	
 }
 
