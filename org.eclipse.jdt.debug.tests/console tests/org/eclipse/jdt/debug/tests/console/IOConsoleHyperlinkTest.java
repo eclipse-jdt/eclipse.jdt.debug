@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.console;
 
 import java.io.PrintStream;
@@ -5,6 +15,7 @@ import java.io.PrintStream;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -17,7 +28,7 @@ import org.eclipse.ui.console.IConsoleHyperlink;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-import org.eclipse.ui.console.IPatternMatchNotifier;
+import org.eclipse.ui.console.IPatternMatchHandler;
 
 public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindowActionDelegate {
  
@@ -27,18 +38,21 @@ public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindo
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         manager.addConsoles(new IConsole[] { console });
 
-        IPatternMatchNotifier notifier = new IPatternMatchNotifier() {
-            int matches = 0;
+        IPatternMatchHandler listener = new IPatternMatchHandler() {
             public String getPattern() {
                 return "1234567890"; //$NON-NLS-1$
             }
 
             public void matchFound(String text, int offset) {
-                console.addHyperlink(new MyHyperlink(), offset, text.length());
+                try {
+                    console.addHyperlink(new MyHyperlink(), offset, text.length());
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
             }
         };
         
-        console.addPatternMatchNotifier(notifier);
+        console.addPatternMatchNotifier(listener);
         IOConsoleOutputStream stream = console.createOutputStream("OUTPUT");
         stream.setFontStyle(SWT.ITALIC | SWT.BOLD);
         final PrintStream out = new PrintStream(stream);
