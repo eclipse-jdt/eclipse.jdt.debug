@@ -28,10 +28,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int EXIT=				 	0x010;
 	/** Flag to render the enabled breakpoint adornment */
 	public final static int ENABLED=				0x020;
-	/** Flag to render the running adornment */
-	public final static int RUNNING=				0x040;
+	/** Flag to render the conditional breakpoint adornment */
+	public final static int CONDITIONAL=				0x040;
 
-	
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
@@ -123,30 +122,42 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				y -= data.height;
 				drawImage(data, x, y);
 			}
-			if ((flags & ENTRY) != 0) {
+			if ((flags & CONDITIONAL) != 0) {
 				int x= getSize().x;
 				int y= 0;
-				
 				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
+					data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT.getImageData();
 				} else {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
+					data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED.getImageData();
 				}
 				x -= data.width;
 				drawImage(data, x, y);
-			}
-			if ((flags & EXIT)  != 0){
-				int x= getSize().x;
-				int y= getSize().y;
-				if ((flags & ENABLED) != 0) {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
+			} else {
+				if ((flags & ENTRY) != 0) {
+					int x= getSize().x;
+					int y= 0;
+				
+					if ((flags & ENABLED) !=0) {
+						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
+					} else {
+						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
+					}
+					x -= data.width;
+					drawImage(data, x, y);
 				}
-				x -= data.width;
-				y -= data.height;
-				drawImage(data, x, y);
-			}
+				if ((flags & EXIT)  != 0){
+					int x= getSize().x;
+					int y= getSize().y;
+					if ((flags & ENABLED) != 0) {
+						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
+					} else {
+						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
+					}
+					x -= data.width;
+					y -= data.height;
+					drawImage(data, x, y);
+				}
+			}	
 		}
 	}
 	

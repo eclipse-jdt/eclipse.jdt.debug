@@ -626,7 +626,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected Image getBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
 		if (breakpoint instanceof IJavaExceptionBreakpoint) {
 			return getExceptionBreakpointImage((IJavaExceptionBreakpoint)breakpoint);
-		} if (BreakpointUtils.isRunToLineBreakpoint((IJavaLineBreakpoint)breakpoint)) {
+		} 
+		
+		if (breakpoint instanceof IJavaLineBreakpoint && BreakpointUtils.isRunToLineBreakpoint((IJavaLineBreakpoint)breakpoint)) {
 			return null;
 		} else {
 			return getJavaBreakpointImage(breakpoint);
@@ -791,13 +793,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (breakpoint.isInstalled()) {
 				flags |= JDIImageDescriptor.INSTALLED;
 			}
-			if (breakpoint instanceof IJavaMethodBreakpoint) {
-				IJavaMethodBreakpoint mBreakpoint= (IJavaMethodBreakpoint)breakpoint;
-				if (mBreakpoint.isEntry()) {
-					flags |= JDIImageDescriptor.ENTRY;
+			if (breakpoint instanceof IJavaLineBreakpoint) {
+				if (((IJavaLineBreakpoint)breakpoint).isConditionEnabled()) {
+					flags |= JDIImageDescriptor.CONDITIONAL;
 				}
-				if (mBreakpoint.isExit()) {
-					flags |= JDIImageDescriptor.EXIT;
+				if (breakpoint instanceof IJavaMethodBreakpoint) {
+					IJavaMethodBreakpoint mBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+					if (mBreakpoint.isEntry()) {
+						flags |= JDIImageDescriptor.ENTRY;
+					}
+					if (mBreakpoint.isExit()) {
+						flags |= JDIImageDescriptor.EXIT;
+					}
 				}
 			}
 		} catch (CoreException e) {
