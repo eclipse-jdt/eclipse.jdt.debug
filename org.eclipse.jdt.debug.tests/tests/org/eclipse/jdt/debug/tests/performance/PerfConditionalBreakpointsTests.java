@@ -52,7 +52,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         super(name);
     }
 
-    public void testConditionalBreakpoint() throws Exception {
+    public void testConditionalBreakpoints() throws Exception {
         tagAsGlobalSummary("Conditional Breakpoint Test", Dimension.CPU_TIME);
         // just in case
         removeAllBreakpoints();
