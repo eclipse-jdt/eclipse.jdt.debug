@@ -1,8 +1,7 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2002, 2003.
  * All Rights Reserved.
  */
-
 package org.eclipse.jdt.internal.launching.macosx;
 
 import java.io.File;

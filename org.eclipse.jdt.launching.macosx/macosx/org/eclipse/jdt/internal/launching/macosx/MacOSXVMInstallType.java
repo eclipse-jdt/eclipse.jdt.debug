@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2002, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.jdt.internal.launching.macosx;
@@ -54,7 +54,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	}
 	
 	public String getName() {
-		return MacOSXLauncherMessages.getString("MacOSXVMType.name"); //$NON-NLS-1$
+		return MacOSXLaunchingPlugin.getString("MacOSXVMType.name"); //$NON-NLS-1$
 	}
 	
 	public IStatus validateInstallLocation(File installLocation) {
@@ -62,7 +62,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 		File java= new File(installLocation, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
 		if (java.isFile())
 			return new Status(IStatus.OK, id, 0, "ok", null); //$NON-NLS-1$
-		return new Status(IStatus.ERROR, id, 0, MacOSXLauncherMessages.getString("MacOSXVMType.error.notRoot"), null); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, id, 0, MacOSXLaunchingPlugin.getString("MacOSXVMType.error.notRoot"), null); //$NON-NLS-1$
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 					if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
 						VMStandin vm= new VMStandin(this, version);
 						vm.setInstallLocation(home);
-						String format= MacOSXLauncherMessages.getString(version.equals(fDefaultJDKID)
+						String format= MacOSXLaunchingPlugin.getString(version.equals(fDefaultJDKID)
 													? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
 													: "MacOSXVMType.jvmName");				//$NON-NLS-1$
 						vm.setName(MessageFormat.format(format, new Object[] { version } ));
