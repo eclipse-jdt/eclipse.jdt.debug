@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,19 +20,25 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.internal.events.ResourceChangeEvent;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -64,9 +71,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private boolean fIgnoreVMDefPropertyChangeEvents = false;
 	
 	/**
-	 * Status code indicating that a build is in progress.
+	 * Status code indicating that a workspace runnable needs to be run.
 	 */
-	public static final int BUILD_PROGRESS_STATUS = 191;
+	public static final int WORKSPACE_RUNNABLE_STATUS = 191;
 		
 	private static final String EMPTY_STRING = "";    //$NON-NLS-1$
 	
@@ -481,18 +488,44 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Build the Java projects in the specified Set.  Because we're in a non-UI plugin,
 	 * we can't directly put up a progress monitor.  Finesse this by using a status 
-	 * handler to do the build and put up a progress monitor.	 */
-	private void buildProjects(Set projects) {
-		IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), BUILD_PROGRESS_STATUS, "Build in progress", null);
+	 * handler to do the build and put up a progress monitor if the status handler is
+	 * available (if UI is loaded), or just use a workspace runnable to do the build otherwise.	 */
+	private void buildProjects(final Set projects) {
+		
+		// Workspace runnable that builds the specified projects
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				Iterator iter = projects.iterator();
+				monitor.beginTask(EMPTY_STRING, projects.size() * 100);
+				while (iter.hasNext()) {
+					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 100);
+					IProject pro = ((IJavaProject)iter.next()).getProject();
+					pro.build(IncrementalProjectBuilder.FULL_BUILD, subMonitor);
+					subMonitor.done();
+				}
+				monitor.done();				
+			}
+		};
+		
+		// Try to retrieve a status handler.  If found, have it run the build, otherwise
+		// just do it with a null progress monitor
+		IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), WORKSPACE_RUNNABLE_STATUS, LaunchingMessages.getString("LaunchingPlugin.Build_in_progress_1"), null); //$NON-NLS-1$
 		IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
 		if (handler != null) {			
 			try {
-				handler.handleStatus(status, projects);
+				handler.handleStatus(status, runnable);
+			} catch (CoreException ce) {
+				log(ce);
+			}
+		} else {
+			try {
+				ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
 			} catch (CoreException ce) {
 				log(ce);
 			}
 		}
-	}			
+	}	
+			
 	/**
 	 * @see IVMInstallChangedListener#defaultVMInstallChanged(IVMInstall, IVMInstall)
 	 */

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,40 +20,36 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
- * Status handler that builds a set of projects and shows the build progress in a 
- * standard ProgressMonitorDialog.
+ * Status handler that runs an <code>IWorkspaceRunnable</code> and shows the 
+ * progress in a progress monitor dialog.
  */
-public class ProjectBuilderWithProgressMonitorStatusHandler implements IStatusHandler {
+public class WorkspaceRunnableStatusHandler implements IStatusHandler {
 
 	/**
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		if (!(source instanceof Set)) {
+		
+		// Verify we're being asked to run an IWorkspaceRunnable
+		if (!(source instanceof IWorkspaceRunnable)) {
 			return null;
 		}
-		final Set projects = (Set) source;
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
+		final IWorkspaceRunnable runnable = (IWorkspaceRunnable) source;
+		
+		// Construct a progress monitor dialog and use it to run the runnable
+		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());						
 		try {
 			dialog.run(true, true, new WorkspaceModifyOperation() {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException{
 					try {
-						Iterator iter = projects.iterator();
-						monitor.beginTask("", projects.size() * 100); //$NON-NLS-1$
-						while (iter.hasNext()) {
-							IProgressMonitor subMontior = new SubProgressMonitor(monitor, 100);
-							IProject pro = ((IJavaProject)iter.next()).getProject();
-							pro.build(IncrementalProjectBuilder.FULL_BUILD, subMontior);
-							subMontior.done();
-						}
-						monitor.done();
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
+						runnable.run(monitor);
+					} catch (CoreException ce) {
+						throw new InvocationTargetException(ce);
 					}
 				}
 			});
 		} catch (InterruptedException ie) {
-			// opearation canceled by user
+			// operation canceled by user
 		} catch (InvocationTargetException ite) {
 			ExceptionHandler.handle(ite, getShell(), LauncherMessages.getString("VMPreferencePage.Installed_JREs_1"), LauncherMessages.getString("VMPreferencePage.Build_failed._1")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
