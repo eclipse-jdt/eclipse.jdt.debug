@@ -190,7 +190,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 				String vmName= fLabelProvider.getText(target);
 				IStatus status;
 				if (exception == null) {
-					status= new Status(IStatus.WARNING, getPluginId(), IStatus.WARNING, "The target VM does not support hot code replace", null);
+					status= new Status(IStatus.WARNING, getPluginId(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.The_target_VM_does_not_support_hot_code_replace_1"), null); //$NON-NLS-1$
 				} else {
 					status= exception.getStatus();
 				}
