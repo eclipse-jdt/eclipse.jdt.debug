@@ -55,12 +55,6 @@ public class MacOSXLaunchingPlugin extends Plugin {
 
 	static String[] wrap(Class clazz, String[] cmdLine) {
 		
-//		System.err.println("wrap:");
-//		for (int ii= 0; ii < cmdLine.length; ii++) {
-//			System.err.println("  " + cmdLine[ii]);
-//		}
-//		System.err.println();
-		
 		for (int i= 0; i < cmdLine.length; i++) {
 			String arg= cmdLine[i];
 			if (arg.indexOf("swt.jar") >= 0 || arg.indexOf("org.eclipse.swt") >= 0 || "-ws".equals(arg)) {	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -128,10 +122,18 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		File macos_dir= createDir(contents_dir, "MacOS", false); //$NON-NLS-1$
 		
 		// JavaApplicationBundle
+		InputStream is= clazz.getResourceAsStream(javaApplicationStub);
 		File stub= new File(macos_dir, javaApplicationStub);
-		copyFile(clazz, javaApplicationStub, stub);
-		Runtime.getRuntime().exec(new String[] { "/bin/chmod", "+x", stub.getAbsolutePath() }); //$NON-NLS-1$ //$NON-NLS-2$
-		
+		copyFile(is, stub);
+		Process p= Runtime.getRuntime().exec(new String[] { "/bin/chmod", "a+x", stub.getAbsolutePath() }); //$NON-NLS-1$ //$NON-NLS-2$
+		if (p != null) {						
+			try {
+				p.waitFor();
+			} catch (InterruptedException e) {
+					// silently ignore
+			}
+		}
+			
 		// Info.plist
 		File info= new File(contents_dir, "Info.plist"); //$NON-NLS-1$
 		FileOutputStream fos= new FileOutputStream(info);
@@ -197,32 +199,27 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		return dir;
 	}
 	
-	static void copyFile(Class where, String from, File to) throws IOException {
-		
+	static void copyFile(InputStream from, File to) throws IOException {		
 		FileOutputStream os= new FileOutputStream(to);
-
-		InputStream is= null;
 		try {
-			is= where.getResourceAsStream(from);
-			if (is != null) {
-				while (true) {
-					int c= is.read();
-					if (c == -1)
-						break;
-					os.write(c);
-				}
+			byte[] buffer= new byte[2048];
+			while (true) {
+				int n= from.read(buffer);
+				if (n == -1)
+					break;
+				os.write(buffer, 0, n);
 			}
 			os.flush();
 		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-				}
+			try {
+				from.close();
+			} catch (IOException e) {
+				// we don't log these
 			}
 			try {
 				os.close();
 			} catch(IOException e) {
+				// we don't log these
 			}
 		}
 	}
