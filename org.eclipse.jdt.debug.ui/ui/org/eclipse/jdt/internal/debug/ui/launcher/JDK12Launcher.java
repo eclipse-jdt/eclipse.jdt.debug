@@ -27,6 +27,7 @@ public class JDK12Launcher extends JavaLauncher {
 	
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
 		verifyVMInstall();
+		File workingDir = getWorkingDir(config);
 		String location= getJDKLocation();
 		
 		String program= location+File.separator+"bin"+File.separator+"java"; //$NON-NLS-2$ //$NON-NLS-1$
@@ -64,7 +65,7 @@ public class JDK12Launcher extends JavaLauncher {
 		arguments.toArray(cmdLine);
 
 		try {
-			Process p= Runtime.getRuntime().exec(cmdLine);
+			Process p= Runtime.getRuntime().exec(cmdLine, null, workingDir);
 			IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
 			process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 			return new VMRunnerResult(null, new IProcess[] { process });

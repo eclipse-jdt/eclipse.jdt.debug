@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 public abstract class JavaLauncher implements IVMRunner {
 	protected IVMInstall fVMInstance;
@@ -82,8 +83,29 @@ public abstract class JavaLauncher implements IVMRunner {
 	protected static IStatus createStatus(String message, Throwable th) {
 		return new Status(IStatus.ERROR, JavaDebugUI.PLUGIN_ID, IStatus.ERROR, message, th);
 	}
-		
-		
+	
+	/**
+	 * Returns the working directory to use for the launched VM,
+	 * or <code>null</code> if the working directory is to be inherited
+	 * from the current process.
+	 * 
+	 * @return the working directory to use
+	 * @exception CoreException if the working directory specified by
+	 *  the configuration does not exist or is not a directory
+	 */	
+	protected File getWorkingDir(VMRunnerConfiguration config) throws CoreException {
+		String path = config.getWorkingDirectory();
+		if (path == null) {
+			return null;
+		}
+		File dir = new File(path);
+		if (dir.isDirectory()) {
+			return dir;
+		} else {
+			throw new CoreException(createStatus(
+				MessageFormat.format("Specified working directory does not exist or is not a directory: {0}", new String[] {path}), null)); //$NON-NLS-1$			
+		}
+	}
 	
 	
 }

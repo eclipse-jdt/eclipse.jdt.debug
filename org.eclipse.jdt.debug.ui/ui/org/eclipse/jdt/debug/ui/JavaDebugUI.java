@@ -43,6 +43,15 @@ public class JavaDebugUI {
 	public static final String VM_ARGUMENTS_ATTR = "VM_ARGUMENTS";	 //$NON-NLS-1$
 	
 	/**
+	 * Working directory attribute name. The working directory
+	 * to be used by the VM is stored with this key. The value
+	 * is a string specifying an absolute path to the working
+	 * directory to use. When unspecified, the working directory
+	 * is inherited from the current process.
+	 */
+	public static final String WORKING_DIRECTORY_ATTR = "WORKING_DIRECTORY";	 //$NON-NLS-1$
+	
+	/**
 	 * VM install launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstall</code>
 	 * identifying a VM to use for a launch.
@@ -100,6 +109,12 @@ public class JavaDebugUI {
 	 */
 	public static final int NOT_A_JAVA_PROJECT = 105;	
 	
+	/**
+	 * Status code indicating the specified working directory
+	 * does not exist.
+	 */
+	public static final int WORKING_DIRECTORY_DOES_NOT_EXIST = 106;	
+		
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */

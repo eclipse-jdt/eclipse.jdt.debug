@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
@@ -99,6 +100,13 @@ public class JavaApplicationLaunchConfigurationDelegate
 		if (runner == null) {
 			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{installId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
+		String path = configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, null);
+		if (path != null) {
+			File dir = new File(path);
+			if (!dir.isDirectory()) {
+				abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfiguration.Working_directory_does_not_exist"), new String[] {path}), null, JavaDebugUI.WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+			}
+		}
 		
 		IJavaProject javaProject = mainType.getJavaProject();
 		
@@ -117,6 +125,7 @@ public class JavaApplicationLaunchConfigurationDelegate
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainType.getFullyQualifiedName(), classpath);
 		runConfig.setProgramArguments(args.getProgramArgumentsArray());
 		runConfig.setVMArguments(args.getVMArgumentsArray());
+		runConfig.setWorkingDirectory(path);
 		if (bootpath != null) {
 			runConfig.setBootClassPath(new String[]{bootpath});
 		}

@@ -609,7 +609,7 @@ public final class JavaRuntime {
 			monitor= new NullProgressMonitor();
 		}
 		
-		monitor.beginTask("Setting JRE classpath variables...", 3);
+		monitor.beginTask(LaunchingMessages.getString("JavaRuntime.Setting_JRE_classpath_variables"), 3); //$NON-NLS-1$
 		try {	
 			IPath oldLibrary= JavaCore.getClasspathVariable(JRELIB_VARIABLE);
 			IPath oldSource= JavaCore.getClasspathVariable(JRESRC_VARIABLE);

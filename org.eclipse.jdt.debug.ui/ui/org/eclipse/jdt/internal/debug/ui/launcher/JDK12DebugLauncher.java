@@ -54,6 +54,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 	 */
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
 		verifyVMInstall();
+		File workingDir = getWorkingDir(config);
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
 			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noPort"), null)); //$NON-NLS-1$
@@ -108,7 +109,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 				connector.startListening(map);
 
 				try {
-					p= Runtime.getRuntime().exec(cmdLine);
+					p= Runtime.getRuntime().exec(cmdLine, null, workingDir);
 		
 				} catch (IOException e) {
 					if (p != null) {

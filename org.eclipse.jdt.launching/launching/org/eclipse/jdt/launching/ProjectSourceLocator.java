@@ -161,7 +161,7 @@ public class ProjectSourceLocator implements ISourceLocator {
 			int dotIndex= pathStr.lastIndexOf('/');
 			int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
 			if (dollarIndex != -1) {
-				jelement= jproject.findElement(new Path(pathStr.substring(0, dollarIndex) + ".java"));
+				jelement= jproject.findElement(new Path(pathStr.substring(0, dollarIndex) + ".java")); //$NON-NLS-1$
 			}
 		}
 
