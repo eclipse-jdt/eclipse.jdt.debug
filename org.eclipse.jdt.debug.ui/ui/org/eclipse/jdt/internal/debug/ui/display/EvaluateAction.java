@@ -602,19 +602,19 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		}
 	}
 
-	/*
+	/**
 	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
-	/*
+	/**
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
 	}
 
-	/*
+	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
@@ -624,7 +624,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		}		
 	}
 
-	/*
+	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
@@ -636,5 +636,4 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	public void selectionChanged(SelectionChangedEvent event) {
 		selectionChanged(getAction(), event.getSelection());
 	}
-
 }
