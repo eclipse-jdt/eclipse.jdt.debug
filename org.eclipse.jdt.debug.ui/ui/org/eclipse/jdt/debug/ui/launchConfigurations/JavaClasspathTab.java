@@ -220,8 +220,10 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			if (useDefault) {
 				if (!isDefaultClasspath(getCurrentClasspath(), workingCopy)) {
 					initializeFrom(workingCopy);
+					return;
 				}
 			}
+			fClasspathViewer.refresh();
 		} catch (CoreException e) {
 		}
 	}
