@@ -45,6 +45,7 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -113,6 +114,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @param listener the listener
 	 */	
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
+		if (thread.isSuspended() && ((JDIThread)thread).isInvokingMethod()) {
+			listener.detailComputed(objectValue, DebugUIMessages.getString("JavaDetailFormattersManager.Cannot_performed_nested_evaluation")); //$NON-NLS-1$
+			return;
+		}
 		Runnable postEventDispatch = new Runnable() {
 			public void run() {
 				Runnable postEventProcess = new Runnable() {

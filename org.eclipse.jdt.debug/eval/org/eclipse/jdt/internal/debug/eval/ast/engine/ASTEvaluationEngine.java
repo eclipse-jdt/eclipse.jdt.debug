@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
@@ -32,6 +33,7 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
@@ -91,6 +93,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 */
 	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {		
 		if (expression instanceof InstructionSequence) {
+			// don't queue explicite evaluation if the thread is allready performing an evaluation.
+			if (thread.isSuspended() && ((JDIThread)thread).isInvokingMethod() || thread.isPerformingEvaluation() && evaluationDetail == DebugEvent.EVALUATION) {
+				EvaluationResult result= new EvaluationResult(this, expression.getSnippet(), thread);
+				result.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_nested_evaluations")); //$NON-NLS-1$
+				listener.evaluationComplete(result);
+				return;
+			}
 			thread.queueRunnable(new EvalRunnable((InstructionSequence)expression, thread, context, listener, evaluationDetail, hitBreakpoints));
 		} else {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, EvaluationEngineMessages.getString("ASTEvaluationEngine.AST_evaluation_engine_cannot_evaluate_expression"), null)); //$NON-NLS-1$

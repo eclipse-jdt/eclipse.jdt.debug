@@ -33,6 +33,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 /**
  * A watch expression is an expression which is re-evaluated after every thread
@@ -267,6 +268,10 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	private boolean preEvaluationCheck(IJavaThread javaThread, boolean implicit) {
 		if (javaThread == null) {
 			refresh();
+			return false;
+		}
+		if (javaThread.isSuspended() && ((JDIThread)javaThread).isInvokingMethod()) {
+			refreshForError();
 			return false;
 		}
 		if (implicit && !isEnabled()) {
