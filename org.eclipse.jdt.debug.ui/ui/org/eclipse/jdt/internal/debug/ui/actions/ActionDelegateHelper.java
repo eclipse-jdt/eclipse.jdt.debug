@@ -74,12 +74,15 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
+		if (part == getTextEditor()) {
+			setTextEditor(null);
+		}
 	}
 
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
-	public void partDeactivated(IWorkbenchPart part) {
+	public void partDeactivated(IWorkbenchPart part) {		
 	}
 
 	/**
