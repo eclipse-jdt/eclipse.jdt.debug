@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -749,9 +750,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Execute the given workspace runnable
 	 */
-	protected void run(IWorkspaceRunnable wr) throws DebugException {
+	protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) throws DebugException {
 		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
+			ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
 		} catch (CoreException e) {
 			throw new DebugException(e.getStatus());
 		}			

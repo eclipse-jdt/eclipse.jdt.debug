@@ -66,7 +66,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 				register(add);
 			}
 		};
-		run(wr);
+		run(null, wr);
 	}
 	
 	/**

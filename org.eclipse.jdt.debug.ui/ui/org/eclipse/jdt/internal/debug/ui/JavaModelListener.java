@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -81,7 +82,7 @@ class JavaModelListener implements IElementChangedListener {
 				}
 			};
 			
-			fork(wr);
+			fork(null, wr);
 		} 
 	}
 	
@@ -101,11 +102,11 @@ class JavaModelListener implements IElementChangedListener {
 		}
 	}
 	
-	protected void fork(final IWorkspaceRunnable wRunnable) {
+	protected void fork(final ISchedulingRule rule, final IWorkspaceRunnable wRunnable) {
 		Runnable runnable= new Runnable() {
 			public void run() {
 				try {
-					ResourcesPlugin.getWorkspace().run(wRunnable, null);
+					ResourcesPlugin.getWorkspace().run(wRunnable, rule, 0, null);
 				} catch (CoreException ce) {
 					DebugPlugin.log(ce);
 				}

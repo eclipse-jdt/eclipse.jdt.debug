@@ -81,7 +81,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 				register(register);
 			}
 		};
-		run(wr);
+		run(null, wr);
 	}
 
 	/**

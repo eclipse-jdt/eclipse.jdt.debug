@@ -64,7 +64,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
+			ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.getString("JavaBreakpointPage.1"), e); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);

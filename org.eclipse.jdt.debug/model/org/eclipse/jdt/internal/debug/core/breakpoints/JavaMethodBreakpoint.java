@@ -157,7 +157,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 
 		};
-		run(wr);
+		run(null, wr);
 		fMatcher= new StringMatcher(typePattern, false, false);
 	}
 	

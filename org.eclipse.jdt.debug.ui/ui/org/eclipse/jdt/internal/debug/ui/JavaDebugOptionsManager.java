@@ -258,7 +258,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		};
 		
 		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
+			ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
@@ -828,7 +828,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(runnable, null);
+			ResourcesPlugin.getWorkspace().run(runnable, null, 0, null);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
