@@ -15,10 +15,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jdt.core.IField;
 
-import org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor;
-import org.eclipse.jdt.internal.corext.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
+import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
  */
@@ -29,8 +29,8 @@ public class JavaWatchpointIFieldRenameParticipant extends RenameParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#initialize(org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor, java.lang.Object)
 	 */
-	public void initialize(IRefactoringProcessor processor, Object element) throws CoreException {
-		super.initialize(processor);
+	public void initialize(RefactoringProcessor processor, Object element) throws CoreException {
+		setProcessor(processor);
 		fField= (IField) element;
 	}
 
@@ -39,13 +39,6 @@ public class JavaWatchpointIFieldRenameParticipant extends RenameParticipant {
 	 */
 	public boolean isAvailable() throws CoreException {
 		return !fField.getDeclaringType().isLocal();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#operatesOn(java.lang.Object)
-	 */
-	public boolean operatesOn(Object element) {
-		return fField.equals(element);
 	}
 
 	/* (non-Javadoc)
@@ -66,7 +59,7 @@ public class JavaWatchpointIFieldRenameParticipant extends RenameParticipant {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return JavaWatchpointFieldNameChange.createChange(fField, getNewName());
+		return JavaWatchpointFieldNameChange.createChange(fField, getArguments().getNewName());
 	}
 
 }

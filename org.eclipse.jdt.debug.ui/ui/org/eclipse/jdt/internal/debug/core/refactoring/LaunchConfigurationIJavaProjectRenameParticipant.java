@@ -14,10 +14,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 
-import org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor;
-import org.eclipse.jdt.internal.corext.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
+import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
  */
@@ -28,8 +28,8 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#initialize(org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor, java.lang.Object)
 	 */
-	public void initialize(IRefactoringProcessor processor, Object element) {
-		super.initialize(processor);
+	public void initialize(RefactoringProcessor processor, Object element) {
+		setProcessor(processor);
 		fJavaProject= (IJavaProject) element;
 	}
 	
@@ -38,13 +38,6 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 	 */
 	public boolean isAvailable() {
 		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#operatesOn(java.lang.Object)
-	 */
-	public boolean operatesOn(Object element) {
-		return fJavaProject.equals(element);
 	}
 
 	/* (non-Javadoc)
@@ -65,6 +58,6 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return LaunchConfigurationProjectNameChange.createChangesFor(fJavaProject, getNewName());
+		return LaunchConfigurationProjectNameChange.createChangesFor(fJavaProject, getArguments().getNewName());
 	}
 }
