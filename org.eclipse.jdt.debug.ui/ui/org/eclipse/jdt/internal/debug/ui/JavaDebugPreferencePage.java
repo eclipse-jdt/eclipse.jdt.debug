@@ -167,7 +167,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		storeValues();
 		if (getPropertyChangeListener().hasStateChanged()) {
 			//only fire the notification if the user has toggled a button.
-			getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, new Boolean(true), new Boolean(false));
+			getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, Boolean.TRUE, Boolean.FALSE);
 		}
 		return true;
 	}

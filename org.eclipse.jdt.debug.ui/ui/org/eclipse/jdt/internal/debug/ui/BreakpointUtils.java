@@ -203,8 +203,8 @@ public class BreakpointUtils {
 	 *  the marker
 	 */
 	public static void addRunToLineAttributes(Map attributes) {
-		attributes.put(IBreakpoint.PERSISTED, new Boolean(false));
-		attributes.put(RUN_TO_LINE, new Boolean(true));
+		attributes.put(IBreakpoint.PERSISTED, Boolean.FALSE);
+		attributes.put(RUN_TO_LINE, Boolean.TRUE);
 	}	
 	
 	/**

@@ -6,10 +6,8 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -31,14 +29,12 @@ import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.internal.core.JavaModel;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
-import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
@@ -302,7 +298,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		attributes.put(TYPE_NAME, typeName);
 		if (hitCount > 0) {
 			attributes.put(HIT_COUNT, new Integer(hitCount));
-			attributes.put(EXPIRED, new Boolean(false));
+			attributes.put(EXPIRED, Boolean.FALSE);
 		}
 	}
 	
@@ -554,7 +550,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		ensureMarker().setAttributes(new String []{CONDITION_ENABLED},
 			new Object[]{new Boolean(conditionEnabled)});
 	}
-	
 }
 
 

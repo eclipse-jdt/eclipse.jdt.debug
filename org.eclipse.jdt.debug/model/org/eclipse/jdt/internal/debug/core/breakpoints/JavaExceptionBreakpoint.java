@@ -119,7 +119,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				// add attributes
 				attributes.put(IBreakpoint.ID, getModelIdentifier());
 				attributes.put(TYPE_NAME, exceptionName);
-				attributes.put(ENABLED, new Boolean(true));
+				attributes.put(ENABLED, Boolean.TRUE);
 				attributes.put(CAUGHT, new Boolean(caught));
 				attributes.put(UNCAUGHT, new Boolean(uncaught));
 				attributes.put(CHECKED, new Boolean(checked));

@@ -18,12 +18,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIType;
-import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ReferenceType;
-import com.sun.jdi.request.EventRequest;
 
 public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPatternBreakpoint {
 
@@ -169,7 +166,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		}		
 		if (hitCount > 0) {
 			attributes.put(HIT_COUNT, new Integer(hitCount));
-			attributes.put(EXPIRED, new Boolean(false));
+			attributes.put(EXPIRED, Boolean.FALSE);
 		}
 	}
 	
