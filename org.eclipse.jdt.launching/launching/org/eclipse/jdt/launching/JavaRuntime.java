@@ -39,12 +39,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -650,31 +648,6 @@ public final class JavaRuntime {
 			sourceRootPath= location.getPackageRootPath();
 		}
 		return new LibraryLocation(libraryPath, sourcePath, sourceRootPath);
-	}
-	
-	private static void setJREVariables(IPath library, IPath source, IPath root, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
-		
-		monitor.beginTask(LaunchingMessages.getString("JavaRuntime.Setting_JRE_classpath_variables"), 3); //$NON-NLS-1$
-		try {	
-			IPath oldLibrary= JavaCore.getClasspathVariable(JRELIB_VARIABLE);
-			IPath oldSource= JavaCore.getClasspathVariable(JRESRC_VARIABLE);
-			IPath oldPkgRoot= JavaCore.getClasspathVariable(JRESRCROOT_VARIABLE);
-	
-			if (!library.equals(oldLibrary)) {
-				JavaCore.setClasspathVariable(JRELIB_VARIABLE, library, new SubProgressMonitor(monitor, 1));
-			}
-			if (!source.equals(oldSource)) {
-				JavaCore.setClasspathVariable(JRESRC_VARIABLE, source, new SubProgressMonitor(monitor, 1));
-			}
-			if (!root.equals(oldPkgRoot)) {
-				JavaCore.setClasspathVariable(JRESRCROOT_VARIABLE, root, new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
-		}
 	}
 	
 	/**
