@@ -58,4 +58,16 @@ public class JavaVersionInfo {
 		return ibmFound() && getVersionString().startsWith("1.4"); //$NON-NLS-1$
 	}	
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		if (!ibmFound()) {
+			buffer.append("not ");
+		}
+		buffer.append("IBM ");
+		buffer.append(getVersionString());
+		return buffer.toString();
+	}
 }
