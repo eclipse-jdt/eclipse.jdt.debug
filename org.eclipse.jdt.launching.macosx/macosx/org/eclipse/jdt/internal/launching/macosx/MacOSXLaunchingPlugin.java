@@ -57,23 +57,48 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		
 		for (int i= 0; i < cmdLine.length; i++) {
 			String arg= cmdLine[i];
+			// test whether we depend on SWT
 			if (arg.indexOf("swt.jar") >= 0 || arg.indexOf("org.eclipse.swt") >= 0 || "-ws".equals(arg)) {	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-				if (false) {
-					
-					cmdLine[0]= "/Eclipse/Apple/WWDC\'2003/simpleJavaLauncher/build/simple"; //$NON-NLS-1$
-					return cmdLine;
-					
-				} else {
-					try {
-						return new String[] { createBundle(clazz, cmdLine) };
-					} catch (IOException e) {
-						e.printStackTrace();
-					}		
+				// what VM version are we using?
+				String vm= cmdLine[0];
+				try {
+					if (vm.indexOf("1.4.1") >= 0) {//$NON-NLS-1$
+						
+						// just replace the VM with our special SWT VM support
+						cmdLine[0]= createSWTlauncher(clazz);
+						
+					} else {
+						// otherwise create an application bundle
+						cmdLine= new String[] { createBundle(clazz, cmdLine) };
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
+				return cmdLine;
 			}
 		}
 		return cmdLine;
+	}
+	
+	/**
+	 * Returns path to executable.
+	 */
+	static String createSWTlauncher(Class clazz) throws IOException {
+		
+		String JAVA_LAUNCHER= "java_swt"; //$NON-NLS-1$
+		
+		File tmp_dir= new File("/tmp"); //$NON-NLS-1$
+		File swt_dir= createDir(tmp_dir, "swt_stubs", false); //$NON-NLS-1$
+
+		// create executable SWT launcher in tmp directory
+		InputStream is= clazz.getResourceAsStream(JAVA_LAUNCHER);
+		File stub= new File(swt_dir, JAVA_LAUNCHER);
+		String path= stub.getAbsolutePath();
+		copyFile(is, stub);
+		chmod(path, "a+x"); //$NON-NLS-1$
+
+		return path;
 	}
 	
 	static String createBundle(Class clazz, String[] cmdLine) throws IOException {
@@ -133,14 +158,8 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		InputStream is= clazz.getResourceAsStream(javaApplicationStub);
 		File stub= new File(macos_dir, javaApplicationStub);
 		copyFile(is, stub);
-		Process p= Runtime.getRuntime().exec(new String[] { "/bin/chmod", "a+x", stub.getAbsolutePath() }); //$NON-NLS-1$ //$NON-NLS-2$
-		if (p != null) {						
-			try {
-				p.waitFor();
-			} catch (InterruptedException e) {
-					// silently ignore
-			}
-		}
+		chmod(stub.getAbsolutePath(), "a+x"); //$NON-NLS-1$
+		
 			
 		// Info.plist
 		File info= new File(contents_dir, "Info.plist"); //$NON-NLS-1$
@@ -184,6 +203,17 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		w.close();
 		
 		return stub.getAbsolutePath();
+	}
+	
+	static void chmod(String path, String mod) throws IOException {
+		Process p= Runtime.getRuntime().exec(new String[] { "/bin/chmod", mod, path }); //$NON-NLS-1$
+		if (p != null) {						
+			try {
+				p.waitFor();
+			} catch (InterruptedException e) {
+					// silently ignore
+			}
+		}		
 	}
 	
 	static void deleteDir(File dir) {
