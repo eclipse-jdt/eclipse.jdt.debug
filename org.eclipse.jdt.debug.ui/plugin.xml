@@ -234,6 +234,9 @@
 		<action
 			id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
 			label="%hitCount.label"
+			icon="icons/full/clc116/sethitcount_co.gif"
+			disabledIcon="icons/full/dlc116/sethitcount_co.gif"
+			hoverIcon="icons/full/elc116/sethitcount_co.gif"
 			menubarPath="emptyBreakpointGroup"
 			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
 			enablesFor="1">
