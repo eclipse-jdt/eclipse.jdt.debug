@@ -85,6 +85,7 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 		if (fNeedsInitialization) {
 			setAction(action);
 			action.setId(getActionId());
+			fNeedsInitialization= false;
 		}
 	}
 	
