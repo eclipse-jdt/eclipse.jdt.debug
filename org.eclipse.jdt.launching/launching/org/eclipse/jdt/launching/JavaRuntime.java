@@ -19,11 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -1382,28 +1380,6 @@ public final class JavaRuntime {
 					}
 					if (defaultVM != null) {
 						break;
-					}
-				}
-				if (defaultVM == null) {
-					// did not detect default VM - register error with the workspace root
-					final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-					try {
-						IMarker[] markers = root.findMarkers(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE, false, IResource.DEPTH_ZERO);
-						if (markers.length == 0) {
-							// create a new error - none exist
-							IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-								/**
-								 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-								 */
-								public void run(IProgressMonitor monitor) throws CoreException {
-									IMarker error = root.createMarker(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE);
-									error.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-									error.setAttribute(IMarker.MESSAGE, LaunchingMessages.getString("JavaRuntime.Unable_to_detect_default_JRE._See___Preferences_->_Java_->_Installed_JREs___1")); //$NON-NLS-1$
-								}
-							};
-							root.getWorkspace().run(runnable, null);
-						}
-					} catch (CoreException e) {
 					}
 				}
 			} else {

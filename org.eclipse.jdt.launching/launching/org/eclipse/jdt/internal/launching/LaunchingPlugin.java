@@ -27,8 +27,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.internal.events.ResourceChangeEvent;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -78,12 +76,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private boolean fIgnoreVMDefPropertyChangeEvents = false;
 		
 	private static final String EMPTY_STRING = "";    //$NON-NLS-1$
-	
-	/**
-	 * Marker used to indicate a default JRE could not be found/detected
-	 */
-	public static final String NO_DEFAULT_JRE_MARKER_TYPE = getUniqueIdentifier() + ".noDefaultJRE"; //$NON-NLS-1$
-		
+			
 	/**
 	 * Mapping of top-level VM installation directories to library info for that
 	 * VM.
@@ -414,20 +407,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		} else if (property.equals(JavaRuntime.PREF_VM_XML)) {
 			if (!isIgnoreVMDefPropertyChangeEvents()) {
 				processVMPrefsChanged((String)event.getOldValue(), (String)event.getNewValue());
-				// remove error marker if there is now a default VM
-				if (JavaRuntime.getDefaultVMInstall() != null) {
-					IMarker[] markers;
-					try {
-						markers = ResourcesPlugin.getWorkspace().getRoot().findMarkers(NO_DEFAULT_JRE_MARKER_TYPE,	false,	IResource.DEPTH_ZERO);
-						if (markers.length > 0) {
-							for (int i = 0; i < markers.length; i++) {
-								IMarker marker = markers[i];
-								marker.delete();
-							}
-						}
-					} catch (CoreException e) {
-					}					
-				}
 			}
 		}
 	}

@@ -11,11 +11,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -53,14 +51,15 @@ public abstract class JREResolution implements IMarkerResolution {
 	 * Prompts the user to choose a JRE for the given project.
 	 * Returns the selected VM or <code>null</code>.
 	 * 
-	 * @param project
+	 * @param title the title for the dialog
+	 * @param message the message for the dialog
 	 * @return selected VM or <code>null</code>
 	 */
-	protected IVMInstall chooseVMInstall(IJavaProject project) {
+	protected IVMInstall chooseVMInstall(String title, String message) {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), new JRELabelProvider());
 		dialog.setElements(getAllVMs());
-		dialog.setTitle(LauncherMessages.getString("JREResolution.Select_System_Library_1")); //$NON-NLS-1$
-		dialog.setMessage(MessageFormat.format(LauncherMessages.getString("JREResolution.Select_a_system_library_to_use_when_building_{0}_2"), new String[]{project.getElementName()})); //$NON-NLS-1$
+		dialog.setTitle(title);
+		dialog.setMessage(message);
 		dialog.setMultipleSelection(false);
 		dialog.open();
 		return (IVMInstall)dialog.getFirstResult();

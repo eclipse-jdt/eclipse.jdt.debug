@@ -31,14 +31,14 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
- * Handles JRE resolution for an unbound JRE container
+ * Quick fix to select an alternate JRE for a project. 
  */
-public class JREContainerResolution extends JREResolution {
+public class SelectSystemLibraryQuickFix extends JREResolution {
 	
 	private IPath fUnboundPath;
 	private IJavaProject fProject;
 	
-	public JREContainerResolution(IPath unboundPath, IJavaProject project) {
+	public SelectSystemLibraryQuickFix(IPath unboundPath, IJavaProject project) {
 		fUnboundPath = unboundPath;
 		fProject = project;	
 	}
@@ -56,7 +56,10 @@ public class JREContainerResolution extends JREResolution {
 	
 	protected void handleContainerResolutionError(final IPath unboundPath, final IJavaProject project) throws CoreException {			
 		
-		final IVMInstall vm = chooseVMInstall(project);
+		String title = LauncherMessages.getString("JREResolution.Select_System_Library_1"); //$NON-NLS-1$
+		String message = MessageFormat.format(LauncherMessages.getString("JREResolution.Select_a_system_library_to_use_when_building_{0}_2"), new String[]{project.getElementName()}); //$NON-NLS-1$
+		
+		final IVMInstall vm = chooseVMInstall(title, message);
 		if (vm == null) {
 			return;
 		}
