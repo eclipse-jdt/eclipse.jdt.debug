@@ -11,6 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
@@ -51,23 +55,35 @@ public class DropToFrameButton implements IViewActionDelegate, IActionDelegate2 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(final IAction action, ISelection selection) {
 		fFrame = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			if (ss.size() == 1) {
-				Object object = ss.getFirstElement();
+				final Object object = ss.getFirstElement();
 				if (object instanceof IAdaptable) {
-					IJavaStackFrame frame = (IJavaStackFrame) ((IAdaptable)object).getAdapter(IJavaStackFrame.class);
-					if (frame != null && frame.supportsDropToFrame()) {
-						action.setEnabled(true);
-						fFrame = frame;
-						return;
-					}
+                    Job stateUpdateJob = new Job("Update Enablement") { //$NON-NLS-1$
+                        protected IStatus run(IProgressMonitor monitor) {
+                            if (monitor.isCanceled()) {
+                                return Status.CANCEL_STATUS;
+                            }
+                            IJavaStackFrame frame = (IJavaStackFrame) ((IAdaptable)object).getAdapter(IJavaStackFrame.class);
+                            if (frame != null && frame.supportsDropToFrame()) {
+                                action.setEnabled(true);
+                                fFrame = frame;
+                                return Status.OK_STATUS;
+                            }
+                            
+                            action.setEnabled(false);
+                            return Status.OK_STATUS;                           
+                        }
+                    };
+                    stateUpdateJob.setSystem(true);
+                    stateUpdateJob.schedule();
 				}
 			}
 		}
-		action.setEnabled(false);
+//		action.setEnabled(false);
 	}
 
 	/* (non-Javadoc)
