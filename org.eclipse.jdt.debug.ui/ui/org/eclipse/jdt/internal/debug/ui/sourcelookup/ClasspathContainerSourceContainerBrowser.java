@@ -54,7 +54,9 @@ public class ClasspathContainerSourceContainerBrowser implements ISourceContaine
 		if (dialog.open() == Window.OK) {
 			IClasspathEntry created= wizard.getNewEntry();
 			if (created != null) {	
-				return new ISourceContainer[] {new ClasspathContainerSourceContainer(created.getPath())};
+				ClasspathContainerSourceContainer container = new ClasspathContainerSourceContainer(created.getPath());
+				container.init(director);
+				return new ISourceContainer[] {container};
 			}
 		}			
 		return new ISourceContainer[0];		
