@@ -90,7 +90,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * starts it is added to the list. When a thread ends it
 	 * is removed from the list.
 	 */
-	private List fThreads;
+	private ArrayList fThreads;
 	/**
 	 * Associated system process, or <code>null</code> if not available.
 	 */
@@ -253,7 +253,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @return list of threads
 	 */
-	protected List getThreadList() {
+	protected ArrayList getThreadList() {
 		return fThreads;
 	}
 	
@@ -265,7 +265,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @param threads empty list
 	 */
-	private void setThreadList(List threads) {
+	private void setThreadList(ArrayList threads) {
 		fThreads = threads;
 	}
 	
@@ -708,6 +708,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	private void typesFailedHCR(Set types) {
 		fOutOfSynchTypes.addAll(types);
+		fireChangeEvent();
 	}
 	
 	/**
@@ -725,7 +726,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see IJavaDebugTarget#isOutOfSynch()
 	 */
 	public boolean isOutOfSynch() throws DebugException {
-		Iterator threads= getThreadList().iterator();
+		List threadList= (List) getThreadList().clone();
+		Iterator threads= threadList.iterator();
 		while (threads.hasNext()) {
 			JDIThread thread= (JDIThread)threads.next();
 			if (thread.isOutOfSynch()) {
@@ -739,7 +741,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see IJavaDebugTarget#mayBeOutOfSynch()
 	 */
 	public boolean mayBeOutOfSynch() throws DebugException {
-		Iterator threads= getThreadList().iterator();
+		List threadList= (List) getThreadList().clone();
+		Iterator threads= threadList.iterator();
 		while (threads.hasNext()) {
 			JDIThread thread= (JDIThread)threads.next();
 			if (thread.mayBeOutOfSynch()) {
@@ -1162,7 +1165,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	protected void removeAllThreads() {
 		Iterator itr= getThreadList().iterator();
-		setThreadList(Collections.EMPTY_LIST);
+		setThreadList(new ArrayList(0));
 		while (itr.hasNext()) {
 			JDIThread child= (JDIThread) itr.next();
 			child.terminated();

@@ -49,10 +49,10 @@ public class JavaDebugImages {
 	 */	
 	
 
-	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.gif"; 	//$NON-NLS-1$
-	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif"; 		//$NON-NLS-1$	
-	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "brkpi_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.gif";			//$NON-NLS-1$
+	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
+	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "brkpi_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -60,7 +60,7 @@ public class JavaDebugImages {
 	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
 	private static final String T_OVR= "ovr16"; 		//$NON-NLS-1$
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
-	private static final String T_LCL= "clcl16"; 	//$NON-NLS-1$
+	private static final String T_LCL= "clcl16"; 		//$NON-NLS-1$
 	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
@@ -68,13 +68,16 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
 	
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
+	
+	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
 			
 	public static final ImageDescriptor DESC_WIZBAN_NEWSCRAPPAGE= create(T_WIZBAN, "newsbook_wiz.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_ATTACH= create(T_WIZBAN, "java_attach_wiz.gif"); 	//$NON-NLS-1$
 	
-	public static final ImageDescriptor DESC_TOOL_DISPLAYSNIPPET= create(T_CTOOL, "disp_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_CTOOL, "run_sbook.gif"); 				//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_DISPLAYSNIPPET= create(T_CTOOL, "disp_sbook.gif"); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_CTOOL, "run_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_INSPSNIPPET= create(T_CTOOL, "insp_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_PACKSNIPPET= create(T_CTOOL, "pack_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
