@@ -29,7 +29,7 @@ import org.eclipse.debug.core.model.IVariable;
  * @see org.eclipse.core.runtime.IAdaptable 
  */
 
-public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvaluate {
+public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 			
 	/**
 	 * Drops to this stack frame by popping stack frames in this stack

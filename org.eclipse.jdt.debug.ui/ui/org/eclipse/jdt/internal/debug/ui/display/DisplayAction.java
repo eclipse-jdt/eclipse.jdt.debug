@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -77,7 +78,7 @@ public class DisplayAction extends EvaluateAction {
 				if (sig != null) {
 					resultString= MessageFormat.format(DisplayMessages.getString("Display.type_name_pattern"), new Object[] { result.getReferenceTypeName() }); //$NON-NLS-1$
 				}
-				resultString= MessageFormat.format(DisplayMessages.getString("Display.result_pattern"), new Object[] { resultString, result.evaluateToString(thread) }); //$NON-NLS-1$
+				resultString= MessageFormat.format(DisplayMessages.getString("Display.result_pattern"), new Object[] { resultString, evaluateToString(result, thread) }); //$NON-NLS-1$
 			}
 		} catch(DebugException x) {
 			reportError(x);
@@ -94,5 +95,25 @@ public class DisplayAction extends EvaluateAction {
 	 */
 	protected Class getAdapterClass() {
 		return IDisplayAction.class;
+	}
+	
+	/**
+	 * Returns the result of evaluating 'toString' on the given
+	 * value.
+	 * 
+	 * @param value object or primitive data type the 'toString'
+	 *  is required for
+	 * @param thread the thread in which to evaluate 'toString'
+	 * @return the result of evaluating toString
+	 * @exception DebugException if an exception occurrs during the
+	 *  evaluation.
+	 */
+	protected String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+		if (value instanceof IJavaObject) {
+			IJavaValue result = ((IJavaObject)value).sendMessage("toString","()Ljava/lang/String;", null, thread, false);
+			return result.getValueString();
+		} else {
+			return value.getValueString();
+		}
 	}
 }

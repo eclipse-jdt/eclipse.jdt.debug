@@ -15,12 +15,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
@@ -34,7 +30,6 @@ import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
-import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadGroupReference;
@@ -1304,56 +1299,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @see IJavaEvaluation#evaluate(String, IJavaEvaluationListener, IJavaProject)
-	 */
-	public void evaluate(String snippet, IJavaEvaluationListener listener, IJavaProject project) throws DebugException {
-		IEvaluationContext underlyingContext = ((JDIDebugTarget)getDebugTarget()).getEvaluationContext(project);
-		evaluate(snippet, listener, underlyingContext);
-	}
-	
-	/**
-	 * @see IJavaEvaluation#evaluate(String, IJavaEvaluationListener, IEvaluationContext)
-	 */
-	public void evaluate(String snippet, IJavaEvaluationListener listener, IEvaluationContext evaluationContext) throws DebugException {
-		verifyEvaluation(evaluationContext);
-		ThreadEvaluationContext context = new ThreadEvaluationContext(this, evaluationContext);
-		context.evaluate(snippet, listener);
-	}
-	
-	/**
-	 * Verifies this thread is in a valid state to perform an evaluation,
-	 * and throws an exception if not.
-	 * 
-	 * @exception DebugException if not in a valid state for an evaluation. 
-	 *  Reasons include:
-	 * <ul>
-	 * <li>This thread is already performing an evaluation</li>
-	 * <li>The evaluation project context does not have a built state</li>
-	 * <li>This thread was not suspended by a breakpoint or step request.
-	 * 	When a thread has been suspended by an explicit call to <code>suspend</code>,
-	 *  it is not in a state that allows evaluations to be performed.</li>
-	 * </ul>
-	 */
-	protected void verifyEvaluation(IEvaluationContext evaluationContext) throws DebugException {
-		if (fInEvaluation) {
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations_3"), null); //$NON-NLS-1$
-		}
-		if (!evaluationContext.getProject().hasBuildState()) {
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.Project_must_be_built"), null); //$NON-NLS-1$
-		}
-		if (!fEventSuspend) {
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_perform_evaluation_at_current_location"), null); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * @see IJavaEvaluate#canPerformEvaluation()
-	 */
-	public boolean canPerformEvaluation() {
-		return isSuspended() && !fInEvaluation && fEventSuspend;
 	}
 	
 	/**

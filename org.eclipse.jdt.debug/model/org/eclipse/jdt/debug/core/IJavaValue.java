@@ -36,40 +36,9 @@ public interface IJavaValue extends IValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>The type associated with the signature is not yet loaded</li></ul>
-	 * @deprecated use <code>getJavaType().getSignature()</code>
 	 */
 	public String getSignature() throws DebugException;
-	
-	/**
-	 * Returns the length of this array, if this value is associated
-	 * with an array type, or -1 otherwise.
-	 *
-	 * @return arrayLength, or -1 if this value is not an array
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li></ul>
-	 * @deprecated use <code>IJavaArray.getLength()</code>
-	 */
-	public int getArrayLength() throws DebugException;
-	
-	/**
-	 * Evaluates and returns the result of sending the message
-	 * <code>toString()</code> to this value. If this value
-	 * represents a primitive data type, the returned value
-	 * is the same as that returned from <code>getValueString()</code>.
-	 * The evaluation is performed in the specified thread.
-	 * If the thread is not suspended, an exception is thrown.
-	 *
-	 * @param thread the thread used to perform the evaluation
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li></ul>
-	 * @deprecated use <code>sendMessage(String, String, IJavaValue[], IJavaThread)</code>
-	 */
-	public String evaluateToString(IJavaThread thread) throws DebugException;
-	
+		
 	/**
 	 * Returns the type of this value, or <code>null</code>
 	 * if this value represents the <code>null</code> value

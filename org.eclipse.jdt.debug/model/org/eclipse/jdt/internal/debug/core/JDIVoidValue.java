@@ -43,13 +43,6 @@ public class JDIVoidValue extends JDIValue {
 	}
 
 	/**
-	 * @see IJavaValue#evaluateToString(IJavaThread)
-	 */
-	public String evaluateToString(IJavaThread thread) {
-		return getValueString();
-	}
-
-	/**
 	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() {

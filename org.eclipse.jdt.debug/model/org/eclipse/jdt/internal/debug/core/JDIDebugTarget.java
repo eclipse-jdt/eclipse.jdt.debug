@@ -148,14 +148,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private String fName;
 	
 	/**
-	 * A cache of evaluation contexts keyed by Java projects. When 
-	 * an evaluation is performed, a reusable evaluation context
-	 * is cached for the associated Java project. Contexts are discarded
-	 * when this VM terminates.
-	 */
-	private HashMap fEvaluationContexts;
-	
-	/**
 	 * Collection of temporary files deployed to the target for evaluation.
 	 * These files are deleted when this target terminates.
 	 */
@@ -910,21 +902,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public IProcess getProcess() {
 		return fProcess;
 	}
-
-	/**
-	 * Resumes the given thread
-	 * 
-	 * @param underlying thread reference
-	 * @deprecated this method to be removed
-	 */
-	protected void resume(ThreadReference thread) {
-		try {
-			thread.resume();
-		} catch (VMDisconnectedException e) {
-		} catch (RuntimeException e) {
-			internalError(e);
-		}
-	}
 	
 	/**
 	 * Notification the underlying VM has died. Updates
@@ -1161,7 +1138,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * This target is removed as a breakpoint listener,
 	 * and all breakpoints are removed from this target.
 	 * Temporary .class files created for evaluation
-	 * are deleted, and evaluation contexts are cleared.
+	 * are deleted.
 	 * </p>
 	 */
 	protected void cleanup() {
@@ -1172,9 +1149,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		removeAllBreakpoints();
 		cleanupTempFiles();
 		fOutOfSynchTypes.clear();
-		if (fEvaluationContexts != null) {
-			fEvaluationContexts.clear();
-		}
 	}
 
 	/**
@@ -1347,25 +1321,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 			fTempFiles.clear();
 		}
-	}
-
-	/**
-	 * Returns an evaluation context for the given Java project, creating
-	 * one if not yet created.
-	 * 
-	 * @param project the Java project for which a context is required
-	 * @return an evaluation context
-	 */
-	protected IEvaluationContext getEvaluationContext(IJavaProject project) {
-		if (fEvaluationContexts == null) {
-			fEvaluationContexts = new HashMap(2);
-		}
-		IEvaluationContext context = (IEvaluationContext)fEvaluationContexts.get(project);
-		if (context == null) {
-			context = project.newEvaluationContext();
-			fEvaluationContexts.put(project, context);
-		}
-		return context;
 	}
 	
 	/**

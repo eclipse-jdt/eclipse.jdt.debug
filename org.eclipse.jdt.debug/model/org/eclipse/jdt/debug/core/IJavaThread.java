@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * @see org.eclipse.debug.core.model.IThread
  * @see org.eclipse.core.runtime.IAdaptable 
  */
-public interface IJavaThread extends IThread, IJavaEvaluate {
+public interface IJavaThread extends IThread {
 	
 	/**
 	 * Returns whether this thread is a system thread.

@@ -6,14 +6,30 @@ package org.eclipse.jdt.internal.debug.core;
  */
  
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.jdt.debug.core.*;
-
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaType;
-import com.sun.jdi.*;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ClassObjectReference;
+import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.PrimitiveValue;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.StringReference;
+import com.sun.jdi.Type;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.Value;
 
 /**
  * The value of a variable
@@ -315,80 +331,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	protected Value getUnderlyingValue() {
 		return fValue;
 	}
-	
-	/**
-	 * @see IJavaValue#evaluateToString(IJavaThread)
-	 */
-	public synchronized String evaluateToString(final IJavaThread thread) throws DebugException {
-		String sig = getSignature();
-		if (sig == null) {
-			return JDIDebugModelMessages.getString("JDIValue.null_15"); //$NON-NLS-1$
-		}
-		if (sig.length() == 1) {
-			// primitive
-			return getValueString();
-		}
-
-		if (!thread.isSuspended()) {
-			requestFailed(JDIDebugModelMessages.getString("JDIValue.thread_not_suspended"), null); //$NON-NLS-1$
-		}
-		
-		final String[] toString = new String[1];
-		final DebugException[] ex = new DebugException[1];
-		Runnable eval= new Runnable() {
-			public void run() {
-				try {
-					toString[0] = evaluateToString0((JDIThread)thread);
-				} catch (DebugException e) {
-					ex[0]= e;
-				}					
-				synchronized (JDIValue.this) {
-					JDIValue.this.notifyAll();
-				}
-			}
-		};
-		
-		int timeout = ((JDIThread)thread).getRequestTimeout();
-		Thread evalThread = new Thread(eval);
-		evalThread.start();
-		try {
-			wait(timeout);
-		} catch (InterruptedException e) {
-		}
-		
-		if (ex[0] != null) {
-			throw ex[0];
-		}
-		
-		if (toString[0] != null) {
-			return toString[0];
-		}	
-		
-		((JDIThread)thread).abortEvaluation();
-		requestFailed(JDIDebugModelMessages.getString("JDIValue.timeout_performing_toString()"), null); //$NON-NLS-1$
-		return null;
-	}
-	
-	
-	protected String evaluateToString0(JDIThread thread) throws DebugException {
-		try {
-			ObjectReference object = (ObjectReference)fValue;
-			ReferenceType type = object.referenceType();
-			List methods = type.methodsByName(fgToString, fgToStringSignature);
-			if (methods.size() == 0) {
-				requestFailed(JDIDebugModelMessages.getString("JDIValue.toString()_not_implemented"), null); //$NON-NLS-1$
-			}
-			Method method = (Method)methods.get(0);
-			StringReference string = (StringReference)thread.invokeMethod(null, object, method, Collections.EMPTY_LIST);
-			return string.value();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_evaluating_toString()"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// exection will never reach this line as
-			// #targetRequestFailed will throw an exception			
-			return null;
-		}
-	} 
-		
+			
 	/**
 	 * @see IJavaValue#getJavaType()
 	 */

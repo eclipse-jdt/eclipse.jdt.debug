@@ -7,29 +7,20 @@ package org.eclipse.jdt.internal.debug.core;
  
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaClassType;
-import org.eclipse.jdt.debug.core.IJavaEvaluate;
-import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaThread;
-
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import com.sun.jdi.AbsentInformationException;
@@ -40,9 +31,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
-import com.sun.jdi.VirtualMachine;
 
 /**
  * Proxy to a stack frame on the target.
@@ -579,31 +568,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return this;
 		}
 		return super.getAdapter(adapter);
-	}
-
-	/**
-	 *
-	 * @see IJavaEvaluate#evaluate(String, IJavaEvaluationListener, IJavaProject)
-	 */
-	public void evaluate(String snippet, IJavaEvaluationListener listener, IJavaProject project) throws DebugException {
-		IEvaluationContext underlyingContext = ((JDIDebugTarget)getDebugTarget()).getEvaluationContext(project);
-		evaluate(snippet, listener, underlyingContext);
-	}
-
-	/**
-	 * @see IJavaEvaluate#evaluate(String, IJavaEvaluationListener, IEvaluationContext)
-	 */
-	public void evaluate(String snippet, IJavaEvaluationListener listener, IEvaluationContext evaluationContext) throws DebugException {
-		((JDIThread)getThread()).verifyEvaluation(evaluationContext);
-		StackFrameEvaluationContext context = new StackFrameEvaluationContext(this, evaluationContext);
-		context.evaluate(snippet, listener);
-	}	
-	
-	/**
-	 * @see IJavaEvaluate#canPerformEvaluation()
-	 */
-	public boolean canPerformEvaluation() {
-		return ((IJavaThread)getThread()).canPerformEvaluation();
 	}
 	
 	/**

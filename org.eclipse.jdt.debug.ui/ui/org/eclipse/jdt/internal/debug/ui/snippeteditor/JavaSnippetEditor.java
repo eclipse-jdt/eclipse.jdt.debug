@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -522,7 +523,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 					} else {
 						resultString.append(" "); //$NON-NLS-1$
 					}   
-					resultString.append(result.evaluateToString(thread));
+					resultString.append(evaluateToString(result, thread));
 				}
 			} else {
 				resultString.append(result.getValueString());
@@ -538,6 +539,26 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		
 		selectAndReveal(fSnippetEnd, resultString.length());
 	}
+	
+	/**
+	 * Returns the result of evaluating 'toString' on the given
+	 * value.
+	 * 
+	 * @param value object or primitive data type the 'toString'
+	 *  is required for
+	 * @param thread the thread in which to evaluate 'toString'
+	 * @return the result of evaluating toString
+	 * @exception DebugException if an exception occurrs during the
+	 *  evaluation.
+	 */
+	protected String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+		if (value instanceof IJavaObject) {
+			IJavaValue result = ((IJavaObject)value).sendMessage("toString","()Ljava/lang/String;", null, thread, false);
+			return result.getValueString();
+		} else {
+			return value.getValueString();
+		}
+	}	
 	
 	protected void showAllProblems(IMarker[] problems) {
 		IDocument document = getSourceViewer().getDocument();
