@@ -572,14 +572,15 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	protected void reinstallBreakpointsIn(List resources) {
 		List breakpoints= getBreakpoints();
-		Iterator iter= breakpoints.iterator();
+		IJavaBreakpoint[] copy= new IJavaBreakpoint[breakpoints.size()];
+		breakpoints.toArray(copy);
 		IJavaBreakpoint breakpoint= null;
 		String installedType= null;
 		
 		List classNames= JDTDebugUtils.getQualifiedNames(resources);
 		
-		while (iter.hasNext()) {
-			breakpoint= (IJavaBreakpoint) iter.next();
+		for (int i= 0; i < copy.length; i++) {
+			breakpoint= copy[i];
 			if (breakpoint instanceof JavaLineBreakpoint) {
 				try {
 					installedType= breakpoint.getType().getFullyQualifiedName();
@@ -824,7 +825,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (breakpoint instanceof JavaBreakpoint) {
 			try {
 				((JavaBreakpoint)breakpoint).addToTarget(this);
-				getBreakpoints().add(breakpoint);
+				if (!getBreakpoints().contains(breakpoint)) {
+					getBreakpoints().add(breakpoint);
+				}
 			} catch (CoreException e) {
 				logError(e);
 			}

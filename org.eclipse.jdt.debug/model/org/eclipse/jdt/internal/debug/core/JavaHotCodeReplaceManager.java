@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
@@ -26,9 +26,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
@@ -112,21 +109,31 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		List resources= getChangedClassFiles(event.getDelta());
+		final List resources= getChangedClassFiles(event.getDelta());
 		if (resources.isEmpty()) {
 			return;
 		}		
-		List j9HotSwapTargets= getJ9HotSwapTargets();
-		List jdkHotSwapTargets= getJDKHotSwapTargets();
+		final List j9HotSwapTargets= getJ9HotSwapTargets();
+		final List jdkHotSwapTargets= getJDKHotSwapTargets();
 		if (j9HotSwapTargets.isEmpty() && jdkHotSwapTargets.isEmpty()) {
 			return;
 		}
-		List typeNames= JDTDebugUtils.getQualifiedNames(resources);
+		final List typeNames= JDTDebugUtils.getQualifiedNames(resources);
 		if (!j9HotSwapTargets.isEmpty()) {
-			notifyJ9(j9HotSwapTargets, resources, typeNames);
+			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					notifyJ9(j9HotSwapTargets, resources, typeNames);
+				}
+			};
+			fork(wRunnable);	
 		}
 		if (!jdkHotSwapTargets.isEmpty()) {
-			notifyJDK(jdkHotSwapTargets, resources, typeNames);
+			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					notifyJDK(jdkHotSwapTargets, resources, typeNames);
+				}
+			};
+			fork(wRunnable);	
 		}
 	}
 	
@@ -210,7 +217,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 					// J9 HCR support
 					target.typesHaveChanged(qNames);
 				}
-			attemptDropToFrame(target, typeNames);
+				attemptDropToFrame(target, typeNames);
 				fireHCRSucceeded();
 			} catch (DebugException de) {
 				// target update failed
@@ -224,9 +231,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	 * Notifies listeners that a hot code replace attempt succeeded
 	 */
 	private void fireHCRSucceeded() {
-		IJavaHotCodeReplaceListener[] listeners= (IJavaHotCodeReplaceListener[]) fHotCodeReplaceListeners.getListeners();
+		Object[] listeners= fHotCodeReplaceListeners.getListeners();
 		for (int i=0; i<listeners.length; i++) {
-			listeners[i].hotCodeReplaceSucceeded();
+			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceSucceeded();
 		}		
 	}
 	
@@ -234,9 +241,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	 * Notifies listeners that a hot code replace attempt failed with the given exception
 	 */
 	private void fireHCRFailed(DebugException exception) {
-		IJavaHotCodeReplaceListener[] listeners= (IJavaHotCodeReplaceListener[]) fHotCodeReplaceListeners.getListeners();
+		Object[] listeners= fHotCodeReplaceListeners.getListeners();
 		for (int i=0; i<listeners.length; i++) {
-			listeners[i].hotCodeReplaceFailed(exception);
+			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceFailed(exception);
 		}
 	}
 
@@ -349,6 +356,18 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		fHotCodeReplaceListeners.remove(listener);
 	}
-
+	
+	protected void fork(final IWorkspaceRunnable wRunnable) {
+		Runnable runnable= new Runnable() {
+			public void run() {
+				try {
+					getWorkspace().run(wRunnable, null);
+				} catch (CoreException ce) {
+					JDIDebugPlugin.logError(ce);
+				}
+			}
+		};
+		new Thread(runnable).start();
+	}
 }
 
