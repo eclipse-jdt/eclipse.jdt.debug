@@ -108,7 +108,7 @@
     <perspectiveExtension 
     	targetID="org.eclipse.debug.ui.DebugPerspective"> 
     	<view id="org.eclipse.jdt.debug.ui.DisplayView" 
-        	relative="org.eclipse.debug.ui.InspectorView" 
+        	relative="org.eclipse.debug.ui.ExpressionView" 
     		relationship="stack"/> 
     	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
      </perspectiveExtension> 
