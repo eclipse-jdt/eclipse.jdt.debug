@@ -8,7 +8,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * A method entry breakpoint suspends execution on the first
