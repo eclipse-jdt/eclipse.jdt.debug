@@ -59,7 +59,7 @@ public class JDIType implements IJavaType {
 		return new JDIType(target, type);
 	}
 	
-	/*
+	/**
 	 * @see IJavaType#getSignature()
 	 */
 	public String getSignature() throws DebugException {
@@ -131,6 +131,4 @@ public class JDIType implements IJavaType {
 		// will be thrown by the catch block
 		return null;
 	}
-
 }
-
