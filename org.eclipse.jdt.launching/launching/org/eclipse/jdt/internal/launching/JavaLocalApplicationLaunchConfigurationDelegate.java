@@ -86,6 +86,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(workingDirName);
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+		runConfig.setLaunchConfiguration(configuration);
 
 		// Bootpath
 		String[] bootpath = getBootpath(configuration);

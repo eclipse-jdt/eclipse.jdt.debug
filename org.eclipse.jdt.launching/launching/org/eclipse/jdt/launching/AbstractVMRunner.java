@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
@@ -75,14 +76,32 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	}
 	
 	/**
-	 * Returns the default process attribute map for java processes.
+	 * Returns the default process attribute map for Java processes.
 	 * 
-	 * @return defatult process attribute map for java processes
+	 * @return default process attribute map for Java processes
 	 */
 	protected Map getDefaultProcessMap() {
 		Map map = new HashMap();
 		map.put(IProcess.ATTR_PROCESS_TYPE, IJavaLaunchConfigurationConstants.ID_JAVA_PROCESS_TYPE);
 		return map;
 	}
-			
+	
+	/**
+	 * Allows the specification of the process type in the launch configuration.
+	 * @param config the launch configuration to consult.
+	 * @return default process attribute map for Java processes possibly modified by attributes
+	 * 			in the specified launch configuration
+	 * @throws CoreException problems occurred accessing the launch configuration
+	 */
+	protected Map getDefaultProcessMap(VMRunnerConfiguration config) throws CoreException {
+		Map processMap= getDefaultProcessMap();
+		ILaunchConfiguration launchConfiguration= config.getLaunchConfiguration();
+		if (launchConfiguration != null) {
+			String processType= launchConfiguration.getAttribute(IProcess.ATTR_PROCESS_TYPE, (String)null);
+			if (processType != null) {
+				processMap.put(IProcess.ATTR_PROCESS_TYPE, processType);
+			}
+		}
+		return processMap;
+	}
 }

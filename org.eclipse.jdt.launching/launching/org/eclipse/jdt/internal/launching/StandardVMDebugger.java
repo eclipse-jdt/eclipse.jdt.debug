@@ -207,7 +207,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 					return;
 				}				
 				
-				IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
+				IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap(config));
 				process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 				subMonitor.worked(1);
 				subMonitor.subTask(LaunchingMessages.getString("StandardVMDebugger.Establishing_debug_connection..._5")); //$NON-NLS-1$

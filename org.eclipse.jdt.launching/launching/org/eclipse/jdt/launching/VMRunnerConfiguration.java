@@ -14,6 +14,7 @@ package org.eclipse.jdt.launching;
  
 import java.util.Map;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 /**
@@ -31,6 +32,7 @@ public class VMRunnerConfiguration {
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
 	private Map fVMSpecificAttributesMap;
+	private ILaunchConfiguration fConfiguration;
 	
 	private static final String[] fgEmpty= new String[0];
 	
@@ -199,4 +201,26 @@ public class VMRunnerConfiguration {
 		return fWorkingDirectory;
 	}	
 	
+	/**
+	 * Returns the launch configuration associated with this runner.
+	 * May be <code>null</code>.
+	 * If not <code>null</code>, the launch configuration will be queried to set attributes on the 
+	 * attribute map for the Java process.
+	 * 
+	 * @return the launch configuration for this this runner.
+	 * @since 3.0
+	 */
+	public ILaunchConfiguration getLaunchConfiguration() {
+		return fConfiguration;
+	}
+
+	/**
+	 * Sets the launch configuration associated with this runner.
+	 * 
+	 * @param configuration the launch configuration for this runner
+	 * @since 3.0
+	 */
+	public void setLaunchConfiguration(ILaunchConfiguration configuration) {
+		fConfiguration = configuration;
+	}
 }

@@ -238,10 +238,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 			return;
 		}		
 		
-		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
+		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap(config));
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 		subMonitor.worked(1);
 		subMonitor.done();
 	}
-
 }
