@@ -208,9 +208,6 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 						jWatchpoint.setModification(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.MODIFICATION));
 					}
 					break;
-				case 'P':
-					breakpoint.setPersisted(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.PERSISTED));
-					break;
 				case 'S':
 					String value= getPreferenceStore().getString(JavaBreakpointPreferenceStore.SUSPEND_POLICY);
 					if (value.equals(JavaBreakpointPreferencePage.VM_SUSPEND_POLICY)) {

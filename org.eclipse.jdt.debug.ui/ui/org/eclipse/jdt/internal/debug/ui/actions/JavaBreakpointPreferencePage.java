@@ -205,8 +205,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			} else {
 				store.setValue(JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED, false);
 			}
-
-			store.setValue(JavaBreakpointPreferenceStore.PERSISTED, breakpoint.isPersisted());
+			
 			String policy = ""; //$NON-NLS-1$
 			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD) {
 				policy = THREAD_SUSPEND_POLICY;
@@ -215,7 +214,6 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			}
 			store.setValue(JavaBreakpointPreferenceStore.SUSPEND_POLICY, policy);
 			addField(createEnabledEditor(getFieldEditorParent()));
-			addField(createPersistedEditor(getFieldEditorParent()));
 			createHitCountEditor(getFieldEditorParent());
 			addField(createSuspendPolicyEditor(getFieldEditorParent()));
 			createTypeSpecificFieldEditors();
@@ -339,10 +337,6 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		return bfe;
 	}
 
-	protected FieldEditor createPersistedEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.PERSISTED, ActionMessages.getString("JavaBreakpointPreferencePage.&Persisted_28"),parent); //$NON-NLS-1$
-		return bfe;
-	}
 
 	protected FieldEditor createSuspendPolicyEditor(Composite parent) {	
 		RadioGroupFieldEditor editor= new RadioGroupFieldEditor(

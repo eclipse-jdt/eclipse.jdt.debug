@@ -21,7 +21,6 @@ class JavaBreakpointPreferenceStore implements IPreferenceStore {
 	protected final static String ENABLED= "ENABLED"; //$NON-NLS-1$
 	protected final static String HIT_COUNT= "HIT_COUNT"; //$NON-NLS-1$
 	protected final static String HIT_COUNT_ENABLED= "HIT_COUNT_ENABLED"; //$NON-NLS-1$
-	protected final static String PERSISTED= "PERSISTED"; //$NON-NLS-1$
 	protected final static String SUSPEND_POLICY= "SUSPEND_POLICY"; //$NON-NLS-1$
 	protected final static String METHOD_EXIT= "METHOD_EXIT"; //$NON-NLS-1$
 	protected final static String METHOD_ENTRY= "METHOD_ENTRY"; //$NON-NLS-1$
