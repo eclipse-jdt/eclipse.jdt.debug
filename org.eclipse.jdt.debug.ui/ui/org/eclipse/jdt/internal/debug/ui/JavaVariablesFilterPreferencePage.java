@@ -130,7 +130,7 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 		setViewer(viewer);
 		fRunningInPreferenceDialog = runningInPrefDialog;
 		if (isRunningInPreferenceDialog()) {
-			setDescription("Default filter settings for Java variable views");
+			setDescription(DebugUIMessages.getString("JavaVariablesFilterPreferencePage.Default_filter_settings_for_Java_variable_views_1")); //$NON-NLS-1$
 		}
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
 		setPreferencePrefix(preferencePrefix);		
