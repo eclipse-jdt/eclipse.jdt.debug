@@ -12,7 +12,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Bundle of most images used by the Java debug plug-in.
@@ -71,6 +70,8 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_ovr_disabled.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
+	
+	public static final String IMG_VIEW_ARGUMENTS_TAB= NAME_PREFIX + "variable_tab.gif";  //$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -80,6 +81,7 @@ public class JavaDebugImages {
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
 	private static final String T_LCL= "clcl16"; 	//$NON-NLS-1$
 	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
+	private static final String T_CVIEW= "cview16"; 	//$NON-NLS-1$
 	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
 	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
 	
@@ -115,6 +117,8 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
 	
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
+	
+	public static final ImageDescriptor DESC_VIEW_ARGUMENTS_TAB = createManaged(T_CVIEW, IMG_VIEW_ARGUMENTS_TAB);
 		
 	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
