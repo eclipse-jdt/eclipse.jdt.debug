@@ -320,7 +320,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (typeBinding.isTypeVariable()) {
 			ITypeBinding[] typeBounds= typeBinding.getTypeBounds();
 			String name= getTypeName(typeBounds[0]);
-			if (typeBounds.length > 1 && "java.lang.Object".equals(name)) {
+			if (typeBounds.length > 1 && "java.lang.Object".equals(name)) { //$NON-NLS-1$
 				return getTypeName(typeBounds[1]);
 			}
 			return name;
