@@ -7,37 +7,16 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 
 /**
  * Action to switch to the Monitor centric view of the Monitors view
  */
-public class ToggleMonitorsViewAction implements IViewActionDelegate {
+public class ToggleMonitorsViewAction extends ToggleViewAction {
 	 
-	protected MonitorsView fMonitorsView;
-	
 	/**
-	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
+	 * @see org.eclipse.jdt.internal.debug.ui.monitors.ToggleViewAction#getViewId()
 	 */
-	public void init(IViewPart view) {
-		if (view instanceof MonitorsView) {
-			fMonitorsView= (MonitorsView)view;
-		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
-		fMonitorsView.setView(MonitorsView.VIEW_ID_MONITOR);
-	}
-
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	protected int getViewId() {
+		return fMonitorsView.VIEW_ID_MONITOR;
 	}
 }

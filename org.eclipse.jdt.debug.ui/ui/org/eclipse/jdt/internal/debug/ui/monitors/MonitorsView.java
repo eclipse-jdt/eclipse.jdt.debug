@@ -29,13 +29,13 @@ import org.eclipse.ui.part.Page;
 /**
  * Handles the different viewers: Thread, Monitor and Deadlock
  */
-public class MonitorsView extends AbstractDebugEventHandlerView{
+public class MonitorsView extends AbstractDebugEventHandlerView {
 
 	public static final int VIEW_ID_THREAD = 1;
 	public static final int VIEW_ID_MONITOR = 2;
 	public static final int VIEW_ID_DEADLOCK = 3;
 	
-	private int viewId;
+	private int fViewId;
 	
 	private Viewer fDeadLocksViewer;
 	private Viewer fMonitorsViewer;
@@ -112,7 +112,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 	}
 	
 	public MonitorsView(){		
-		viewId = VIEW_ID_THREAD;
+		fViewId = VIEW_ID_THREAD;
 		setEventHandler(new MonitorsDebugEventHandler(this));
 	}
 
@@ -120,9 +120,9 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 	 * Sets the current view (see view id)
 	 * called from ToggleViewAction. Must be called after creation of the viewpart.
 	 */	
-	public void setView(int viewerIndex) {
-		viewId = viewerIndex;
-		switch (viewId) {
+	public void setViewId(int viewerIndex) {
+		fViewId = viewerIndex;
+		switch (fViewId) {
 			case VIEW_ID_THREAD:
 				showViewer();
 				break;
@@ -133,6 +133,14 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 				showMonitorsViewer();
 				break;
 		}
+		updateObjects();
+	}
+	
+	/**
+	 * Returns the current view id.
+	 */	
+	public int getViewId() {
+		return fViewId;
 	}
 
 	/**
@@ -296,6 +304,6 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 		((TreeViewer)getMonitorsViewer()).expandAll();
 		getDeadLocksViewer().refresh();
 		((TreeViewer)getDeadLocksViewer()).expandAll();
-		setView(viewId);
+		setViewId(fViewId);
 	}
 }
