@@ -1895,50 +1895,6 @@
       </sourceLocator>
    </extension>
    <extension
-         point="org.eclipse.debug.ui.debugActionGroups">
-      <debugActionGroup
-            name="%JavaDebugActionGroup.name"
-            visible="true"
-            id="org.eclipse.jdt.debug.ui.javaDebugActionGroup">
-         <action
-               id="org.eclipse.jdt.debug.ui.actions.AddException">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.breakpointViewActions.ShowQualified">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowQualified">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.expressionViewActions.AddWatchExpression">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.launchViewActions.ShowQualified">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowQualified">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowStatic">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowStatic">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowConstants">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowConstants">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.expressionViewActions.PrimitiveOptions">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
-         </action>
-      </debugActionGroup>
-   </extension>
-   <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             label="%JavaApplicationShortcut.label"
