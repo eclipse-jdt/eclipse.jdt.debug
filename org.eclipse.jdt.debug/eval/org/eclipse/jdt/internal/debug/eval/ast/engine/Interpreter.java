@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
 public class Interpreter {
 	private Instruction[] fInstructions;
@@ -17,19 +18,25 @@ public class Interpreter {
 	private IRuntimeContext fContext;
 	private Stack fStack;
 	
-	public Interpreter(Instruction[] instructions, IRuntimeContext context) {
-		fInstructions= instructions;
+	private boolean fStopped= false;
+	
+	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
+		fInstructions= instructions.getInstructions();
 		fContext= context;
 	}
 	
 	public void execute() throws CoreException {
 		reset();
-		while(fInstructionCounter < fInstructions.length) {
+		while(fInstructionCounter < fInstructions.length && !fStopped) {
 			Instruction instruction= fInstructions[fInstructionCounter++];
 			instruction.setInterpreter(this);
 			instruction.execute();
 			instruction.setInterpreter(null);
 		}
+	}
+	
+	public void stop() {
+		fStopped= true;
 	}
 
 	private void reset() {

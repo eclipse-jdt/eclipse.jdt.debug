@@ -35,25 +35,6 @@ public class InstructionSequence implements ICompiledExpression {
 	}
 	
 	/**
-	 * Runs this compiled expression in the given context, and retuns
-	 * the result.
-	 * 
-	 * @param context evaluation context
-	 */
-	public IJavaValue evaluate(IRuntimeContext context) {
-		Interpreter interpreter= new Interpreter(getInstructions(), context);
-		try {
-			interpreter.execute();
-		} catch (CoreException exception) {
-			fException= exception;
-		} catch (Throwable exception) {
-			JDIDebugPlugin.log(exception);
-			fException= new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
-		}
-		return interpreter.getResult();
-	}
-	
-	/**
 	 * Returns the runtime exception that occurred while evaluating this expression
 	 * or <code>null</code> if no exception occurred.
 	 */
@@ -93,7 +74,7 @@ public class InstructionSequence implements ICompiledExpression {
 	/**
 	 * Answers the array of instructions, or an empty array.
 	 */
-	private Instruction[] getInstructions() {
+	public Instruction[] getInstructions() {
 		int size= fInstructions.size();
 		Instruction[] instructions= new Instruction[size];
 		if (size > 0) {

@@ -12,8 +12,11 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -29,10 +32,12 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.internal.compiler.CompilationResult;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionsEvaluationMessages;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	
@@ -103,6 +108,12 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		getEvaluationThread().evaluate(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
+	/**
+	 * Returns an evaluation thread which can be used to perform an evaluation.
+	 * This method will return an existing thread if a one exists that is 
+	 * currently not performing an evaluation. Otherwise, a new thread will 
+	 * be created.
+	 */
 	private EvaluationThread getEvaluationThread() {
 		Iterator iter= fEvaluationThreads.iterator();
 		EvaluationThread thread= null;
@@ -112,7 +123,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				return thread;
 			}
 		}
-		thread= new EvaluationThread();
+		thread= new EvaluationThread(this);
 		fEvaluationThreads.add(thread);
 		return thread;
 	}
@@ -124,7 +135,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * the thread is allowed to keep running - it will be reused for the
 	 * next evaluation.
 	 */
-	private void evaluationThreadFinished(EvaluationThread thread) {
+	protected void evaluationThreadFinished(EvaluationThread thread) {
 		if (fEvaluationThreads.size() == 1) {
 			// Always leave at least one thread running
 			return;
@@ -144,106 +155,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		if (!allBusy) {
 			thread.stop();
 			fEvaluationThreads.remove(thread);
-		}
-	}
-	
-	class EvaluationThread {
-		private ICompiledExpression fExpression;
-		private IRuntimeContext fContext;
-		private IJavaThread fThread;
-		private IEvaluationListener fListener;
-		private int fEvaluationDetail;
-		private boolean fHitBreakpoints;
-
-		private boolean fEvaluating= false;
-		private Thread fEvaluationThread;
-		private boolean fStopped= false;
-		private Object fLock= new Object();
-		
-		public boolean isEvaluating() {
-			return fEvaluating;
-		}
-		
-		public void stop() {
-			fStopped= true;
-			synchronized (fLock) {
-				fLock.notify();
-			}
-		}
-		
-		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) {
-			fExpression= expression;
-			fContext= context;
-			fThread= thread;
-			fListener= listener;
-			fEvaluationDetail= evaluationDetail;
-			fHitBreakpoints= hitBreakpoints;
-			if (fEvaluationThread == null) {
-				// Create a new thread
-				fEvaluationThread= new Thread(new Runnable() {
-					public void run() {
-						while (!fStopped) {
-							synchronized (fLock) {
-								doEvaluation();
-								try {
-									// Sleep until the next evaluation
-									fLock.wait();
-								} catch (InterruptedException exception) {
-								}
-							}
-						}
-					}
-				}, "Evaluation thread"); //$NON-NLS-1$
-				fEvaluationThread.start();
-			} else {
-				// Use the existing thread
-				synchronized (fLock) {
-					fLock.notifyAll();
-				}
-			}
-		}
-		
-		public synchronized void doEvaluation() {
-			fEvaluating= true;
-			EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, fExpression.getSnippet(), fThread);
-			if (fExpression.hasErrors()) {
-				Message[] errors= fExpression.getErrors();
-				for (int i= 0, numErrors= errors.length; i < numErrors; i++) {
-					result.addError(errors[i]);
-				}
-				fListener.evaluationComplete(result);
-				return;
-			}
-	
-			final IJavaValue[] valuez = new IJavaValue[1];
-			final InstructionSequence instructionSet = (InstructionSequence)fExpression;
-			IEvaluationRunnable er = new IEvaluationRunnable() {
-				public void run(IJavaThread jt, IProgressMonitor pm) {
-					valuez[0] = instructionSet.evaluate(fContext);
-				}
-			};
-			CoreException exception = null;
-			try {
-				fThread.runEvaluation(er, null, fEvaluationDetail, fHitBreakpoints);
-			} catch (DebugException e) {
-				exception = e;
-			}
-			IJavaValue value = valuez[0];
-			
-
-			if (exception == null) {
-				exception= instructionSet.getException();
-			}
-			
-			if (value != null) {
-				result.setValue(value);
-			}
-			if (exception != null) {
-				result.setException(new DebugException(exception.getStatus()));
-			}
-			fEvaluating= false;
-			evaluationThreadFinished(this);
-			fListener.evaluationComplete(result);
 		}
 	}
 
@@ -288,7 +199,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 
 	// ******
-	// for hide problems with local variable declare as instance of Local Types
+	// to hide problems with local variable declare as instance of Local Types
 	private boolean isLocalType(String typeName) {
 		StringTokenizer strTok= new StringTokenizer(typeName,"$"); //$NON-NLS-1$
 		strTok.nextToken();
