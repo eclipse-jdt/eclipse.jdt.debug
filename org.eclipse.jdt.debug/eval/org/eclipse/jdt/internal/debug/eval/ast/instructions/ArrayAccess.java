@@ -1,7 +1,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2003.
  * All Rights Reserved.
  */
 
@@ -37,7 +37,7 @@ public class ArrayAccess extends ArrayInstruction {
 		// an array of JDIArrayEntryVariable if the number of element in the array is to big.
 		// In this case, we have to through these partition to get the correct variable.
 		int firstIndex= 0;
-		while (variables[1] instanceof JDIArrayPartition) {
+		while (variables[0] instanceof JDIArrayPartition) {
 			JDIArrayPartition partition= (JDIArrayPartition)variables[0];
 			int offset= partition.getEnd() - firstIndex + 1;
 			int partitionIndex= (index - firstIndex) / offset;
