@@ -285,7 +285,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return an iterator over the collection of threads
 	 */
 	private Iterator getThreadIterator() {
-		List threadList= (List) getThreadList().clone();
+		List threadList;
+		synchronized (fThreads) {
+			threadList= (List) getThreadList().clone();
+		}
 		Iterator threads = threadList.iterator();
 		return threads;
 	}
@@ -453,7 +456,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (isDisconnected()) {
 			return null;
 		}
-		getThreadList().add(jdiThread);
+		synchronized (fThreads) {
+			getThreadList().add(jdiThread);
+		}
 		jdiThread.fireCreationEvent();
 		return jdiThread;
 	}
@@ -462,7 +467,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IDebugTarget#getThreads()
 	 */
 	public IThread[] getThreads() {
-		return (IThread[])getThreadList().toArray(new IThread[0]);
+		synchronized (fThreads) {
+			return (IThread[])getThreadList().toArray(new IThread[0]);
+		}
 	}
 	
 	/**
@@ -1744,7 +1751,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			ThreadReference ref= ((ThreadDeathEvent)event).thread();
 			JDIThread thread= findThread(ref);
 			if (thread != null) {
-				getThreadList().remove(thread);
+				synchronized (fThreads) {
+					getThreadList().remove(thread);
+				}
 				thread.terminated();
 			}
 			return true;
