@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -947,7 +949,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected synchronized StackFrame getUnderlyingStackFrame() throws DebugException {
 		if (fStackFrame == null) {
-			setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(getDepth()));
+			int depth= getDepth();
+			if (depth == -1) {
+				// Depth is set to -1 when the thread clears its handles
+				// to this object. See Bug 47198.
+				throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+			}
+			setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(depth));
 		}
 		return fStackFrame;
 	}

@@ -455,6 +455,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						((JDIStackFrame)fStackFrames.get(i)).setDepth(i);	
 					}					
 				} else {
+					// If we're not preserving stack frames, set all
+					// old frame indices to -1. This allows obsolete
+					// stack frames to shortcut methods. For example, when
+					// a background label provider asks them for information
+					// after they're obsolete. See Bug 47198.
+					Iterator iter= fStackFrames.iterator();
+					while (iter.hasNext()) {
+						JDIStackFrame frame= (JDIStackFrame) iter.next();
+						frame.setDepth(-1);
+					}
 					fStackFrames = createAllStackFrames();
 				}
 			}
@@ -554,6 +564,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (IncompatibleThreadStateException e) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 		} catch (IndexOutOfBoundsException e) {
+			computeNewStackFrames();
+			fireChangeEvent(DebugEvent.CONTENT);
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.41"), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
