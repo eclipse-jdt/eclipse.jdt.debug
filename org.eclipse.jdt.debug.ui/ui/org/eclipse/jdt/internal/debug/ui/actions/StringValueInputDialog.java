@@ -14,7 +14,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
@@ -26,7 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class StringValueInputDialog extends ExpressionInputDialog {
 
-    private Label fTextLabel;
     private TextViewer fTextViewer;
     private Button fTextButton;
     private Button fEvaluationButton;
@@ -45,9 +44,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     private Group fTextGroup;
     
     private boolean fUseLiteralValue= true;
-    private static final String PREF_PREFIX = "STRING_VALUE_DIALOG"; //$NON-NLS-1$
-    private static final String PREF_USE_EVALUATION = PREF_PREFIX + ".USE_EVALUATION"; //$NON-NLS-1$
-    private static final String PREF_WRAP_TEXT = PREF_PREFIX + "STRING_VALUE"; //$NON-NLS-1$
+    private static final String USE_EVALUATION = "USE_EVALUATION"; //$NON-NLS-1$
+    private static final String WRAP_TEXT = "WRAP_TEXT"; //$NON-NLS-1$
 
     /**
      * @param parentShell
@@ -64,6 +62,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     protected void createInputArea(Composite parent) {
         super.createInputArea(parent);
         createRadioButtons(parent);
+        Dialog.applyDialogFont(parent);
     }
 
     /**
@@ -71,7 +70,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * (source viewer or simple text viewer) in the input area.
      */
     protected void populateInputArea() {
-        boolean useEvaluation = JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_USE_EVALUATION);
+        boolean useEvaluation = JDIDebugUIPlugin.getDefault().getDialogSettings().getBoolean(USE_EVALUATION);
         if (useEvaluation) {
             createSourceViewer();
             fUseLiteralValue= false;
@@ -87,12 +86,11 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * value.
      */
     private void createTextViewer() {
-        fTextLabel= new Label(fInputArea, SWT.WRAP);
-        fTextLabel.setText(ActionMessages.getString("StringValueInputDialog.0")); //$NON-NLS-1$
-        
         fTextGroup= new Group(fInputArea, SWT.NONE);
         fTextGroup.setLayout(new GridLayout());
         fTextGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        fTextGroup.setText(ActionMessages.getString("StringValueInputDialog.0")); //$NON-NLS-1$
+
         Composite parent= fTextGroup; 
         
         fTextViewer= new TextViewer(parent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -109,13 +107,15 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         }
         fWrapText= new Button(parent, SWT.CHECK);
         fWrapText.setText(ActionMessages.getString("StringValueInputDialog.4")); //$NON-NLS-1$
-        fWrapText.setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_WRAP_TEXT));
+        fWrapText.setSelection(JDIDebugUIPlugin.getDefault().getDialogSettings().getBoolean(WRAP_TEXT));
         updateWordWrap();
         fWrapText.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateWordWrap();
             }
         });
+        
+        Dialog.applyDialogFont(fInputArea);
     }
     
     private void updateWordWrap() {
@@ -163,10 +163,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             fTextGroup.dispose();
             fTextGroup= null;
         }
-        if (fTextLabel != null) {
-		    fTextLabel.dispose();
-		    fTextLabel= null;
-        }
+       
         if (fTextViewer != null) {
             StyledText textWidget = fTextViewer.getTextWidget();
             if (textWidget != null) {
@@ -202,9 +199,14 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * selection.
      */
     protected void okPressed() {
-        IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-        store.setValue(PREF_USE_EVALUATION, fEvaluationButton.getSelection());
-        store.setValue(PREF_WRAP_TEXT, fWrapText.getSelection());
+        IDialogSettings settings= JDIDebugUIPlugin.getDefault().getDialogSettings().getSection(getDialogSettingsSectionName());
+        if (settings == null) {
+        	settings= JDIDebugUIPlugin.getDefault().getDialogSettings().addNewSection(getDialogSettingsSectionName());
+        }
+        settings.put(USE_EVALUATION, fEvaluationButton.getSelection());
+        if (fWrapText != null) {
+        	settings.put(WRAP_TEXT, fWrapText.getSelection());
+        }
         super.okPressed();
     }
     
@@ -243,11 +245,10 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             super.dispose();
         }
     }
-    
-    protected String getHeightPreferenceKey() {
-        return "STRING_VALUE_DIALOG_HEIGHT"; //$NON-NLS-1$
-    }
-    protected String getWidthPreferenceKey() {
-        return "STRING_VALUE_DIALOG_WIDTH"; //$NON-NLS-1$
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#getDialogSettingsSectionName()
+	 */
+	protected String getDialogSettingsSectionName() {
+		return "STRING_VALUE_INPUT_DIALOG"; //$NON-NLS-1$
+	}
 }

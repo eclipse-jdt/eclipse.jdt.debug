@@ -12,13 +12,12 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.text.MessageFormat;
 import java.util.Map;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
@@ -26,7 +25,6 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.Document;
@@ -133,6 +131,7 @@ public class ExpressionInputDialog extends Dialog {
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         fInputArea.setLayout(layout);
+        Dialog.applyDialogFont(fInputArea);
     }
     
     /**
@@ -314,7 +313,6 @@ public class ExpressionInputDialog extends Dialog {
 	 * Persist the dialog size and store the user's input on OK is pressed.
 	 */
     protected void okPressed() {
-        persistDialogSize();
         fResult= getText();
 		dispose();
         super.okPressed();
@@ -337,14 +335,11 @@ public class ExpressionInputDialog extends Dialog {
     }
     
     /**
-     * Persists the current dialog dimensions in the preference store.
+     * Persists the current dialog dimensions in the dialog settings
      */
     protected void persistDialogSize() {
         if (fShellResized) {
-            Point size = getShell().getSize();
-            IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-            store.setValue(getWidthPreferenceKey(), size.x);
-            store.setValue(getHeightPreferenceKey(), size.y);
+        	DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
         }
     }
 
@@ -405,45 +400,35 @@ public class ExpressionInputDialog extends Dialog {
         refreshValidState();
     }
     
-    /**
-     * Initialize the dialog's dimensions from the persisted settings.
-     */
-    protected void initializeBounds() {
-        super.initializeBounds();
-        // Restore persisted shell size
-        IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-        int width = store.getInt(getWidthPreferenceKey());
-        int height= store.getInt(getHeightPreferenceKey());
-        if (width > 0 && height > 0) {
-            getShell().setSize(width, height);
-        }
-    }
-
-    /**
-     * Returns the preference key that should be used to store the
-     * dialog's width. This method is intended to be overridden by
-     * subclasses to store their dialog width in a separate preference.
-     * @return
-     */
-    protected String getWidthPreferenceKey() {
-        return "EXPRESSION_DIALOG_WIDTH"; //$NON-NLS-1$
-    }
-    
-    /**
-     * Returns the preference key that should be used to store the
-     * dialog's height. This method is intended to be overridden by
-     * subclasses to store their dialog height in a separate preference.
-     * @return
-     */
-    protected String getHeightPreferenceKey() {
-        return "EXPRESSION_DIALOG_HEIGHT"; //$NON-NLS-1$
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close() {
+    	persistDialogSize();
         dispose();
         return super.close();
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+	 */
+	protected Point getInitialLocation(Point initialSize) {
+		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		if (initialLocation != null) {
+			return initialLocation;
+		}
+		return super.getInitialLocation(initialSize);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		Point size = super.getInitialSize();
+		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
+	}
+	
+	protected String getDialogSettingsSectionName() {
+		return "EXPRESSION_INPUT_DIALOG"; //$NON-NLS-1$
+	}
 }
