@@ -242,10 +242,10 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	}
 	
 	/** 
-	 * @return Returns an identifing name for the source corresponding to the declaration of this type.
+	 * @return Returns an identifying name for the source corresponding to the declaration of this type.
 	 */
 	public String sourceName() throws AbsentInformationException {
-		throw new AbsentInformationException("No source name for Arrays");
+		throw new AbsentInformationException(JDIMessages.getString("ArrayTypeImpl.No_source_name_for_Arrays_1")); //$NON-NLS-1$
 	}
 	/**
 	 * @see com.sun.jdi.ReferenceType#visibleFields()

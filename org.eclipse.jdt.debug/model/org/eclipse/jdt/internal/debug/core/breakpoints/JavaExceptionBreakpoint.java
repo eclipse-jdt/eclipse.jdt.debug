@@ -514,7 +514,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#isInclusiveFiltered()
 	 */
 	public boolean isInclusiveFiltered() throws CoreException {
-		return ensureMarker().getAttribute(INCLUSION_FILTERS, "").length() > 0;
+		return ensureMarker().getAttribute(INCLUSION_FILTERS, "").length() > 0; //$NON-NLS-1$
 	}
 	
 	protected String[] getInclusionClassFilters() {

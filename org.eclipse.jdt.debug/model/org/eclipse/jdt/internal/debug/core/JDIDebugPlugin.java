@@ -133,8 +133,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		try {
 			// JDI clients before version 1.4 do not support
 			// hot code replace.
-			Class clazz = Class.forName("com.sun.jdi.VirtualMachine");
-			clazz.getMethod("canRedefineClasses", new Class[0]);
+			Class clazz = Class.forName("com.sun.jdi.VirtualMachine"); //$NON-NLS-1$
+			clazz.getMethod("canRedefineClasses", new Class[0]); //$NON-NLS-1$
 		} catch (NoSuchMethodException e) {
 			fJDIVersion= (float)1.3;
 		} catch (ClassNotFoundException e) {

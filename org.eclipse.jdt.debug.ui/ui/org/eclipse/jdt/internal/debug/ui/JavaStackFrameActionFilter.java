@@ -26,8 +26,8 @@ public class JavaStackFrameActionFilter implements IActionFilter {
 			if (name.equals("DropToFrameActionFilter") //$NON-NLS-1$
 				&& value.equals("supportsDropToFrame")) { //$NON-NLS-1$
 					return frame.supportsDropToFrame();
-			} else if (name.equals("ReceivingStackFrameActionFilter") 
-				&& value.equals("isReceivingType")) {
+			} else if (name.equals("ReceivingStackFrameActionFilter")  //$NON-NLS-1$
+				&& value.equals("isReceivingType")) { //$NON-NLS-1$
 					try {
 						return !frame.getReceivingTypeName().equals(frame.getDeclaringTypeName());
 					} catch (DebugException de) {

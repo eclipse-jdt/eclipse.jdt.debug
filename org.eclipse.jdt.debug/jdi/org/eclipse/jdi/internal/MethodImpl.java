@@ -251,7 +251,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 */
 	public List arguments() throws AbsentInformationException {
 		if (isNative()) {
-			throw new NativeMethodException("Attempt to retrieve argument information from a native method");
+			throw new NativeMethodException(JDIMessages.getString("MethodImpl.Attempt_to_retrieve_argument_information_from_a_native_method_1")); //$NON-NLS-1$
 		}
 		if (fArguments != null) {
 			return fArguments;
@@ -450,7 +450,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		try {
 			Integer lineNrInt = (Integer)codeIndexToLine().get(new Long(index));
 			if (lineNrInt == null) {
-				throw new InvalidCodeIndexException(MessageFormat.format("No valid location at the specified code index {0}", new Object[]{Long.toString(index)}));
+				throw new InvalidCodeIndexException(MessageFormat.format(JDIMessages.getString("MethodImpl.No_valid_location_at_the_specified_code_index_{0}_2"), new Object[]{Long.toString(index)})); //$NON-NLS-1$
 			}
 		} catch (AbsentInformationException e ) {
 		}
@@ -505,7 +505,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 */
 	public List variables() throws AbsentInformationException {
 		if (isNative()) {
-			throw new NativeMethodException("Attempt to retrieve variable information from a native method");
+			throw new NativeMethodException(JDIMessages.getString("MethodImpl.Attempt_to_retrieve_variable_information_from_a_native_method_3")); //$NON-NLS-1$
 		}
 		
 		if (fVariables != null) {

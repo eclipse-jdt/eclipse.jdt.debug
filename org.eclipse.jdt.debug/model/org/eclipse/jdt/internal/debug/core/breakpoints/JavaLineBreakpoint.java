@@ -262,7 +262,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		try {
 			locations= type.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException aie) {
-			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, MessageFormat.format("Absent Line Number information", new String[] {"Missing"}), null); 
+			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Absent_Line_Number_Information_1"), null);  //$NON-NLS-1$
 			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
 			if (handler != null) {
 				try {

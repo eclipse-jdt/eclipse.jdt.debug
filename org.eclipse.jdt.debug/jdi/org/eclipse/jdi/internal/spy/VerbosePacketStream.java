@@ -149,7 +149,7 @@ public class VerbosePacketStream extends PrintStream {
 			println();
 		} catch (UnableToParseDataException e) {
 			println("\n" + e.getMessage() + ':'); //$NON-NLS-1$
-			printDescription("Remaining data:");
+			printDescription(TcpIpSpyMessages.getString("VerbosePacketStream.Remaining_data__1")); //$NON-NLS-1$
 			byte[] data= e.getRemainingData();
 			if (data == null) {
 				printHex(packet.data());
@@ -2516,7 +2516,7 @@ public class VerbosePacketStream extends PrintStream {
 	
 	protected void printHex(byte[] b) {
 		if (b == null) {
-			println("NULL");
+			println("NULL"); //$NON-NLS-1$
 			return;
 		}
 		int i, length;
