@@ -104,7 +104,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private String fCompilationUnitName;
 	
-	private int fStartPosOffset;
+	private int fSnippetStartPosition;
+	private int fRunMethodStartOffset;
+	private int fRunMethodLength;
 	
 	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
@@ -130,8 +132,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return fCompilationUnitName;
 	}
 	
-	public int getStartPosition() {
-		return fStartPosOffset;
+	public int getSnippetStart() {
+		return fSnippetStartPosition;
+	}
+	public int getRunMethodStart() {
+		return fSnippetStartPosition - fRunMethodStartOffset;
+	}
+	public int getRunMethodLength() {
+		return fRunMethodLength;
 	}
 	
 	private int getPosition() {
@@ -181,13 +189,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		buffer.append(") throws Throwable {"); //$NON-NLS-1$
 		buffer.append('\n');
-		fStartPosOffset= buffer.length() - 2;
+		fSnippetStartPosition= buffer.length() - 2;
+		fRunMethodStartOffset= fSnippetStartPosition;
 		String codeSnippet= new String(fCodeSnippet).trim();
 		
 		buffer.append(codeSnippet);
 
 		buffer.append('\n');
 		buffer.append('}').append('\n');
+		fRunMethodLength= buffer.length();
 		return buffer;
 	}
 	
@@ -212,7 +222,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 		source.append('{').append('\n');
 		if (buffer != null) {
-			fStartPosOffset += source.length();
+			fSnippetStartPosition += source.length();
 			source.append(buffer);
 		}
 		for (Iterator iterator= list.iterator(); iterator.hasNext();) {
@@ -345,7 +355,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		
 		if (buffer != null) {
-			fStartPosOffset+= source.length();
+			fSnippetStartPosition+= source.length();
 		}
 		source.append(buildTypeBody(buffer, typeDeclaration.bodyDeclarations()));
 		
@@ -372,7 +382,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			source.append(";\n"); //$NON-NLS-1$
 		}
 		
-		fStartPosOffset += source.length();
+		fSnippetStartPosition += source.length();
 		source.append(buffer);
 		
 		for (Iterator iterator = compilationUnit.types().iterator(); iterator.hasNext();) {
@@ -536,7 +546,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				fSource.append(getQualifiedIdentifier(node.getName()));
 				fSource.append("()"); //$NON-NLS-1$
 				
-				fStartPosOffset+= fSource.length();
+				fSnippetStartPosition+= fSource.length();
 				fSource.append(source);
 				fSource.append(";}\n"); //$NON-NLS-1$
 				
@@ -559,7 +569,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				fSource.append(getQualifiedIdentifier(node.getName()));
 				fSource.append("()"); //$NON-NLS-1$
 				
-				fStartPosOffset+= fSource.length();
+				fSnippetStartPosition+= fSource.length();
 				fSource.append(source);
 				fSource.append(";\n"); //$NON-NLS-1$
 				
@@ -631,7 +641,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				}
 				
 				fSource.append("void ___eval() {\n"); //$NON-NLS-1$
-				fStartPosOffset+= fSource.length();
+				fSnippetStartPosition+= fSource.length();
 				fSource.append(source);
 				fSource.append("}\n"); //$NON-NLS-1$
 				

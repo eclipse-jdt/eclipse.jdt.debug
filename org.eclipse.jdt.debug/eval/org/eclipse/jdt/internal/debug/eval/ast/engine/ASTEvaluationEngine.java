@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
@@ -27,10 +28,20 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
+	
+	/**
+	 * Code snippets that return a value generate an exception from
+	 * the compiler because void methods cannot return a value. Since the
+	 * messages returned by the compilation unit only contain a string and
+	 * a position, we have to check if the message's string matches the
+	 * message for the "void methods cannot return a value" error.
+	 */
+	private static String fVoidMessageError= new DefaultProblemFactory(Locale.getDefault()).getLocalizedMessage(105, new String[0]);
 
 	private IJavaProject fProject;
 	
@@ -321,25 +332,33 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	private ICompiledExpression createExpressionFromAST(String snippet, EvaluationSourceGenerator mapper, CompilationUnit unit) {
 		Message[] messages= unit.getMessages();
 		if (messages.length != 0) {
-			boolean error= false;
+			boolean snippetError= false;
+			boolean runMethodError= false;
 			InstructionSequence errorSequence= new InstructionSequence(snippet);
-			int codeSnippetStartOffset= mapper.getStartPosition();
-			int codeSnippetEndOffset= codeSnippetStartOffset + mapper.getSnippet().length();
+			int codeSnippetStart= mapper.getSnippetStart();
+			int codeSnippetEnd= codeSnippetStart + mapper.getSnippet().length();
+			int runMethodStart= mapper.getRunMethodStart();
+			int runMethodEnd= runMethodStart + mapper.getRunMethodLength();
 			for (int i = 0; i < messages.length; i++) {
 				Message message= messages[i];
 				int errorOffset= message.getSourcePosition();
 				// TO DO: Internationalize "void method..." error message check
-				if (codeSnippetStartOffset <= errorOffset && errorOffset <= codeSnippetEndOffset && !EngineEvaluationMessages.getString("ASTEvaluationEngine.Void_methods_cannot_return_a_value_1").equals(message.getMessage())) { //$NON-NLS-1$
+				if (codeSnippetStart <= errorOffset && errorOffset <= codeSnippetEnd && !fVoidMessageError.equals(message.getMessage())) {
 					errorSequence.addError(message);
-					error = true;
+					snippetError = true;
+				} else if (runMethodStart <= errorOffset && errorOffset <= runMethodEnd && !fVoidMessageError.equals(message.getMessage())) {
+					runMethodError = true;
 				}
 			}
-			if (error) {
+			if (snippetError || runMethodError) {
+				if (runMethodError) {
+					errorSequence.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngineEvaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1"), 0)); //$NON-NLS-1$
+				}
 				return errorSequence;
 			}
 		}
 		
-		ASTInstructionCompiler visitor = new ASTInstructionCompiler(mapper.getStartPosition(), snippet);
+		ASTInstructionCompiler visitor = new ASTInstructionCompiler(mapper.getSnippetStart(), snippet);
 		unit.accept(visitor);
 
 		return visitor.getInstructions();

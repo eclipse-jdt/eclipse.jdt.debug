@@ -38,6 +38,8 @@ public class BinaryBasedSourceGenerator {
 	
 	private StringBuffer fSource;
 	
+	private int fRunMethodStartOffset;
+	private int fRunMethodLength;
 	private int fCodeSnippetPosition;
 	
 	private String fCompilationUnitName;
@@ -108,9 +110,11 @@ public class BinaryBasedSourceGenerator {
 		source.append(") throws Throwable {"); //$NON-NLS-1$
 		source.append('\n');
 		fCodeSnippetPosition= source.length();
+		fRunMethodStartOffset= fCodeSnippetPosition;
 
 		source.append('\n');
 		source.append('}').append('\n');
+		fRunMethodLength= source.length();
 		return source;
 	}
 	
@@ -427,8 +431,16 @@ public class BinaryBasedSourceGenerator {
 		return fCompilationUnitName;
 	}
 	
-	public int getBlockStar() {
+	public int getSnippetStart() {
 		return fCodeSnippetPosition - 2;
+	}
+	
+	public int getRunMethodStart() {
+		return fCodeSnippetPosition - fRunMethodStartOffset;
+	}
+	
+	public int getRunMethodLength() {
+		return fRunMethodLength;
 	}
 
 }

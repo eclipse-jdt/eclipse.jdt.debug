@@ -14,13 +14,13 @@ Contributors:
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class EngineEvaluationMessages {
+public class EvaluationEngineMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.eval.ast.engine.EngineEvaluationMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.eval.ast.engine.EvaluationEngineMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private EngineEvaluationMessages() {
+	private EvaluationEngineMessages() {
 	}
 
 	public static String getString(String key) {

@@ -57,7 +57,9 @@ public class EvaluationSourceGenerator {
 	
 	private String fSource;
 	private String fCompilationUnitName;
-	private int fStartPosition;
+	private int fSnippetStartPosition;
+	private int fRunMethodStartPosition;
+	private int fRunMethodLength;
 	
 	/**
 	 * Rebuild source in presence of external local variables
@@ -71,20 +73,38 @@ public class EvaluationSourceGenerator {
 	}
 
 	protected String getCompleteSnippet(String codeSnippet) {
-		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
 
-		if (isAnExpression) {
+		if (isExpression(codeSnippet)) {
 			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
 		}
 		return codeSnippet;
+	}
+	
+	protected boolean isExpression(String codeSnippet) {
+		return codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
 	}
 	
 	public String getCompilationUnitName() {
 		return fCompilationUnitName;
 	}
 	
-	public int getStartPosition() {
-		return fStartPosition;
+	public int getSnippetStart() {
+		return fSnippetStartPosition;
+	}
+	public int getRunMethodStart() {
+		return fRunMethodStartPosition;
+	}
+	public int getRunMethodLength() {
+		return fRunMethodLength;
+	}
+	protected void setSnippetStart(int position) {
+		fSnippetStartPosition= position;
+	}
+	protected void setRunMethodStart(int position) {
+		fRunMethodStartPosition= position;
+	}
+	protected void setRunMethodLength(int length) {
+		fRunMethodLength= length;
 	}
 	
 	public String getSnippet() {
@@ -98,13 +118,17 @@ public class EvaluationSourceGenerator {
 		
 		setSource(visitor.getSource());
 		setCompilationUnitName(visitor.getCompilationUnitName());
-		setStartPosition(visitor.getStartPosition());
+		setSnippetStart(visitor.getSnippetStart());
+		setRunMethodStart(visitor.getRunMethodStart());
+		setRunMethodLength(visitor.getRunMethodLength());
 	}
 	
 	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) throws DebugException {
 		
 		setCompilationUnitName(objectToEvaluationSourceMapper.getCompilationUnitName());
-		setStartPosition(objectToEvaluationSourceMapper.getBlockStar());
+		setSnippetStart(objectToEvaluationSourceMapper.getSnippetStart());
+		setRunMethodStart(objectToEvaluationSourceMapper.getRunMethodStart());
+		setRunMethodLength(fCodeSnippet.length() + objectToEvaluationSourceMapper.getRunMethodLength());
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
@@ -210,10 +234,6 @@ public class EvaluationSourceGenerator {
 	
 	protected void setCompilationUnitName(String name) {
 		fCompilationUnitName= name;
-	}
-	
-	protected void setStartPosition(int position) {
-		fStartPosition= position;
 	}
 	
 	protected void setSource(String source) {
