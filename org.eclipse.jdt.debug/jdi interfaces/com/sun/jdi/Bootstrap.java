@@ -9,13 +9,7 @@ import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
-public class Bootstrap
+public interface Bootstrap
 {
-	private static org.eclipse.jdi.internal.VirtualMachineManagerImpl fVirtualMachineManager;
-
-	public Bootstrap() { }
-	
-	public static synchronized com.sun.jdi.VirtualMachineManager virtualMachineManager() {
-		return org.eclipse.jdi.Bootstrap.virtualMachineManager();
-	}
+	public VirtualMachineManager virtualMachineManager();
 }
