@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,7 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
@@ -47,25 +49,24 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
-		Composite comp = new Composite(parent, SWT.NONE);
-		setControl(comp);
-		GridLayout topLayout = new GridLayout();
-		comp.setLayout(topLayout);
-		topLayout.numColumns = 2;
-		topLayout.marginWidth= 0;
-		topLayout.marginHeight= 0;
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gd);
+		Composite comp = new Composite(parent, parent.getStyle());
+		GridLayout layout = new GridLayout();
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setFont(font);
 		
-		createVerticalSpacer(comp, 2);
+		Group group = new Group(comp, SWT.NONE);
+		setControl(group);
+		GridLayout topLayout = new GridLayout();
+		group.setLayout(topLayout);
+		topLayout.numColumns = 2;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(gd);
+		group.setFont(font);
 		
-		Label javaCommandLabel= new Label(comp, SWT.NONE);
-		javaCommandLabel.setText(JREMessages.getString("AbstractJavaCommandTab.1"));  //$NON-NLS-1$
-		javaCommandLabel.setFont(font);
+		group.setText(JREMessages.getString("AbstractJavaCommandTab.1"));  //$NON-NLS-1$
 		
-		fDefaultButton = new Button(comp, SWT.RADIO);
+		fDefaultButton = new Button(group, SWT.RADIO);
 		fDefaultButton.setFont(font);
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
@@ -78,7 +79,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fSpecificButton = new Button(comp, SWT.RADIO);
+		fSpecificButton = new Button(group, SWT.RADIO);
 		fSpecificButton.setFont(font);
 		gd = new GridData(GridData.BEGINNING);
 		fSpecificButton.setLayoutData(gd);
@@ -90,7 +91,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 				
-		fJavaCommandText= new Text(comp, SWT.SINGLE | SWT.BORDER);
+		fJavaCommandText= new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJavaCommandText.setLayoutData(gd);
 		fJavaCommandText.setFont(font);
@@ -99,8 +100,8 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
-		setControl(comp);
+		ControlAccessibleListener.addListener(fJavaCommandText, fSpecificButton.getText());
+		setControl(group);
 	}
 
 	protected void handleSelection() {

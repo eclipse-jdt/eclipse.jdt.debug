@@ -22,13 +22,16 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
@@ -156,13 +159,9 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fWorkingDirBlock.createControl(comp);		
 		fWorkingDirBlock.initializeFrom(fConfig);
 		
-		createSeparator(comp);
-		
 		fVMArgumentsBlock.setLaunchConfigurationDialog(fProxy);
 		fVMArgumentsBlock.createControl(comp);
 		fVMArgumentsBlock.initializeFrom(fConfig);		
-		
-		createSeparator(comp);
 		
 		fJRETab.setLaunchConfigurationDialog(fProxy);
 		fJRETab.setVMSpecificArgumentsVisible(false);
@@ -170,15 +169,6 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fJRETab.initializeFrom(fConfig);
 		
 		return comp;
-	}
-	
-	/**
-	 * @param comp
-	 */
-	private void createSeparator(Composite comp) {
-		Label spacer = new Label(comp, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		spacer.setLayoutData(data);
 	}
 
 	/**

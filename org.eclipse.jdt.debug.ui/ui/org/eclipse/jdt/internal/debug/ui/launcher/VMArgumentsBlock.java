@@ -16,6 +16,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -27,7 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -36,7 +37,6 @@ import org.eclipse.swt.widgets.Text;
 public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 
 	// VM arguments widgets
-	protected Label fVMArgumentsLabel;
 	protected Text fVMArgumentsText;
 	
 	/**
@@ -45,20 +45,16 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
-		Composite comp = new Composite(parent, SWT.NONE);
-		setControl(comp);
+		Group group = new Group(parent, SWT.NONE);
+		setControl(group);
 		GridLayout topLayout = new GridLayout();
-		topLayout.marginHeight = 0;
-		topLayout.marginWidth = 0;
-		comp.setLayout(topLayout);	
+		group.setLayout(topLayout);	
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		comp.setLayoutData(gd);
-				
-		fVMArgumentsLabel = new Label(comp, SWT.NONE);
-		fVMArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
-		fVMArgumentsLabel.setFont(font);
+		group.setLayoutData(gd);
+		group.setFont(font);
+		group.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
 		
-		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
+		fVMArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
@@ -69,8 +65,9 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});	
+		ControlAccessibleListener.addListener(fVMArgumentsText, group.getText());
 				
-		Button pgrmArgVariableButton = createPushButton(comp, LauncherMessages.getString("VMArgumentsBlock.4"), null); //$NON-NLS-1$
+		Button pgrmArgVariableButton = createPushButton(group, LauncherMessages.getString("VMArgumentsBlock.4"), null); //$NON-NLS-1$
 		pgrmArgVariableButton.setFont(font);
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
@@ -135,7 +132,6 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 	}	
 	
 	public void setEnabled(boolean enabled) {
-		fVMArgumentsLabel.setEnabled(enabled);
 		fVMArgumentsText.setEnabled(enabled);
 	}
 }

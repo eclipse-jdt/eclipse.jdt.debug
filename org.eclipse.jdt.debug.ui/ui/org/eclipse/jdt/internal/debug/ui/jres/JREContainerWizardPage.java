@@ -129,6 +129,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
+		composite.setFont(parent.getFont());
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
 		fJREBlock.setTitle(JREMessages.getString("JREContainerWizardPage.3")); //$NON-NLS-1$

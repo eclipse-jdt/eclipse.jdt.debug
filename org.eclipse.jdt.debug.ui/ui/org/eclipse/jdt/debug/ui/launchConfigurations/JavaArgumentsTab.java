@@ -19,6 +19,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
@@ -35,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -79,22 +81,26 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
-		Composite comp = new Composite(parent, SWT.NONE);
+		Composite comp = new Composite(parent, parent.getStyle());
+		GridLayout layout = new GridLayout(1, true);
+		comp.setLayout(layout);
 		comp.setFont(font);
+		
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		comp.setLayoutData(gd);
 		setControl(comp);
 		setHelpContextId();
-		GridLayout topLayout = new GridLayout();
-		comp.setLayout(topLayout);		
-		GridData gd;
 		
-		createVerticalSpacer(comp, 1);
-				
-		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
-		fPrgmArgumentsLabel.setFont(font);
+		Group group = new Group(comp, SWT.NONE);
+		group.setFont(font);
+		layout = new GridLayout();
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		String controlName = (LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
+		group.setText(controlName);
+		
+		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
@@ -105,8 +111,10 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		ControlAccessibleListener.addListener(fPrgmArgumentsText, group.getText());
 		
-		Button pgrmArgVariableButton = createPushButton(comp, LauncherMessages.getString("JavaArgumentsTab.5"), null);  //$NON-NLS-1$
+		String buttonLabel = LauncherMessages.getString("JavaArgumentsTab.5");  //$NON-NLS-1$
+		Button pgrmArgVariableButton = createPushButton(group, buttonLabel, null); 
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -122,12 +130,8 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			
 		});
 		
-		createSeparator(comp, 1);
-		
 		fVMArgumentsBlock.createControl(comp);
-				
-		createSeparator(comp, 1);
-						
+		
 		fWorkingDirectoryBlock.createControl(comp);		
 	}
 	

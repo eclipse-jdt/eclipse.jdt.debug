@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.DefineSystemLibraryQuickFix;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -40,7 +41,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
@@ -164,32 +165,31 @@ public class JREsComboBlock implements ISelectionProvider {
 	 * @param anscestor containing control
 	 */
 	public void createControl(Composite ancestor) {
-		
-		Composite parent= new Composite(ancestor, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
 		Font font = ancestor.getFont();
-		parent.setFont(font);	
-		fControl = parent;	
+		Composite comp = new Composite(ancestor, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		comp.setLayout(new GridLayout());
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fControl = comp;
+		comp.setFont(font);
+		
+		Group group= new Group(comp, SWT.NULL);
+		layout= new GridLayout();
+		layout.numColumns= 3;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setFont(font);	
 		
 		GridData data;
 		
 		if (fTitle == null) {
 			fTitle = JREMessages.getString("JREsComboBlock.3"); //$NON-NLS-1$
 		}
-		Label label = new Label(parent, SWT.NONE);
-		label.setFont(font);
-		label.setText(fTitle);
-		data = new GridData(GridData.BEGINNING);
-		data.horizontalSpan = 3;
-		label.setLayoutData(data);
+		group.setText(fTitle);
 		
 		// display a 'use default JRE' check box
 		if (fDefaultDescriptor != null) {
-			fDefaultButton = new Button(parent, SWT.RADIO);
+			fDefaultButton = new Button(group, SWT.RADIO);
 			fDefaultButton.setText(fDefaultDescriptor.getDescription());
 			fDefaultButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -204,7 +204,7 @@ public class JREsComboBlock implements ISelectionProvider {
 			fDefaultButton.setFont(font);
 		}
 		
-		fSpecificButton = new Button(parent, SWT.RADIO);
+		fSpecificButton = new Button(group, SWT.RADIO);
 		if (fSpecificDescriptor != null) {
 			fSpecificButton.setText(fSpecificDescriptor.getDescription());
 		} else {
@@ -223,11 +223,12 @@ public class JREsComboBlock implements ISelectionProvider {
 		data = new GridData(GridData.BEGINNING);
 		fSpecificButton.setLayoutData(data);
 		
-		fCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fCombo = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fCombo.setFont(font);
 		data= new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 1;
 		fCombo.setLayoutData(data);
+		ControlAccessibleListener.addListener(fCombo, fSpecificButton.getText());
 		
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -235,7 +236,7 @@ public class JREsComboBlock implements ISelectionProvider {
 			}
 		});
 				
-		fManageButton = createPushButton(parent, JREMessages.getString("JREsComboBlock.2")); //$NON-NLS-1$
+		fManageButton = createPushButton(group, JREMessages.getString("JREsComboBlock.2")); //$NON-NLS-1$
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IVMInstall oldSelection = getJRE();

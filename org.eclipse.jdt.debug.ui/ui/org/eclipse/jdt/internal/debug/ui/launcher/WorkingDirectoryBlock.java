@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
  
 import java.io.File;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -24,9 +25,11 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
@@ -40,7 +43,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -51,8 +54,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 			
-	// Working directory UI widgets
-	protected Label fWorkingDirLabel;
+
 	
 	// Local directory
 	protected Button fLocalDirButton;
@@ -112,56 +114,51 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 				
-		Composite workingDirComp = new Composite(parent, SWT.NONE);
-		WorkbenchHelp.setHelp(workingDirComp, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);		
+		Group group = new Group(parent, SWT.NONE);
+		WorkbenchHelp.setHelp(group, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);		
 		GridLayout workingDirLayout = new GridLayout();
 		workingDirLayout.numColumns = 4;
-		workingDirLayout.marginHeight = 0;
-		workingDirLayout.marginWidth = 0;
-		workingDirComp.setLayout(workingDirLayout);
+		group.setLayout(workingDirLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		workingDirComp.setLayoutData(gd);
-		workingDirComp.setFont(font);
-		setControl(workingDirComp);
+		group.setLayoutData(gd);
+		group.setFont(font);
+		setControl(group);
 		
-		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText(LauncherMessages.getString("WorkingDirectoryBlock.12")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 4;
-		fWorkingDirLabel.setLayoutData(gd);
-		fWorkingDirLabel.setFont(font);
+		group.setText(LauncherMessages.getString("WorkingDirectoryBlock.12")); //$NON-NLS-1$
 		
-		fLocalDirButton = createRadioButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.&Local_directory__1")); //$NON-NLS-1$
+		fLocalDirButton = createRadioButton(group, LauncherMessages.getString("WorkingDirectoryBlock.&Local_directory__1")); //$NON-NLS-1$
 		fLocalDirButton.addSelectionListener(fListener);
 		
-		fWorkingDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
+		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);
 		fWorkingDirText.addModifyListener(fListener);
+		ControlAccessibleListener.addListener(fWorkingDirText, fLocalDirButton.getText());
 		
-		fWorkingDirBrowseButton = createPushButton(workingDirComp, LauncherMessages.getString("JavaArgumentsTab.&Browse_3"), null); //$NON-NLS-1$
+		fWorkingDirBrowseButton = createPushButton(group, LauncherMessages.getString("JavaArgumentsTab.&Browse_3"), null); //$NON-NLS-1$
 		fWorkingDirBrowseButton.addSelectionListener(fListener);
 		
-		fWorkingDirVariablesButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.17"), null); //$NON-NLS-1$
+		fWorkingDirVariablesButton = createPushButton(group, LauncherMessages.getString("WorkingDirectoryBlock.17"), null); //$NON-NLS-1$
 		fWorkingDirVariablesButton.addSelectionListener(fListener);		
 		
-		fWorkspaceDirButton = createRadioButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.Works&pace__2")); //$NON-NLS-1$
+		fWorkspaceDirButton = createRadioButton(group, LauncherMessages.getString("WorkingDirectoryBlock.Works&pace__2")); //$NON-NLS-1$
 		fWorkspaceDirButton.addSelectionListener(fListener);		
 		
-		fWorkspaceDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
+		fWorkspaceDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkspaceDirText.setLayoutData(gd);
 		fWorkspaceDirText.setFont(font);
 		fWorkspaceDirText.addModifyListener(fListener);
+		ControlAccessibleListener.addListener(fWorkspaceDirText, fWorkspaceDirButton.getText());
 		
-		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.B&rowse..._3"), null); //$NON-NLS-1$
+		fWorkspaceDirBrowseButton = createPushButton(group, LauncherMessages.getString("WorkingDirectoryBlock.B&rowse..._3"), null); //$NON-NLS-1$
 		fWorkspaceDirBrowseButton.addSelectionListener(fListener);		
 
-		fWorkspaceDirVariablesButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.17"), null); //$NON-NLS-1$
+		fWorkspaceDirVariablesButton = createPushButton(group, LauncherMessages.getString("WorkingDirectoryBlock.17"), null); //$NON-NLS-1$
 		fWorkspaceDirVariablesButton.addSelectionListener(fListener);
 		
-		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
+		fUseDefaultWorkingDirButton = new Button(group,SWT.CHECK);
 		fUseDefaultWorkingDirButton.setText(LauncherMessages.getString("JavaArgumentsTab.Use_de&fault_working_directory_4")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 4;
