@@ -59,4 +59,11 @@ public class JDIVoidValue extends JDIValue {
 	public IJavaType getJavaType() throws DebugException {
 		return new JDIVoidType((JDIDebugTarget)getDebugTarget());
 	}
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "void"; //$NON-NLS-1$
+	}
+
 }

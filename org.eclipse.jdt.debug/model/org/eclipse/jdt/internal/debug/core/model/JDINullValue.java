@@ -74,4 +74,11 @@ public class JDINullValue extends JDIValue {
 		return getClass().hashCode();
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "null"; //$NON-NLS-1$
+	}
+
 }
