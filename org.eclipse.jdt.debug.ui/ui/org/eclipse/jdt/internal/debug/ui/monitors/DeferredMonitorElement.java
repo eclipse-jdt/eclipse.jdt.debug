@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementWorkbenchAdapter;
+import org.eclipse.debug.ui.DebugElementWorkbenchAdapter;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
