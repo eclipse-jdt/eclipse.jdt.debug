@@ -1,10 +1,13 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaModelException;
@@ -64,6 +67,15 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 				
 			} else {
 				member= getMember(selection);
+				try {
+					IJavaProject project= member.getJavaProject();
+					if (member != null && (!member.exists() || (project == null || !project.isOnClasspath(member)))) {
+						member= null;
+					}
+				} catch (JavaModelException e) {
+					JDIDebugUIPlugin.log(e);
+					member= null;
+				}
 			}
 		}
 		

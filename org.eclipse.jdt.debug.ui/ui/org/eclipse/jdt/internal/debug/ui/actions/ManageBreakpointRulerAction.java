@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -226,18 +229,22 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						}
 						IJavaElement e = unit.getElementAt(line.getOffset());
 						if (e instanceof IType) {
-							type = (IType)e;
-						} else if (e != null && e instanceof IMember) {
-							type = ((IMember)e).getDeclaringType();
+							type= (IType)e;
+						} else if (e instanceof IMember) {
+							type= ((IMember)e).getDeclaringType();
 						}
 					}
 				}
+				
 				if (type != null) {
-					if (JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(),lineNumber) == null) {
-						Map attributes = new HashMap(10);
-						JavaCore.addJavaElementMarkerAttributes(attributes, type);
-						attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier()); //$NON-NLS-1$
-						JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
+					IJavaProject project= type.getJavaProject();
+					if (type.exists() && project != null && project.isOnClasspath(type)) {
+						if (JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(),lineNumber) == null) {
+							Map attributes = new HashMap(10);
+							JavaCore.addJavaElementMarkerAttributes(attributes, type);
+							attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier()); //$NON-NLS-1$
+							JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
+						}
 					}
 				}
 			}
