@@ -66,7 +66,7 @@ public class GreaterOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("GreaterOperator._>___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("GreaterOperator._>___operator_1"); //$NON-NLS-1$
 	}
 
 }

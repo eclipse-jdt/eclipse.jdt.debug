@@ -36,7 +36,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return EvalMessages.getString("InstanceOfOperator._instanceof___operator_3"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("InstanceOfOperator._instanceof___operator_3"); //$NON-NLS-1$
 	}
 
 }

@@ -41,7 +41,7 @@ public class UnaryMinusOperator extends UnaryOperator {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return EvalMessages.getString("UnaryMinusOperator.unary_minus_operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("UnaryMinusOperator.unary_minus_operator_1"); //$NON-NLS-1$
 	}
 
 }

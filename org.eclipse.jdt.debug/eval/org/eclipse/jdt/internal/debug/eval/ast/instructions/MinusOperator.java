@@ -60,7 +60,7 @@ public class MinusOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("MinusOperator._-___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("MinusOperator._-___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -17,7 +17,7 @@ public class PushNull extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("PushNull.push___null__1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("PushNull.push___null__1"); //$NON-NLS-1$
 	}
 }
 

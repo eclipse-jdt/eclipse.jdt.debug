@@ -22,7 +22,7 @@ public class NoOp extends CompoundInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return EvalMessages.getString("NoOp.no_op_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("NoOp.no_op_1"); //$NON-NLS-1$
 	}
 
 }

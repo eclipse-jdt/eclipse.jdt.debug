@@ -21,7 +21,7 @@ public class PushFloat extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return EvalMessages.getString("PushFloat.push__1") + fValue; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("PushFloat.push__1") + fValue; //$NON-NLS-1$
 	}
 
 }

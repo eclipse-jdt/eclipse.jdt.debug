@@ -47,7 +47,7 @@ public class PostfixPlusPlusOperator extends XfixOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("PostfixPlusPlusOperator.postfix___++___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("PostfixPlusPlusOperator.postfix___++___operator_1"); //$NON-NLS-1$
 	}
 
 }

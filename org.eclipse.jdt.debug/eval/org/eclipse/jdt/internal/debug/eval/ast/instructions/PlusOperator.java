@@ -103,7 +103,7 @@ public class PlusOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("PlusOperator._+___operator_2"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("PlusOperator._+___operator_2"); //$NON-NLS-1$
 	}
 
 }

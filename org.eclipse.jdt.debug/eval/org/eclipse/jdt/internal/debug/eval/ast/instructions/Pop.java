@@ -19,7 +19,7 @@ public class Pop extends SimpleInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return EvalMessages.getString("Pop.pop_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("Pop.pop_1"); //$NON-NLS-1$
 	}
 
 }

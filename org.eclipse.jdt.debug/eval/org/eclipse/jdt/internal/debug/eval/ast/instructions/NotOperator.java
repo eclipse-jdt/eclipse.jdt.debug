@@ -22,7 +22,7 @@ public class NotOperator extends UnaryOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("NotOperator._!___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("NotOperator._!___operator_1"); //$NON-NLS-1$
 	}
 
 }

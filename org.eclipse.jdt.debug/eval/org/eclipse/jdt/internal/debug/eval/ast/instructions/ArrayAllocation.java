@@ -85,7 +85,7 @@ public class ArrayAllocation extends ArrayInstruction {
 	}		
 
 	public String toString() {
-		return EvalMessages.getString("ArrayAllocation.array_allocation_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("ArrayAllocation.array_allocation_1"); //$NON-NLS-1$
 	}
 
 }

@@ -29,7 +29,7 @@ public class ConditionalJump extends Jump {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return EvalMessages.getString("ConditionalJump.conditional_jump_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("ConditionalJump.conditional_jump_1"); //$NON-NLS-1$
 	}
 
 }

@@ -60,7 +60,7 @@ public class OrOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("OrOperator._|___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("OrOperator._|___operator_1"); //$NON-NLS-1$
 	}
 
 }

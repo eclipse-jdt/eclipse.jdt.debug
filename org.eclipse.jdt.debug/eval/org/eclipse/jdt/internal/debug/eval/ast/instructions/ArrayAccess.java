@@ -27,7 +27,7 @@ public class ArrayAccess extends ArrayInstruction {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("ArrayAccess.array_access_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("ArrayAccess.array_access_1"); //$NON-NLS-1$
 	}
 }
 

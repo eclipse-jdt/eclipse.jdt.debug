@@ -27,7 +27,7 @@ public class PushType extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return EvalMessages.getString("PushType.push_type__1") + fTypeName; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("PushType.push_type__1") + fTypeName; //$NON-NLS-1$
 	}
 
 	

@@ -44,7 +44,7 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("ArrayInitializerInstruction.array_initializer_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("ArrayInitializerInstruction.array_initializer_1"); //$NON-NLS-1$
 	}
 
 }

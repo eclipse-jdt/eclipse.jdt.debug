@@ -59,7 +59,7 @@ public class XorOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return EvalMessages.getString("XorOperator._^___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("XorOperator._^___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -85,7 +85,7 @@ public class Cast extends CompoundInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return EvalMessages.getString("Cast.cast_3"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.getString("Cast.cast_3"); //$NON-NLS-1$
 	}
 
 }
