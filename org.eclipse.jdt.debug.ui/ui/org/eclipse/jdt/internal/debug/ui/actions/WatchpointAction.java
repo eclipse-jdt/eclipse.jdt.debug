@@ -115,19 +115,19 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 	}
 	
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		final Display display= Display.getDefault();
@@ -156,6 +156,5 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 	protected IBreakpoint getBreakpoint(IMarker marker) {
 		return getBreakpointManager().getBreakpoint(marker);
 	}
-
 }
 
