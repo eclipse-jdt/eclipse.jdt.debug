@@ -19,9 +19,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
@@ -179,21 +181,33 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 	 */
 	protected List searchForDeclaringType(IJavaFieldVariable variable) {
 		List types= new ArrayList();
-		ILaunchConfiguration configuration= variable.getDebugTarget().getLaunch().getLaunchConfiguration();
-		if (configuration == null) {
+		ILaunch launch = variable.getDebugTarget().getLaunch();
+		if (launch == null) {
 			return types;
 		}
-		String projectName= null;
-		try {
-			projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
-		} catch (CoreException e) {
-			return types;
-		}
-		if (projectName == null) {
-			return types;
-		}
+		
+		
+		ILaunchConfiguration configuration= launch.getLaunchConfiguration();
+		IJavaProject javaProject = null;
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IJavaProject javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
+		if (configuration == null) {
+			Object element = launch.getElement();
+			if (element instanceof IJavaElement) {
+				javaProject = ((IJavaElement)element).getJavaProject();
+			}
+		} else {
+			try {
+				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+				if (projectName == null) {
+					return types;
+				}	
+				javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
+			} catch (CoreException e) {
+				return types;
+			}
+		}
+
+
 		SearchEngine engine= new SearchEngine();
 		IJavaSearchScope scope= engine.createJavaSearchScope(new IJavaProject[] {javaProject}, true);
 		String declaringType= null;
