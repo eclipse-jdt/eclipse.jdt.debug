@@ -86,6 +86,10 @@ public class EvaluationSourceGenerator {
 	public int getStartPosition() {
 		return fStartPosition;
 	}
+	
+	public String getSnippet() {
+		return fCodeSnippet;
+	}
 
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());

@@ -324,7 +324,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			boolean error= false;
 			InstructionSequence errorSequence= new InstructionSequence(snippet);
 			int codeSnippetStartOffset= mapper.getStartPosition();
-			int codeSnippetEndOffset= codeSnippetStartOffset + snippet.length();
+			int codeSnippetEndOffset= codeSnippetStartOffset + mapper.getSnippet().length();
 			for (int i = 0; i < messages.length; i++) {
 				Message message= messages[i];
 				int errorOffset= message.getSourcePosition();
