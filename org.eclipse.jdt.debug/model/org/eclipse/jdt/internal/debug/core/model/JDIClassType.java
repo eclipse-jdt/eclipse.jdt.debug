@@ -21,7 +21,6 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 /**
@@ -37,7 +36,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		super(target, type);
 	}
 
-	/*
+	/**
 	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
 	 */
 	public IJavaObject newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
@@ -66,7 +65,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see IJavaType#sendMessage(String, String, IJavaValue[], IJavaThread)
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
@@ -115,7 +114,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		}
 		return arguments;	
 	}
-	/*
+	/**
 	 * @see IJavaClassType#getField(String)
 	 */
 	public IJavaVariable getField(String name) throws DebugException {
@@ -131,7 +130,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see IJavaClassType#getSuperclass()
 	 */
 	public IJavaClassType getSuperclass() throws DebugException {
