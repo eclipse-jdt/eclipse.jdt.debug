@@ -602,7 +602,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		} else if (fReentering) {
 			fReentering= false;
 			try {
-				stepInto();
+				stepInto0();
 			} catch (DebugException e) {
 				abortDropAndStep();
 				internalError(e);
@@ -756,6 +756,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!canStepInto()) {
 			return;
 		}
+		stepInto0();
+	}
+	
+	private void stepInto0() throws DebugException {
 		step(StepRequest.STEP_INTO);
 	}
 
