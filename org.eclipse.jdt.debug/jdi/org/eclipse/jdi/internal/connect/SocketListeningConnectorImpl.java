@@ -98,7 +98,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 */
 	public String startListening(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
-		String result = ConnectMessages.getString("SocketListeningConnectorImpl.ListeningConnector_Socket_Port=_9") + fPort; //$NON-NLS-1$
+		String result = ConnectMessages.getString("SocketListeningConnectorImpl.ListeningConnector_Socket_Port") + fPort; //$NON-NLS-1$
 		try {
 			((SocketTransportImpl)fTransport).listen(fPort);
 		} catch (IllegalArgumentException e) {

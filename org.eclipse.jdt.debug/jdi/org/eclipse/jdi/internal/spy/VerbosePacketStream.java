@@ -1451,7 +1451,7 @@ public class VerbosePacketStream extends PrintStream {
 			byte typeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			printRefTypeTag(typeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.getString("VerbosePacketStream.Type_id_43"), typeId); //$NON-NLS-1$
+			printlnReferenceTypeId(TcpIpSpyMessages.getString("VerbosePacketStream.Type_id__43"), typeId); //$NON-NLS-1$
 		}
 	}
 	
