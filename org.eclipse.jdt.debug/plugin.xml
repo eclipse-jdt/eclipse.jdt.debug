@@ -44,6 +44,11 @@
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint">
 	</breakpoint>
 	<breakpoint
+		id="javaTargetPatternBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint">
+	</breakpoint>	
+	<breakpoint
 		id="javaExceptionBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint">
@@ -83,6 +88,13 @@
 	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
 	<persistent value="true"/>
 	<attribute name="org.eclipse.jdt.debug.core.pattern"/>
+	<attribute name="org.eclipse.jdt.debug.core.sourceName"/>
+</extension>	
+
+<extension id="javaTargetPatternBreakpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
+	<persistent value="true"/>
+	<attribute name="org.eclipse.jdt.debug.core.sourceName"/>
 </extension>	
 
 <extension id="javaExceptionBreakpointMarker" point="org.eclipse.core.resources.markers">

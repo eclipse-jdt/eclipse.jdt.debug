@@ -326,7 +326,7 @@ public class JDIDebugPlugin extends Plugin {
 	 * @param type the type the breakpoint is about to be installed in
 	 * @return whether the breakpoint should be installed
 	 */
-	public boolean fireInstalling(IJavaDebugTarget target, IJavaPatternBreakpoint breakpoint, IJavaType type) {
+	public boolean fireInstalling(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 		Object[] listeners = fBreakpointListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];

@@ -30,7 +30,7 @@ public interface IJavaBreakpointListener {
 	public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint);
 	
 	/**
-	 * Notification that the given pattern breakpoint is about to be installed in
+	 * Notification that the given breakpoint is about to be installed in
 	 * the specified target, in the specified type. Returns whether the
 	 * installation should proceed. If any registered listener returns
 	 * <code>false</code> the breakpoint is not installed in the given
@@ -39,11 +39,12 @@ public interface IJavaBreakpointListener {
 	 * @param target Java debug target
 	 * @param breakpoint Java breakpoint
 	 * @param type the type (class or interface) the breakpoint is about to be installed in 
+	 *  or <code>null</code> if the given breakpoint is not installed in a specific type
 	 *  (one of <code>IJavaClassType</code>, <code>IJavaInterfaceType</code>, or 
 	 *  <code>IJavaArrayType</code>)
 	 * @return whether the the breakpoint should be installed in the given type and target
 	 */
-	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaPatternBreakpoint breakpoint, IJavaType type);
+	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type);
 		
 	/**
 	 * Notification that the given breakpoint has been installed in

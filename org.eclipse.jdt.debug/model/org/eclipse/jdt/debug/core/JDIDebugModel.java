@@ -23,6 +23,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -227,6 +228,10 @@ public class JDIDebugModel {
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times. 
 	 * @param resource the original source file
+	 * @param sourceName the name of the source file in which the breakpoint is
+	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
+	 *  install itself in classes that have a source file name debug attribute
+	 *  that matches this value, and satisfies the class name pattern.
 	 * @param pattern the class name pattern in which the pattern breakpoint should
 	 *   be installed. The pattern breakpoint will install itself in every class which
 	 *   matches the pattern.
@@ -248,13 +253,49 @@ public class JDIDebugModel {
 	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
 	 */
-	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String pattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String sourceName, String pattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
 		if (attributes == null) {
 			attributes = new HashMap(10);
 		}		
-		return new JavaPatternBreakpoint(resource, pattern, lineNumber, charStart, charEnd, hitCount, register, attributes);
+		return new JavaPatternBreakpoint(resource, sourceName, pattern, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}	
 	
+	/**
+	 * Creates and returns a target pattern breakpoint for the given resource at the
+	 * given line number. Clients must set the class name pattern per target for
+	 * this type of breakpoint.
+	 * If hitCount > 0, the breakpoint will suspend execution when it is
+	 * "hit" the specified number of times. 
+	 * @param resource the original source file
+	 * @param sourceName the name of the source file in which the breakpoint is
+	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
+	 *  install itself in classes that have a source file name debug attribute
+	 *  that matches this value, and satisfies the class name pattern.
+	 * @param lineNumber the line number on which this breakpoint should be placed.
+	 *   Note that the line number refers to the debug attributes in the generated
+	 * 	 class file. Generally, this refers to a line number in the original
+	 *   source, but the attribute is client defined.
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified
+ 	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 *   suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
+	 * @return a target pattern breakpoint
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
+	 * the underlying exception responsible for the failure.</li></ul>
+	 */
+	public static IJavaTargetPatternBreakpoint createTargetPatternBreakpoint(IResource resource, String sourceName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}		
+		return new JavaTargetPatternBreakpoint(resource, sourceName, lineNumber, charStart, charEnd, hitCount, register, attributes);
+	}	
+		
 	/**
 	 * Creates and returns an exception breakpoint in a type with the given name.
 	 * The marker associated with the breakpoint will be created on the specified resource.

@@ -38,7 +38,6 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -589,9 +588,9 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	}
 
 	/**
-	 * @see IJavaBreakpointListener#installingBreakpoint(IJavaDebugTarget, IJavaPatternBreakpoint, IJavaType)
+	 * @see IJavaBreakpointListener#installingBreakpoint(IJavaDebugTarget, IJavaBreakpoint, IJavaType)
 	 */
-	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaPatternBreakpoint breakpoint, IJavaType type) {
+	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 		return true;
 	}
 	

@@ -26,11 +26,14 @@ import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.compiler.flow.FinallyFlowContext;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.JDIType;
 
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
@@ -94,6 +97,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * value: thread the filtered thread (IJavaThread) in the given target
 	 */
 	protected Map fFilteredThreadsByTarget;
+	
+	/**
+	 * Whether to ignore change callbacks - used when updating intall counts
+	 */
+	private boolean fIngoreChange = false;
 	
 	/**
 	 * Propery identifier for a breakpoint object on an event request
@@ -281,7 +289,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	/**
 	 * Returns whether the given reference type is appropriate for this
-	 * breakpoint to be installed in the given target
+	 * breakpoint to be installed in the given target. Query registered
+	 * breakpoint listeners.
 	 */
 	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
 		String installableType= getTypeName();
@@ -290,14 +299,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return false;
 		}
 		if (installableType.equals(queriedType)) {
-			return true;
+			return queryInstallListeners(target, type);
 		}
 		int index= queriedType.indexOf('$', 0);
 		if (index == -1) {
 			return false;
 		}
-		return installableType.regionMatches(0, queriedType, 0, index);
-		
+		if (installableType.regionMatches(0, queriedType, 0, index)) {
+			return queryInstallListeners(target, type);
+		}
+		return false;
 	}
 	
 	/**
@@ -464,8 +475,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Update all requests that this breakpoint has installed in the
 	 * given target to reflect the current state of this breakpoint.
+	 * Ignore the change if the 'ignore change' flag has been set
+	 * (used when updating install counts).
 	 */
 	public void changeForTarget(JDIDebugTarget target) throws CoreException {
+		if (isIgnoreChange()) {
+			return;
+		}
+		
 		List requests = getRequests(target);
 		if (!requests.isEmpty()) {
 			ListIterator iter = requests.listIterator();
@@ -582,34 +599,29 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * debug target.
 	 */
 	public void removeFromTarget(final JDIDebugTarget target) throws CoreException {
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			// This operation is wrapped in a workspace runnable so that the
-			// marker changes which result from deregistering a request are
-			// fired after we're done iterating over the requests.
-			// Failing to do so can result in a ConcurrentModificationException
-			public void run(IProgressMonitor monitor) throws CoreException {
-				List requests = getRequests(target);
-				Iterator iter = requests.iterator();
-				EventRequest req;
-				while (iter.hasNext()) {
-					req = (EventRequest)iter.next();
-					try {				
-						if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
-							target.getEventRequestManager().deleteEventRequest(req); // disable & remove
-						}
-					} catch (VMDisconnectedException e) {
-						if (target.isAvailable()) {
-							JDIDebugPlugin.log(e);
-						}
-					} catch (RuntimeException e) {
-						JDIDebugPlugin.log(e);
-					} finally {
-						deregisterRequest(req, target);
-					}
+		// removing was previously done is a workspace runnable, but that is
+		// not possible since it can be a resouce callback (marker deletion) that
+		// causes a breakpoint to be removed
+		List requests = getRequests(target);
+		Iterator iter = requests.iterator();
+		EventRequest req;
+		while (iter.hasNext()) {
+			req = (EventRequest)iter.next();
+			try {				
+				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
+					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
 				}
+			} catch (VMDisconnectedException e) {
+				if (target.isAvailable()) {
+					JDIDebugPlugin.log(e);
+				}
+			} catch (RuntimeException e) {
+				JDIDebugPlugin.log(e);
+			} finally {
+				deregisterRequest(req, target);
 			}
-		};
-		run(runnable);
+		}
+		
 		fRequestsByTarget.remove(target);
 		fFilteredThreadsByTarget.remove(target);
 		
@@ -668,8 +680,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Increments the install count of this breakpoint
 	 */
 	protected void incrementInstallCount() throws CoreException {
-		int count = getInstallCount();
-		setAttribute(INSTALL_COUNT, count + 1);
+		try {
+			setIgnoreChange(true);		
+			int count = getInstallCount();
+			setAttribute(INSTALL_COUNT, count + 1);
+		} finally {
+			setIgnoreChange(false);
+		}
 	}	
 	
 	/**
@@ -681,19 +698,25 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 
 	/**
-	 * Decrements the install count of this breakpoint
+	 * Decrements the install count of this breakpoint, and disregards
+	 * change callback for install count change.
 	 */
 	protected void decrementInstallCount() throws CoreException {
-		int count= getInstallCount();
-		if (count > 0) {
-			setAttribute(INSTALL_COUNT, count - 1);	
-		}
-		if (count == 1) {
-			if (isExpired()) {
-				// if breakpoint was auto-disabled, re-enable it
-				setAttributes(fgExpiredEnabledAttributes,
-						new Object[]{Boolean.FALSE, Boolean.TRUE});
+		try {
+			setIgnoreChange(true);
+			int count= getInstallCount();
+			if (count > 0) {
+				setAttribute(INSTALL_COUNT, count - 1);	
 			}
+			if (count == 1) {
+				if (isExpired()) {
+					// if breakpoint was auto-disabled, re-enable it
+					setAttributes(fgExpiredEnabledAttributes,
+							new Object[]{Boolean.FALSE, Boolean.TRUE});
+				}
+			}
+		} finally {
+			setIgnoreChange(false);
 		}
 	}
 	
@@ -952,6 +975,36 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether this breakpoint should be installed in the given reference
+	 * type in the given target according to registered breakpoint listeners.
+	 * 
+	 * @param target debug target
+	 * @param type reference type or <code>null</code> if this breakpoint is
+	 *  not installed in a specific type
+	 */
+	protected boolean queryInstallListeners(JDIDebugTarget target, ReferenceType type) {
+		IJavaType jt = null;
+		if (type != null) {
+			jt = JDIType.createType(target, type);
+		}
+		return JDIDebugPlugin.getDefault().fireInstalling(target, this, jt);
+	}
+	
+	/**
+	 * Sets whether change callbacks should be ignored
+	 */
+	protected void setIgnoreChange(boolean ignore) {
+		fIngoreChange = ignore;
+	}
+	
+	/**
+	 * Returns whether change callbacks should be ignored
+	 */
+	protected boolean isIgnoreChange() {
+		return fIngoreChange;
 	}
 }
 

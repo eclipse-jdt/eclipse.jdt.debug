@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
@@ -25,28 +28,26 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.EventRequest;
 
-public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPatternBreakpoint {
+public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements IJavaTargetPatternBreakpoint {
 
-	private static final String PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.javaPatternBreakpointMarker"; //$NON-NLS-1$
+	private static final String TARGET_PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker"; //$NON-NLS-1$	
 	
 	/**
-	 * Breakpoint attribute storing the pattern identifier of the source
-	 * file in which a breakpoint is created
-	 * (value <code>"org.eclipse.jdt.debug.core.pattern"</code>). This attribute is a <code>String</code>.
+	 * Table of targets to patterns
 	 */
-	protected static final String PATTERN = "org.eclipse.jdt.debug.core.pattern"; //$NON-NLS-1$	
+	private HashMap fPatterns;
 	
-	public JavaPatternBreakpoint() {
+	public JavaTargetPatternBreakpoint() {
 	}
 	
 	/**
 	 * @see JDIDebugModel#createPatternBreakpoint(IResource, String, int, int, int, int, boolean, Map)
 	 */	
-	public JavaPatternBreakpoint(IResource resource, String sourceName, String pattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, Map attributes) throws DebugException {
-		this(resource, sourceName, pattern, lineNumber, charStart, charEnd, hitCount, add, attributes, PATTERN_BREAKPOINT);
+	public JavaTargetPatternBreakpoint(IResource resource, String sourceName, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, Map attributes) throws DebugException {
+		this(resource, sourceName, lineNumber, charStart, charEnd, hitCount, add, attributes, TARGET_PATTERN_BREAKPOINT);
 	}
 	
-	public JavaPatternBreakpoint(final IResource resource, final String sourceName, final String pattern, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes, final String markerType) throws DebugException {
+	public JavaTargetPatternBreakpoint(final IResource resource, final String sourceName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes, final String markerType) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 	
@@ -55,7 +56,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 				
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
-				addPatternAndHitCount(attributes, sourceName, pattern, hitCount);
+				addSourceNameAndHitCount(attributes, sourceName, hitCount);
 				
 				// set attributes
 				ensureMarker().setAttributes(attributes);
@@ -77,7 +78,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		// pre-notification
 		fireAdding(target);
 				
-		String referenceTypeName= getReferenceTypeName();
+		String referenceTypeName= getPattern(target);
 		if (referenceTypeName == null) {
 			return;
 		}
@@ -110,9 +111,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * @see JavaBreakpoint#getReferenceTypeName()
 	 */
 	protected String getReferenceTypeName() {
-		String name= ""; //$NON-NLS-1$
+		String name= "*"; //$NON-NLS-1$
 		try {
-			name= getPattern();
+			name= getSourceName();
 		} catch (CoreException ce) {
 			JDIDebugPlugin.log(ce);
 		}
@@ -146,7 +147,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 			}
 		}
 		
-		String pattern= getPattern();
+		String pattern= getPattern(target);
 		String queriedType= type.name();
 		if (pattern == null || queriedType == null) {
 			return false;
@@ -160,10 +161,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	}	
 	
 	/**
-	 * Adds the class name pattern and hit count attributes to the gvien map.
+	 * Adds the source name and hit count attributes to the gvien map.
 	 */
-	protected void addPatternAndHitCount(Map attributes, String sourceName, String pattern, int hitCount) throws CoreException {
-		attributes.put(PATTERN, pattern);
+	protected void addSourceNameAndHitCount(Map attributes, String sourceName, int hitCount) throws CoreException {
 		if (sourceName != null) {
 			attributes.put(SOURCE_NAME, sourceName);
 		}		
@@ -174,11 +174,30 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	}
 	
 	/**
-	 * @see IJavaPatternBreakpoint#getPattern()
+	 * @see IJavaTargetPatternBreakpoint#getPattern(IJavaDebugTarget)
 	 */
-	public String getPattern() throws CoreException {
-		return (String) ensureMarker().getAttribute(PATTERN);		
+	public String getPattern(IJavaDebugTarget target) {
+		if (fPatterns != null) {
+			return (String)fPatterns.get(target);
+		}
+		return null;
 	}	
+	
+	/**
+	 * @see IJavaTargetPatternBreakpoint#setPattern(IJavaDebugTarget, String)
+	 */
+	public void setPattern(IJavaDebugTarget target, String pattern) throws CoreException {
+		if (fPatterns == null) {
+			fPatterns = new HashMap(2);
+		}
+		// if pattern is changing then remove and re-add
+		String oldPattern = getPattern(target);
+		fPatterns.put(target, pattern);
+		if (oldPattern != null && !oldPattern.equals(pattern)) {
+			removeFromTarget((JDIDebugTarget)target);
+			addToTarget((JDIDebugTarget)target);
+		}
+	}		
 	
 	/**
 	 * @see IJavaPatternBreakpoint#getSourceName()

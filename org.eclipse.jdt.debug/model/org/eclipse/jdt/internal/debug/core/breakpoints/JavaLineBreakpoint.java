@@ -67,6 +67,13 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * <code>boolean</code>.
 	 */
 	protected static final String CONDITION_ENABLED= "org.eclipse.jdt.debug.core.conditionEnabled";
+	
+	/**
+	 * Breakpoint attribute storing a breakpoint's source file name (debug attribute)
+	 * (value <code>"org.eclipse.jdt.debug.core.sourceName"</code>). This attribute is stored as
+	 * a <code>String</code>.
+	 */
+	protected static final String SOURCE_NAME= "org.eclipse.jdt.debug.core.sourceName";	
 
 	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	// Marker label String keys

@@ -43,6 +43,7 @@ import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -1068,6 +1069,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return getWatchpointText((IJavaWatchpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaPatternBreakpoint) {
 			return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
+		} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
+			return getJavaTargetPatternBreakpointText((IJavaTargetPatternBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
 			return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
 		}
@@ -1180,7 +1183,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 		return label.toString();
 	}
+
+	protected String getJavaTargetPatternBreakpointText(IJavaTargetPatternBreakpoint breakpoint) throws CoreException {
 	
+		IResource resource= breakpoint.getMarker().getResource();
+		IMember member= BreakpointUtils.getMember(breakpoint);
+		StringBuffer label= new StringBuffer(breakpoint.getSourceName());
+		appendLineNumber(breakpoint, label);
+		appendHitCount(breakpoint, label);
+		appendSuspendPolicy(breakpoint,label);
+		appendThreadFilter(breakpoint, label);
+					
+		if (member != null) {
+			label.append(" - "); //$NON-NLS-1$
+			label.append(fJavaLabelProvider.getText(member));
+		}
+		
+		return label.toString();
+	}
+		
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
 		
 		String lineInfo= getLineBreakpointText(watchpoint);
