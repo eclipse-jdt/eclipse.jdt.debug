@@ -76,16 +76,7 @@
                mode="TEST_MODE">
          </launchMode>
       </launchConfigurationTabGroup>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.simpleLaunchVariables">
-      <variable
-            name="TEST_VAR_WITH_INITIALIZER"
-            initializerClass="org.eclipse.jdt.debug.testplugin.SimpleVariableInitializer"
-            description="testing">
-      </variable>
-   </extension>
-   
+   </extension>   
    <extension
          point="org.eclipse.debug.core.valueVariables">
       <variable
