@@ -1195,7 +1195,7 @@
                enablesFor="1"
                label="%EditLogicalStructure.label"
                class="org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction"
-               menubarPath="variableGroup"
+               menubarPath="emptyNavigationGroup"
                id="EditLogicalStructure"/>
          <visibility>
             <objectState
