@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.Iterator;
 
@@ -14,11 +16,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class DropToFrameAction extends ObjectActionDelegate {
-
-	protected boolean isEnabledFor(Object element) {
-		IJavaStackFrame frame= (IJavaStackFrame)element;
-		return frame != null && frame.isSuspended() && frame.supportsDropToFrame();
-	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)

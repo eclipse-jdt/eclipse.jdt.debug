@@ -13,10 +13,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
 public abstract class OpenStackFrameAction extends OpenTypeAction {
 	
-	protected boolean isEnabledFor(Object element) {
-		return element instanceof IAdaptable && ((IAdaptable) element).getAdapter(IJavaStackFrame.class) != null;
-	}
-		
 	protected IDebugElement getDebugElement(IAdaptable element) {
 		return (IDebugElement)element.getAdapter(IJavaStackFrame.class);
 	}
