@@ -36,12 +36,14 @@
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
             class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint"
-            id="javaLineBreakpoint">
+            id="javaLineBreakpoint"
+            name="%javaLineBreakpoint.name">
       </breakpoint>
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker"
             class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaClassPrepareBreakpoint"
-            id="javaClassPrepareBreakpoint">
+            id="javaClassPrepareBreakpoint"
+            name="%javaClassLoadBreakpoint.name">
       </breakpoint>      
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaPatternBreakpointMarker"
@@ -56,22 +58,26 @@
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
             class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint"
-            id="javaExceptionBreakpoint">
+            id="javaExceptionBreakpoint"
+            name="%javaExceptionBreakpoint.name">
       </breakpoint>
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
             class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint"
-            id="javaWatchpoint">
+            id="javaWatchpoint"
+            name="%javaWatchpoint.name">
       </breakpoint>
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
             class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint"
-            id="javaMethodBreakpoint">
+            id="javaMethodBreakpoint"
+            name="%javaMethodBreakpoint.name">
       </breakpoint>
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
             class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint"
-            id="javaMethodEntryBreakpoint">
+            id="javaMethodEntryBreakpoint"
+            name="%javaMethodBreakpoint.name">
       </breakpoint>
       <breakpoint
             markerType="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"
