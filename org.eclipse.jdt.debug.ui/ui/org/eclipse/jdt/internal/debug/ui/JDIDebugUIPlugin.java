@@ -188,6 +188,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		store.setDefault(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, true);
 		
 		JavaDebugPreferencePage.initDefaults(store);
+		JavaStepFilterPreferencePage.initDefaults(store);
 	}
 	
 	/**
