@@ -236,6 +236,8 @@ public class MirrorImpl implements Mirror {
 				throw new UnsupportedOperationException();
 			case JdwpReplyPacket.HCR_OPERATION_REFUSED:
 				throw new org.eclipse.jdi.hcr.OperationRefusedException();
+			case JdwpReplyPacket.VM_DEAD:
+				throw new VMDisconnectedException();
 			default:
 				throw new InternalException("Got error code in reply: " + error);
 		}
