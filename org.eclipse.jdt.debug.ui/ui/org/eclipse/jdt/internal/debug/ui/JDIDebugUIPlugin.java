@@ -28,6 +28,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -236,8 +237,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public void startup() throws CoreException {
 		super.startup();
 		JavaDebugOptionsManager.getDefault().startup();
+		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);
+		manager.registerAdapters(new MethodAdapterFactory(), IMethod.class);
+		
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 		fJavaModelListener= new JavaModelListener();
 		JavaCore.addElementChangedListener(fJavaModelListener);
