@@ -543,24 +543,24 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * </ul>
 	 */
 	protected StackFrame getUnderlyingFrame(int depth) throws DebugException {
+		if (!isSuspended()) {
+			// Checking isSuspended here eliminates a race condition in resume
+			// between the time stack frames are preserved and the time the
+			// underlying thread is actually resumed.
+			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+		}
 		try {
 			return getUnderlyingThread().frame(depth);
 		} catch (IncompatibleThreadStateException e) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
-			return null;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
-			return null;
 		} catch (InternalError e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
-			return null;
 		}
+		// execution will not reach this line, as
+		// #targetRequestFailed will thrown an exception
+		return null;
 	}
 
 	/**

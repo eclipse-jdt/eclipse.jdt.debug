@@ -946,7 +946,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 *  resumed, and is not yet suspended).
 	 */
 	protected StackFrame getUnderlyingStackFrame() throws DebugException {
-		if (fStackFrame == null && getThread().isSuspended()) {
+		if (fStackFrame == null) {
 			setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(getDepth()));
 		}
 		return fStackFrame;
