@@ -46,6 +46,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -239,9 +240,27 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		super.initializeDefaultPreferences(store);
-		JavaDebugPreferencePage.initDefaults(store);
-		JavaStepFilterPreferencePage.initDefaults(store);
+		//JavaDebugPreferencePage
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
+
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
+		store.setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
+
+		store.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
+		store.setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
+		
+		//JavaStepFilterPreferencePage
+		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.PREF_USE_FILTERS, true);
+		
 		JavaVariablesFilterPreferencePage.initDefaults(store);
 	}
 	

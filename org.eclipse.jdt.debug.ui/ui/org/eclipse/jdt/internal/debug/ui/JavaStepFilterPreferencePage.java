@@ -122,15 +122,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 	
 	/**
-	 * Set the default preferences for this page.
-	 */
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.PREF_USE_FILTERS, true);
-	}
-	
-	/**
 	 * Creates composite control and sets the default layout data.
 	 *
 	 * @param parent  the parent of the new composite
@@ -779,6 +770,4 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		public void dispose() {
 		}		
 	}
-	
-
 }

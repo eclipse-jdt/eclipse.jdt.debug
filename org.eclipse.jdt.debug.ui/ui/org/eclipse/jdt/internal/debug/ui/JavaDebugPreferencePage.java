@@ -82,26 +82,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		getPreferenceStore().addPropertyChangeListener(getPropertyChangeListener());
 		setDescription(DebugUIMessages.getString("JavaDebugPreferencePage.description")); //$NON-NLS-1$
 	}
-	
-	/**
-	 * Set the default preferences for this page.
-	 */
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, false);		
-		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
-		
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
-		store.setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
-		
-		store.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
-		store.setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
-	}
+
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
