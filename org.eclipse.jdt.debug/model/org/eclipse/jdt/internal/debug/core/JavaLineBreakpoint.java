@@ -284,12 +284,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	protected IMember binSearch(IType type, int start, int end) throws JavaModelException {
 		IJavaElement je = getElementAt(type, start);
 		if (je != null && !je.equals(type)) {
-			return (IMember)je;
+			return asMember(je);
 		}
 		if (end > start) {
 			je = getElementAt(type, end);
 			if (je != null && !je.equals(type)) {
-				return (IMember)je;
+				return asMember(je);
 			}
 			int mid = ((end - start) / 2) + start;
 			if (mid > start) {
@@ -297,11 +297,27 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				if (je == null) {
 					je = binSearch(type, mid + 1, end - 1);
 				}
-				return (IMember)je;
+				return asMember(je);
 			}
 		}
 		return null;
 	}	
+	
+	/**
+	 * Returns the given Java element if it is an
+	 * <code>IMember</code>, otherwise <code>null</code>.
+	 * 
+	 * @param element Java element
+	 * @return the given element if it is a type member,
+	 * 	otherwise <code>null</code>
+	 */
+	private IMember asMember(IJavaElement element) {
+		if (element instanceof IMember) {
+			return (IMember)element;
+		} else {
+			return null;
+		}		
+	}
 	
 	/**
 	 * Returns the element at the given position in the given type
