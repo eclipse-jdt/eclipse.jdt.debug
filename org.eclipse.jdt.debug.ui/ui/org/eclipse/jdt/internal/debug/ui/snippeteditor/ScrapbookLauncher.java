@@ -29,9 +29,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIEventFilter;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -63,7 +61,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	private HashMap fScrapbookToVMs = new HashMap(10);
 	private HashMap fVMsToBreakpoints = new HashMap(10);
 	private HashMap fVMsToScrapbooks = new HashMap(10);
-	private HashMap fVMsToFilters = new HashMap(10);
 	
 	private static ScrapbookLauncher fgDefault = null;
 	
@@ -178,9 +175,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				fVMsToScrapbooks.put(dt, page);
 				fVMsToBreakpoints.put(dt, magicBreakpoint);
 				dt.breakpointAdded(magicBreakpoint);
-				IDebugUIEventFilter filter = new ScrapbookEventFilter(launch);
-				fVMsToFilters.put(dt, filter);
-				DebugUITools.addEventFilter(filter);
 				launch.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
 				return launch;
 			}
@@ -248,8 +242,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			fVMsToScrapbooks.remove(target);
 			fScrapbookToVMs.remove(page);
 			fVMsToBreakpoints.remove(target);
-			IDebugUIEventFilter filter = (IDebugUIEventFilter)fVMsToFilters.remove(target);
-			DebugUITools.removeEventFilter(filter);
 			ILaunch launch = target.getLaunch();
 			if (launch != null) {
 				ILaunchConfiguration config = launch.getLaunchConfiguration();
