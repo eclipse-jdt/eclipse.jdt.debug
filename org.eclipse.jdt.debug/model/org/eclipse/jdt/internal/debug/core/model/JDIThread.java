@@ -2488,4 +2488,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 	}
+
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#stop(org.eclipse.jdt.debug.core.IJavaValue)
+	 */
+	public void stop(IJavaObject exception) throws DebugException {
+		try {
+			getUnderlyingThread().stop(((JDIObjectValue)exception).getUnderlyingObject());
+		} catch (InvalidTypeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_stoping_thread"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+	}
 }

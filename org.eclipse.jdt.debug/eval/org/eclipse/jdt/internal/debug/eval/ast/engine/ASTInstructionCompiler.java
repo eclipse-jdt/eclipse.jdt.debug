@@ -153,6 +153,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftAssignment
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.SendMessage;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.SendStaticMessage;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.ThrowInstruction;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.TwiddleOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnaryMinusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnaryPlusOperator;
@@ -1079,7 +1080,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(ThrowStatement)
 	 */
 	public void endVisit(ThrowStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
 	}
 
 	/**
@@ -2649,8 +2652,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		setHasError(true);
-		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Throw_statement_cannot_be_used_in_an_evaluation_expression_22")); //$NON-NLS-1$
+		push(new ThrowInstruction(fCounter));
 		return true;
 	}
 
