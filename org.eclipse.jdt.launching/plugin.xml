@@ -27,7 +27,7 @@
 
 <!-- Extension point definitions -->
 
-<extension-point name="%classpathProviders" id="classpathProviders"/>
+<extension-point name="%classpathProviders" id="classpathProviders" schema="schema/classpathProviders.exsd"/>
 <extension-point name="%runtimeClasspathEntryResolvers" id="runtimeClasspathEntryResolvers" schema="schema/runtimeClasspathEntryResolvers.exsd"/>
 <extension-point name="%vmConnectors" id="vmConnectors" schema="schema/vmConnectors.exsd"/>
 <extension-point name="%vmInstallTypes" id="vmInstallTypes" schema="schema/vmInstallTypes.exsd"/>
