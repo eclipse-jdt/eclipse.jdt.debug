@@ -1321,7 +1321,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * count.
 	 */
 	protected void removeAllBreakpoints() {
-		Iterator breakpoints= getBreakpoints().iterator();
+		Iterator breakpoints= ((ArrayList)((ArrayList)getBreakpoints()).clone()).iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
 			try {
