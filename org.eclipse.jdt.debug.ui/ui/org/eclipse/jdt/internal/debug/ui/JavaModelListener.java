@@ -11,6 +11,9 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -31,6 +34,11 @@ class JavaModelListener implements IElementChangedListener {
 	 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent e) {
+		List removedRoots= new ArrayList();
+		getRemovedPackageFragmentRoots(e.getDelta(), removedRoots);
+		if (removedRoots.size() == 0) {
+			return;
+		}
 		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
 		IJavaBreakpoint breakpoint= null;
 		for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
@@ -41,38 +49,32 @@ class JavaModelListener implements IElementChangedListener {
 			try {
 				IType type= BreakpointUtils.getType(breakpoint);
 				if (type != null) {
-					IJavaElement parent= type.getPackageFragment().getParent();
-					check(breakpoint, parent, e.getDelta());
+					if (removedRoots.contains(type.getPackageFragment().getParent())) {
+						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+					}
 				}
 			} catch (CoreException x) {
 				JDIDebugUIPlugin.log(x);
 			}
-		}
+		}	
 	}
 	
 	/**
-	 * Recursively check whether the class file has been deleted. 
-	 * Returns true if delta processing can be stopped.
+	 * Recursively traverses the given java element delta looking for package
+	 * fragment roots which have been removed, closed, or removed from the classpath
 	 */
-	protected boolean check(IJavaBreakpoint breakpoint, IJavaElement parent, IJavaElementDelta delta) throws CoreException {
+	protected void getRemovedPackageFragmentRoots(IJavaElementDelta delta, List removedRoots) {
 		IJavaElement element= delta.getElement();
-		if ((delta.getKind() & IJavaElementDelta.REMOVED) != 0 || (delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0) { 
-			if (element.equals(parent)) {
-				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
-				return true;
+		if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT_ROOT) {
+			if ((delta.getKind() & IJavaElementDelta.REMOVED) != 0 || (delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0 ||
+				(delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) {
+				removedRoots.add(delta.getElement());
 			}
-		} else if (((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) && element.equals(parent)) {
-			DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
-			return true;
+			return; // Stop traversal once a package fragment root is encountered.
 		}
-
 		IJavaElementDelta[] subdeltas= delta.getAffectedChildren();
-		for (int i= 0; i < subdeltas.length; i++) {
-			if (check(breakpoint, parent, subdeltas[i])) {
-				return true;
-			}
+		for (int i= 0, numDeltas= subdeltas.length; i < numDeltas; i++) {
+			getRemovedPackageFragmentRoots(subdeltas[i], removedRoots);
 		}
-
-		return false;
 	}
 }
