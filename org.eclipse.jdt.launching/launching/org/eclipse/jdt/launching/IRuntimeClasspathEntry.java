@@ -8,6 +8,7 @@ package org.eclipse.jdt.launching;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathEntry;
 
 /**
  * Represents an entry on a runtime classpath. A runtime classpath entry
@@ -244,4 +245,10 @@ public interface IRuntimeClasspathEntry {
 	 *  if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>
 	 */
 	public String getVariableName();
+	
+	/**
+	 * Returns a classpath entry equivalent to this runtime classpath entry.
+	 * 	 * @return a classpath entry equivalent to this runtime classpath entry
+	 * @since 2.1	 */
+	public IClasspathEntry getClasspathEntry();
 }

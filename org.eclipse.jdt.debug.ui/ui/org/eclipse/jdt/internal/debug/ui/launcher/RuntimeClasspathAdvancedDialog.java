@@ -146,7 +146,12 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	}
 	
 	private IRuntimeClasspathEntry chooseContainerEntry(ClasspathContainerDescriptor desc) {
-		ClasspathContainerWizard wizard= new ClasspathContainerWizard(desc);
+		IRuntimeClasspathEntry[] currentEntries = fViewer.getEntries();
+		IClasspathEntry[] entries = new IClasspathEntry[currentEntries.length];
+		for (int i = 0; i < entries.length; i++) {
+			entries[i]= currentEntries[i].getClasspathEntry();
+		}
+		ClasspathContainerWizard wizard= new ClasspathContainerWizard(desc, null, entries);
 		
 		WizardDialog dialog= new WizardDialog(getShell(), wizard);
 		PixelConverter converter= new PixelConverter(getShell());

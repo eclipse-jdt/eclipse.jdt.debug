@@ -242,13 +242,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 
 	/**
-	 * Returns the classpath entry associated with this runtime classpath entry,
-	 * or <code>null</code> if none.
-	 *
-	 * @return classpath entry associated with this runtime classpath entry,
-	 *  or <code>null</code> if none
+	 * @see IRuntimeClasspathEntry#getClasspathEntry()
 	 */
-	protected IClasspathEntry getClasspathEntry() {
+	public IClasspathEntry getClasspathEntry() {
 		return fClasspathEntry;
 	}
 
