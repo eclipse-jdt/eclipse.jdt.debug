@@ -99,10 +99,8 @@ class EventDispatcher implements Runnable {
 			if (event == null) {
 				continue;
 			}
-			// The event types are checked in order
-			// of their expected frequency, from the most specific type to the more general.
 			
-			// dispatch to handler if there is one
+			// Dispatch events to registered listeners, if any
 			IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
 			if (listener != null) {
 				vote = true;
@@ -110,6 +108,7 @@ class EventDispatcher implements Runnable {
 				continue;
 			}
 			
+			// Dispatch VM start/end events
 			if (event instanceof VMDeathEvent) {
 				fTarget.handleVMDeath((VMDeathEvent) event);
 				shutdown(); // stop listening for events
