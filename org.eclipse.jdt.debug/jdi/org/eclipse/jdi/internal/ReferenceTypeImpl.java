@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/** The following are the stored results of JDWP calls. */
 	protected List fInterfaces = null;
 	private List fMethods = null;
+	private Hashtable fMethodTable= null;
 	private List fFields = null;
 	private List fAllMethods = null;
 	private List fVisibleMethods = null;
@@ -116,6 +118,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				method.flushStoredJdwpResults();
 			}
 			fMethods = null;
+			fMethodTable= null;
 		}
 
 		// Flush Fields.
@@ -591,16 +594,18 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns MethodImpl of a method in the reference specified by a given methodID, or null if not found.
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
-		Iterator iter = methods().iterator();
-		while(iter.hasNext()) {
-			MethodImpl method = (MethodImpl)iter.next();
-			if (method.getMethodID().equals(methodID))
-				return method;
-		}
 		if (methodID.value() == 0) {
 			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", -1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return null;
+		if (fMethodTable == null) {
+			fMethodTable= new Hashtable();
+			Iterator iter = methods().iterator();
+			while(iter.hasNext()) {
+				MethodImpl method = (MethodImpl)iter.next();
+				fMethodTable.put(method.getMethodID(), method);
+			}
+		}
+		return (MethodImpl)fMethodTable.get(methodID);
 	}
 	
 	/** 
