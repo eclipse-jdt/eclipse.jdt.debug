@@ -143,6 +143,43 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * Launches the type with the given name, and waits for a terminate
+	 * event in that program. Returns the debug target in which the suspend
+	 * event occurred.
+	 * 
+	 * @param mainTypeName the program to launch
+	 * @return debug target in which the terminate event occurred
+	 */
+	protected IJavaDebugTarget launchAndTerminate(String mainTypeName, int timeout) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		return launchAndTerminate(config, timeout);
+	}
+
+	/**
+	 * Launches the given configuration in debug mode, and waits for a terminate
+	 * event in that program. Returns the debug target in which the terminate
+	 * event occurred.
+	 * 
+	 * @param config the configuration to launch
+	 * @return thread in which the first suspend event occurred
+	 */	
+	protected IJavaDebugTarget launchAndTerminate(ILaunchConfiguration config, int timeout) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IJavaDebugTarget.class);
+		waiter.setTimeout(timeout);
+		
+		config.launch(getLaunchManager().DEBUG_MODE, null);
+
+		Object terminatee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not terminate.", terminatee);
+		assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget);
+		IJavaDebugTarget debugTarget = (IJavaDebugTarget) terminatee;
+		assertTrue("debug target is not terminated", debugTarget.isTerminated());
+		return debugTarget;		
+	}
+	
+	/**
 	 * Launches the type with the given name, and waits for a line breakpoint suspend
 	 * event in that program. Returns the thread in which the suspend
 	 * event occurred.
@@ -382,12 +419,29 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Terminates the given thread and removes its launch
 	 */
 	protected void terminateAndRemove(IJavaThread thread) {
-		ILaunch launch = thread.getLaunch();
-		try {
-			thread.getDebugTarget().terminate();
-		} catch (CoreException e) {
-		} finally {
-			getLaunchManager().removeLaunch(launch);
+		if (thread != null) {
+				ILaunch launch = thread.getLaunch();
+				try {
+					thread.getDebugTarget().terminate();
+				} catch (CoreException e) {
+				} finally {
+					getLaunchManager().removeLaunch(launch);
+				}
+		}
+	}
+	
+	/**
+	 * Terminates the given debug target and removes its launch
+	 */
+	protected void terminateAndRemove(IJavaDebugTarget debugTarget) {
+		if (debugTarget != null) {
+			ILaunch launch = debugTarget.getLaunch();
+			try {
+				debugTarget.getDebugTarget().terminate();
+			} catch (CoreException e) {
+			} finally {
+				getLaunchManager().removeLaunch(launch);
+			}
 		}
 	}
 	
