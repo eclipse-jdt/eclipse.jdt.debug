@@ -1,0 +1,14 @@
+<project name="exportplugins" default="export" basedir=".">
+	<target name="init">
+		<tstamp/>
+	</target>
+
+	<target name="export" depends="init">
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.debug.core" target="export"/>
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.debug.ui" target="export"/>
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.jdt.debug" target="export"/>
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.jdt.debug.ui" target="export"/>
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.jdt.launching" target="export"/>
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.jdt.launching.j9" target="export"/>
+	</target>
+</project>
