@@ -668,6 +668,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Instruction condition= fInstructions.getInstruction(conditionAddress);
 		int bodyAddress= conditionAddress - condition.getSize();
 		Instruction body= fInstructions.getInstruction(bodyAddress);
+		int bodyStartAddress= bodyAddress - body.getSize();
 
 		// add the conditionnalJump
 		ConditionalJump conditionalJump= new ConditionalJump(true);
@@ -681,10 +682,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		// this loop, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
 			CompleteInstruction instruction= (CompleteInstruction) iter.next();
-			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+			Jump jumpInstruction= instruction.fInstruction;
+			int instructionAddress= fInstructions.indexOf(jumpInstruction);
+			if (instructionAddress > bodyStartAddress && (instruction.fLabel == null || instruction.fLabel.equals(label))) {
 				iter.remove();
-				Jump jumpInstruction= instruction.fInstruction;
-				int instructionAddress= fInstructions.indexOf(jumpInstruction);
 				if (instruction.fIsBreak) {
 					// jump to the instruction after the last jump
 					jumpInstruction.setOffset((conditionAddress - instructionAddress) + 1);
@@ -776,10 +777,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String label= getLabel(node);
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
 			CompleteInstruction instruction= (CompleteInstruction) iter.next();
-			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+			Jump jumpInstruction= instruction.fInstruction;
+			int instructionAddress= fInstructions.indexOf(jumpInstruction);
+			if (instructionAddress > conditionAddress && (instruction.fLabel == null || instruction.fLabel.equals(label))) {
 				iter.remove();
-				Jump jumpInstruction= instruction.fInstruction;
-				int instructionAddress= fInstructions.indexOf(jumpInstruction);
 				if (instruction.fIsBreak) {
 					// jump to the instruction after the last jump
 					jumpInstruction.setOffset((bodyAddress - instructionAddress) + 1);
@@ -853,12 +854,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Instruction updaters= fInstructions.getInstruction(updatersAddress);
 		int bodyAddress= updatersAddress - updaters.getSize();
 		Instruction body= fInstructions.getInstruction(bodyAddress);
+		int bodyStartAddress= bodyAddress - body.getSize();
 
 		int conditionAddress;
 		Instruction condition;
 
 		if (hasCondition) {
-			conditionAddress= bodyAddress - body.getSize();
+			conditionAddress= bodyStartAddress;
 			condition= fInstructions.getInstruction(conditionAddress);
 		} else {
 			conditionAddress= 0;
@@ -875,9 +877,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			ConditionalJump condJump= new ConditionalJump(false);
 			fInstructions.insert(condJump, conditionAddress + 1);
 			bodyAddress++;
+			bodyStartAddress++;
 			updatersAddress++;
 			fCounter++;
-			// conditionnal set jump offset
+			// set conditionnal jump offset
 			condJump.setOffset(body.getSize() + updaters.getSize() + 1);
 		}
 
@@ -888,10 +891,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		// this loop, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
 			CompleteInstruction instruction= (CompleteInstruction) iter.next();
-			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+			Jump jumpInstruction= instruction.fInstruction;
+			int instructionAddress= fInstructions.indexOf(jumpInstruction);
+			if (instructionAddress > bodyStartAddress && (instruction.fLabel == null || instruction.fLabel.equals(label))) {
 				iter.remove();
-				Jump jumpInstruction= instruction.fInstruction;
-				int instructionAddress= fInstructions.indexOf(jumpInstruction);
 				if (instruction.fIsBreak) {
 					// jump to the instruction after the last jump
 					jumpInstruction.setOffset((updatersAddress - instructionAddress) + 1);
@@ -1317,10 +1320,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		// this loop, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
 			CompleteInstruction instruction= (CompleteInstruction) iter.next();
-			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+			Jump jumpInstruction= instruction.fInstruction;
+			int instructionAddress= fInstructions.indexOf(jumpInstruction);
+			if (instructionAddress > conditionAddress && (instruction.fLabel == null || instruction.fLabel.equals(label))) {
 				iter.remove();
-				Jump jumpInstruction= instruction.fInstruction;
-				int instructionAddress= fInstructions.indexOf(jumpInstruction);
 				if (instruction.fIsBreak) {
 					// jump to the instruction after the last jump
 					jumpInstruction.setOffset((bodyAddress - instructionAddress) + 2);
