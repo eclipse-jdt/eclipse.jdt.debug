@@ -14,6 +14,8 @@ Contributors:
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.boot.BootLoader;
+
 /**
  * The execution arguments for running a Java VM. The execution arguments are
  * separated into two parts: arguments to the VM itself, and arguments to the Java 
@@ -118,7 +120,12 @@ public class ExecutionArguments {
 				if (ch == '\\') {
 					ch= getNext();
 					if (ch != '"') {           // Only escape double quotes
-						buf.append('\\'); 
+						buf.append('\\');
+					} else {
+						if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+							// @see Bug 26870. Windows requires an extra escape for embedded strings
+							buf.append('\\');
+						}
 					}
 				}
 				if (ch > 0) {
@@ -128,10 +135,7 @@ public class ExecutionArguments {
 			}
 	
 			ch= getNext();
-				
-			// add the preceding and trailing quotes that were present
-			buf.insert(0, '"');
-			buf.append('"');
+			
 			return buf.toString();
 		}
 		
