@@ -74,11 +74,13 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		String mainTypeName = verifyMainTypeName(configuration);
 
 		IJavaProject javaProject = getJavaProject(configuration);
-		IType type = JavaLaunchConfigurationUtils.getMainType(mainTypeName, javaProject);
-		ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
-		IType javaLangApplet = JavaLaunchConfigurationUtils.getMainType("java.applet.Applet", javaProject); //$NON-NLS-1$
-		if (!hierarchy.contains(javaLangApplet)) {
-			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.error.not_an_applet"), null, IJavaLaunchConfigurationConstants.ERR_NOT_AN_APPLET); //$NON-NLS-1$
+		if (javaProject != null) {
+			IType type = JavaLaunchConfigurationUtils.getMainType(mainTypeName, javaProject);
+			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
+			IType javaLangApplet = JavaLaunchConfigurationUtils.getMainType("java.applet.Applet", javaProject); //$NON-NLS-1$
+			if (!hierarchy.contains(javaLangApplet)) {
+				abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.error.not_an_applet"), null, IJavaLaunchConfigurationConstants.ERR_NOT_AN_APPLET); //$NON-NLS-1$
+			}
 		}
 
 		IVMInstall vm = verifyVMInstall(configuration);
@@ -93,13 +95,10 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		}
 
 		File workingDir = verifyWorkingDirectory(configuration);
-		String workingDirName = null;
-		if (workingDir != null) {
-			workingDirName = workingDir.getAbsolutePath();
-		}
+		String workingDirName = workingDir.getAbsolutePath();
 		
 		// Program & VM args
-		String javaPolicy = getJavaPolicyFile(configuration);
+		String javaPolicy = getJavaPolicyFile(workingDir);
 		ExecutionArguments execArgs = new ExecutionArguments(getVMArguments(configuration), ""); //$NON-NLS-1$
 		// Classpath
 		String[] classpath = getClasspath(configuration);
@@ -109,7 +108,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(appletViewerClassName, classpath);
 		
 		// Construct the HTML file and set its name as a program argument
-		File htmlFile = buildHTMLFile(configuration);
+		File htmlFile = buildHTMLFile(configuration, workingDir);
 		if (htmlFile == null) {
 			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Could_not_build_HTML_file_for_applet_launch_1"), null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
 		}			
@@ -161,19 +160,14 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	}
 
 	/**
-	 * Returns the VM arguments specified by the given launch
-	 * configuration, as a string. The returned string is empty if
-	 * no VM arguments are specified.
+	 * Returns the system property string for the policy file
 	 * 
-	 * @param configuration launch configuration
-	 * @return the VM arguments specified by the given 
-	 *  launch configuration, possibly an empty string
-	 * @exception CoreException if unable to retrieve the attribute
+	 * @param workingDir the working directory
+	 * @return system property for the policy file
 	 */
-	public String getJavaPolicyFile(ILaunchConfiguration configuration)
+	public String getJavaPolicyFile(File workingDir)
 		throws CoreException {
-			String fileName = getWorkingDirectory(configuration).getAbsolutePath() + File.separator + "java.policy.applet";//$NON-NLS-1$
-			File file = new File(fileName);
+			File file = new File(workingDir, "java.policy.applet");//$NON-NLS-1$ 
 			if (!file.exists()) {
 				// copy it to the working directory
 				File test = LaunchingPlugin.getFileInPlugin(new Path("java.policy.applet")); //$NON-NLS-1$
@@ -192,13 +186,15 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	/**
 	 * Using the specified launch configuration, build an HTML file that specifies the
 	 * applet to launch.  Return the name of the HTML file.
+	 * 
+	 * @param dir the directoru in which to make the file
 	 */
-	private File buildHTMLFile(ILaunchConfiguration configuration) {
+	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
 		FileWriter writer = null;
 		File tempFile = null;
 		try {
 			String name = getMainTypeName(configuration);
-			tempFile = new File(getWorkingDirectory(configuration).toString(), name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
+			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer = new FileWriter(tempFile);
 			writer.write("<html>\n"); //$NON-NLS-1$
 			writer.write("<body>\n"); //$NON-NLS-1$
@@ -369,6 +365,10 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		if (path == null) {
 			// default working dir for applets is the project's output directory
 			String outputDir = JavaRuntime.getProjectOutputDirectory(configuration);
+			if (outputDir == null) {
+				// if no project attribute, default to eclipse directory
+				return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
+			}
 			File workspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 			return new File(workspaceRoot, outputDir);
 		} else {
@@ -388,6 +388,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				}
 			}
 		}
+		// cannot return null - an exception will be thrown
 		return null;		
 	}
 
