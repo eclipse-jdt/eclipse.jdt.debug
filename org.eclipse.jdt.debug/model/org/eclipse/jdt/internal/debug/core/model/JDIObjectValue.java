@@ -112,7 +112,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			return ((ClassType)refType.classObject().referenceType()).superclass().concreteMethodByName(selector, signature);
 		}
 		targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.method_lookup_failed_for_selector___{0}___with_signature___{1}__1"), new String[] {selector, signature}), null); //$NON-NLS-1$
-		// it is possible to return null
+		// it is not possible to return null
 		return null;
 	}
 	
