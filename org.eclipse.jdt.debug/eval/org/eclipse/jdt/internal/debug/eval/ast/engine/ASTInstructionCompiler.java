@@ -314,6 +314,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	private String getTypeName(ITypeBinding typeBinding) {
+		if (typeBinding.isRawType()) {
+			typeBinding= typeBinding.getErasure();
+		}
+		if (typeBinding.isTypeVariable()) {
+			ITypeBinding[] typeBounds= typeBinding.getTypeBounds();
+			String name= getTypeName(typeBounds[0]);
+			if (typeBounds.length > 1 && "java.lang.Object".equals(name)) {
+				return getTypeName(typeBounds[1]);
+			}
+			return name;
+		}
 		StringBuffer name;
 		if (typeBinding.isArray()) {
 			name= new StringBuffer(getTypeName(typeBinding.getElementType()));
@@ -3217,6 +3228,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	private String getMethodSignature(IMethodBinding methodBinding, String enclosingTypeSignature) {
+		methodBinding= methodBinding.getErasure();
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int i;
 		int argCount;
