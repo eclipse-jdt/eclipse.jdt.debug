@@ -1452,7 +1452,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @return underlying thread
 	 */
-	protected ThreadReference getUnderlyingThread() {
+	public ThreadReference getUnderlyingThread() {
 		return fThread;
 	}
 	
