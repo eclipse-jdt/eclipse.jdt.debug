@@ -1437,6 +1437,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public List locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
 		Iterator allMethods = methods().iterator();
 		List locations= new ArrayList();
+		boolean hasLineInformation= false;
+		AbsentInformationException exception= null;
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl)allMethods.next();
 			if (method.isAbstract() || method.isNative()) {
@@ -1444,7 +1446,15 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 			// one line in the input source can be translate in multiple lines in different
 			// methods in the output source. We need all these locations.
-			locations.addAll(locationsOfLine(stratum, sourceName, lineNumber, method));
+			try {
+				locations.addAll(locationsOfLine(stratum, sourceName, lineNumber, method));
+				hasLineInformation= true;
+			} catch (AbsentInformationException e) {
+				exception= e;
+			}
+		}
+		if (!hasLineInformation) {
+			throw exception;
 		}
 		return locations;
 	}
