@@ -62,8 +62,15 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
-		VirtualMachine vm= connector.connect(argMap, monitor);
+		VirtualMachine vm = null;
+		try {
+			// momentarily place the launch config handle into the connect map (bug 19379)
+			argMap.put(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION, configuration.getMemento());		
+			vm= connector.connect(argMap, monitor);
+		} finally {
+			// remove the launch config handle from the arg map, so launch config does not have unsaved changes
+			argMap.remove(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION);
+		}
 		
 		// check for cancellation
 		if (monitor.isCanceled()) {

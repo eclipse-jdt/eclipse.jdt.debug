@@ -46,6 +46,14 @@ public interface IVMConnector {
 	 * The keys of the map are names of arguments used by this
 	 * connector (as returned by <code>#getDefaultArguments()</code>, and the
 	 * values are Strings representing the vales to use.
+	 * <p>
+	 * In addition, if this connector is being called from the standard
+	 * remote Java application launch configuration delegate, the map
+	 * contains an attribute which is the memento for the launch configuration
+	 * associated with this connection. This provides a connector with extra
+	 * information it may require. The launch configuration menento is keyed
+	 * by <code>IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION</code>.
+	 * </p>
 	 * 
 	 * @param map argument map to use in establishing a connection
 	 * @param monitor progress monitor
