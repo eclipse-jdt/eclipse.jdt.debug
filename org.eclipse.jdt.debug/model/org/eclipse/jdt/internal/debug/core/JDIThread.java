@@ -572,6 +572,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					fDestinationFrame = null;
 				} else {
 					stepReturn();
+					fRunning = true;
+					fStepCount--;
+					return;
 				}
 			} catch (DebugException e) {
 				fDestinationFrame = null;
