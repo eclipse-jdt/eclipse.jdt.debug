@@ -18,6 +18,7 @@ import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -31,11 +32,19 @@ public class InspectAction extends EvaluateAction {
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	protected void displayResult(IEvaluationResult result) {
-		IJavaValue value= result.getValue();
-		showExpressionView();
-		JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
-		DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+	protected void displayResult(final IEvaluationResult result) {
+		final IJavaValue value= result.getValue();
+		final Display display= JDIDebugUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (display.isDisposed()) {
+					return;
+				}
+				showExpressionView();
+				JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
+				DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+			}
+		});
 	}
 	
 	/**

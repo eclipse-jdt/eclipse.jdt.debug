@@ -149,8 +149,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else if (context instanceof IJavaThread) {
 				thread = (IJavaThread)context;
 			}
-			if (thread != null && !thread.getDebugTarget().equals(target)) {
-				// can only use threads in the same target
+			if (thread != null && (!thread.getDebugTarget().equals(target) || !thread.isSuspended())) {
+				// can only use suspended threads in the same target
 				thread = null;
 			}
 		}

@@ -17,8 +17,10 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -75,7 +77,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	protected void displayResult(IEvaluationResult result) {
 		IJavaValue value= result.getValue();
 		String resultString= " "; //$NON-NLS-1$
-		IDataDisplay dataDisplay= getDataDisplay();
+		final IDataDisplay dataDisplay= getDataDisplay();
 		try {
 			String sig= null;
 			IJavaType type= value.getJavaType();
@@ -91,11 +93,20 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value) }); //$NON-NLS-1$
 			}
 		} catch(DebugException x) {
-			dataDisplay.displayExpressionValue(getExceptionMessage(x));
+			resultString= getExceptionMessage(x);
 		}
 		
 		if (dataDisplay != null) {
-			dataDisplay.displayExpressionValue(resultString);
+			final String finalString= resultString;
+			final Display display= JDIDebugUIPlugin.getStandardDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if (display.isDisposed()) {
+						return;
+					}
+					dataDisplay.displayExpressionValue(finalString);
+				}
+			});
 		}
 	}
 	
