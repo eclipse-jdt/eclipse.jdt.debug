@@ -39,14 +39,6 @@ import com.sun.jdi.connect.ListeningConnector;
  */
 public class JDKDebugLauncher extends JDKLauncher {
 
-
-	public interface IRetryQuery {
-		/**
-		 * Query the user to retry connecting to the VM.
-		 */
-		boolean queryRetry();
-	}
-
 	private IRetryQuery fRetryQuery;
 
 	/**
@@ -165,22 +157,6 @@ public class JDKDebugLauncher extends JDKLauncher {
 		return null;
 	}
 
-	private Process createProcess(File workingDir, String[] cmdLine) throws CoreException {
-		Process p= null;
-		try {
-			if (workingDir == null) {
-				p= Runtime.getRuntime().exec(cmdLine, null);
-			} else {
-				p= Runtime.getRuntime().exec(cmdLine, null, workingDir);
-			}
-		} catch (IOException e) {
-				if (p != null) {
-					p.destroy();
-				}
-				throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.title"), e)); //$NON-NLS-1$
-		} 
-		return p;
-	}
 	
 	private void reportError(final String errorMessage) {
 		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
@@ -229,28 +205,4 @@ public class JDKDebugLauncher extends JDKLauncher {
 		fRetryQuery = retryQuery;
 	}
 	
-	protected String constructProgramString() {
-		StringBuffer buff= new StringBuffer(getJDKLocation());
-		buff.append(File.separator);
-		buff.append("bin"); //$NON-NLS-1$
-		buff.append(File.separator);
-		buff.append("java"); //$NON-NLS-1$
-		return buff.toString();
-	}
-	
-	private IRetryQuery createRetryQueryForNoWorkingDirectory() {
-		return new IRetryQuery() {
-			public boolean queryRetry() {
-				final boolean[] result= new boolean[1];
-				JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-					public void run() {
-						String title= LauncherMessages.getString("jdkLauncher.error.title"); //$NON-NLS-1$
-						String message= LauncherMessages.getString("JDKDebugLauncher.Setting_a_working_directory"); //$NON-NLS-1$
-						result[0]= (MessageDialog.openQuestion(JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message));
-					}
-				});
-				return result[0];
-			}
-		};
-	}	
 }

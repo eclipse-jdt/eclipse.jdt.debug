@@ -13,31 +13,42 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
-
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class JDKLauncher extends JavaLauncher {
+	
+	public interface IRetryQuery {
+		/**
+		 * Query the user to retry connecting to the VM.
+		 */
+		boolean queryRetry();
+	}
 	
 	public JDKLauncher(IVMInstall vmInstance) {
 		super(vmInstance);
 	}
 	
+	/**
+	 * @see IVMRunner#run(VMRunnerConfiguration)
+	 */
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
 		verifyVMInstall();
-		File workingDir = getWorkingDir(config);
-		String location= getJDKLocation();
 		
-		String program= location+File.separator+"bin"+File.separator+"java"; //$NON-NLS-2$ //$NON-NLS-1$
-		File javawexe= new File(program+"w.exe"); //$NON-NLS-1$
-		File javaw= new File(program+"w"); //$NON-NLS-1$
+		String program= constructProgramString();
+		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
+		File javaw= new File(program + "w"); //$NON-NLS-1$
 		
-		if (javaw.isFile()) 
+		if (javawexe.isFile()) {
 			program= javaw.getAbsolutePath();
-		else if (javawexe.isFile())
+		} else if (javaw.isFile()) {
 			program= javawexe.getAbsolutePath();
+		}
 		
 		List arguments= new ArrayList();
 
@@ -45,7 +56,7 @@ public class JDKLauncher extends JavaLauncher {
 				
 		String[] bootCP= config.getBootClassPath();
 		if (bootCP.length > 0) {
-			arguments.add("-Xbootclasspath:"+convertClassPath(bootCP)); //$NON-NLS-1$
+			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
 		} 
 		
 		String[] cp= config.getClassPath();
@@ -64,14 +75,20 @@ public class JDKLauncher extends JavaLauncher {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 
+		Process p= null;
 		try {
-			Process p= Runtime.getRuntime().exec(cmdLine, null, workingDir);
+			File workingDir = getWorkingDir(config);
+			p= createProcess(workingDir, cmdLine);
+		} catch (NoSuchMethodError e) {
+			//attempting launches on 1.2.* - no ability to set working directory
+			boolean retry= createRetryQueryForNoWorkingDirectory().queryRetry();
+			if (retry) {
+				p= createProcess(null, cmdLine);
+			}
+		}
 			IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
 			process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 			return new VMRunnerResult(null, new IProcess[] { process });
-		} catch (IOException e) {
-			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.startVM"), e)); //$NON-NLS-1$
-		}
 	}
 
 	protected String convertClassPath(String[] cp) {
@@ -94,4 +111,45 @@ public class JDKLauncher extends JavaLauncher {
 		return buf.toString();
 	}
 	
+	protected Process createProcess(File workingDir, String[] cmdLine) throws CoreException {
+		Process p= null;
+		try {
+			if (workingDir == null) {
+				p= Runtime.getRuntime().exec(cmdLine, null);
+			} else {
+				p= Runtime.getRuntime().exec(cmdLine, null, workingDir);
+			}
+		} catch (IOException e) {
+				if (p != null) {
+					p.destroy();
+				}
+				throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.startVM"), e)); //$NON-NLS-1$
+		} 
+		return p;
+	}
+	
+	protected IRetryQuery createRetryQueryForNoWorkingDirectory() {
+		return new IRetryQuery() {
+			public boolean queryRetry() {
+				final boolean[] result= new boolean[1];
+				JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+					public void run() {
+						String title= LauncherMessages.getString("jdkLauncher.error.title"); //$NON-NLS-1$
+						String message= LauncherMessages.getString("JDKDebugLauncher.Setting_a_working_directory"); //$NON-NLS-1$
+						result[0]= (MessageDialog.openQuestion(JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message));
+					}
+				});
+				return result[0];
+			}
+		};
+	}
+	
+	protected String constructProgramString() {
+		StringBuffer buff= new StringBuffer(getJDKLocation());
+		buff.append(File.separator);
+		buff.append("bin"); //$NON-NLS-1$
+		buff.append(File.separator);
+		buff.append("java"); //$NON-NLS-1$
+		return buff.toString();
+	}	
 }
