@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core.hcr;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -219,14 +220,14 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected List getBuiltProjects(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
 		if (event.getType() != IResourceChangeEvent.POST_AUTO_BUILD || delta == null) {
-			return new ArrayList(0);
+			return Collections.EMPTY_LIST;
 		}
 		fProjectVisitor.reset();
 		try {
 			delta.accept(fProjectVisitor);
 		} catch (CoreException e) {
 			JDIDebugPlugin.logError(e);
-			return new ArrayList(0);
+			return Collections.EMPTY_LIST;
 		}
 		return fProjectVisitor.getBuiltProjects();
 	}
@@ -764,14 +765,14 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected List getChangedClassFiles(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
 		if (event.getType() != IResourceChangeEvent.POST_CHANGE || delta == null) {
-			return new ArrayList(0);
+			return Collections.EMPTY_LIST;
 		}
 		fClassfileVisitor.reset();
 		try {
 			delta.accept(fClassfileVisitor);
 		} catch (CoreException e) {
 			JDIDebugPlugin.logError(e);
-			return new ArrayList(0); // quiet failure
+			return Collections.EMPTY_LIST; // quiet failure
 		}
 		return fClassfileVisitor.getChangedClassFiles();
 	}
@@ -814,7 +815,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 											hasCompileErrors= true;
 									}
 								}
-							} catch (CoreException exception) {
+							} catch (CoreException e) {
+								JDIDebugPlugin.logError(e);
 							}
 							if (!hasCompileErrors) {
 								// Only return class files that have no compilation errors.
