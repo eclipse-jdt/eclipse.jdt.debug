@@ -167,7 +167,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/**
-	 * @see IPreferencePage#performOk()
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 * Also, notifies interested listeners
 	 */
 	public boolean performOk() {

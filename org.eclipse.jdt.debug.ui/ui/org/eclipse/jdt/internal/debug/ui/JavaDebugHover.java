@@ -45,10 +45,8 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension, ISelectionListener, IPartListener {
 		
-	
 	protected IEditorPart fEditor;
 	protected ISelection fSelection = null;
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
@@ -97,8 +95,8 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public JavaDebugHover() {
 	}
 
-	/**
-	 * @see IJavaEditorTextHover#setEditor(IEditorPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setEditor(IEditorPart editor) {
 		if (editor != null) {
@@ -116,8 +114,8 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		}
 	}
 		
-	/**
-	 * @see ITextHover#getHoverRegion(ITextViewer, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return JavaWordFinder.findWord(textViewer.getDocument(), offset);
@@ -143,8 +141,8 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		return null;
 	}
 		
-	/**
-	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IJavaStackFrame frame = getFrame();				

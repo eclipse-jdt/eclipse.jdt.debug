@@ -107,6 +107,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	 * <li>Listen to class loads related to the breakpoint</li>
 	 * <li>Respond to the breakpoint being hit</li>
 	 * </ul>
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addToTarget(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		
@@ -143,7 +144,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#installableReferenceType(com.sun.jdi.ReferenceType, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
 	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
@@ -282,27 +283,30 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		return null;
 	}
 	
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaStratumBreakpoint#getClassNamePattern()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getPattern()
 	 */
 	public String getPattern() throws CoreException {
 		return (String) ensureMarker().getAttribute(PATTERN);		
 	}
 
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaStratumBreakpoint#getSourceName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getSourceName()
 	 */
 	public String getSourceName() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_NAME);		
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getStratum()
 	 */
 	public String getStratum() throws CoreException {
 		return (String) ensureMarker().getAttribute(STRATUM);		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getSourcePath()
+	 */
 	public String getSourcePath() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_PATH);
 	}

@@ -255,7 +255,7 @@ public class EventDispatcher implements Runnable {
 	 * be notified.
 	 * 
 	 * @param listener the listener to register
-	 * @param reqest the event request associated with events
+	 * @param request the event request associated with events
 	 * 	the listener is interested in
 	 */
 	public void addJDIEventListener(IJDIEventListener listener, EventRequest request) {

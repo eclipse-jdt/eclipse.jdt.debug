@@ -185,7 +185,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	/**
 	 * Not to be instantiated
 	 * 
-	 * @see JavaDebugOptionsManager.getDefault();
+	 * @see JavaDebugOptionsManager#getDefault();
 	 */
 	private JavaDebugOptionsManager() {
 	}
@@ -699,8 +699,8 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		return null;
 	}	
 	
-	/**
-	 * @see IJavaConditionalBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, Throwable)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasRuntimeException(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.debug.core.DebugException)
 	 */
 	public void breakpointHasRuntimeException(final IJavaLineBreakpoint breakpoint, final DebugException exception) {
 		IStatus status;
@@ -715,8 +715,8 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_encountered_runtime_exception._1"), status); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IJavaConditionalBreakpointListener#breakpointHasCompilationErrors(IJavaLineBreakpoint, Message[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 	 */
 	public void breakpointHasCompilationErrors(final IJavaLineBreakpoint breakpoint, final Message[] errors) {
 		StringBuffer message= new StringBuffer();
