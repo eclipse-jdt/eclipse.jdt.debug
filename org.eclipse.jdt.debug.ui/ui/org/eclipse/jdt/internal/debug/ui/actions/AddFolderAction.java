@@ -88,22 +88,22 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	}
 	
 	/**
-	 * Returns a list of resources of currently selected jars
+	 * Returns a list of resources of currently selected folders
 	 */
 	protected List getSelectedFolders() {
 		List list = getEntriesAsList();
-		List jars = new ArrayList();
+		List folders = new ArrayList();
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
 			IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)iter.next();
 			if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
 				IResource res = entry.getResource();
 				if (res != null && res instanceof IContainer) {
-					jars.add(res);
+					folders.add(res);
 				}
 			}
 		}
-		return jars;
+		return folders;
 	}
 	
 	protected int getActionType() {
