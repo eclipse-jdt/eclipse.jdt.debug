@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
  * 	<li>A variable (type <code>VARIABLE</code>) - a variable refers to a 
  * 		classpath variable, which may refer to a jar.</li>
  * 	<li>A library (type <code>CONTAINER</code>) - a container refers to classpath
- * 		conatiner variable which refers to a collection of archives derived
+ * 		container variable which refers to a collection of archives derived
  * 		dynamically, on a per project basis.</li>
  * </ul>
  * <p>
@@ -107,7 +107,7 @@ public interface IRuntimeClasspathEntry {
 	 * 		project.</li>
 	 * <li><code>ARCHIVE</code> - the absolute path of the assoicated archive,
 	 * 		which may or may not be in the workspace.</li>
-	 * <li><code>VARIALBE</code> - the path corresponding to the associated
+	 * <li><code>VARIABLE</code> - the path corresponding to the associated
 	 * 		classpath variable entry.</li>
 	 * <li><code>CONTAINER</code> - the path corresponding to the associated
 	 * 		classpath container variable entry.</li>
