@@ -627,7 +627,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		
 		fRequestsByTarget.remove(target);
 		fFilteredThreadsByTarget.remove(target);
-		fInstalledType = null;
+		if (getInstallCount() == 0) {
+			fInstalledType = null;
+		}
 		
 		// notification
 		fireRemoved(target);
