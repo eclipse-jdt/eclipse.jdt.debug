@@ -494,7 +494,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame"
+            objectClass="org.eclipse.debug.core.model.IStackFrame"
             id="org.eclipse.jdt.debug.DropToFrameActions">
          <filter
                name="DropToFrameActionFilter"
