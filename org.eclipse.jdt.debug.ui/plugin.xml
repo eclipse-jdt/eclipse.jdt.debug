@@ -48,6 +48,29 @@
    </editor>
 </extension>
 
+<extension point="org.eclipse.ui.editorActions">
+	<editorContribution
+		id="org.eclipse.jdt.debug.CompilationUnitEditor.BreakpointRulerActions"
+		targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
+		<action
+			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction"
+			actionID="RulerDoubleClick"
+			label="%Dummy.label"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+		</action>
+	</editorContribution>	
+	<editorContribution
+		id="org.eclipse.jdt.debug.ClassFileEditor.BreakpointRulerActions"
+		targetID="org.eclipse.jdt.ui.ClassFileEditor">
+		<action
+			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction"
+			actionID="RulerDoubleClick"
+			label="%Dummy.label"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+		</action>
+	</editorContribution>
+</extension>
+
 <extension point="org.eclipse.ui.actionSets">
 	<actionSet 
 		label="%JDTDebugActionSet.label" 
@@ -495,6 +518,27 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
+
+	<viewerContribution 
+    	id="org.eclipse.jdt.debug.ui.ClassFileRulerPopupActions" 
+    	targetID="#ClassFileRulerContext">
+		<action
+			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
+			label="%AddBreakpoint.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+		</action>
+	</viewerContribution>
+	<viewerContribution 
+    	id="org.eclipse.jdt.debug.ui.CompilationUnitRulerPopupActions" 
+    	targetID="#CompilationUnitRulerContext">
+		<action
+			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
+			label="%AddBreakpoint.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+		</action>
+	</viewerContribution>	
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
