@@ -465,10 +465,14 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		String name = ""; //$NON-NLS-1$
 		try {
 			IResource resource = javaElement.getUnderlyingResource();
-			name = resource.getName();
-			int index = name.lastIndexOf('.');
-			if (index > 0) {
-				name = name.substring(0, index);
+			if (resource != null) {
+				name = resource.getName();
+				int index = name.lastIndexOf('.');
+				if (index > 0) {
+					name = name.substring(0, index);
+				}
+			} else {
+				name= javaElement.getElementName();
 			}
 			name = getLaunchConfigurationDialog().generateName(name);				
 		} catch (JavaModelException jme) {
