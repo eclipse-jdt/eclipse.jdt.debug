@@ -1028,22 +1028,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	protected String getExpressionText(IExpression expression) throws DebugException {
-		String label= expression.getExpressionText();
+		String label= '"' + expression.getExpressionText() + '"';
 		if (label != null) {
 			boolean showTypes= isShowVariableTypeNames();
-			int spaceIndex= label.lastIndexOf(' ');
 			StringBuffer buff= new StringBuffer();
 			IJavaValue javaValue= (IJavaValue) expression.getValue();
 			String typeName= javaValue.getReferenceTypeName();
-			if (showTypes && spaceIndex == -1) {
+			if (showTypes ) {
 				typeName= getQualifiedName(typeName);
 				if (typeName.length() > 0) {
 					buff.append(typeName);
 					buff.append(' ');
 				}
-			}
-			if (spaceIndex != -1 && !showTypes) {
-				label= label.substring(spaceIndex + 1);
 			}
 			buff.append(label);
 
