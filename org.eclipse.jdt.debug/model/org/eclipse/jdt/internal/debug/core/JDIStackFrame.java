@@ -762,14 +762,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return false;
 	}
 	
-	/**
-	 * Returns whether this stack frame's declaring type may be out of synch with
-	 * the declaring type loaded in the VM.
-	 */
-	public boolean mayBeOutOfSynch() throws DebugException {
-		return false;
-	}
-	
 	protected boolean exists() throws DebugException {
 		return ((JDIThread)getThread()).computeStackFrames().indexOf(this) != -1;
 	}

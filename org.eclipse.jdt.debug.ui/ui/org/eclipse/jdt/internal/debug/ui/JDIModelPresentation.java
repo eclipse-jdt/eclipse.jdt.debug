@@ -96,6 +96,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * used to evaluate 'toString()' for displaying details of values.
 	 */
 	private static final String fgToString = "toString"; //$NON-NLS-1$
+	
+	/**
+	 * Map used for retrieving cached composite image descriptors.
+	 * key: the base image
+	 * value: a "flag map" such that:
+	 * 		key: a set of adornment (overlay) flags
+	 * 		value: the image descriptor which contains the base image with the
+	 * 				overlays appropriate for the flags.
+	 * 				
+	 */
+	private HashMap fImageMap= new HashMap(5);
 
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	
@@ -298,9 +309,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				String label= getStackFrameText((IStackFrame) item);
 				if (item instanceof IJavaStackFrame) {
 					if (((IJavaStackFrame)item).isOutOfSynch()) {
-						label= label + DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1"); //$NON-NLS-1$
-					} else if (((IJavaStackFrame)item).mayBeOutOfSynch()) {
-						label= label + DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2"); //$NON-NLS-1$
+						label= label + " (out of synch)";
 					}
 				}
 				return label;
@@ -316,24 +325,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				String label= null;
 				if (item instanceof IJavaThread) {
 					label= getThreadText((IJavaThread) item, showQualified);
+					if (((IJavaThread)item).isOutOfSynch()) {
+						label= label + " (out of synch)";
+					} else if (((IJavaThread)item).mayBeOutOfSynch()) {
+						label= label + " (may be out of synch)";
+					}
 				} else if (item instanceof IJavaDebugTarget) {
 					label= getDebugTargetText((IJavaDebugTarget) item, showQualified);
+					if (((IJavaDebugTarget)item).isOutOfSynch()) {
+						label= label + " (out of synch)";
+					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
+						label= label + " (may be out of synch)";
+					}
 				} else if (item instanceof IJavaValue) {
 					label= getValueText((IJavaValue) item);
 				}
-				if (item instanceof IJavaThread) {
-					if (((IJavaThread)item).isOutOfSynch()) {
-						label= label + DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1"); //$NON-NLS-1$
-					} else if (((IJavaThread)item).mayBeOutOfSynch()) {
-						label= label + DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2"); //$NON-NLS-1$
-					}
-				} else if (item instanceof IJavaDebugTarget) {
-					if (((IJavaDebugTarget)item).isOutOfSynch()) {
-						label= label + DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1"); //$NON-NLS-1$
-					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
-						label= label + DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2"); //$NON-NLS-1$
-					}
-				}		
 				if (item instanceof ITerminate) {
 					if (((ITerminate) item).isTerminated()) {
 						label= DebugUIMessages.getString("JDIModelPresentation.<terminated>_2") + " " + label; //$NON-NLS-2$ //$NON-NLS-1$
@@ -780,7 +786,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (image == null) {
 			return null;
 		}
-		JDIDebugElementImageDescriptor descriptor= new JDIDebugElementImageDescriptor(image, computeJDIAdornmentFlags(element));
+		int flags= computeJDIAdornmentFlags(element);
+		JDIDebugElementImageDescriptor descriptor= null;
+		HashMap flagMap= (HashMap) fImageMap.get(image); // Get flags mapped to image
+		if (flagMap != null) {
+			descriptor= (JDIDebugElementImageDescriptor) flagMap.get(new Integer(flags)); // Get descriptor mapped to flags (and image)
+		} else {
+			flagMap= new HashMap(3);
+			fImageMap.put(image, flagMap); // Store mapping of image to flags
+		}
+		if (descriptor == null) {
+			descriptor= new JDIDebugElementImageDescriptor(image, flags);
+			flagMap.put(new Integer(flags), descriptor); // Store mapping of flags (and image) to descriptor
+		}
 		return fRegistry.get(descriptor);
 	}
 	
@@ -794,9 +812,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (element instanceof IJavaStackFrame) {
 				if (((IJavaStackFrame)element).isOutOfSynch()) {
 					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
-				}
-				if (((IJavaStackFrame)element).mayBeOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.MAY_BE_OUT_OF_SYNCH;
 				}
 			}
 			if (element instanceof IJavaThread) {

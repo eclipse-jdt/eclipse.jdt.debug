@@ -945,9 +945,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	public boolean isOutOfSynch() throws DebugException {
 		if (isSuspended()) {
-			IStackFrame[] frames= getStackFrames();
-			for (int i= 0; i < frames.length; i++) {
-				if (((JDIStackFrame) frames[i]).isOutOfSynch()) {
+			List frames= computeStackFrames();
+			Iterator iter= frames.iterator();
+			while (iter.hasNext()) {
+				if (((JDIStackFrame) iter.next()).isOutOfSynch()) {
 					return true;
 				}
 			}
@@ -960,17 +961,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	public boolean mayBeOutOfSynch() throws DebugException {
-		if (isSuspended()) {
-			IStackFrame[] frames= getStackFrames();
-			for (int i= 0; i < frames.length; i++) {
-				if (((JDIStackFrame) frames[i]).mayBeOutOfSynch()) {
-					return true;
-				}
-			}
-			return false;	
-		} else {
+		if (!isSuspended()) {
 			return ((JDIDebugTarget)getDebugTarget()).hasHCRFailed();
 		}
+		return false;
 	}	
 	
 	/**
