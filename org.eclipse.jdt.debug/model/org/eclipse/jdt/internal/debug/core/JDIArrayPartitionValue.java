@@ -109,9 +109,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	 * @see IJavaValue#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {
-			requestFailed("An array partition does not have a type.", null);
-			// execution will not fall through, as
-			// #requestFailed will throw an exception
 			return null;
 	}
 
