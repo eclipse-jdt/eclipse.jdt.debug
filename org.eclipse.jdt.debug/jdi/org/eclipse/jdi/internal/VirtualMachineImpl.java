@@ -741,16 +741,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	/**
 	 * Prepares the VM's threads for VM resume.
 	 * 
-	 * Reset event flags of all ThreadReferenceImpl for which there exist references.
-	 * Note that only when no references exist they will not be in cache.
-	 * We can therefore be sure that we will reset all ThreadReferenceImpl objects that
-	 * the application holds.
+	 * Reset event flags of all threads.
 	 * 
 	 * Also, make sure the suspend count on each thread is not greater than 1. If it is,
 	 * resuming the VM will not actually resume the thread.
 	 */
-	public void primeThreadsForResume() {
-		Iterator iter = fCachedObjects.valuesWithType(ThreadReferenceImpl.class).iterator();
+	private void primeThreadsForResume() {
+		Iterator iter = allThreads().iterator();
 		ThreadReferenceImpl thread;
 		while (iter.hasNext()) {
 			thread = (ThreadReferenceImpl)iter.next();
