@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
@@ -55,6 +57,20 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 					IResource editorResource= getResource();
 					if (breakpointResource.equals(editorResource)) {
 						return breakpoint;
+					} else if (editorResource == null) {
+						IClassFile classFile= (IClassFile)getTextEditor().getEditorInput().getAdapter(IClassFile.class);
+						if (classFile != null) {
+							try {
+								IType type = classFile.getType();
+								if (type.getFullyQualifiedName().equals(jBreakpoint.getTypeName())) {
+									return breakpoint;
+								}
+							} catch (CoreException ce) {
+								JDIDebugUIPlugin.log(ce);
+								continue;
+							}
+			
+						} 
 					}
 				}
 			}
