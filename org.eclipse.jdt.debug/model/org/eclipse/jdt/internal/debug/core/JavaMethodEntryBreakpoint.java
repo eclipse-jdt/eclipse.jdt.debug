@@ -1,15 +1,28 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.util.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import org.eclipse.core.resources.*;
+import java.util.Map;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 
-import com.sun.jdi.*;
+import com.sun.jdi.Method;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.request.EventRequest;
@@ -33,16 +46,15 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	 * </ol>
 	 */
 	private String[] fMethodNameSignature= null;
-	
+
 	public JavaMethodEntryBreakpoint() {
 	}
-
+	
 	/**
 	 * Creates and returns a method entry breakpoint in the
 	 * given method.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
+	 * "hit" the specified number of times.
 	 *
 	 * @param method the method in which to suspend on entry
 	 * @param hitCount the number of times the breakpoint will be hit before
@@ -64,10 +76,10 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				// create the marker
 				setMarker(resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT));
 				
-				// find the source range if available
+				// find the name range if available
 				int start = -1;
 				int end = -1;
-				ISourceRange range = method.getSourceRange();
+				ISourceRange range = method.getNameRange();
 				if (range != null) {
 					start = range.getOffset();
 					end = start + range.getLength() - 1;
@@ -283,4 +295,3 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		return fMethodNameSignature;
 	}		
 }
-
