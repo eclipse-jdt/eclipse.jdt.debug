@@ -84,6 +84,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	public final static String DISPLAY_QUALIFIED_NAMES= "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
 	
 	protected HashMap fAttributes= new HashMap(3);
+	
+	/**
+	 * A mapping of detail listeners (IValueDetailListener) to the values (IValue) that they
+	 * are currently expecting details from.
+	 */
+	private HashMap fRequestedValues= new HashMap();
 
 	static final Point BIG_SIZE= new Point(22, 16);
 	protected ImageDescriptorRegistry fJavaElementImageRegistry= JavaPlugin.getImageDescriptorRegistry();
@@ -1377,61 +1383,51 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		public void computeDetail(IValue value, IThread thread, IValueDetailListener listener) throws DebugException;
 	}
 	
-	class DefaultJavaValueDetailProvider implements IValueDetailProvider,
-													  ITimeoutListener {		
+	class DefaultJavaValueDetailProvider implements IValueDetailProvider {		
 		private StringBuffer fResultBuffer;
-		private boolean fTimedOut = false;
 		private Thread fDetailThread;
-		private Timer fTimer;
 		private IValue fValue;
 		private IValueDetailListener fListener;
 		private static final int EVAL_TIMEOUT = 3000;
 		
 		public DefaultJavaValueDetailProvider() {
 			fResultBuffer = new StringBuffer(50);
-			fTimer = new Timer();
-		}
-		
-		public void timeout() {
-			fTimedOut = true;
-			fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<timeout>_77")); //$NON-NLS-1$
-			notifyListener();
-			fTimer.dispose();
 		}
 		
 		private void notifyListener() {
 			fListener.detailComputed(fValue, fResultBuffer.toString());
 		}
 		
-		public void computeDetail(IValue value, final IThread thread, IValueDetailListener listener) throws DebugException {
+		public void computeDetail(final IValue value, final IThread thread, final IValueDetailListener listener) throws DebugException {
+			fRequestedValues.put(listener, value);
 			fValue = value;
 			fListener = listener;
 			Runnable detailRunnable = new Runnable() {	
-				public void run() {		
-					fTimer.start(DefaultJavaValueDetailProvider.this, EVAL_TIMEOUT);
-					
-					if (fValue == null) {
+				public void run() {	
+					if (value == null) {
 						fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
 					} else if (thread instanceof IJavaThread) {
 						IJavaThread javaThread = (IJavaThread) thread;
+						javaThread.setPerformingEvaluation(true);
 						if (javaThread.isSuspended()) {
-							if (fValue instanceof IJavaArray) {
-								appendArrayDetail((IJavaArray)fValue, javaThread);
+							if (value instanceof IJavaArray) {
+								appendArrayDetail((IJavaArray)value, javaThread);
 							} else if (fValue instanceof IJavaObject) {
-								appendObjectDetail((IJavaObject)fValue, javaThread);
+								appendObjectDetail((IJavaObject)value, javaThread);
 							} else {
-								appendJDIValueString(fValue);															
+								appendJDIValueString(value);															
 							}
 						} else {
-							appendJDIValueString(fValue);							
+							appendJDIValueString(value);							
 						}
+						javaThread.setPerformingEvaluation(false);
 					} else {
-						appendJDIValueString(fValue);
+						appendJDIValueString(value);
 					}
-					
-					if (!fTimedOut) {
+					if (value == fRequestedValues.get(fListener)) {
+						// If another evaluation occurs before this one finished,
+						// don't display this result
 						notifyListener();
-						fTimer.dispose();
 					}
 				}
 			};

@@ -1466,7 +1466,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (evaluating) {
 			fireResumeEvent(DebugEvent.EVALUATION);
 		} else {
-			fireChangeEvent(DebugEvent.EVALUATION);
+			fireSuspendEvent(DebugEvent.EVALUATION);
 		}
 	}
 	

@@ -76,6 +76,13 @@ public interface IJavaThread extends IThread {
 	 */
 	boolean isPerformingEvaluation();
 	/**
+	 * Informs this thread that it is about to begin
+	 * or end an evaluation. Clients should call this method
+	 * when they begin an evaluation with <code>true</code> and when
+	 * they end the evaluation with <code>false</code>
+	 */
+	void setPerformingEvaluation(boolean evaluating);
+	/**
 	 * Returns the name of the thread group this thread belongs to.
 	 *
 	 * @return thread group name
