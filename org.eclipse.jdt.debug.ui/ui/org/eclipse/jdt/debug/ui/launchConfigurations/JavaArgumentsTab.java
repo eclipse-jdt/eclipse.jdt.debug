@@ -140,7 +140,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
 		fVMArgumentsBlock.setDefaults(config);
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		fWorkingDirectoryBlock.setDefaults(config);
 	}
 
 	/**
