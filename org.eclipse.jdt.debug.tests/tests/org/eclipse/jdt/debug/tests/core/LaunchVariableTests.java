@@ -176,7 +176,7 @@ public class LaunchVariableTests extends LaunchConfigurationTests {
 		String variableName= "SimpleVariable";
 		ISimpleLaunchVariable variable= new SimpleLaunchVariable(variableName);
 		String variableValue= "VariableValue";
-		variable.setText(variableValue);
+		variable.setValue(variableValue);
 		ILaunchVariableManager manager= DebugPlugin.getDefault().getLaunchVariableManager(); 
 		manager.addSimpleVariables(new ISimpleLaunchVariable[] { variable });
 		assertNotNull("Added variable not retrieved from simple variable registry.", manager.getSimpleVariable(variableName));
