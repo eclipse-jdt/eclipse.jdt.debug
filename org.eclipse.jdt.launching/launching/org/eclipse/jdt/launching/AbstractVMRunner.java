@@ -59,6 +59,12 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		return DebugPlugin.exec(cmdLine, workingDirectory);
 	}	
 	
+	/**
+	 * Returns the given array of strings as a single space-delimited string.
+	 * 
+	 * @param cmdLine array of strings
+	 * @return a single space-delimited string
+	 */
 	protected String getCmdLineAsString(String[] cmdLine) {
 		StringBuffer buff= new StringBuffer();
 		for (int i = 0, numStrings= cmdLine.length; i < numStrings; i++) {

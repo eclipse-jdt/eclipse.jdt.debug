@@ -49,6 +49,8 @@ public final class LibraryLocation {
 	}		
 		
 	/**
+	 * Returns the JRE library jar location.
+	 * 
 	 * @return The JRE library jar location.
 	 */
 	public IPath getSystemLibraryPath() {
@@ -56,6 +58,8 @@ public final class LibraryLocation {
 	}
 	
 	/**
+	 * Reutrns the JRE library source zip location.
+	 * 
 	 * @return The JRE library source zip location.
 	 */
 	public IPath getSystemLibrarySourcePath() {
@@ -63,6 +67,8 @@ public final class LibraryLocation {
 	}	
 	
 	/**
+	 * Returns the path to the default package in the sources zip file
+	 * 
 	 * @return The path to the default package in the sources zip file.
 	 */
 	public IPath getPackageRootPath() {

@@ -139,8 +139,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 
 	/**
 	 * Verifies the VM install specified by the given 
-	 * launch configuration - i.e. that its home location
-	 * is specified and exists, and returns the VM install.
+	 * launch configuration exists and returns the VM install.
 	 * 
 	 * @param configuration launch configuration
 	 * @return the VM install specified by the given 

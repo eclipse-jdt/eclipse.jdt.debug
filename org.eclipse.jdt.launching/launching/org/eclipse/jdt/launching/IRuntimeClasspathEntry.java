@@ -55,7 +55,7 @@ public interface IRuntimeClasspathEntry {
 	public static final int VARIABLE = 3;
 	
 	/**
-	 * Tpye identifier for container entries.
+	 * Type identifier for container entries.
 	 */
 	public static final int CONTAINER = 4;
 

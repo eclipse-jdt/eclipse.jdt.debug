@@ -98,14 +98,13 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 		return vm;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Subclasses should return a new instance of the appropriate
-	 * IVMInstall subclass from this method.
-	 * @param	id	The vm's id. The IVMInstall instance that is created must
-	 * 				return <code>id</code> from its getId() method.
-	 * 				Must not be null.
-	 * @return	the newly created IVMInstall instance. Must not return
-	 			null.
+	 * <code>IVMInstall</code> subclass from this method.
+	 * @param	id	The vm's id. The <code>IVMInstall</code> instance that is created must
+	 * 				return <code>id</code> from its <code>getId()</code> method.
+	 * 				Must not be <code>null</code>.
+	 * @return	the newly created IVMInstall instance. Must not return <code>null</code>.
 	 */
 	protected abstract IVMInstall doCreateVMInstall(String id);
 

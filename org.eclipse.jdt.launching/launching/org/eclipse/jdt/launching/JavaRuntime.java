@@ -104,7 +104,7 @@ public final class JavaRuntime {
 		
 	/**
 	 * Classpath container used for a project's JRE
-	 * (value <code>"org. eclipse.jdt.launching.JRE_CONTAINER"</code>). A
+	 * (value <code>"org.eclipse.jdt.launching.JRE_CONTAINER"</code>). A
 	 * container  is resolved in the context of a specific Java project, to one
 	 * or more system libraries contained in a JRE. The container can have zero
 	 * or two path segments following the container name. When no segments
