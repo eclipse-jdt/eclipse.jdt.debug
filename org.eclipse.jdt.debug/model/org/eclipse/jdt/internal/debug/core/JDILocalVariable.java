@@ -116,6 +116,12 @@ public class JDILocalVariable extends JDIModificationVariable {
 	protected JDIStackFrame getStackFrame() {
 		return fStackFrame;
 	}
-	
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getLocal().toString();
+	}		
 }
 

@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.eval.IEvaluationContext;
  * @see IJavaEvaluationResult
  * @see IJavaValue
  * @see IEvaluationContext
+ * @deprecated evaluation API will no longer be supported. 
  */
 
 public interface IJavaEvaluate {
@@ -53,6 +54,7 @@ public interface IJavaEvaluate {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 * @see IJavaEvaluationListener
+	 * @deprecated evaluation API will no longer be supported. 
 	 */
 	void evaluate(String expression, IJavaEvaluationListener listener, IJavaProject project) throws DebugException;
 
@@ -78,6 +80,7 @@ public interface IJavaEvaluate {
 	 * </ul>
 	 * @see IJavaEvaluationListener
 	 * @see IEvaluationContext
+	 * @deprecated evaluation API will no longer be supported. 
 	 */
 	void evaluate(String expression, IJavaEvaluationListener listener, IEvaluationContext context) throws DebugException;
 
@@ -88,6 +91,7 @@ public interface IJavaEvaluate {
 	 * (i.e. nested evaluations are not supported).
 	 *
 	 * @return whether this element can currently perform an evaluation
+	 * @deprecated evaluation API will no longer be supported. 
 	 */
 	boolean canPerformEvaluation();
 }

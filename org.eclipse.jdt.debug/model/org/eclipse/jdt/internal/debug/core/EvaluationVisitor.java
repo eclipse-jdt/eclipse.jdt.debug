@@ -5,16 +5,16 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.ClassType;
-import com.sun.jdi.Method;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.compiler.IAbstractSyntaxTreeVisitor;
 import org.eclipse.jdt.internal.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.ast.AND_AND_Expression;
@@ -120,7 +120,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	/**
 	 * Whether to print debug messages to the console
 	 */
-	private static boolean VERBOSE = true;
+	private static boolean VERBOSE = false;
 	
 	/**
 	 * The stack containing the objects/literals pushed as
@@ -131,7 +131,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	/**
 	 * The stack frame context for this evaluation.
 	 */ 
-	private StackFrameEvaluationContext fContext;
+	private IJavaStackFrame fFrame;
 	
 	/**
 	 * Wether evaluation is active. Evaluation is only
@@ -147,12 +147,12 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	
 	/**
 	 * Constructs an AST visitor to perform an evaluation in the
-	 * context of the give stack frame evaluation context.
+	 * context of the give stack frame.
 	 * 
 	 * @param frame stack frame
 	 */
-	protected EvaluationVisitor(StackFrameEvaluationContext context) {
-		setContext(context);
+	protected EvaluationVisitor(IJavaStackFrame frame) {
+		setStackFrame(frame);
 		fStack = new Stack();
 		setActive(false);
 	}
@@ -221,30 +221,21 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	}	
 	
 	/**
-	 * Sets the context for this evalaution.
+	 * Sets the stack frame context for this evalaution.
 	 * 
 	 * @param context stack frame evaluation context
 	 */
-	protected void setContext(StackFrameEvaluationContext context) {
-		fContext = context;
+	protected void setStackFrame(IJavaStackFrame frame) {
+		fFrame = frame;
 	}
-	
-	/**
-	 * Returns the context for this evalaution.
-	 * 
-	 * @return stack frame evaluation context
-	 */
-	protected StackFrameEvaluationContext getConext() {
-		return fContext;
-	}
-	
+		
 	/**
 	 * Returns the stack frame context for this evaluation.
 	 * 
 	 * @return stack frame
 	 */
-	protected JDIStackFrame getStackFrame() {
-		return getConext().getModelFrame();
+	protected IJavaStackFrame getStackFrame() {
+		return fFrame;
 	}
 	
 	/**
@@ -252,8 +243,8 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 * 
 	 * @return the thread in which to perform evalautions
 	 */
-	protected JDIThread getThread() {
-		return getConext().getModelThread();
+	protected IJavaThread getThread() {
+		return (IJavaThread)getStackFrame().getThread();
 	}
 	
 	/**
@@ -310,25 +301,18 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 				if (allocationExpression.arguments != null) {
 					numArgs = allocationExpression.arguments.length;
 				}
-				List args = new ArrayList(numArgs);
-				for (int i= 0; i < numArgs; i++) {
-					args.add(0, pop());
+				IJavaValue[] args = new IJavaValue[numArgs];
+				// args are in reverse order
+				for (int i= numArgs - 1; i >= 0; i--) {
+					args[i] = (IJavaValue)pop();
 				}
-				Object receiver = pop();
-				if (receiver instanceof ClassType) {
-					ClassType type = (ClassType)receiver;
-					String selector = toString(allocationExpression.binding.selector);
-					String signature = toString(allocationExpression.binding.signature());
-					List methods = type.methodsByName(selector, signature);
-					if (methods.isEmpty()) {
-						verbose("Method lookup failed");
-						return;
-					}
-					Value result = getThread().newInstance(type, (Method)methods.get(0), args);
-					verbose("Invoked constructor: " + selector + " " + signature);
-					push(result);
-				}
+				IJavaType clazz = (IJavaType)pop();
+				String signature = toString(allocationExpression.binding.signature());
+				IJavaValue result = clazz.newInstance(signature, args, getThread());
+				verbose("Invoked constructor: " + signature);
+				push(result);
 			} catch (DebugException e){
+				e.printStackTrace();
 			}
 		}			
 	}
@@ -559,6 +543,20 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 * @see IAbstractSyntaxTreeVisitor#endVisit(FieldReference, BlockScope)
 	 */
 	public void endVisit(FieldReference fieldReference, BlockScope scope) {
+		if (isActive()) {
+			try {
+				IJavaValue receiver = (IJavaValue)pop();
+				String name = toString(fieldReference.token);
+				IJavaVariable field = getField(receiver, name);
+				if (field == null) {
+					verbose("could not field " + name);
+				} else {
+					push(field.getValue());
+				}
+			} catch (DebugException e) {
+				e.printStackTrace();
+			}
+		}	
 	}
 
 	/*
@@ -649,28 +647,22 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 				if (messageSend.arguments != null) {
 					numArgs = messageSend.arguments.length;
 				}
-				List args = new ArrayList(numArgs);
-				for (int i= 0; i < numArgs; i++) {
-					args.add(0, pop());
+				IJavaValue[] args = new IJavaValue[numArgs];
+				// args are in reverse order
+				for (int i= numArgs - 1; i >= 0; i--) {
+					args[i] = (IJavaValue)pop();
 				}
-				Object receiver = pop();
-				if (receiver instanceof ObjectReference) {
-					ObjectReference object = (ObjectReference)receiver;
-					String selector = toString(messageSend.selector);
-					String signature = toString(messageSend.binding.signature());
-					List methods = object.referenceType().methodsByName(selector, signature);
-					if (methods.isEmpty()) {
-						verbose("Method lookup failed");
-						return;
-					}
-					Value result = getThread().invokeMethod(null, object, (Method)methods.get(0), args);
-					verbose("Sent message: " + selector + " " + signature);
-					if (result != null) {
-						// void result is null
-						push(result);
-					}
+				IJavaValue receiver = (IJavaValue)pop();
+				String selector = toString(messageSend.selector);
+				String signature = toString(messageSend.binding.signature());
+				IJavaValue result = receiver.sendMessage(selector, signature, args, getThread(), messageSend.isSuperAccess());
+				verbose("Sent message: " + selector + " " + signature);
+				if (result != null) {
+					// void result is null
+					push(result);
 				}
 			} catch (DebugException e){
+				e.printStackTrace();
 			}
 		}
 	}
@@ -1129,7 +1121,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 */
 	public boolean visit(FalseLiteral falseLiteral, BlockScope scope) {
 		if (isActive()) {
-			push(getVM().mirrorOf(false));
+			push(getDebugTarget().newValue(false));
 		}
 		return true;
 	}
@@ -1155,7 +1147,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 		if (isActive()) {
 			// value of FloatLiteral is not visible, so must parse
 			// source to get the value
-			push(getVM().mirrorOf(Float.parseFloat(toString(floatLiteral.source()))));
+			push(getDebugTarget().newValue(Float.parseFloat(toString(floatLiteral.source()))));
 		}		
 		return true;
 	}
@@ -1202,7 +1194,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 */
 	public boolean visit(IntLiteral intLiteral, BlockScope scope) {
 		if (isActive()) {
-			push(getVM().mirrorOf(intLiteral.value));
+			push(getDebugTarget().newValue(intLiteral.value));
 		}
 		return true;
 	}
@@ -1237,7 +1229,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 		if (isActive()) {
 			// LongLiteral.value is not visible, so must parse its source
 			// to get the value
-			push(getVM().mirrorOf(Long.parseLong(toString(longLiteral.source()))));
+			push(getDebugTarget().newValue(Long.parseLong(toString(longLiteral.source()))));
 		}		
 		return true;
 	}
@@ -1369,10 +1361,12 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 		BlockScope scope) {
 			if (isActive()) {
 				try {
-					JDIVariable var = (JDIVariable)getStackFrame().findVariable(toString(singleNameReference.token));
+					String name = toString(singleNameReference.token);
+					IJavaVariable var = (IJavaVariable)getStackFrame().findVariable(name);
 					if (var == null) {
+						verbose("could not find variable named " + name);
 					} else {
-						push(var.getCurrentValue());
+						push(var.getValue());
 					}
 				} catch (DebugException e) {
 				}
@@ -1392,7 +1386,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 					// trim 'L' prefix and ';' suffix
 					signature = signature.substring(1, signature.length() - 1);
 					signature = signature.replace('/', '.');
-					ClassType type = getConext().classForName(signature);
+					IJavaType type = getDebugTarget().getJavaType(signature);
 					if (type == null) {
 						verbose("Unable to get class for name: " + signature);
 						return false;
@@ -1419,7 +1413,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 */
 	public boolean visit(StringLiteral stringLiteral, BlockScope scope) {
 		if (isActive()) {
-			push(getVM().mirrorOf(new String(stringLiteral.source())));
+			push(getDebugTarget().newValue(new String(stringLiteral.source())));
 		}		
 		return true;
 	}
@@ -1428,7 +1422,19 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 * @see IAbstractSyntaxTreeVisitor#visit(SuperReference, BlockScope)
 	 */
 	public boolean visit(SuperReference superReference, BlockScope scope) {
-		return true;
+		if (isActive()) {
+			try {
+				IJavaVariable var = (IJavaVariable)getStackFrame().findVariable("this");
+				if (var == null) {
+					verbose("could not find 'this'");
+				} else {
+					push(var.getValue());
+				}
+			} catch (DebugException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -1451,7 +1457,19 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 * @see IAbstractSyntaxTreeVisitor#visit(ThisReference, BlockScope)
 	 */
 	public boolean visit(ThisReference thisReference, BlockScope scope) {
-		return true;
+		if (isActive()) {
+			try {
+				IJavaVariable var = (IJavaVariable)getStackFrame().findVariable("this");
+				if (var == null) {
+					verbose("could not find 'this'");
+				} else {
+					push(var.getValue());
+				}
+			} catch (DebugException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -1466,7 +1484,7 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	 */
 	public boolean visit(TrueLiteral trueLiteral, BlockScope scope) {
 		if (isActive()) {
-			push(getVM().mirrorOf(true));
+			push(getDebugTarget().newValue(true));
 		}				
 		return true;
 	}
@@ -1533,13 +1551,33 @@ public class EvaluationVisitor implements IAbstractSyntaxTreeVisitor {
 	}
 	
 	/**
-	 * Returns the underlying virtual machine on which the
-	 * evaluation is being performed.
+	 * Returns the debug target in which the evaluation is
+	 * being performed.
 	 * 
-	 * @return underlying VM
+	 * @return debug target
 	 */
-	protected VirtualMachine getVM() {
-		return getStackFrame().getVM();
+	protected IJavaDebugTarget getDebugTarget() {
+		return (IJavaDebugTarget)getStackFrame().getDebugTarget();
 	}
+	
+	/**
+	 * Returns the field of the given object with the specified
+	 * name, or <code>null</code> if not found.
+	 * 
+	 * @param object value in which to locate field
+	 * @param name name of field to locate
+	 * @return the field, as a variable
+	 * @exception DebugException if an underlying method fails
+	 */
+	protected IJavaVariable getField(IJavaValue object, String name) throws DebugException {
+		IVariable[] vars = object.getVariables();
+		for (int i = 0; i < vars.length; i ++) {
+			if (vars[i].getName().equals(name)) {
+				return (IJavaVariable)vars[i];
+			}
+		}
+		return null;
+	}
+	
 }
 

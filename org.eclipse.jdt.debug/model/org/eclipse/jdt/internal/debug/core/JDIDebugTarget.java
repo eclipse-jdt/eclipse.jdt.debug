@@ -39,8 +39,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -51,6 +54,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
@@ -1031,7 +1035,100 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		return null;
 	}
+
+	/**
+	 * @see IJavaDebugTarget.getJavaType(Sting)
+	 */
+	public IJavaType getJavaType(String name) throws DebugException {
+		try {
+			// get java.lang.Class
+			List classes = getVM().classesByName(name);
+			if (classes.size() == 0) {
+				return null;
+			} else {
+				ClassType type = (ClassType)classes.get(0);
+				return new JDIType(this, type);
+			}
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving class for name {1}", new String[]{e.toString(), name}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will will throw an exception
+			return null;
+		}
+	}
 	
+	/**
+	 * @see IJavaDebugTarget#newValue(boolean)
+	 */
+	public IJavaValue newValue(boolean value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#newValue(byte)
+	 */
+	public IJavaValue newValue(byte value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+
+	/**
+	 * @see IJavaDebugTarget#newValue(char)
+	 */
+	public IJavaValue newValue(char value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+
+	/**
+	 * @see IJavaDebugTarget#newValue(double)
+	 */
+	public IJavaValue newValue(double value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#newValue(float)
+	 */
+	public IJavaValue newValue(float value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+						
+	/**
+	 * @see IJavaDebugTarget#newValue(int)
+	 */
+	public IJavaValue newValue(int value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#newValue(long)
+	 */
+	public IJavaValue newValue(long value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}	
+	
+	/**
+	 * @see IJavaDebugTarget#newValue(short)
+	 */
+	public IJavaValue newValue(short value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#newValue(String)
+	 */
+	public IJavaValue newValue(String value) {
+		Value v = getVM().mirrorOf(value);
+		return new JDIValue(this, v);
+	}
+		
 	/**
 	 * Sets the instance of <code>java.lang.ThreadDeath</code> used
 	 * by this target to terminate threads. The instance is created

@@ -19,6 +19,7 @@ package org.eclipse.jdt.debug.core;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IJavaEvaluationResult
+ * @deprecated evaluation API will no longer be supported. 
  */
 
 public interface IJavaEvaluationListener {
@@ -29,6 +30,7 @@ public interface IJavaEvaluationListener {
 	 * 
 	 * @param result The result from the evaluation
 	 * @see IJavaEvaluationResult
+	 * @deprecated evaluation API will no longer be supported. 
 	 */
 	void evaluationComplete(IJavaEvaluationResult result);
 }

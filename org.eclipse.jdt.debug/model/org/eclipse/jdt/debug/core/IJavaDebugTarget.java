@@ -47,5 +47,112 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
+	
+	/**
+	 * Returns the type from this debug target with the given fully
+	 * qualified name, or <code>null</code> of no type with the given
+	 * name is loaded.
+	 * 
+	 * @param name fully qualified name of type, for example
+	 * 	<code>java.lang.String</code>
+	 * @return the type with the given name, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	IJavaType getJavaType(String name) throws DebugException;
+
+	/**
+	 * Returns an <code>IJavaValue</code> for the given boolean. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a boolean from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(boolean value);	
+
+	/**
+	 * Returns an <code>IJavaValue</code> for the given byte. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a byte from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(byte value);	
+
+	/**
+	 * Returns an <code>IJavaValue</code> for the given char. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a char from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(char value);
+	
+	/**
+	 * Returns an <code>IJavaValue</code> for the given double. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a double from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(double value);	
+	
+	/**
+	 * Returns an <code>IJavaValue</code> for the given float. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a float from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(float value);		
+				
+	/**
+	 * Returns an <code>IJavaValue</code> for the given int. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value an int from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(int value);
+	
+	/**
+	 * Returns an <code>IJavaValue</code> for the given long. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a long from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(long value);	
+	
+	/**
+	 * Returns an <code>IJavaValue</code> for the given short. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a short from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(short value);
+	
+	/**
+	 * Returns an <code>IJavaValue</code> for the given string. This
+	 * value can be used for setting and comparing against a value 
+	 * retrieved from this debug target.
+	 * 
+	 * @param value a string from which to create a value
+	 * @return the equivalent <code>IJavaValue</code>
+	 */	
+	IJavaValue newValue(String value);			
 
 }

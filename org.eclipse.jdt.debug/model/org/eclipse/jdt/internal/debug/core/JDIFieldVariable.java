@@ -180,5 +180,12 @@ public class JDIFieldVariable extends JDIModificationVariable {
 		}
 		return super.supportsValueModification();
 	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getField().toString();
+	}		
 }
 

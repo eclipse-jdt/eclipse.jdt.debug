@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IMarker;
  * </p>
  * @see IJavaValue
  * @see IJavaEvaluate
+ * @deprecated evaluation API will no longer be supported. 
  */
 
 public interface IJavaEvaluationResult {
@@ -29,6 +30,7 @@ public interface IJavaEvaluationResult {
 	 * evaluation, or <code>null</code> if no result is available.
 	 *
 	 * @return the resulting value
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	IJavaValue getValue();
 	
@@ -40,6 +42,7 @@ public interface IJavaEvaluationResult {
 	 * @return whether there were any problems.
 	 * @see #getProblems
 	 * @see #getException
+	 * @deprecated evaluation API will no longer be supported. 
 	 */
 	boolean hasProblems();
 	
@@ -51,6 +54,7 @@ public interface IJavaEvaluationResult {
 	 * source line number is relative to the initializer code.
 	 *
 	 * @return problems, or an empty array if no problems
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	IMarker[] getProblems();
 	
@@ -64,6 +68,7 @@ public interface IJavaEvaluationResult {
 	 * 
 	 * @param problem A problem marker returned by <code>getProblems</code>.
 	 * @return A source fragment for the problem.
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	String getSourceFragment(IMarker problem);
 
@@ -77,6 +82,7 @@ public interface IJavaEvaluationResult {
 	 * @param problem A problem marker returned by <code>getProblems</code>.
 	 * @return a source fragment for the problem
 	 * @see org.eclipse.jdt.core.eval.ICodeSnippetRequestor
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	int getKind(IMarker problem);
 	
@@ -84,6 +90,7 @@ public interface IJavaEvaluationResult {
 	 * Returns the snippet that was evaluated.
 	 *
 	 * @return The string code snippet.
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	String getSnippet();
 	
@@ -97,6 +104,7 @@ public interface IJavaEvaluationResult {
 	 * @return The exception that occurred during the evaluation
 	 * @see com.sun.jdi.InvocationException
 	 * @see org.eclipse.debug.core.DebugException
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	Throwable getException();
 	
@@ -104,6 +112,7 @@ public interface IJavaEvaluationResult {
 	 * Returns the thread in which the evaluation was performed.
 	 * 
 	 * @return The thread in which the evaluation was performed
+	 * @deprecated evaluation API will no longer be supported. 	
 	 */
 	IJavaThread getThread();
 }

@@ -337,8 +337,8 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		fLocalVariableTypeNames = localVariableTypeNames;
 	}
 	
-	public void acceptAst(CompilationUnitDeclaration ast, CompilationUnitScope scope) {
-		EvaluationVisitor visitor = new EvaluationVisitor(this);
+	public void acceptAst(CompilationUnitDeclaration ast, CompilationUnitScope scope) {	
+		EvaluationVisitor visitor = new EvaluationVisitor(getModelFrame());
 		ast.traverse(visitor, scope);
 	}
 }

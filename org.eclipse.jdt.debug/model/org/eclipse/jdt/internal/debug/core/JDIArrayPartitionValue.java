@@ -10,8 +10,10 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.sun.jdi.ArrayReference;
@@ -103,4 +105,30 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	protected JDIArrayPartition getPartition() {
 		return fPartition;
 	}
+	/**
+	 * @see IJavaValue#getJavaType()
+	 */
+	public IJavaType getJavaType() throws DebugException {
+			requestFailed("An array partition does not have a type.", null);
+			// execution will not fall through, as
+			// #requestFailed will throw an exception
+			return null;
+	}
+
+	/**
+	 * @see IJavaValue#sendMessage(String, String, IJavaValue[], IJavaThread)
+	 */
+	public IJavaValue sendMessage(
+		String selector,
+		String signature,
+		IJavaValue[] args,
+		IJavaThread thread,
+		boolean superSend)
+		throws DebugException {
+			requestFailed("Cannot send a message to an array.", null);
+			// execution will not fall through, as
+			// #requestFailed will throw an exception
+			return null;
+	}
+
 }

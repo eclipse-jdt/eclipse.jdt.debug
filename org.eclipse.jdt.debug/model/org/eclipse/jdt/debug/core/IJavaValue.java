@@ -35,6 +35,7 @@ public interface IJavaValue extends IValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>The type associated with the signature is not yet loaded</li></ul>
+	 * @deprecated use <code>getJavaType().getSignature()</code>
 	 */
 	public String getSignature() throws DebugException;
 	
@@ -63,8 +64,44 @@ public interface IJavaValue extends IValue {
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
+	 * @deprecated use <code>sendMessage(String, String, IJavaValue[], IJavaThread)</code>
 	 */
 	public String evaluateToString(IJavaThread thread) throws DebugException;
+	
+	/**
+	 * Returns the type of this vlaue.
+	 * 
+	 * @return the type of this value
+	 */
+	public IJavaType getJavaType() throws DebugException;
+	
+	/**
+	 * Returns the result of sending the specified message to this object
+	 * with the given arguments in the specified thread. The given
+	 * thread is resumed to perform the method invocation, and this
+	 * method does not return until the method invocation is complete.
+	 * Resuming the specified thread can result in breakpoints being
+	 * hit, infinite loops, and deadlock.
+	 * 
+	 * @param selector the selector of the method to be invoked
+	 * @param signature the JNI style signature of the method to be invoked
+	 * @param args the arguments of the method, which can be
+	 * 	<code>null</code> or emtpy if there are none
+	 * @param thread the thread in which to invoke the method
+	 * @param superSend <code>true</code> if the method lookup should 
+	 *  begin in this object's superclass
+	 * @return the result of invoking the method
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This object does not implement the specified method</li>
+	 * <li>This value does not represent an object (i.e. this value 
+	 * represents a primitive data type or array). </li>
+	 * <li>An exception occurrs while invoking the specified method</li>
+	 * </ul>
+	 */
+	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException;	
 }
 
 

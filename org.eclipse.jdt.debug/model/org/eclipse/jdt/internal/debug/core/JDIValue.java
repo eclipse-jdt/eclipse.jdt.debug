@@ -12,6 +12,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.debug.core.*;
 
+import org.eclipse.jdt.debug.core.IJavaType;
 import com.sun.jdi.*;
 
 /**
@@ -100,7 +101,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			if (fValue == null) {
 				return JDIDebugModelMessages.getString("JDIValue.null_10"); //$NON-NLS-1$
 			}
-			return fValue.type().name();
+			return getUnderlyingType().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
@@ -368,4 +369,80 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return null;
 		}
 	} 
+	
+	/**
+	 * @see IJavaValue#sendMessage(String, String, IJavaValue[], IJavaThread)
+	 */
+	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException {
+		if (fValue instanceof ObjectReference) {
+			JDIThread javaThread = (JDIThread)thread;
+			List arguments = null;
+			if (args == null) {
+				arguments = Collections.EMPTY_LIST;
+			} else {
+				arguments= new ArrayList(args.length);
+				for (int i = 0; i < args.length; i++) {
+					arguments.add(((JDIValue)args[i]).fValue);
+				}
+			}
+			ObjectReference object = (ObjectReference)fValue;
+			Method method = null;			
+			try {
+				ReferenceType refType = object.referenceType();
+				if (superSend) {
+					// begin lookup in superclass
+					refType = ((ClassType)refType).superclass();
+				}
+				List methods = refType.methodsByName(selector, signature);
+				if (methods.isEmpty()) {
+					requestFailed("Receiver does not implement selector {0} and signature {1}", null);
+				} else {
+					method = (Method)methods.get(0);
+				}
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for selector {1} and signature {2}", new String[] {e.toString(), selector, signature}), e);
+			}
+			Value result = javaThread.invokeMethod(null, object, method, arguments);
+			return new JDIValue((JDIDebugTarget)getDebugTarget(), result);
+		} else {
+			requestFailed("Receiver is not an object or class.", null);
+		}
+		// execution will not fall through to here,
+		// as #requestFailed will throw an exception
+		return null;
+	}
+	
+	/**
+	 * @see IJavaValue#getJavaType()
+	 */
+	public IJavaType getJavaType() throws DebugException {
+		return new JDIType((JDIDebugTarget)getDebugTarget(), getUnderlyingType());
+	}
+	
+	/**
+	 * Retuns this value's underlying type.
+	 * 
+	 * @return type
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	protected Type getUnderlyingType() throws DebugException {
+		try {
+			return getUnderlyingValue().type();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred retrieving type", new String[] {e.toString()}), e);
+			// execution will not fall through to here,
+			// as #requestFailed will throw an exception			
+			return null;
+		}
+	}	
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getUnderlyingValue().toString();
+	}
 }
