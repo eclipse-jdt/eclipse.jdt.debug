@@ -96,9 +96,10 @@ public interface IJavaThread extends IThread {
 	 */
 	boolean isPerformingEvaluation();
 	/**
-	 * Returns the name of the thread group this thread belongs to.
+	 * Returns the name of the thread group this thread belongs to,
+	 * or <code>null</code> if none.
 	 *
-	 * @return thread group name
+	 * @return thread group name, or <code>null</code> if none
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's

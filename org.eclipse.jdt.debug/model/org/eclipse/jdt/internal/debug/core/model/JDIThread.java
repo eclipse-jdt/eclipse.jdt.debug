@@ -942,6 +942,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public String getThreadGroupName() throws DebugException {
 		if (fThreadGroupName == null) {
 			ThreadGroupReference tgr= getUnderlyingThreadGroup();
+			
+			// bug# 20370
+			if (tgr == null) {
+				return null;
+			}
+			
 			try {
 				fThreadGroupName = tgr.name();
 			} catch (RuntimeException e) {
