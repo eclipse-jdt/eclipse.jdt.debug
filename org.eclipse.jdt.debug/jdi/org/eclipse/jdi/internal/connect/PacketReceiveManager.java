@@ -102,7 +102,7 @@ public class PacketReceiveManager extends PacketManager {
 	/** 
 	 * @return Returns a specified Reply Packet from the Virtual Machine.
 	 */
-	public synchronized JdwpReplyPacket getReply(int id, long timeToWait) throws InterruptedException {
+	public synchronized JdwpReplyPacket getReply(int id, long timeToWait) {
 		JdwpReplyPacket packet = null;
 		long remainingTime = timeToWait;
 		long timeBeforeWait;
@@ -113,7 +113,10 @@ public class PacketReceiveManager extends PacketManager {
 					&& (packet = removeReplyPacket(id)) == null
 					&& (timeToWait < 0 || remainingTime > 0)) {
 			timeBeforeWait = System.currentTimeMillis();
-			waitForPacketAvailable(timeToWait);
+			try {
+				waitForPacketAvailable(remainingTime);
+			} catch (InterruptedException e) {
+			}
 			waitedTime = System.currentTimeMillis() - timeBeforeWait;
 			remainingTime -= waitedTime;
 		}
@@ -133,12 +136,7 @@ public class PacketReceiveManager extends PacketManager {
 	 * @return Returns a specified Reply Packet from the Virtual Machine.
 	 */
 	public JdwpReplyPacket getReply(JdwpCommandPacket commandPacket) {
-		try {
-			return getReply(commandPacket.getId(), fVM.getRequestTimeout());
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-		return null;
+		return getReply(commandPacket.getId(), fVM.getRequestTimeout());
 	}
 
 	/** 
