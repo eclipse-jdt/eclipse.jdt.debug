@@ -445,7 +445,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public boolean equals(Object obj) {
 		if (obj instanceof IRuntimeClasspathEntry) {
 			IRuntimeClasspathEntry r = (IRuntimeClasspathEntry)obj;
-			if (getType() == r.getType()) {
+			if (getType() == r.getType() && getClasspathProperty() == r.getClasspathProperty()) {
 				if (getType() == IRuntimeClasspathEntry.CONTAINER) {
 					// containers are equal if their ID is equal
 					return getPath().equals(r.getPath());
