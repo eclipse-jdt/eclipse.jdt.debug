@@ -101,6 +101,9 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 		final CoreException[] ex = new CoreException[1];
 		final Object lock = this;
 		fDone = false;
+		if (thread.isPerformingEvaluation() && thread.isSuspended()) {
+			return value;
+		}
 		thread.queueRunnable(new Runnable() {
 			public void run() {
 				try {

@@ -121,11 +121,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			public void run() {
 				Runnable postEventProcess = new Runnable() {
 					public void run() {
-						thread.queueRunnable(new Runnable() {
-							public void run() {
-								resolveFormatter(objectValue, thread, listener);
-							}
-						});
+						if (thread.isPerformingEvaluation() && thread.isSuspended()) {
+							listener.detailComputed(objectValue, "Cannot perform nested evaluations.");
+						} else {
+							thread.queueRunnable(new Runnable() {
+								public void run() {
+									resolveFormatter(objectValue, thread, listener);
+								}
+							});
+						}
 					}
 				};
 				JDIDebugUIPlugin.getStandardDisplay().asyncExec(postEventProcess);
