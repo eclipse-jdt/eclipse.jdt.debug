@@ -42,6 +42,8 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Sets whether this breakpoint suspends execution when the associated
 	 * exception is thrown and caught.
 	 *
+	 * @param caught whether or not this breakpoint suspends execution when the
+	 *  associated exception is thrown and caught
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
@@ -50,6 +52,8 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Sets whether this breakpoint suspends execution when the associated
 	 * exception is thrown and not caught.
 	 * 
+	 * @param uncaught whether or not this breakpoint suspends execution when the
+	 *  associated exception is thrown and not caught
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */	

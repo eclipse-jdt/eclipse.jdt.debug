@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 
 import com.sun.jdi.*;
@@ -18,7 +17,13 @@ import com.sun.jdi.request.MethodEntryRequest;
 
 public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJavaMethodEntryBreakpoint {
 	
-	static String fMarkerType= IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT;
+	private static final String JAVA_METHOD_ENTRY_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"; //$NON-NLS-1$
+	/**
+	 * Breakpoint attribute storing the handle identifier of the Java element
+	 * corresponding to the method in which a breakpoint is contained
+	 * (value <code>"methodHandle"</code>). This attribute is a <code>String</code>.
+	 */
+	private static final String METHOD_HANDLE = "methodHandle"; //$NON-NLS-1$	
 	
 	public JavaMethodEntryBreakpoint() {
 	}
@@ -48,7 +53,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				}
 
 				// create the marker
-				fMarker= resource.createMarker(fMarkerType);
+				fMarker= resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT);
 				
 				// find the source range if available
 				int start = -1;
@@ -95,7 +100,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			int hitCount = getHitCount();
 			if (hitCount > 0) {
-				request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
+				request.putProperty(HIT_COUNT, new Integer(hitCount));
 			}		
 			request.setEnabled(isEnabled());
 		} catch (VMDisconnectedException e) {
@@ -124,7 +129,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				if (hitCount > 0) {
 					hc = new Integer(hitCount);
 				}
-				request.putProperty(IJavaDebugConstants.HIT_COUNT, hc);
+				request.putProperty(HIT_COUNT, hc);
 			} catch (VMDisconnectedException e) {
 				if (target.isTerminated() || target.isDisconnected()) {
 					return request;
@@ -152,8 +157,16 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	 * Sets the <code>METHOD_HANDLE</code> attribute of this breakpoint.
 	 */
 	public void setMethodHandleIdentifier(String identifier) throws CoreException {
-		ensureMarker().setAttribute(IJavaDebugConstants.METHOD_HANDLE, identifier);
+		ensureMarker().setAttribute(METHOD_HANDLE, identifier);
 	}	
+	
+	/**
+	 * Returns the <code>METHOD_HANDLE</code> attribute of the given breakpoint.
+	 */
+	public String getMethodHandleIdentifier() throws CoreException {
+		return (String) ensureMarker().getAttribute(METHOD_HANDLE);
+	}	
+		
 	
 	/**
 	 * Handles a method entry event. If this method entry event is
@@ -173,7 +186,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			if (nameSignature != null && nameSignature[0].equals(enteredMethodName) &&
 				nameSignature[1].equals(enteredMethod.signature())) {
 					// simulate hit count
-					Integer count = (Integer)request.getProperty(IJavaDebugConstants.HIT_COUNT);
+					Integer count = (Integer)request.getProperty(HIT_COUNT);
 					if (count != null) {
 						return handleHitCountMethodEntryBreakpoint(event, count, target);
 					} else {
@@ -210,7 +223,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		if (hitCount > 0) {
 			hitCount--;
 			count = new Integer(hitCount);
-			event.request().putProperty(IJavaDebugConstants.HIT_COUNT, count);
+			event.request().putProperty(HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit
 				boolean resume = doSuspend(event.thread(), target);

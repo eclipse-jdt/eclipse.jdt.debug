@@ -1,14 +1,18 @@
 package org.eclipse.jdt.internal.debug.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.ISnippetSupportLineBreakpoint;
 
 public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements ISnippetSupportLineBreakpoint {
 	
-	static String fMarkerType= IJavaDebugConstants.SNIPPET_SUPPORT_LINE_BREAKPOINT;	
+	private static final String SNIPPET_SUPPORT_LINE_BREAKPOINT= "org.eclipse.jdt.debug.snippetSupportLineBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for SnippetSupportLineBreakpoint
@@ -21,7 +25,7 @@ public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements 
 	 * Constructor for SnippetSupportLineBreakpoint
 	 */
 	public SnippetSupportLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
-		super(type, lineNumber, charStart, charEnd, hitCount, fMarkerType);
+		super(type, lineNumber, charStart, charEnd, hitCount, SNIPPET_SUPPORT_LINE_BREAKPOINT);
 	}
 
 	/**

@@ -3,12 +3,11 @@ package org.eclipse.jdt.internal.debug.core;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaRunToLineBreakpoint;
 
 public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJavaRunToLineBreakpoint {
-			
-	static String fMarkerType= IJavaDebugConstants.JAVA_RUN_TO_LINE_BREAKPOINT;		
+	
+	private static final String JAVA_RUN_TO_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaRunToLineBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Create a run to line breakpoint
@@ -35,21 +34,8 @@ public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJava
 	 *  to a lower level exception.
 	 */
 	public JavaRunToLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd) throws DebugException {
-		super(type, lineNumber, charStart, charEnd, 1, fMarkerType);
+		super(type, lineNumber, charStart, charEnd, 1, JAVA_RUN_TO_LINE_BREAKPOINT);
 	}
-
-/*	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
-		int lineNumber= getAttribute(IMarker.LINE_NUMBER, -1);
-		if (lineNumber > -1) {
-			if (systemThread) {
-				return getFormattedString(RUN_TO_LINE_SYS, new String[] {threadName, String.valueOf(lineNumber), typeName});
-			} else {
-				return getFormattedString(RUN_TO_LINE_USR, new String[] {threadName, String.valueOf(lineNumber), typeName});
-			}
-		}
-		return "";
-	}
-	*/
 	
 	/**
 	 * Run to line breakpoints should not be added to the breakpoint

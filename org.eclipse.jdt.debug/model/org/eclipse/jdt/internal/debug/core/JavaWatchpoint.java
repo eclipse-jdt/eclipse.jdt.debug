@@ -32,7 +32,7 @@ import com.sun.jdi.request.WatchpointRequest;
 
 public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoint {
 	
-	static String fMarkerType= IJavaDebugConstants.JAVA_WATCHPOINT;
+	public static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Watchpoint attribute storing the access value (value <code>"access"</code>).
@@ -41,11 +41,23 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	private static final String ACCESS= "access"; //$NON-NLS-1$
 	/**
+	 * Watchpoint attribute storing the modification value (value <code>"modification"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether a
+	 * watchpoint is a modification watchpoint.
+	 */
+	private static final String MODIFICATION= "modification"; //$NON-NLS-1$	
+	/**
 	 * Watchpoint attribute storing the auto_disabled value (value <code>"auto_disabled"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint has been auto-disabled (as opposed to being disabled explicitly by the user)
 	 */
-	private static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$	
+	private static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$
+	/**
+	 * Breakpoint attribute storing the handle identifier of the Java element
+	 * corresponding to the field on which a breakpoint is set
+	 * (value <code>"fieldHandle"</code>). This attribute is a <code>String</code>.
+	 */
+	private static final String FIELD_HANDLE= "fieldHandle"; //$NON-NLS-1$	
 	
 	private final static Integer ACCESS_EVENT= new Integer(0);
 	private final static Integer MODIFICATION_EVENT= new Integer(1);
@@ -82,7 +94,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				
 				if (fMarker == null) {
 					// Only create a marker if one is not already assigned
-					fMarker= resource.createMarker(fMarkerType);
+					fMarker= resource.createMarker(JAVA_WATCHPOINT);
 				}
 				
 				// configure the standard attributes
@@ -289,7 +301,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * @see IJavaWatchpoint#isModification
 	 */	
 	public boolean isModification() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.MODIFICATION, false);
+		return ensureMarker().getAttribute(MODIFICATION, false);
 	}
 	
 	/**
@@ -299,7 +311,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (modification == isModification()) {
 			return;
 		}
-		ensureMarker().setAttribute(IJavaDebugConstants.MODIFICATION, modification);
+		ensureMarker().setAttribute(MODIFICATION, modification);
 		if (modification && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(modification || isAccess())) {
@@ -317,7 +329,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	private void setDefaultAccessAndModification() throws CoreException {
 		Object[] values= new Object[]{Boolean.FALSE, Boolean.TRUE};
-		String[] attributes= new String[]{ACCESS, IJavaDebugConstants.MODIFICATION};
+		String[] attributes= new String[]{ACCESS, MODIFICATION};
 		ensureMarker().setAttributes(attributes, values);
 	}
 
@@ -334,7 +346,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Sets the <code>FIELD_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public void setFieldHandleIdentifier(String handle) throws CoreException {
-		ensureMarker().setAttribute(IJavaDebugConstants.FIELD_HANDLE, handle);
+		ensureMarker().setAttribute(FIELD_HANDLE, handle);
 	}
 	
 	/**
@@ -391,7 +403,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Returns the <code>FIELD_HANDLE</code> attribute of this watchpoint.
 	 */
 	public String getFieldHandleIdentifier() throws CoreException {
-		return (String) ensureMarker().getAttribute(IJavaDebugConstants.FIELD_HANDLE);
+		return (String) ensureMarker().getAttribute(FIELD_HANDLE);
 	}
 	
 	/*

@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 
 import com.sun.jdi.*;
@@ -184,8 +183,8 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 		int hitCount= getHitCount();
 		if (hitCount > 0) {
 			request.addCountFilter(hitCount);
-			request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
-			request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
+			request.putProperty(HIT_COUNT, new Integer(hitCount));
+			request.putProperty(EXPIRED, Boolean.FALSE);
 		}
 		// Important: only enable a request after it has been configured
 		updateEnabledState(request);
@@ -213,13 +212,6 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 		Object[] values= new Object[]{new Boolean(true), new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)};
 		ensureMarker().setAttributes(fgLineBreakpointAttributes, values);			
 	}
-	
-	/**
-	 * Returns the <code>METHOD_HANDLE</code> attribute of the given breakpoint.
-	 */
-	public String getMethodHandleIdentifier() throws CoreException {
-		return (String) ensureMarker().getAttribute(IJavaDebugConstants.METHOD_HANDLE);
-	}	
 	
 	/**
 	 * @see IJavaLineBreakpoint#getMember()

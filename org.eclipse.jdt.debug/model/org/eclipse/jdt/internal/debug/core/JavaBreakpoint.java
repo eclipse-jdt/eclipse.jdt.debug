@@ -39,6 +39,31 @@ import com.sun.jdi.request.MethodEntryRequest;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
 	
+	/**
+	 * Breakpoint attribute storing the expired value (value <code>"expired"</code>).
+	 * This attribute is stored as a <code>boolean</code>. Once a hit count has
+	 * been reached, a breakpoint is considered to be "expired".
+	 */
+	protected static final String EXPIRED = "expired"; //$NON-NLS-1$
+	/**
+	 * Breakpoint attribute storing a breakpoint's hit count value
+	 * (value <code>"hitCount"</code>). This attribute is stored as an
+	 * <code>int</code>.
+	 */
+	protected static final String HIT_COUNT = "hitCount"; //$NON-NLS-1$
+	/**
+	 * Breakpoint attribute storing the number of debug targets a
+	 * breakpoint is installed in (value <code>"installCount"</code>).
+	 * This attribute is a <code>int</code>.
+	 */
+	protected static final String INSTALL_COUNT = "installCount"; //$NON-NLS-1$	
+	/**
+	 * Breakpoint attribute storing the handle identifier of the Java element
+	 * corresponding to the type in which a breakpoint is contained
+	 * (value <code>"typeHandle"</code>). This attribute is a <code>String</code>.
+	 */
+	protected static final String TYPE_HANDLE = "typeHandle"; //$NON-NLS-1$	
+	
 	protected HashMap fRequestsByTarget;
 	
 	/**
@@ -49,7 +74,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * JavaBreakpoint attributes
 	 */	
-	protected static final String[] fgExpiredEnabledAttributes= new String[]{IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED};
+	protected static final String[] fgExpiredEnabledAttributes= new String[]{EXPIRED, IDebugConstants.ENABLED};
 	
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap(2);
@@ -144,10 +169,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void expireHitCount(Event event) {
 		EventRequest request= event.request();
-		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
+		Integer requestCount= (Integer) request.getProperty(HIT_COUNT);
 		if (requestCount != null) {
 			try {
-				request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.TRUE);
+				request.putProperty(EXPIRED, Boolean.TRUE);
 				setEnabled(false);
 				// make a note that we auto-disabled this breakpoint.
 				setExpired(true);
@@ -191,7 +216,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected boolean hasHitCountChanged(EventRequest request) throws CoreException {
 		int hitCount= getHitCount();
-		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
+		Integer requestCount= (Integer) request.getProperty(HIT_COUNT);
 		int oldCount = -1;
 		if (requestCount != null)  {
 			oldCount = requestCount.intValue();
@@ -269,14 +294,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns whether this breakpoint has expired.
 	 */
 	public boolean isExpired() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.EXPIRED, false);
+		return ensureMarker().getAttribute(EXPIRED, false);
 	}	
 	
 	/**
 	 * Returns whether the given request is expired
 	 */
 	protected boolean isExpired(EventRequest request) {
-		Boolean requestExpired= (Boolean) request.getProperty(IJavaDebugConstants.EXPIRED);
+		Boolean requestExpired= (Boolean) request.getProperty(EXPIRED);
 		if (requestExpired == null) {
 				return false;
 		}
@@ -287,7 +312,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @see IJavaBreakpoint#isInstalled()
 	 */
 	public boolean isInstalled() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.INSTALL_COUNT, 0) > 0;
+		return ensureMarker().getAttribute(INSTALL_COUNT, 0) > 0;
 	}	
 	
 	/**
@@ -295,7 +320,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void incrementInstallCount() throws CoreException {
 		int count = getInstallCount();
-		ensureMarker().setAttribute(IJavaDebugConstants.INSTALL_COUNT, count + 1);
+		ensureMarker().setAttribute(INSTALL_COUNT, count + 1);
 	}	
 	
 	/**
@@ -303,7 +328,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * or 0 if the attribute is not set.
 	 */
 	public int getInstallCount() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.INSTALL_COUNT, 0);
+		return ensureMarker().getAttribute(INSTALL_COUNT, 0);
 	}	
 
 	/**
@@ -312,7 +337,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void decrementInstallCount() throws CoreException {
 		int count= getInstallCount();
 		if (count > 0) {
-			ensureMarker().setAttribute(IJavaDebugConstants.INSTALL_COUNT, count - 1);	
+			ensureMarker().setAttribute(INSTALL_COUNT, count - 1);	
 		}
 		if (count == 1) {
 			if (isExpired()) {
@@ -336,7 +361,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Sets the <code>TYPE_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public void setTypeHandleIdentifier(String identifier) throws CoreException {
-		ensureMarker().setAttribute(IJavaDebugConstants.TYPE_HANDLE, identifier);
+		ensureMarker().setAttribute(TYPE_HANDLE, identifier);
 	}
 	
 	/**
@@ -354,7 +379,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns the <code>TYPE_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public String getTypeHandleIdentifier() throws CoreException {
-		return (String) ensureMarker().getAttribute(IJavaDebugConstants.TYPE_HANDLE);
+		return (String) ensureMarker().getAttribute(TYPE_HANDLE);
 	}	
 	
 	/**
@@ -400,12 +425,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		List attributes= new ArrayList(3);
 		List values= new ArrayList(3);
 		if (isInstalled()) {
-			attributes.add(IJavaDebugConstants.INSTALL_COUNT);
+			attributes.add(INSTALL_COUNT);
 			values.add(new Integer(0));
 		}
 		if (isExpired()) {
 			// if breakpoint was auto-disabled, re-enable it
-			attributes.add(IJavaDebugConstants.EXPIRED);
+			attributes.add(EXPIRED);
 			values.add(Boolean.FALSE);
 			attributes.add(IDebugConstants.ENABLED);
 			values.add(Boolean.TRUE);
@@ -434,7 +459,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @see IJavaBreakpoint#getHitCount()
 	 */
 	public int getHitCount() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.HIT_COUNT, -1);
+		return ensureMarker().getAttribute(HIT_COUNT, -1);
 	}
 	
 	/**
@@ -442,10 +467,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setHitCount(int count) throws CoreException {	
 		if (!isEnabled() && count > -1) {
-			ensureMarker().setAttributes(new String []{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED},
+			ensureMarker().setAttributes(new String []{HIT_COUNT, EXPIRED, IDebugConstants.ENABLED},
 				new Object[]{new Integer(count), Boolean.FALSE, Boolean.TRUE});
 		} else {
-			ensureMarker().setAttributes(new String[]{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED},
+			ensureMarker().setAttributes(new String[]{HIT_COUNT, EXPIRED},
 				new Object[]{new Integer(count), Boolean.FALSE});
 		}
 	}	
@@ -454,7 +479,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Sets the <code>EXPIRED</code> attribute of the given breakpoint.
 	 */
 	public void setExpired(boolean expired) throws CoreException {
-		ensureMarker().setAttribute(IJavaDebugConstants.EXPIRED, expired);	
+		ensureMarker().setAttribute(EXPIRED, expired);	
 	}	
 
 }

@@ -15,11 +15,19 @@ import com.sun.jdi.*;
 
 public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements IJavaPatternBreakpoint {
 
-	public static String fMarkerType= IJavaDebugConstants.PATTERN_BREAKPOINT;
-	protected static final String[] fgPatternAndHitCountAttributes= new String[]{IJavaDebugConstants.PATTERN, IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED};		
+	private static final String PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.patternBreakpointMarker"; //$NON-NLS-1$
+	
+	/**
+	 * Breakpoint attribute storing the pattern identifier of the source
+	 * file in which a breakpoint is created
+	 * (value <code>"patternHandle"</code>). This attribute is a <code>String</code>.
+	 */
+	private static final String PATTERN = "pattern"; //$NON-NLS-1$	
+	
+	protected static final String[] fgPatternAndHitCountAttributes= new String[]{PATTERN, HIT_COUNT, EXPIRED};		
 	
 	public JavaPatternBreakpoint(IResource resource, String pattern, int lineNumber, int hitCount) throws DebugException {
-		this(resource, pattern, lineNumber, hitCount, fMarkerType);
+		this(resource, pattern, lineNumber, hitCount, PATTERN_BREAKPOINT);
 	}
 	
 	public JavaPatternBreakpoint(final IResource resource, final String pattern, final int lineNumber, final int hitCount, final String markerType) throws DebugException {
@@ -110,14 +118,14 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	 * Sets the <code>PATTERN</code> attribute of this breakpoint.
 	 */
 	public void setPattern(String pattern) throws CoreException {
-		ensureMarker().setAttribute(IJavaDebugConstants.PATTERN, pattern);
+		ensureMarker().setAttribute(PATTERN, pattern);
 	}
 	
 	/**
 	 * Returns the <code>PATTERN</code> attribute of this breakpoint
 	 */
 	public String getPattern() throws CoreException {
-		return (String) ensureMarker().getAttribute(IJavaDebugConstants.PATTERN);		
+		return (String) ensureMarker().getAttribute(PATTERN);		
 	}	
 
 }

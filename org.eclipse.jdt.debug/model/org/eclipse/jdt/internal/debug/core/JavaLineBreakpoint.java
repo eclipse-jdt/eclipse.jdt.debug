@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 
 import com.sun.jdi.*;
@@ -17,20 +16,24 @@ import com.sun.jdi.request.*;
 
 public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJavaLineBreakpoint {
 		
-	static String fMarkerType= IJavaDebugConstants.JAVA_LINE_BREAKPOINT;
+	/**
+	 * Java line breakpoint marker type
+	 * (value <code>"org.eclipse.jdt.debug.javaLineBreakpointMarker"</code>).
+	 */
+	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Sets of attributes used to configure a line breakpoint
 	 */
-	protected static final String[] fgTypeAndHitCountAttributes= new String[]{IJavaDebugConstants.TYPE_HANDLE, IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED};	
+	protected static final String[] fgTypeAndHitCountAttributes= new String[]{TYPE_HANDLE, HIT_COUNT, EXPIRED};	
 	
 	public JavaLineBreakpoint() {
 	}
 	
 	public JavaLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
-		this(type, lineNumber, charStart, charEnd, hitCount, fMarkerType);
+		this(type, lineNumber, charStart, charEnd, hitCount, JAVA_LINE_BREAKPOINT);
 	}
-	
+
 	public JavaLineBreakpoint(final IType type, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final String markerType) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -58,7 +61,7 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 	}	
 	
 	public static String getMarkerType() {
-		return fMarkerType;
+		return JAVA_LINE_BREAKPOINT;
 	}
 	
 	/**

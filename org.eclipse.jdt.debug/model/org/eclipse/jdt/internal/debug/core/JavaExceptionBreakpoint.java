@@ -27,18 +27,31 @@ import com.sun.jdi.request.ExceptionRequest;
 
 public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExceptionBreakpoint {
 	
+	private static final String JAVA_EXCEPTION_BREAKPOINT= "org.eclipse.jdt.debug.javaExceptionBreakpointMarker"; //$NON-NLS-1$
+	
 	/**
 	 * Exception breakpoint attribute storing the suspend on caught value
 	 * (value <code>"caught"</code>). This attribute is stored as a <code>boolean</code>.
 	 * When this attribute is <code>true</code>, a caught exception of the associated
 	 * type will cause excecution to suspend .
 	 */
-	public static final String CAUGHT = "caught"; //$NON-NLS-1$
+	private static final String CAUGHT = "caught"; //$NON-NLS-1$
+	/**
+	 * Exception breakpoint attribute storing the suspend on uncaught value
+	 * (value <code>"uncaught"</code>). This attribute is stored as a
+	 * <code>boolean</code>. When this attribute is <code>true</code>, an uncaught
+	 * exception of the associated type will cause excecution to suspend. .
+	 */
+	public static final String UNCAUGHT = "uncaught"; //$NON-NLS-1$	
+	/**
+	 * Exception breakpoint attribute storing the checked value (value <code>"checked"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether an
+	 * exception is a checked exception.
+	 */
+	private static final String CHECKED = "checked"; //$NON-NLS-1$	
 	
 	// Attribute strings
-	protected static final String[] fgExceptionBreakpointAttributes= new String[]{IJavaDebugConstants.CHECKED, IJavaDebugConstants.TYPE_HANDLE};	
-	
-	static String fMarkerType= IJavaDebugConstants.JAVA_EXCEPTION_BREAKPOINT;	
+	protected static final String[] fgExceptionBreakpointAttributes= new String[]{CHECKED, TYPE_HANDLE};		
 	
 	public JavaExceptionBreakpoint() {
 	}
@@ -71,7 +84,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				}
 				
 				// create the marker
-				fMarker= resource.createMarker(fMarkerType);
+				fMarker= resource.createMarker(JAVA_EXCEPTION_BREAKPOINT);
 				// configure the standard attributes
 				setEnabled(true);
 				// configure caught, uncaught, checked, and the type attributes
@@ -104,7 +117,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			
 	public void setDefaultCaughtAndUncaught() throws CoreException {
 		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
-		String[] attributes= new String[]{CAUGHT, IJavaDebugConstants.UNCAUGHT};
+		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
 		ensureMarker().setAttributes(attributes, values);
 	}
 	
@@ -152,8 +165,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				int hitCount= getHitCount();
 				if (hitCount > 0) {
 					request.addCountFilter(hitCount);
-					request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
-					request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
+					request.putProperty(HIT_COUNT, new Integer(hitCount));
+					request.putProperty(EXPIRED, Boolean.FALSE);
 				}
 			} catch (VMDisconnectedException e) {
 				if (target.isTerminated() || target.isDisconnected()) {
@@ -224,7 +237,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#isUncaught()
 	 */
 	public boolean isUncaught() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.UNCAUGHT, false);
+		return ensureMarker().getAttribute(UNCAUGHT, false);
 	}	
 	
 	/**
@@ -235,7 +248,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (uncaught == isUncaught()) {
 			return;
 		}
-		ensureMarker().setAttribute(IJavaDebugConstants.UNCAUGHT, uncaught);
+		ensureMarker().setAttribute(UNCAUGHT, uncaught);
 		if (uncaught && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(uncaught || isCaught())) {
@@ -247,7 +260,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#isChecked()
 	 */
 	public boolean isChecked() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.CHECKED, false);
+		return ensureMarker().getAttribute(CHECKED, false);
 	}
 	
 	/**
