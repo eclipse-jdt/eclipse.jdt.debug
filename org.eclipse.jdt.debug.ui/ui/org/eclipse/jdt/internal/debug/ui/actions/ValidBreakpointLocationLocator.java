@@ -531,9 +531,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			for (Iterator iter= arguments.iterator(); iter.hasNext();) {
 				((Expression)iter.next()).accept(this);
 			}
-			List bodyDeclaration= node.bodyDeclarations();
-			for (Iterator iter= bodyDeclaration.iterator(); iter.hasNext();) {
-				((BodyDeclaration)iter.next()).accept(this);
+			AnonymousClassDeclaration decl= node.getAnonymousClassDeclaration();
+			if (decl != null) {
+				decl.accept(this);
 			}
 		}
 		return false;

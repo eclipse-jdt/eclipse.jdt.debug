@@ -3806,7 +3806,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	private String getMethodSignature(IMethodBinding methodBinding, String enclosingTypeSignature) {
-		methodBinding= methodBinding.getErasure();
+		methodBinding= methodBinding.getMethodDeclaration();
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int i;
 		int argCount;
