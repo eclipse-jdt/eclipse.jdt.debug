@@ -232,13 +232,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			logError(e);
 		}
 	}
-	
-	/**
-	 * @see IDebugElement#getElementType()
-	 */
-	public int getElementType() {
-		return THREAD;
-	}
 
 	/**
 	 * @see IThread#getBreakpoint()

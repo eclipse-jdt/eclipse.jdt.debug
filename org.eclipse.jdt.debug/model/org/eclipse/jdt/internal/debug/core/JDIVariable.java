@@ -39,14 +39,6 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 		return super.getAdapter(adapter);
 	}
 
-
-	/**
-	 * @see IDebugElement#getElementType()
-	 */
-	public int getElementType() {
-		return VARIABLE;
-	}
-
 	/**
 	 * Returns this variable's current underlying jdi value.
 	 * Subclasses must implement #retrieveValue() and do not

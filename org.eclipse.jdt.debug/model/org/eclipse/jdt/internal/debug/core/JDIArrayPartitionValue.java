@@ -30,10 +30,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 		fPartition = partition;
 	}
 	
-	public int getElementType() {
-		return VALUE;
-	}
-	
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}

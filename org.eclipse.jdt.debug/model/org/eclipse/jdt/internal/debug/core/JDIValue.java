@@ -43,10 +43,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}			
 		return super.getAdapter(adapter);
 	}
-
-	public int getElementType() {
-		return VALUE;
-	}
 	
 	/**
 	 * Creates the appropriate kind of value - i.e. a primitive

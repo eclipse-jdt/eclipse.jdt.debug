@@ -676,7 +676,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		Object source = e.getSource();
 		if (source instanceof IDebugElement) {
 			IDebugElement de = (IDebugElement)source;
-			if (de.getElementType() == IDebugElement.DEBUG_TARGET) {
+			if (de instanceof IDebugTarget) {
 				if (de.getDebugTarget().equals(fVM)) {
 					if (e.getKind() == DebugEvent.TERMINATE) {
 						Runnable r = new Runnable() {

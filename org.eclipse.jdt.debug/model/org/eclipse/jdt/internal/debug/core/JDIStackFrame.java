@@ -113,13 +113,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * @see IDebugElement#getElementType()
-	 */
-	public int getElementType() {
-		return STACK_FRAME;
-	}	
-	
-	/**
 	 * @see IStackFrame#getThread()
 	 */
 	public IThread getThread() {

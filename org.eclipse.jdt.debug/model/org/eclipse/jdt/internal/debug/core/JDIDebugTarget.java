@@ -463,13 +463,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
-	 * @see IDebugTarget#getElementType()
-	 */
-	public int getElementType() {
-		return DEBUG_TARGET;
-	}
-	
-	/**
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
