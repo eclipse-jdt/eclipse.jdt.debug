@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.ui.IActionFilter;
 
 /**
@@ -35,6 +36,8 @@ import org.eclipse.ui.IActionFilter;
 				return new JavaVariableActionFilter();
 			} else if (obj instanceof IMethod) {
 				return new MethodActionFilter();
+			} else if (obj instanceof JavaInspectExpression) {
+				return new JavaInspectExpressionActionFilter();
 			}
 		}
 		return null;

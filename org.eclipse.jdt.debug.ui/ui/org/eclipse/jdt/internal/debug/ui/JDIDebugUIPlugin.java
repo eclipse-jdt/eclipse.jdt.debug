@@ -42,6 +42,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -252,6 +253,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaVariable.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaStackFrame.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaThread.class);
+		manager.registerAdapters(fActionFilterAdapterFactory, JavaInspectExpression.class);
 		fSourceLocationAdapterFactory = new JavaSourceLocationWorkbenchAdapterFactory();
 		manager.registerAdapters(fSourceLocationAdapterFactory, IJavaSourceLocation.class);
 		

@@ -1,5 +1,12 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+/* ********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -8,18 +15,11 @@ import org.eclipse.jdt.internal.debug.ui.DetailFormatter;
 import org.eclipse.jdt.internal.debug.ui.DetailFormatterDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-/**
- * @author lbourlie
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class EditDetailFormatterAction extends ObjectActionDelegate {
 
 	/**
@@ -27,13 +27,21 @@ public class EditDetailFormatterAction extends ObjectActionDelegate {
 	 */
 	public void run(IAction action) {
 		IStructuredSelection selection= getCurrentSelection();
-		Object element= selection.getFirstElement();
-		if (selection.size() != 1 || !(element instanceof IJavaVariable)) {
+		if (selection.size() != 1) {
 			return;
 		}
+		Object element= selection.getFirstElement();
 		IJavaType type;
 		try {
-			type = ((IJavaValue)((IJavaVariable) element).getValue()).getJavaType();
+			IJavaValue value;
+			if (element instanceof IJavaVariable) {
+				value = ((IJavaValue)((IJavaVariable) element).getValue());
+			} else if (element instanceof JavaInspectExpression) {
+				value = ((IJavaValue)((JavaInspectExpression) element).getValue());
+			} else {
+				return;
+			}
+			type= value.getJavaType();
 		} catch (DebugException e) {
 			return;
 		}
