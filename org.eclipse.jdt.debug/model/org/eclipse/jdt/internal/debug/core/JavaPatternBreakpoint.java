@@ -65,6 +65,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
 		
 		String referenceTypeName= getReferenceTypeName();
+		if (referenceTypeName == null) {
+			return;
+		}
 		
 		// create request to listen to class loads
 		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
@@ -88,15 +91,16 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	/**
 	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
-	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		String typeName= type.name();
 		String installableTypeName= getReferenceTypeName();
 		if (typeName == null || installableTypeName == null) {
-			return;
+			return false;
 		}
 		if (typeName.startsWith(getReferenceTypeName())) {
-			super.createRequest(target, type);
-		}		
+			return super.createRequest(target, type);
+		}
+		return false;		
 	}
 	
 	/**

@@ -149,14 +149,14 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * this watchpoint is an access watchpoint, modification watchpoint, or
 	 * both. Finally, the requests are registered with the given target.
 	 */	
-	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		IField javaField= getField();
 		Field field= null;
 		
 		field= type.fieldByName(javaField.getElementName());
 		if (field == null) {
 			// error
-			return;
+			return false;
 		}
 		AccessWatchpointRequest accessRequest= null;
 		ModificationWatchpointRequest modificationRequest= null;			
@@ -168,11 +168,15 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		}
 		if (modificationSupportedBy(target.getVM())) {
 			modificationRequest= createModificationWatchpoint(target, field);
+			if (modificationRequest == null) {
+				return false;
+			} 
 			registerRequest(modificationRequest, target);
+			return true;
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
 		}
-
+		return false;
 	}
 	
 	/**

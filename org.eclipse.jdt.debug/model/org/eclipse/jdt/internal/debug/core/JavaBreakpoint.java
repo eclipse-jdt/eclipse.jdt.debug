@@ -141,7 +141,29 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Returns a string corresponding to the reference type
+	 * Returns a String corresponding to the reference type
+	 * name to the top enclosing type in which this breakpoint
+	 * is located or <code>null</code> if no reference type could be
+	 * found.
+	 */
+	protected String getEnclosingReferenceTypeName() {
+		String name= null;
+		try {
+			IType type = getType();
+			if (type != null) {
+				while (type.getDeclaringType() != null) {
+					type = type.getDeclaringType();
+				}
+				name= type.getFullyQualifiedName();
+			}
+		} catch (CoreException ce) {
+			JDIDebugPlugin.logError(ce);
+		}
+		return name;
+	}	
+	
+	/**
+	 * Returns a String corresponding to the reference type
 	 * name in which this breakpoint is installed or
 	 * <code>null</code> if no reference type could be
 	 * found.
@@ -151,9 +173,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		try {
 			IType type = getType();
 			if (type != null) {
-				while (type.getDeclaringType() != null) {
-					type = type.getDeclaringType();
-				}
 				name= type.getFullyQualifiedName();
 			}
 		} catch (CoreException ce) {
@@ -243,18 +262,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (installableType == null || queriedType == null) {
 			return false;
 		}
-		int installableLength= installableType.length();
-		int queriedLength= queriedType.length();
-		if (queriedType.regionMatches(0, installableType, 0, installableLength)) {
-			if (queriedLength > installableLength) {
-				if (queriedType.charAt(installableLength) == '$') {
-					return true;
-				}
-			} else {
-				return true;
-			}
+		if (installableType.equals(queriedType)) {
+			return true;
 		}
-		return false;
+		int index= queriedType.indexOf('$', 0);
+		if (index == -1) {
+			return false;
+		}
+		return installableType.regionMatches(0, queriedType, 0, index);
+		
 	}
 	
 	/**
@@ -276,12 +292,18 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 
 	/**
-	 * Create a breakpoint request for this breakpoint in the given
+	 * Attempts to create a breakpoint request for this breakpoint in the given
 	 * reference type in the given target.
+	 * 
+	 * @return Whether a request was created
 	 */
-	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		EventRequest request= newRequest(target, type);
+		if (request == null) {
+			return false;
+		}
 		registerRequest(request, target);
+		return true;
 	}
 	
 	/**
@@ -325,24 +347,52 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
 		String referenceTypeName= getReferenceTypeName();
-		if (referenceTypeName == null) {
+		String enclosingTypeName= getEnclosingReferenceTypeName();
+		if (referenceTypeName == null || enclosingTypeName == null) {
 			return;
 		}
 		
 		// create request to listen to class loads
-		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
+		registerRequest(target.createClassPrepareRequest(enclosingTypeName), target);
 		
 		// create breakpoint requests for each class currently loaded
 		List classes= target.jdiClassesByName(referenceTypeName);
+		boolean success= false;
 		if (!classes.isEmpty()) {
 			Iterator iter = classes.iterator();
 			while (iter.hasNext()) {
 				ReferenceType type= (ReferenceType) iter.next();
-				createRequest(target, type);
+				if (createRequest(target, type)) {
+					success= true;
+				}
 			}
+		}
+		
+		if (!success) {
+			addToTargetForLocalType(target, enclosingTypeName);
 		}
 	}
 	
+	/**
+	 * XXX Comment
+	 * Local types (types defined in methods).
+	 */
+	protected void addToTargetForLocalType(JDIDebugTarget target, String enclosingTypeName) throws CoreException {
+		List classes= target.jdiClassesByName(enclosingTypeName);
+		if (!classes.isEmpty()) {
+			Iterator iter = classes.iterator();
+			while (iter.hasNext()) {
+				ReferenceType type= (ReferenceType) iter.next();
+				Iterator nestedTypes= type.nestedTypes().iterator();
+				while (nestedTypes.hasNext()) {
+					ReferenceType nestedType= (ReferenceType) nestedTypes.next();
+					if (createRequest(target, nestedType)) {
+						break;
+					}				
+				}
+			}
+		}	
+	}
 	/**
 	 * Update all requests that this breakpoint has installed in the
 	 * given target to reflect the current state of this breakpoint.
