@@ -32,11 +32,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate, IPartListener {	
+public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate, IPartListener {
 	
 	private IWorkbenchWindow fWorkbenchWindow= null;
-	private IAction fPluginAction;
-	
 	public RunToLineAction() {
 		setText(ActionMessages.getString("RunToLine.label")); //$NON-NLS-1$
 		setToolTipText(ActionMessages.getString("RunToLine.tooltip")); //$NON-NLS-1$
@@ -45,7 +43,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		update();
 		setHelpContextId(IHelpContextIds.RUN_TO_LINE_ACTION );					
 	}
-
 	public void run() {
 		try {
 			IDebugTarget target= getContext();
@@ -74,7 +71,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 					try {
 						thread.resume();
 					} catch (DebugException de) {
-
 					}
 					break;
 				}
@@ -83,7 +79,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 			JDIDebugUIPlugin.logError(de);
 		}
 	}
-
 	/**
 	 * Resolves the debug target context to set the run to line
 	 */
@@ -109,7 +104,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		}
 		return null;
 	}
-
 	/**
 	 * Resolves a debug target context from the model
 	 */
@@ -123,7 +117,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		}
 		return null;
 	}
-
 	/**
 	 * Resolves a debug target context from the model
 	 */
@@ -133,7 +126,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		}
 		return null;
 	}
-
 	/**
 	 * Resolves a stack frame context from the UI
 	 */
@@ -149,7 +141,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		
 		return null;
 	}
-
 	protected void errorDialog(IStatus status) {
 		Shell shell= getTextEditor().getSite().getShell();
 		ErrorDialog.openError(shell, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1"), status); //$NON-NLS-1$ //$NON-NLS-2$
@@ -207,7 +198,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	public void dispose() {
 		getWorkbenchWindow().getPartService().removePartListener(this);
 	}
-
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
@@ -219,6 +209,23 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		}
 		window.getPartService().addPartListener(this);
 	}
+	
+	
+	protected IWorkbenchWindow getWorkbenchWindow() {
+		return fWorkbenchWindow;
+	}
+	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
+		fWorkbenchWindow = workbenchWindow;
+	}
+	
+	/**
+	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
+	 */
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		setPluginAction(action);
+		update();
+	}
+	
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
@@ -228,13 +235,13 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 			update();
 		}
 	}
-
+	
 	/**
 	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
-
+	
 	/**
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
@@ -244,32 +251,16 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 			update();
 		}
 	}
-
+	
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
 	}
-
+	
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
-	}
-	
-	protected IWorkbenchWindow getWorkbenchWindow() {
-		return fWorkbenchWindow;
-	}
-
-	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
-		fWorkbenchWindow = workbenchWindow;
-	}
-	
-	protected IAction getPluginAction() {
-		return fPluginAction;
-	}
-
-	protected void setPluginAction(IAction pluginAction) {
-		fPluginAction = pluginAction;
 	}
 }

@@ -6,7 +6,10 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -21,17 +24,21 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Action for setting breakpoints for a given text selection.
  */
-public class AddBreakpointAction extends TextEditorAction implements IEditorActionDelegate {
+public class AddBreakpointAction extends TextEditorAction implements IEditorActionDelegate, IBreakpointListener {
 	
+	private IAction fAction= null;
 	private int fLineNumber;
 	private IType fType= null;
 	
@@ -43,8 +50,10 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 	 * @see Action#run()
 	 */
 	public void run() {
-		if (getTextEditor() != null) 
+		if (getTextEditor() != null) {
 			createBreakpoint(getTextEditor().getEditorInput());
+		}
+		update();
 	}
 	/**
 	 * Creates a breakpoint marker.
@@ -77,37 +86,47 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 	
 	protected IType getType(IEditorInput editorInput) {
 		IType type = null;
-		ISelection s= getTextEditor().getSelectionProvider().getSelection();
-		if (!s.isEmpty() && s instanceof ITextSelection) {
-			ITextSelection selection= (ITextSelection) s;
-			try {
+		ISelectionProvider sp= getTextEditor().getSelectionProvider();
+		if (sp != null) {
+			ISelection s= sp.getSelection();
+			if (!s.isEmpty() && s instanceof ITextSelection) {
+				ITextSelection selection= (ITextSelection) s;
 				IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
 				BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
 				int lineNumber = bv.getValidBreakpointLocation(document, selection.getStartLine());
 				if (lineNumber > 0) {
 					setLineNumber(lineNumber);
-					IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
-					if (classFile != null) {
-						type = classFile.getType();
-					
-					} else {
-						IFile file= (IFile)editorInput.getAdapter(IFile.class);
-						if (file != null) {
-							IJavaElement element= JavaCore.create(file);
-							if (element instanceof ICompilationUnit) {
-								ICompilationUnit cu = (ICompilationUnit) element;
-								IJavaElement e = cu.getElementAt(selection.getOffset());
-								if (e instanceof IType)
-									type = (IType)e;
-								else if (e != null && e instanceof IMember) {
-									type = ((IMember) e).getDeclaringType();
-								}
-							}
+					type= getType0(selection, editorInput);
+				}
+			}
+		}
+		return type;
+	}
+	
+	protected IType getType0(ITextSelection selection, IEditorInput editorInput) {
+		IType type= null;
+		try {
+			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
+			if (classFile != null) {
+				type = classFile.getType();
+			
+			} else {
+				IFile file= (IFile)editorInput.getAdapter(IFile.class);
+				if (file != null) {
+					IJavaElement element= JavaCore.create(file);
+					if (element instanceof ICompilationUnit) {
+						ICompilationUnit cu = (ICompilationUnit) element;
+						IJavaElement e = cu.getElementAt(selection.getOffset());
+						if (e instanceof IType)
+							type = (IType)e;
+						else if (e != null && e instanceof IMember) {
+							type = ((IMember) e).getDeclaringType();
 						}
 					}
 				}
-			} catch (JavaModelException jme) {
 			}
+		} catch (JavaModelException jme) {
+			JDIDebugUIPlugin.logError(jme);
 		}
 		return type;
 	}
@@ -115,42 +134,78 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		setPluginAction(action);
 		if (targetEditor instanceof ITextEditor) {
 			setEditor((ITextEditor)targetEditor);
+			//see Bug 7012
+			//DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+		} else {
+			//DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		}
 		update();
-		action.setEnabled(isEnabled());
 	}
-
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		setPluginAction(action);
 		run();
 	}
-
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		setPluginAction(action);
+		update();
+	}
+	
+	public void updatePluginAction() {
+		IAction action= getPluginAction();
+		if (action != null) {
+			action.setEnabled(isEnabled());
+		}
 	}
 		
 	public void update() {
-		setEnabled(getTextEditor()!= null && breakpointCanBeCreated(getTextEditor().getEditorInput()));
+		setEnabled(getTextEditor()!= null); //@see bug 7012 && breakpointCanBeCreated(getTextEditor().getEditorInput()));
+		updatePluginAction();
 	}
+	
 	protected int getLineNumber() {
 		return fLineNumber;
 	}
-
 	protected void setLineNumber(int lineNumber) {
 		fLineNumber = lineNumber;
 	}
-
 	protected IType getType() {
 		return fType;
 	}
-
 	protected void setType(IType type) {
 		fType = type;
 	}
-}
+	
+	protected IAction getPluginAction() {
+		return fAction;
+	}
+	protected void setPluginAction(IAction action) {
+		fAction = action;
+	}
+	/**
+	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 */
+	public void breakpointAdded(IBreakpoint breakpoint) {
+		update();
+	}
+	/**
+	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+	 */
+	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+		update();
+	}
+	/**
+	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+	 */
+	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+	}
+	
+	}

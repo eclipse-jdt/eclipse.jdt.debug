@@ -46,12 +46,10 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		public void mouseDown(MouseEvent event) {
 			if (event.button == 3) {
 				update(getBreakpoint());
-				updateAction(getAction());
 			}
 		}
 	};
 	
-	private IAction fAction= null;
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
@@ -63,7 +61,6 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		update();
 //		setHelpContextId(IHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION );					
 	}
-
 	
 	/**
 	 * @see Action#run()
@@ -79,7 +76,6 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 			}
 		}
 	}
-
 	protected IBreakpoint getBreakpoint() {
 		
 		IType type= getType();
@@ -133,6 +129,7 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
+		updatePluginAction();
 	}
 	
 	protected boolean breakpointAtRulerLine(int breakpointLineNumber) {
@@ -143,10 +140,7 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		} 
 		return false;
 	}
-	/**
-	 * @see SelectionProviderAction#selectionChanged(IStructuredSelection)
-	 */
-	public void selectionChanged(IStructuredSelection sel) {
+	protected void selectionChanged(IStructuredSelection sel) {
 		Iterator enum= sel.iterator();
 		if (!enum.hasNext()) {
 			//No selection
@@ -169,7 +163,6 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		
 		setEnabled(true);
 	}
-
 	/**
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -183,41 +176,26 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 			}
 		}
 	}
-
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
-		run();
-		updateAction(action);
-	}
-
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			selectionChanged((IStructuredSelection)selection);
-			updateAction(action);
+			updatePluginAction();
 		}
-	}
-	
-	protected void updateAction(IAction action) {
-		action.setText(getText());
-		action.setEnabled(isEnabled());
 	}
 	
 	/**
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(final IAction action, IEditorPart targetEditor) {
-		setAction(action);
+		setPluginAction(action);
 		if (targetEditor instanceof ITextEditor) {
 			setEditor((ITextEditor)targetEditor);
 			IVerticalRuler ruler= (IVerticalRuler)getTextEditor().getAdapter(IVerticalRuler.class);
@@ -229,13 +207,6 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		}
 	}
 	
-	protected IAction getAction() {
-		return fAction;
-	}
-
-	protected void setAction(IAction action) {
-		fAction = action;
-	}
 	protected MouseListener getMouseListener() {
 		return fMouseListener;
 	}
@@ -245,28 +216,7 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 		ISelection s= getTextEditor().getSelectionProvider().getSelection();
 		if (s instanceof ITextSelection) {
 			ITextSelection selection= (ITextSelection) s;
-	
-			try {
-				IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
-				if (classFile != null) {
-					type = classFile.getType();
-				} else {
-					IFile file= (IFile)editorInput.getAdapter(IFile.class);
-					if (file != null) {
-						IJavaElement element= JavaCore.create(file);
-						if (element instanceof ICompilationUnit) {
-							ICompilationUnit cu = (ICompilationUnit) element;
-							IJavaElement e = cu.getElementAt(selection.getOffset());
-							if (e instanceof IType)
-								type = (IType)e;
-							else if (e != null && e instanceof IMember) {
-								type = ((IMember) e).getDeclaringType();
-							}
-						}
-					}
-				}
-			} catch (JavaModelException jme) {
-			}
+			type= getType0(selection, editorInput);
 		}
 		return type;
 	}
