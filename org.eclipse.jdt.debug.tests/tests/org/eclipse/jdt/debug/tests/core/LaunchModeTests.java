@@ -155,7 +155,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION); 
 		ILaunchConfigurationTabGroup standardGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(javaType, ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTabGroup testGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(javaType, "TEST_MODE");
-		ILaunchConfigurationDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+		ILaunchConfigurationDialog dialog = new LaunchConfigurationsDialog(null, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
 		standardGroup.createTabs(dialog, ILaunchManager.DEBUG_MODE);
 		testGroup.createTabs(dialog, "TEST_MODE");
 		
