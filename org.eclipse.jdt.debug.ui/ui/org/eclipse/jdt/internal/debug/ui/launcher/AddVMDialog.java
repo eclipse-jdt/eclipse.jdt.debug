@@ -7,6 +7,8 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -61,6 +63,8 @@ public class AddVMDialog extends StatusDialog {
 	
 	private StringButtonDialogField fJRERoot;
 	private StringDialogField fVMName;
+
+	private StringButtonDialogField fJavadocURL;
 	
 	private IDialogSettings fDialogSettings;
 	
@@ -122,7 +126,14 @@ public class AddVMDialog extends StatusDialog {
 				updateStatusLine();
 			}
 		});
-				
+	
+		fJavadocURL = new StringButtonDialogField(new IStringButtonAdapter() {
+			public void changeControlPressed(DialogField field) {
+				browseForJavadocURL();
+			}
+		});
+		fJavadocURL.setLabelText(LauncherMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
+		fJavadocURL.setButtonLabel(LauncherMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
 	}
 	
 	protected String getVMName() {
@@ -146,7 +157,8 @@ public class AddVMDialog extends StatusDialog {
 		fVMName.doFillIntoGrid(parent, 3);
 	
 		fJRERoot.doFillIntoGrid(parent, 3);
-		LayoutUtil.setHorizontalGrabbing(fJRERoot.getTextControl(null));
+		
+		fJavadocURL.doFillIntoGrid(parent, 3);
 	
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(LauncherMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
@@ -169,6 +181,14 @@ public class AddVMDialog extends StatusDialog {
 		gd.heightHint = gds.heightHint;
 		gd.widthHint = gds.widthHint;
 		gd.horizontalAlignment = GridData.END;
+		LayoutUtil.setHorizontalGrabbing(fJRERoot.getTextControl(null));
+		
+		b = fJavadocURL.getChangeControl(parent);
+		gd = (GridData)b.getLayoutData();
+		gd.heightHint = gds.heightHint;
+		gd.widthHint = gds.widthHint;
+		gd.horizontalAlignment = GridData.END;		
+		LayoutUtil.setHorizontalGrabbing(fJavadocURL.getTextControl(null));
 			
 		initializeFields();
 		
@@ -212,11 +232,18 @@ public class AddVMDialog extends StatusDialog {
 		if (fEditedVM == null) {
 			fVMName.setText(""); //$NON-NLS-1$
 			fJRERoot.setText(""); //$NON-NLS-1$
+			fJavadocURL.setText(""); //$NON-NLS-1$
 			fLibraryBlock.initializeFrom(null, fSelectedVMType);
 		} else {
 			fVMTypeCombo.setEnabled(false);
 			fVMName.setText(fEditedVM.getName());
 			fJRERoot.setText(fEditedVM.getInstallLocation().getAbsolutePath());
+			URL url = fEditedVM.getJavadocLocation();
+			if (url == null) {
+				fJavadocURL.setText(""); //$NON-NLS-1$
+			} else {
+				fJavadocURL.setText(url.toExternalForm());
+			}
 			fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
 		}
 	}
@@ -323,6 +350,37 @@ public class AddVMDialog extends StatusDialog {
 		}
 	}
 	
+	private void browseForJavadocURL() {
+		DirectoryDialog dialog= new DirectoryDialog(getShell());
+		
+		String initPath= ""; //$NON-NLS-1$
+		URL url = getURL();
+		if (url != null && "file".equals(url.getProtocol())) { //$NON-NLS-1$
+			initPath= (new File(url.getFile())).getPath();
+		}
+
+		dialog.setFilterPath(initPath);
+		dialog.setMessage(LauncherMessages.getString("AddVMDialog.Select_Javadoc_location__3")); //$NON-NLS-1$
+		String res = dialog.open();
+		if (res != null) {
+			try {
+				url = (new File(res)).toURL();
+				fJavadocURL.setText(url.toExternalForm());
+			} catch (MalformedURLException e) {
+				// should not happen
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+	}	
+	
+	protected URL getURL() {
+		try {
+			return new URL(fJavadocURL.getText());
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+	
 	protected void okPressed() {
 		doOkPressed();
 		super.okPressed();
@@ -349,6 +407,7 @@ public class AddVMDialog extends StatusDialog {
 	protected void setFieldValuesToVM(IVMInstall vm) {
 		vm.setInstallLocation(new File(fJRERoot.getText()).getAbsoluteFile());
 		vm.setName(fVMName.getText());
+		vm.setJavadocLocation(getURL());
 		fLibraryBlock.performApply(vm);
 	}
 	
