@@ -151,6 +151,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		preferenceStore.setValue(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.ALWAYS);
 		preferenceStore.setValue(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.ALWAYS);
 		preferenceStore.setValue(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.NEVER);
+		preferenceStore.setValue(IDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.ALWAYS);
 		
 		preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setValue(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.ALWAYS);
