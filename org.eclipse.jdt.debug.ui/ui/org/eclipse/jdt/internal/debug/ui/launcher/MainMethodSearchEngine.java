@@ -144,8 +144,7 @@ public class MainMethodSearchEngine{
 						result.add(t);
 					}				
 				} catch (JavaModelException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					JDIDebugUIPlugin.log(e);
 				}
 			}
 			monitor.worked(1);
