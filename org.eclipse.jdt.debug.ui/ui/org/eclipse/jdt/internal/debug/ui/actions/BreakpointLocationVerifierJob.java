@@ -94,9 +94,9 @@ public class BreakpointLocationVerifierJob extends Job {
 		IJavaProject project= JavaCore.create(fResource).getJavaProject();
 		int apiLevel;
 		if ("1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) { //$NON-NLS-1$
-			apiLevel= AST.LEVEL_3_0;
+			apiLevel= AST.JLS3;
 		} else {
-			apiLevel= AST.LEVEL_2_0;
+			apiLevel= AST.JLS2;
 		}
 		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(fDocument.get().toCharArray());

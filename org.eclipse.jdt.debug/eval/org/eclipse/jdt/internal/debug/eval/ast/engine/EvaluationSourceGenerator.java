@@ -146,7 +146,7 @@ public class EvaluationSourceGenerator {
 	}
 
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAnInstanceMethod) throws DebugException {
-		ASTParser parser = ASTParser.newParser(AST.LEVEL_2_0);
+		ASTParser parser = ASTParser.newParser(AST.JLS2);
 		parser.setSource(source.toCharArray());
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAnInstanceMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
