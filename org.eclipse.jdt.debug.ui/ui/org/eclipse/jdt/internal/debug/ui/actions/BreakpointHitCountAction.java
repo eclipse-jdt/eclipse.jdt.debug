@@ -14,18 +14,25 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 public class BreakpointHitCountAction extends Action implements IViewActionDelegate {
 
-	private static final String INITIAL_VALUE= "0"; //$NON-NLS-1$
+	private static final String INITIAL_VALUE= "1"; //$NON-NLS-1$
 
 	protected IStructuredSelection fCurrentSelection;
 
@@ -33,6 +40,10 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 	 * A dialog that sets the focus to the text area.
 	 */
 	class HitCountDialog extends InputDialog {
+		
+		private Button fEnabledButton;
+		private boolean fHitCountEnabled;
+		
 		protected  HitCountDialog(Shell parentShell,
 									String dialogTitle,
 									String dialogMessage,
@@ -41,17 +52,63 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 		}
 		
-		public int open() {
-			Display display= JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell().getDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					getText().setFocus();
+		/**
+		 * @see Window#close()
+		 */
+		public boolean close() {
+			setHitCountEnabled(getEnabledButton().getSelection());
+			return super.close();
+		}
+		/**
+		 * @see Dialog#createDialogArea(Composite)
+		 */
+		protected Control createDialogArea(Composite parent) {
+			Composite area= (Composite)super.createDialogArea(parent);
+			Button b= new Button(area, SWT.CHECK);
+			GridData data = new GridData(
+				GridData.GRAB_HORIZONTAL |
+				GridData.HORIZONTAL_ALIGN_FILL);
+			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+			b.setLayoutData(data);
+			b.setFont(parent.getFont());
+			b.setText("Enabled Hit Count");
+			b.setSelection(true);
+			b.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					boolean enabled= getEnabledButton().getSelection();
+					getText().setEnabled(enabled);
+					if (enabled) {
+						validateInput();
+					} else {
+						getOkButton().setEnabled(true);
+						getErrorMessageLabel().setText(""); //$NON-NLS-1$
+					}
+				}
+				
+				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
-			
-			return super.open();
+			setEnabledButton(b);
+			return area;
 		}
-	}
+
+		protected Button getEnabledButton() {
+			return fEnabledButton;
+		}
+
+		protected void setEnabledButton(Button enabledButton) {
+			fEnabledButton = enabledButton;
+		}
+
+		protected boolean isHitCountEnabled() {
+			return fHitCountEnabled;
+		}
+
+		protected void setHitCountEnabled(boolean hitCountEnabled) {
+			fHitCountEnabled = hitCountEnabled;
+		}
+
+}
 	
 	public BreakpointHitCountAction() {
 		setEnabled(false);
@@ -76,14 +133,17 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 
 		while (enum.hasNext()) {
 			IJavaBreakpoint breakpoint= (IJavaBreakpoint)enum.next();
-			int newHitCount= hitCountDialog(breakpoint);
-			if (newHitCount != -1) {				
-				try {
+			try {
+				int oldHitCount= breakpoint.getHitCount();
+				int newHitCount= hitCountDialog(breakpoint);
+				if (newHitCount != -1) {					
+					if (oldHitCount == newHitCount && newHitCount == 0) {
+						return;
+					}
 					breakpoint.setHitCount(newHitCount);
-					breakpoint.setEnabled(true);
-				} catch (CoreException ce) {
-					JDIDebugUIPlugin.logError(ce);
 				}
+			} catch (CoreException ce) {
+				JDIDebugUIPlugin.logError(ce);
 			}
 		}
 	}
@@ -106,7 +166,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 				} catch (NumberFormatException nfe) {
 					hitCount= -1;
 				}
-				if (hitCount < 0) {
+				if (hitCount < 1) {
 					return ActionMessages.getString("BreakpointHitCountAction.Value_is_not_a_valid_hit_count_4"); //$NON-NLS-1$
 				}
 				//no error
@@ -126,12 +186,15 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 			initialValue= INITIAL_VALUE;
 		}
 		Shell activeShell= JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell();
-		InputDialog dialog= new HitCountDialog(activeShell, title, message, initialValue, validator);
+		HitCountDialog dialog= new HitCountDialog(activeShell, title, message, initialValue, validator);
 		if (dialog.open() != dialog.OK) {
 			return -1;
 		}
-
-		return Integer.parseInt(dialog.getValue().trim());
+		if (dialog.isHitCountEnabled()) {
+			return Integer.parseInt(dialog.getValue().trim());
+		} else {
+			return 0;
+		}
 	}
 
 	/**
