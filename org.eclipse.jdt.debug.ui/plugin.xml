@@ -110,7 +110,7 @@
             <enablement>
                <and>
                   <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
                         value="true">
                   </systemProperty>
                   <objectClass
@@ -1263,7 +1263,7 @@
             <enablement>
                <and>
                   <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
                         value="true">
                   </systemProperty>
                   <objectClass
@@ -1387,7 +1387,7 @@
             <enablement>
                <and>
                   <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
                         value="true">
                   </systemProperty>
                   <objectClass

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -42,6 +43,17 @@ import org.eclipse.ui.PlatformUI;
 public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {
 
 	private static EvaluationContextManager fgManager;
+	
+	/**
+	 * System property indicating a stack frame is selected in the debug view with an
+	 * <code>IJavaStackFrame</code> adapter.
+	 */
+	private static final String DEBUGGER_ACTIVE = JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"; //$NON-NLS-1$
+	/**
+	 * System property indicating an element is selected in the debug view that is
+	 * an instanceof <code>IJavaStackFrame</code> or <code>IJavaThread</code>.
+	 */
+	private static final String INSTANCE_OF_IJAVA_STACK_FRAME = JDIDebugUIPlugin.getUniqueIdentifier() + ".instanceof.IJavaStackFrame"; //$NON-NLS-1$
 	
 	private Map fContextsByPage = null;
 	
@@ -139,10 +151,11 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 				Object element = ss.getFirstElement();
 				if (element instanceof IAdaptable) {
 					IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
+					boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
 					if (frame != null) {
 						// do not consider scrapbook frames
 						if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-							setContext(page, frame);
+							setContext(page, frame, instOf);
 							return;
 						}
 					}
@@ -160,12 +173,17 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @param page
 	 * @param frame
 	 */
-	private void setContext(IWorkbenchPage page, IJavaStackFrame frame) {
+	private void setContext(IWorkbenchPage page, IJavaStackFrame frame, boolean instOf) {
 		if (fContextsByPage == null) {
 			fContextsByPage = new HashMap();
 		}
 		fContextsByPage.put(page, frame);
-		System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$	
+		System.setProperty(DEBUGGER_ACTIVE, "true"); //$NON-NLS-1$
+		if (instOf) {
+			System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "true"); //$NON-NLS-1$
+		} else {
+			System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "false"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -178,7 +196,8 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 		if (fContextsByPage != null) {
 			fContextsByPage.remove(page);
 			if (fContextsByPage.isEmpty()) {
-				System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.setProperty(DEBUGGER_ACTIVE, "false"); //$NON-NLS-1$
+				System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "false"); //$NON-NLS-1$
 			}
 		}
 	}
