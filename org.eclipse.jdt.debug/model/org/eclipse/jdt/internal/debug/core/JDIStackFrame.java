@@ -155,10 +155,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
 	
-	/**
-	 *
-	 */
-	protected List getVariables0() throws DebugException {
+	protected synchronized List getVariables0() throws DebugException {
 		if (fVariables == null) {
 			Method method= getUnderlyingMethod();
 			fVariables= new ArrayList();
@@ -761,5 +758,3 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 	}
 }
-
-

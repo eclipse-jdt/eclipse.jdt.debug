@@ -313,7 +313,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 *
 	 */
-	protected List getStackFrames0() throws DebugException {
+	protected synchronized List getStackFrames0() throws DebugException {
 		if (isSuspended()) {
 			if (isTerminated()) {
 				fStackFrames = Collections.EMPTY_LIST;
@@ -1020,13 +1020,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IVariableLookup
+	 * @see IJavaThread
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
 			IStackFrame[] stackframes= getStackFrames();
 			for (int i = 0; i < stackframes.length; i++) {
-				JDIStackFrame sf= (JDIStackFrame) stackframes[i];
+				JDIStackFrame sf= (JDIStackFrame)stackframes[i];
 				IVariable var= sf.findVariable(varName);
 				if (var != null) {
 					return var;
@@ -1134,6 +1134,4 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			fTimer.stop();
 		}
 	}
-	
 }
-
