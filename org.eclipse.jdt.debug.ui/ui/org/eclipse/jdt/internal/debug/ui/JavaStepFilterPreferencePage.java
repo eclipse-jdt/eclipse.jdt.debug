@@ -510,12 +510,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			fNewStepFilter = null;
 			fNewTableItem = null;
 			fTableEditor.setEditor(null, null, 0);	
-			fEditorText.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					fEditorText.dispose();
-					fEditorText = null;
-				}
-			});		
+			fEditorText.dispose();
+			fEditorText = null;
 		}
 	}
 	
