@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -170,6 +171,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * Returns the monitor the given thread is waiting for.
 	 */
 	public JavaContendedMonitor getContendedMonitor(IJavaThread thread) {
+		if (!fIsEnabled || !((JDIDebugTarget)thread.getDebugTarget()).supportsMonitorInformation()) {
+			return null;
+		}
 		return getJavaMonitorThread(thread).getContendedMonitor();
 	}
 	
@@ -177,6 +181,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * Returns the monitors the given thread owns.
 	 */
 	public JavaOwnedMonitor[] getOwnedMonitors(IJavaThread thread) {
+		if (!fIsEnabled || !((JDIDebugTarget)thread.getDebugTarget()).supportsMonitorInformation()) {
+			return new JavaOwnedMonitor[0];
+		}
 		return getJavaMonitorThread(thread).getOwnedMonitors();
 	}
 
@@ -261,7 +268,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * in a deadlock, <code>false</code> otherwise.
 	 */
 	public boolean isInDeadlock(IJavaThread thread) {
-		if (!fIsEnabled) {
+		if (!fIsEnabled || !((JDIDebugTarget)thread.getDebugTarget()).supportsMonitorInformation()) {
 			return false;
 		}
 		return getJavaMonitorThread(thread).isInDeadlock();
