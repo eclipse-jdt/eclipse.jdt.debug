@@ -53,6 +53,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int VM_HOLD_EVENTS = 15					 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_RELEASE_EVENTS = 16				 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_CAPABILITIES_NEW = 17				 + (CSET_VIRTUAL_MACHINE << 8);
+	public static final int VM_REDEFINE_CLASSES = 18			 + (CSET_VIRTUAL_MACHINE << 8);
 
 	/** Commands ReferenceType. */
 	public static final int RT_SIGNATURE = 1					 + (CSET_REFERENCE_TYPE << 8);
@@ -66,6 +67,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int RT_STATUS = 9						 + (CSET_REFERENCE_TYPE << 8);
 	public static final int RT_INTERFACES = 10					 + (CSET_REFERENCE_TYPE << 8);
 	public static final int RT_CLASS_OBJECT = 11				 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_SOURCE_DEBUG_EXTENSION = 12		 + (CSET_REFERENCE_TYPE << 8);
 
 	/** Commands ClassType. */
 	public static final int CT_SUPERCLASS = 1					 + (CSET_CLASS_TYPE << 8);
@@ -80,6 +82,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int M_LINE_TABLE = 1					 + (CSET_METHOD << 8);
 	public static final int M_VARIABLE_TABLE = 2				 + (CSET_METHOD << 8);
 	public static final int M_BYTECODES = 3						 + (CSET_METHOD << 8);
+	public static final int M_OBSOLETE = 4						 + (CSET_METHOD << 8);
 
 	/** Commands ObjectReference. */
 	public static final int OR_REFERENCE_TYPE = 1				 + (CSET_OBJECT_REFERENCE << 8);
@@ -107,6 +110,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int TR_STOP = 10						 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_INTERRUPT = 11					 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_SUSPEND_COUNT = 12				 + (CSET_THREAD_REFERENCE << 8);
+	public static final int TR_POP_TOP_FRAME = 13				 + (CSET_THREAD_REFERENCE << 8);
 
 	/** Commands ThreadGroupReference. */
 	public static final int TGR_NAME = 1						 + (CSET_THREAD_GROUP_REFERENCE << 8);
@@ -130,6 +134,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int SF_GET_VALUES = 1					 + (CSET_STACK_FRAME << 8);
 	public static final int SF_SET_VALUES = 2					 + (CSET_STACK_FRAME << 8);
 	public static final int SF_THIS_OBJECT = 3					 + (CSET_STACK_FRAME << 8);
+	public static final int SF_POP_FRAME = 4					 + (CSET_STACK_FRAME << 8);
 
 	/** Commands ClassObjectReference. */
 	public static final int COR_REFLECTED_TYPE = 1				 + (CSET_CLASS_OBJECT_REFERENCE << 8);

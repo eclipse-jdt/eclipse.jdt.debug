@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -35,6 +36,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -43,7 +45,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
+import org.eclipse.jdt.internal.core.Util;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -414,11 +416,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 	
 	/**
-	 * Returns whether this debug target supports hot code replace.
+	 * Returns whether this debug target supports hot code replace for the J9 VM.
 	 * 
-	 * @return whether this debug target supports hot code replace
+	 * @return whether this debug target supports J9 hot code replace
 	 */
-	protected boolean supportsHotCodeReplace() {
+	protected boolean supportsJ9HotCodeReplace() {
 		if (!isTerminated() && getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
 			try {
 				return ((org.eclipse.jdi.hcr.VirtualMachine) getVM()).canReloadClasses();
@@ -426,6 +428,18 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				// This is not an error condition - UnsupportedOperationException is thrown when a VM does
 				// not support HCR
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether this debug target supports hot code replace for JDK VMs.
+	 * 
+	 * @return whether this debug target supports JDK hot code replace
+	 */
+	protected boolean supportsJDKHotCodeReplace() {
+		if (!isTerminated()) {
+			return getVM().canRedefineClasses();
 		}
 		return false;
 	}
@@ -495,7 +509,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public void typesHaveChanged(String[] typeNames) throws DebugException {
 			
-		if (supportsHotCodeReplace()) {
+		if (supportsJ9HotCodeReplace()) {
 			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) getVM();
 			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
 			try {
@@ -516,7 +530,98 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
 		}
-		
+	}
+	
+	/**
+	 * Notifies this target that the specified types have been changed and
+	 * should be replaced.
+	 * 
+	 * Breakpoints are reinstalled automatically when the new
+	 * types are loaded.
+	 * 
+	 * This method is to be used for JDK hot code replace.
+	 */
+	public void typesHaveChanged(List resources) throws DebugException {
+		if (supportsJDKHotCodeReplace()) {
+			Map typesToBytes= getTypesToBytes(resources);
+			try {
+				getVM().redefineClasses(typesToBytes);
+			} catch (UnsupportedOperationException uoe) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_unsupported_redefinition"), uoe); //$NON-NLS-1$
+			} catch (NoClassDefFoundError ncdfe) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_bad_bytes"), ncdfe); //$NON-NLS-1$
+			} catch (VerifyError ve) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_verify_error"), ve); //$NON-NLS-1$
+			} catch (UnsupportedClassVersionError ucve) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_unsupported_class_version"), ucve); //$NON-NLS-1$
+			} catch (ClassFormatError cfe) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_class_format_error"), cfe); //$NON-NLS-1$
+			} catch (ClassCircularityError cce) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"),cce); //$NON-NLS-1$
+			}
+		} else {
+			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
+		}
+	}
+	
+	private String getString(String key) {
+		return JDIDebugModelMessages.getString(key);
+	}
+	
+	/**
+	 * Returns a mapping of class files to the bytes that make up those
+	 * class files.
+	 * 
+	 * @param resources the classfiles
+	 * @returns a mapping of class files to bytes
+	 *  key: class file
+	 *  value: the bytes which make up that classfile
+	 */
+	protected Map getTypesToBytes(List resources) {
+		Map typesToBytes= new HashMap(resources.size());
+		Iterator iter= resources.iterator();
+		IProject project= null;
+		IPath outputPath= null;
+		IJavaProject javaProject= null;
+		while (iter.hasNext()) {
+			IResource resource= (IResource)iter.next();
+			if (project == null || !resource.getProject().equals(project)) {
+				project= resource.getProject();
+				javaProject= JavaCore.create(project);
+				try {
+					outputPath= javaProject.getOutputLocation();
+				} catch (JavaModelException jme) {
+					JDIDebugPlugin.logError(jme);
+					project= null;
+					continue;
+				}
+			}
+			IPath resourcePath= resource.getFullPath();
+			int count= resourcePath.matchingFirstSegments(outputPath);
+			resourcePath= resourcePath.removeFirstSegments(count);
+			String qualifiedName= resourcePath.toString();
+			qualifiedName= translateResourceName(qualifiedName);
+			List classes= jdiClassesByName(qualifiedName);
+			byte[] bytes= null;
+			try {
+				bytes= Util.getResourceContentsAsByteArray((IFile) resource);
+			} catch (JavaModelException jme) {
+				continue;
+			}
+			Iterator classIter= classes.iterator();
+			while (classIter.hasNext()) {
+				ReferenceType type= (ReferenceType) classIter.next();
+				typesToBytes.put(type, bytes);
+			}
+		}
+		return typesToBytes;
+	}
+	
+	protected String translateResourceName(String resourceName) {
+		// get rid of ".class"
+		resourceName= resourceName.substring(0, resourceName.length() - 6);
+		// switch to dot seperated
+		return resourceName.replace(IPath.SEPARATOR, '.');
 	}
 
 	/**

@@ -6,6 +6,8 @@ package org.eclipse.jdi.internal.request;
  */
 
 import com.sun.jdi.*;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.*;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
@@ -41,4 +43,5 @@ public class BreakpointRequestImpl extends EventRequestImpl implements Breakpoin
 	protected final byte eventKind() {
 		return BreakpointEventImpl.EVENT_KIND;
 	}
+
 }

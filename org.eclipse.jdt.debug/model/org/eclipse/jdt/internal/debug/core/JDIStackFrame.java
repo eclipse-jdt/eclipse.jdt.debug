@@ -430,12 +430,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean supportsDropToFrame() {
 		//FIXME 1GH3XDA: ITPDUI:ALL - Drop to frame hangs if after invoke
+		JDIThread thread= (JDIThread) getThread();
+		boolean jdkSupport= getVM().canPopFrames();
+		boolean j9Support= false;
 		try {
-			JDIThread thread= (JDIThread) getThread();
+			j9Support= (thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference) &&
+			 			((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
+		} catch (UnsupportedOperationException uoe) {
+			j9Support= false;
+		}
+		try {
 			boolean supported = !thread.isTerminated()
 				&& thread.isSuspended()
-				&& thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference
-				&& ((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
+				&& (jdkSupport || j9Support);
 			if (supported) {
 				// Also ensure that this frame and no frames above this
 				// frame are native. Unable to pop native stack frames.

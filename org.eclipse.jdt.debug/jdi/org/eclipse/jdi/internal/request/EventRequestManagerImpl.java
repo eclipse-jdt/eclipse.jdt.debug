@@ -6,10 +6,16 @@ package org.eclipse.jdi.internal.request;
  */
 
 import com.sun.jdi.*;
+import com.sun.jdi.Location;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.*;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.StepRequest;
+import com.sun.jdi.request.VMDeathRequest;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import java.util.*;
+import java.util.List;
 import org.eclipse.jdi.internal.*;
 import org.eclipse.jdi.internal.jdwp.*;
 import org.eclipse.jdi.internal.connect.*;
@@ -35,6 +41,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	private static final int STEP_INDEX = 8;
 	private static final int THREAD_DEATH_INDEX = 9;
 	private static final int THREAD_START_INDEX = 10;
+	private static final int VM_DEATH_INDEX = 11;
 
 	/** Set of all existing requests per request type. */
 	private HashSet[] fRequests;
@@ -166,7 +173,17 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		ThreadStartRequestImpl req = new ThreadStartRequestImpl(virtualMachineImpl());
 		addEventRequest(THREAD_START_INDEX, req);
 		return req;
-	} 
+	}
+	
+
+	/*
+	 * @see EventRequestManager#createVMDeathRequest()
+	 */
+	public VMDeathRequest createVMDeathRequest() {
+		VMDeathRequestImpl req = new VMDeathRequestImpl(virtualMachineImpl());
+		addEventRequest(VM_DEATH_INDEX, req);
+		return req;
+	}	
 
 	/**
 	 * Creates ReenterStepRequest (for OTI specific Hot Code Replacement).
@@ -432,4 +449,5 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		else
 			throw new InternalError("Got event of unknown type.");
 	}
+
 }

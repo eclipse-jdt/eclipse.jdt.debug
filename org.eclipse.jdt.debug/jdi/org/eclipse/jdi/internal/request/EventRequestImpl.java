@@ -48,6 +48,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	public static final byte MODIF_KIND_EXCEPTIONONLY = 8;
 	public static final byte MODIF_KIND_FIELDONLY = 9;
 	public static final byte MODIF_KIND_STEP = 10;
+	public static final byte MODIF_KIND_INSTANCE = 11;
 	
 	/** Mapping of command codes to strings. */
 	private static HashMap fStepSizeMap = null;
@@ -95,6 +96,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	
 	/** Thread step filters. */
 	protected ArrayList fThreadStepFilters = null;
+	
+	/** Instance filters. */
+	protected ArrayList fInstanceFilters = null;
 
 	/**
 	 * Creates new EventRequest.
@@ -381,6 +385,14 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 	filter.fThreadStepDepth = depth;
 	 	fThreadStepFilters.add(filter);
 	 }
+	 
+	 public void addInstanceFilter(ObjectReference instance) {
+	 	checkVM(instance);
+	 	if (fInstanceFilters == null) {
+	 		fInstanceFilters = new ArrayList();
+	 	}
+	 	fInstanceFilters.add(instance);
+	 }
 
 	/**
 	 * From here on JDWP functionality of EventRequest is implemented.
@@ -540,6 +552,12 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			for (int i = 0; i < fCountFilters.size(); i++) {
 				writeByte(MODIF_KIND_COUNT, "modifier", modifierKindMap(), outData);
 				writeInt(((Integer)fCountFilters.get(i)).intValue(), "count filter", outData);
+			}
+		}
+		if (fInstanceFilters != null) {
+			for (int i = 0; i < fInstanceFilters.size(); i++) {
+				writeByte(MODIF_KIND_INSTANCE, "modifier", modifierKindMap(), outData);
+				((ObjectReferenceImpl)fInstanceFilters.get(i)).write(this, outData);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import org.eclipse.jdi.internal.event.*;
 import org.eclipse.jdi.internal.jdwp.*;
 import org.eclipse.jdi.internal.spy.*;
 import java.util.*;
+import java.util.Map;
 import java.io.*;
 
 /**
@@ -83,9 +84,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanRedefineClasses;
 	private boolean fCanAddMethod;
 	private boolean fCanUnrestrictedlyRedefineClasses;
-	private boolean fCanPopTopFrame;
 	private boolean fCanPopFrames;
-	private boolean fCanPopObsoleteFrames;
+	private boolean fCanUseInstanceFilters;
+	private boolean fCanGetSourceDebugExtension;
+	private boolean fCanRequestVMDeathEvent;
+	private boolean fCanSetDefaultStratum;
 	private boolean[] fHcrCapabilities = null;
 	
 	/** 
@@ -341,28 +344,30 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
-			fCanWatchFieldModification = readBoolean("watch field modif", replyData);
+			fCanWatchFieldModification = readBoolean("watch field modification", replyData);
 			fCanWatchFieldAccess = readBoolean("watch field access", replyData);
 			fCanGetBytecodes = readBoolean("get bytecodes", replyData);
 			fCanGetSyntheticAttribute = readBoolean("synth. attr", replyData);
 			fCanGetOwnedMonitorInfo = readBoolean("owned monitor info", replyData);
-			fCanGetCurrentContendedMonitor = readBoolean("curr. cont. monitor", replyData);
+			fCanGetCurrentContendedMonitor = readBoolean("curr. contended monitor", replyData);
 			fCanGetMonitorInfo = readBoolean("monitor info", replyData);
 			if (command == JdwpCommandPacket.VM_CAPABILITIES_NEW) {
 				// extended capabilities
 				fCanRedefineClasses = readBoolean("redefine classes", replyData);
 				fCanAddMethod = readBoolean("add method", replyData);
 				fCanUnrestrictedlyRedefineClasses = readBoolean("unrestrictedly redefine classes", replyData);
-				fCanPopTopFrame = readBoolean("pop top frame", replyData);
 				fCanPopFrames = readBoolean("pop frames", replyData);
-				fCanPopObsoleteFrames = readBoolean("pop obsolete frames", replyData);
+				fCanUseInstanceFilters = readBoolean("use instance filters", replyData);
+				fCanGetSourceDebugExtension = readBoolean("get source debug extension", replyData);
+				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData);
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;
 				fCanUnrestrictedlyRedefineClasses = false;
-				fCanPopTopFrame = false;
-				fCanPopFrames = false;
-				fCanPopObsoleteFrames = false;				
+				fCanPopFrames = false;			
+				fCanUseInstanceFilters = false;
+				fCanGetSourceDebugExtension = false;
+				fCanRequestVMDeathEvent = false;
 			}
 			fGotCapabilities = true;
 		} catch (IOException e) {
@@ -953,4 +958,142 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			(fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
 	}
 	
+	/*
+	 * @see VirtualMachine#redefineClasses(Map)
+	 */
+	public void redefineClasses(Map typesToBytes) {
+		if (!canRedefineClasses()) {
+			throw new UnsupportedOperationException();
+		}
+		
+		initJdwpRequest();
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			writeInt(typesToBytes.size(), "classes", outData);
+			
+			Set types = typesToBytes.keySet();
+			Iterator iter = types.iterator();
+			while (iter.hasNext()) {
+				ReferenceTypeImpl type = (ReferenceTypeImpl) iter.next();
+				type.write(this, outData);
+				byte[] bytes = (byte[]) typesToBytes.get(type);
+				writeInt(bytes.length, "classfile", outData);
+				for (int i=0; i < bytes.length; i++) {
+					writeByte(bytes[i], "classByte", outData);
+				}
+				fCachedReftypes.remove(type.getRefTypeID()); // flush local cache of redefined types
+			}
+			
+			JdwpReplyPacket reply = requestVM(JdwpCommandPacket.VM_REDEFINE_CLASSES, outBytes);
+			switch (reply.errorCode()) {
+				case JdwpReplyPacket.UNSUPPORTED_VERSION:
+					throw new UnsupportedClassVersionError();
+				case JdwpReplyPacket.INVALID_CLASS_FORMAT:
+					throw new ClassFormatError();
+				case JdwpReplyPacket.CIRCULAR_CLASS_DEFINITION:
+					throw new ClassCircularityError();
+				case JdwpReplyPacket.FAILS_VERIFICATION:
+					throw new VerifyError();
+				case JdwpReplyPacket.NAMES_DONT_MATCH:
+					throw new NoClassDefFoundError();
+				case JdwpReplyPacket.ADD_METHOD_NOT_IMPLEMENTED:
+				case JdwpReplyPacket.SCHEMA_CHANGE_NOT_IMPLEMENTED:
+				case JdwpReplyPacket.HIERARCHY_CHANGE_NOT_IMPLEMENTED:
+				case JdwpReplyPacket.DELETE_METHOD_NOT_IMPLEMENTED:
+				case JdwpReplyPacket.CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
+				case JdwpReplyPacket.METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException();
+				default:
+					defaultReplyErrorHandler(reply.errorCode());
+			}
+		} catch (IOException ioe) {
+			defaultIOExceptionHandler(ioe);
+			return;
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+
+	/*
+	 * @see VirtualMachine#canRedefineClasses()
+	 */
+	public boolean canRedefineClasses() {
+		getCapabilities();
+		return fCanRedefineClasses;
+	}
+
+	/*
+	 * @see VirtualMachine#canUseInstanceFilters()
+	 */
+	public boolean canUseInstanceFilters() {
+		getCapabilities();
+		return fCanUseInstanceFilters;
+	}
+
+	/*
+	 * @see VirtualMachine#canAddMethod()
+	 */
+	public boolean canAddMethod() {
+		getCapabilities();
+		return fCanAddMethod;
+	}
+
+	/*
+	 * @see VirtualMachine#canUnrestrictedlyRedefineClasses()
+	 */
+	public boolean canUnrestrictedlyRedefineClasses() {
+		getCapabilities();
+		return fCanUnrestrictedlyRedefineClasses;
+	}
+
+	/*
+	 * @see VirtualMachine#canPopFrames()
+	 */
+	public boolean canPopFrames() {
+		getCapabilities();
+		return fCanPopFrames;
+	}
+
+	/*
+	 * @see VirtualMachine#canGetSourceDebugExtension()
+	 */
+	public boolean canGetSourceDebugExtension() {
+		getCapabilities();
+		return fCanGetSourceDebugExtension;
+	}
+
+	/*
+	 * @see VirtualMachine#canRequestVMDeathEvent()
+	 */
+	public boolean canRequestVMDeathEvent() {
+		getCapabilities();
+		return fCanRequestVMDeathEvent;
+	}
+
+	/*
+	 * @see VirtualMachine#setDefaultStratum(String)
+	 */
+	public void setDefaultStratum(String stratum) {
+		if (!canSetDefaultStratum()) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	/*
+	 * @see VirtualMachine#getDefaultStratum()
+	 */
+	public String getDefaultStratum() {
+		return null;
+	}
+	
+	/*
+	 * Returns whether the target VM supports setting
+	 * the default stratum.
+	 */
+	private boolean canSetDefaultStratum() {
+		getCapabilities();
+		return fCanSetDefaultStratum;
+	}
+
 }

@@ -44,6 +44,12 @@ public class JdwpReplyPacket extends JdwpPacket {
 	public static final short ADD_METHOD_NOT_IMPLEMENTED = 63;
 	public static final short SCHEMA_CHANGE_NOT_IMPLEMENTED = 64;
 	public static final short INVALID_TYPESTATE = 65;
+	public static final short HIERARCHY_CHANGE_NOT_IMPLEMENTED = 66;
+	public static final short DELETE_METHOD_NOT_IMPLEMENTED = 67;
+	public static final short UNSUPPORTED_VERSION = 68;
+	public static final short NAMES_DONT_MATCH = 69;
+	public static final short CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 70;
+	public static final short METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 71;
 	public static final short NOT_IMPLEMENTED = 99;
 	public static final short NULL_POINTER = 100;
 	public static final short ABSENT_INFORMATION = 101;

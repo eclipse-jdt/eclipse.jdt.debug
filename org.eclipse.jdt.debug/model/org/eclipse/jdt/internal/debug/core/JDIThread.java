@@ -1172,8 +1172,23 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * </ul>
 	 */
 	protected void dropToFrame(IStackFrame frame) throws DebugException {
-		StepHandler handler = new DropToFrameHandler(frame);
-		handler.step();
+		VirtualMachine vm= getVM();
+		if (vm.canPopFrames()) {
+			// JDK 1.4 support
+			try {
+				fThread.popFrames(((JDIStackFrame) frame).getUnderlyingStackFrame());
+			} catch (IncompatibleThreadStateException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {e.toString()}),e);
+			} finally {
+				disposeStackFrames();
+				computeStackFrames();
+				fireChangeEvent();				
+			}
+		} else {
+			// J9 support
+			StepHandler handler = new DropToFrameHandler(frame);
+			handler.step();
+		}
 	}
 	
 	/**
