@@ -279,12 +279,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					}
 					Map attributes = new HashMap(10);
 					BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
+					IType type= method.getDeclaringType();
+					String methodSignature= method.getSignature();
 					String methodName = method.getElementName();
 					if (method.isConstructor()) {
 						methodName = "<init>"; //$NON-NLS-1$
+						if (type.isEnum()) {
+							methodSignature= "(Ljava.lang.String;I" + methodSignature.substring(1); //$NON-NLS-1$
+						}
 					}
-					IType type= method.getDeclaringType();
-					String methodSignature= method.getSignature();
 					if (!type.isBinary()) {
 						//resolve the type names
 						methodSignature= resolveMethodSignature(type, methodSignature);
