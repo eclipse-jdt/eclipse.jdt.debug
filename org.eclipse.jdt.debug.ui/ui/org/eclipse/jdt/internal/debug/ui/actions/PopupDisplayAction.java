@@ -16,7 +16,6 @@ import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -34,6 +33,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.IHandler;
 
 
 public class PopupDisplayAction extends DisplayAction implements IInformationProvider {
@@ -53,13 +55,26 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	}
 	
 	private void showPopup() {		
-		final IAction action = new MoveResultToViewerAction(new MoveToDisplayViewerRunnable());
-		action.setText(ActionMessages.getString("PopupDisplayAction.2")); //$NON-NLS-1$
-		action.setActionDefinitionId(ACTION_DEFINITION_ID);
+		final IHandler handler = new AbstractHandler() {
+			public void execute(Object parameter) throws ExecutionException {
+				IDataDisplay directDisplay= getDirectDataDisplay();
+				Display display= JDIDebugUIPlugin.getStandardDisplay();
 				
+				if (!display.isDisposed()) {
+					IDataDisplay dataDisplay= getDataDisplay();
+					if (dataDisplay != null) {
+						if (directDisplay == null) {
+							dataDisplay.displayExpression(snippet);
+						}
+						dataDisplay.displayExpressionValue(resultString);
+					}
+				}
+				evaluationCleanup();
+			}			
+		};
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new PopupInformationControl(parent, new DisplayInformationControlAdapter(), action);
+				return new PopupInformationControl(parent, new DisplayInformationControlAdapter(ActionMessages.getString("PopupDisplayAction.2"), ACTION_DEFINITION_ID), handler); //$NON-NLS-1$
 			}
 		});
 		
@@ -77,28 +92,15 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		
 	}
 
-	private class MoveToDisplayViewerRunnable implements Runnable {
-		final IDataDisplay directDisplay= getDirectDataDisplay();
-		final Display display= JDIDebugUIPlugin.getStandardDisplay();
-		
-		public void run() {
-			if (!display.isDisposed()) {
-				IDataDisplay dataDisplay= getDataDisplay();
-				if (dataDisplay != null) {
-					if (directDisplay == null) {
-						dataDisplay.displayExpression(snippet);
-					}
-					dataDisplay.displayExpressionValue(resultString);
-				}
-			}
-			evaluationCleanup();
-		}
-	}
-	
-	
 	private class DisplayInformationControlAdapter implements IPopupInformationControlAdapter {
 		private StyledText text;
+		private String label;
+		private String actionDefinitionId;
 		
+		DisplayInformationControlAdapter(String label, String actionDefinitionId) {
+			this.label = label;
+			this.actionDefinitionId = actionDefinitionId;
+		}
 		public boolean hasContents() {
 			return (text != null && text.getCharCount() >0);
 		}
@@ -129,6 +131,20 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		 */
 		public IDialogSettings getDialogSettings() {
 			return JDIDebugUIPlugin.getDefault().getDialogSettings();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getLabel()
+		 */
+		public String getLabel() {
+			return label;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getActionDefinitionId()
+		 */
+		public String getActionDefinitionId() {
+			return actionDefinitionId;
 		}
 	}
 

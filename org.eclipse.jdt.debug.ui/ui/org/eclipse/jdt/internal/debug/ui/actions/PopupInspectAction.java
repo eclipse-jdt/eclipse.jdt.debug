@@ -13,12 +13,12 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -32,6 +32,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.IHandler;
 
 
 public class PopupInspectAction extends InspectAction implements IInformationProvider {
@@ -66,12 +69,17 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 	protected void showPopup(final IEvaluationResult result) {
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				IAction action = new MoveResultToViewerAction(new MoveToViewerRunnable());
-				action.setText(ActionMessages.getString("PopupInspectAction.3")); //$NON-NLS-1$
-				action.setActionDefinitionId(ACTION_DEFININIITION_ID);
+				IHandler handler = new AbstractHandler() {
+					public void execute(Object parameter) throws ExecutionException {
+						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
+						showExpressionView();
+					}				
+				};
+				
 				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 				expression = new JavaInspectExpression(result);
-				return new PopupInformationControl(parent, DebugUITools.newExpressionInformationControlAdapter(page, expression), action);
+				IPopupInformationControlAdapter adapter = DebugUITools.newExpressionInformationControlAdapter(page, expression, ActionMessages.getString("PopupInspectAction.3"), ACTION_DEFININIITION_ID); //$NON-NLS-1$
+				return new PopupInformationControl(parent, adapter, handler);
 			}
 		});
 		
@@ -104,11 +112,5 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 	}
 	
 	
-	private class MoveToViewerRunnable implements Runnable {
-		public void run() {
-			DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
-			showExpressionView();
-		}
-	}
 
 }
