@@ -100,6 +100,13 @@ public class JavaLogicalStructure {
 
 		public IJavaValue evaluate(String snippet) throws DebugException {
 			ICompiledExpression compiledExpression= fEvaluationEngine.getCompiledExpression(snippet, fEvaluationType);
+			if (compiledExpression.hasErrors()) {
+				String[] errorMessages = compiledExpression.getErrorMessages();
+				for (int i = 0; i < errorMessages.length; i++) {
+					JDIDebugPlugin.logDebugMessage(errorMessages[i]);
+				}
+				return null;
+			}
 			fResult= null;
 			fEvaluationEngine.evaluateExpression(compiledExpression, fEvaluationValue, fThread, this, DebugEvent.EVALUATION_IMPLICIT, false);
 			synchronized(this) {
@@ -111,6 +118,13 @@ public class JavaLogicalStructure {
 				}
 			}
 			if (fResult == null) {
+				return null;
+			}
+			if (fResult.hasErrors()) {
+				DebugException exception = fResult.getException();
+				if (exception != null) {
+					JDIDebugPlugin.log(exception);
+				}
 				return null;
 			}
 			return fResult.getValue();
