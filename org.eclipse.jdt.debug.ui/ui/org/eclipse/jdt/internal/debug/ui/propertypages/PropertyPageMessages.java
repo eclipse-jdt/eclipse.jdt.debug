@@ -22,17 +22,9 @@ public class PropertyPageMessages {
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	/**
-	 * 
-	 */
 	private PropertyPageMessages() {
-
-		// TODO Auto-generated constructor stub
 	}
-	/**
-	 * @param key
-	 * @return
-	 */
+
 	public static String getString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
