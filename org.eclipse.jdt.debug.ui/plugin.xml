@@ -48,6 +48,7 @@
       icon="icons/full/obj16/jsbook_obj.gif"
       name="%JavaSnippetEditor.label"
       extensions="jpage"
+      symbolicFontName= "org.eclipse.jdt.ui.editors.textfont"
       class="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor"
       contributorClass="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorActionContributor">
    </editor>
