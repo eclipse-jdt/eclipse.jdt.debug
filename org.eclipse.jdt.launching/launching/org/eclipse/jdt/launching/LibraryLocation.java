@@ -107,7 +107,7 @@ public final class LibraryLocation {
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
-				&& (getJavadocLocation() != null && getJavadocLocation().equals(lib.getJavadocLocation()) || getJavadocLocation() == null && lib.getJavadocLocation() == null);
+				&& equalsOrNull(getJavadocLocation(), lib.getJavadocLocation());
 		} 
 		return false;
 	}
@@ -126,13 +126,24 @@ public final class LibraryLocation {
 	 * @return whether the given paths are equal
 	 */
 	protected boolean equals(IPath path1, IPath path2) {
-		if (path1 == null) {
-			return path2 == null;
+		return equalsOrNull(path1, path2);
+	}
+	
+	/**
+	 * Returns whether the given objects are equal - either may be <code>null</code>.
+	 * @param o1 object to be compared
+	 * @param o2 object to be compared
+	 * @return whether the given objects are equal or both null
+	 * @since 3.1
+	 */	
+	private boolean equalsOrNull(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
 		}
-		if (path2 == null) {
+		if (o2 == null) {
 			return false;
 		}
-		return path1.equals(path2);
+		return o1.equals(o2);
 	}
 
 	/**
