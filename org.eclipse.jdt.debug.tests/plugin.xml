@@ -43,4 +43,12 @@
   </classpathProvider>
 </extension>
 
+<extension point="org.eclipse.debug.ui.consoleLineTrackers">
+  <consoleLineTracker
+    id = "org.eclipse.jdt.debug.tests.ConsoleLineTracker"
+    class ="org.eclipse.jdt.debug.testplugin.ConsoleLineTracker"
+    processType = "java">
+  </consoleLineTracker>
+</extension>
+
 </plugin>
