@@ -87,7 +87,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, false);		
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
 		
