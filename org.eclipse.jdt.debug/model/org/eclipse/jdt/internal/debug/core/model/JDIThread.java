@@ -913,9 +913,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			fPreviousName = getUnderlyingThread().name(); 
 			return fPreviousName;
 		} catch (RuntimeException e) {
-			// Don't bother reporting the exception if we have the old name (bug 30785)
+			// Don't bother reporting the exception when retrieving the name (bug 30785 & bug 33276)
 			if (e instanceof ObjectCollectedException) {
-				if (fPreviousName != null) {
+				if (fPreviousName == null) {
+					return JDIDebugModelMessages.getString("JDIThread.garbage_collected_1"); //$NON-NLS-1$
+				} else {
 					return fPreviousName;
 				}
 			}
