@@ -1073,44 +1073,40 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	protected String getExpressionText(IExpression expression) throws DebugException {
-		String label= '"' + expression.getExpressionText() + '"';
-		if (label != null) {
-			boolean showTypes= isShowVariableTypeNames();
-			StringBuffer buff= new StringBuffer();
-			IJavaValue javaValue= (IJavaValue) expression.getValue();
-			if (javaValue != null) {
-				String typeName=null;
-				try {
-					typeName= javaValue.getReferenceTypeName();
-				} catch (DebugException exception) {
-					// ObjectCollectedException is an expected exception which will
-					// occur if the inspected object has been garbage collected.
-					if (exception.getStatus().getException() instanceof ObjectCollectedException) {
-						return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
-					} else {
-						throw exception;
-					}
-				}
-				if (showTypes ) {
-					typeName= getQualifiedName(typeName);
-					if (typeName.length() > 0) {
-						buff.append(typeName);
-						buff.append(' ');
-					}
+		boolean showTypes= isShowVariableTypeNames();
+		StringBuffer buff= new StringBuffer();
+		IJavaValue javaValue= (IJavaValue) expression.getValue();
+		if (javaValue != null) {
+			String typeName=null;
+			try {
+				typeName= javaValue.getReferenceTypeName();
+			} catch (DebugException exception) {
+				// ObjectCollectedException is an expected exception which will
+				// occur if the inspected object has been garbage collected.
+				if (exception.getStatus().getException() instanceof ObjectCollectedException) {
+					return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
+				} else {
+					throw exception;
 				}
 			}
-			buff.append(label);
-
-			if (javaValue != null) {
-				String valueString= getValueText(javaValue);
-				if (valueString.length() > 0) {
-					buff.append("= "); //$NON-NLS-1$
-					buff.append(valueString);
+			if (showTypes ) {
+				typeName= getQualifiedName(typeName);
+				if (typeName.length() > 0) {
+					buff.append(typeName);
+					buff.append(' ');
 				}
 			}
-			return buff.toString();
 		}
-		return ""; //$NON-NLS-1$ 
+		buff.append('"' + expression.getExpressionText() + '"');
+
+		if (javaValue != null) {
+			String valueString= getValueText(javaValue);
+			if (valueString.length() > 0) {
+				buff.append("= "); //$NON-NLS-1$
+				buff.append(valueString);
+			}
+		}
+		return buff.toString();
 	}	
 
 	/**
