@@ -174,7 +174,10 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		if (resolvedType != null && resolvedType.length == 1) {
 			String[] typeNames= resolvedType[0];
 			String qualifiedName= Signature.toQualifiedName(typeNames);
-			
+			if (qualifiedName.startsWith(".")) { //$NON-NLS-1$
+				// remove leading "."
+				qualifiedName = qualifiedName.substring(1);
+			}
 			for (int j = 0; j < count; j++) {
 				resolvedSig.append('[');
 			}
