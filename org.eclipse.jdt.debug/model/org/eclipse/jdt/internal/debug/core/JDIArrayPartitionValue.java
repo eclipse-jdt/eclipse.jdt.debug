@@ -57,18 +57,18 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	}
 	
 	protected List getVariables0() {
-		return JDIArrayPartition.splitArray((JDIDebugTarget)fPartition.getDebugTarget(), fPartition.getArrayReference(), fPartition.getStart(), fPartition.getEnd());
+		return JDIArrayPartition.splitArray((JDIDebugTarget)getPartition().getDebugTarget(), getPartition().getArrayReference(), getPartition().getStart(), getPartition().getEnd());
 	}
 
 	public ArrayReference getArrayReference() {
-		return fPartition.getArrayReference();
+		return getPartition().getArrayReference();
 	}
 	
 	/**
 	 * @see JDIDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
-		return fPartition.getDebugTarget();
+		return getPartition().getDebugTarget();
 	}
 
 	/**
@@ -95,5 +95,9 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	 */
 	public String getSignature() {
 		return null;
+	}
+	
+	protected JDIArrayPartition getPartition() {
+		return fPartition;
 	}
 }
