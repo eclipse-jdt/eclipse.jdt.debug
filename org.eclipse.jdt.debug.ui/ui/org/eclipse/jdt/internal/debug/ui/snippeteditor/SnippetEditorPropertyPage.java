@@ -91,8 +91,8 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		 */
 		public void updateMessage() {
 			setValid(isValid());
-			setMessage(fWorkingDirBlock.getMessage());
-			setErrorMessage(fWorkingDirBlock.getErrorMessage());
+			setMessage(getMessage());
+			setErrorMessage(getErrorMessage());
 		}
 
 		/**
@@ -182,10 +182,10 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	 */
 	public String getErrorMessage() {
 		String message = fWorkingDirBlock.getErrorMessage();
-		if (message != null) {
+		if (message == null) {
 			return fJRETab.getErrorMessage();
 		}
-		return null;
+		return message;
 	}
 
 	/**
@@ -193,10 +193,10 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	 */
 	public String getMessage() {
 		String message = fWorkingDirBlock.getMessage();
-		if (message != null) {
+		if (message == null) {
 			return fJRETab.getMessage();
 		}
-		return null;
+		return message;
 	}
 
 	/**
