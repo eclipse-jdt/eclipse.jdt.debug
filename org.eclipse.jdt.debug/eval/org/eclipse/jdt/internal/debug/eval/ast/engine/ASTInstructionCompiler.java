@@ -1984,7 +1984,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				
 				if (Modifier.isStatic(fieldBinding.getModifiers())) {
 					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
-					storeInstruction();
 				} else {
 					if (declaringTypeBinding == null) {
 						push(new PushArrayLength(fCounter));
@@ -1993,6 +1992,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					}
 					node.getQualifier().accept(this);
 				}
+				storeInstruction();
 				break;
 		}
 		
