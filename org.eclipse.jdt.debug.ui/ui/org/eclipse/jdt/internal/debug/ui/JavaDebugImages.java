@@ -132,6 +132,7 @@ public class JavaDebugImages {
 	
 	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_SYNCHRONIZED= create(T_OVR, "sync_ovr.gif");				//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OVR_OWNED= create(T_OVR, "owned_ovr.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_OWNS_MONITOR= create(T_OVR, "ownsmonitor_ovr.gif");		//$NON-NLS-1$

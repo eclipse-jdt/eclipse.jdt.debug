@@ -811,8 +811,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	private int computeJDIAdornmentFlags(Object element) {
 		try {
 			if (element instanceof IJavaStackFrame) {
-				if (((IJavaStackFrame)element).isOutOfSynch()) {
+				IJavaStackFrame javaStackFrame = ((IJavaStackFrame)element);
+				if (javaStackFrame.isOutOfSynch()) {
 					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
+				}
+				if (!javaStackFrame.isObsolete() && javaStackFrame.isSynchronized()) {
+					return JDIImageDescriptor.SYNCHRONIZED;
 				}
 			}
 			if (element instanceof IJavaThread) {
