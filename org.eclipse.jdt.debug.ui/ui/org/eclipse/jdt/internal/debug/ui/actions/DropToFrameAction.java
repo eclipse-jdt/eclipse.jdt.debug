@@ -29,7 +29,7 @@ public class DropToFrameAction extends Action implements IViewActionDelegate {
 
 	public boolean isEnabledFor(Object element) {
 		IJavaStackFrame frame= getJavaStackFrame(element);
-		return frame != null && !frame.isSuspended() && frame.supportsDropToFrame();
+		return frame != null && frame.isSuspended() && frame.supportsDropToFrame();
 	}
 
 	protected IJavaStackFrame getJavaStackFrame(Object object) {
