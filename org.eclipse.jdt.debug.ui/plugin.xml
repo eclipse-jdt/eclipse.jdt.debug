@@ -2146,7 +2146,7 @@
             id="org.eclipse.jdt.debug.ui.Display">
       </command>
       <keyBinding
-            string="Ctrl+Alt+D"
+            string="Ctrl+Shift+D"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -2158,7 +2158,7 @@
             id="org.eclipse.jdt.debug.ui.Inspect">
       </command>
       <keyBinding
-            string=""
+            string="Ctrl+Shift+I"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.Inspect"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">

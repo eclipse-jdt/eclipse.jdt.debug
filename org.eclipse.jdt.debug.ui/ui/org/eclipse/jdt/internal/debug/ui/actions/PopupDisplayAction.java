@@ -16,7 +16,6 @@ import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -51,58 +50,47 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	}
 	
 	private void showPopup() {		
-		final IAction action = new Action() {
-			public void run() {
-				moveToViewer();
-			}
-		};
-		action.setText(ActionMessages.getString("PopupDisplayAction.6")); //$NON-NLS-1$
-		action.setToolTipText(ActionMessages.getString("PopupDisplayAction.6")); //$NON-NLS-1$
-		
+		final IAction action = new MoveResultToViewerAction(new MoveToDisplayViewerRunnable());
+		action.setText(ActionMessages.getString("PopupDisplayAction.2")); //$NON-NLS-1$
+				
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				return new PopupInformationControl(parent, new DisplayInformationControlAdapter(), action);
 			}
 		});
 		
-
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				Point p = viewer.getSelectedRange();
-				IDocument doc = viewer.getDocument();
-				try {
-					String contentType = doc.getContentType(p.x);
-					infoPresenter.setInformationProvider(PopupDisplayAction.this, contentType);				
-					
-					infoPresenter.install(viewer);
-					infoPresenter.showInformation();
-				} catch (BadLocationException e) {
-					return;
-				}				
-			}
-		});	
-		
+		Point p = viewer.getSelectedRange();
+		IDocument doc = viewer.getDocument();
+		try {
+			String contentType = doc.getContentType(p.x);
+			infoPresenter.setInformationProvider(PopupDisplayAction.this, contentType);				
+			
+			infoPresenter.install(viewer);
+			infoPresenter.showInformation();
+		} catch (BadLocationException e) {
+			return;
+		}				
 		
 	}
 
-	public void moveToViewer() {
+	private class MoveToDisplayViewerRunnable implements Runnable {
 		final IDataDisplay directDisplay= getDirectDataDisplay();
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
-		display.asyncExec(new Runnable() {
-			public void run() {
-				if (!display.isDisposed()) {
-					IDataDisplay dataDisplay= getDataDisplay();
-					if (dataDisplay != null) {
-						if (directDisplay == null) {
-							dataDisplay.displayExpression(snippet);
-						}
-						dataDisplay.displayExpressionValue(resultString);
+		
+		public void run() {
+			if (!display.isDisposed()) {
+				IDataDisplay dataDisplay= getDataDisplay();
+				if (dataDisplay != null) {
+					if (directDisplay == null) {
+						dataDisplay.displayExpression(snippet);
 					}
+					dataDisplay.displayExpressionValue(resultString);
 				}
-				evaluationCleanup();
 			}
-		});
+			evaluationCleanup();
+		}
 	}
+	
 	
 	private class DisplayInformationControlAdapter implements IPopupInformationControlAdapter {
 		private StyledText text;
@@ -115,12 +103,10 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 			return text.isFocusControl();
 		}
 		
-		public  Composite createInformationComposite(Shell parent) {			
+		public  Composite createInformationComposite(Shell parent) {
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL );
 			text.setFont(viewer.getTextWidget().getFont());
-//			gd.widthHint = 300;
-//			gd.heightHint = 175;
 			text.setLayoutData(gd);
 			
 			text.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
@@ -151,7 +137,13 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		} else {
 			snippet = currentSnippet;
 			resultString = currentResultString;
-			showPopup();
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					showPopup();
+				}
+			});
 		}
 	}
+
+
 }

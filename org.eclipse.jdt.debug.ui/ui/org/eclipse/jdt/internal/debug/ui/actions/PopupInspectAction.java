@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
- 
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.PopupInformationControl;
@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -29,6 +28,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -36,11 +36,12 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class PopupInspectAction extends InspectAction implements IInformationProvider {
 	private ITextViewer viewer;
+	private JavaInspectExpression expression;
 	
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	protected void displayResult(IEvaluationResult result) {
+	protected void displayResult(final IEvaluationResult result) {
 		IWorkbenchPart part = getTargetPart();
 		viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
 		if (viewer == null) {
@@ -51,23 +52,21 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		if (viewer == null) {
 			super.displayResult(result);
 		} else {
-			showPopup(result);
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					showPopup(result);
+				}
+			});
 		}		
 	}
 	
 	protected void showPopup(final IEvaluationResult result) {
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				final JavaInspectExpression expression = new JavaInspectExpression(result);
+				IAction action = new MoveResultToViewerAction(new MoveToViewerRunnable());
+				action.setText(ActionMessages.getString("PopupInspectAction.3")); //$NON-NLS-1$
 				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
-				IAction action = new Action() {
-					public void run() {
-						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
-						showExpressionView();						
-					}
-				};
-				action.setText(ActionMessages.getString("PopupInspectAction.1")); //$NON-NLS-1$
-				action.setToolTipText(ActionMessages.getString("PopupInspectAction.1")); //$NON-NLS-1$
+				expression = new JavaInspectExpression(result);
 				return new PopupInformationControl(parent, DebugUITools.newExpressionInformationControlAdapter(page, expression), action);
 			}
 		});
@@ -82,17 +81,6 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 					infoPresenter.setInformationProvider(PopupInspectAction.this, contentType);				
 					
 					infoPresenter.install(viewer);
-
-//					Control control = viewer.getTextWidget();
-//					Point pixelSize = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//					GC gc= new GC(control);
-//					gc.setFont(control.getFont());
-//					int charWidth= gc.getFontMetrics().getAverageCharWidth();
-//					int charHeight = gc.getFontMetrics().getHeight();
-//					gc.dispose();					
-					
-//					infoPresenter.setSizeConstraints(0,0, true, false);
-
 					infoPresenter.showInformation();
 				} catch (BadLocationException e) {
 					return;
@@ -104,11 +92,19 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		return getRegion();
 	}
-
+	
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 //		the ExpressionInformationControlAdapter was constructed with everything that it needs
 //		returning null would result in popup not being displayed 
-		return "null";  //$NON-NLS-1$
+		return "not null";  //$NON-NLS-1$
+	}
+	
+	
+	private class MoveToViewerRunnable implements Runnable {
+		public void run() {
+			DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
+			showExpressionView();
+		}
 	}
 
 }
