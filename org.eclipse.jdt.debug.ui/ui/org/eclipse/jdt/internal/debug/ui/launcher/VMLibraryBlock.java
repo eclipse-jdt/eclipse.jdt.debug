@@ -235,6 +235,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 	public void update() {
 		boolean useDefault = fDefaultButton.getSelection();
 		LibraryLocation[] libs = null;
+		IStatus status = null;
 		if (useDefault) {
 			if (getHomeDirectory() == null) {
 				libs = new LibraryLocation[0];
@@ -243,18 +244,22 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 			}
 			IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[libs.length];
 			for (int i = 0; i < libs.length; i++) {
-				entries[i] = JavaRuntime.newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
+				IPath libPath = libs[i].getSystemLibraryPath();
+				entries[i] = JavaRuntime.newArchiveRuntimeClasspathEntry(libPath);
 				entries[i].setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
 				entries[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+				if (!libPath.toFile().exists() && status == null) {
+					status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
+						LauncherMessages.getString("VMLibraryBlock.Default_libraries_do_not_exist._1"), null); //$NON-NLS-1$
+				}				
 			}
 			fPathViewer.setEntries(entries);
 		}
 		fPathViewer.setEnabled(!useDefault);		
-		IStatus status = null;
 		if (getEntries().length == 0 && !isDefaultSystemLibrary()) {
 			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
 				LauncherMessages.getString("VMLibraryBlock.Libraries_cannot_be_empty._1"), null); //$NON-NLS-1$
-		} else {
+		} else if (status == null) {
 			status = new StatusInfo();
 		}		
 		fDialog.setSystemLibraryStatus(status);
