@@ -70,8 +70,15 @@ public class WatchExpressionTests extends AbstractDebugTest {
 	
 	/**
 	 * Test a watch expression that is created while a program is suspended.
+     * 
+     * see bug 81519. This test is flawed as expressions added to the manager
+     * are note updated automatically. They are updated by the action that
+     * creates the expression, or when a selection change occurrs in the debug view.
+     * This test can pass as the ordering of expression addition and selection 
+     * change events can vary. However, it it attempting to test behavior that
+     * does not exist, and is removed from the test suite.
 	 */
-	public void testNonDeferredExpression() throws Exception {
+	public void REMOVEDtestNonDeferredExpression() throws Exception {
 		String typeName = "WatchItemTests";
 		createLineBreakpoint(42, typeName);
 		IJavaThread thread= null;
