@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -29,6 +31,24 @@ public class SourceLookupTests extends AbstractDebugTest {
 	
 	public SourceLookupTests(String name) {
 		super(name);
+	}
+	
+	/**
+	 * See Bug 53646
+	 */
+	public void testPackageFragmentRoots() throws Exception {
+		IJavaProject javaProject = getJavaProject();
+		IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
+		IResource resource = javaProject.getProject().getFile("src/A.jar");
+		IPackageFragmentRoot packageFragmentRoot = javaProject.getPackageFragmentRoot(resource);
+		assertTrue("package fragment root should exist", packageFragmentRoot.exists());
+		for (int i = 0; i < roots.length; i++) {
+			IPackageFragmentRoot root = roots[i];
+			if (packageFragmentRoot.equals(root)) {
+				return;
+			}
+		}
+		assertTrue("Failed to locate package fragment root", false);
 	}
 
 	/**
