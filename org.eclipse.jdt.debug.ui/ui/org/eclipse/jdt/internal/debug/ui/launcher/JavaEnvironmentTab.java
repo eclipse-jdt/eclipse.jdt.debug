@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * Launch configuration tab for local java launches that presents the various paths (bootpath,
  * classpath and extension dirs path) and the environment variables to the user.
+ * 
+ * @deprecated replaced with JavaClasspathTab and JavaJRETab.
  */
 public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	

@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Control used to edit the source lookup path for a Java launch configuration.
  */
-public class SourceLookupBlock2 {
+public class SourceLookupBlock {
 	
 	protected IJavaProject fProject;
 	protected ILaunchConfiguration fConfig;

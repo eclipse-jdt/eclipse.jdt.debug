@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock2;
+import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
@@ -146,7 +146,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 */
 	private static class SourceLookupDialog extends Dialog {
 		
-		private SourceLookupBlock2 fSourceLookupBlock;
+		private SourceLookupBlock fSourceLookupBlock;
 		private JavaUISourceLocator fLocator;
 		private ILaunchConfiguration fConfiguration;
 		private String fTypeName;
@@ -155,7 +155,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		
 		public SourceLookupDialog(Shell shell, String typeName, ILaunchConfiguration configuration, JavaUISourceLocator locator) {
 			super(shell);
-			fSourceLookupBlock= new SourceLookupBlock2();
+			fSourceLookupBlock= new SourceLookupBlock();
 			fTypeName= typeName;
 			fNotAskAgain= false;
 			fAskAgainCheckBox= null;

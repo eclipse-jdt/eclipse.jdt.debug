@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 
-	protected SourceLookupBlock2 fSourceLookupBlock;
+	protected SourceLookupBlock fSourceLookupBlock;
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -41,7 +41,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 		
 		createVerticalSpacer(comp, 1);
 		
-		fSourceLookupBlock = new SourceLookupBlock2();
+		fSourceLookupBlock = new SourceLookupBlock();
 		fSourceLookupBlock.createControl(comp);
 		
 	}
