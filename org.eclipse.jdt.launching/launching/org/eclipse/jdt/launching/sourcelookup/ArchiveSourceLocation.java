@@ -8,6 +8,7 @@ package org.eclipse.jdt.launching.sourcelookup;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
@@ -90,6 +91,11 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	private IPath fRootPath;
 	
 	/**
+	 * Whether the root path has been detected (or set)
+	 */
+	private boolean fRootDetected = false;
+	
+	/**
 	 * The name of the archive
 	 */
 	private String fName;
@@ -134,6 +140,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			}		
 			pathStr += ".java"; //$NON-NLS-1$
 			IPath path = new Path(pathStr); 
+			autoDetectRoot(path);
 			if (getRootPath() != null) {
 				path = getRootPath().append(path);
 			}
@@ -148,6 +155,37 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		}
 	}
 	
+	/**
+	 * Automatically detect the root path, if required.
+	 * 
+	 * @param path source file name, excluding root path
+	 */
+	private void autoDetectRoot(IPath path) {
+		if (!fRootDetected) {
+			Enumeration entries = null;
+			try {
+				entries = getArchive().entries();
+			} catch (IOException e) {
+				LaunchingPlugin.log(e);
+				return;
+			}
+			String fileName = path.toString();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry)entries.nextElement();
+				String entryName = entry.getName();
+				if (entryName.endsWith(fileName)) {
+					int rootLength = entryName.length() - fileName.length();
+					if (rootLength > 0) {
+						String root = entryName.substring(0, rootLength);
+						setRootPath(root);
+					}
+					fRootDetected = true;
+					return;
+				}
+			}
+		}
+	}
+
 	/**
 	 * Returns the archive associated with this source
 	 * location.
@@ -172,6 +210,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			fRootPath = null;
 		} else {
 			fRootPath = new Path(path);
+			fRootDetected = true;
 		}
 	}
 	
