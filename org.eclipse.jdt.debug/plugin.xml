@@ -3,12 +3,10 @@
 <plugin
    id="org.eclipse.jdt.debug"
    name="JDIDebugPlugin"
-   version="0.105.0"
+   version="0.9"
    provider-name="Object Technology International, Inc."
    class="org.eclipse.jdt.internal.debug.core.JDIDebugPlugin">
-
 <!-- Required plugins -->
-
 <requires>
    <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.core.resources"/>
@@ -17,7 +15,6 @@
 </requires>
 
 <!-- Runtime -->
-
 <runtime>
    <library name="jdi.jar">
       <export name="*"/>
@@ -27,10 +24,8 @@
    </library>
 </runtime>
 
-<!-- Extension points -->
-
-
 <!-- Extensions -->
+<!-- Extension points -->
 <extension
       id="javaLineBreakpoint"
       point="org.eclipse.core.resources.markers">
