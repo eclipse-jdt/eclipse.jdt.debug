@@ -14,6 +14,7 @@ import java.util.*;import org.eclipse.core.runtime.IPath;import org.eclipse.co
 public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		
 	protected static final String ERROR_NO_TYPE = ERROR+ "no_type";
+	protected static final String ERROR_BINARY_TYPE = ERROR+ "binary_type";
 	
 	/**
 	 * The stack frame context
@@ -55,7 +56,8 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			String[] typeNames = computeNestedTypes();
 			if (result != null) {
 				if (result instanceof IClassFile) {
-					type = ((IClassFile)result).getType();
+					fModelFrame.requestFailed(ERROR_BINARY_TYPE, null);
+					//type = ((IClassFile)result).getType();
 				} else if (result instanceof ICompilationUnit) {
 					type = ((ICompilationUnit)result).getType(typeNames[0]);
 				}
