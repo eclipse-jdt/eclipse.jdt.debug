@@ -751,30 +751,36 @@ public final class JavaRuntime {
 	 * Delegates to the Java model.
 	 */
 	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
-		if (project == null) {
-			// cannot resolve without project context
+		if (project == null || entry == null) {
+			// cannot resolve without entry or project context
 			return new IRuntimeClasspathEntry[0];
 		} else {							
 			IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-			IClasspathEntry[] cpes = container.getClasspathEntries();
-			int property = -1;
-			switch (container.getKind()) {
-				case IClasspathContainer.K_APPLICATION:
-					property = IRuntimeClasspathEntry.USER_CLASSES;
-					break;
-				case IClasspathContainer.K_DEFAULT_SYSTEM:
-					property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-					break;	
-				case IClasspathContainer.K_SYSTEM:
-					property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-					break;
-			}			
-			IRuntimeClasspathEntry[] resolved = new IRuntimeClasspathEntry[cpes.length];
-			for (int i = 0; i < resolved.length; i++) {
-				resolved[i] = newRuntimeClasspathEntry(cpes[i]);
-				resolved[i].setClasspathProperty(property);
+			if (container == null) {
+				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Could_not_resolve_classpath_container__{0}_1"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+				// execution will not reach here - exception will be thrown
+				return null;
+			} else {
+				IClasspathEntry[] cpes = container.getClasspathEntries();
+				int property = -1;
+				switch (container.getKind()) {
+					case IClasspathContainer.K_APPLICATION:
+						property = IRuntimeClasspathEntry.USER_CLASSES;
+						break;
+					case IClasspathContainer.K_DEFAULT_SYSTEM:
+						property = IRuntimeClasspathEntry.STANDARD_CLASSES;
+						break;	
+					case IClasspathContainer.K_SYSTEM:
+						property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+						break;
+				}			
+				IRuntimeClasspathEntry[] resolved = new IRuntimeClasspathEntry[cpes.length];
+				for (int i = 0; i < resolved.length; i++) {
+					resolved[i] = newRuntimeClasspathEntry(cpes[i]);
+					resolved[i].setClasspathProperty(property);
+				}
+				return resolved;
 			}
-			return resolved;
 		}
 	}
 			
