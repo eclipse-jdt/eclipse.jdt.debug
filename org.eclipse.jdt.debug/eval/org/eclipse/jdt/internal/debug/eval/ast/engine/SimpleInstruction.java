@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2001 MyCorporation.
+ * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
