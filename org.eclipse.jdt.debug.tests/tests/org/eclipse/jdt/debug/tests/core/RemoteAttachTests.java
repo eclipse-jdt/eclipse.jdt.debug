@@ -50,6 +50,10 @@ public class RemoteAttachTests extends AbstractDebugTest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "Breakpoints");
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Djava.compiler=NONE -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,suspend=y,server=y");
+		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
+		Map map = new HashMap(1);
+		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);		
 		ILaunchConfiguration launchRemoteVMConfig = config.doSave();
 		
 		// create a launch config to do the attach

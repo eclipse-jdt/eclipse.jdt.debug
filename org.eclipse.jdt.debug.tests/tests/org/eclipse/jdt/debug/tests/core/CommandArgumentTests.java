@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -131,6 +134,12 @@ public class CommandArgumentTests extends AbstractDebugTest {
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "FooPropertyPrinter");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, argString);
+		
+		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
+		Map map = new HashMap(1);
+		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
+		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
+				
 		ILaunchConfiguration config = workingCopy.doSave();
 		fOutputListener.clear();
 		IJavaDebugTarget target= null;
