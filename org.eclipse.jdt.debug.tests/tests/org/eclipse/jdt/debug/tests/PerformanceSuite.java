@@ -38,13 +38,13 @@ public class PerformanceSuite extends DebugSuite {
 	 */
 	public PerformanceSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
-//		addTest(new TestSuite(PerfDebugBaselineTest.class));
-//		
-//		addTest(new TestSuite(PerfContextualLaunchMenu.class));
+		addTest(new TestSuite(PerfDebugBaselineTest.class));
+		
+		addTest(new TestSuite(PerfContextualLaunchMenu.class));
 		addTest(new TestSuite(PerfBreakpointTests.class));
-//		addTest(new TestSuite(PerfConditionalBreakpointsTests.class));
-//		addTest(new TestSuite(PerfSteppingTests.class));
-//		addTest(new TestSuite(PerfConsoleTests.class));
+		addTest(new TestSuite(PerfConditionalBreakpointsTests.class));
+		addTest(new TestSuite(PerfSteppingTests.class));
+		addTest(new TestSuite(PerfConsoleTests.class));
 //		addTest(new TestSuite(PerfLaunchTests.class));
 		
 	}
