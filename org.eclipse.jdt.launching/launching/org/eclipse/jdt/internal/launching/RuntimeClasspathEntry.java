@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.launching;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -12,6 +14,7 @@ import java.text.MessageFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -165,6 +168,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 							abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_archive_path_5"), null); //$NON-NLS-1$
 						} else {
 							IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
+							if (res == null) {
+								abort(LaunchingMessages.getString("RuntimeClasspathEntry.Internal_archive_no_longer_exists___1") + path, null); //$NON-NLS-1$
+							}
 							setClasspathEntry(JavaCore.newLibraryEntry(res.getFullPath(), sourcePath, rootPath));
 						}
 					} else {
