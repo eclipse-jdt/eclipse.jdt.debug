@@ -17,15 +17,15 @@ import java.util.List;
 public class IllegalConnectorArgumentsException extends Exception {
 	List fNames;
 	
-	public IllegalConnectorArgumentsException(String arg1, List arg2) {
-		super(arg1);
-		fNames = arg2;
+	public IllegalConnectorArgumentsException(String message, List argNames) {
+		super(message);
+		fNames = argNames;
 	}
 	
-	public IllegalConnectorArgumentsException(String arg1, String arg2) {
-		super(arg1);
+	public IllegalConnectorArgumentsException(String message, String argName) {
+		super(message);
 		fNames = new ArrayList(1);
-		fNames.add(arg2);
+		fNames.add(argName);
 	}
 	
 	public List argumentNames() { 
