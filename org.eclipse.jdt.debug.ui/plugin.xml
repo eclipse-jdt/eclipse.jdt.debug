@@ -2596,7 +2596,7 @@ M4 = Platform-specific fourth key
        </classpathProvider>
    </extension>
    
-   <!--Java Stack Trace Console-->
+   <!--Java Stack Trace Console
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
@@ -2604,6 +2604,7 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
    </extension>
+   -->
    
    <!--Java Stack Trace Pattern Matchers-->
    <!--""-->
