@@ -55,33 +55,13 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 		vm.setInstallLocation(home);
 		
 		String format= MacOSXLauncherMessages.getString(id.equals(fDefaultJDKID)
-									? "MacOSXVMType.jvmDefaultName"
-									: "MacOSXVMType.jvmName");
+									? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
+									: "MacOSXVMType.jvmName");				//$NON-NLS-1$
 		vm.setName(MessageFormat.format(format, new Object[] { id } ));
 		
 		vm.setLibraryLocations(getDefaultLibraryLocations(home));
 		
-		URL doc= null;
-		
-		// first try in local filesystem
-		File docLocation= new File(JAVADOC_LOC + id);
-		if (docLocation.exists()) {
-			try {
-				doc= new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
-			} catch (MalformedURLException ex) {
-			}
-		}
-		if (doc == null) {
-			// now try in a standard place on the web
-			String version= id;
-			if ("1.3.1".equals(id))
-				version= "1.3";
-			try {
-				doc= new URL("http://java.sun.com/j2se/"+version+"/docs/api/");	//$NON-NLS-1$ //$NON-NLS-2$
-			} catch (MalformedURLException ex) {
-			}			
-		}
-		
+		URL doc= getDefaultJavaDocLocation(id);
 		if (doc != null)
 			vm.setJavadocLocation(doc);
 		
@@ -146,6 +126,16 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	 * @see IVMInstallType#getDefaultSystemLibraryDescription(File)
 	 */
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
+		
+		// HACK
+//		String id= "1.4.1";
+//		URL url= getDefaultJavaDocLocation(id);
+//		if (url != null) {
+//			IVMInstall vm= findVMInstall(id);
+//			if (vm != null)
+//				vm.setJavadocLocation(url);
+//		}
+		
 		IPath libHome= new Path(installLocation.toString()); //$NON-NLS-1$
 		libHome= libHome.append(".."); //$NON-NLS-1$
 		libHome= libHome.append("Classes"); //$NON-NLS-1$
@@ -161,5 +151,29 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 				new LibraryLocation(lib, source, srcPkgRoot),
 				new LibraryLocation(uilib, source, srcPkgRoot)
 		};
+	}
+	
+	private URL getDefaultJavaDocLocation(String id) {
+		URL doc= null;
+		
+		// first try in local filesystem
+		File docLocation= new File(JAVADOC_LOC + id);
+		if (docLocation.exists()) {
+			try {
+				doc= new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MalformedURLException ex) {
+			}
+		}
+		if (doc == null) {
+			// now try in a standard place on the web
+			String version= id;
+			if ("1.3.1".equals(id))	//$NON-NLS-1$
+				version= "1.3";		//$NON-NLS-1$
+			try {
+				doc= new URL("http://java.sun.com/j2se/"+version+"/docs/api/");	//$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MalformedURLException ex) {
+			}			
+		}
+		return doc;
 	}
 }
