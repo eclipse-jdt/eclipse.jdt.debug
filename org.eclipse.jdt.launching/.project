@@ -2,6 +2,8 @@
 <projectDescription>
 	<name>org.eclipse.jdt.launching</name>
 	<comment></comment>
+	<projects>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
@@ -23,9 +25,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;launchConfiguration local=&quot;false&quot; path=&quot;/org.eclipse.jdt.launching/.externalToolBuilders/Build Launching Support JAR.launch&quot;/&gt;
-</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Build Launching Support JAR.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
