@@ -1553,7 +1553,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// Workaround to a J9SC bug. It returns an empty string instead of a ABSENT_INFORMATION
 		// error if the source debug extension is not available.
 		if ("".equals(fSmap)) { //$NON-NLS-1$
-			throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.33")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.31")); //$NON-NLS-1$
 		}
 		// parse the source map.
 		fStrata= new HashMap();
@@ -1840,7 +1840,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			} else { // sourceName != null
 				FileInfo fileInfo= stratum.getFileInfo(sourceName);
 				if (fileInfo == null) {
-					throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.35")); //$NON-NLS-1$
+					throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.34")); //$NON-NLS-1$
 				}
 				int fileId= fileInfo.fFileId;
 				int lastIndex= 0;

@@ -248,7 +248,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '(':
 				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_convert_method_signature_to_name_2")); //$NON-NLS-1$
 		}
-		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____3") + signature + JDIMessages.getString("TypeImpl.__4")); //$NON-NLS-1$ //$NON-NLS-2$
+		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____10") + signature + JDIMessages.getString("TypeImpl.__11")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static String getPrimitiveSignatureToName(char signature) {
