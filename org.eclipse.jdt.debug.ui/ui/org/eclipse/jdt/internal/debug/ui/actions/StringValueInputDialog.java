@@ -70,7 +70,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * (source viewer or simple text viewer) in the input area.
      */
     protected void populateInputArea() {
-        boolean useEvaluation = JDIDebugUIPlugin.getDefault().getDialogSettings().getBoolean(USE_EVALUATION);
+        boolean useEvaluation = getDialogSettings().getBoolean(USE_EVALUATION);
         if (useEvaluation) {
             createSourceViewer();
             fUseLiteralValue= false;
@@ -107,7 +107,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         }
         fWrapText= new Button(parent, SWT.CHECK);
         fWrapText.setText(ActionMessages.getString("StringValueInputDialog.4")); //$NON-NLS-1$
-        fWrapText.setSelection(JDIDebugUIPlugin.getDefault().getDialogSettings().getBoolean(WRAP_TEXT));
+        fWrapText.setSelection(getDialogSettings().getBoolean(WRAP_TEXT));
         updateWordWrap();
         fWrapText.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -199,7 +199,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * selection.
      */
     protected void okPressed() {
-        IDialogSettings settings= JDIDebugUIPlugin.getDefault().getDialogSettings().getSection(getDialogSettingsSectionName());
+        IDialogSettings settings= getDialogSettings();
         if (settings == null) {
         	settings= JDIDebugUIPlugin.getDefault().getDialogSettings().addNewSection(getDialogSettingsSectionName());
         }
@@ -245,6 +245,15 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             super.dispose();
         }
     }
+    
+    /**
+     * Returns the dialog settings used for this dialog
+     * @return the dialog settings used for this dialog
+     */
+    protected IDialogSettings getDialogSettings() {
+        return JDIDebugUIPlugin.getDefault().getDialogSettings().getSection(getDialogSettingsSectionName());
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#getDialogSettingsSectionName()
 	 */
