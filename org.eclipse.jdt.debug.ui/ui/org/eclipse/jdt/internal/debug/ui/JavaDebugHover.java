@@ -136,8 +136,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             					}
             				} else {
             					// compare unresolved signatures
-            					if (frame.getMethodName().equals(method.getElementName())
-            							&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())) {
+            					if (((frame.isConstructor() && method.isConstructor()) || frame.getMethodName().equals(method.getElementName()))
+            							&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())
+            							&& frame.getArgumentTypeNames().size() == method.getNumberOfParameters()) {
             						equal = true;
             					}
             				}
