@@ -686,13 +686,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return fVirtualMachine.classesByName(className);
 		} catch (VMDisconnectedException e) {
 			if (isDisconnected() || isTerminated()) {
-				return null;
+				return Collections.EMPTY_LIST;
 			}
 			logError(e);
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
-		return null;
+		return Collections.EMPTY_LIST;
 	}
 
 	/**
@@ -860,7 +860,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	public Integer getCRC(String typeName) throws DebugException {
 		if (getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
 			List classes = jdiClassesByName(typeName);
-			if (classes != null && !classes.isEmpty()) {
+			if (!classes.isEmpty()) {
 				ReferenceType type = (ReferenceType)classes.get(0);
 				if (type instanceof org.eclipse.jdi.hcr.ReferenceType) {
 					try {
@@ -976,7 +976,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				}
 				//non NLS
 				List classes= jdiClassesByName("java.lang.ThreadDeath"); //$NON-NLS-1$
-				if (classes != null && classes.size() != 0) {
+				if (!classes.isEmpty()) {
 					ClassType threadDeathClass= (ClassType) classes.get(0);
 					Method constructor= null;
 					try {

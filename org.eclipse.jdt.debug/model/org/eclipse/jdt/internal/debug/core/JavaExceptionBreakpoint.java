@@ -114,7 +114,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		
 		if (isCaught() || isUncaught()) {			
 			List classes= target.jdiClassesByName(exceptionName);
-			if (classes != null) {
+			if (!classes.isEmpty()) {
 				Iterator iter = classes.iterator();
 				while (iter.hasNext()) {
 					ReferenceType exClass = (ReferenceType)iter.next();				

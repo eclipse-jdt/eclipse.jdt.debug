@@ -91,7 +91,7 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 		
 		// create breakpoint requests for each class currently loaded
 		List classes= target.jdiClassesByName(topLevelName);
-		if (classes != null) {
+		if (!classes.isEmpty()) {
 			Iterator iter = classes.iterator();
 			while (iter.hasNext()) {
 				ReferenceType type= (ReferenceType) iter.next();
