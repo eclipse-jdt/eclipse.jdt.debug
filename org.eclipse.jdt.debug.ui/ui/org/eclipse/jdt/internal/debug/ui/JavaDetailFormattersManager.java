@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
@@ -156,7 +157,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 
 		Object sourceElement;
 		try {
-			sourceElement= locator.getSourceElement(thread.getTopStackFrame());
+			IStackFrame frame = thread.getTopStackFrame();
+			if (frame == null)
+				return null;
+			sourceElement= locator.getSourceElement(frame);
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);
 			return null;
