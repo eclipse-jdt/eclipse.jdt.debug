@@ -158,7 +158,7 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 			String[] localVariables= new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
 				localVariables[i] = locals[i].getName();
-				localTypesNames[i] = ((EvaluationValue)locals[i].getValue()).getJavaValue().getReferenceTypeName();
+				localTypesNames[i] = locals[i].getType().getName();
 				localModifiers[i]= 0;
 			}
 			mapper = new EvaluationSourceGenerator(new String[0], localModifiers, localTypesNames, localVariables, snippet);
