@@ -118,8 +118,8 @@ public class SourceAttachmentBlock {
 			fPrefixField= new VariablePathDialogField(adapter);
 			fPrefixField.setDialogFieldListener(adapter);
 			fPrefixField.setLabelText(LauncherMessages.getString("SourceAttachmentBlock.R&oot_variable_path__4")); //$NON-NLS-1$
-			fPrefixField.setButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.E&xtension..._2")); //$NON-NLS-1$
-			((VariablePathDialogField)fPrefixField).setVariableButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.&Variable..._3")); //$NON-NLS-1$
+			fPrefixField.setButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.Ex&tension..._3")); //$NON-NLS-1$
+			((VariablePathDialogField)fPrefixField).setVariableButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.V&ariable..._4")); //$NON-NLS-1$
 			
 		} else {
 			fFileNameField= new StringButtonDialogField(adapter);
