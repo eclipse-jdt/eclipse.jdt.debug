@@ -16,6 +16,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
@@ -113,10 +114,15 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 * Ensure our contributed launch mode exists.
 	 */
 	public void testLaunchModes() {
-		String[] modes = getLaunchManager().getLaunchModes();
-		assertContains("Missing TEST_MODE", modes, "TEST_MODE");
-		assertContains("Missing debug mode", modes, ILaunchManager.DEBUG_MODE);
-		assertContains("Missing run mode", modes, ILaunchManager.RUN_MODE);
+		ILaunchMode[] modes = getLaunchManager().getLaunchModes();
+		String[] ids = new String[modes.length];
+		for (int i = 0; i < modes.length; i++) {
+			ILaunchMode mode = modes[i];
+			ids[i] = mode.getIdentifier();
+		}
+		assertContains("Missing TEST_MODE", ids, "TEST_MODE");
+		assertContains("Missing debug mode", ids, ILaunchManager.DEBUG_MODE);
+		assertContains("Missing run mode", ids, ILaunchManager.RUN_MODE);
 	}
 	
 	/**
