@@ -226,9 +226,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				}
 			}
 		}
-		if (tempFile == null) {
-			return null;
-		}
+		
 		return tempFile;
 	}
 	
