@@ -490,7 +490,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	private IJavaProject getJavaProject(IProject project) {
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				JavaModel model = JavaModelManager.getJavaModel(project.getWorkspace());
+				JavaModel model = JavaModelManager.getJavaModelManager().getJavaModel();
 				if (model != null) {
 					return model.getJavaProject(project);
 				}
