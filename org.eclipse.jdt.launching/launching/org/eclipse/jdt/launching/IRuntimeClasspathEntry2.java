@@ -20,9 +20,6 @@ import org.w3c.dom.Element;
  * entries have a type of <code>OTHER</code>, and are contributed to
  * the <code>runtimeClasspathEntries</code> extension point.
  * <p>
- * TODO: XML example
- * </p>
- * <p>
  * Clients are not intended to implement this interface, as new types
  * of runtime classpath entries are only intended to be contributed
  * by the Java debugger.
