@@ -15,9 +15,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
@@ -200,9 +202,16 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 			}
 		});
 		
-		fPathMoveUpButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathMoveUpButton.setText("Move &up");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		Composite moveButtonComp = new Composite(pathButtonComp, SWT.NONE);
+		GridLayout moveButtonLayout = new GridLayout();
+		moveButtonLayout.marginHeight = 0;
+		moveButtonLayout.marginWidth = 0;
+		moveButtonLayout.numColumns = 2;
+		moveButtonComp.setLayout(moveButtonLayout);
+		
+		fPathMoveUpButton = new Button(moveButtonComp, SWT.PUSH);
+		fPathMoveUpButton.setImage(JavaDebugImages.get(JavaDebugImages.IMG_OBJS_UP_NAV));
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fPathMoveUpButton.setLayoutData(gd);
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -210,9 +219,9 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 			}
 		});
 		
-		fPathMoveDownButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathMoveDownButton.setText("Move &down");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fPathMoveDownButton = new Button(moveButtonComp, SWT.PUSH);
+		fPathMoveDownButton.setImage(JavaDebugImages.get(JavaDebugImages.IMG_OBJS_DOWN_NAV));
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fPathMoveDownButton.setLayoutData(gd);
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {

@@ -48,14 +48,6 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
  */
 public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
-	// QualifiedName constants used in writing and retrieving persisted default attribute values
-	private static final QualifiedName fgQualNameContainer = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_CONTAINER);
-	private static final QualifiedName fgQualNameRunPerspId = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE);
-	private static final QualifiedName fgQualNameDebugPerspId = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE);
-	private static final QualifiedName fgQualNameHostName = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.HOSTNAME_ATTR);
-	private static final QualifiedName fgQualNamePortNumber = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.PORT_ATTR);
-	private static final QualifiedName fgQualNameAllowTerminate = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.ALLOW_TERMINATE_ATTR);
-
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
@@ -235,18 +227,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		boolean allowTerminate = configuration.getAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);
 		String portNumberString = String.valueOf(portNumber);
 		
-		// Persist config info as default values on the launched resource
-		IResource projectResource = null;
-		try {
-			projectResource = javaProject.getUnderlyingResource();
-		} catch (CoreException ce) {			
-		}		
-		if (projectResource != null) {
-			persistAttribute(fgQualNameHostName, projectResource, hostName);
-			persistAttribute(fgQualNamePortNumber, projectResource, portNumberString);
-			persistAttribute(fgQualNameAllowTerminate, projectResource, String.valueOf(allowTerminate));
-		}
-			
 		IDebugTarget debugTarget = null;
 		AttachingConnector connector= getAttachingConnector();
 		if (connector != null) {
@@ -269,6 +249,16 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 			abort("Shared memory attaching connector not available", null, JavaDebugUI.SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
 		}
 
+		// Persist config info as default values on the launched resource
+		IResource projectResource = null;
+		try {
+			projectResource = javaProject.getUnderlyingResource();
+		} catch (CoreException ce) {			
+		}		
+		if (projectResource != null) {
+			getLaunchManager().setDefaultLaunchConfiguration(projectResource, configuration);
+		}
+			
 		ISourceLocator sourceLocator = new JavaUISourceLocator(javaProject);
 		Launch launch = new Launch(configuration, mode, sourceLocator, null, debugTarget);
 		return launch;		

@@ -59,21 +59,6 @@ import org.eclipse.ui.IEditorInput;
  */
 public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
-	// QualifiedName constants used in writing and retrieving persisted default attribute values
-	private static final QualifiedName fgQualNameContainer = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_CONTAINER);
-	private static final QualifiedName fgQualNameRunPerspId = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE);
-	private static final QualifiedName fgQualNameDebugPerspId = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE);
-	private static final QualifiedName fgQualNameWorkingDir = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.WORKING_DIRECTORY_ATTR);
-	private static final QualifiedName fgQualNamePgmArgs = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.PROGRAM_ARGUMENTS_ATTR);
-	private static final QualifiedName fgQualNameVMArgs = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_ARGUMENTS_ATTR);
-	private static final QualifiedName fgQualNameVMTypeId = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_INSTALL_TYPE_ATTR);
-	private static final QualifiedName fgQualNameVMId = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.VM_INSTALL_ATTR);
-	private static final QualifiedName fgQualNameBuild = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR);
-	private static final QualifiedName fgQualNameBootpath = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.BOOTPATH_ATTR);
-	private static final QualifiedName fgQualNameClasspath = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.CLASSPATH_ATTR);
-	private static final QualifiedName fgQualNameExtpath = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.EXTPATH_ATTR);
-	private static final QualifiedName fgQualNameEnvVars = new QualifiedName(JavaDebugUI.PLUGIN_ID, JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR);
-
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */

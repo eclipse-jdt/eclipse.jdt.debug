@@ -53,6 +53,8 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "brkpi_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_UP_NAV= NAME_PREFIX + "up_nav.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_DOWN_NAV= NAME_PREFIX + "down_nav.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -68,6 +70,9 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
 	
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
+	
+	public static final ImageDescriptor DESC_OBJS_UP_NAV= createManaged(T_OBJ, IMG_OBJS_UP_NAV);
+	public static final ImageDescriptor DESC_OBJS_DOWN_NAV= createManaged(T_OBJ, IMG_OBJS_DOWN_NAV);
 	
 	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
