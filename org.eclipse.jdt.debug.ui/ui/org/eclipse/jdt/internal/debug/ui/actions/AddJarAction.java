@@ -53,6 +53,9 @@ public class AddJarAction extends RuntimeClasspathAction {
 		
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
+				if (selection.length == 0) {
+					return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+				}
 				for (int i= 0; i < selection.length; i++) {
 					if (selection[i] instanceof IFile) {
 						IFile file = (IFile)selection[i];
@@ -63,14 +66,13 @@ public class AddJarAction extends RuntimeClasspathAction {
 							return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddJarAction.Selection_must_be_a_jar_or_zip_4"), null); //$NON-NLS-1$
 						}
 					} else {
-						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddJarAction.Selection_must_be_a_jar_or_zip_4"), null); //$NON-NLS-1$
-					}
-					
+						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+					}					
 				}
 				return new Status(IStatus.OK, JDIDebugPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
 			}			
 		};
-		ViewerFilter filter= new ObjectFilter(getSelectedJars());
+		ViewerFilter filter= new ArchiveFilter(getSelectedJars());
 		
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
