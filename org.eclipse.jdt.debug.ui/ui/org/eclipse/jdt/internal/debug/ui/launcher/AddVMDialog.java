@@ -43,7 +43,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class AddVMDialog extends StatusDialog {
 	private static final String JAVA_LANG_OBJECT= "java/lang/Object.java"; //$NON-NLS-1$
 
-	private VMPreferencePage fPreferencePage;
+	private IAddVMDialogRequestor fRequestor;
 	
 	private IVMInstall fEditedVM;
 
@@ -64,9 +64,9 @@ public class AddVMDialog extends StatusDialog {
 	
 	private IStatus[] fStati;
 		
-	public AddVMDialog(VMPreferencePage page, IVMInstallType[] vmInstallTypes, IVMInstall editedVM) {
-		super(page.getShell());
-		fPreferencePage= page;
+	public AddVMDialog(IAddVMDialogRequestor requestor, Shell shell, IVMInstallType[] vmInstallTypes, IVMInstall editedVM) {
+		super(shell);
+		fRequestor= requestor;
 		fStati= new IStatus[5];
 		for (int i= 0; i < fStati.length; i++) {
 			fStati[i]= new StatusInfo();
@@ -297,7 +297,7 @@ public class AddVMDialog extends StatusDialog {
 			status.setError(LauncherMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
 		} else {
 			IVMInstallType type= getVMType();
-			if (fPreferencePage.isDuplicateName(type, name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
+			if (fRequestor.isDuplicateName(type, name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
 				status.setError(LauncherMessages.getString("addVMDialog.duplicateName")); //$NON-NLS-1$
 			}
 		}
@@ -516,7 +516,7 @@ public class AddVMDialog extends StatusDialog {
 		if (fEditedVM == null) {
 			IVMInstall vm= new VMStandin(fSelectedVMType, createUniqueId(fSelectedVMType));
 			setFieldValuesToVM(vm);
-			fPreferencePage.vmAdded(vm);
+			fRequestor.vmAdded(vm);
 		} else {
 			setFieldValuesToVM(fEditedVM);
 		}
