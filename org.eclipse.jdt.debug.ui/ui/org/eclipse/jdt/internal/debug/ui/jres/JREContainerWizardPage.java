@@ -8,22 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.jres;
 
 
-import org.eclipse.core.runtime.CoreException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.graphics.Image;
@@ -42,13 +42,8 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	/**
 	 * JRE control
 	 */
-	private JavaJRETab fJRETab;
-	
-	/**
-	 * Fake launch config used with the control.
-	 */
-	private ILaunchConfigurationWorkingCopy fConfig;
-	
+	private InstalledJREsBlock fJREBlock;
+		
 	/**
 	 * Image
 	 */
@@ -58,33 +53,25 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * Constructs a new page.
 	 */
 	public JREContainerWizardPage() {
-		super(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
+		super(JREMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see IClasspathContainerPage#finish()
 	 */
 	public boolean finish() {
-		// retrieve selected JRE
-		fJRETab.performApply(fConfig);
-		String typeId = null;
-		String name = null;
-		try {
-			typeId = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-			name = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JREContainerWizardPage.Unable_to_set_JRE_for_project._2"), e); //$NON-NLS-1$
-			return false;
-		}
-		
+		JREsUpdater updater = new JREsUpdater(getShell());
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-		if (typeId != null) {
-			path = path.append(typeId);
-			path = path.append(name);
+		IVMInstall vm = fJREBlock.getCheckedJRE();
+		if (!vm.equals(JavaRuntime.getDefaultVMInstall())) {
+			path = path.append(vm.getVMInstallType().getId());
+			path = path.append(vm.getName());
 		}
-		
-		fSelection = JavaCore.newContainerEntry(path);
-		
+		// update Installed JREs as required
+		updater.updateJRESettings(fJREBlock.getJREs(), JavaRuntime.getDefaultVMInstall());
+		// save table settings
+		fJREBlock.saveColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), getClass().getName());
+		fSelection = JavaCore.newContainerEntry(path);		
 		return true;
 	}
 
@@ -115,11 +102,26 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 				if (path.segmentCount() > 1) {
 					typeId = path.segment(1);
 					name = path.segment(2);
+				} else {
+					fJREBlock.setCheckedJRE(JavaRuntime.getDefaultVMInstall());
+					return;
 				}
 			}
-			fConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, typeId);
-			fConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, name);
-			fJRETab.initializeFrom(fConfig);
+			IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+			for (int i = 0; i < types.length; i++) {
+				IVMInstallType type = types[i];
+				if (type.getId().equals(typeId)) {
+					IVMInstall[] installs = type.getVMInstalls();
+					for (int j = 0; j < installs.length; j++) {
+						IVMInstall install = installs[j];
+						if (install.getName().equals(name)) {
+							fJREBlock.setCheckedJRE(install);
+							return;
+						}
+					}
+					return;
+				}
+			}
 		}
 	}
 	
@@ -127,21 +129,27 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		fJRETab = new JavaJRETab();
-		fJRETab.setVMSpecificArgumentsVisible(false);
-		fJRETab.createControl(parent);
-		setControl(fJRETab.getControl());
-		setTitle(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
-		setMessage(LauncherMessages.getString("JREContainerWizardPage.Select_the_JRE_used_to_build_this_project._4")); //$NON-NLS-1$
+		fJREBlock = new InstalledJREsBlock();
+		fJREBlock.createControl(parent);
+		setControl(fJREBlock.getControl());
+		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), getClass().getName());
 		
-		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		try {
-			fConfig = type.newInstance(null, "TEMP_CONFIG"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JREContainerWizardPage.Unable_to_retrieve_existing_JREs_6"), e); //$NON-NLS-1$
-			return;
+		// fill with JREs
+		List standins = new ArrayList();
+		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+		for (int i = 0; i < types.length; i++) {
+			IVMInstallType type = types[i];
+			IVMInstall[] installs = type.getVMInstalls();
+			for (int j = 0; j < installs.length; j++) {
+				IVMInstall install = installs[j];
+				standins.add(new VMStandin(install));
+			}
 		}
+		fJREBlock.setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));
 		
+		setTitle(JREMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
+		setMessage(JREMessages.getString("JREContainerWizardPage.Select_the_JRE_used_to_build_this_project._4")); //$NON-NLS-1$
+				
 		initializeFromSelection();
 	}
 

@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
- * Processes add/removed/changed VMs from an Installed JREs block.
+ * Processes add/removed/changed VMs.
  */
 public class JREsUpdater {
 	

@@ -2102,7 +2102,7 @@
          point="org.eclipse.jdt.ui.classpathContainerPage">
       <classpathContainerPage
             name="%jreSystemLibrary.name"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"
+            class="org.eclipse.jdt.internal.debug.ui.jres.JREContainerWizardPage"
             id="org.eclipse.jdt.launching.JRE_CONTAINER">
       </classpathContainerPage>
    </extension>

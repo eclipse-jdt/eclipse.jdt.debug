@@ -377,38 +377,15 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	protected void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3) {
 		parent.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				fResizingTable = true;
-				Rectangle area = parent.getClientArea();
-				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = area.width - 2 * table.getBorderWidth();
-				if (preferredSize.y > area.height) {
-					// Subtract the scrollbar width from the total column width
-					// if a vertical scrollbar will be required
-					Point vBarSize = table.getVerticalBar().getSize();
-					width -= vBarSize.x;
-				}
-				width-= buttons.getSize().x;
-				Point oldSize = table.getSize();
-				if (oldSize.x > width) {
-					// table is getting smaller so make the columns
-					// smaller first and then resize the table to
-					// match the client area width
-					column1.setWidth(Math.round(width * fWeight1));
-					column2.setWidth(Math.round(width * fWeight2));
-					column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
-					table.setSize(width, area.height);
-				} else {
-					// table is getting bigger so make the table
-					// bigger first and then make the columns wider
-					// to match the client area width
-					table.setSize(width, area.height);
-					column1.setWidth(Math.round(width * fWeight1));
-					column2.setWidth(Math.round(width * fWeight2));
-					column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
-				 }
-				 fResizingTable = false;
+				resizeTable(parent, buttons, table, column1, column2, column3);
 			}
 		}); 
+		table.addListener(SWT.Paint, new Listener() {
+			public void handleEvent(Event event) {
+				table.removeListener(SWT.Paint, this);
+				resizeTable(parent, buttons, table, column1, column2, column3);
+			}
+		});
 		column1.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
 				if (column1.getWidth() > 0 && !fResizingTable) {
@@ -424,14 +401,56 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 			}
 		});
 		column3.addControlListener(new ControlAdapter() {
-		public void controlResized(ControlEvent e) {
-			if (column3.getWidth() > 0 && !fResizingTable) {
-				fWeight3 = getColumnWeight(2);
+			public void controlResized(ControlEvent e) {
+				if (column3.getWidth() > 0 && !fResizingTable) {
+					fWeight3 = getColumnWeight(2);
+				}
 			}
-		}
-	});
+		});
 	}	
 
+	private void resizeTable(Composite parent, Composite buttons, Table table, TableColumn column1, TableColumn column2, TableColumn column3) {
+		fResizingTable = true;
+		int parentWidth = -1;
+		int parentHeight = -1;
+		if (parent.isVisible()) {
+			Rectangle area = parent.getClientArea();
+			parentWidth = area.width;
+			parentHeight = area.height;
+		} else {
+			Point parentSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			parentWidth = parentSize.x;
+			parentHeight = parentSize.y;
+		}
+		Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		int width = parentWidth - 2 * table.getBorderWidth();
+		if (preferredSize.y > parentHeight) {
+			// Subtract the scrollbar width from the total column width
+			// if a vertical scrollbar will be required
+			Point vBarSize = table.getVerticalBar().getSize();
+			width -= vBarSize.x;
+		}
+		width-= buttons.getSize().x;
+		Point oldSize = table.getSize();
+		if (oldSize.x > width) {
+			// table is getting smaller so make the columns
+			// smaller first and then resize the table to
+			// match the client area width
+			column1.setWidth(Math.round(width * fWeight1));
+			column2.setWidth(Math.round(width * fWeight2));
+			column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
+			table.setSize(width, parentHeight);
+		} else {
+			// table is getting bigger so make the table
+			// bigger first and then make the columns wider
+			// to match the client area width
+			table.setSize(width, parentHeight);
+			column1.setWidth(Math.round(width * fWeight1));
+			column2.setWidth(Math.round(width * fWeight2));
+			column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
+		 }
+		 fResizingTable = false;		
+	} 
 	/**
 	 * Returns this block's control
 	 * 
