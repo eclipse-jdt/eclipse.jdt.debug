@@ -78,7 +78,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendDuringEvaluations;
 	// Cancel launch because compile error radio buttons
 	private Button fPromptContinueWithErrors;
-	private Button fNeverContinueWithErrors;
 	private Button fAlwaysContinueWithErrors;
 	
 	// Hot code replace preference widgets
@@ -127,8 +126,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		comp = createGroupComposite(composite, 3, DebugUIMessages.getString("JavaDebugPreferencePage.15"));  //$NON-NLS-1$
 		fAlwaysContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
 		fAlwaysContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.16")); //$NON-NLS-1$
-		fNeverContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
-		fNeverContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.17")); //$NON-NLS-1$
 		fPromptContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
 		fPromptContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.18")); //$NON-NLS-1$
 
@@ -286,8 +283,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		String pref = store.getString(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if(pref.equals(AlwaysNeverDialog.ALWAYS)) {
 			fAlwaysContinueWithErrors.setSelection(true);
-		} else if (pref.equals(AlwaysNeverDialog.NEVER)) {
-			fNeverContinueWithErrors.setSelection(true);
 		} else {
 			fPromptContinueWithErrors.setSelection(true);
 		}
@@ -315,9 +310,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		String value = AlwaysNeverDialog.PROMPT;
 		if (fAlwaysContinueWithErrors.getSelection()) {
 			value = AlwaysNeverDialog.ALWAYS;
-		} else if (fNeverContinueWithErrors.getSelection()) {
-			value = AlwaysNeverDialog.NEVER;
-		}
+		} 
 		store.setValue(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, value);
 	}
 	

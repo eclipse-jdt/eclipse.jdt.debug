@@ -16,6 +16,8 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 
@@ -36,13 +38,47 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		if (pref != null) {
 			if (pref.equals(AlwaysNeverDialog.ALWAYS)) {
 				return new Boolean(true);
-			} else if (pref.equals(AlwaysNeverDialog.NEVER)) {
-				return new Boolean(false);
 			}
 		}
 		
-		boolean answer = AlwaysNeverDialog.openQuestion(shell, title, message, IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
-		return new Boolean(answer);
+		PromptDialog pd = new PromptDialog(shell, title, message, IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
+		pd.open();
+		
+		int returnValue = pd.getReturnCode();
+		if (returnValue == 0 || returnValue == 2) { //YES=0, ALWAYS=2
+			return new Boolean(true);
+		} else { // ESC=-1, NO=1
+			return new Boolean(false);
+		}
+		
+	}
+
+	
+	private class PromptDialog extends MessageDialog {
+		
+		private String fPreferenceKey = null;
+		private String fResult = null;
+		private IPreferenceStore fStore = null;
+		
+		public PromptDialog(Shell parent, String title, String message, String preferenceKey, IPreferenceStore store) {
+			super(parent, title, null, message, QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, LauncherMessages.getString("CompileErrorPromptStatusHandler.3")},0);		// yes is the default //$NON-NLS-1$
+			fStore = store;
+			fPreferenceKey = preferenceKey;
+		}
+
+		protected void buttonPressed(int id) {
+			if (id == 2) { // Always
+				fResult= AlwaysNeverDialog.ALWAYS;
+			} else {
+				fResult= AlwaysNeverDialog.PROMPT;
+			}
+			
+			if (fStore != null && fPreferenceKey != null) {
+				fStore.setValue(fPreferenceKey, fResult);
+			}
+			
+			super.buttonPressed(id);
+		}
 	}
 
 	
