@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -41,6 +42,7 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
@@ -115,10 +117,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					if (a.getViewer() != null) {
 						ISelection s = a.getViewer().getSelection();
 						if (s instanceof IStructuredSelection) {
-							IStructuredSelection ss = (IStructuredSelection)s;
-							if (ss.size() == 1) {
-								if (ss.getFirstElement() instanceof IJavaVariable) {
-									IJavaVariable var = (IJavaVariable)ss.getFirstElement();
+							IStructuredSelection structuredSelection = (IStructuredSelection)s;
+							if (structuredSelection.size() == 1) {
+								Object selection= structuredSelection.getFirstElement();
+								if (selection instanceof IJavaVariable) {
+									IJavaVariable var = (IJavaVariable)selection;
 									// if 'this' is selected, use stack frame context
 									try {
 										if (!var.getName().equals("this")) { //$NON-NLS-1$
@@ -129,6 +132,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 										} 
 									} catch (DebugException e) {
 										JDIDebugUIPlugin.log(e);
+									}
+								} else if (selection instanceof JavaInspectExpression) {
+									IValue value= ((JavaInspectExpression)selection).getValue();
+									if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
+										return (IJavaObject)value;
 									}
 								}
 							}
