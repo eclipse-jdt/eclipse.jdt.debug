@@ -91,7 +91,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @see VMRunner#getPluginIdentifier()
 	 */
 	protected String getPluginIdentifier() {
-		return LaunchingPlugin.PLUGIN_ID;
+		return LaunchingPlugin.getUniqueIdentifier();
 	}
 	
 	protected String constructProgramString() {

@@ -18,30 +18,30 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Identifier for a Java Application launch configuration
 	 * (value <code>org.eclipse.jdt.launching.localJavaApplication"</code>).
 	 */
-	public static final String ID_JAVA_APPLICATION = LaunchingPlugin.PLUGIN_ID + ".localJavaApplication"; //$NON-NLS-1$
+	public static final String ID_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".localJavaApplication"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a Remote Java Application launch configuration
 	 * (value <code>org.eclipse.jdt.launching.remoteJavaApplication"</code>).
 	 */
-	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.PLUGIN_ID + ".remoteJavaApplication"; //$NON-NLS-1$	
+	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".remoteJavaApplication"; //$NON-NLS-1$	
 
 	/**
 	 * Identifier for the standard socket attaching VM connector
 	 * (value <code>org.eclipse.jdt.launching.socketAttachConnector"</code>).
 	 */
-	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.PLUGIN_ID + ".socketAttachConnector"; //$NON-NLS-1$	
+	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$	
 			
 	/**
 	 * Name of project containing the main type.
 	 */
-	public static final String ATTR_PROJECT_NAME = LaunchingPlugin.PLUGIN_ID + ".PROJECT_ATTR"; //$NON-NLS-1$
+	public static final String ATTR_PROJECT_NAME = LaunchingPlugin.getUniqueIdentifier() + ".PROJECT_ATTR"; //$NON-NLS-1$
 	
 	/**
 	 * Main type launch configuration attribute name.
 	 * The fully qualified name of the <code>IType</code> to launch.
 	 */
-	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.PLUGIN_ID + ".MAIN_TYPE";	 //$NON-NLS-1$
+	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MAIN_TYPE";	 //$NON-NLS-1$
 	
 	/**
 	 * Program arguments launch configuration attribute name.
@@ -49,7 +49,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * in a launch configuration with this key. Program
 	 * arguments are stored as a raw string.
 	 */
-	public static final String ATTR_PROGRAM_ARGUMENTS = LaunchingPlugin.PLUGIN_ID + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
+	public static final String ATTR_PROGRAM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
 	
 	/**
 	 * VM arguments launch configuration attribute name.
@@ -57,7 +57,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * in a launch configuration with this key. VM
 	 * arguments are stored as a raw string.
 	 */
-	public static final String ATTR_VM_ARGUMENTS = LaunchingPlugin.PLUGIN_ID + ".VM_ARGUMENTS";	 //$NON-NLS-1$
+	public static final String ATTR_VM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".VM_ARGUMENTS";	 //$NON-NLS-1$
 	
 	/**
 	 * Working directory attribute name. The working directory
@@ -66,28 +66,28 @@ public interface IJavaLaunchConfigurationConstants {
 	 * directory to use. When unspecified, the working directory
 	 * is inherited from the current process.
 	 */
-	public static final String ATTR_WORKING_DIRECTORY = LaunchingPlugin.PLUGIN_ID + ".WORKING_DIRECTORY";	 //$NON-NLS-1$
+	public static final String ATTR_WORKING_DIRECTORY = LaunchingPlugin.getUniqueIdentifier() + ".WORKING_DIRECTORY";	 //$NON-NLS-1$
 	
 	/**
 	 * VM install launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstall</code>
 	 * identifying a VM to use for a launch.
 	 */
-	public static final String ATTR_VM_INSTALL = LaunchingPlugin.PLUGIN_ID + ".VM_INSTALL_ID"; //$NON-NLS-1$
+	public static final String ATTR_VM_INSTALL = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_ID"; //$NON-NLS-1$
 	
 	/**
 	 * VM install type launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstallType</code>
 	 * identifying a type of VM to use for a launch.
 	 */
-	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.PLUGIN_ID + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
+	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	
 	/**
 	 * VM connector launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMConnector</code>
 	 * identifying a connector to use for a remote attach.
 	 */
-	public static final String ATTR_VM_CONNECTOR= LaunchingPlugin.PLUGIN_ID + ".VM_CONNECTOR_ID"; //$NON-NLS-1$
+	public static final String ATTR_VM_CONNECTOR= LaunchingPlugin.getUniqueIdentifier() + ".VM_CONNECTOR_ID"; //$NON-NLS-1$
 	
 	/**
 	 * Bootpath launch configuration attribute name.
@@ -95,7 +95,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * in a launch configuration with this key. A bootpath
 	 * is stored as a raw string.
 	 */
-	public static final String ATTR_BOOTPATH = LaunchingPlugin.PLUGIN_ID + ".BOOTPATH";	 //$NON-NLS-1$
+	public static final String ATTR_BOOTPATH = LaunchingPlugin.getUniqueIdentifier() + ".BOOTPATH";	 //$NON-NLS-1$
 	
 	/**
 	 * Classpath launch configuration attribute name.
@@ -103,7 +103,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * the sole classpath for the launch.  If not present, a default class runtime
 	 * classpath is used.
 	 */
-	public static final String ATTR_CLASSPATH = LaunchingPlugin.PLUGIN_ID + ".CLASSPATH";	 //$NON-NLS-1$
+	public static final String ATTR_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH";	 //$NON-NLS-1$
 	
 	/**
 	 * Default classpath launch configuration boolean attribute name.
@@ -111,25 +111,25 @@ public interface IJavaLaunchConfigurationConstants {
 	 * class path is computed at runtime.  If this attribute is set, the contents
 	 * of <code>CLASSPATH_ATTR</code> are ignored.
 	 */
-	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.PLUGIN_ID + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
+	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
 		
 	/**
 	 * Host name launch configuration attribute name.
 	 * This attribute is used for attach launching.
 	 */
-	public static final String ATTR_HOSTNAME = LaunchingPlugin.PLUGIN_ID + ".HOSTNAME";	 //$NON-NLS-1$
+	public static final String ATTR_HOSTNAME = LaunchingPlugin.getUniqueIdentifier() + ".HOSTNAME";	 //$NON-NLS-1$
 
 	/**
 	 * Allow termination launch configuration attribute name.
 	 * This attribute is used for attach launching.
 	 */
-	public static final String ATTR_ALLOW_TERMINATE = LaunchingPlugin.PLUGIN_ID + ".ALLOW_TERMINATE";	 //$NON-NLS-1$
+	public static final String ATTR_ALLOW_TERMINATE = LaunchingPlugin.getUniqueIdentifier() + ".ALLOW_TERMINATE";	 //$NON-NLS-1$
 
 	/**
 	 * Port # launch configuration attribute name.
 	 * This attribute is used for attach launching.
 	 */
-	public static final String ATTR_PORT_NUMBER = LaunchingPlugin.PLUGIN_ID + ".PORT";	 //$NON-NLS-1$
+	public static final String ATTR_PORT_NUMBER = LaunchingPlugin.getUniqueIdentifier() + ".PORT";	 //$NON-NLS-1$
 
 	/**
 	 * Status code indicating a launch configuration does not

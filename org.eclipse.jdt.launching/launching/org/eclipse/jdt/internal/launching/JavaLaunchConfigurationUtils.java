@@ -142,7 +142,7 @@ public class JavaLaunchConfigurationUtils {
 	 *  exception
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID,
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(),
 		  code, message, exception));
 	}
 	

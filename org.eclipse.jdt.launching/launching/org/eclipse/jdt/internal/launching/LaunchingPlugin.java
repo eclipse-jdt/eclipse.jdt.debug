@@ -1,9 +1,10 @@
+package org.eclipse.jdt.internal.launching;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.launching;
-
+ 
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -23,12 +24,10 @@ import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
 public class LaunchingPlugin extends Plugin {
 	
-	public static final String PLUGIN_ID= "org.eclipse.jdt.launching"; //$NON-NLS-1$
-	
 	/**
 	 * Identifier for 'vmConnectors' extension point
 	 */
-	public static final String ID_EXTENSION_POINT_VM_CONNECTORS = PLUGIN_ID + ".vmConnectors"; //$NON-NLS-1$
+	public static final String ID_EXTENSION_POINT_VM_CONNECTORS = getUniqueIdentifier() + ".vmConnectors"; //$NON-NLS-1$
 	
 	private static LaunchingPlugin fgLaunchingPlugin;
 	
@@ -38,21 +37,34 @@ public class LaunchingPlugin extends Plugin {
 		super(descriptor);
 		fgLaunchingPlugin= this;
 	}
+	
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.jdt.launching"; //$NON-NLS-1$
+		}
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
 
-	public static LaunchingPlugin getPlugin() {
+	public static LaunchingPlugin getDefault() {
 		return fgLaunchingPlugin;
 	}
 	
 	public static void log(IStatus status) {
-		getPlugin().getLog().log(status);
+		getDefault().getLog().log(status);
 	}
 	
 	public static void log(String message) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
 	}	
 		
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
 	}	
 	
 	/**
@@ -116,7 +128,7 @@ public class LaunchingPlugin extends Plugin {
 	private void initializeVMConnectors() {
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(PLUGIN_ID, IStatus.OK, LaunchingMessages.getString("LaunchingPlugin.Exception_occurred_reading_vmConnectors_extensions_1"), null); //$NON-NLS-1$
+		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, LaunchingMessages.getString("LaunchingPlugin.Exception_occurred_reading_vmConnectors_extensions_1"), null); //$NON-NLS-1$
 		fVMConnectors = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			try {

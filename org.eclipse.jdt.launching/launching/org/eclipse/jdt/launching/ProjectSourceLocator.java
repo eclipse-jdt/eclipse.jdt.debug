@@ -159,7 +159,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	public static IJavaProject[] getSourceLookupPath(IJavaProject project) throws JavaModelException {
 		IProject p= project.getProject();
 		try {
-			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOOKUP_PROPERTY));
+			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), ADDITIONAL_LOOKUP_PROPERTY));
 			if (property == null)
 				return null;
 			return decodeProjects(property);
@@ -185,7 +185,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	public static IJavaSourceLocation[] getPersistedSourceLocations(IJavaProject project) throws JavaModelException {
 		IProject p= project.getProject();
 		try {
-			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY));
+			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), ADDITIONAL_LOCATIONS_PROPERTY));
 			if (property == null)
 				return null;
 			return JavaLaunchConfigurationUtils.decodeSourceLocations(property);
@@ -212,7 +212,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		if (projects != null)
 			property= encodeProjects(projects);
 		try {
-			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOOKUP_PROPERTY), property);
+			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), ADDITIONAL_LOOKUP_PROPERTY), property);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
 		}
@@ -235,7 +235,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		try {
 			if (locations != null)
 				property= JavaLaunchConfigurationUtils.encodeSourceLocations(locations);
-			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY), property);
+			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), ADDITIONAL_LOCATIONS_PROPERTY), property);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
 		} catch (IOException e) {

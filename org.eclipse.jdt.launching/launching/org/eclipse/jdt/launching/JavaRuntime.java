@@ -96,9 +96,9 @@ public final class JavaRuntime {
 	 * was launched with. Implementers of IVMRunners use this property
 	 * key to attach the command line to the IProcesses they create.
 	 */
-	public final static String ATTR_CMDLINE= LaunchingPlugin.PLUGIN_ID + ".launcher.cmdLine"; //$NON-NLS-1$
+	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 
-	private static final String PROPERTY_VM= LaunchingPlugin.PLUGIN_ID + ".vm"; //$NON-NLS-1$
+	private static final String PROPERTY_VM= LaunchingPlugin.getUniqueIdentifier() + ".vm"; //$NON-NLS-1$
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
@@ -125,9 +125,9 @@ public final class JavaRuntime {
 	}
 	
 	private static synchronized void initializeVMTypes() {
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(LaunchingPlugin.PLUGIN_ID + ".vmInstallTypes"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(LaunchingPlugin.getUniqueIdentifier() + ".vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(LaunchingPlugin.PLUGIN_ID, IStatus.OK, LaunchingMessages.getString("JavaRuntime.exceptionOccurred"), null); //$NON-NLS-1$
+		MultiStatus status= new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, LaunchingMessages.getString("JavaRuntime.exceptionOccurred"), null); //$NON-NLS-1$
 		fgVMTypes= new IVMInstallType[configs.length];
 
 		for (int i= 0; i < configs.length; i++) {
@@ -170,7 +170,7 @@ public final class JavaRuntime {
 	 * 							corrupt.
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
-		String idString= project.getProject().getPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, PROPERTY_VM));
+		String idString= project.getProject().getPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_VM));
 		return getVMFromId(idString);
 	}
 	
@@ -215,7 +215,7 @@ public final class JavaRuntime {
 	 */
 	public static void setVM(IJavaProject project, IVMInstall javaRuntime) throws CoreException {
 		String idString= getIdFromVM(javaRuntime);
-		project.getProject().setPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, PROPERTY_VM), idString);
+		project.getProject().setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_VM), idString);
 	}
 	
 	/**
@@ -229,7 +229,7 @@ public final class JavaRuntime {
 		try {
 			setDefaultVMInstall(vm, null);
 		} catch (CoreException e) {
-			LaunchingPlugin.getPlugin().getLog().log(e.getStatus());
+			LaunchingPlugin.getDefault().getLog().log(e.getStatus());
 		}
 	}
 	
@@ -553,7 +553,7 @@ public final class JavaRuntime {
 	 * configuration information.
 	 */
 	public static void saveVMConfiguration() throws CoreException {
-		IPath stateLocation= LaunchingPlugin.getPlugin().getStateLocation();
+		IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
 		IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 		File f= new File(stateFile.toOSString());
 		try {
@@ -561,7 +561,7 @@ public final class JavaRuntime {
 			Writer writer= new OutputStreamWriter(stream);
 			writeVMs(writer);
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
 		}
 		
 	}
@@ -634,7 +634,7 @@ public final class JavaRuntime {
 	}
 	
 	private static void initializeVMConfiguration() throws IOException {
-		IPath stateLocation= LaunchingPlugin.getPlugin().getStateLocation();
+		IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
 		IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 		File f= new File(stateFile.toOSString());
 		if (f.isFile()) {
@@ -826,7 +826,7 @@ public final class JavaRuntime {
 	 * @return VM connector or <code>null</code> if none
 	 */
 	public static IVMConnector getVMConnector(String id) {
-		return LaunchingPlugin.getPlugin().getVMConnector(id);
+		return LaunchingPlugin.getDefault().getVMConnector(id);
 	}
 	
 	/**
@@ -835,6 +835,6 @@ public final class JavaRuntime {
 	 * @return VM connectors
 	 */
 	public static IVMConnector[] getVMConnectors() {
-		return LaunchingPlugin.getPlugin().getVMConnectors();
+		return LaunchingPlugin.getDefault().getVMConnectors();
 	}	
 }

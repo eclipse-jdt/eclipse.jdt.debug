@@ -84,7 +84,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 			
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, LaunchingMessages.getString("AbstractVMRunner.Eclipse_runtime_does_not_support_working_directory_2"), e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, LaunchingMessages.getString("AbstractVMRunner.Eclipse_runtime_does_not_support_working_directory_2"), e); //$NON-NLS-1$
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 			
 			if (handler != null) {

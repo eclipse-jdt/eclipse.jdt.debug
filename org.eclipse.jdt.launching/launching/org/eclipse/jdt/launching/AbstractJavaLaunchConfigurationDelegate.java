@@ -60,7 +60,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @param code error code
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, code, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
 	}	
 	
 	/**

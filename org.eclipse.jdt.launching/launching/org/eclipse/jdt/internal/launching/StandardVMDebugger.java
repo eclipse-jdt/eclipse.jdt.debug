@@ -133,7 +133,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 							abort(errorMessage, e, IJavaLaunchConfigurationConstants.ERR_VM_LAUNCH_ERROR);
 						} else {
 							// timeout, consult status handler if there is one
-							IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_VM_CONNECT_TIMEOUT, "", e); //$NON-NLS-1$
+							IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_CONNECT_TIMEOUT, "", e); //$NON-NLS-1$
 							IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 							
 							retry= false;

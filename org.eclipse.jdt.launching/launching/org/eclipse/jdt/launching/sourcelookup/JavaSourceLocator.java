@@ -54,7 +54,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * Identifier for the 'Java Source Locator' extension
 	 * (value <code>"org.eclipse.jdt.launching.javaSourceLocator"</code>).
 	 */
-	public static final String ID_JAVA_SOURCE_LOCATOR = LaunchingPlugin.PLUGIN_ID + ".javaSourceLocator"; //$NON-NLS-1$
+	public static final String ID_JAVA_SOURCE_LOCATOR = LaunchingPlugin.getUniqueIdentifier() + ".javaSourceLocator"; //$NON-NLS-1$
 
 	/**
 	 * A collection of the source locations to search
@@ -276,7 +276,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		try {
 			return JavaLaunchConfigurationUtils.encodeSourceLocations(getSourceLocations());
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
 			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_creating_a_source_locator_memento_for___JavaSourceLocator__2"), e)); //$NON-NLS-1$
 		}
 
@@ -300,7 +300,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		try {
 			locations = JavaLaunchConfigurationUtils.decodeSourceLocations(memento);
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
 			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_restoring___JavaSourceLocator___from_a_memento_3"), e)); //$NON-NLS-1$
 		}
 		setSourceLocations(locations);
