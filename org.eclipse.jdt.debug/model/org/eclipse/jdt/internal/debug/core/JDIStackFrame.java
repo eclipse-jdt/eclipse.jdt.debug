@@ -135,7 +135,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepReturn() {
 		try {
-			List frames = ((JDIThread)getThread()).getStackFrames0();
+			List frames = ((JDIThread)getThread()).computeStackFrames();
 			if (frames != null && !frames.isEmpty()) {
 				Object bottomFrame = frames.get(frames.size() - 1);
 				return exists() && !this.equals(bottomFrame) && getThread().canStepReturn();
@@ -315,7 +315,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (isTopStackFrame()) {
 			getThread().stepReturn();
 		} else {
-			List frames = ((JDIThread)getThread()).getStackFrames0();
+			List frames = ((JDIThread)getThread()).computeStackFrames();
 			int index = frames.indexOf(this);
 			if (index >= 0 && index < frames.size() - 1) {
 				IStackFrame nextFrame = (IStackFrame)frames.get(index + 1);
@@ -713,7 +713,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	protected boolean exists() throws DebugException {
-		return ((JDIThread)getThread()).getStackFrames0().indexOf(this) != -1;
+		return ((JDIThread)getThread()).computeStackFrames().indexOf(this) != -1;
 	}
 	
 	/**

@@ -15,9 +15,25 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  */
 public class Timer {
 	
+	/**
+	 * Listener to notify of a timeout
+	 */
 	private ITimeoutListener fListener;
+	
+	/**
+	 * Timeout value, in milliseconds
+	 */
 	private int fTimeout;
+	
+	/**
+	 * Whether this timer's thread is alive
+	 */
 	private boolean fAlive = true;
+	
+	/**
+	 * Whether this timer has been started and
+	 * has not yet timed out or been stopped.
+	 */
 	private boolean fStarted = false;
 	
 	/**
@@ -38,12 +54,13 @@ public class Timer {
 						Thread.sleep(getTimeout());
 					} catch (InterruptedException e) {
 						interrupted = true;
-					}
+					}			
 					if (!interrupted) {
 						if (getListener() != null) {
 							setStarted(false);
 							setTimeout(Integer.MAX_VALUE);
 							getListener().timeout();
+							setListener(null);
 						}
 					}
 				}
@@ -59,10 +76,11 @@ public class Timer {
 	 * the time has passed. A call to <code>stop</code>, before the
 	 * time expires, will cancel the the timer and timeout callback.
 	 * This method can only be called if this timer is idle (i.e.
-	 * stopped, or expired).
+	 * <code>isStarted() == false<code>).
 	 * 
 	 * @param listener The timer listener
-	 * @param ms The number of milliseconds for this timer
+	 * @param ms The number of milliseconds to wait before
+	 * 	notifying the listener
 	 */
 	public void start(ITimeoutListener listener, int ms) {
 		if (isStarted()) {
@@ -75,11 +93,12 @@ public class Timer {
 	}
 	
 	/**
-	 * Stops this timer
+	 * Stops this timer, cancelling any pending timeout
+	 * notification.
 	 */
 	public void stop() {
-		setTimeout(Integer.MAX_VALUE);
 		setStarted(false);
+		setTimeout(Integer.MAX_VALUE);
 		getThread().interrupt();
 	}
 	
@@ -92,43 +111,105 @@ public class Timer {
 		setThread(null);
 	}
 	
-	protected boolean isAlive() {
+	/**
+	 * Returns whether this timer's thread is alive
+	 * 
+	 * @return whether this timer's thread is alive
+	 */
+	private boolean isAlive() {
 		return fAlive;
 	}
 
-	protected void setAlive(boolean alive) {
+	/**
+	 * Sets whether this timer's thread is alive. When
+	 * set to <code>false</code> this timer's thread
+	 * will exit on its next iteration.
+	 * 
+	 * @param alive whether this timer's thread should
+	 * 	be alive
+	 * @see #dispose()
+	 */
+	private void setAlive(boolean alive) {
 		fAlive = alive;
 	}
 
+	/**
+	 * Returns the current timeout listener
+	 * 
+	 * @return timeout listener
+	 */
 	protected ITimeoutListener getListener() {
 		return fListener;
 	}
 
-	protected void setListener(ITimeoutListener listener) {
+	/**
+	 * Sets the listener to be notified if this
+	 * timer times out.
+	 * 
+	 * @param listener timeout listener
+	 */
+	private void setListener(ITimeoutListener listener) {
 		fListener = listener;
 	}
 
-	protected boolean isStarted() {
+	/**
+	 * Returns whether this timer has been started,
+	 * and has not yet timed out, or been stopped.
+	 * 
+	 * @return whether this timer has been started,
+	 * and has not yet timed out, or been stopped
+	 */
+	public boolean isStarted() {
 		return fStarted;
 	}
 
-	protected void setStarted(boolean started) {
+	/**
+	 * Sets whether this timer has been started,
+	 * and has not yet timed out, or been stopped.
+	 * 
+	 * @param started whether this timer has been started,
+	 *  and has not yet timed out, or been stopped
+	 */
+	private void setStarted(boolean started) {
 		fStarted = started;
 	}
 
-	protected Thread getThread() {
+	/**
+	 * Returns this timer's thread
+	 * 
+	 * @return thread that waits for a timeout
+	 */
+	private Thread getThread() {
 		return fThread;
 	}
 
-	protected void setThread(Thread thread) {
+	/**
+	 * Sets this timer's thread used to perform
+	 * timeout processing
+	 * 
+	 * @param thread thread that waits for a timeout
+	 */
+	private void setThread(Thread thread) {
 		fThread = thread;
 	}
 
+	/**
+	 * Returns the amount of time, in milliseconds, that
+	 * this timer is/was waiting for.
+	 * 
+	 * @return timeout value, in milliseconds
+	 */
 	protected int getTimeout() {
 		return fTimeout;
 	}
 
-	protected void setTimeout(int timeout) {
+	/**
+	 * Sets the amount of time, in milliseconds, that this
+	 * timer will wait for before timing out.
+	 * 
+	 * @param timeout value, in milliseconds
+	 */
+	private void setTimeout(int timeout) {
 		fTimeout = timeout;
 	}
 }

@@ -44,32 +44,44 @@ import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.StepRequest;
 
 /** 
- * Proxy to a thread reference on the target.
+ * Model thread implementation for an underlying
+ * thread on a VM.
  */
 public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutListener {
 	
-	protected static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
+	/**
+	 * Constant for the nane of the main thread group.
+	 */
+	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
+	
+	/**
+	 * Number of milliseconds used as a timeout before
+	 * 'collapsing' stack frames when performing a step
+	 * or method invocation.
+	 */
+	private static final int COLLAPSE_TIMEOUT = 3000;
 
 	/**
 	 * Underlying thread.
 	 */
-	protected ThreadReference fThread;
+	private ThreadReference fThread;
 	
 	/**
 	 * Collection of stack frames
 	 */
-	protected List fStackFrames;
+	private List fStackFrames;
 
 	/**
 	 * Underlying thread group.
 	 */
-	protected ThreadGroupReference fThreadGroup;
+	private ThreadGroupReference fThreadGroup;
 	
 	/**
 	 * Whether children need to be refreshed. Set to
-	 * to true after a step has started.
+	 * <code>true</code> when stack frames are re-used
+	 * on the next suspend.
 	 */
-	protected boolean fRefreshChildren = true;
+	private boolean fRefreshChildren = true;
 	
 	/**
 	 * Currently pending step handler, <code>null</code>
@@ -83,11 +95,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	private boolean fRunning;
 		
 	/**
-	 * Whether suspended by an event in the VM such as a
-	 * breakpoint or step, or via an explicit user
-	 * request to suspend.
+	 * <code>true</code> when suspended by an event in the
+	 * VM such as a breakpoint or step, and <code>false</code>
+	 * when suspended by an explicit user request (i.e. when
+	 * a call is made to <code>#suspend()</code>).
 	 */
-	protected boolean fEventSuspend = false;
+	private boolean fEventSuspend = false;
 
 	/**
 	 * Action timer. During a long running action,
@@ -98,30 +111,42 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * Whether terminated.
 	 */
-	protected boolean fTerminated;
+	private boolean fTerminated;
 	/**
 	 * Whether this thread is a system thread.
 	 */
-	protected boolean fIsSystemThread;
+	private boolean fIsSystemThread;
 
 	/**
 	 * The breakpoint that caused the last suspend, or
 	 * <code>null</code> if none.
 	 */
-	protected IJavaBreakpoint fCurrentBreakpoint;
+	private IJavaBreakpoint fCurrentBreakpoint;
 
 	/**
 	 * The cached named of the underlying thread.
 	 */
-	protected String fName= null;
+	private String fName= null;
 	
 	/**
 	 * Whether this thread is currently performing
 	 * an evaluation (invoke method). Nested method
 	 * invocations cannot be performed.
 	 */
-	protected boolean fInEvaluation = false;
-	protected boolean fEvaluationAborted = false;
+	private boolean fInEvaluation = false;
+	
+	/**
+	 * When performing an evaluation, a client
+	 * may decide to abort the evaluation, in which
+	 * case this flag gets set to <code>true</code>.
+	 * When an evaluation is aborted, before it completes,
+	 * the evaluation thread is evenutally (automatically)
+	 * resumed when the evaluation completes. When 
+	 * an evaluation is not aborted, the evaluation thread
+	 * remains suspended when on completion of the
+	 * evaluation.
+	 */
+	private boolean fEvaluationAborted = false;
 	
 	/**
 	 * Whether this thread has been interrupted during
@@ -132,18 +157,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	private boolean fInterrupted = false;
 
 	/**
-	 * Creates a new thread on the underlying thread reference.
+	 * Creates a new thread on the underlying thread reference
+	 * in the given debug target.
+	 * 
+	 * @param target the debug target in which this thread is contained
+	 * @param thread the underlying thread on the VM
 	 */
 	public JDIThread(JDIDebugTarget target, ThreadReference thread) {
 		super(target);
-		fThread= thread;
+		setUnderlyingThread(thread);
 		initialize();
 	}
 
 	/**
-	 * Initializes this thread on creation
+	 * Thread initialization:<ul>
+	 * <li>Determines if this thread is a system thread</li>
+	 * <li>Sets terminated state to <code>false</code></li>
+	 * <li>Determines suspended state from underlying thread</li> 
+	 * <li>Sets this threads stack frames to an empty collection</li>
+	 * </ul>
 	 */
 	protected void initialize() {
+		fStackFrames= Collections.EMPTY_LIST;
 		// system thread
 		try {
 			determineIfSystemThread();
@@ -152,31 +187,30 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 
 		// state
-		fTerminated= false;
+		setTerminated(false);
+		setRunning(false);
 		try {
-			fRunning= !getUnderlyingThread().isSuspended();
+			setRunning(!getUnderlyingThread().isSuspended());
 		} catch (VMDisconnectedException e) {
-			fTerminated = true;
-			fRunning = false;
+			setTerminated(true);
 			if (getDebugTarget().isDisconnected() || getDebugTarget().isTerminated()) {
 				return;
 			}
 			logError(e);
 		} catch (RuntimeException e) {
 			logError(e);
-			fRunning= false;
 		}
 	}
 	
 	/**
-	 * @see IDebugElement
+	 * @see IDebugElement#getElementType()
 	 */
 	public int getElementType() {
 		return THREAD;
 	}
 
 	/**
-	 * @see IJavaThread
+	 * @see IJavaThread#getBreakpoint()
 	 */
 	public IJavaBreakpoint getBreakpoint() {
 		if (fCurrentBreakpoint != null && !fCurrentBreakpoint.getMarker().exists()) {
@@ -186,21 +220,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
 		return isSuspended();
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
 		return !isSuspended();
 	}
 
 	/**
-	 * @see ITerminate
+	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
 		ObjectReference threadDeath= ((JDIDebugTarget) getDebugTarget()).getThreadDeathInstance();
@@ -208,21 +242,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep@canStepInto()
 	 */
 	public boolean canStepInto() {
 		return isSuspended() && !isStepping();
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
 		return isSuspended() && !isStepping();
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
 		return isSuspended() && !isStepping();
@@ -230,6 +264,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 
 	/**
 	 * Determines and sets whether this thread represents a system thread.
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected void determineIfSystemThread() throws DebugException {
 		fIsSystemThread= false;
@@ -255,44 +296,59 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IThread
+	 * NOTE: this method returns a copy of this thread's stack frames.
+	 * 
+	 * @see IThread#getStackFrames()
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
-		List list = getStackFrames0();
+		List list = computeStackFrames();
 		return (IStackFrame[])list.toArray(new IStackFrame[list.size()]);
 	}
 	
 	/**
-	 * Sets the stack frames for this thread.
+	 * Returns this thread's current stack frames as a list, computing
+	 * them if required. Returns an empty collection if this thread is
+	 * not currently suspended, or this thread is terminated. This
+	 * method should be used internally to get the current stack frames,
+	 * instead of calling <code>#getStackFrames()</code>, which makes a
+	 * copy of the current list.
+	 * <p>
+	 * Before a thread is resumed a call must be made to one of:<ul>
+	 * <li><code>preserveStackFrames()</code></li>
+	 * <li><code>disposeStackFrames()</code></li>
+	 * </ul>
+	 * If stack frames are disposed before a thread is resumed, stack frames
+	 * are completely re-computed on the next call to this method. If stack
+	 * frames are to be preserved, this method will attempt to re-use any stack
+	 * frame objects which represent the same stack frame as on the previous
+	 * suspend. Stack frames are cached until a subsequent call to preserve
+	 * or dispose stack frames.
+	 * </p>
 	 * 
-	 * @param frames a list of stack frames
+	 * @return list of <code>IJavaStackFrame</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
-	protected void setStackFrames(List frames) {
-		fStackFrames = frames;
-	}
-	
-	/**
-	 *
-	 */
-	protected synchronized List getStackFrames0() throws DebugException {
+	protected synchronized List computeStackFrames() throws DebugException {
 		if (isSuspended()) {
 			if (isTerminated()) {
 				fStackFrames = Collections.EMPTY_LIST;
-				return fStackFrames;
-			}
-			if (fRefreshChildren) {
-				if (fStackFrames == null || fStackFrames.isEmpty()) {
+			} else if (fRefreshChildren) {
+				if (fStackFrames.isEmpty()) {
 					fStackFrames = createAllStackFrames();
 				} else {
 					// compute new or removed stack frames
 					List frames= getUnderlyingFrames();
 					int offset= 0, length= frames.size();
 					if (length > fStackFrames.size()) {
-						// compute new children
+						// compute new frames
 						offset= length - fStackFrames.size();
 						for (int i= offset - 1; i >= 0; i--) {
 							JDIStackFrame newStackFrame= new JDIStackFrame(this, (StackFrame) frames.get(i));
-							// addChild appends - we need a stack, so insert manually
 							fStackFrames.add(0, newStackFrame);
 						}
 						length= fStackFrames.size() - offset;
@@ -306,20 +362,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 						} else {
 							if (frames.isEmpty()) {
 								fStackFrames = Collections.EMPTY_LIST;
-								return fStackFrames;
 							} else {
 								// same number of stack frames - if the TOS is different, remove/replace all stack frames
 								Method oldMethod= ((JDIStackFrame) fStackFrames.get(0)).getUnderlyingMethod();
-								if (oldMethod == null) {
-									fStackFrames = createAllStackFrames();
-									return fStackFrames;
-								}
 								StackFrame newTOS= (StackFrame) frames.get(0);
 								Method newMethod= getUnderlyingMethod(newTOS);
-								if (newMethod == null) {
-									fStackFrames = createAllStackFrames();
-									return fStackFrames;
-								}
 								if (!oldMethod.equals(newMethod)) {
 									// remove & replace all stack frames
 									fStackFrames= createAllStackFrames();
@@ -328,26 +375,32 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 								}
 							}
 						}
-					// update existing frames
+					// update preserved frames
 					if (offset < fStackFrames.size()) {
 						updateStackFrames(frames, offset, fStackFrames, length);
 					}
 				}
 				fRefreshChildren = false;
 			}
-		} else
+		} else {
 			return Collections.EMPTY_LIST;
+		}
 		return fStackFrames;
 	}
 
 	/**
-	 * Helper method for #getChildren0 to create new children for all frames
+	 * Helper method for <code>#computeStackFrames()</code> to create all
+	 * underlying stack frames.
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected List createAllStackFrames() throws DebugException {
 		List frames= getUnderlyingFrames();
-		if (frames == null) {
-			return new ArrayList(0);
-		}
 		List list= new ArrayList(frames.size());
 		Iterator iter= frames.iterator();
 		while (iter.hasNext()) {
@@ -358,25 +411,42 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * Helper method for #getChildren to retrieve stack frames for this thread
-	 *
-	 * @see com.sun.jdi.ThreadReference
+	 * Retrieves and returns all underlying stack frames
+	 * 
+	 * @return list of <code>StackFrame</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected List getUnderlyingFrames() throws DebugException {
 		List frames= null;
 		try {
-			frames= fThread.frames();
+			frames= getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// this code will never be executed as the try block will
+			// succeed or this catch block will throw an exception
 			return Collections.EMPTY_LIST;
 		}
 		return frames;
 	}
 
 	/**
-	 * Helper method for #getChildren to retrieve the method for a stack frame
+	 * Returns the underlying method for the given stack frame
+	 * 
+	 * @param frame an underlying JDI stack frame
+	 * @return underlying method
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected Method getUnderlyingMethod(StackFrame frame) throws DebugException {
 		Method method= null;
@@ -384,7 +454,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			method= frame.location().method();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			return null;
 		}
 		return method;
 	}
@@ -416,11 +485,54 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * Invokes a method in this thread, and returns the result. Only one receiver may
-	 * be specified - either a class or an object, the other must be <code>null</code>.
+	 * Invokes a method on the target, in this thread, and returns the result. Only
+	 * one receiver may be specified - either a class or an object, the other must
+	 * be <code>null</code>. This thread is left suspended after the invocation
+	 * is complete, unless a call is made to <code>abortEvaluation<code> while
+	 * performing a method invocation. In that case, this thread is automatically
+	 * resumed when/if this invocation (eventually) completes.
+	 * <p>
+	 * Method invocations cannot be nested. That is, this method must
+	 * return before another call to this method can be made. This
+	 * method does not return until the invocation is complete.
+	 * Breakpoints can suspend a method invocation, and it is possible
+	 * that an invocation will not complete due to an infinite loop
+	 * or deadlock.
+	 * </p>
+	 * <p>
+	 * Stack frames are preserved during method invocations, unless
+	 * a timeout occurrs. Athough this thread's state is updated to
+	 * running while performing an evalutaion, no debug events are
+	 * fired unless this invocation is interrupted by a breakpoint,
+	 * or the invocation times out.
+	 * </p>
+	 * <p>
+	 * When performing an invocation, the communication timeout with
+	 * the target VM is set to infinite, as the invocation may not 
+	 * complete in a timely fashion, if at all. The timeout value
+	 * is reset to its original value when the invocation completes.
+	 * </p>
+	 * 
+	 * @param receiverClass the class in the target representing the receiver
+	 * 	of a static message send, or <code>null</code>
+	 * @param receiverObject the object in the target to be the receiver of
+	 * 	the message send, or <code>null</code>
+	 * @param method the underlying method to be invoked
+	 * @param args the arguments to invoke the method with (an empty list
+	 *  if none) 
+	 * @return the result of the method, as an underlying value
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args) throws DebugException {
-		if (fInEvaluation) {
+		if (receiverClass != null && receiverObject != null) {
+			throw new IllegalArgumentException("Internal error - can only specify one receiver for a method invocation");
+		}
+		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null); //$NON-NLS-1$
 		}
 		Value result= null;
@@ -428,15 +540,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		try {
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
+			resetAbortEvaluation();
 			setRunning(true);
-			fInEvaluation = true;
+			setPerformingEvaluation(true);
 			preserveStackFrames();
 			resetInterrupted();
 			startCollapseTimer();
 			if (receiverClass == null) {
-				result= receiverObject.invokeMethod(fThread, method, args, ClassType.INVOKE_SINGLE_THREADED);
+				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
 			} else {
-				result= receiverClass.invokeMethod(fThread, method, args, ClassType.INVOKE_SINGLE_THREADED);
+				result= receiverClass.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
 			}
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
@@ -451,18 +564,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 
 		invokeComplete(timeout);
-		if (fEvaluationAborted) {
-			fEvaluationAborted = false;
+		if (wasEvaluationAborted()) {
 			resume();
 		}
 		return result;
 	}
 	
 	/**
-	 * Called when an evaluation may have been interrupted.
-	 * If an evaluation gets suspended, or times out, we need
-	 * to fire a suspend event when the evaluation compeletes,
-	 * to update the UI.
+	 * Called when this thread suspends. If this thread is performing
+	 * a method invocation, a not is made that the invocation was
+	 * interruped. When an invocation is interrupted, a suspend
+	 * event must be fired when/if the invocation eventually completes.
+	 * 
+	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
 	 */
 	protected void interrupted() {
 		if (isPerformingEvaluation()) {
@@ -487,18 +601,78 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Called by JDIValue when an evaluation of
-	 * #toString times out. Causes this thread to
-	 * be automatically resumed when it returns from
-	 * its evaluation - see <code>invokeMethod</code>.
+	 * Causes this thread to be automatically resumed when
+	 * it returns from its current invocation, if any.
+	 * <p>
+	 * For example, this is called by <code>JDIValue</code>
+	 * when a 'to string' evaluation times out. If the invocation
+	 * ever completes, the thread will not suspend when/if the
+	 * 'to string' evaluation completes.
+	 * </p>
+	 * 
+	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
 	 */
 	protected void abortEvaluation() {
 		fEvaluationAborted = true;
 	}
 	
 	/**
-	 * Invokes a method in this thread, creating a new instance of the given
-	 * class using the specified constructor, and returns the result.
+	 * Resets the abort flag to <code>false</code> before
+	 * an evaluation.
+	 */
+	protected void resetAbortEvaluation() {
+		fEvaluationAborted = false;
+	}
+	
+	/**
+	 * Returns whether a client asked to abort an evaluation
+	 * while performing a method invocation.
+	 * 
+	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
+	 */
+	protected boolean wasEvaluationAborted() {
+		return fEvaluationAborted;
+	}
+	
+	/**
+	 * Invokes a constructor in this thread, creating a new instance of the given
+	 * class, and returns the result as an object reference.
+	 * This thread is left suspended after the invocation
+	 * is complete.
+	 * <p>
+	 * Method invocations cannot be nested. That is, this method must
+	 * return before another call to this method can be made. This
+	 * method does not return until the invocation is complete.
+	 * Breakpoints can suspend a method invocation, and it is possible
+	 * that an invocation will not complete due to an infinite loop
+	 * or deadlock.
+	 * </p>
+	 * <p>
+	 * Stack frames are preserved during method invocations, unless
+	 * a timeout occurrs. Athough this thread's state is updated to
+	 * running while performing an evalutaion, no debug events are
+	 * fired unless this invocation is interrupted by a breakpoint,
+	 * or the invocation times out.
+	 * </p>
+	 * <p>
+	 * When performing an invocation, the communication timeout with
+	 * the target VM is set to infinite, as the invocation may not 
+	 * complete in a timely fashion, if at all. The timeout value
+	 * is reset to its original value when the invocation completes.
+	 * </p>
+	 * 
+	 * @param receiverClass the class in the target representing the receiver
+	 * 	of the 'new' message send
+	 * @param constructor the underlying constructor to be invoked
+	 * @param args the arguments to invoke the constructor with (an empty list
+	 *  if none) 
+	 * @return a new object reference
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected ObjectReference newInstance(ClassType receiverClass, Method constructor, List args) throws DebugException {
 		if (fInEvaluation) {
@@ -510,11 +684,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
 			setRunning(true);
-			fInEvaluation = true;
+			setPerformingEvaluation(true);
 			preserveStackFrames();
 			resetInterrupted();
 			startCollapseTimer();
-			result= receiverClass.newInstance(fThread, constructor, args, ClassType.INVOKE_SINGLE_THREADED);
+			result= receiverClass.newInstance(getUnderlyingThread(), constructor, args, ClassType.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
 		} catch (ClassNotLoadedException e) {
@@ -532,8 +706,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * An invocation failed. Restore the JDI timeout value and
-	 * handle the exception.
+	 * Called when an invocation fails. Performs cleanup
+	 * and throws an exception.
+	 * 
+	 * @param e the exception that caused the failure
+	 * @param restoreTimeout the communication timeout value,
+	 * 	in milliseconds, that should be reset
+	 * @see #invokeComplete(int)
+	 * @exception DebugException.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected void invokeFailed(Throwable e, int restoreTimeout) throws DebugException {
 		invokeComplete(restoreTimeout);
@@ -541,18 +726,29 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Update state when invocation is complete. Restore
-	 * the orginal timeout value for JDI requests.
+	 * Called when a method invocation has returned, successfully
+	 * or not. This method performs cleanup:<ul>
+	 * <li>Stops the frame collapse timer</li>
+	 * <li>Resets the state of this thread to suspended</li>
+	 * <li>Restores the communication timeout value</li>
+	 * <li>Computes the new set of stack frames for this thread</code>
+	 * <li>Fires a suspend event, iff the invocation was interrupted</code>
+	 * </ul>
+	 * 
+	 * @param restoreTimeout the communication timeout value,
+	 * 	in milliseconds, that should be reset
+	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
+ 	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected void invokeComplete(int restoreTimeout) {
 		stopCollapseTimer();
 		boolean interrupted= wasInterrupted();
 		setRunning(false);
-		fInEvaluation = false;
+		setPerformingEvaluation(false);
 		setRequestTimeout(restoreTimeout);
 		// update preserved stack frames
 		try {
-			getStackFrames0();
+			computeStackFrames();
 		} catch (DebugException e) {
 			logError(e);
 		}
@@ -563,6 +759,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	/**
 	 * Sets the timeout interval for jdi requests in milliseconds
+	 * 
+	 * @param timeout the communication timeout, in milliseconds
 	 */
 	protected void setRequestTimeout(int timeout) {
 		VirtualMachine vm = getVM();
@@ -574,6 +772,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * Returns the timeout interval for jdi requests in millieseconds,
 	 * or -1 if not supported
+	 * 
+	 * @return timeout value, in milliseconds, or -1 if not supported
 	 */
 	protected int getRequestTimeout() {
 		VirtualMachine vm = getVM();
@@ -584,7 +784,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * @see IDebugElement
+	 * @see IThread#getName()
 	 */
 	public String getName() throws DebugException {
 		if (fName == null) {
@@ -599,7 +799,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IThread
+	 * @see IThread#getPriority
 	 */
 	public int getPriority() throws DebugException {
 		// to get the priority, we must get the value from the "priority" field
@@ -623,24 +823,23 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IThread
+	 * @see IThread#getTopStackFrame()
 	 */
 	public IStackFrame getTopStackFrame() throws DebugException {
-		if (isSuspended()) {
-			List c= getStackFrames0();
-			if (c.isEmpty()) {
-				return null;
-			} else {
-				return (IStackFrame) c.get(0);
-			}
-		} else {
+		List c= computeStackFrames();
+		if (c.isEmpty()) {
 			return null;
+		} else {
+			return (IStackFrame) c.get(0);
 		}
 	}
 
 	/**
-	 * Suspend this thread for the given breakpoint. If notify equals <code>true</code>,
-	 * send notification of the change. Otherwise, do not.
+	 * A breakpoint has suspended execution of this thread.
+	 * Aborts any step currently in process and fires a
+	 * suspend event.
+	 * 
+	 * @param breakpoint the breakpoint that caused the suspend
 	 */
 	protected void handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
 		abortStep();
@@ -650,28 +849,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#isStepping()
 	 */
 	public boolean isStepping() {
 		return getPendingStepHandler() != null;
 	}
 
 	/**
-	 * @see IStep
+	 * @see ISuspendResum#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return !fRunning && !fTerminated;
 	}
 
 	/**
-	 * @see IJavaThread
+	 * @see IJavaThread#isSystemThread()
 	 */
 	public boolean isSystemThread() {
 		return fIsSystemThread;
 	}
 
 	/**
-	 * @see IJavaThread
+	 * @see IJavaThread#getThreadGroupName()
 	 */
 	public String getThreadGroupName() throws DebugException {
 		ThreadGroupReference tgr= getUnderlyingThreadGroup();
@@ -687,14 +886,23 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see ITerminate
+	 * @see ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return fTerminated;
 	}
+	
+	/**
+	 * Sets whether this thread is terminated
+	 * 
+	 * @param terminated whether this thread is terminated
+	 */
+	protected void setTerminated(boolean terminated) {
+		fTerminated= terminated;
+	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
 		if (!isSuspended()) {
@@ -704,7 +912,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setRunning(true);
 			disposeStackFrames();
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
-			fThread.resume();
+			getUnderlyingThread().resume();
 		} catch (RuntimeException e) {
 			setRunning(false);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
@@ -715,7 +923,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * Sets whether this thread is currently executing.
 	 * When set to <code>true</code>, this thread's current
-	 * breakpoint is cleared. When set to <code>false</code>
+	 * breakpoint is cleared. When set to <code>false</code>,
 	 * a note is made that this thread has been interrupted.
 	 * 
 	 * @param running whether this thread is executing
@@ -732,30 +940,35 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * Preserves stack frames to be used on the next suspend event.
 	 * Iterates through all current stack frames, setting their
-	 * state as invalid. This is done when this thread is resumed,
-	 * but we want to re-use stack frames when it later suspends.
+	 * state as invalid. This method should be called before this thread
+	 * is resumed, when stack frames are to be re-used when it later
+	 * suspends.
+	 * 
+	 * @see computeStackFrames()
 	 */
 	protected void preserveStackFrames() {
-		if (fStackFrames != null) {
-			fRefreshChildren = true;
-			Iterator frames = fStackFrames.iterator();
-			while (frames.hasNext()) {
-				((JDIStackFrame)frames.next()).invalidateVariables();
-			}
+		fRefreshChildren = true;
+		Iterator frames = fStackFrames.iterator();
+		while (frames.hasNext()) {
+			((JDIStackFrame)frames.next()).invalidateVariables();
 		}
 	}
 
 	/**
 	 * Disposes stack frames, to be completely re-computed on
-	 * the next suspend event.
+	 * the next suspend event. This method should be called before
+	 * this thread is resumed when stack frames are not to be re-used
+	 * on the next suspend.
+	 * 
+	 * @see computeStackFrames()
 	 */
 	protected void disposeStackFrames() {
-		setStackFrames(Collections.EMPTY_LIST);
+		fStackFrames= Collections.EMPTY_LIST;
 		fRefreshChildren = true;
 	}
 	
 	/**
-	 * @see IStep
+	 * @see IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
 		if (!canStepInto()) {
@@ -766,7 +979,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
 		if (!canStepOver()) {
@@ -777,7 +990,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#stepReturn()
 	 */
 	public void stepReturn() throws DebugException {
 		if (!canStepReturn()) {
@@ -788,13 +1001,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
 		try {
 			// Abort any pending step request
 			abortStep();
-			fThread.suspend();
+			getUnderlyingThread().suspend();
 			setRunning(false);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (RuntimeException e) {
@@ -804,14 +1017,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see ITerminate
+	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
 
 		ObjectReference threadDeath= ((JDIDebugTarget) getDebugTarget()).getThreadDeathInstance();
 		if (threadDeath != null) {
 			try {
-				fThread.stop(threadDeath);
+				getUnderlyingThread().stop(threadDeath);
 			} catch (InvalidTypeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			} catch (RuntimeException e) {
@@ -828,9 +1041,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * Replaces the StackFrame objects in the old frames list with the objects
-	 * from the new frames list. StackFrames are invalid after a resume or step
-	 * and must be replaced with the new objects.
+	 * Replaces the underlying stack frame objects in the preserved frames
+	 * list with the current underlying stack frames.
+	 * 
+	 * @param newFrames list of current underlying <code>StackFrame</code>s.
+	 * 	Frames from this list are assigned to the underlying frames in
+	 *  the <code>oldFrames</code> list.
+	 * @param offset the offset in the lists at which to start replacing
+	 *  the old underlying frames
+	 * @param oldFrames list of preserved frames, of type <code>JDIStackFrame</code>
+	 * @param length the number of frames to replace
 	 */
 	protected void updateStackFrames(List newFrames, int offset, List oldFrames, int length) throws DebugException {
 		for (int i= 0; i < length; i++) {
@@ -842,12 +1062,30 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 
 	/**
 	 * Drops to the given stack frame
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected void dropToFrame(IStackFrame frame) throws DebugException {
 		StepHandler handler = new DropToFrameHandler(frame);
 		handler.step();
 	}
-
+	
+	/**
+	 * Steps until the specified stack frame is the top frame. Provides
+	 * ability to step over/return in the non-top stack frame.
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
 	protected void stepToFrame(IStackFrame frame) throws DebugException {
 		if (!canStepReturn()) {
 			return;
@@ -867,7 +1105,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see IJavaThread
+	 * @see IJavaThread#findVariable(String)
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
@@ -884,9 +1122,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * Evaluates the snippet using this thread (no stack frame context)
-	 *
-	 * @see IJavaThread
+	 * @see IJavaEvaluation#evaluate(String, IJavaEvaluationListener, IJavaProject)
 	 */
 	public void evaluate(String snippet, IJavaEvaluationListener listener, IJavaProject project) throws DebugException {
 		IEvaluationContext underlyingContext = ((JDIDebugTarget)getDebugTarget()).getEvaluationContext(project);
@@ -894,8 +1130,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 *
-	 * @see IJavaThread
+	 * @see IJavaEvaluation#evaluate(String, IJavaEvaluationListener, IEvaluationContext)
 	 */
 	public void evaluate(String snippet, IJavaEvaluationListener listener, IEvaluationContext evaluationContext) throws DebugException {
 		verifyEvaluation(evaluationContext);
@@ -903,6 +1138,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		context.evaluate(snippet, listener);
 	}
 	
+	/**
+	 * Verifies this thread is in a valid state to perform an evaluation,
+	 * and throws an exception if not.
+	 * 
+	 * @exception DebugException if not in a valid state for an evaluation. 
+	 *  Reasons include:
+	 * <ul>
+	 * <li>This thread is already performing an evaluation</li>
+	 * <li>The evaluation project context does not have a built state</li>
+	 * <li>This thread was not suspended by a breakpoint or step request.
+	 * 	When a thread has been suspended by an explicit call to <code>suspend</code>,
+	 *  it is not in a state that allows evaluations to be performed.</li>
+	 * </ul>
+	 */
 	protected void verifyEvaluation(IEvaluationContext evaluationContext) throws DebugException {
 		if (fInEvaluation) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations_3"), null); //$NON-NLS-1$
@@ -916,12 +1165,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * @see IJavaEvaluate
+	 * @see IJavaEvaluate#canPerformEvaluation()
 	 */
 	public boolean canPerformEvaluation() {
 		return isSuspended() && !fInEvaluation && fEventSuspend;
 	}
 	
+	/**
+	 * When a thread is disposed, its timer thread is disposed.
+	 */
 	protected void dispose() {
 		if (fTimer != null) {
 			fTimer.dispose();
@@ -943,23 +1195,45 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	/**
 	 * Notification this thread has terminated - update state
+	 * and fire a termiante event.
 	 */
 	protected void terminated() {
-		fTerminated= true;
-		fRunning= false;
+		setTerminated(true);
+		setRunning(false);
 		dispose();		
 		fireTerminateEvent();
 	}
 	
 	/** 
-	 * Returns this thread's underlying thread reference
+	 * Returns this thread on the underlying VM which this
+	 * model thread is a proxy to.
+	 * 
+	 * @return underlying thread
 	 */
 	protected ThreadReference getUnderlyingThread() {
 		return fThread;
 	}
 	
+	/**
+	 * Sets the underlying thread that this model object
+	 * is a proxy to.
+	 * 
+	 * @param thread underlying thread on target VM
+	 */
+	protected void setUnderlyingThread(ThreadReference thread) {
+		fThread = thread;
+	}
+	
 	/** 
 	 * Returns this thread's underlying thread group
+	 * 
+	 * @return thread group
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	protected ThreadGroupReference getUnderlyingThreadGroup() throws DebugException {
 		if (fThreadGroup == null) {
@@ -977,6 +1251,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	/**
 	 * Returns this thread's timer.
+	 * 
+	 * @return timer
 	 */
 	private Timer getTimer() {
 		if (fTimer == null) {
@@ -986,7 +1262,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * An action has timed out. Dispose stack frames.
+	 * An action has timed out. Stack frames are
+	 * disposed and a change event is fired.
 	 */
 	public void timeout() {
 		System.out.println("timeout");
@@ -1000,9 +1277,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * stack frames are collapsed.
 	 */
 	protected void startCollapseTimer() {
-		getTimer().start(this, 3000);
+		getTimer().start(this, COLLAPSE_TIMEOUT);
 	}
 	
+	/**
+	 * Stops the current timer to cancel a pending
+	 * stack frame collapse.
+	 */
 	protected void stopCollapseTimer() {
 		getTimer().stop();
 	}
@@ -1016,6 +1297,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected boolean isPerformingEvaluation() {
 		return fInEvaluation;
+	}
+	
+	/**
+	 * Sets whether this thread is currently performing
+	 * an evaluation.
+	 * 
+	 * @param evaluating whether this thread is currently
+	 *  performing an evaluation
+	 */
+	protected void setPerformingEvaluation(boolean evaluating) {
+		fInEvaluation= evaluating;
 	}
 	
 	/**
@@ -1311,8 +1603,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * </ul>
 		 */
 		protected StepToFrameHanlder(IStackFrame frame) throws DebugException {
-			List frames = getStackFrames0();
-			setRemainingFrames(frames.size() - getStackFrames0().indexOf(frame));
+			List frames = computeStackFrames();
+			setRemainingFrames(frames.size() - frames.indexOf(frame));
 		}
 		
 		/**
@@ -1423,7 +1715,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * </ul>
 		 */		
 		protected DropToFrameHandler(IStackFrame frame) throws DebugException {
-			List frames = getStackFrames0();
+			List frames = computeStackFrames();
 			setFramesToDrop(frames.indexOf(frame));
 		}
 		
