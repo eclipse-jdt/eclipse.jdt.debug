@@ -6,13 +6,11 @@ package org.eclipse.jdt.internal.debug.ui;
  */
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.ILaunchWizard;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLauncherDelegate;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -58,11 +56,6 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 			return false;
 		}
 
-		if (!lastLaunchSuccessful[0]) {
-			String string= DebugUIMessages.getString("JavaApplicationWizard.Launch_attempt_failed__{0}_1"); //$NON-NLS-1$
-			String message= MessageFormat.format(string, new String[] {fLauncher.getLabel()});
-			MessageDialog.openError(getShell(), DebugUIMessages.getString("JavaApplicationWizard.Launch_failed_2"), message); //$NON-NLS-1$
-		}
 		return lastLaunchSuccessful[0];
 	}
 
