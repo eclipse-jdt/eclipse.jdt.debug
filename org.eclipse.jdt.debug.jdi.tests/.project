@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>org.eclipse.jdt.debug</project>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
