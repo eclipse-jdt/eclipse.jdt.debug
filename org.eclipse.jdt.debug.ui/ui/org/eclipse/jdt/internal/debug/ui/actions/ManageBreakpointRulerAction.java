@@ -42,7 +42,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -169,6 +168,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 	 * @see Action#run()
 	 */
 	public void run() {
+		report(null);
 		if (fMarkers.isEmpty()) {
 			addMarker();
 		} else {
@@ -232,10 +232,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 					int start = sourceRange.getOffset();
 					int end = start + sourceRange.getLength();
 					if (offset < start || offset > end) {
-						// not in the inner type
-						IStatusLineManager manager  = getTextEditor().getEditorSite().getActionBars().getStatusLineManager();
-						manager.setErrorMessage(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[]{type.getTypeQualifiedName()})); //$NON-NLS-1$
-						Display.getCurrent().beep();
+						report(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[]{type.getTypeQualifiedName()})); //$NON-NLS-1$
 						return;
 					}
 				}
@@ -302,4 +299,17 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 		}
 	}
 	
+	protected void report(final String message) {
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
+				if (statusLine != null) {
+					statusLine.setMessage(true, message, null);
+				}
+				if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+					Display.getCurrent().beep();
+				}
+			}
+		});
+	}	
 }

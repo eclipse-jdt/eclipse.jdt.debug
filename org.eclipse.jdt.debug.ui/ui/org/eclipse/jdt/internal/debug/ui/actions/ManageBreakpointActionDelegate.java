@@ -203,6 +203,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void run(IAction action) {
 		if (getTextEditor() != null) {
+			report(null);
 			update();
 			manageBreakpoint(getTextEditor().getEditorInput());
 		}
