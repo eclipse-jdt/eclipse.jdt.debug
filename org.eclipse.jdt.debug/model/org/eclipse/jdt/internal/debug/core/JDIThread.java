@@ -441,8 +441,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 							StackFrame newTOS= (StackFrame) frames.get(0);
 							Method newMethod= getUnderlyingMethod(newTOS);
 							if (!oldMethod.equals(newMethod)) {
-								// replace top stack frame
-								fStackFrames.set(0, new JDIStackFrame(this, newTOS));
+								// remove & replace all stack frames
+								fStackFrames= createAllStackFrames();
 								// no stack frames to update
 								offset= fStackFrames.size();
 							}
