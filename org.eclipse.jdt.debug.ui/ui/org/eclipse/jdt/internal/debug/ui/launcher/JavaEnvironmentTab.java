@@ -602,6 +602,13 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	}
 
 	/**
+	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		return isValid();
+	}
+
+	/**
 	 * @see ILaunchConfigurationTab#isPageComplete()
 	 */
 	public boolean isValid() {

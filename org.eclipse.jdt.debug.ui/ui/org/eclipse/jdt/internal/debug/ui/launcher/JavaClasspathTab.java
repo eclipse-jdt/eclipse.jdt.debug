@@ -272,6 +272,13 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
+	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		return isValid();
+	}
+	
+	/**
 	 * @see ILaunchConfigurationTab#isValid()
 	 */
 	public boolean isValid() {

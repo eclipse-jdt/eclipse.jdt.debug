@@ -304,6 +304,12 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		return JavaCore.create(getWorkspaceRoot());
 	}
 
+	/**
+	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		return isValid();
+	}
 
 	/**
 	 * @see ILaunchConfigurationTab#isPageComplete()
