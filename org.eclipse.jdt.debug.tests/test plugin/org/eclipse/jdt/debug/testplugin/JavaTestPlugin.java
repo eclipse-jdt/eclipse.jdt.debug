@@ -51,7 +51,7 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 	
 	public File getFileInPlugin(IPath path) {
 		try {
-			Bundle bundle = Platform.getBundle("org.eclipse.jdt.debug.tests");
+			Bundle bundle = getDefault().getBundle();
 			URL installURL= new URL(bundle.getEntry("/"), path.toString());
 			URL localURL= Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
