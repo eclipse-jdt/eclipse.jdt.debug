@@ -26,10 +26,12 @@ import org.eclipse.jdt.debug.tests.eval.FloatAssignmentOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.FloatOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.IntAssignmentOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.IntOperatorsTests;
+import org.eclipse.jdt.debug.tests.eval.LabelTests;
 import org.eclipse.jdt.debug.tests.eval.LocalVarAssignmentTests;
 import org.eclipse.jdt.debug.tests.eval.LocalVarValueTests;
 import org.eclipse.jdt.debug.tests.eval.LongAssignmentOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.LongOperatorsTests;
+import org.eclipse.jdt.debug.tests.eval.LoopTests;
 import org.eclipse.jdt.debug.tests.eval.NestedTypeFieldValue_109;
 import org.eclipse.jdt.debug.tests.eval.NestedTypeFieldValue_134;
 import org.eclipse.jdt.debug.tests.eval.NestedTypeFieldValue_144;
@@ -90,6 +92,7 @@ import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_32_6;
 import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_1;
 import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_2;
 import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_3;
+import org.eclipse.jdt.debug.tests.eval.VariableDeclarationTests;
 import org.eclipse.jdt.debug.tests.eval.XfixOperatorsTests;
 import org.eclipse.swt.widgets.Display;
 
@@ -209,6 +212,11 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(TypeHierarchy_146_1.class));
 		
 		addTest(new TestSuite(TestsNumberLiteral.class));
+
+		addTest(new TestSuite(VariableDeclarationTests.class));
+		addTest(new TestSuite(LoopTests.class));
+		addTest(new TestSuite(LabelTests.class));
+		
 
 	}
 	
