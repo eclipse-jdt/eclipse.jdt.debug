@@ -89,13 +89,23 @@
         <separator
            name="jdtGroup">
          </separator>
+         <separator
+           name="breakpointGroup">
+         </separator>
       </menu>
+      	<action id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+  			label="%manageMethodBreakpointAction.label"
+  			icon="icons/full/obj16/brkpi_obj.gif"
+  			helpContextId="manage_method_breakpoint_action_context"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
+  			menubarPath="org.eclipse.debug.ui.DebugMenu/breakpointGroup">
+  	    </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
   			label="%ManageBreakpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
   			helpContextId="manage_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
-  			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup">
+  			menubarPath="org.eclipse.debug.ui.DebugMenu/breakpointGroup">
   	    </action>
   	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
   			label="%runToLineAction.label"
@@ -708,7 +718,7 @@
 		 	label="%manageMethodBreakpointAction.label"
 		 	helpContextId="manage_methodbreakpoint_action_context"
 		 	menubarPath="additions" 
-		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointAction"
+		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
 		 	enablesFor="1">
 	  </action>
   	</objectContribution>
@@ -719,7 +729,7 @@
   			label="%manageWatchpointAction.label"
   			helpContextId="manage_watchpoint_action_context"
   			menubarPath="additions"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointAction"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
   			enablesFor="1">
   		</action> 
     </objectContribution>
@@ -730,7 +740,7 @@
   			label="%manageWatchpointAction.label"
   			helpContextId="manage_watchpoint_action_context"
   			menubarPath="additions"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointAction"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
   			enablesFor="1">
   		</action> 
     </objectContribution>
