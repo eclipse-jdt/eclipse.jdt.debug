@@ -248,8 +248,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @return the unknown String
 	 */
 	protected String getUnknownMessage() {
-		//FIXME: NLS
-		return "<unknown>";
+		return JDIDebugModelMessages.getString("JDIDebugElement.unknown"); //$NON-NLS-1$
 	}
 	
 	/**
