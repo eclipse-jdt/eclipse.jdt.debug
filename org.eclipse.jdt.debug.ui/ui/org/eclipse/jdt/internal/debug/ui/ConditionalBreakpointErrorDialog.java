@@ -37,8 +37,8 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 		fBreakpoint= breakpoint;
 	}
 	
-	protected Control createMessageArea(Composite parent) {
-		Composite dialogArea= (Composite) super.createMessageArea(parent);
+	protected Control createDialogArea(Composite parent) {
+		Composite dialogArea= (Composite) super.createDialogArea(parent);
 		String condition= ""; //$NON-NLS-1$
 		try {
 			condition= fBreakpoint.getCondition();

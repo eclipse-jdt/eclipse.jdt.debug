@@ -45,10 +45,10 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 		}
 
 		/**
-		 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createMessageArea(org.eclipse.swt.widgets.Composite)
+		 * @see Dialog#createDialogArea(Composite)
 		 */
-		protected Control createMessageArea(Composite parent) {
-			Composite comp = (Composite)super.createMessageArea(parent);
+		protected Control createDialogArea(Composite parent) {
+			Composite comp = (Composite)super.createDialogArea(parent);
 			
 			fJRETab = new JavaJRETab();
 			fJRETab.setVMSpecificArgumentsVisible(false);

@@ -51,8 +51,8 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		setBlockOnOpen(false);
 	}
 
-	protected Control createMessageArea(Composite parent) {
-		Composite dialogArea= (Composite) super.createMessageArea(parent);
+	protected Control createDialogArea(Composite parent) {
+		Composite dialogArea= (Composite) super.createDialogArea(parent);
 		setToggleButton(createCheckButton(dialogArea, fToggleMessage));
 		getToggleButton().setSelection(fStore.getBoolean(fPreferenceKey));
 		return dialogArea;
