@@ -342,15 +342,18 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	/**
 	 * Set the default stratum used in this debug target.
 	 * 
-	 * @param stratum the new default stratum.
+	 * @param stratum the new default stratum, or <code>null</code> to indicate per-class
+	 *  default stratum
 	 * @since 3.0
 	 */
 	public void setDefaultStratum(String stratum);
 	
 	/**
-	 * Return the default stratum used in this the target.
+	 * Return the default stratum used in this the target, or <code>null</code> to indicate
+	 * a per-class default stratum.
 	 * 
-	 * @return the default stratum.
+	 * @return the default stratum, or <code>null</code> to indicate a per-class default
+	 *  stratum
 	 * @see #setDefaultStratum(String)
 	 * @since 3.0
 	 */

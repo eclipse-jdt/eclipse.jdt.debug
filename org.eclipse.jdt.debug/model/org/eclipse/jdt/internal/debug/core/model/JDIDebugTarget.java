@@ -2105,11 +2105,18 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#setDefaultStratum()
 	 */
 	public void setDefaultStratum(String stratum) {
-		getVM().setDefaultStratum(stratum);
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+		    vm.setDefaultStratum(stratum);
+		}
 	}
 	
 	public String getDefaultStratum() {
-		return getVM().getDefaultStratum();
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+		    return vm.getDefaultStratum();
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
