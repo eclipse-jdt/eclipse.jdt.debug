@@ -35,7 +35,7 @@ import org.eclipse.jdt.internal.core.JavaElement;
  */
 public class CompilationUnitDelta {
 	
-	private static final boolean DEBUG= false;
+	private static final boolean DEBUG= true;
 	
 	private static class SimpleJavaElement {
 		
@@ -190,6 +190,7 @@ public class CompilationUnitDelta {
 		};
 		
 		fRoot= (SimpleJavaElement) differencer.findDifferences(false, null, null, null, oldStructure, newStructure);
+		fHasHistory= (fRoot != null); // if no changes pretend that we had no history
 
 		if (DEBUG) {
 			if (fRoot != null)
