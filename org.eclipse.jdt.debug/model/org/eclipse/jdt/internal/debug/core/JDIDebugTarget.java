@@ -404,7 +404,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				initializeSuspendOnUncaughtExceptionBreakpoint();
 				return;
 			}
-			if (breakpoint.isEnabled() != enable) {
+			if (breakpoint != null && breakpoint.isEnabled() != enable) {
 				breakpoint.setEnabled(enable);
 				breakpointChanged(breakpoint, null);
 			}
