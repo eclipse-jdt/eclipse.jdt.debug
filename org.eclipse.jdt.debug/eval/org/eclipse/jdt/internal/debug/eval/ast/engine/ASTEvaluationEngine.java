@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,7 +38,6 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
-import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -48,7 +46,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
-
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -71,32 +68,32 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		fDebugTarget = debugTarget;
 	}
 
-	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener, int, boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String, org.eclipse.jdt.debug.core.IJavaStackFrame, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
 		evaluateExpression(expression, frame, listener, evaluationDetail, hitBreakpoints);
 	}
 	
-	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener, int, boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String, org.eclipse.jdt.debug.core.IJavaObject, org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
 		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
-	/**
-	 * @see IAstEvaluationEngine#evaluateExpression(ICompiledExpression, IJavaStackFrame, IEvaluationListener, int, boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org.eclipse.jdt.debug.eval.ICompiledExpression, org.eclipse.jdt.debug.core.IJavaStackFrame, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
 		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, evaluationDetail, hitBreakpoints);
 	}
 
-	/**
-	 * @see IAstEvaluationEngine#evaluateExpression(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener, int, boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org.eclipse.jdt.debug.eval.ICompiledExpression, org.eclipse.jdt.debug.core.IJavaObject, org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
@@ -121,8 +118,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 	}
 
-	/**
-	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaStackFrame)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression(java.lang.String, org.eclipse.jdt.debug.core.IJavaStackFrame)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) {
 		IJavaProject javaProject = getJavaProject();
@@ -195,9 +192,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	// ******
 	
-
-	/**
-	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression(java.lang.String, org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
 		try {
@@ -281,22 +277,22 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		return visitor.getInstructions();
 	}
 
-	/**
-	 * @see IEvaluationEngine#getJavaProject()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#getJavaProject()
 	 */
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
 
-	/**
-	 * @see IEvaluationEngine#getDebugTarget()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#getDebugTarget()
 	 */
 	public IJavaDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
 
-	/**
-	 * @see IEvaluationEngine#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
 	}
