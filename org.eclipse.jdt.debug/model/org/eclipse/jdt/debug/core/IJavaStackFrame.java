@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -412,6 +412,24 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	 * @since 2.0
 	 */
 	public boolean wereLocalsAvailable();
+	
+	/**
+	 * Returns whether the method associated with this stack frame is
+	 * a varargs method.
+	 * 
+	 * @return <code>true</code> if the method associated with this
+	 * stack frame is a varargs method, <code>false</code> otherwise.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 * @since 3.0
+	 */
+	public boolean isVarargs() throws DebugException;
 }
 
 
