@@ -80,14 +80,14 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 	}
 	
 	/**
-	 * @return Returns a human-readable description of this connector and its purpose.
+	 * @return Returns a short identifier for the connector.
 	 */	
 	public String name() {
 		return "com.sun.jdi.CommandLineLaunch";
 	}
 	
 	/**
-	 * @return Returns a short identifier for the connector.
+	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
 		return "Launches target using Sun Java VM command line and attaches to it.";

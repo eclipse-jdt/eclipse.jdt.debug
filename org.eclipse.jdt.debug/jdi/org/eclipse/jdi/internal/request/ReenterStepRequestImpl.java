@@ -31,7 +31,7 @@ public class ReenterStepRequestImpl extends StepRequestImpl implements org.eclip
 	/**
 	 * @return Returns JDWP constant for step depth.
 	 */
-	public int threadStepDepthJDWP() {
+	public int threadStepDepthJDWP(int threadStepDepth) {
 		return STEP_DEPTH_REENTER_JDWP_HCR;
 	}
 

@@ -61,12 +61,12 @@ public abstract class ConnectorImpl implements Connector {
 	}
 
 	/**
-	 * @return Returns a short identifier for the connector.
+	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public abstract String description();
 	
 	/**
-	 * @return Returns a human-readable description of this connector and its purpose.
+	 * @return Returns a short identifier for the connector.
 	 */	
 	public abstract String name();
 	

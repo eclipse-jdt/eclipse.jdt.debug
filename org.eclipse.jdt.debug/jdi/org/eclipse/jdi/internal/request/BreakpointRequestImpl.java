@@ -32,7 +32,7 @@ public class BreakpointRequestImpl extends EventRequestImpl implements Breakpoin
 	 * @return Returns location of Breakpoint Request.
 	 */
 	public Location location() {
-		return fLocationFilter;
+		return (Location)fLocationFilters.get(0);
 	}
 	
 	/**

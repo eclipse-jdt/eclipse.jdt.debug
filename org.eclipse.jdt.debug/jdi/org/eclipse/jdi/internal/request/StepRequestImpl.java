@@ -38,21 +38,21 @@ public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	 * @return Returns the relative call stack limit.
 	 */
 	public int depth() {
-		return fThreadStepDepth;
+		return ((EventRequestImpl.ThreadStepFilter)fThreadStepFilters.get(0)).fThreadStepDepth;
 	}
 	
 	/**
 	 * @return Returns the size of each step.
 	 */
 	public int size() {
-		return fThreadStepSize;
+		return ((EventRequestImpl.ThreadStepFilter)fThreadStepFilters.get(0)).fThreadStepSize;
 	}
 	
 	/**
 	 * @return Returns ThreadReference of thread in which to step.
 	 */
 	public ThreadReference thread() {
-		return fThreadStepFilter;
+		return ((EventRequestImpl.ThreadStepFilter)fThreadStepFilters.get(0)).fThread;
 	}
 
 	/**

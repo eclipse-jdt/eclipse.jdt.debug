@@ -59,14 +59,14 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 	}
 	
 	/**
-	 * @return Returns a human-readable description of this connector and its purpose.
+	 * @return Returns a short identifier for the connector.
 	 */	
 	public String name() {
 		return "com.sun.jdi.RawCommandLineLaunch";
 	}
 	
 	/**
-	 * @return Returns a short identifier for the connector.
+	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
 		return "Launches target using user-specified command line and attaches to it.";

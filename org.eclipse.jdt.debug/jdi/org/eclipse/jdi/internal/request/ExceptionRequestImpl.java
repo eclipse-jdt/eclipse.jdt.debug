@@ -32,21 +32,21 @@ public class ExceptionRequestImpl extends EventRequestImpl implements ExceptionR
 	 * Returns exception type for which exception events are requested.
 	 */
 	public ReferenceType exception() {
-		return fExceptionFilter;
+		return ((EventRequestImpl.ExceptionFilter)fExceptionFilters.get(0)).fException;
 	}
 	
 	/**
 	 * @return Returns true if caught exceptions will be reported.
 	 */
 	public boolean notifyCaught() {
-		return fNotifyCaught;
+		return ((EventRequestImpl.ExceptionFilter)fExceptionFilters.get(0)).fNotifyCaught;
 	}
    
 	/**
 	 * @return Returns true if uncaught exceptions will be reported.
 	 */
 	public boolean notifyUncaught() {
-		return fNotifyUncaught;
+		return ((EventRequestImpl.ExceptionFilter)fExceptionFilters.get(0)).fNotifyUncaught;
 	}
 
 	/**

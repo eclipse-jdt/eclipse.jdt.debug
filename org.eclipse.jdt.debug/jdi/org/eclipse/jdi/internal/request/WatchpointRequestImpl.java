@@ -31,6 +31,6 @@ public abstract class WatchpointRequestImpl extends EventRequestImpl implements 
 	 * @return Returns field for which Watchpoint requests is issued.
 	 */
 	public Field field() {
-		return fFieldFilter;
+		return (Field)fFieldFilters.get(0);
 	}
 }

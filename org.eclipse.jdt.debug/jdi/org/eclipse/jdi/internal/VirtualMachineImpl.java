@@ -149,7 +149,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		fCachedReftypes.put(mirror.getRefTypeID(), mirror);
 		// tbd: It is now yet possible to only ask for unload events for
 		// classes that we know of due to a limitation in the J9 VM.
-		// eventRequestManagerImpl().enableInternalClasUnloadEvent(refType);
+		// eventRequestManagerImpl().enableInternalClasUnloadEvent(mirror);
 	}
 	
 	/** 

@@ -55,9 +55,6 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	private static HashMap fSuspendPolicyMap = null;
 	private static HashMap fModifierKindMap = null;
 
-	/** Value for counfilter if not set. */	
-	protected static final int COUNTFILTER_NONE = -1;
-	
 	/** Flag that indicates the request was generated from inside of this JDI implementation. */
 	private boolean fGeneratedInside = false;
 	
@@ -72,42 +69,32 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	/**
 	 * Modifiers.
 	 */	
-	/** Limits the requested event to be reported at most once after a given number of occurrences. */
-	protected int fCountFilter = COUNTFILTER_NONE;
+	/** Count filters. */
+	protected ArrayList fCountFilters;
 	
-	/** Thread filter. */
-	protected ThreadReferenceImpl fThreadFilter = null;
+	/** Thread filters. */
+	protected ArrayList fThreadFilters = null;
 	
-	/** Class filter. */
-	protected String fClassFilter = null;
+	/** Class filters. */
+	protected ArrayList fClassFilters = null;
 	
-	/** Class filter. */
-	protected ReferenceTypeImpl fClassFilterRef = null;
+	/** Class filters. */
+	protected ArrayList fClassFilterRefs = null;
 	
-	/** Class Exclusion filter. */
-	protected String fClassExclusionFilter = null;
+	/** Class Exclusion filters. */
+	protected ArrayList fClassExclusionFilters = null;
 	
-	/** Location filter. */
-	protected LocationImpl fLocationFilter = null;
+	/** Location filters. */
+	protected ArrayList fLocationFilters = null;
 	
-	/** If non-null, specifies that exceptions which are instances of fExceptionFilterRef will be reported. */
-	protected boolean fHasExceptionFilter = false;
-	/** If non-null, specifies that exceptions which are instances of fExceptionFilterRef will be reported. */
-	protected ReferenceTypeImpl fExceptionFilter = null;
-	/** If true, caught exceptions will be reported. */
-	protected boolean fNotifyCaught = false;
-	/** If true, uncaught exceptions will be reported. */
-	protected boolean fNotifyUncaught = false;
+	/** Exception filters. */
+	protected ArrayList fExceptionFilters = null;
 	
-	/** Restricts reported events to those that occur for a given field. */
-	protected FieldImpl fFieldFilter = null;
+	/** Field filters. */
+	protected ArrayList fFieldFilters = null;
 	
-	/** ThreadReference of thread in which to step. */
-	protected ThreadReferenceImpl fThreadStepFilter = null;
-	/** Size of each step. */
-	protected int fThreadStepSize;
-	/** Relative call stack limit. */
-	protected int fThreadStepDepth;
+	/** Thread step filters. */
+	protected ArrayList fThreadStepFilters = null;
 
 	/**
 	 * Creates new EventRequest.
@@ -280,7 +267,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 */
 	public void addCountFilter(int count) throws InvalidRequestStateException {
 		checkDisabled();
-		fCountFilter = count;
+		if (fCountFilters == null)
+			fCountFilters = new ArrayList();
+		
+		fCountFilters.add(new Integer(count));
 	}
 	
 	/**
@@ -291,7 +281,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		checkDisabled();
 		if (threadFilter.isCollected())
 			throw new ObjectCollectedException();
-		fThreadFilter = (ThreadReferenceImpl)threadFilter;
+		if (fThreadFilters == null)
+			fThreadFilters = new ArrayList();
+			
+		fThreadFilters.add(threadFilter);
 	}
 
 	/**
@@ -300,7 +293,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	public void addClassFilter(ReferenceType filter) throws VMMismatchException, InvalidRequestStateException {
 		checkVM(filter);
 		checkDisabled();
-		fClassFilterRef = (ReferenceTypeImpl)filter;
+		if (fClassFilterRefs == null)
+			fClassFilterRefs = new ArrayList();
+			
+		fClassFilterRefs.add(filter);
 	}
 	
 	/**
@@ -308,7 +304,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 */
 	public void addClassFilter(String filter) throws InvalidRequestStateException {
 		checkDisabled();
-		fClassFilter = filter;
+		if (fClassFilters == null)
+			fClassFilters = new ArrayList();
+			
+		fClassFilters.add(filter);
 	}
 	
 	/**
@@ -316,7 +315,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 */
 	public void addClassExclusionFilter(String filter) throws InvalidRequestStateException {
 		checkDisabled();
-		fClassExclusionFilter = filter;
+		if (fClassExclusionFilters == null)
+			fClassExclusionFilters = new ArrayList();
+			
+		fClassExclusionFilters.add(filter);
 	}
 
    	/**
@@ -325,21 +327,28 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	public void addLocationFilter(LocationImpl location) throws VMMismatchException {
 		// Used in createBreakpointRequest.
 		checkVM(location);
-		fLocationFilter = location;
+		if (fLocationFilters == null)
+			fLocationFilters = new ArrayList();
+			
+		fLocationFilters.add(location);
 	}
 	
    	/**
 	 * Restricts reported exceptions by their class and whether they are caught or uncaught.
 	 */
 	 public void addExceptionFilter(ReferenceTypeImpl refType, boolean notifyCaught, boolean notifyUncaught) throws VMMismatchException {
-		// Used in createExceptionRequest.
-		fHasExceptionFilter = true;
 		// refType Null means report exceptions of all types.
 		if (refType != null)
 			checkVM(refType);
-		fExceptionFilter = refType;
-		fNotifyCaught = notifyCaught;
-		fNotifyUncaught = notifyUncaught;
+			
+		if (fExceptionFilters == null)
+			fExceptionFilters = new ArrayList();
+			
+		ExceptionFilter filter = new ExceptionFilter();
+		filter.fException = refType;
+		filter.fNotifyCaught = notifyCaught;
+		filter.fNotifyUncaught = notifyUncaught;
+		fExceptionFilters.add(filter);
 	}
 
    	/**
@@ -348,7 +357,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 public void addFieldFilter(FieldImpl field) throws VMMismatchException {
 		// Used in createXWatchpointRequest methods.
 		checkVM(field);
-		fFieldFilter = field;
+		if (fFieldFilters == null)
+			fFieldFilters = new ArrayList();
+			
+		fFieldFilters.add(field);
 	}
 
    	/**
@@ -359,9 +371,15 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 	checkVM(thread);
 		if (thread.isCollected())
 			throw new ObjectCollectedException();
-	 	fThreadStepFilter = thread;
-	 	fThreadStepSize = size;
-	 	fThreadStepDepth = depth;
+			
+		if (fThreadStepFilters == null)
+			fThreadStepFilters = new ArrayList();
+			
+		ThreadStepFilter filter = new ThreadStepFilter();
+	 	filter.fThread = thread;
+	 	filter.fThreadStepSize = size;
+	 	filter.fThreadStepDepth = depth;
+	 	fThreadStepFilters.add(filter);
 	 }
 
 	/**
@@ -372,7 +390,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 * @return Returns JDWP constant for suspend policy.
 	 */
 	public byte suspendPolicyJDWP() {
-		switch(fSuspendPolicy) {
+		switch (fSuspendPolicy) {
 			case SUSPEND_NONE:
 				return SUSPENDPOL_NONE_JDWP;
 			case SUSPEND_EVENT_THREAD:
@@ -387,22 +405,22 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	/**
 	 * @return Returns JDWP constant for step size.
 	 */
-	public int threadStepSizeJDWP() {
-		switch (fThreadStepSize) {
+	public int threadStepSizeJDWP(int threadStepSize) {
+		switch (threadStepSize) {
 			case StepRequest.STEP_MIN:
 				return STEP_SIZE_MIN_JDWP;
 			case StepRequest.STEP_LINE:
 				return STEP_SIZE_LINE_JDWP;
 			default:
-				throw new InternalException("Invalid step size encountered: " + fThreadStepSize);
+				throw new InternalException("Invalid step size encountered: " + threadStepSize);
 		}
 	}
 	
 	/**
 	 * @return Returns JDWP constant for step depth.
 	 */
-	public int threadStepDepthJDWP() {
-		switch (fThreadStepDepth) {
+	public int threadStepDepthJDWP(int threadStepDepth) {
+		switch (threadStepDepth) {
 			case StepRequest.STEP_INTO:
 				return STEP_DEPTH_INTO_JDWP;
 			case StepRequest.STEP_OVER:
@@ -410,7 +428,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			case StepRequest.STEP_OUT:
 				return STEP_DEPTH_OUT_JDWP;
 			default:
-				throw new InternalException("Invalid step depth encountered: " + fThreadStepDepth);
+				throw new InternalException("Invalid step depth encountered: " + threadStepDepth);
 		}
 	}
 
@@ -423,7 +441,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 * @return Returns true if modifier count is set.
 	 */
 	private boolean modifierCountIsSet() {
-		return (fCountFilter >= 0 );
+		return (fCountFilters != null);
 	}
 
 	/**
@@ -432,24 +450,24 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	protected int modifierCount() {
 		int count =  0;
 		
-		if (modifierCountIsSet())
-			count++;
-		if (fThreadFilter != null)
-			count++;
-		if (fClassFilterRef != null)
-			count++;
-		if (fClassFilter != null)
-			count++;
-		if (fClassExclusionFilter != null)
-			count++;
-		if (fLocationFilter != null)
-			count++;
-		if (fHasExceptionFilter)
-			count++;
-		if (fFieldFilter != null)
-			count++;
-		if (fThreadStepFilter != null)
-			count++;
+		if (fCountFilters != null)
+			count += fCountFilters.size();
+		if (fThreadFilters != null)
+			count += fThreadFilters.size();
+		if (fClassFilterRefs != null)
+			count += fClassFilterRefs.size();
+		if (fClassFilters != null)
+			count += fClassFilters.size();
+		if (fClassExclusionFilters != null)
+			count += fClassExclusionFilters.size();
+		if (fLocationFilters != null)
+			count += fLocationFilters.size();
+		if (fExceptionFilters != null)
+			count += fExceptionFilters.size();
+		if (fFieldFilters != null)
+			count += fFieldFilters.size();
+		if (fThreadStepFilters != null)
+			count += fThreadStepFilters.size();
 			
 		return count;
 	}
@@ -460,49 +478,69 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	protected void writeModifiers(DataOutputStream outData) throws IOException {
 		// Note: for some reason the order of these modifiers matters when communicating with SUN's VM.
 		// It seems to expect them 'the wrong way around'.
-		if (fThreadStepFilter != null) {
-			writeByte(MODIF_KIND_STEP, "modifier", modifierKindMap(), outData);
-			fThreadStepFilter.write(this, outData);
-			writeInt(threadStepSizeJDWP(), "step size", outData);
-			writeInt(threadStepDepthJDWP(), "step depth", outData);
+		if (fThreadStepFilters != null) {
+			for (int i = 0; i < fThreadStepFilters.size(); i++) {
+				ThreadStepFilter filter = (ThreadStepFilter)fThreadStepFilters.get(i);
+				writeByte(MODIF_KIND_STEP, "modifier", modifierKindMap(), outData);
+				filter.fThread.write(this, outData);
+				writeInt(threadStepSizeJDWP(filter.fThreadStepSize), "step size", outData);
+				writeInt(threadStepDepthJDWP(filter.fThreadStepDepth), "step depth", outData);
+			}
 		}
-		if (fFieldFilter != null) {
-			writeByte(MODIF_KIND_FIELDONLY, "modifier", modifierKindMap(), outData);
-			fFieldFilter.writeWithReferenceType(this, outData);
+		if (fFieldFilters != null) {
+			for (int i = 0; i < fFieldFilters.size(); i++) {
+				writeByte(MODIF_KIND_FIELDONLY, "modifier", modifierKindMap(), outData);
+				((FieldImpl)fFieldFilters.get(i)).writeWithReferenceType(this, outData);
+			}
 		}
-		if (fHasExceptionFilter) {
-			writeByte(MODIF_KIND_EXCEPTIONONLY, "modifier", modifierKindMap(), outData);
-			if (fExceptionFilter != null)
-				fExceptionFilter.write(this, outData);
-			else
-				ReferenceTypeImpl.writeNull(this, outData);
-
-			writeBoolean(fNotifyCaught, "notify caught", outData);
-			writeBoolean(fNotifyUncaught, "notify uncaught", outData);
+		if (fExceptionFilters != null) {
+			for (int i = 0; i < fExceptionFilters.size(); i++) {
+				ExceptionFilter filter = (ExceptionFilter)fExceptionFilters.get(i);
+				writeByte(MODIF_KIND_EXCEPTIONONLY, "modifier", modifierKindMap(), outData);
+				if (filter.fException != null)
+					filter.fException.write(this, outData);
+				else
+					ReferenceTypeImpl.writeNull(this, outData);
+	
+				writeBoolean(filter.fNotifyCaught, "notify caught", outData);
+				writeBoolean(filter.fNotifyUncaught, "notify uncaught", outData);
+			}
 		}
-		if (fLocationFilter != null) {
-			writeByte(MODIF_KIND_LOCATIONONLY, "modifier", modifierKindMap(), outData);
-			fLocationFilter.write(this, outData);
+		if (fLocationFilters != null) {
+			for (int i = 0; i < fLocationFilters.size(); i++) {
+				writeByte(MODIF_KIND_LOCATIONONLY, "modifier", modifierKindMap(), outData);
+				((LocationImpl)fLocationFilters.get(i)).write(this, outData);
+			}
 		}
-		if (fClassExclusionFilter != null) {
-			writeByte(MODIF_KIND_CLASSEXCLUDE, "modifier", modifierKindMap(), outData);
-			writeString(fClassExclusionFilter, "class excl. filter", outData);
+		if (fClassExclusionFilters != null) {
+			for (int i = 0; i < fClassExclusionFilters.size(); i++) {
+				writeByte(MODIF_KIND_CLASSEXCLUDE, "modifier", modifierKindMap(), outData);
+				writeString((String)fClassExclusionFilters.get(i), "class excl. filter", outData);
+			}
 		}
-		if (fClassFilter != null) {
-			writeByte(MODIF_KIND_CLASSMATCH, "modifier", modifierKindMap(), outData);
-			writeString(fClassFilter, "class filter", outData);
+		if (fClassFilters != null) {
+			for (int i = 0; i < fClassFilters.size(); i++) {
+				writeByte(MODIF_KIND_CLASSMATCH, "modifier", modifierKindMap(), outData);
+				writeString((String)fClassFilters.get(i), "class filter", outData);
+			}
 		}
-		if (fClassFilterRef != null) {
-			writeByte(MODIF_KIND_CLASSONLY, "modifier", modifierKindMap(), outData);
-			fClassFilterRef.write(this, outData);
+		if (fClassFilterRefs != null) {
+			for (int i = 0; i < fClassFilterRefs.size(); i++) {
+				writeByte(MODIF_KIND_CLASSONLY, "modifier", modifierKindMap(), outData);
+				((ReferenceTypeImpl)fClassFilterRefs.get(i)).write(this, outData);
+			}
 		}
-		if (fThreadFilter != null) {
-			writeByte(MODIF_KIND_THREADONLY, "modifier", modifierKindMap(), outData);
-			fThreadFilter.write(this, outData);
+		if (fThreadFilters != null) {
+			for (int i = 0; i < fThreadFilters.size(); i++) {
+				writeByte(MODIF_KIND_THREADONLY, "modifier", modifierKindMap(), outData);
+				((ThreadReferenceImpl)fThreadFilters.get(i)).write(this, outData);
+			}
 		}
-		if (modifierCountIsSet()) {
-			writeByte(MODIF_KIND_COUNT, "modifier", modifierKindMap(), outData);
-			writeInt(fCountFilter, "count filter", outData);
+		if (fCountFilters != null) {
+			for (int i = 0; i < fCountFilters.size(); i++) {
+				writeByte(MODIF_KIND_COUNT, "modifier", modifierKindMap(), outData);
+				writeInt(((Integer)fCountFilters.get(i)).intValue(), "count filter", outData);
+			}
 		}
 	}
 
@@ -580,4 +618,22 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 	getConstantMaps();
 	 	return fModifierKindMap;
 	 }
+
+	class ExceptionFilter {
+		/** If non-null, specifies that exceptions which are instances of fExceptionFilterRef will be reported. */
+		ReferenceTypeImpl fException = null;
+		/** If true, caught exceptions will be reported. */
+		boolean fNotifyCaught = false;
+		/** If true, uncaught exceptions will be reported. */
+		boolean fNotifyUncaught = false;
+	}
+	
+	class ThreadStepFilter {
+		/** ThreadReference of thread in which to step. */
+		protected ThreadReferenceImpl fThread = null;
+		/** Size of each step. */
+		protected int fThreadStepSize;
+		/** Relative call stack limit. */
+		protected int fThreadStepDepth;
+	}
 }
