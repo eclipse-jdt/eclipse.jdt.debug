@@ -271,15 +271,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
-	 * Returns the list of threads contained in this debug target.
-	 * 
-	 * @return list of threads
-	 */
-	private ArrayList getThreadList() {
-		return fThreads;
-	}
-	
-	/**
 	 * Returns an iterator over the collection of threads. The
 	 * returned iterator is made on a copy of the thread list
 	 * so that it is thread safe. This method should always be
@@ -289,10 +280,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private Iterator getThreadIterator() {
 		List threadList;
 		synchronized (fThreads) {
-			threadList= (List) getThreadList().clone();
+			threadList= (List) fThreads.clone();
 		}
-		Iterator threads = threadList.iterator();
-		return threads;
+		return threadList.iterator();
 	}
 	
 	/**
@@ -462,7 +452,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return null;
 		}
 		synchronized (fThreads) {
-			getThreadList().add(jdiThread);
+			fThreads.add(jdiThread);
 		}
 		jdiThread.fireCreationEvent();
 		return jdiThread;
@@ -473,7 +463,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public IThread[] getThreads() {
 		synchronized (fThreads) {
-			return (IThread[])getThreadList().toArray(new IThread[0]);
+			return (IThread[])fThreads.toArray(new IThread[0]);
 		}
 	}
 	
@@ -1341,7 +1331,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			JDIThread child= (JDIThread) itr.next();
 			child.terminated();
 		}
-		getThreadList().clear();
+		synchronized (fThreads) {
+		    fThreads.clear();
+		}
 	}
 
 	/**
@@ -1815,7 +1807,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			JDIThread thread= findThread(ref);
 			if (thread != null) {
 				synchronized (fThreads) {
-					getThreadList().remove(thread);
+					fThreads.remove(thread);
 				}
 				thread.terminated();
 			}
@@ -1987,7 +1979,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IDebugTarget#hasThreads()
 	 */
 	public boolean hasThreads() {
-		return getThreadList().size() > 0;
+		return fThreads.size() > 0;
 	}
 	
 	/**
