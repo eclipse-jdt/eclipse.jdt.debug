@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -20,8 +21,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -86,6 +87,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected HashMap fRequestsByTarget;
 	
 	/**
+	 * The list of threads (ThreadReference objects) in which this breakpoint will suspend,
+	 * associated with the target in which each thread exists (JDIDebugTarget).
+	 * key: targets the debug targets (IJavaDebugTarget)
+	 * value: thread the filtered thread (IJavaThread) in the given target
+	 */
+	protected Map fFilteredThreadsByTarget;
+	
+	/**
 	 * Propery identifier for a breakpoint object on an event request
 	 */
 	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
@@ -97,6 +106,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap(1);
+		fFilteredThreadsByTarget= new HashMap(1);
 	}	
 	
 	/**
@@ -226,7 +236,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (event instanceof ClassPrepareEvent) {
 			return handleClassPrepareEvent((ClassPrepareEvent)event, target);
 		} else {
-			return handleBreakpointEvent(event, target)			;
+			return handleBreakpointEvent(event, target);
 		}		
 	}
 
@@ -257,7 +267,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target) {
 		ThreadReference threadRef= ((LocatableEvent)event).thread();
-			JDIThread thread= target.findThread(threadRef);		
+		JDIThread thread= target.findThread(threadRef);		
 		if (thread == null) {
 			return true;
 		} else {
@@ -350,18 +360,37 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * and sets the suspend policy of the request to suspend 
 	 * the event thread.
 	 */
-	protected void configureRequest(EventRequest request) throws CoreException {
+	protected void configureRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		request.setSuspendPolicy(getJDISuspendPolicy());
-		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);								
+		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);
+		configureRequestThreadFilter(request, target);
+		configureRequestHitCount(request);
+		// Important: only enable a request after it has been configured
+		updateEnabledState(request);
+	}
+	
+	/**
+	 * Configure the thread filter property of the given request.
+	 */
+	protected void configureRequestThreadFilter(EventRequest request, JDIDebugTarget target) {
+		IJavaThread thread= (IJavaThread)fFilteredThreadsByTarget.get(target);
+		if (thread == null || (!(thread instanceof JDIThread))) {
+			return;
+		}
+		setRequestThreadFilter(request, ((JDIThread)thread).getUnderlyingThread());
+	}
+	
+	/**
+	 * Configure the given request's hit count
+	 */
+	protected void configureRequestHitCount(EventRequest request) throws CoreException {
 		int hitCount= getHitCount();
 		if (hitCount > 0) {
 			request.addCountFilter(hitCount);
 			request.putProperty(HIT_COUNT, new Integer(hitCount));
 			request.putProperty(EXPIRED, Boolean.FALSE);
 		}
-		// Important: only enable a request after it has been configured
-		updateEnabledState(request);
-	}	
+	}
 	
 	/**
 	 * Creates and returns a breakpoint request for this breakpoint which
@@ -446,7 +475,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 					}				
 				}
 			}
-		}	
+		}
 	}
 	
 	/**
@@ -459,8 +488,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		ArrayList requests = (ArrayList) getRequests(target).clone();
 		if (!requests.isEmpty()) {
 			Iterator iter = requests.iterator();
+			EventRequest req;
 			while (iter.hasNext()) {
-				EventRequest req = (EventRequest)iter.next();
+				req = (EventRequest)iter.next();
 				if (!(req instanceof ClassPrepareRequest)) {
 					updateRequest(req, target);
 				}
@@ -486,7 +516,21 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Update the given request in the given debug target to
 	 * reflect the current hit count of this breakpoint.
 	 */
-	protected abstract EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException;
+	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {
+		// if the hit count has changed, or the request has expired and is being re-enabled,
+		// create a new request
+		if (hasHitCountChanged(request) || (isExpired(request) && this.isEnabled())) {
+			request= recreateRequest(request, target);
+		}
+		return request;
+	}
+	
+	/**
+	 * Create a request that reflects the current state of this breakpoint.
+	 * The returned request will be installed in the same type as the given
+	 * request.
+	 */
+	protected abstract EventRequest recreateRequest(EventRequest request, JDIDebugTarget target) throws CoreException;
 	
 	/**
 	 * Update the given request in the given debug target to
@@ -552,11 +596,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * debug target.
 	 */
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
-		
 		List requests = getRequests(target);
 		Iterator iter = requests.iterator();
+		EventRequest req;
 		while (iter.hasNext()) {
-			EventRequest req = (EventRequest)iter.next();
+			req = (EventRequest)iter.next();
 			try {				
 				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
 					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
@@ -572,6 +616,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}
 		fRequestsByTarget.remove(target);
+		fFilteredThreadsByTarget.remove(target);
 		
 		// notification
 		fireRemoved(target);
@@ -788,5 +833,80 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected void fireInstalled(IJavaDebugTarget target) {
 		JDIDebugPlugin.getDefault().fireBreakpointInstalled(target, this);
 	}	
+	
+	/**
+	 * @see IJavaBreakpoint#addThreadFilter(IJavaThread)
+	 */
+	public void setThreadFilter(IJavaThread thread) throws CoreException {
+		if (!(thread.getDebugTarget() instanceof JDIDebugTarget) || !(thread instanceof JDIThread)) {
+			return;
+		}
+		JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
+		fFilteredThreadsByTarget.put(target, thread);
+		// Other breakpoints set attributes on the underlying
+		// marker and the marker changes are eventually
+		// propagated to the target. The target then asks the
+		// breakpoint to update its request. Since thread filters
+		// are transient properties, they are not set on
+		// the marker. Thus we must update the request
+		// here.
+		List requests= getRequests(target);
+		Iterator iter= requests.iterator();
+		EventRequest request= null;
+		while (iter.hasNext()) {
+			request= (EventRequest)iter.next();
+			if (request instanceof ClassPrepareRequest) {
+				continue;
+			}
+			EventRequest newRequest = recreateRequest(request, target);
+			if (newRequest != request) {
+				replaceRequest(target, request, newRequest);
+			}
+		}
+	}
+	
+	/** 
+	 * EventRequest does not support thread filters, so they
+	 * can't be set generically here. However, each of the breakpoint
+	 * subclasses of EventRequest do support thread filters. So
+	 * subclasses can set thread filters on their specific
+	 * request type.
+	 */
+	protected abstract void setRequestThreadFilter(EventRequest request, ThreadReference thread);
+	
+	/**
+	 * @see IJavaBreakpoint#getThreadFilter(IJavaDebugTarget)
+	 */
+	public IJavaThread getThreadFilter(IJavaDebugTarget target) throws CoreException {
+		return (IJavaThread)fFilteredThreadsByTarget.get(target);
+	}
+
+	/**
+	 * @see IJavaBreakpoint#removeThreadFilter(IJavaThread)
+	 */
+	public void removeThreadFilter(IJavaDebugTarget javaTarget) throws CoreException {
+		if (!(javaTarget instanceof JDIDebugTarget)) {
+			return;
+		}
+		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
+		fFilteredThreadsByTarget.remove(target);
+		List requests= getRequests(target);
+		Iterator iter= requests.iterator();
+		EventRequest request= null;
+		while (iter.hasNext()) {
+			request= (EventRequest)iter.next();
+			if (request instanceof ClassPrepareRequest) {
+				continue;
+			}
+			// Since there is no API for removing thread filters from requests,
+			// we create a new request with the current thread filters
+			// and replace the old.
+			EventRequest newRequest = recreateRequest(request, target);
+			if (newRequest != request) {
+				replaceRequest(target, request, newRequest);
+			}
+		}
+	}
+
 }
 

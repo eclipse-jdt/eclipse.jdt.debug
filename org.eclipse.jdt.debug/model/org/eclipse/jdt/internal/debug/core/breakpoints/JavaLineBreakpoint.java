@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import com.sun.jdi.InvalidLineNumberException;
 import com.sun.jdi.Location;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
@@ -117,7 +119,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		BreakpointRequest request = null;
 		try {
 			request= target.getEventRequestManager().createBreakpointRequest(location);
-			configureRequest(request);
+			configureRequest(request, target);
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {			
 				return null;
@@ -128,6 +130,13 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return null;
 		}
 		return request;
+	}
+	
+	/**
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 */
+	protected void setRequestThreadFilter(EventRequest request, ThreadReference thread) {
+		((BreakpointRequest)request).addThreadFilter(thread);
 	}
 		
 	/**
@@ -172,17 +181,25 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		// if the hit count has changed, or the request has expired and is being re-enabled,
 		// create a new request
 		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
-			try {
-				Location location = ((BreakpointRequest) request).location();			
-				request = createLineBreakpointRequest(location, target);
-			} catch (VMDisconnectedException e) {
-				if (!target.isAvailable()) {
-					return request;
-				}
-				JDIDebugPlugin.logError(e);
-			} catch (RuntimeException e) {
-				JDIDebugPlugin.logError(e);
+			request= recreateRequest(request, target);
+		}
+		return request;
+	}
+	
+	/**
+	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
+	 */
+	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+		try {
+			Location location = ((BreakpointRequest) request).location();			
+			request = createLineBreakpointRequest(location, target);
+		} catch (VMDisconnectedException e) {
+			if (!target.isAvailable()) {
+				return request;
 			}
+			JDIDebugPlugin.logError(e);
+		} catch (RuntimeException e) {
+			JDIDebugPlugin.logError(e);
 		}
 		return request;
 	}

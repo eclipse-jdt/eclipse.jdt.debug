@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
@@ -18,6 +19,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ExceptionEvent;
@@ -112,7 +114,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			ExceptionRequest request= null;
 			try {
 				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
-				configureRequest(request);
+				configureRequest(request, target);
 			} catch (VMDisconnectedException e) {
 				if (!target.isAvailable()) {
 					return null;
@@ -207,19 +209,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
-	 * the appropriate settings.
-	 */
-	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {		
-		// if the hit count has changed, or the request has expired and is being re-enabled,
-		// create a new request
-		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
-			request= createUpdatedExceptionRequest(target, (ExceptionRequest)request);
-		}
-		return request;
-	}	
-	
-	/**
 	 * @see JavaBreakpoint#updateRequest(EventRequest, JDIDebugTarget)
 	 */
 	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
@@ -242,20 +231,18 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		}
 		ExceptionRequest request= (ExceptionRequest) req;
 		if (request.notifyCaught() != isCaught() || request.notifyUncaught() != isUncaught()) {
-			request= createUpdatedExceptionRequest(target, (ExceptionRequest)request);
+			request= (ExceptionRequest)recreateRequest(request, target);
 		}
 		return request;
 	}
 	
 	/**
-	 * Create a request that reflects the current state of this breakpoint.
-	 * The new request will be installed in the same type as the given
-	 * request.
+	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
 	 */
-	protected ExceptionRequest createUpdatedExceptionRequest(JDIDebugTarget target, ExceptionRequest request) throws CoreException{
+	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target) throws CoreException{
 		try {
 			ReferenceType exClass = ((ExceptionRequest)request).exception();				
-			request = (ExceptionRequest) newRequest(target, exClass);
+			request = newRequest(target, exClass);
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {
 				return request;
@@ -265,7 +252,14 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			JDIDebugPlugin.logError(e);
 		}
 		return request;
-	}	
+	}
+	
+	/**
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 */
+	protected void setRequestThreadFilter(EventRequest request, ThreadReference thread) {
+		((ExceptionRequest)request).addThreadFilter(thread);
+	}
 	
 	/**
 	 * @see IJDIEventListener#handleEvent(Event)

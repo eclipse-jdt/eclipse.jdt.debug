@@ -23,6 +23,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.MethodEntryEvent;
@@ -202,12 +203,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				request= target.getEventRequestManager().createMethodExitRequest();
 				((MethodExitRequest)request).addClassFilter(type);
 			}
-			request.setSuspendPolicy(getJDISuspendPolicy());
-			int hitCount = getHitCount();
-			if (hitCount > 0) {
-				request.putProperty(HIT_COUNT, new Integer(hitCount));
-			}		
-			request.setEnabled(isEnabled() && (isExit() || isEntry()));
+			configureRequest(request, target);
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {
 				return null;
@@ -217,6 +213,30 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			JDIDebugPlugin.logError(e);
 		}			
 		return request;
+	}
+	
+	/**
+	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
+	 */
+	protected void setRequestThreadFilter(EventRequest request, ThreadReference thread) {
+		if (request instanceof MethodEntryRequest) {
+			((MethodEntryRequest)request).addThreadFilter(thread);
+		} else {
+			((MethodExitRequest)request).addThreadFilter(thread);
+		}
+	}
+	
+	/**
+	 * Configure the given request's hit count. Since method
+	 * entry/exit requests do not support hit counts, we simulate
+	 * a hit count by manually updating a counter stored on the
+	 * request.
+	 */
+	protected void configureRequestHitCount(EventRequest request) throws CoreException {
+		int hitCount = getHitCount();
+		if (hitCount > 0) {
+			request.putProperty(HIT_COUNT, new Integer(hitCount));
+		}	
 	}
 
 	/**
@@ -335,7 +355,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 		return true;
 	}
-	
 	
 	/**
 	 * Method entry/exit events are fired each time any method is invoked in a class

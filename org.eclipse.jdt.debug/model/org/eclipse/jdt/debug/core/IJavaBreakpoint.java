@@ -97,7 +97,46 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
-	public int getSuspendPolicy() throws CoreException;	
-
+	public int getSuspendPolicy() throws CoreException;
+	
+	/**
+	 * Set the given threads as the thread in which this
+	 * breakpoint is enabled. The previous thread filter, if
+	 * any, is lost.
+	 * 
+	 * A thread filter applies to a single debug target and is not persisted
+	 * across invokations.
+	 * 
+	 * While this breakpoint has a thread filter, 
+	 * it will only suspend in the filtered thread.
+	 * 
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public void setThreadFilter(IJavaThread thread) throws CoreException;
+	
+	/**
+	 * Removes this breakpoint's thread filter in the given target, if any. 
+	 * Has no effect if this breakpoint does not have a filter in the given target.
+	 * 
+	 * While this breakpoint has a thread filter in the given target,
+	 * it will only suspend threads which are filtered.
+	 * 
+	 * @param target the target whose thread filter will be removed
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public void removeThreadFilter(IJavaDebugTarget target) throws CoreException;
+	
+	/**
+	 * Returns the thread in the given target in which this breakpoint
+	 * is enabled or <code>null</code> if this breakpoint is enabled in
+	 * all threads in the given target.
+	 * 
+	 * @return the thread in the given target that this breakpoint is enabled for
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public IJavaThread getThreadFilter(IJavaDebugTarget target) throws CoreException;
 }
 

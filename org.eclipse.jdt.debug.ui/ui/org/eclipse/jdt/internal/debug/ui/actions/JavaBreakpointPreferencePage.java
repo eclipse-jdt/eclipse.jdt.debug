@@ -15,7 +15,6 @@ import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPreferenceStore;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -217,9 +216,14 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			createHitCountEditor(getFieldEditorParent());
 			addField(createSuspendPolicyEditor(getFieldEditorParent()));
 			createTypeSpecificFieldEditors();
+			addField(createThreadFilterViewer(getFieldEditorParent()));
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
+	}
+	
+	protected FieldEditor createThreadFilterViewer(Composite parent) {
+		return new ThreadFilterViewer(parent, getBreakpoint());
 	}
 
 	protected void createTypeSpecificFieldEditors() throws CoreException {
