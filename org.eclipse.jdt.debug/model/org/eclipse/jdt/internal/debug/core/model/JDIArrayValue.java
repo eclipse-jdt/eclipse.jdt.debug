@@ -159,7 +159,29 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
 	public IVariable getVariable(int offset) throws DebugException {
+		if (offset >= getLength()) {
+			requestFailed(JDIDebugModelMessages.getString("JDIArrayValue.6"), null); //$NON-NLS-1$
+		}
 		return new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), offset);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
+	 */
+	public IVariable[] getVariables(int offset, int length) throws DebugException {
+		if (offset >= getLength()) {
+			requestFailed(JDIDebugModelMessages.getString("JDIArrayValue.6"), null); //$NON-NLS-1$
+		}
+		if ((offset + length - 1) >= getLength()) {
+			requestFailed(JDIDebugModelMessages.getString("JDIArrayValue.8"), null); //$NON-NLS-1$
+		}
+		IVariable[] variables = new IVariable[length];
+		int index = offset;
+		for (int i = 0; i < length; i++) {
+			variables[i] = new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), index);
+			index++;
+		}
+		return variables;
 	}
 
 }
