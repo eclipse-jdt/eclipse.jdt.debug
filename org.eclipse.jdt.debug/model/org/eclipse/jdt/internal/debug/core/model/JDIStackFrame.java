@@ -219,16 +219,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Returns the underlying method associated with this stack frame,
 	 * retreiving the method is necessary.
 	 */
-	public synchronized Method getUnderlyingMethod() throws DebugException {
-		if (fStackFrame == null || fMethod == null) {
-			try {
-				fMethod= getUnderlyingStackFrame().location().method();
-				fLastMethod = fMethod;
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
+	public Method getUnderlyingMethod() throws DebugException {
+		synchronized (fThread) {
+			if (fStackFrame == null || fMethod == null) {
+				try {
+					fMethod= getUnderlyingStackFrame().location().method();
+					fLastMethod = fMethod;
+				} catch (RuntimeException e) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}
 			}
+			return fMethod;
 		}
-		return fMethod;
 	}
 
 	/**
@@ -239,69 +241,71 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
 	
-	protected synchronized List getVariables0() throws DebugException {
-		if (fVariables == null) {
-			
-			// throw exception if native method, so variable view will update
-			// with information message
-			if (isNative()) {
-				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Variable_information_unavailable_for_native_methods"), null); //$NON-NLS-1$
-			}
-			
-			Method method= getUnderlyingMethod();
-			fVariables= new ArrayList();
-			// #isStatic() does not claim to throw any exceptions - so it is not try/catch coded
-			if (method.isStatic()) {
-				// add statics
-				List allFields= null;
-				ReferenceType declaringType = method.declaringType();
-				try {
-					allFields= declaringType.allFields();
-				} catch (RuntimeException e) {
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
-					// execution will not reach this line, as 
-					// #targetRequestFailed will throw an exception					
-					return Collections.EMPTY_LIST;
+	protected List getVariables0() throws DebugException {
+		synchronized (fThread) {
+			if (fVariables == null) {
+				
+				// throw exception if native method, so variable view will update
+				// with information message
+				if (isNative()) {
+					requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Variable_information_unavailable_for_native_methods"), null); //$NON-NLS-1$
 				}
-				if (allFields != null) {
-					Iterator fields= allFields.iterator();
-					while (fields.hasNext()) {
-						Field field= (Field) fields.next();
-						if (field.isStatic()) {
-							fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, declaringType));
-						}
+				
+				Method method= getUnderlyingMethod();
+				fVariables= new ArrayList();
+				// #isStatic() does not claim to throw any exceptions - so it is not try/catch coded
+				if (method.isStatic()) {
+					// add statics
+					List allFields= null;
+					ReferenceType declaringType = method.declaringType();
+					try {
+						allFields= declaringType.allFields();
+					} catch (RuntimeException e) {
+						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
+						// execution will not reach this line, as 
+						// #targetRequestFailed will throw an exception					
+						return Collections.EMPTY_LIST;
 					}
-					Collections.sort(fVariables, new Comparator() {
-						public int compare(Object a, Object b) {
-							JDIFieldVariable v1= (JDIFieldVariable)a;
-							JDIFieldVariable v2= (JDIFieldVariable)b;
-							try {
-								return v1.getName().compareToIgnoreCase(v2.getName());
-							} catch (DebugException de) {
-								logError(de);
-								return -1;
+					if (allFields != null) {
+						Iterator fields= allFields.iterator();
+						while (fields.hasNext()) {
+							Field field= (Field) fields.next();
+							if (field.isStatic()) {
+								fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, declaringType));
 							}
 						}
-					});
+						Collections.sort(fVariables, new Comparator() {
+							public int compare(Object a, Object b) {
+								JDIFieldVariable v1= (JDIFieldVariable)a;
+								JDIFieldVariable v2= (JDIFieldVariable)b;
+								try {
+									return v1.getName().compareToIgnoreCase(v2.getName());
+								} catch (DebugException de) {
+									logError(de);
+									return -1;
+								}
+							}
+						});
+					}
+				} else {
+					// add "this"
+					ObjectReference t= getUnderlyingThisObject();
+					if (t != null) {
+						fVariables.add(new JDIThisVariable((JDIDebugTarget)getDebugTarget(), t));
+					}
 				}
-			} else {
-				// add "this"
-				ObjectReference t= getUnderlyingThisObject();
-				if (t != null) {
-					fVariables.add(new JDIThisVariable((JDIDebugTarget)getDebugTarget(), t));
+				// add locals
+				Iterator variables= getUnderlyingVisibleVariables().iterator();
+				while (variables.hasNext()) {
+					LocalVariable var= (LocalVariable) variables.next();
+					fVariables.add(new JDILocalVariable(this, var));
 				}
+			} else if (fRefreshVariables) {
+				updateVariables();
 			}
-			// add locals
-			Iterator variables= getUnderlyingVisibleVariables().iterator();
-			while (variables.hasNext()) {
-				LocalVariable var= (LocalVariable) variables.next();
-				fVariables.add(new JDILocalVariable(this, var));
-			}
-		} else if (fRefreshVariables) {
-			updateVariables();
+			fRefreshVariables = false;
+			return fVariables;
 		}
-		fRefreshVariables = false;
-		return fVariables;
 	}
 
 	/**
@@ -947,19 +951,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 *  interim state where this frame's thead has been
 	 *  resumed, and is not yet suspended).
 	 */
-	protected synchronized StackFrame getUnderlyingStackFrame() throws DebugException {
-		StackFrame stackFrame= fStackFrame;
-		if (stackFrame == null) {
-			int depth= getDepth();
-			if (depth == -1) {
-				// Depth is set to -1 when the thread clears its handles
-				// to this object. See Bug 47198.
-				throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+	protected StackFrame getUnderlyingStackFrame() throws DebugException {
+		synchronized (fThread) {
+			if (fStackFrame == null) {
+				int depth= getDepth();
+				if (depth == -1) {
+					// Depth is set to -1 when the thread clears its handles
+					// to this object. See Bug 47198.
+					throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+				}
+				setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(depth));
 			}
-			stackFrame= ((JDIThread)getThread()).getUnderlyingFrame(depth);
-			setUnderlyingStackFrame(stackFrame);
+			return fStackFrame;
 		}
-		return stackFrame;
 	}
 	
 	/**
@@ -969,7 +973,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @param frame The underlying stack frame
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
-		fStackFrame = frame;
+		synchronized (fThread) {
+			fStackFrame = frame;
+		}
 	}
 	
 	/**
