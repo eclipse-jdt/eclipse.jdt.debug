@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
 
@@ -43,6 +46,9 @@ public class InstructionSequence implements ICompiledExpression {
 			interpreter.execute();
 		} catch (CoreException exception) {
 			fException= exception;
+		} catch (Throwable exception) {
+			JDIDebugPlugin.log(exception);
+			fException= new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
 		}
 		return interpreter.getResult();
 	}

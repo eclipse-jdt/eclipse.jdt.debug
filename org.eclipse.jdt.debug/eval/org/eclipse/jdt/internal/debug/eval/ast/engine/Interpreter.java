@@ -73,7 +73,7 @@ public class Interpreter {
 	}
 	
 	public IJavaValue getResult() {
-		if (fStack.isEmpty())
+		if (fStack == null || fStack.isEmpty())
 			return getContext().getVM().voidValue();
 		Object top= fStack.peek();
 		if (top instanceof IJavaVariable) {
