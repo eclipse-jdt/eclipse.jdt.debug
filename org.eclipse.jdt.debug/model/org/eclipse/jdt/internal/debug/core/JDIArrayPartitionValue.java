@@ -122,7 +122,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 		IJavaThread thread,
 		boolean superSend)
 		throws DebugException {
-			requestFailed("Cannot send a message to an array.", null);
+			requestFailed(JDIDebugModelMessages.getString("JDIArrayPartitionValue.Cannot_send_a_message_to_an_array"), null); //$NON-NLS-1$
 			// execution will not fall through, as
 			// #requestFailed will throw an exception
 			return null;

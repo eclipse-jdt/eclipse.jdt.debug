@@ -37,7 +37,7 @@ public class JDIArrayType extends JDIType implements IJavaArrayType {
 			ArrayReference ar = ((ArrayType)getUnderlyingType()).newInstance(size);
 			return (IJavaArray)JDIValue.createValue(getDebugTarget(), ar);
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while creating new instance of array.", new String[] {e.toString()}), e);
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_creating_new_instance_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
@@ -52,9 +52,9 @@ public class JDIArrayType extends JDIType implements IJavaArrayType {
 			Type type = ((ArrayType)getUnderlyingType()).componentType();
 			return JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
 		} catch (ClassNotLoadedException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while retrieving component type of array.", new String[] {e.toString()}), e);
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_retrieving_component_type_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while retrieving component type of array.", new String[] {e.toString()}), e);
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_retrieving_component_type_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
