@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaType;
 
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Type;
 
@@ -45,6 +46,9 @@ public class JDIType implements IJavaType {
 	 * type.
 	 */
 	protected static JDIType createType(JDIDebugTarget target, Type type) {
+		if (type instanceof ArrayType) {
+			return new JDIArrayType(target, (ArrayType)type);
+		}
 		if (type instanceof ClassType) {
 			return new JDIClassType(target, (ClassType)type);
 		}
