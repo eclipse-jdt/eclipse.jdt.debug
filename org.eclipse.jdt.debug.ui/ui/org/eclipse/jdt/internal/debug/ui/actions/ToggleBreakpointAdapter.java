@@ -338,6 +338,20 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			}
 			return (IField[]) fields.toArray(new IField[fields.size()]);
 		}
+	}
+	
+	private boolean isFields(IStructuredSelection selection) {
+		if (!selection.isEmpty()) {
+			Iterator iterator = selection.iterator();
+			while (iterator.hasNext()) {
+				Object thing = iterator.next();
+				if (!(thing instanceof IField || thing instanceof IJavaFieldVariable)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}	
 
 	/* (non-Javadoc)
@@ -560,7 +574,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
-			return getFields(ss).length > 0;
+			return isFields(ss);
 		} else {
 			return selection instanceof ITextSelection;
 		}
