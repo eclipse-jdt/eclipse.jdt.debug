@@ -465,9 +465,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (supported) {
 				// Also ensure that this frame and no frames above this
 				// frame are native. Unable to pop native stack frames.
-				IStackFrame[] frames = thread.getStackFrames();
-				for (int i = 0; i < frames.length; i++) {
-					JDIStackFrame frame = (JDIStackFrame)frames[i];
+				List frames= thread.computeStackFrames();
+				Iterator iter= frames.iterator();
+				JDIStackFrame frame= null;
+				while (iter.hasNext()) {
+					frame= (JDIStackFrame) iter.next();
 					if (frame.isNative()) {
 						return false;
 					}
