@@ -498,7 +498,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			//Load java.util.Arrays
 			IJavaType[] types;
 			try {
-				types = target.getJavaTypes("java.lang.Class");
+				types = target.getJavaTypes("java.lang.Class"); //$NON-NLS-1$
 			} catch (DebugException de) {
 				types = null;
 			}
@@ -506,8 +506,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			if (types != null && types.length >0) {
 				try {
 					IJavaClassType type = (IJavaClassType) types[0];
-					IJavaValue arg = target.newValue("java.util.Arrays");
-					type.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", new IJavaValue[] {arg}, fThread);
+					IJavaValue arg = target.newValue("java.util.Arrays"); //$NON-NLS-1$
+					type.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", new IJavaValue[] {arg}, fThread);  //$NON-NLS-1$//$NON-NLS-2$
 				} catch (DebugException de) {
 					//java.util.Arrays didn't load properly. Can't use Arrays.asList()
 					appendArrayDetailIndividually(result, arrayValue);
@@ -518,13 +518,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 			
 			types = null;
-			types = target.getJavaTypes("java.util.Arrays");
+			types = target.getJavaTypes("java.util.Arrays"); //$NON-NLS-1$
 			if (types != null && types.length >0) {
 				IJavaClassType type = (IJavaClassType) types[0];
 				IJavaObject javaObject;
 				try {
 					//execute Arrays.asList() on target
-					javaObject = (IJavaObject) type.sendMessage("asList", "([Ljava/lang/Object;)Ljava/util/List;", new IJavaValue[] {arrayValue}, fThread);
+					javaObject = (IJavaObject) type.sendMessage("asList", "([Ljava/lang/Object;)Ljava/util/List;", new IJavaValue[] {arrayValue}, fThread); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (DebugException de) {
 					//asList() failed.
 					appendArrayDetailIndividually(result, arrayValue);
