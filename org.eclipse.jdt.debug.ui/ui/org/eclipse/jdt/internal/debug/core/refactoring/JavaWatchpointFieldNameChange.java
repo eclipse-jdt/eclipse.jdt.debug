@@ -13,12 +13,10 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
@@ -36,7 +34,6 @@ public class JavaWatchpointFieldNameChange extends Change {
 	private String fNewName;
 	private String fOldName;
 	private IType fDeclaringType;
-	private IBreakpointsListener fBreakpointsListener;
 
 	public static Change createChange(IField field, String newName) throws CoreException {
 		String typeName= field.getDeclaringType().getFullyQualifiedName();
@@ -73,37 +70,14 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
-		fBreakpointsListener= new IBreakpointsListener() {
-			public void breakpointsAdded(IBreakpoint[] breakpoints) {
-			}
-			public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-				for (int i= 0; i < breakpoints.length; i++) {
-					if (breakpoints[i].equals(fWatchpoint)) {
-						fWatchpoint= null;
-						DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-					}
-				}	
-			}
-			public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-			}
-		};
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(fBreakpointsListener);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointsListener);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus status= new RefactoringStatus();
-		if (fWatchpoint == null) {
+		if (!fWatchpoint.isRegistered()) {
 			status.addFatalError(MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.2"), new String[] {fDeclaringType.getElementName(), fOldName})); //$NON-NLS-1$
 		}
 		return status;
