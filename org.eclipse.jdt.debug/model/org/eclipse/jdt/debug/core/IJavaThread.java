@@ -1,9 +1,13 @@
 package org.eclipse.jdt.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
@@ -175,4 +179,47 @@ public interface IJavaThread extends IThread {
 	 * @since 2.1
 	 */
 	public boolean canTerminateEvaluation();
+	
+	/**
+	 * Returns a Java object for the monitor, if any, for
+	 * which this thread is currently waiting. 
+	 *
+	 * @return IJavaObject the contended monitor object or <code>null</code> if this
+	 * thread is not waiting on a monitor.
+	 * @exception DebugException if an exception occurs while 
+	 * retrieving the contended monitor.
+	 * @since 2.1
+	 */
+	public IJavaObject getCurrentContendedMonitor() throws DebugException;
+	
+	/**
+	 * Returns whether thread is in contention for at least one monitor.
+	 * 
+	 * @return boolean whether this thread is in contention for at least one monitor
+	 * @exception DebugException if an exception occurs determining
+	 * if there are contented monitors.
+	 * @since 2.1
+	 */
+	public boolean hasContendedMonitors() throws DebugException;
+	
+	/**
+	 * Returns a list of all of the monitors owned by this thread.
+	 * An empty list is returned if this thread owns no monitors.
+	 * 
+	 * @return List the list of monitors owned by this thread
+	 * @exception DebugException if an exception occurs while retrieving
+	 * the owned monitors of this thread.
+	 * @since 2.1
+	 */
+	public List getOwnedMonitors() throws DebugException;
+	
+	/**
+	 * Returns whether this threads owns at least one monitor.
+	 * 
+	 * @return boolean whether this thread owns a monitor
+	 * @exception DebugException if an exception occurs determining
+	 * if there are owned monitors.
+	 * @since 2.1
+	 */
+	public boolean hasOwnedMonitors() throws DebugException;
 }

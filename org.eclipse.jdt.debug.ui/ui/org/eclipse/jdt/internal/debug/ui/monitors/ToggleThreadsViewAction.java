@@ -13,11 +13,11 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * Action to switch between to the Threads view
+ * Action to switch to the Threads centric view in the MonitorsView
  */
 public class ToggleThreadsViewAction implements IViewActionDelegate {
 	
-	MonitorsView fMonitorsView;
+	protected MonitorsView fMonitorsView;
 	
 	/**
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
@@ -38,6 +38,6 @@ public class ToggleThreadsViewAction implements IViewActionDelegate {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {}
-
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
 }

@@ -14,11 +14,10 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
 
 /**
- * Listend to certain events in the debug view
+ * Listen to certain events in the debug view
  */
 public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 
-	
 	public MonitorsDebugEventHandler(MonitorsView view) {
 		super(view);
 	}
@@ -36,28 +35,22 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 			//if a thread is suspended in the debug view
 			if(event.getKind() == DebugEvent.SUSPEND) {
 				if (source instanceof IJavaDebugTarget) {
-					MonitorManager.getDefault().updatePart((IJavaDebugTarget)source);
+					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+					refreshView();
+				} else if (source instanceof IJavaThread) {
+					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
 					refreshView();
 				}
-				else if (source instanceof IJavaThread) {
-					MonitorManager.getDefault().updatePart((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
-					refreshView();
-				}
-			}
-			//if a thread is resumed in the debug view
-			else if(event.getKind() == DebugEvent.RESUME) {
+			} else if(event.getKind() == DebugEvent.RESUME) { 			
 				if (source instanceof IJavaDebugTarget) {
-					MonitorManager.getDefault().updatePart((IJavaDebugTarget)source);
+					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+					refreshView();
+				} else if (source instanceof IJavaThread) {
+					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
 					refreshView();
 				}
-				else if (source instanceof IJavaThread) {
-					MonitorManager.getDefault().updatePart((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
-					refreshView();
-				}
-			}
-			//if a thread is terminated in the debug view
-			else if(event.getKind() == DebugEvent.TERMINATE) {
-				MonitorManager.getDefault().clearTables();
+			} else if(event.getKind() == DebugEvent.TERMINATE && source instanceof IJavaDebugTarget) {
+				MonitorManager.getDefault().removeMonitorInformation((IJavaDebugTarget)source);
 				refreshView();
 			}
 		}
@@ -66,5 +59,4 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 	private void refreshView() {
 		((MonitorsView)getView()).refreshViewers();
 	}
-	
 }

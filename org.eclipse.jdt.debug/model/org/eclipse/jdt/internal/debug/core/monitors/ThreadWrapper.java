@@ -13,59 +13,44 @@ import java.util.List;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
- * ThreadWrapper used in monitor Manager,
+ * ThreadWrapper used in by the monitor manager,
  * wrapping the thread itself and its deadlock list
  */
 public class ThreadWrapper {
 	
-	private IJavaThread thread;
+	/**
+	 * The underlying Java thread	 */
+	private IJavaThread fThread;
 	
 	/**
 	 * The list holding the way to the deadlock
 	 * as described in MonitorManager
 	 */
-	private List deadLockList;
+	private List fDeadLockList;
 
 	/**
-	 * Constructor
+	 * Constructor for the monitor thread wrapper
 	 * @param thread The thread
 	 * @param deadLockList The deadlock list as described in MonitorManager
 	 */
 	public ThreadWrapper(IJavaThread thread, List deadLockList){
-		this.thread = thread;
-		this.deadLockList = new ArrayList(deadLockList);
+		fThread = thread;
+		fDeadLockList = new ArrayList(deadLockList);
 	}
 
 	/**
-	 * Returns the deadLockList.
+	 * Returns the dead lock list.
 	 * @return List
 	 */
 	public List getDeadLockList() {
-		return deadLockList;
+		return fDeadLockList;
 	}
 
 	/**
-	 * Returns the startThread.
+	 * Returns the start thread.
 	 * @return IJavaThread
 	 */
 	public IJavaThread getStartThread() {
-		return thread;
+		return fThread;
 	}
-
-	/**
-	 * Sets the deadLockList.
-	 * @param deadLockList The deadLockList to set
-	 */
-	public void setDeadLockList(List deadLockList) {
-		this.deadLockList = deadLockList;
-	}
-
-	/**
-	 * Sets the startThread.
-	 * @param startThread The startThread to set
-	 */
-	public void setStartThread(IJavaThread startThread) {
-		this.thread = startThread;
-	}
-
 }

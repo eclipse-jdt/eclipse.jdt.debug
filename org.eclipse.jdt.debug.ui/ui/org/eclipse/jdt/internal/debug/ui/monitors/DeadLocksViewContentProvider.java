@@ -9,14 +9,13 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.util.List;
 
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
 import org.eclipse.jdt.internal.debug.core.monitors.ThreadWrapper;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-
-import com.sun.jdi.ObjectReference;
 
 /**
  * Provides the tree data for the deadlock view
@@ -31,7 +30,7 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 	 */
 	public class ContentThreadWrapper {
 		public IJavaThread fThread;
-		public ObjectReference fParent;
+		public IJavaObject fParent;
 		public List fDeadLockList;
 		public boolean caughtInADeadLock;
 	}
@@ -40,12 +39,12 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 	 * MonitorWrapper for the deadlock view
 	 */	
 	public class ContentMonitorWrapper {
-		public ObjectReference fMonitor;
+		public IJavaObject fMonitor;
 		public IJavaThread fParent;
 		public List fDeadLockList;
 	}
 	
-	TreeViewer fViewer= null;
+	protected TreeViewer fViewer= null;
 
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
@@ -63,15 +62,13 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			// searching the element in the list
 			for (int i = 0; i < deadLockList.size(); i+=2) {
 				// if it is the same elements
-				if(((ContentThreadWrapper)parentElement).fThread.equals((IJavaThread)(deadLockList.get(i)))){
+				if(((ContentThreadWrapper)parentElement).fThread.equals(deadLockList.get(i))){
 					// if they have the same parent or if the parent is null
-					if(
-					(i<deadLockList.size()-1)&&
-					((i>0)&&((ContentThreadWrapper)parentElement).fParent.equals((ObjectReference)(deadLockList.get(i-1))))||
-					((((ContentThreadWrapper)parentElement).fParent == null)&&(i==0))
-					){
+					if((i < deadLockList.size() - 1) &&
+						((i > 0) && ((ContentThreadWrapper)parentElement).fParent.equals(deadLockList.get(i-1)))
+						|| ((((ContentThreadWrapper)parentElement).fParent == null) && (i == 0))) {
 						//transforms the child in a ContentMonitorWrapper
-						cmw.fMonitor = (ObjectReference)deadLockList.get(i+1);
+						cmw.fMonitor = (IJavaObject)deadLockList.get(i+1);
 						cmw.fParent = ((ContentThreadWrapper)parentElement).fThread;
 						cmw.fDeadLockList = deadLockList;
 						res[0] = cmw;
@@ -89,17 +86,15 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			// searching the element in the list
 			for (int i = 1; i < deadLockList.size(); i+=2) {
 				// if it is the same elements
-				if(((ContentMonitorWrapper)parentElement).fMonitor.equals((ObjectReference)(deadLockList.get(i)))){
+				if(((ContentMonitorWrapper)parentElement).fMonitor.equals(deadLockList.get(i))){
 					// if they have the same parent or if the parent is null
-					if(
-					((i>0)&&((ContentMonitorWrapper)parentElement).fParent.equals((IJavaThread)(deadLockList.get(i-1))))||
-					((((ContentMonitorWrapper)parentElement).fParent == null)&&(i==0))
-					){
+					if(((i > 0) && ((ContentMonitorWrapper)parentElement).fParent.equals(deadLockList.get(i-1)))
+					|| ((((ContentMonitorWrapper)parentElement).fParent == null) && (i == 0))){
 						//transforms the child in a ContentThreadWrapper
 						ctw.fThread = (IJavaThread)deadLockList.get(i+1);
 						ctw.fParent = ((ContentMonitorWrapper)parentElement).fMonitor;
 						ctw.fDeadLockList = deadLockList;
-						if(i==deadLockList.size()-2){
+						if(i == deadLockList.size() - 2){
 							ctw.caughtInADeadLock = true;
 						}
 						res[0] = ctw;
@@ -127,10 +122,9 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 				// if it is the same elements
 				if(((ContentThreadWrapper)element).fThread.equals((IJavaThread)(deadLockList.get(i)))){
 					// if they have the same parent or if the parent is null
-					if ((i>0)&&((ContentThreadWrapper)element).fParent.equals((ObjectReference)(deadLockList.get(i-1))))
-					{
+					if ((i>0)&&((ContentThreadWrapper)element).fParent.equals(deadLockList.get(i-1))) {
 						//transforms the parent in a ContentMonitorWrapper
-						cmw.fMonitor = (ObjectReference)deadLockList.get(i-1);
+						cmw.fMonitor = (IJavaObject)deadLockList.get(i-1);
 						cmw.fParent = (IJavaThread)deadLockList.get(i-2);
 						cmw.fDeadLockList = deadLockList;
 						return cmw;
@@ -150,17 +144,15 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			// searching the element in the list
 			for (int i = 1; i < deadLockList.size(); i+=2) {
 				// if it is the same elements
-				if(((ContentMonitorWrapper)element).fMonitor.equals((ObjectReference)(deadLockList.get(i)))){
+				if(((ContentMonitorWrapper)element).fMonitor.equals(deadLockList.get(i))){
 					// if they have the same parent or if the parent is null
-					if((i>0)&&((ContentMonitorWrapper)element).fParent.equals((IJavaThread)(deadLockList.get(i-1))))
-					{
+					if((i > 0) && ((ContentMonitorWrapper)element).fParent.equals(deadLockList.get(i-1))) {
 						//transforms the parent in a ContentThreadWrapper
 						ctw.fThread = (IJavaThread)deadLockList.get(i-1);
-						ctw.fParent = (ObjectReference)deadLockList.get(i-2);
+						ctw.fParent = (IJavaObject)deadLockList.get(i-2);
 						ctw.fDeadLockList = deadLockList;
 						return ctw;
-					}
-					else if((((ContentMonitorWrapper)element).fParent == null)&&(i==0)){
+					} else if((((ContentMonitorWrapper)element).fParent == null)&&(i==0)){
 						return null;	
 					}
 				}			
@@ -182,12 +174,10 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			// searching the element in the list
 			for (int i = 0; i < deadLockList.size(); i+=2) {
 				// if it is the same elements
-				if(((ContentThreadWrapper)element).fThread.equals((IJavaThread)(deadLockList.get(i)))){
+				if(((ContentThreadWrapper)element).fThread.equals(deadLockList.get(i))){
 					// if they have the same parent or if the parent is null
-					if(
-					((i>0)&&((ContentThreadWrapper)element).fParent.equals((ObjectReference)(deadLockList.get(i-1))))||
-					((((ContentThreadWrapper)element).fParent == null)&&(i==0))
-					){
+					if(((i > 0) && ((ContentThreadWrapper)element).fParent.equals(deadLockList.get(i-1)))
+					|| ((((ContentThreadWrapper)element).fParent == null) && (i==0))) {
 						// if this element has a child
 						if(i<(deadLockList.size()-1)){
 							return true;
@@ -204,14 +194,12 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			// searching the element in the list
 			for (int i = 1; i < deadLockList.size(); i+=2) {
 				// if it is the same elements
-				if(((ContentMonitorWrapper)element).fMonitor.equals((ObjectReference)(deadLockList.get(i)))){
+				if(((ContentMonitorWrapper)element).fMonitor.equals(deadLockList.get(i))){
 					// if they have the same parent or if the parent is null
-					if(
-					((i>0)&&((ContentMonitorWrapper)element).fParent.equals((IJavaThread)(deadLockList.get(i-1))))||
-					((((ContentMonitorWrapper)element).fParent == null)&&(i==0))
-					){
+					if(((i > 0) && ((ContentMonitorWrapper)element).fParent.equals(deadLockList.get(i-1)))
+					|| ((((ContentMonitorWrapper)element).fParent == null) && (i==0))){
 						// if this element has a child
-						if(i<(deadLockList.size()-1)){
+						if(i < (deadLockList.size()-1)){
 							return true;
 						}
 					}
@@ -247,6 +235,7 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		fViewer= null;
 	}
 
 	/**
@@ -255,5 +244,4 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer= (TreeViewer)viewer;
 	}
-
 }

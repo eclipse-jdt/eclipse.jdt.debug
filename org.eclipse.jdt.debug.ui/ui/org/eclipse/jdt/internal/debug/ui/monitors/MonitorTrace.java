@@ -23,7 +23,7 @@ import org.eclipse.ui.IViewPart;
  */
 public class MonitorTrace implements IViewActionDelegate {
 	
-	IViewPart fView;
+	protected IViewPart fView;
 	
 	/**
 	 * @see IActionDelegate#run(IAction)
@@ -31,6 +31,9 @@ public class MonitorTrace implements IViewActionDelegate {
 	public void run(IAction action) {
 			
 		IJavaDebugTarget target= getDebugTarget();
+		if (target == null) {
+			return;
+		}
 		MonitorManager.getDefault().update(target);
 		IDebugView debugView= (IDebugView)fView.getAdapter(IDebugView.class);
 		if (debugView != null) {

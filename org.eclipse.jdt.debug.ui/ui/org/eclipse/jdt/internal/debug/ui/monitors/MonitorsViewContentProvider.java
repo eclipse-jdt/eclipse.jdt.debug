@@ -11,19 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.sun.jdi.ObjectReference;
-
 /**
- * Provides the tree data for the monitor view
+ * Provides the tree data for the monitors view
  */
 public class MonitorsViewContentProvider implements ITreeContentProvider {
 	
+	protected TreeViewer fViewer= null;
+		
 	/**
 	 * ThreadWrapper for the monitor view
 	 * We use it to know the state of the thread we display: owning or waiting
@@ -31,11 +32,9 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	public class ThreadWrapper{
 		public static final int OWNING_THREAD = 1;
 		public static final int CONTENDING_THREAD = 2;
-		public JDIThread thread;
+		public IJavaThread thread;
 		public int state;
 	}
-	
-	TreeViewer fViewer= null;
 
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
@@ -43,10 +42,10 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 
 		//the parents will be monitors
-		if (parentElement instanceof ObjectReference) {
-			ObjectReference monitor= (ObjectReference)parentElement;
+		if (parentElement instanceof IJavaObject) {
+			IJavaObject monitor= (IJavaObject)parentElement;
 			//owning thread
-			JDIThread owningThread = MonitorManager.getDefault().getOwningThread(monitor);
+			IJavaThread owningThread = MonitorManager.getDefault().getOwningThread(monitor);
 			
 			//contending threads
 			List contendingThreads = MonitorManager.getDefault().getContendingThreads(monitor);
@@ -68,7 +67,7 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 				List wrappedThreads = new ArrayList();
 				for (int i = 0; i < contendingThreads.size(); i++) {
 					ThreadWrapper tw = new ThreadWrapper();
-					tw.thread = (JDIThread) contendingThreads.get(i);
+					tw.thread = (IJavaThread) contendingThreads.get(i);
 					tw.state = ThreadWrapper.CONTENDING_THREAD;
 					wrappedThreads.add(tw);
 				}
@@ -92,11 +91,11 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	 */
 	public Object getParent(Object element) {
 		
-		if (element instanceof JDIThread) {
-			return MonitorManager.getDefault().getOwnedMonitors((JDIThread)element);
+		if (element instanceof IJavaThread) {
+			return MonitorManager.getDefault().getOwnedMonitors((IJavaThread)element);
 		}
-		else if (element instanceof ObjectReference) {
-			return MonitorManager.getDefault().getOwningThread((ObjectReference)element);
+		else if (element instanceof IJavaObject) {
+			return MonitorManager.getDefault().getOwningThread((IJavaObject)element);
 		}		
 		return null;
 	}
@@ -106,9 +105,9 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	 */
 	public boolean hasChildren(Object element) {
 		
-		if (element instanceof ObjectReference) {
-			ObjectReference monitor= (ObjectReference)element;
-			JDIThread owningThread = MonitorManager.getDefault().getOwningThread(monitor);
+		if (element instanceof IJavaObject) {
+			IJavaObject monitor= (IJavaObject)element;
+			IJavaThread owningThread = MonitorManager.getDefault().getOwningThread(monitor);
 			List contendingThreads = MonitorManager.getDefault().getContendingThreads(monitor);
 			if (owningThread == null && contendingThreads == null) {
 				return false;
@@ -132,14 +131,13 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		fViewer= null;
 	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
 		fViewer= (TreeViewer)viewer;
 	}
-
 }

@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -2199,48 +2200,52 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}	
 	
 	/**
-	 * Returns true if all the user threads are suspended and
-	 * this owns at least one monitor.
-	 * @return boolean
-	 * @throws DebugException
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#hasOwnedMonitors()
 	 */
 	public boolean hasOwnedMonitors() throws DebugException {
 		return isSuspended() && getOwnedMonitors().size() > 0;
 	}
 	
+	
 	/**
-	 * @see ThreadReference#ownedMonitors()
-	 * @return List
-	 * @throws DebugException
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getOwnedMonitors()
 	 */
 	public List getOwnedMonitors() throws DebugException {
 		try {
-			return getUnderlyingThread().ownedMonitors();
+			JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
+			List ownedMonitors= getUnderlyingThread().ownedMonitors();
+			List javaOwnedMonitors= new ArrayList(ownedMonitors.size());
+			Iterator itr= ownedMonitors.iterator();
+			while (itr.hasNext()) {
+				ObjectReference element = (ObjectReference) itr.next();
+				javaOwnedMonitors.add(new JDIObjectValue(target, element));
+			}
+			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
 		}
 		return Collections.EMPTY_LIST;
 	}
 	
+	
 	/**
-	 * Returns true if all the user threads are suspended and
-	 * this thread owns at least one monitor.
-	 * @return boolean
-	 * @throws DebugException
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#hasContendedMonitors()
 	 */
-	public boolean hasContendedMonitors() throws DebugException{
-		return isSuspended() && (getCurrentContendedMonitor()!=null);
+	public boolean hasContendedMonitors() throws DebugException {
+		return isSuspended() && (getCurrentContendedMonitor() != null);
 	}
 
 	/**
-	 * @see ThreadReference#currentContendedMonitor()
-	 * @return List
-	 * @throws DebugException
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getCurrentContendedMonitor()
 	 */
-	public ObjectReference getCurrentContendedMonitor() throws DebugException {
+	public IJavaObject getCurrentContendedMonitor() throws DebugException {
 		try {
-			return getUnderlyingThread().currentContendedMonitor();
+			ObjectReference monitor= getUnderlyingThread().currentContendedMonitor();
+			if (monitor != null) {
+				return new JDIObjectValue((JDIDebugTarget)getDebugTarget(), monitor);
+			}
 		} catch (IncompatibleThreadStateException e) {
 		}
+		
 		return null;
 	}
 }

@@ -7,10 +7,13 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -18,16 +21,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 
-import com.sun.jdi.ObjectReference;
-
 /**
  * @see IDebugModelPresentation
  */
-public class JDIMonitorModelPresentation extends LabelProvider implements IDebugModelPresentation {
+public class MonitorModelPresentation extends LabelProvider implements IDebugModelPresentation {
 
-	protected org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
+	protected ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
 
-	public JDIMonitorModelPresentation() {
+	public MonitorModelPresentation() {
 		super();
 	}
 			
@@ -35,13 +36,6 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
-//		IJavaThread thread = getEvaluationThread((IJavaDebugTarget)value.getDebugTarget());
-//		try {
-//			DefaultJavaValueDetailProvider detailProvider = new DefaultJavaValueDetailProvider();
-//			detailProvider.computeDetail(value, thread, listener);
-//		} catch (DebugException de) {
-//			JDIDebugUIPlugin.log(de);
-//		}
 	}
 			
 	/**
@@ -54,15 +48,15 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 		}
 	
 		else if (item instanceof DeadLocksViewContentProvider.ContentMonitorWrapper) {
-			return getMonitorText((ObjectReference)((DeadLocksViewContentProvider.ContentMonitorWrapper)item).fMonitor);
+			return getMonitorText((IJavaObject)((DeadLocksViewContentProvider.ContentMonitorWrapper)item).fMonitor);
 		}
 		
-		else if (item instanceof ObjectReference) {
-			return getMonitorText((ObjectReference)item);
+		else if (item instanceof IJavaObject) {
+			return getMonitorText((IJavaObject)item);
 		}
 
-		else if (item instanceof JDIThread) {
-			return getThreadText((JDIThread)item);
+		else if (item instanceof IJavaThread) {
+			return getThreadText((IJavaThread)item);
 		}			
 		
 		else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
@@ -88,7 +82,8 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 		String res="";
 		try{
 			res += thread.fThread.getName();
-		} catch(Exception e){}
+		} catch(DebugException e){
+		}
 		
 		if(thread.caughtInADeadLock){
 			res += " (caught in the deadlock)";
@@ -104,8 +99,7 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 		try{
 			res += ctw.fThread.getName();
 		}
-		catch (Exception e) {
-			
+		catch (DebugException e) {
 		}
 		if(ctw.caughtInADeadLock){
 			res += " (caught in a deadlock)";
@@ -116,7 +110,7 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	/**
 	 * Text for monitors
 	 */
-	protected String getMonitorText(ObjectReference monitor) {
+	protected String getMonitorText(IJavaObject monitor) {
 		return monitor.toString();
 	}
 
@@ -166,7 +160,7 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	/**
 	 * Text for threads
 	 */	
-	protected String getThreadText(JDIThread thread){
+	protected String getThreadText(IJavaThread thread){
 		String res = "";
 		try{
 			res += thread.getName();
@@ -193,8 +187,8 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 			return getThreadWrapperMonitorImage((MonitorsViewContentProvider.ThreadWrapper)item);
 		}
 
-		else if (item instanceof ObjectReference) {
-			return getMonitorImage((ObjectReference)item);
+		else if (item instanceof IJavaObject) {
+			return getMonitorImage((IJavaObject)item);
 		}
 		
 		else {
@@ -238,7 +232,7 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	/**
 	 * Image for monitors
 	 */
-	private Image getMonitorImage(ObjectReference monitor){
+	private Image getMonitorImage(IJavaObject monitor){
 		return fDebugImageRegistry.get(JavaDebugImages.DESC_OBJ_MONITOR);
 	}
 
@@ -246,26 +240,6 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	 * @see IDebugModelPresentation#getEditorInput(Object)
 	 */
 	public IEditorInput getEditorInput(Object item) {
-//		try {
-//			if (item instanceof IMarker) {
-//				item = getBreakpoint((IMarker)item);
-//			}
-//			if (item instanceof IJavaPatternBreakpoint || item instanceof IJavaTargetPatternBreakpoint) {
-//				item = ((IJavaBreakpoint)item).getMarker().getResource();
-//			} else if (item instanceof IJavaBreakpoint) {
-//				item= BreakpointUtils.getType((IJavaBreakpoint)item);
-//			}
-//			if (item instanceof LocalFileStorage) {
-//				return new LocalFileStorageEditorInput((LocalFileStorage)item);
-//			}
-//			if (item instanceof ZipEntryStorage) {
-//				return new ZipEntryStorageEditorInput((ZipEntryStorage)item);
-//			}
-//			return EditorUtility.getEditorInput(item);
-//		} catch (CoreException e) {
-//			JDIDebugUIPlugin.log(e);
-//			return null;
-//		}
 		return null;
 	}
 
@@ -273,11 +247,6 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	 * @see IDebugModelPresentation#getEditorId(IEditorInput, Object)
 	 */
 	public String getEditorId(IEditorInput input, Object inputObject) {
-//		IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-//		IEditorDescriptor descriptor= registry.getDefaultEditor(input.getName());
-//		if (descriptor != null)
-//			return descriptor.getId();
-//		
 		return null;
 	}
 
@@ -285,9 +254,5 @@ public class JDIMonitorModelPresentation extends LabelProvider implements IDebug
 	 * @see IDebugModelPresentation#setAttribute(String, Object)
 	 */
 	public void setAttribute(String id, Object value) {
-//		if (value == null) {
-//			return;
-//		}
-//		fAttributes.put(id, value);
 	}
 }

@@ -141,7 +141,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 	protected Viewer createViewer(Composite parent) {
 		StructuredViewer threadViewer = new TreeViewer(parent, SWT.MULTI);
 		threadViewer.setContentProvider(new ThreadsViewContentProvider());
-		threadViewer.setLabelProvider(new JDIMonitorModelPresentation());
+		threadViewer.setLabelProvider(new MonitorModelPresentation());
 		threadViewer.setInput(MonitorManager.getDefault());	
 		return threadViewer;
 	}
@@ -149,7 +149,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 	protected Viewer createMonitorsViewer(Composite parent) {
 		StructuredViewer monitorsViewer = new TreeViewer(parent, SWT.MULTI);
 		monitorsViewer.setContentProvider(new MonitorsViewContentProvider());
-		monitorsViewer.setLabelProvider(new JDIMonitorModelPresentation());
+		monitorsViewer.setLabelProvider(new MonitorModelPresentation());
 		monitorsViewer.setInput(MonitorManager.getDefault());	
 		return monitorsViewer;
 	}
@@ -185,7 +185,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView{
 
 		};
 		deadLocksViewer.setContentProvider(new DeadLocksViewContentProvider());
-		deadLocksViewer.setLabelProvider(new JDIMonitorModelPresentation());
+		deadLocksViewer.setLabelProvider(new MonitorModelPresentation());
 		deadLocksViewer.setInput(MonitorManager.getDefault());	
 		return deadLocksViewer;
 	}

@@ -23,7 +23,7 @@ import org.eclipse.ui.IViewPart;
  */
 public class MonitorQuit implements IViewActionDelegate {
 	
-	IViewPart fView;
+	protected IViewPart fView;
 
 	/**
 	 * @see IActionDelegate#run(IAction)
