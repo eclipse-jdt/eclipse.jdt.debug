@@ -192,13 +192,21 @@ public abstract class AbstractBreakpointActionDelegate extends PartEventAction i
 	 * @exception CoreException if unable to retrieve the contents of the given
 	 *  text editor	 */
 	protected CompilationUnit createCompilationUnit(ITextEditor editor) throws CoreException {
+		//long getDocStart = System.currentTimeMillis();
 		IDocumentProvider provider = editor.getDocumentProvider();
 		IEditorInput input = editor.getEditorInput();
 		provider.connect(input);
 		IDocument document =  provider.getDocument(editor.getEditorInput());
 		String content = document.get();
 		provider.disconnect(input);
-		return AST.parseCompilationUnit(content.toCharArray());
+		//long getDocEnd = System.currentTimeMillis();
+		char[] chars = content.toCharArray();
+		//System.out.println("get document contents: " + (getDocEnd - getDocStart));
+		//long parseStart = System.currentTimeMillis();
+		CompilationUnit dom = AST.parseCompilationUnit(chars);
+		//long parseEnd = System.currentTimeMillis();
+		//System.out.println("parse time: " + (parseEnd - parseStart));
+		return dom;
 	}
 	
 	/**
