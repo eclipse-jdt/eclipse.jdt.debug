@@ -257,7 +257,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * is ambiguous.
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {
-		if (isEnabled()) {
+		if (enabled) {
 			if (!(isAccess() || isModification())) {
 				setDefaultAccessAndModification();
 			}
@@ -320,7 +320,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * <ul>
 	 */
 	protected void setDefaultAccessAndModification() throws CoreException {
-		Object[] values= new Object[]{Boolean.FALSE, Boolean.TRUE};
+		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
 		String[] attributes= new String[]{ACCESS, MODIFICATION};
 		setAttributes(attributes, values);
 	}
