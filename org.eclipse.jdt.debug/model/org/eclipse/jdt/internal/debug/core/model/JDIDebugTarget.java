@@ -1039,6 +1039,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_resume"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}	
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(IBreakpoint)
+	 */
+	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
+		return breakpoint instanceof IJavaBreakpoint;
+	}
 
 	/**
 	 * Notification a breakpoint has been added to the
