@@ -1,8 +1,7 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
@@ -14,73 +13,74 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-public interface IClasspathViewer {
+/**
+ * Defines a classpath viewer to abstract between classpath viewers that are tree or table viewers.
+ */
+public interface IClasspathViewer extends ISelectionProvider {
 
 	/**
-	 * @param action
-	 */
-	void removeSelectionChangedListener(ISelectionChangedListener action);
-
-	/**
-	 * @param action
-	 */
-	void addSelectionChangedListener(ISelectionChangedListener action);
-
-	/**
-	 * @return
-	 */
-	IRuntimeClasspathEntry[] getEntries();
-
-	/**
-	 * @param entries
-	 */
-	void setEntries(IRuntimeClasspathEntry[] entries);
-
-	/**
-	 * @param selection
-	 */
-	void setSelection(ISelection selection);
-
-	/**
-	 * @return
-	 */
-	Shell getShell();
-
-	/**
-	 * @return
-	 */
-	boolean isEnabled();
-
-	/**
-	 * @param res
-	 */
-	void addEntries(IRuntimeClasspathEntry[] res);
-
-	/**
-	 * @param entry
-	 */
-	void refresh(Object entry);
-
-	/**
+	 * Returns the entries in this viewer that are the children of the parent element
+	 * associated with the selected item(s)
 	 * 
+	 * @return the entries in this viewer
 	 */
-	void notifyChanged();
+	public IRuntimeClasspathEntry[] getEntries();
 
 	/**
-	 * @param entry
-	 * @return
+	 * Sets the entries in this viewer to the given runtime classpath
+	 * entries
+	 * 
+	 * @param entries runtime classpath entries
 	 */
-	int indexOf(IRuntimeClasspathEntry entry);
+	public void setEntries(IRuntimeClasspathEntry[] entries);
 
 	/**
-	 * @param i
-	 * @param selection
-	 * @return
+	 * Returns the shell associated with this viewer
+	 * @return a shell
 	 */
-	boolean updateSelection(int i, IStructuredSelection selection);
+	public Shell getShell();
 
 	/**
-	 * @return
+	 * Returns whether this viewer is enabled
+	 * @return whether this viewer is enabled
 	 */
-	ISelection getSelection();
+	public boolean isEnabled();
+
+	/**
+	 * Adds the given entries to the list. If there is no selection
+	 * in the list, the entries are added at the end of the list, 
+	 * otherwise the new entries are added before the (first) selected
+	 * entry. The new entries are selected.
+	 * 
+	 * @param entries additions
+	 */
+	public void addEntries(IRuntimeClasspathEntry[] res);
+
+	/**
+	 * Refreshes this entry in the viewer.
+	 * @param entry the entry to be refreshed
+	 */
+	public void refresh(Object entry);
+
+	/**
+	 * The entries in a runtime classpath entry viewer have changed in some way.
+	 * Calling this method allows the viewer to adapt to those changes if necessary.
+	 */
+	public void notifyChanged();
+
+	/**
+	 * Returns the index of an equivalent entry, or -1 if none.
+	 * 
+	 * @return the index of an equivalent entry, or -1 if none
+	 */
+	public int indexOf(IRuntimeClasspathEntry entry);
+
+	/**
+	 * Returns whether an action of the supplied action type should be enabled based on the supplied selection.
+	 * 
+	 * @param actionType One of RuntimeClasspathAction constants defining the action type
+	 * @param selection The selection to use for the update
+	 * @return Whether the action of this type should be enabled based on the selection
+	 */
+	public boolean updateSelection(int actionType, IStructuredSelection selection);
 }

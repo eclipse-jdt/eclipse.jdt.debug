@@ -74,11 +74,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		});
 	}	
 
-	/**
-	 * Sets the entries in this viewer to the given runtime classpath
-	 * entries
-	 * 
-	 * @param entries runtime classpath entries
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#setEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
 		getClasspathContentProvider().setRefreshEnabled(false);
@@ -89,12 +86,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		notifyChanged();
 	}
 	
-	/**
-	 * Returns the entries in this viewer that are the children of the parent element
-	 * associated with the selected item(s)
-	 * 
-	 * 
-	 * @return the entries in this viewer
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
 	public IRuntimeClasspathEntry[] getEntries() {
 		resolveCurrentParent(getSelection());
@@ -115,13 +108,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		return (IRuntimeClasspathEntry[])runtimeEntries.toArray(new IRuntimeClasspathEntry[runtimeEntries.size()]);
 	}
 	
-	/**
-	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list, 
-	 * otherwise the new entries are added before the (first) selected
-	 * entry. The new entries are selected.
-	 * 
-	 * @param entries additions
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
 	public void addEntries(IRuntimeClasspathEntry[] entries) {
 		getClasspathContentProvider().setRefreshEnabled(false);
@@ -164,8 +152,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		return true;
 	}
 	
-	/**
-	 * Returns whether this viewer is enabled
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return fEnabled;
@@ -188,6 +176,9 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		fListeners.remove(listener);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#notifyChanged()
+	 */
 	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -195,10 +186,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		}
 	}
 	
-	/**
-	 * Returns the index of an equivalent entry, or -1 if none.
-	 * 
-	 * @return the index of an equivalent entry, or -1 if none
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */
 	public int indexOf(IRuntimeClasspathEntry entry) {
 		IClasspathEntry[] entries= getClasspathContentProvider().getBootstrapClasspathEntries();
