@@ -125,6 +125,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				attributes.put(CAUGHT, new Boolean(caught));
 				attributes.put(UNCAUGHT, new Boolean(uncaught));
 				attributes.put(CHECKED, new Boolean(checked));
+				attributes.put(INCLUSIVE_FILTERS, Boolean.TRUE);
 				
 				ensureMarker().setAttributes(attributes);
 				
@@ -381,7 +382,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
 		String serializedFilters= serializeList(filters);
-		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, false)) {
+		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, true)) {
 			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) { //$NON-NLS-1$
 				//no change
 				return;

@@ -76,6 +76,9 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	private TableViewer fFilterViewer;
 	private Table fFilterTable;
 	private Composite fOuter;
+	private Label fIncludeExcludeLabel;
+	private Button fInclusiveRadioButton;
+	private Button fExclusiveRadioButton;
 	
 	private FilterContentProvider fFilterContentProvider;
 	
@@ -217,6 +220,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		});		
 		
 		createFilterButtons(fOuter);
+		createIncludeExcludeRadioButtons(fOuter);
 	}
 
 	private void createFilterButtons(Composite container) {
@@ -287,6 +291,41 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		});
 		fRemoveFilterButton.setEnabled(false);
 		
+	}
+	
+	private void createIncludeExcludeRadioButtons(Composite container) {
+		Composite comp = new Composite(container, SWT.NONE);
+		GridLayout compLayout = new GridLayout();
+		compLayout.marginHeight = 0;
+		compLayout.marginWidth = 0;
+		comp.setLayout(compLayout);
+		
+		fIncludeExcludeLabel = new Label(comp, SWT.NONE);
+		fIncludeExcludeLabel.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Selected_location_semantics_1"));  //$NON-NLS-1$
+		
+		Composite radioComp = new Composite(comp, SWT.NONE);
+		GridLayout radioLayout = new GridLayout();
+		radioLayout.marginHeight = 0;
+		radioLayout.marginWidth = 0;
+		radioComp.setLayout(radioLayout);
+		GridData gd = new GridData();
+		gd.horizontalIndent = HORIZONTAL_GAP;
+		radioComp.setLayoutData(gd);
+
+		fInclusiveRadioButton = new Button(radioComp, SWT.RADIO);
+		fInclusiveRadioButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.I&nclusive_(only_stop_in_specified_locations)_2")); //$NON-NLS-1$
+		fExclusiveRadioButton = new Button(radioComp, SWT.RADIO);
+		fExclusiveRadioButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.E&xclusive_(only_stop_outside_of_specified_locations)_3"));  //$NON-NLS-1$
+			
+		try {
+			if (!fBreakpoint.isInclusiveFiltered()) {
+				fExclusiveRadioButton.setSelection(true);
+			} else {
+				fInclusiveRadioButton.setSelection(true);			
+			}			
+		} catch (CoreException ce) {
+			fInclusiveRadioButton.setSelection(true);
+		}
 	}
 	
 	private GridData getButtonGridData(Button button) {
@@ -586,10 +625,11 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			stringFilters[i]= name;
 		}
 		try {
-			fBreakpoint.setFilters(stringFilters, true);
+			fBreakpoint.setFilters(stringFilters, fInclusiveRadioButton.getSelection());
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
+		
 	}
 
 	/**
