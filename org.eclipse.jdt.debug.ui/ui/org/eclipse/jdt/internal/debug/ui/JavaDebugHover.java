@@ -100,55 +100,54 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		    }
 		    if (codeAssist == null) {
 		        return getRemoteHoverInfo(frame, textViewer, hoverRegion);
-		    } else {
-				try {
-					IJavaElement[] resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
-					for (int i = 0; i < resolve.length; i++) {
-						IJavaElement javaElement = resolve[i];
-						if (javaElement instanceof IField) {
-						    IField field = (IField)javaElement;
-						    String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
-						    typeSignature = typeSignature.replace('.', '/');
-							IJavaFieldVariable fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
-						    if (fieldVariable != null) {
-						        StringBuffer buf = new StringBuffer();
-						        appendVariable(buf, fieldVariable);
-						        return buf.toString();
-						    }
-							break;
-						}
-						if (javaElement instanceof ILocalVariable) {
-						    ILocalVariable var = (ILocalVariable)javaElement;
-						    IJavaElement parent = var.getParent();
-						    while (!(parent instanceof IMethod) && parent != null) {
-						    	parent = parent.getParent();
-						    }
-						    if (parent instanceof IMethod) {
-								IMethod method = (IMethod) parent;
-								boolean equal = false;
-								if (method.isBinary()) {
-									// compare resolved signatures
-									if (method.getSignature().equals(frame.getSignature())) {
-										equal = true;
-									}
-								} else {
-									// compare unresolved signatures
-									if (frame.getMethodName().equals(method.getElementName())
-											&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())) {
-										equal = true;
-									}
-								}
-								if (equal) {
-									return generateHoverForLocal(frame, var.getElementName());
-								}
-							}
-						    break;
-						}
-					}
-				} catch (CoreException e) {
-					JDIDebugPlugin.log(e);
-				}	        
 		    }
+            try {
+            	IJavaElement[] resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
+            	for (int i = 0; i < resolve.length; i++) {
+            		IJavaElement javaElement = resolve[i];
+            		if (javaElement instanceof IField) {
+            		    IField field = (IField)javaElement;
+            		    String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
+            		    typeSignature = typeSignature.replace('.', '/');
+            			IJavaFieldVariable fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
+            		    if (fieldVariable != null) {
+            		        StringBuffer buf = new StringBuffer();
+            		        appendVariable(buf, fieldVariable);
+            		        return buf.toString();
+            		    }
+            			break;
+            		}
+            		if (javaElement instanceof ILocalVariable) {
+            		    ILocalVariable var = (ILocalVariable)javaElement;
+            		    IJavaElement parent = var.getParent();
+            		    while (!(parent instanceof IMethod) && parent != null) {
+            		    	parent = parent.getParent();
+            		    }
+            		    if (parent instanceof IMethod) {
+            				IMethod method = (IMethod) parent;
+            				boolean equal = false;
+            				if (method.isBinary()) {
+            					// compare resolved signatures
+            					if (method.getSignature().equals(frame.getSignature())) {
+            						equal = true;
+            					}
+            				} else {
+            					// compare unresolved signatures
+            					if (frame.getMethodName().equals(method.getElementName())
+            							&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())) {
+            						equal = true;
+            					}
+            				}
+            				if (equal) {
+            					return generateHoverForLocal(frame, var.getElementName());
+            				}
+            			}
+            		    break;
+            		}
+            	}
+            } catch (CoreException e) {
+            	JDIDebugPlugin.log(e);
+            }
 	    }
 	    return null;
 	}
@@ -191,7 +190,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/**
 	 * Append HTML for the given variable to the given buffer
 	 */
-	private static void appendVariable(StringBuffer buffer, IVariable variable) throws DebugException {		
+	private static void appendVariable(StringBuffer buffer, IVariable variable) {		
 		JDIModelPresentation modelPresentation = getModelPresentation();
 		buffer.append("<p><pre>"); //$NON-NLS-1$
 		buffer.append(modelPresentation.getVariableText((IJavaVariable) variable));
