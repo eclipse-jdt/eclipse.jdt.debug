@@ -66,7 +66,7 @@
             targetID="org.eclipse.jdt.ui.CompilationUnitEditor"
             id="org.eclipse.jdt.debug.CompilationUnitEditor.BreakpointRulerActions">
          <action
-               label="%Dummy.label"
+               label="%AddBreakpoint.label"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction">
@@ -76,7 +76,7 @@
             targetID="org.eclipse.jdt.ui.ClassFileEditor"
             id="org.eclipse.jdt.debug.ClassFileEditor.BreakpointRulerActions">
          <action
-               label="%Dummy.label"
+               label="%AddBreakpoint.label"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction">

@@ -63,14 +63,10 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 	private ITextEditor fTextEditor;
 	private List fMarkers;
 
-	private String fAddLabel;
-	private String fRemoveLabel;
-	
 	public ManageBreakpointRulerAction(IVerticalRulerInfo ruler, ITextEditor editor) {
+		super(ActionMessages.getString("ManageBreakpointRulerAction.label")); //$NON-NLS-1$
 		fRuler= ruler;
 		fTextEditor= editor;
-		fAddLabel= ActionMessages.getString("ManageBreakpointRulerAction.add.label"); //$NON-NLS-1$
-		fRemoveLabel= ActionMessages.getString("ManageBreakpointRulerAction.remove.label"); //$NON-NLS-1$
 	}
 	
 	/** 
@@ -161,7 +157,6 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 	 */
 	public void update() {
 		fMarkers= getMarkers();
-		setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
 	}
 
 	/**
