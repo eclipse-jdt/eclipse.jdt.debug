@@ -431,10 +431,6 @@ public abstract class Tests extends AbstractDebugTest {
 			public IEvaluationResult getResult() {
 				return fResult;
 			}
-			
-			public boolean evaluationTimedOut(IJavaThread thread) {
-				return true;
-			}
 		}
 		Listener listener= new Listener();
 		try {
