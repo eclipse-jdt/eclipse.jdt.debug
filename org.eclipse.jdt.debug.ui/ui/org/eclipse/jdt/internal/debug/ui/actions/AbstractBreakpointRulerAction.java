@@ -91,21 +91,24 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	}
 
 	protected boolean breakpointAtRulerLine(IJavaLineBreakpoint jBreakpoint) throws CoreException {
-		Position position= getAnnotationModel().getMarkerPosition(jBreakpoint.getMarker());
-		if (position != null) {
-			IDocumentProvider provider= getTextEditor().getDocumentProvider();
-			IDocument doc=  provider.getDocument(getTextEditor().getEditorInput());
-			try {
-				int markerLineNumber= doc.getLineOfOffset(position.getOffset());
-				int rulerLine= getInfo().getLineOfLastMouseButtonActivity();
-				if (rulerLine == markerLineNumber) {
-					if (getTextEditor().isDirty()) {
-						return jBreakpoint.getLineNumber() == markerLineNumber + 1;
+		AbstractMarkerAnnotationModel model = getAnnotationModel();
+		if (model != null) {
+			Position position= model.getMarkerPosition(jBreakpoint.getMarker());
+			if (position != null) {
+				IDocumentProvider provider= getTextEditor().getDocumentProvider();
+				IDocument doc=  provider.getDocument(getTextEditor().getEditorInput());
+				try {
+					int markerLineNumber= doc.getLineOfOffset(position.getOffset());
+					int rulerLine= getInfo().getLineOfLastMouseButtonActivity();
+					if (rulerLine == markerLineNumber) {
+						if (getTextEditor().isDirty()) {
+							return jBreakpoint.getLineNumber() == markerLineNumber + 1;
+						}
+						return true;
 					}
-					return true;
+				} catch (BadLocationException x) {
+					JDIDebugUIPlugin.log(x);
 				}
-			} catch (BadLocationException x) {
-				JDIDebugUIPlugin.log(x);
 			}
 		}
 		
