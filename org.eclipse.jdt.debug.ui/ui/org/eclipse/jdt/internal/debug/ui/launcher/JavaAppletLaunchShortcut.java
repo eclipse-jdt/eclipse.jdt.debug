@@ -9,14 +9,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -26,12 +21,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchShortcut;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletArgumentsTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -40,15 +31,12 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -117,7 +105,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 			dialog.setMessage(LauncherMessages.getString("appletlauncher.selection.type.dialog.message.run"));  //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementListSelectionDialog.OK) {
 			return (IType)dialog.getFirstResult();
 		}
 		return null;
@@ -221,7 +209,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
 		labelProvider.dispose();
-		if (result == dialog.OK) {
+		if (result == ElementListSelectionDialog.OK) {
 			return (ILaunchConfiguration)dialog.getFirstResult();
 		}
 		return null;		

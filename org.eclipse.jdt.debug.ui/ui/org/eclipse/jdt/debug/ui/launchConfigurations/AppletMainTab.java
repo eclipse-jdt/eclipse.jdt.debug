@@ -223,7 +223,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				javaProject);
 		dialog.setTitle(LauncherMessages.getString("appletlauncher.maintab.selection.applet.dialog.title")); //$NON-NLS-1$
 		dialog.setMessage(LauncherMessages.getString("appletlauncher.maintab.selection.applet.dialog.message")); //$NON-NLS-1$
-		if (dialog.open() == dialog.CANCEL) {
+		if (dialog.open() == AppletSelectionDialog.CANCEL) {
 			return;
 		}
 		
@@ -277,7 +277,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == dialog.OK) {			
+		if (dialog.open() == ElementListSelectionDialog.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
 		}			
 		return null;		
@@ -334,7 +334,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		if (jp != null) {
 			// only verify type exists if Java project is specified
 			try {
-				IType type = AppletLaunchConfigurationUtils.getMainType(name, jp);
+				AppletLaunchConfigurationUtils.getMainType(name, jp);
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 				return false;
