@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -26,12 +25,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -413,17 +414,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		if (!hasCondition()) {
 			return !suspendForEvent(event, thread);
 		}
-		IMarker marker= getMarker();
-		if (marker == null) {
-			return true;
-		}
-		IJavaProject project= getJavaProject(marker.getResource().getProject());
-		IAstEvaluationEngine engine = getEvaluationEngine(target, project);
-		if (engine == null) {
-			// If no engine is available, suspend
-			return !suspendForEvent(event, thread);
-		}
-		
 		EvaluationListener listener= new EvaluationListener();
 
 		int suspendPolicy= SUSPEND_THREAD;
@@ -437,6 +427,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			thread.handleSuspendForBreakpointQuiet(this);
 		}
 		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
+		IJavaProject project= getJavaProject(frame);
+		IAstEvaluationEngine engine = getEvaluationEngine(target, project);
+		if (engine == null) {
+			// If no engine is available, suspend
+			return !suspendForEvent(event, thread);
+		}
 		ICompiledExpression expression= (ICompiledExpression)fCompiledExpressions.get(thread);
 		if (expression == null) {
 			expression= engine.getCompiledExpression(condition, frame);
@@ -452,6 +448,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.
 		return false;
+	}
+	
+	private IJavaProject getJavaProject(JDIStackFrame stackFrame) {
+		ILaunch launch = stackFrame.getLaunch();
+		if (launch == null) {
+			return null;
+		}
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null)
+			return null;
+		
+		Object sourceElement = locator.getSourceElement(stackFrame);
+		if (sourceElement instanceof IJavaElement) {
+			return ((IJavaElement) sourceElement).getJavaProject();
+		}			
+		return null;
 	}
 	
 	/**
@@ -552,16 +564,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	public boolean conditionHasErrors(ICompiledExpression expression) {
 		return expression.hasErrors();
-	}
-	
-	private IJavaProject getJavaProject(IProject project) {
-		try {
-			if (project.exists() && project.hasNature(JavaCore.NATURE_ID)) {
-				return JavaCore.create(project);
-			}
-		} catch (CoreException e) {
-		}
-		return null;
 	}
 	
 	/**
