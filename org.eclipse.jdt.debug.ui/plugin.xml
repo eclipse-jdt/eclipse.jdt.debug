@@ -2666,7 +2666,7 @@ M4 = Platform-specific fourth key
          </factory>
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaMonitorThread">
+            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
             <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>

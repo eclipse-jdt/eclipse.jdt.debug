@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -99,7 +100,7 @@ public class JavaWaitingThread implements IDebugElement {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		return null;
+		return InternalPlatform.getDefault().getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/**
