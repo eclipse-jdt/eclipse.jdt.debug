@@ -346,17 +346,7 @@ public class JavaLaunchConfigurationHelper implements IResourceChangeListener,
 		String pathStr= mainTypeName.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IJavaElement javaElement= javaProject.findElement(new Path(pathStr));
 		if (javaElement == null) {
-			// try to find it as inner type
-			String qualifier= Signature.getQualifier(mainTypeName);
-			if (qualifier.length() > 0) {
-				IType type= findType(javaProject, qualifier); // recursive!
-				if (type != null) {
-					IType res= type.getType(Signature.getSimpleName(mainTypeName));
-					if (res.exists()) {
-						return res;
-					}
-				}
-			}
+			return null;
 		} else if (javaElement instanceof IType) {
 			return (IType)javaElement;
 		} else if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
