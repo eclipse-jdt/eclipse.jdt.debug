@@ -84,13 +84,6 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
-	public char[] getCompletionProposalAutoActivationCharacters() {
-		return null;
-	}
-
-	/**
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
@@ -203,6 +196,13 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public void orderProposalsAlphabetically(boolean order) {
 		fComparator= order ? new CompletionProposalComparator() : null;
+	}
+	
+	/**
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
+	 */
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		return fProposalAutoActivationSet;
 	}
 	
 	/**
