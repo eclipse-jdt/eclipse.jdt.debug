@@ -162,8 +162,6 @@ public final class JavaRuntime {
 	 */
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 
-	private static final String PROPERTY_BUILD_VM= LaunchingPlugin.getUniqueIdentifier() + ".build_vm"; //$NON-NLS-1$
-
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
 	private static String fgDefaultVMConnectorId = null;
@@ -256,8 +254,38 @@ public final class JavaRuntime {
 	 * 							corrupt.
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
-		String idString= project.getProject().getPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_BUILD_VM));
-		return getVMFromId(idString);
+		// check the classpath
+		IClasspathEntry[] classpath = project.getRawClasspath();
+		for (int i = 0; i < classpath.length; i++) {
+			switch (classpath[i].getEntryKind()) {
+				case IClasspathEntry.CPE_VARIABLE:
+					if (classpath[i].getPath().segment(0).equals(JRELIB_VARIABLE)) {
+						return getDefaultVMInstall();
+					}
+					break;
+				case IClasspathEntry.CPE_CONTAINER:
+					if (classpath[i].getPath().segment(0).equals(JRE_CONTAINER)) {
+						IPath path = classpath[i].getPath();
+						if (path.segmentCount() > 1) {
+							String typeId = path.segment(1);
+							String name = path.segment(2);
+							IVMInstallType type = getVMInstallType(typeId);
+							if (type != null) {
+								IVMInstall[] vms = type.getVMInstalls();
+								for (int j = 0; j < vms.length; j++) {
+									if (vms[j].getName().equals(name)) {
+										return vms[i];
+									}
+								}
+							}
+						} else {
+							return getDefaultVMInstall();
+						}
+					}
+					break;
+			}
+		}
+		return null;
 	}
 	
 	private static IVMInstall getVMFromId(String idString) {
@@ -298,14 +326,10 @@ public final class JavaRuntime {
 	 * 					  property.
 	 * @throws	CoreException	If the property could not be set to
 	 * 							the underlying project.
+	 * @deprecated this method has no effect. Setting the JRE associated with a project
+	 *  should be done by setting it's classpath.
 	 */
 	public static void setVM(IJavaProject project, IVMInstall javaRuntime) throws CoreException {
-		IVMInstall previous = getVMInstall(project);
-		String idString= getIdFromVM(javaRuntime);
-		project.getProject().setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_BUILD_VM), idString);
-		if (previous != javaRuntime) {
-			notifyProjectVMChanged(project, previous, javaRuntime);
-		}
 	}
 	
 	/**
