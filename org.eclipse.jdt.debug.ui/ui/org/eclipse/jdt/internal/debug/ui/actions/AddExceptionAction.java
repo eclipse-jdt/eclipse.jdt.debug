@@ -1,4 +1,3 @@
-
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
@@ -20,8 +19,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public class AddExceptionAction implements IViewActionDelegate {
+public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindowActionDelegate {
 
 	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
@@ -51,5 +52,17 @@ public class AddExceptionAction implements IViewActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
 	}
 }

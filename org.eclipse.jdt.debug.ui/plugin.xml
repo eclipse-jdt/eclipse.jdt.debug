@@ -104,6 +104,16 @@
              	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
             </enablement> 
   	    </action>
+  	    <action id="org.eclipse.jdt.debug.ui.actionSet.AddException"
+			label="%exceptionAction.accel.label"
+			icon="icons/full/clcl16/exc_catch.gif"
+			helpContextId="add_exception_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
+			menubarPath="org.eclipse.ui.run/breakpointGroup">
+			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
+		</action>
       	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
   			label="%ManageBreakpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
