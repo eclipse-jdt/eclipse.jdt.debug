@@ -12,10 +12,8 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -162,16 +160,6 @@ public class CreateStepFilterDialog extends StatusDialog {
 			}
 		}
 		return true;
-	}	
-
-	
-	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-		if (section == null) {
-			section = settings.addNewSection(getDialogSettingsSectionName());
-		} 
-		return section;
 	}
 	
 	/**
@@ -182,50 +170,25 @@ public class CreateStepFilterDialog extends StatusDialog {
 	protected String getDialogSettingsSectionName() {
 		return IJavaDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
-	private void persistShellGeometry() {
-		Point shellLocation = getShell().getLocation();
-		Point shellSize = getShell().getSize();
-		IDialogSettings settings = getDialogSettings();
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
-		settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
-	}	
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	protected Point getInitialLocation(Point initialSize) {
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
-			return new Point(x,y);
-		} catch (NumberFormatException e) {
+		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		if (initialLocation != null) {
+			return initialLocation;
 		}
 		return super.getInitialLocation(initialSize);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
-		
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
-			return new Point(Math.max(x,size.x),Math.max(y,size.y));
-		} catch (NumberFormatException e) {
-		}
-		return size;
+		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
@@ -235,7 +198,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 			filterValid = false;
 			filter = null;
 		}
-		persistShellGeometry();
+		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 		return super.close();
 	}
 

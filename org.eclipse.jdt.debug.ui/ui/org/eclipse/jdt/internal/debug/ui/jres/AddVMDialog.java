@@ -15,12 +15,13 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
@@ -37,7 +38,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
@@ -513,34 +513,6 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	/**
-	 * Write out this dialog's Shell size, location to the preference store.
-	 */
-	protected void persistShellGeometry() {
-		Point shellLocation = getShell().getLocation();
-		Point shellSize = getShell().getSize();
-		IDialogSettings settings = getDialogSettings();
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
-		settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
-	}
-	
-	/**
-	 * Returns the dialog settings for this dialog. Subclasses should override
-	 * <code>getDialogSettingsKey()</code>.
-	 * 
-	 * @return IDialogSettings
-	 */
-	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-		if (section == null) {
-			section = settings.addNewSection(getDialogSettingsSectionName());
-		} 
-		return section;
-	}
-	
-	/**
 	 * Returns the name of the section that this dialog stores its settings in
 	 * 
 	 * @return String
@@ -553,8 +525,19 @@ public class AddVMDialog extends StatusDialog {
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		persistShellGeometry();
+		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 		return super.close();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+	 */
+	protected Point getInitialLocation(Point initialSize) {
+		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		if (initialLocation != null) {
+			return initialLocation;
+		}
+		return super.getInitialLocation(initialSize);
 	}
 	
 	/* (non-Javadoc)
@@ -562,30 +545,6 @@ public class AddVMDialog extends StatusDialog {
 	 */
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
-		
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
-			return new Point(Math.max(x,size.x),Math.max(y,size.y));
-		} catch (NumberFormatException e) {
-		}
-		return size;
-	}
-	
-	/**
-	 * @see Window#getInitialLocation(Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
-			return new Point(x,y);
-		} catch (NumberFormatException e) {
-		}
-		return super.getInitialLocation(initialSize);
+		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
 	}
 }
