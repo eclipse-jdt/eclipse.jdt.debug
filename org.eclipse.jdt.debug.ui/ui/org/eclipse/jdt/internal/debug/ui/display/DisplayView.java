@@ -55,6 +55,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -178,7 +179,7 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 			 * @see IDocumentListener#documentChanged(DocumentEvent)
 			 */
 			public void documentChanged(DocumentEvent event) {
-				updateAction(IWorkbenchActionConstants.FIND);
+				updateAction(ActionFactory.FIND.getId());
 			}
 		};
 		doc.addDocumentListener(fDocumentListener);
@@ -208,33 +209,33 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 		action.setText(DisplayMessages.getString("DisplayView.Cut.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.Cut.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.Cut.description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.CUT, action);
+		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.COPY);
 		action.setText(DisplayMessages.getString("DisplayView.Copy.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.Copy.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.Copy.description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.COPY, action);
+		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.PASTE);
 		action.setText(DisplayMessages.getString("DisplayView.Paste.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.Paste.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.Paste.Description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.PASTE, action);
+		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.SELECT_ALL);
 		action.setText(DisplayMessages.getString("DisplayView.SelectAll.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.SelectAll.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.SelectAll.description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.SELECT_ALL, action);
+		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
 		
-		fSelectionActions.add(IWorkbenchActionConstants.CUT);
-		fSelectionActions.add(IWorkbenchActionConstants.COPY);
-		fSelectionActions.add(IWorkbenchActionConstants.PASTE);
+		fSelectionActions.add(ActionFactory.CUT.getId());
+		fSelectionActions.add(ActionFactory.COPY.getId());
+		fSelectionActions.add(ActionFactory.PASTE.getId());
 		
 		fContentAssistAction= new DisplayViewAction(this, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		fContentAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
@@ -296,12 +297,12 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 			menu.add(fContentAssistAction);
 		}
 		menu.add(new Separator());		
-		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.CUT));
-		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.COPY));
-		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.PASTE));
-		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));
+		menu.add((IAction) fGlobalActions.get(ActionFactory.CUT.getId()));
+		menu.add((IAction) fGlobalActions.get(ActionFactory.COPY.getId()));
+		menu.add((IAction) fGlobalActions.get(ActionFactory.PASTE.getId()));
+		menu.add((IAction) fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
 		menu.add(new Separator());
-		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.FIND));
+		menu.add((IAction) fGlobalActions.get(ActionFactory.FIND.getId()));
 		menu.add(fClearDisplayAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

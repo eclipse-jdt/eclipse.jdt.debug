@@ -23,6 +23,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -46,7 +47,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		 */
 		public ImageDescriptor getImageDescriptor(Object o) {
 			if (o instanceof JavaProjectSourceLocation) {
-				return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_PROJECT);
+				return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
 			} else if (o instanceof DirectorySourceLocation) {
 				return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 			} else if (o instanceof ArchiveSourceLocation) {
