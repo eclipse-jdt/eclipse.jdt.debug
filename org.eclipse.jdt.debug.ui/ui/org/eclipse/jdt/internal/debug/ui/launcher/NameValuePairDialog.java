@@ -55,7 +55,16 @@ public class NameValuePairDialog extends Dialog {
 		Composite comp = new Composite(parent, SWT.NULL);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
+		topLayout.marginHeight =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		topLayout.marginWidth =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		topLayout.verticalSpacing =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		topLayout.horizontalSpacing =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);		
 		comp.setLayout(topLayout);
+		comp.setFont(font);
 		GridData gd;
 		
 		fNameLabel = new Label(comp, SWT.NONE);
