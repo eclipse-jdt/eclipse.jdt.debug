@@ -653,7 +653,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * Creates, enables and returns a class prepare request for the
 	 * specified class name in this target, or <code>null</code> if
-	 * unable to create the request.
+	 * unable to create the request. This is a utility method used
+	 * by event requesters that need to create class prepare requests.
 	 * 
 	 * @param className regular expression specifying the pattern of
 	 * 	class names that will cause the event request to fire. Regular
@@ -697,7 +698,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		if (breakpoint instanceof JavaBreakpoint) {
 			try {
-				((JavaBreakpoint)breakpoint).addToTarget(JDIDebugTarget.this);
+				((JavaBreakpoint)breakpoint).addToTarget(this);
 				getBreakpoints().add(breakpoint);
 			} catch (CoreException e) {
 				logError(e);
@@ -720,7 +721,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}		
 		if (breakpoint instanceof JavaBreakpoint) {	
 			try {
-				((JavaBreakpoint)breakpoint).changeForTarget(JDIDebugTarget.this);
+				((JavaBreakpoint)breakpoint).changeForTarget(this);
 			} catch (CoreException e) {
 				logError(e);
 			}
@@ -741,7 +742,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}		
 		if (breakpoint instanceof JavaBreakpoint) {
 			try {
-				((JavaBreakpoint)breakpoint).removeFromTarget(JDIDebugTarget.this);
+				((JavaBreakpoint)breakpoint).removeFromTarget(this);
 				getBreakpoints().remove(breakpoint);
 			} catch (CoreException e) {
 				logError(e);
@@ -831,25 +832,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		getBreakpoints().clear();
-	}
-
-	/**
-	 * Returns the name of the reference type, logging any JDI exceptions.
-	 *
-	 * @see com.sun.jdi.ReferenceType
-	 */
-	protected String jdiGetTypeName(ReferenceType type) {
-		try {
-			return type.name();
-		} catch (VMDisconnectedException e) {
-			if (isDisconnected() || isTerminated()) {
-				return getUnknownMessage();
-			}
-			logError(e);
-		} catch (RuntimeException e) {
-			logError(e);
-		}
-		return getUnknownMessage();
 	}
 
 	/**
