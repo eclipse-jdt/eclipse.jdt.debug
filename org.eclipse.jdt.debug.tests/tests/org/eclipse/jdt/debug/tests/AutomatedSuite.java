@@ -27,9 +27,11 @@ import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.DebugEventTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.DirectorySourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.DirectorySourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.FolderSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.HcrTests;
 import org.eclipse.jdt.debug.tests.core.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
@@ -44,9 +46,10 @@ import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
+import org.eclipse.jdt.debug.tests.core.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.RefreshTabTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
-import org.eclipse.jdt.debug.tests.core.SourceContainerTests;
+import org.eclipse.jdt.debug.tests.core.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
@@ -60,6 +63,7 @@ import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
+import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -120,7 +124,11 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(JavaBreakpointListenerTests.class));
 		
 		addTest(new TestSuite(SourceLookupTests.class));
-		addTest(new TestSuite(SourceContainerTests.class));
+		addTest(new TestSuite(FolderSourceContainerTests.class));
+		addTest(new TestSuite(DirectorySourceContainerTests.class));
+		addTest(new TestSuite(ProjectSourceContainerTests.class));
+		addTest(new TestSuite(WorkspaceSourceContainerTests.class));		
+		addTest(new TestSuite(DefaultSourceContainerTests.class));
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
