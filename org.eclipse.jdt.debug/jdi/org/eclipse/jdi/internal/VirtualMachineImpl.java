@@ -36,6 +36,7 @@ import com.sun.jdi.DoubleValue;
 import com.sun.jdi.FloatValue;
 import com.sun.jdi.IntegerValue;
 import com.sun.jdi.LongValue;
+import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -232,7 +233,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		Iterator iter = refTypeList.iterator();
 		while (iter.hasNext()) {
 			ReferenceTypeImpl refType = (ReferenceTypeImpl)iter.next();
-			if (!refType.isPrepared()) {
+			boolean prepared= false;
+			try {
+				prepared= refType.isPrepared();
+			} catch (ObjectCollectedException exception) {
+				// The type is unloaded. Fall through
+			}
+			if (!prepared) {
 				refType.flushStoredJdwpResults();
 				iter.remove();
 				fCachedReftypes.remove(refType.getRefTypeID());
