@@ -22,7 +22,6 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 */
 	protected JDIValue fValue;
 	
-	//non NLS
 	protected final static String jdiStringSignature= "Ljava/lang/String;"; //$NON-NLS-1$
 	
 	public JDIVariable(JDIDebugTarget target) {
@@ -58,7 +57,6 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	protected final Value getCurrentValue() throws DebugException {
 		try {
 			return retrieveValue();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIVariable.exception_retrieving"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -66,7 +64,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	}
 	
 	/**
-	 * Returns this variables underlying jdi value
+	 * Returns this variable's underlying jdi value
 	 */
 	protected abstract Value retrieveValue();
 	
