@@ -42,7 +42,7 @@ public class ArchiveFilter extends ObjectFilter {
 
 	/**
 	 * Constructs a new filter to display archives and their containers,
-	 * exlcuding the resources in the given list.
+	 * excluding the resources in the given list.
 	 * 
 	 * @param objects resources to exclude
 	 */
@@ -93,6 +93,4 @@ public class ArchiveFilter extends ObjectFilter {
 		}
 		return added;
 	}
-	
-
 }
