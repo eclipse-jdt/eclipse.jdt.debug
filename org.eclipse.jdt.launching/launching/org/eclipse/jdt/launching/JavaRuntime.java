@@ -127,7 +127,7 @@ public final class JavaRuntime {
 	private static synchronized void initializeVMTypes() {
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(LaunchingPlugin.PLUGIN_ID + ".vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(LaunchingPlugin.PLUGIN_ID, IStatus.OK, LaunchingMessages.getString("javaRuntime.exceptionOccurred"), null); //$NON-NLS-1$
+		MultiStatus status= new MultiStatus(LaunchingPlugin.PLUGIN_ID, IStatus.OK, LaunchingMessages.getString("JavaRuntime.exceptionOccurred"), null); //$NON-NLS-1$
 		ArrayList vmTypes= new ArrayList(configs.length);
 
 		for (int i= 0; i < configs.length; i++) {
@@ -342,7 +342,7 @@ public final class JavaRuntime {
 			Writer writer= new OutputStreamWriter(stream);
 			writeVMs(writer);
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IStatus.ERROR, LaunchingMessages.getString("javaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
 		}
 		
 	}
@@ -436,7 +436,7 @@ public final class JavaRuntime {
 			File detectedLocation= vmTypes[i].detectInstallLocation();
 			if (detectedLocation != null) {
 				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(i));
-				detected.setName(vmTypes[i].getName()+LaunchingMessages.getString("javaRuntime.detectedSuffix")); //$NON-NLS-1$
+				detected.setName(vmTypes[i].getName()+LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
 				detected.setInstallLocation(detectedLocation);
 				if (detected != null && !defaultSet) {
 					setDefaultVMInstall(detected);
@@ -452,15 +452,15 @@ public final class JavaRuntime {
 			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			config = parser.parse(new InputSource(reader)).getDocumentElement();
 		} catch (SAXException e) {
-			throw new IOException(LaunchingMessages.getString("javaRuntime.badFormat")); //$NON-NLS-1$
+			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
 			reader.close();
-			throw new IOException(LaunchingMessages.getString("javaRuntime.badFormat")); //$NON-NLS-1$
+			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
 		} finally {
 			reader.close();
 		}
 		if (!config.getNodeName().equalsIgnoreCase("vmSettings")) { //$NON-NLS-1$
-			throw new IOException(LaunchingMessages.getString("javaRuntime.badFormat")); //$NON-NLS-1$
+			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
 		}
 		fgDefaultVMId= config.getAttribute("defaultVM"); //$NON-NLS-1$
 		NodeList list = config.getChildNodes();
