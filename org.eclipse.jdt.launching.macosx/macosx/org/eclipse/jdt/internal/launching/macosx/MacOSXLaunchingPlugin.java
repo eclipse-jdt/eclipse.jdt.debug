@@ -15,7 +15,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 public class MacOSXLaunchingPlugin extends Plugin {
@@ -80,7 +79,9 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		
 		// the following property is defined if Eclipse is started via java_swt
 		String java_swt= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
-		if (java_swt == null) {
+		
+		if (java_swt == null) {	
+			// not started via java_swt -> now we require that the VM supports the "-XstartOnFirstThread" option
 			String[] newCmdLine= new String[cmdLine.length+1];
 			int argCount= 0;
 			newCmdLine[argCount++]= cmdLine[0];
