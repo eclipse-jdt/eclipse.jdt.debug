@@ -18,6 +18,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IStreamMonitor;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -133,14 +134,16 @@ public class CommandArgumentTests extends AbstractDebugTest {
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, argString);
 		ILaunchConfiguration config = workingCopy.doSave();
 		fOutputListener.clear();
+		IJavaDebugTarget target= null;
 		try {
 			IJavaThread thread = launchAndSuspend(config);
 			thread.getDebugTarget().getProcess().getStreamsProxy().getOutputStreamMonitor().addListener(fOutputListener);
-			resumeAndExit(thread);
+			target= resumeAndExit(thread);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertEquals(argValue, fOutputListener.getOutput());
+		terminateAndRemove(target);
 		config.delete();
 	}
 }
