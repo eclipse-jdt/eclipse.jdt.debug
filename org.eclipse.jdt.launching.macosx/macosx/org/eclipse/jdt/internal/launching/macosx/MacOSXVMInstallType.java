@@ -63,6 +63,8 @@ public class MacOSXVMInstallType extends StandardVMType {
 	private static final String JVM_ROOT= "Home";	//$NON-NLS-1$
 	/** The doc (for all JVMs) lives here (if the developer kit has been expanded)*/
 	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/";	//$NON-NLS-1$
+	/** The doc for 1.4.1 is kept in a sub directory of the above. */ 
+	private static final String JAVADOC_SUBDIR= "/doc/api";	//$NON-NLS-1$
 		
 				
 	public String getName() {
@@ -203,15 +205,22 @@ public class MacOSXVMInstallType extends StandardVMType {
 			if (path.startsWith(JVM_VERSION_LOC) && path.endsWith(post))
 				id= path.substring(JVM_VERSION_LOC.length(), path.length()-post.length());
 		} catch (IOException ex) {
-			// NeedWork
+			// we use the fall back from below
 		}
 		if (id != null) {
-			File docLocation= new File(JAVADOC_LOC + id);
-			if (docLocation.exists()) {
+			String s= JAVADOC_LOC + id + JAVADOC_SUBDIR;	//$NON-NLS-1$
+			File docLocation= new File(s);
+			if (!docLocation.exists()) {
+				s= JAVADOC_LOC + id;
+				docLocation= new File(s);
+				if (!docLocation.exists())
+					s= null;
+			}
+			if (s != null) {
 				try {
-					return new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
+					return new URL("file", "", s);	//$NON-NLS-1$ //$NON-NLS-2$
 				} catch (MalformedURLException ex) {
-					// NeedWork
+					// we use the fall back from below
 				}
 			}
 		}
