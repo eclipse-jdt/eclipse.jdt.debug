@@ -458,12 +458,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				// cannot determine if local is final, so specify as default
 				Arrays.fill(modifiers, 0);
 				setLocalVariableModifiers(modifiers);
+				setThis(frame.getThis());
 				
-				final boolean isStatic = frame.isStatic();
-				if (!isStatic) {
-					setThis(frame.getThis());
-				}
-				
+				final boolean isStatic = frame.isStatic();				
 				final boolean isConstructor = frame.isConstructor();
 				final IType receivingType = getReceivingType(frame);
 				
@@ -653,6 +650,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * Resets this engine for another evaluation.
 	 */
 	private void reset() {
+		setThis(null);
 		setStackFrame(null);
 		setListener(null);
 	}
@@ -875,7 +873,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}	
 	
 	/**
-	 * Retursn whether this evaluation engine has been
+	 * Returns whether this evaluation engine has been
 	 * disposed.
 	 * 
 	 * @return whether this evaluation engine has been
@@ -1098,7 +1096,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}	
 	
 	/**
-	 * Sets the receiver context for the asscoiated evaluation,
+	 * Sets the receiver context for the associated evaluation,
 	 * possibly <code>null</code> if the evaluation is
 	 * in the context of a static method or there is
 	 * no object context.
