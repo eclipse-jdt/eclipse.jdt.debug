@@ -198,6 +198,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.setLayoutData(gd);
 		typeSearchButton.setFont(font);		
+		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				selectType();
@@ -360,7 +361,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		};
 		
 		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
-		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.ALL_OCCURRENCES, SearchPattern.R_PATTERN_MATCH);
+		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		try {
