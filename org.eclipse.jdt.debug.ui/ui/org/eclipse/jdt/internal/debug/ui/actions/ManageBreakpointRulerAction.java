@@ -219,7 +219,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 			IRegion line= document.getLineInformation(getVerticalRulerInfo().getLineOfLastMouseButtonActivity());
 
 			IType type= null;
-			IResource resource = null;
+			IResource resource;
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
 			if (classFile != null) {
 				type= classFile.getType();
@@ -255,9 +255,10 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				}
 				if (type != null) {
 					resource= BreakpointUtils.getBreakpointResource(type);
+				} else {
+					resource= ((IFileEditorInput)editorInput).getFile();
 				}
-			}
-			if (resource == null) {
+			} else {
 				resource= ResourcesPlugin.getWorkspace().getRoot();
 			}
 
