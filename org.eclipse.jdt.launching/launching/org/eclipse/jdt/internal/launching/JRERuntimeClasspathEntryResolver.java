@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.launching;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -52,8 +53,11 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		resolved = new IRuntimeClasspathEntry[libs.length];
 		for (int i = 0; i < libs.length; i++) {
 			resolved[i] = JavaRuntime.newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-			resolved[i].setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-			resolved[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+			IPath path = libs[i].getSystemLibrarySourcePath();
+			if (path != null && !path.isEmpty()) {
+				resolved[i].setSourceAttachmentPath(path);
+				resolved[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+			}
 			resolved[i].setClasspathProperty(kind);
 		}
 		return resolved;

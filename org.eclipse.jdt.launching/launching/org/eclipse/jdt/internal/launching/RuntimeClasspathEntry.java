@@ -333,7 +333,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
 	public IPath getSourceAttachmentRootPath() {
-		return getClasspathEntry().getSourceAttachmentRootPath();
+		IPath path = getClasspathEntry().getSourceAttachmentRootPath();
+		if (path == null && getSourceAttachmentPath() != null) {
+			return Path.EMPTY;
+		} else {
+			return path;
+		}
 	}
 
 	/**

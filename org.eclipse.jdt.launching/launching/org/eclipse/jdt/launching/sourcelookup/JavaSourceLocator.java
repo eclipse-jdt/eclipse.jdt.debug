@@ -12,22 +12,33 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -85,7 +96,6 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * 	as well
 	 */
 	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws JavaModelException {
-		
 		ArrayList requiredProjects = new ArrayList();
 		for (int i= 0; i < projects.length; i++) {
 			if (includeRequired) {
@@ -96,12 +106,37 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				}
 			}
 		}
-		IJavaSourceLocation[] locations = new IJavaSourceLocation[requiredProjects.size()];
-		for (int i = 0; i < requiredProjects.size(); i++) {
-			locations[i] = new JavaProjectSourceLocation((IJavaProject)requiredProjects.get(i));
-		}	
-		setSourceLocations(locations);
 		
+		// only add external entires with the same location once
+		HashMap external = new HashMap();
+		ArrayList list = new ArrayList();
+		// compute the default locations for each project, and add unique ones
+		Iterator iter = requiredProjects.iterator();
+		while (iter.hasNext()) {
+			IJavaProject p = (IJavaProject)iter.next();
+			try {
+				IPackageFragmentRoot[] roots = p.getPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].isExternal()) {
+						IPath location = roots[i].getPath();
+						if (external.get(location) == null) {
+							external.put(location, location);
+							list.add(new PackageFragmentRootSourceLocation(roots[i]));
+						}
+					} else {
+						list.add(new PackageFragmentRootSourceLocation(roots[i]));
+					}
+				}
+			} catch (CoreException e) {
+				if (e instanceof JavaModelException) {
+					throw (JavaModelException)e;
+				} else {
+					throw new JavaModelException(e);
+				}
+			}
+		}
+		IJavaSourceLocation[] locations = (IJavaSourceLocation[])list.toArray(new IJavaSourceLocation[list.size()]);
+		setSourceLocations(locations);
 	}	
 	
 	/**
@@ -246,16 +281,16 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @return a collection of source locations for all required
 	 *  projects
 	 * @exception CoreException if an exception occurs reading
-	 *  the classpath of the given or any required project
+	 *  computing the default locations
 	 */
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
-		ArrayList list = new ArrayList();
-		collectRequiredProjects(project, list);
-		IJavaSourceLocation[] locations = new IJavaSourceLocation[list.size()];
-		for (int i = 0; i < list.size(); i++) {
-			locations[i] = new JavaProjectSourceLocation((IJavaProject)list.get(i));
-		}	
-		return locations;
+		// create a temporary launch config
+		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+		ILaunchConfigurationWorkingCopy config = type.newInstance(null, project.getElementName());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+		JavaSourceLocator locator = new JavaSourceLocator();
+		locator.initializeDefaults(config);
+		return locator.getSourceLocations();
 	}
 	
 	/**
@@ -376,18 +411,22 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.ARCHIVE:
-					String path = entry.getSourceAttachmentLocation();
-					if (path == null) {
-						// if there is no source attachment, look in the archive itself
-						path = entry.getLocation();
-					}
-					if (path != null) {
-						File file = new File(path);
-						if (file.exists()) {
-							if (file.isDirectory()) {
-								location = new DirectorySourceLocation(file);
-							} else {
-								location = new ArchiveSourceLocation(path, entry.getSourceAttachmentRootLocation());
+					// check if the archive is in the workspace as a package fragment root
+					location = getArchiveSourceLocation(entry);
+					if (location == null) {
+						String path = entry.getSourceAttachmentLocation();
+						if (path == null) {
+							// if there is no source attachment, look in the archive itself
+							path = entry.getLocation();
+						}
+						if (path != null) {
+							File file = new File(path);
+							if (file.exists()) {
+								if (file.isDirectory()) {
+									location = new DirectorySourceLocation(file);
+								} else {
+									location = new ArchiveSourceLocation(path, entry.getSourceAttachmentRootLocation());
+								}
 							}
 						}
 					}
@@ -419,4 +458,101 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
 		throw new CoreException(s);		
 	}	
+	
+	/**
+	 * Returns whether the given objects are equal, allowing
+	 * for <code>null</code>.
+	 * 	 * @param a	 * @param b	 * @return whether the given objects are equal, allowing
+	 *   for <code>null</code>	 */
+	private static boolean equalOrNull(Object a, Object b) {
+		if (a == null) {
+			return b == null;
+		}
+		if (b == null) {
+			return false;
+		}
+		return a.equals(b);
+	}
+	
+	/**
+	 * Returns whether the source attachments of the given package fragment
+	 * root and runtime classpath entry are equal.
+	 * 	 * @param root package fragment root	 * @param entry runtime classpath entry	 * @return whether the source attachments of the given package fragment
+	 * root and runtime classpath entry are equal	 * @throws JavaModelException 	 */
+	private static boolean isSourceAttachmentEqual(IPackageFragmentRoot root, IRuntimeClasspathEntry entry) throws JavaModelException {
+		return equalOrNull(root.getSourceAttachmentPath(), entry.getSourceAttachmentPath())
+		   && equalOrNull(root.getSourceAttachmentRootPath(), entry.getSourceAttachmentRootPath());
+	}
+	
+	/**
+	 * Determines if the given archive runtime classpath entry exists
+	 * in the workspace as a package fragment root. Returns the associated
+	 * package fragment root source location if possible, otherwise
+	 * <code>null</code>.
+	 *  	 * @param entry archive runtime classpath entry	 * @return IJavaSourceLocation or <code>null</code>	 */
+	private static IJavaSourceLocation getArchiveSourceLocation(IRuntimeClasspathEntry entry) {
+		IResource resource = entry.getResource();
+		if (resource == null) { 
+			// Check all package fragment roots for case of external archive.
+			// External jars are shared, so it does not matter which project it
+			// originates from
+			IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+			try {
+				IJavaProject[] jps = model.getJavaProjects();
+				for (int i = 0; i < jps.length; i++) {
+					IPackageFragmentRoot[] allRoots = jps[i].getPackageFragmentRoots();
+					for (int j = 0; j < allRoots.length; j++) {
+						IPackageFragmentRoot root = allRoots[j];
+						if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
+							if (isSourceAttachmentEqual(root, entry)) {
+								// use package fragment root
+								return new PackageFragmentRootSourceLocation(root);
+							}							
+						}
+					}
+				}
+			} catch (JavaModelException e) {
+				LaunchingPlugin.log(e);
+			}
+		} else {
+			// check if the archive is a package fragment root
+			IProject project = resource.getProject();
+			IJavaProject jp = JavaCore.create(project);
+			if (jp.exists()) {
+				try {
+					IPackageFragmentRoot root = jp.getPackageFragmentRoot(resource);
+					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
+					for (int j = 0; j < allRoots.length; j++) {
+						if (allRoots[j].equals(root)) {
+							// ensure source attachment paths match
+							if (isSourceAttachmentEqual(root, entry)) {
+								// use package fragment root
+								return new PackageFragmentRootSourceLocation(root);
+							}
+						}
+					}
+					// check all other java projects to see if another project references
+					// the archive
+					IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+					IJavaProject[] jps = model.getJavaProjects();
+					for (int i = 0; i < jps.length; i++) {
+						allRoots = jps[i].getPackageFragmentRoots();
+						for (int j = 0; j < allRoots.length; j++) {
+							root = allRoots[j];
+							if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
+								if (isSourceAttachmentEqual(root, entry)) {
+									// use package fragment root
+									return new PackageFragmentRootSourceLocation(root);
+								}							
+							}
+						}
+					}
+				} catch (JavaModelException e) {
+					LaunchingPlugin.log(e);
+				}		
+			}
+		}		
+		return null;
+	}
+	
 }

@@ -11,12 +11,8 @@ package org.eclipse.jdt.launching;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * Default implementation of source lookup path computation and resolution.
@@ -43,47 +39,4 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 		return entries;
 
 	}
-	
-
-	/**
-	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
-	 */
-	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		boolean includeJRE = false;
-		IJavaProject pro = JavaRuntime.getJavaProject(configuration);
-		includeJRE = pro == null;
-		// omit JRE from source lookup path if the runtime JRE is the same as the build JRE
-		// (so we retrieve source from the workspace, and not an external jar)
-		if (!includeJRE) {
-			IVMInstall buildVM = JavaRuntime.getVMInstall(pro);
-			IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
-			if (buildVM != null) {
-				includeJRE = !buildVM.equals(runVM);
-			}
-		}
-		if (!includeJRE) {
-			// remove the JRE entry
-			List list = new ArrayList(entries.length);
-			for (int i = 0; i < entries.length; i++) {
-				switch (entries[i].getType()) {
-					case IRuntimeClasspathEntry.VARIABLE:
-						if (!entries[i].getVariableName().equals(JavaRuntime.JRELIB_VARIABLE)) {
-							list.add(entries[i]);
-						}
-						break;
-					case IRuntimeClasspathEntry.CONTAINER:
-						if (!entries[i].getVariableName().equals(JavaRuntime.JRE_CONTAINER)) {
-							list.add(entries[i]);
-						}
-						break;						
-					default:
-						list.add(entries[i]);
-						break;
-				}
-			}
-			entries = (IRuntimeClasspathEntry[]) list.toArray(new IRuntimeClasspathEntry[list.size()]);
-		}
-		return super.resolveClasspath(entries, configuration);
-	}
-
 }

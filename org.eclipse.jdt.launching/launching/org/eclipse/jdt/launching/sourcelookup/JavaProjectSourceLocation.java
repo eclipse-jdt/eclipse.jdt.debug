@@ -1,28 +1,32 @@
 package org.eclipse.jdt.launching.sourcelookup;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -33,9 +37,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
  
 /**
- * Locates source elements in a Java project. Returns
- * instances of <code>ICompilationUnit</code> and
- * </code>IClassFile</code>.
+ * Locates source elements in all source folders of the
+ * given Java project. Returns instances of <code>ICompilationUnit</code>
+ * and </code>IClassFile</code>.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -48,6 +52,11 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 * The project associated with this source location
 	 */
 	private IJavaProject fProject;
+	
+	/**
+	 * Corresponding package fragment root locations.
+	 */
+	private IJavaSourceLocation[] fRootLocations = null;
 	
 	/**
 	 * Constructs a new empty source location to be initialized
@@ -70,21 +79,15 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 * @see IJavaSourceLocation#findSourceElement(String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
-		if (getJavaProject() != null) {
-			String pathStr= name.replace('.', '/') + ".java"; //$NON-NLS-1$
-			IJavaElement jelement= getJavaProject().findElement(new Path(pathStr));
-			if (jelement == null) {
-				// maybe an inner type
-				int dotIndex= pathStr.lastIndexOf('/');
-				int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
-				if (dollarIndex != -1) {
-					jelement= getJavaProject().findElement(new Path(pathStr.substring(0, dollarIndex) + ".java")); //$NON-NLS-1$
+		if (fRootLocations != null) {
+			for (int i = 0; i < fRootLocations.length; i++) {
+				Object element = fRootLocations[i].findSourceElement(name);
+				if (element != null) {
+					return element;
 				}
 			}
-			return jelement;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -95,6 +98,22 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 */
 	private void setJavaProject(IJavaProject project) {
 		fProject = project;
+		fRootLocations = null;
+		if (fProject != null) {
+			try {
+				IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
+				ArrayList list = new ArrayList(roots.length);
+				
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+						list.add(new PackageFragmentRootSourceLocation(roots[i]));
+					}
+				}
+				fRootLocations = (IJavaSourceLocation[])list.toArray(new IJavaSourceLocation[list.size()]);
+			} catch (JavaModelException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
 	}
 	
 	/**
