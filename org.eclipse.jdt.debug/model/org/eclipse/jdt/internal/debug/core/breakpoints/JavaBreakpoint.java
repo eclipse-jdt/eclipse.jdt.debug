@@ -15,11 +15,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -118,13 +116,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * the breakpoint for HCR (i.e. in case an inner type is HCR'd).
 	 */
 	protected String fInstalledTypeName = null;
-	
-	/**
-	 * List of targets in which this breakpoint is installed.
-	 * Used to prevent firing of more than one install notification
-	 * when a breakpoint's requests are re-created.
-	 */
-	protected Set fInstalledTargets = null;
 	
 	/**
 	 * List of active instance filters for this breakpoint
@@ -859,7 +850,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void fireRemoved(IJavaDebugTarget target) {
 		JDIDebugPlugin.getDefault().fireBreakpointRemoved(target, this);
-		setInstalledIn(target, false);
 	}	
 	
 	/**
@@ -869,40 +859,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @param target debug target
 	 */
 	protected void fireInstalled(IJavaDebugTarget target) {
-		if (!isInstalledIn(target)) {
-			JDIDebugPlugin.getDefault().fireBreakpointInstalled(target, this);
-			setInstalledIn(target, true);
-		}
+		JDIDebugPlugin.getDefault().fireBreakpointInstalled(target, this);
 	}	
-	
-	/**
-	 * Returns whether this breakpoint is installed in the given target.
-	 * 
-	 * @param target
-	 * @return whether this breakpoint is installed in the given target
-	 */
-	protected boolean isInstalledIn(IJavaDebugTarget target) {
-		return fInstalledTargets != null && fInstalledTargets.contains(target);
-	}
-	
-	/**
-	 * Sets this breakpoint as installed in the given target
-	 * 
-	 * @param target
-	 * @param installed whether installed
-	 */
-	protected void setInstalledIn(IJavaDebugTarget target, boolean installed) {
-		if (installed) {
-			if (fInstalledTargets == null) {
-				fInstalledTargets = new HashSet();
-			}
-			fInstalledTargets.add(target);
-		} else {
-			if (fInstalledTargets != null) {
-				fInstalledTargets.remove(target);
-			}
-		}
-	}
 	
 	/**
 	 * @see IJavaBreakpoint#setThreadFilter(IJavaThread)
