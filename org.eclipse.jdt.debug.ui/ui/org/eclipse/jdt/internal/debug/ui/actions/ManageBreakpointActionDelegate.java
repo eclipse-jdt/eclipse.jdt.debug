@@ -98,21 +98,16 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 * Determines if a breakpoint exists on the line of the current selection.
 	 */
 	protected boolean breakpointExists(IEditorInput editorInput) {
-		ISelectionProvider sp= getTextEditor().getSelectionProvider();
-		if (sp == null) {
-			return false;
-		}
-		ISelection s= sp.getSelection();
-		if (!s.isEmpty() && s instanceof ITextSelection) {
-			IType type= getType(editorInput);
-			if (type != null) {
-				try {
-					return JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber()) == null;
-				} catch (CoreException ce) {
-					JDIDebugUIPlugin.log(ce);
-				}
+		
+		IType type= getType(editorInput);
+		if (type != null) {
+			try {
+				return JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber()) == null;
+			} catch (CoreException ce) {
+				JDIDebugUIPlugin.log(ce);
 			}
-		}	
+		}
+	
 		return false;
 	}
 	
@@ -121,13 +116,14 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
 		if (sp != null) {
 			ISelection s= sp.getSelection();
-			if (!s.isEmpty() && s instanceof ITextSelection) {
+			if (s instanceof ITextSelection) {
 				ITextSelection selection= (ITextSelection) s;
+				setLineNumber(selection.getStartLine() + 1);
 				type= getType();
 				if (type != null && type.exists()) {
 					try {
 						ISourceRange sourceRange= type.getSourceRange();
-						if (selection.getOffset() >= sourceRange.getOffset()) {
+						if (selection.getOffset() >= sourceRange.getOffset() && selection.getOffset() <= (sourceRange.getOffset() + sourceRange.getLength() - 1)) {
 							return type;
 						}
 					} catch(JavaModelException e) {
@@ -141,7 +137,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	}
 	
 	protected IType getType0(ITextSelection selection, IEditorInput editorInput) {
-		setLineNumber(selection.getStartLine() + 1);
 		IType type= null;
 		try {
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
