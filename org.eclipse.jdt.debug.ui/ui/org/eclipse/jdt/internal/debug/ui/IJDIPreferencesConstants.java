@@ -163,6 +163,23 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_SHOW_SYSTEM_THREADS = IJavaDebugUIConstants.PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$
 	
 	/**
+	 * String preference indication when and where variable details should appear.
+	 * Valid values include: 
+	 * <ul>
+	 *   <li><code>INLINE_ALL</code> to show inline details for all variables
+	 *   <li><code>INLINE_FORMATTERS</code> to show inline details for variables with formatters
+	 *   <li><code>DETAIL_PANE</code> to show details only in the detail pane
+	 * </ul> 
+	 */
+	public static final String PREF_SHOW_DETAILS = IJavaDebugUIConstants.PLUGIN_ID + ".show_details"; //$NON-NLS-1$
+	/**
+	 * "Show detail" preference values.
+	 */
+	public static final String INLINE_ALL="INLINE_ALL"; //$NON-NLS-1$
+	public static final String INLINE_FORMATTERS="INLINE_FORMATTERS"; //$NON-NLS-1$
+	public static final String DETAIL_PANE="DETAIL_PANE"; //$NON-NLS-1$
+	
+	/**
 	 * Common dialog settings
 	 */
 	public static final String DIALOG_ORIGIN_X = "DIALOG_ORIGIN_X"; //$NON-NLS-1$

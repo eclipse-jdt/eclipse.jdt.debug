@@ -71,6 +71,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	public JavaDetailFormattersPreferencePage() {
 		super();
+		setTitle(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.0")); //$NON-NLS-1$
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
 		setDescription(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Override_default___toString()___for_Variables_and_Expressions_view_details._1")); //$NON-NLS-1$
 	}

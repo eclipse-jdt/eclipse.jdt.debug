@@ -735,6 +735,14 @@
                id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
          </action>
          <action
+               label="%detailOptionsAction.label"
+               helpContextId="detail_options_action_context"
+               tooltip="%detailOptionsAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DetailOptionsAction"
+               menubarPath="javaActions"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.DetailOptions">
+         </action>
+         <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"

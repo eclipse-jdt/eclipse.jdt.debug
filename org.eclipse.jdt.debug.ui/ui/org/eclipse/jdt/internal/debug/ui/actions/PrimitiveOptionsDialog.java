@@ -54,13 +54,13 @@ public class PrimitiveOptionsDialog extends Dialog {
 		// Create the 3 primitive display checkboxes
 		fHexButton = new Button(composite, SWT.CHECK);
 		fHexButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&hexadecimal_values_(byte,_short,_char,_int,_long)_3")); //$NON-NLS-1$
-		fHexButton.setSelection(PrimitiveOptionsAction.getPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_HEX));
+		fHexButton.setSelection(AbstractDisplayOptionsAction.getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_HEX));
 		fCharButton = new Button(composite, SWT.CHECK);
 		fCharButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_ASCII_&character_values_(byte,_short,_int,_long)_4")); //$NON-NLS-1$
-		fCharButton.setSelection(PrimitiveOptionsAction.getPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_CHAR));
+		fCharButton.setSelection(AbstractDisplayOptionsAction.getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_CHAR));
 		fUnsignedButton = new Button(composite, SWT.CHECK);
 		fUnsignedButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5")); //$NON-NLS-1$
-		fUnsignedButton.setSelection(PrimitiveOptionsAction.getPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_UNSIGNED));
+		fUnsignedButton.setSelection(AbstractDisplayOptionsAction.getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_UNSIGNED));
 		applyDialogFont(composite);
 		return composite;
 	}

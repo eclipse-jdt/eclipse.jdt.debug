@@ -121,6 +121,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	public final static String SHOW_CHAR_VALUES= "SHOW_CHAR_VALUES"; //$NON-NLS-1$
 	
 	/**
+	 * @see IJDIPreferencesConstants#PREF_SHOW_DETAILS
+	 */
+	public static final String SHOW_DETAILS="SHOW_DETAILS"; //$NON-NLS-1$
+	
+	/**
 	 * Qualified names presentation property (value <code>"SHOW_UNSIGNED_VALUES"</code>).
 	 * When <code>SHOW_UNSIGNED_VALUES</code> is set to <code>True</code>,
 	 * this label provider should show unsigned values when rendering
@@ -1011,6 +1016,46 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		try {
 			varLabel= var.getName();
 		} catch (DebugException exception) {
+		}
+		String details= (String) fAttributes.get(SHOW_DETAILS);
+		if (details != null) {
+		    try {
+                IJavaType javaType = var.getJavaType();
+                JavaDetailFormattersManager manager= JavaDetailFormattersManager.getDefault();
+                if (details.equals(IJDIPreferencesConstants.INLINE_ALL) ||
+                   (details.equals(IJDIPreferencesConstants.INLINE_FORMATTERS) &&
+                   manager.hasAssociatedDetailFormatter(javaType))) {
+                    final String[] detail= new String[1];
+                    final Object lock= new Object();
+                    computeDetail(var.getValue(), new IValueDetailListener() {
+                        /* (non-Javadoc)
+                         * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
+                         */
+                        public void detailComputed(IValue value, String result) {
+                            synchronized (lock) {
+                                detail[0]= result;
+                                lock.notifyAll();
+                            }
+                        }
+                    });
+	                synchronized (lock) {
+	                    if (detail[0] == null) {
+		                    try {
+		                        lock.wait(5000);
+		                    } catch (InterruptedException e1) {
+		                        // Fall through
+		                    }
+	                    }
+                    }
+                    if (detail[0] != null) {
+                        StringBuffer buffer= new StringBuffer(varLabel);
+                        buffer.append("= ").append(detail[0]); //$NON-NLS-1$
+                        return buffer.toString();
+                    }
+                }
+            } catch (DebugException e) {
+                // Fall through
+            }
 		}
 		boolean showTypes= isShowVariableTypeNames();
 		int spaceIndex= varLabel.lastIndexOf(' ');
