@@ -569,7 +569,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
    		try {
 			getLineTable();
 		} catch (AbsentInformationException e) {
-			return null;
+			return new LocationImpl(virtualMachineImpl(), this, -1);
 		}
 
 		// Return location with Lowest Valid Code Index.
