@@ -8,10 +8,14 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
@@ -22,7 +26,17 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Displays the result of an evaluation in the display view
  */
-public class DisplayAction extends EvaluateAction {
+public class DisplayAction extends EvaluateAction implements IValueDetailListener {
+	
+	/**
+	 * The debug model presentation used for computing toString
+	 */
+	private IDebugModelPresentation fPresentation= DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
+	/**
+	 * The result of a toString evaluation returned asynchronously by the
+	 * debug model.
+	 */
+	private String fResult;
 		
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
@@ -96,13 +110,22 @@ public class DisplayAction extends EvaluateAction {
 	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
-	protected String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
-		if (value instanceof IJavaObject) {
-			IJavaValue result = ((IJavaObject)value).sendMessage("toString","()Ljava/lang/String;", null, thread, false); //$NON-NLS-1$ //$NON-NLS-2$
-			return result.getValueString();
-		} else {
-			return value.getValueString();
+	protected synchronized String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+		fPresentation.computeDetail(value, this);
+		try {
+			wait(20000);
+		} catch (InterruptedException e) {
+			return ActionMessages.getString("DisplayAction.toString_interrupted"); //$NON-NLS-1$
 		}
+		return fResult;
+	}
+	
+	/**
+	 * @see IValueDetailListener#detailComputed(IValue, String)
+	 */
+	public synchronized void detailComputed(IValue value, final String result) {
+		fResult= result;
+		this.notifyAll();	
 	}
 	
 	protected void run() {

@@ -28,24 +28,26 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
@@ -100,7 +102,7 @@ import com.sun.jdi.ObjectReference;
 /**
  * An editor for Java snippets.
  */
-public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventListener, IEvaluationListener {			
+public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventListener, IEvaluationListener, IValueDetailListener {			
 	public static final String PACKAGE_CONTEXT = "SnippetEditor.package"; //$NON-NLS-1$
 	
 	private final static String TAG= "input_element"; //$NON-NLS-1$
@@ -126,6 +128,16 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	private Image fOldTitleImage= null;
 	private IClassFileEvaluationEngine fEngine= null;
+	
+	/**
+	 * The debug model presentation used for computing toString
+	 */
+	private IDebugModelPresentation fPresentation= DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
+	/**
+	 * The result of a toString evaluation returned asynchronously by the
+	 * debug model.
+	 */
+	private String fResult;
 	
 	public JavaSnippetEditor() {
 		super();
@@ -540,14 +552,23 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
-	protected String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
-		if (value instanceof IJavaObject) {
-			IJavaValue result = ((IJavaObject)value).sendMessage("toString","()Ljava/lang/String;", null, thread, false); //$NON-NLS-1$ //$NON-NLS-2$
-			return result.getValueString();
-		} else {
-			return value.getValueString();
+	protected synchronized String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+		fPresentation.computeDetail(value, this);
+		try {
+			wait(20000);
+		} catch (InterruptedException e) {
+			return SnippetMessages.getString("SnippetEditor.error.interrupted"); //$NON-NLS-1$
 		}
-	}	
+		return fResult;
+	}
+	
+	/**
+	 * @see IValueDetailListener#detailComputed(IValue, String)
+	 */
+	public synchronized void detailComputed(IValue value, final String result) {
+		fResult= result;
+		this.notifyAll();	
+	}
 	
 	protected boolean showAllProblems(IMarker[] problems) {
 		IDocument document = getSourceViewer().getDocument();
