@@ -306,6 +306,10 @@
             class="org.eclipse.jdt.internal.debug.core.JavaDebugPropertyTester"
             id="org.eclipse.jdt.debug.PropertyTester">
       </propertyTester>
-   </extension>      
+   </extension>
+   
+  	<extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.jdt.internal.debug.core.JDIDebugPluginPreferenceInitializer"/>
+	</extension>
    
 </plugin>

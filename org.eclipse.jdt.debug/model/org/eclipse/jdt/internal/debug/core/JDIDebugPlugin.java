@@ -180,7 +180,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
-			getPluginPreferences().removePropertyChangeListener(this);
+			getPluginPreferences().removePropertyChangeListener(this); //added in the preference initializer
 			savePluginPreferences();
 			JavaHotCodeReplaceManager.getDefault().shutdown();
 			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
@@ -523,18 +523,5 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			return (fSuspend & IJavaBreakpointListener.SUSPEND) > 0 ||
 					(fSuspend & IJavaBreakpointListener.DONT_SUSPEND) == 0;
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
-	 */
-	protected void initializeDefaultPluginPreferences() {
-		
-		super.initializeDefaultPluginPreferences();
-		Preferences prefs= getPluginPreferences();
-		prefs.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
-		prefs.setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
-		prefs.setDefault(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, true);
-		prefs.addPropertyChangeListener(this);
 	}
 }
