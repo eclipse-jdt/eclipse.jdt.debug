@@ -69,11 +69,6 @@ import org.xml.sax.SAXException;
  * This class provides static methods only; it is not intended to be
  * instantiated or subclassed by clients.
  * </p>
- * <p>
- * [Issue: This class should be declared final, and have a private constructor
- *  to block instantiation.
- * ]
- * </p>
  * 
  * @see IVMInstallType
  */
@@ -94,7 +89,6 @@ public final class JavaRuntime {
 	 */	
 	public static final String JRESRCROOT_VARIABLE= "JRE_SRCROOT"; //$NON-NLS-1$
 	
-
 	/**
 	 * The class org.eclipse.debug.core.model.IProcess allows attaching
 	 * String properties to processes.
@@ -104,12 +98,17 @@ public final class JavaRuntime {
 	 */
 	public final static String ATTR_CMDLINE= LaunchingPlugin.PLUGIN_ID + ".launcher.cmdLine"; //$NON-NLS-1$
 
-	
 	private static final String PROPERTY_VM= LaunchingPlugin.PLUGIN_ID + ".vm"; //$NON-NLS-1$
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
 	
+	/**
+	 * Not intended to be instantiated.
+	 */
+	private JavaRuntime() {
+	}
+
 	/**
 	 * Returns the list of registered VM types. VM types are registered via
 	 * <code>"org.eclipse.jdt.launching.vmTypes"</code> extension point.
@@ -516,7 +515,7 @@ public final class JavaRuntime {
 				}
 			}
 		} else {
-			LaunchingPlugin.log("VM type element with unknown id");
+			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_type_element_with_unknown_id_1")); //$NON-NLS-1$
 		}
 	}
 
@@ -557,7 +556,7 @@ public final class JavaRuntime {
 			}
 
 		} else {
-			LaunchingPlugin.log("VM element specified with no id attribute");
+			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_element_specified_with_no_id_attribute_2")); //$NON-NLS-1$
 		}
 	}
 	
@@ -568,7 +567,7 @@ public final class JavaRuntime {
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
 			vm.setLibraryLocation(new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot)));
 		} else {
-			LaunchingPlugin.log("Library location element incorrectly specified");
+			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
 		}
 	}
 	
