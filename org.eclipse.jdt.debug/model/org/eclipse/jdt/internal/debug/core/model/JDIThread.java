@@ -466,7 +466,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames"), new String[] {e.toString()}), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception			
 			return null;
@@ -1342,12 +1342,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public IJavaVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
-			Iterator stackFrames= computeStackFrames().iterator();
-			while (stackFrames.hasNext()) {
-				JDIStackFrame sf= (JDIStackFrame)stackFrames.next();
-				IJavaVariable var= sf.findVariable(varName);
-				if (var != null) {
-					return var;
+			try {
+				Iterator stackFrames= computeStackFrames().iterator();
+				while (stackFrames.hasNext()) {
+					JDIStackFrame sf= (JDIStackFrame)stackFrames.next();
+					IJavaVariable var= sf.findVariable(varName);
+					if (var != null) {
+						return var;
+					}
+				}
+			} catch (DebugException e) {
+				// if the thread has since reusmed, return null (no need to report error)
+				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+					throw e;
 				}
 			}
 		}
