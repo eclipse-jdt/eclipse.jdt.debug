@@ -33,17 +33,19 @@ public class NameValuePairDialog extends Dialog {
 	private String fTitle;
 	private String[] fFieldLabels;
 	private String[] fInitialValues;
+	private boolean fNameEnabled;
 	
 	private Label fNameLabel;
 	private Text fNameText;
 	private Label fValueLabel;
 	private Text fValueText;
 
-	public NameValuePairDialog(Shell shell, String title, String[] fieldLabels, String[] initialValues) {
+	public NameValuePairDialog(Shell shell, String title, String[] fieldLabels, String[] initialValues, boolean nameEnabled) {
 		super(shell);
 		fTitle = title;
 		fFieldLabels = fieldLabels;
 		fInitialValues = initialValues;
+		fNameEnabled = nameEnabled;
 	}
 
 	/**
@@ -68,11 +70,15 @@ public class NameValuePairDialog extends Dialog {
 		gd.widthHint = 300;
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(font);
-		fNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateButtons();
-			}
-		});
+		if (fNameEnabled) {
+			fNameText.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					updateButtons();
+				}
+			});
+		} else {
+			fNameText.setEnabled(false);
+		}
 		
 		fValueLabel = new Label(comp, SWT.NONE);
 		fValueLabel.setText(fFieldLabels[1]);
