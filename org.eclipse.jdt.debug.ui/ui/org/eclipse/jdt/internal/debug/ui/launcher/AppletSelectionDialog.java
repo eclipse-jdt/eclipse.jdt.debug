@@ -11,11 +11,14 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -23,6 +26,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -37,6 +41,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 
 	private IRunnableContext fRunnableContext;
 	private IJavaProject fProject;
+	private static final IType[] EMPTY_TYPE_ARRAY = new IType[] {};
 
 	private static class PackageRenderer extends JavaElementLabelProvider {
 		public PackageRenderer() {
@@ -73,51 +78,63 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	 */
 	public int open() {
 		IType[] types = getAppletTypes();
-		if (types != null) {
-			setElements(types);
+		if (types == null) {
+			return CANCEL;
 		}
+		setElements(types);
 		return super.open();
 	}
 	
 	/**
 	 * Return all types extending <code>java.lang.Applet</code> in the project, or
 	 * all types extending Applet in the workspace if the project is <code>null</code>.
+	 * If the search is canceled, return <code>null</code>.
 	 */
 	private IType[] getAppletTypes() {
 		// Populate an array of java projects with either the project specified in
-		// the constructor, or ALL projects in the workspace if it is null
-		IJavaProject[] javaProjects = null;
+		// the constructor, or ALL projects in the workspace if no project was specified
+		final IJavaProject[] javaProjects;
 		if (fProject == null) {
 			try {
 				javaProjects = getJavaModel().getJavaProjects();
-			} catch (JavaModelException e) {
-				return null;
+			} catch (JavaModelException jme) {
+				return EMPTY_TYPE_ARRAY;
 			}
 		} else {
 			javaProjects = new IJavaProject[] {fProject};
 		}
 		
-		// For each java project, collect the Applet types it contains and add 
-		// them the results
-		Set results = null;
-		for (int i = 0; i < javaProjects.length; i++) {
-			IJavaProject javaProject = javaProjects[i];
-			Set applets = AppletLaunchConfigurationUtils.collectAppletTypesInProject(new NullProgressMonitor(), javaProject);
-			if (results == null) {
-				results = applets;
-			} else {
-				results.addAll(applets);
-			}
+		// For each java project, calculate the Applet types it contains and add 
+		// them to the results
+		final int projectCount = javaProjects.length;
+		final Set results = new HashSet(projectCount);
+		boolean canceled = false;
+		try {
+			fRunnableContext.run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {	
+					monitor.beginTask(LauncherMessages.getString("AppletSelectionDialog.Searching..._1"), projectCount); //$NON-NLS-1$
+					for (int i = 0; i < projectCount; i++) {
+						IJavaProject javaProject = javaProjects[i];
+						SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1); 
+						results.addAll(AppletLaunchConfigurationUtils.collectAppletTypesInProject(subMonitor, javaProject));
+						monitor.worked(1);
+					}					
+					monitor.done();
+				}
+			});
+		} catch (InvocationTargetException ite) {
+		} catch (InterruptedException ie) {
+			canceled = true;
 		}
 
 		// Convert the results to an array and return it
-		if (results != null) {
+		if (canceled) {
+			return null;
+		} else {
 			IType[] types = null;
 			types = (IType[]) results.toArray(new IType[results.size()]);		
 			return types;
-		} else {
-			return null;
-		}
+		} 
 	}
 
 	/**
