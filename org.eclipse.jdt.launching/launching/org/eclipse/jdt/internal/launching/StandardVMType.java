@@ -213,7 +213,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			}			
 		}
 		setDefaultRootPath(""); //$NON-NLS-1$
-		return Path.ROOT;
+		return Path.EMPTY; //$NON-NLS-1$
 	}
 
 	protected IPath getDefaultPackageRootPath() {
@@ -311,7 +311,7 @@ public class StandardVMType extends AbstractVMInstallType {
 							if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
 								try {
 									IPath libPath = new Path(jar.getCanonicalPath());
-									LibraryLocation library = new LibraryLocation(libPath, Path.ROOT, Path.EMPTY);
+									LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY);
 									libraries.add(library);
 								} catch (IOException e) {
 									LaunchingPlugin.log(e);

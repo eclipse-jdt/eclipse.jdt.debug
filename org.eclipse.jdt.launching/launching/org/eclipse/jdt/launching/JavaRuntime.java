@@ -1355,7 +1355,7 @@ public final class JavaRuntime {
 				if (sourcePaths[i].toFile().isFile()) {
 					sourceRootPaths[i]= dflts[i].getPackageRootPath();
 				} else {
-					sourcePaths[i]= Path.ROOT;
+					sourcePaths[i]= Path.EMPTY;
 					sourceRootPaths[i]= Path.EMPTY;
 				}
 			}

@@ -127,7 +127,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					if (lib.exists() && lib.isFile()) {
 						IPath srcPath = entry.getSourceAttachmentPath();
 						if (srcPath == null) {
-							srcPath = Path.ROOT;
+							srcPath = Path.EMPTY;
 						}
 						IPath rootPath = entry.getSourceAttachmentRootPath();
 						if (rootPath == null) {

@@ -43,7 +43,7 @@ public class Standard11xVMType extends StandardVMType {
 	 */
 	protected IPath getDefaultSystemLibrarySource(File installLocation) {
 		setDefaultRootPath(""); //$NON-NLS-1$
-		return Path.ROOT;
+		return Path.EMPTY;
 	}
 	
 	/**

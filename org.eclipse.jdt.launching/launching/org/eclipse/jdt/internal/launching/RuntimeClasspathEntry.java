@@ -334,6 +334,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
 	 */
 	public void setSourceAttachmentPath(IPath path) {
+		if (path != null && path.isEmpty()) {
+			path = null;
+		}
 		updateClasspathEntry(getPath(), path, getSourceAttachmentRootPath());
 	}
 	
@@ -353,6 +356,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
 	 */
 	public void setSourceAttachmentRootPath(IPath path) {
+		if (path != null && path.isEmpty()) {
+			path = null;
+		}
 		updateClasspathEntry(getPath(), getSourceAttachmentPath(), path);		
 	}
 	

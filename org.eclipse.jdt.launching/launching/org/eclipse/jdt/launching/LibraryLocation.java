@@ -31,12 +31,12 @@ public final class LibraryLocation {
 	 * @param libraryPath	The location of the JAR containing java.lang.Object
 	 * 					Must not be <code>null</code>.
 	 * @param sourcePath	The location of the zip file containing the sources for <code>library</code>
-	 * 					Must not be <code>null</code> (Use Path.ROOT instead)
+	 * 					Must not be <code>null</code> (Use Path.EMPTY instead)
 	 * @param packageRoot The path inside the <code>source</code> zip file where packages names
 	 * 					  begin. If the source for java.lang.Object source is found at 
 	 * 					  "src/java/lang/Object.java" in the zip file, the 
 	 * 					  packageRoot should be "src"
-	 * 					  Must not be <code>null</code>. (Use Path.EMPTY instead)
+	 * 					  Must not be <code>null</code>. (Use Path.EMPTY or IPath.ROOT)
 	 * @throws	IllegalArgumentException	If the library path is <code>null</code>.
 	 */	
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot) {

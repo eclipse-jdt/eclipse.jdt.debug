@@ -502,13 +502,7 @@ public class VMDefinitionsContainer {
 		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$
 		String pkgRoot= libLocationElement.getAttribute("pkgRoot"); //$NON-NLS-1$
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
-			Path sourcePath;
-			if (jreSrc.length() == 0) {
-				sourcePath= Path.ROOT;
-			} else  {
-				sourcePath= new Path(jreSrc);
-			}
-			return new LibraryLocation(new Path(jreJar), sourcePath, new Path(pkgRoot));
+			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot));
 		} else {
 			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
 		}

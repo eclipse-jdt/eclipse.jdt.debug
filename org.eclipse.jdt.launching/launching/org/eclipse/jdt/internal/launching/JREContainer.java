@@ -94,7 +94,15 @@ public class JREContainer implements IClasspathContainer {
 		List entries = new ArrayList(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			if (!libs[i].getSystemLibraryPath().isEmpty()) {
-				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), libs[i].getSystemLibrarySourcePath(), libs[i].getPackageRootPath()));
+				IPath sourcePath = libs[i].getSystemLibrarySourcePath();
+				if (sourcePath.isEmpty()) {
+					sourcePath = null;
+				}
+				IPath rootPath = libs[i].getPackageRootPath();
+				if (rootPath.isEmpty()) {
+					rootPath = null;
+				}
+				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), sourcePath, rootPath));
 			}
 		}
 		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);		
