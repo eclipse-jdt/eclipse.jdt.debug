@@ -31,9 +31,9 @@ public class NoLineNumberAttributesStatusHandler implements IStatusHandler {
 		if (preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT)) {
 			final ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(JDIDebugUIPlugin.getActiveWorkbenchShell(),
 					DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Java_Breakpoint_1"), //$NON-NLS-1$
-					MessageFormat.format(DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Attempting_to_install_a_breakpoint_in_the_type_{0}_that_has_no_line_number_attributes.__The_breakpoint_cannot_be_installed.__Class_files_must_be_generated_with_the_line_number_attributes._2"), new String[] {type.name()}), //$NON-NLS-1$
+					MessageFormat.format(DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.2"), new String[] {type.name()}), //$NON-NLS-1$
 					status, IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT,
-					DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.2"), //$NON-NLS-1$
+					DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.3"), //$NON-NLS-1$
 					preferenceStore);
 			Display display= JDIDebugUIPlugin.getStandardDisplay();
 			display.syncExec(new Runnable() {
