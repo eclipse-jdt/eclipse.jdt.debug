@@ -37,7 +37,7 @@ public class JavaVariableActionFilter implements IActionFilter {
 		set.add("boolean"); //$NON-NLS-1$
 		set.add("byte"); //$NON-NLS-1$
 		set.add("char"); //$NON-NLS-1$
-		set.add("null");
+		set.add("null"); //$NON-NLS-1$
 		return set;
 	}
 
@@ -48,9 +48,9 @@ public class JavaVariableActionFilter implements IActionFilter {
 		if (target instanceof IJavaVariable) {
 			IJavaVariable var = (IJavaVariable) target;
 			if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
-				if (value.equals("isPrimitive")) {
+				if (value.equals("isPrimitive")) { //$NON-NLS-1$
 					return isPrimitiveType(var);
-				} else if (value.equals("isValuePrimitive")) {
+				} else if (value.equals("isValuePrimitive")) { //$NON-NLS-1$
 					return isValuePrimitiveType(var);
 				}
 			} else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
