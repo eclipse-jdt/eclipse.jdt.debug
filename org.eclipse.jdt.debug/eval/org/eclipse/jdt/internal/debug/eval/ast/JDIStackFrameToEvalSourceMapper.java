@@ -15,7 +15,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 
-public class JDIStackFrameToMagicSourceMapper {
+public class JDIStackFrameToEvalSourceMapper {
 	
 	private static final String RUN_METHOD_NAME= "___run";
 	
@@ -35,7 +35,7 @@ public class JDIStackFrameToMagicSourceMapper {
 	
 	private String fCompilationUnitName;
 	
-	public JDIStackFrameToMagicSourceMapper(JDIStackFrame frame, int[] localModifiers, String[] localTypesNames, String[] localVariables) throws DebugException {
+	public JDIStackFrameToEvalSourceMapper(JDIStackFrame frame, int[] localModifiers, String[] localTypesNames, String[] localVariables) throws DebugException {
 		fObjectValue= (JDIObjectValue)frame.getThis();
 		fLocalModifiers= localModifiers;
 		fLocalTypesNames= localTypesNames;

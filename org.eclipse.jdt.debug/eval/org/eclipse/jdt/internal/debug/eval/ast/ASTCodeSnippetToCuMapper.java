@@ -83,7 +83,7 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 
 	private void createMagicCodeFromSource(String source) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
-		ASTCuToMagicSourceMapper visitor= new ASTCuToMagicSourceMapper(unit, fFrame.getLineNumber(), fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
+		ASTCuToEvalSourceMapper visitor= new ASTCuToEvalSourceMapper(unit, fFrame.getLineNumber(), fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
 		unit.accept(visitor);
 		
 		setSource(visitor.getSource());
@@ -92,7 +92,7 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 	}
 	
 	private void createMagicCodeFromJDIObject(JDIStackFrame frame) throws DebugException {
-		JDIStackFrameToMagicSourceMapper objectToMagicSourceMapper = new JDIStackFrameToMagicSourceMapper(frame, fLocalModifiers, fLocalTypesNames, fLocalVariables);
+		JDIStackFrameToEvalSourceMapper objectToMagicSourceMapper = new JDIStackFrameToEvalSourceMapper(frame, fLocalModifiers, fLocalTypesNames, fLocalVariables);
 		objectToMagicSourceMapper.buildSource();
 
 		String codeSnippet = fCodeSnippet;		
