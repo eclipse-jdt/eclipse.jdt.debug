@@ -48,8 +48,8 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 			fSourceAttachmentBlock= new SourceAttachmentBlock(this, entry.getClasspathEntry(), null, null);
 		}
 		
-		/*
-		 * @see Windows#configureShell
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
@@ -81,7 +81,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	/**
 	 * Creates an action to open a source attachment dialog.
 	 * 
-	 * @param viewer the viewer the action is assocaited with or <code>null</code>
+	 * @param viewer the viewer the action is associated with or <code>null</code>
 	 * @param style a button or radio button
 	 */
 	public AttachSourceAction(RuntimeClasspathViewer viewer, int style) {
@@ -116,5 +116,4 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 			return false;
 		} 
 	}
-	
 }
