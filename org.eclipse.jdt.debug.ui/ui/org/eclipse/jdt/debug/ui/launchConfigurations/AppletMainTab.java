@@ -271,13 +271,6 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Create some empty space 
-	 */
-	private Label createVerticalSpacer(Composite comp) {
-		return new Label(comp, SWT.NONE);
-	}
-		
-	/**
 	 * Show a dialog that lists all main types
 	 */
 	private void handleSearchButtonSelected() {
