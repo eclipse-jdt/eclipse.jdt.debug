@@ -183,6 +183,46 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	public IJavaSourceLocation[] getSourceLocations() {
 		return fLocations;
 	}
+	
+	/**
+	 * Returns all source elements that correspond to the type associated with
+	 * the given stack frame, or <code>null</code> if none.
+	 * 
+	 * @param stackFrame stack frame
+	 * @return all source elements that correspond to the type associated with
+	 * the given stack frame, or <code>null</code> if none
+	 * @since 2.1
+	 */
+	public Object[] getSourceElements(IStackFrame stackFrame) {
+		if (stackFrame instanceof IJavaStackFrame) {
+			IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
+			String name = null;
+			try {
+				name = getFullyQualfiedName(frame);
+			} catch (CoreException e) {
+				// if the thread has since resumed, return null
+				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+					LaunchingPlugin.log(e);
+				}
+				return null;
+			}
+			List list = new ArrayList();
+			IJavaSourceLocation[] locations = getSourceLocations();
+			for (int i = 0; i < locations.length; i++) {
+				try {
+					Object sourceElement = locations[i].findSourceElement(name);
+					if (sourceElement != null) {
+						list.add(sourceElement);
+					}
+				} catch (CoreException e) {
+					// log the error and try the next source location
+					LaunchingPlugin.log(e);
+				}
+			}
+			return list.toArray();
+		}
+		return null;
+	}	
 			
 	/**
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
@@ -192,39 +232,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
 			String name = null;
 			try {
-				if (frame.isObsolete()) {
-					return null;
-				}
-				String sourceName = frame.getSourceName();
-				if (sourceName == null) {
-					// no debug attributes, guess at source name
-					name = frame.getDeclaringTypeName();
-				} else {
-					// build source name from debug attributes using
-					// the source file name and the package of the declaring
-					// type
-					
-					// @see bug# 21518 - remove absolute path prefix
-					int index = sourceName.lastIndexOf('\\');
-					if (index == -1) {
-						index = sourceName.lastIndexOf('/');
-					}
-					if (index >= 0) {
-						sourceName = sourceName.substring(index + 1);
-					}
-					
-					String declName= frame.getDeclaringTypeName();
-					index = declName.lastIndexOf('.');
-					if (index >= 0) {
-						name = declName.substring(0, index + 1);
-					} else {
-						name = ""; //$NON-NLS-1$
-					}
-					index = sourceName.lastIndexOf('.');
-					if (index >= 0) {
-						name += sourceName.substring(0, index) ;
-					}					
-				}
+				name = getFullyQualfiedName(frame);
 			} catch (CoreException e) {
 				// if the thread has since resumed, return null
 				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
@@ -246,6 +254,44 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			}
 		}
 		return null;
+	}
+	
+	private String getFullyQualfiedName(IJavaStackFrame frame) throws CoreException {
+		String name = null;
+		if (frame.isObsolete()) {
+			return null;
+		}
+		String sourceName = frame.getSourceName();
+		if (sourceName == null) {
+			// no debug attributes, guess at source name
+			name = frame.getDeclaringTypeName();
+		} else {
+			// build source name from debug attributes using
+			// the source file name and the package of the declaring
+			// type
+					
+			// @see bug# 21518 - remove absolute path prefix
+			int index = sourceName.lastIndexOf('\\');
+			if (index == -1) {
+				index = sourceName.lastIndexOf('/');
+			}
+			if (index >= 0) {
+				sourceName = sourceName.substring(index + 1);
+			}
+					
+			String declName= frame.getDeclaringTypeName();
+			index = declName.lastIndexOf('.');
+			if (index >= 0) {
+				name = declName.substring(0, index + 1);
+			} else {
+				name = ""; //$NON-NLS-1$
+			}
+			index = sourceName.lastIndexOf('.');
+			if (index >= 0) {
+				name += sourceName.substring(0, index) ;
+			}					
+		}
+		return name;		
 	}
 	
 	/**
