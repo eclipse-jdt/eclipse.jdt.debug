@@ -1160,7 +1160,7 @@ public final class JavaRuntime {
 					unique++;
 				}
 				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(unique));
-				detected.setName(vmTypes[i].getName()+LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
+				detected.setName(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
 				detected.setInstallLocation(detectedLocation);
 				if (detected != null && !defaultSet) {
 					try {
