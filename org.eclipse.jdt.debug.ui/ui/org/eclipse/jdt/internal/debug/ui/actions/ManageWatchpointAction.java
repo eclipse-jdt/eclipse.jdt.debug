@@ -191,11 +191,13 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		IJavaProject javaProject = null;
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		if (configuration == null) {
+			// Old-style launcher support
 			Object element = launch.getElement();
 			if (element instanceof IJavaElement) {
 				javaProject = ((IJavaElement)element).getJavaProject();
 			}
 		} else {
+			// Launch configuration support
 			try {
 				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
 				if (projectName == null) {
