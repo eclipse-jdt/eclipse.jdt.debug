@@ -90,6 +90,9 @@
   			helpContextId="manage_watchpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
+  			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
   	    </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
   			label="%manageMethodBreakpointAction.label"
@@ -97,6 +100,9 @@
   			helpContextId="manage_method_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
+  			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
   	    </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
   			label="%ManageBreakpointAction.label"
@@ -104,6 +110,9 @@
   			helpContextId="manage_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
+  			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
   	    </action>
   	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
   			label="%runToLineAction.label"
@@ -175,6 +184,9 @@
                label="%DebugJavaApplicationAction.label"
                menubarPath="org.eclipse.ui.run/jdtDebugLaunchGroup"
                tooltip="%DebugJavaApplicationAction.tooltip">
+               <enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+               </enablement> 
          </action>
          <action
                id="org.eclipse.jdt.debug.ui.actions.runJavaApp"
@@ -186,6 +198,9 @@
                label="%RunJavaApplicationAction.label"
                menubarPath="org.eclipse.ui.run/jdtRunLaunchGroup"
                tooltip="%RunJavaApplicationAction.tooltip">
+               <enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+               </enablement> 
          </action>
       </actionSet>
 </extension>

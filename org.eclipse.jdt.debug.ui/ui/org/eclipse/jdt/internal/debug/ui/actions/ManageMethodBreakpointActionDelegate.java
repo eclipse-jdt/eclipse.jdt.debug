@@ -80,6 +80,10 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 			// add breakpoint
 			try {
 				IMethod method = (IMethod)getMember();
+				if (method == null) {
+					update();
+					return;
+				} 
 				int start = -1;
 				int end = -1;
 				ISourceRange range = method.getNameRange();

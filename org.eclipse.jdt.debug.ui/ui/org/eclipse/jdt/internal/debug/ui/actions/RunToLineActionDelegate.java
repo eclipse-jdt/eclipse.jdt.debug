@@ -47,7 +47,9 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		try {
 			IDebugTarget target= getContext();
 			if (target == null) {
-				getTextEditor().getSite().getShell().getDisplay().beep();
+				if (getTextEditor() != null) {
+					getTextEditor().getSite().getShell().getDisplay().beep();
+				}
 				return;
 			}
 			
