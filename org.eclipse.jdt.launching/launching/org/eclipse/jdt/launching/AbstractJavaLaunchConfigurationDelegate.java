@@ -678,25 +678,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 	}
 	
-	/**
-	 * Builds the current project and all of it's prerequisite projects if necessary. Respects 
-	 * specified build order if any exists.
-	 * 
-	 * @param configuration the configuration being launched
-	 * @param mode the mode the configuration is being launched in
-	 * @param monitor progress monitor
-	 * @return whether the debug platform should perform an incremental workspace
-	 *  build before the launch
-	 * @throws CoreException if an exception occurrs while building
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		if (orderedProjects != null) {
-			buildProjects(orderedProjects, monitor);
-		}
-		return false; //don't build. I already did it or I threw an exception. 
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
+		return orderedProjects;
 	}
-	
-
 	
 	/**
 	 * Searches for compile errors in the current project and any of its prerequisite
@@ -751,7 +738,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		orderedProjects = null;
 		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);		 
 		if (javaProject != null) {
-			orderedProjects = getBuildOrder(new IProject[] {javaProject.getProject()});
+			orderedProjects = computeReferencedBuildOrder(new IProject[] {javaProject.getProject()});
 		}
 
 		// do generic launch checks
