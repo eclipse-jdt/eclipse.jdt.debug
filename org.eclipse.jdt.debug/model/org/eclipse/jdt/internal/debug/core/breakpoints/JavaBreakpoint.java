@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */ 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -770,23 +772,33 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void setHitCount(int count) throws CoreException {	
 		if (!isEnabled() && count > -1) {
 			setAttributes(new String []{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
-				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count)});
+				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
 			setEnabled(true);
 		} else {
 			setAttributes(new String[]{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
-				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count)});
+				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
 		}
 	}
 	
-	protected String getMarkerMessage(int hitCount) throws CoreException {
+	protected String getMarkerMessage(int hitCount, int suspendPolicy) throws CoreException {
+		StringBuffer buff= new StringBuffer();
 		if (hitCount > 0){
-			return MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaBreakpoint._[Hit_Count__{0}]_1"), new Object[]{Integer.toString(hitCount)}); //$NON-NLS-1$
-		} 
-		return null;
+			buff.append(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaBreakpoint._[Hit_Count__{0}]_1"), new Object[]{Integer.toString(hitCount)})); //$NON-NLS-1$
+			buff.append(' ');
+		}
+		String suspendPolicyString;
+		if (suspendPolicy == IJavaBreakpoint.SUSPEND_THREAD) {
+			suspendPolicyString= JDIDebugBreakpointMessages.getString("JavaBreakpoint.[suspend_policy__thread]_1"); //$NON-NLS-1$
+		} else {
+			suspendPolicyString= JDIDebugBreakpointMessages.getString("JavaBreakpoint.[suspend_policy__VM]_2"); //$NON-NLS-1$
+		}
+		
+		buff.append(suspendPolicyString);
+		return buff.toString();
 	}	
 	
 	/**
-	 * Sets whether or not this breakpoint's hit count has expired.
+	 * Sets whether this breakpoint's hit count has expired.
 	 */
 	public void setExpired(boolean expired) throws CoreException {
 		setAttribute(EXPIRED, expired);	
@@ -804,7 +816,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setSuspendPolicy(int suspendPolicy) throws CoreException {
 		if (getSuspendPolicy() != suspendPolicy) {
-			setAttribute(SUSPEND_POLICY, suspendPolicy);
+			setAttributes(new String[]{SUSPEND_POLICY, IMarker.MESSAGE}, new Object[]{new Integer(suspendPolicy), getMarkerMessage(getHitCount(), suspendPolicy)});
 		}
 	}
 	

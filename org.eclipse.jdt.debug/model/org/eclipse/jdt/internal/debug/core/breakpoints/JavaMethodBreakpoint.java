@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.HashMap;
 import java.util.Map;
@@ -126,6 +128,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addMethodNameAndSignature(attributes, methodName, methodSignature);
 				addTypeNameAndHitCount(attributes, typePattern, hitCount);
+				addMessageAttribute(attributes, lineNumber, hitCount);
 				attributes.put(ENTRY, new Boolean(entry));
 				attributes.put(EXIT, new Boolean(exit));
 				attributes.put(NATIVE, new Boolean(nativeOnly));

@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -103,12 +105,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				
+				addMessageAttribute(attributes, lineNumber, hitCount);
 				// set attributes
 				ensureMarker().setAttributes(attributes);
-				
-				//set the marker message
-				setAttribute(IMarker.MESSAGE, getMarkerMessage(hitCount));
 				
 				// add to breakpoint manager if requested
 				register(add);
@@ -117,6 +116,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		run(wr);
 	}
 	
+	/**
+	 * Sets the marker message for hovering over the breakpoint
+	 */
+	protected void addMessageAttribute(Map attributes, int lineNumber, int hitCount) throws CoreException {
+		attributes.put(IMarker.MESSAGE, getMarkerMessage(hitCount, IJavaLineBreakpoint.SUSPEND_THREAD, lineNumber));
+	}
 	/**
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
@@ -560,24 +565,27 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			condition = null;
 		}
 		setAttributes(new String []{CONDITION, IMarker.MESSAGE},
-			new Object[]{condition, getMarkerMessage(isConditionEnabled(), condition, getHitCount())});
+			new Object[]{condition, getMarkerMessage(isConditionEnabled(), condition, getHitCount(), getSuspendPolicy(), getLineNumber())});
 	}
 
-	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount) throws CoreException {
+	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount, int suspendPolicy, int lineNumber) throws CoreException {
+		StringBuffer message= new StringBuffer(super.getMarkerMessage(hitCount, suspendPolicy));
+		if (lineNumber != -1) {
+			message.append(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaLineBreakpoint._[line__{0}]_1"), new Object[]{Integer.toString(lineNumber)})); //$NON-NLS-1$
+		}
 		if (conditionEnabled && condition != null) {
-			String message= super.getMarkerMessage(hitCount);
-			if (message == null) {
-				message= ""; //$NON-NLS-1$
-			}
-			message+= MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaLineBreakpoint._[Condition__{0}]_2"), new Object[]{condition}); //$NON-NLS-1$
-			return message;
-		} 
-	
-		return super.getMarkerMessage(hitCount);
+			message.append(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaLineBreakpoint._[Condition__{0}]_2"), new Object[]{condition})); //$NON-NLS-1$
+		}
+			
+		return message.toString();
 	}
 	
-	protected String getMarkerMessage(int hitCount) throws CoreException {
-		return getMarkerMessage(isConditionEnabled(), getCondition(), hitCount);
+	protected String getMarkerMessage(int hitCount, int suspendPolicy) throws CoreException {
+		return getMarkerMessage(isConditionEnabled(), getCondition(), hitCount, suspendPolicy, getLineNumber());
+	}
+	
+	protected String getMarkerMessage(int hitCount, int suspendPolicy, int lineNumber) throws CoreException {
+		return getMarkerMessage(isConditionEnabled(), getCondition(), hitCount, suspendPolicy, lineNumber);
 	}
 
 	/**
@@ -591,7 +599,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see IJavaLineBreakpoint#setConditionEnabled(boolean)
 	 */
 	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
-		setAttributes(new String[]{CONDITION_ENABLED, IMarker.MESSAGE}, new Object[]{new Boolean(conditionEnabled), getMarkerMessage(conditionEnabled, getCondition(), getHitCount())});
+		setAttributes(new String[]{CONDITION_ENABLED, IMarker.MESSAGE}, new Object[]{new Boolean(conditionEnabled), getMarkerMessage(conditionEnabled, getCondition(), getHitCount(), getSuspendPolicy(), getLineNumber())});
 	}
 	/**
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#cleanupForThreadTermination(JDIThread)
