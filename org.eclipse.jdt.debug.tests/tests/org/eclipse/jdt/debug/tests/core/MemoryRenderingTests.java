@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockOne;
+import org.eclipse.jdt.debug.testplugin.MemoryBlockThree;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockTwo;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -33,14 +31,10 @@ public class MemoryRenderingTests extends AbstractDebugTest {
 	public void testRenderingTypes() {
 		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
 		IMemoryRenderingType[] types = manager.getRenderingTypes();
-		assertEquals("Should be 2 types contributed", 2, types.length);
-		List list = new ArrayList();
-		for (int i = 0; i < types.length; i++) {
-			IMemoryRenderingType type = types[i];
-			list.add(types[i].getId());
-		}
-		assertTrue("Missing type 1", list.contains("rendering_type_1"));
-		assertTrue("Missing type 2", list.contains("rendering_type_2"));
+		assertEquals("Wrong number of rendering typess contributed", 3, types.length);
+		assertTrue("Missing type 1", indexOf(manager.getRenderingType("rendering_type_1"), types) >= 0);
+        assertTrue("Missing type 2", indexOf(manager.getRenderingType("rendering_type_2"), types) >= 0);
+        assertTrue("Missing type 3", indexOf(manager.getRenderingType("rendering_type_3"), types) >= 0);
 	}
 	
 	public void testRenderingTypeNames() {
@@ -67,7 +61,44 @@ public class MemoryRenderingTests extends AbstractDebugTest {
 		assertTrue("Missing binding", indexOf(manager.getRenderingType("rendering_type_1"), types) >= 0);
 		assertTrue("Missing binding", indexOf(manager.getRenderingType("rendering_type_2"), types) >= 0);
 	}	
+    
+    public void testDefaultBinding() {
+        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+        IMemoryBlock block = new MemoryBlockOne();
+        IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
+        assertEquals("Wrong number of bindings", 1, types.length);
+        assertEquals("Wrong binding", "rendering_type_1", types[0].getId());
+    }
 	
+    public void testNoDefaultBinding() {
+        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+        IMemoryBlock block = new MemoryBlockTwo();
+        IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
+        assertEquals("Wrong number of bindings", 0, types.length);
+    }
+    
+    public void testPrimaryBinding() {
+        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+        IMemoryBlock block = new MemoryBlockOne();
+        IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
+        assertEquals("Wrong binding", "rendering_type_1", type.getId());
+    }
+    
+    public void testNoPrimaryBinding() {
+        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+        IMemoryBlock block = new MemoryBlockTwo();
+        IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
+        assertNull("Wrong binding", type);
+    }
+    
+    public void testDefaultWithoutPrimaryBinding() {
+        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+        IMemoryBlock block = new MemoryBlockThree();
+        IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
+        assertEquals("Wrong number of bindings", 1, types.length);
+        assertEquals("Wrong binding", "rendering_type_3", types[0].getId());
+    }
+    
 	protected int indexOf(Object thing, Object[] list) {
 		for (int i = 0; i < list.length; i++) {
 			Object object2 = list[i];

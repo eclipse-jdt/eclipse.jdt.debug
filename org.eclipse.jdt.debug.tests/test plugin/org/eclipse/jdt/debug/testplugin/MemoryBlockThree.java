@@ -16,6 +16,6 @@ package org.eclipse.jdt.debug.testplugin;
  * 
  * @since 3.1
  */
-public class MemoryBlockOne extends MemoryBlock {
+public class MemoryBlockThree extends MemoryBlock {
 
 }

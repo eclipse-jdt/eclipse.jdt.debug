@@ -203,18 +203,29 @@
             name="Rendering Two"
             class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
       </memoryRenderingType>
-      <defaultRenderings
-      		renderingIds="rendering_type_1">
+      <memoryRenderingType
+            id="rendering_type_3"
+            name="Rendering Default"
+            class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
+      </memoryRenderingType>      
+      <renderingBindings
+      		primaryId="rendering_type_1">
       		<enablement>
       			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockOne"/>
       		</enablement>
-      </defaultRenderings>
+      </renderingBindings>
       <renderingBindings
       		renderingIds="rendering_type_1, rendering_type_2">
       		<enablement>
       			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockTwo"/>
       		</enablement>
-      </renderingBindings>      
+      </renderingBindings>
+      <renderingBindings
+      		defaultIds="rendering_type_3">
+      		<enablement>
+      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockThree"/>
+      		</enablement>
+      </renderingBindings>            
    </extension>
 
 </plugin>
