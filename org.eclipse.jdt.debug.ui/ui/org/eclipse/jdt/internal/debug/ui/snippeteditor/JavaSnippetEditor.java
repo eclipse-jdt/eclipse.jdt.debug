@@ -608,7 +608,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				snippet= snippet.replace('\t', ' ');
 				showExpressionView();
 				JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
-				DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+				showExpression(exp);
 				break;
 			case RESULT_RUN:
 				// no action
@@ -618,6 +618,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		evaluationEnds();
 	}
 	
+
+
 	/**
 	 * Make the expression view visible or open one
 	 * if required.
@@ -708,7 +710,25 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.toString"), null, e.getStatus()); //$NON-NLS-1$
 		}
 			
-		showAndSelect(resultString.toString(), fSnippetEnd);
+		final IDocument document = getSourceViewer().getDocument();
+		final String resultStringText = resultString.toString();
+		
+		final IAction action = new MoveResultToViewerAction(new Runnable() {
+			public void run() {
+				try {
+					document.replace(fSnippetEnd, 0, resultStringText);
+				} catch (BadLocationException e) {
+				}
+				selectAndReveal(fSnippetEnd, resultStringText.length());	
+			}
+		});
+
+		action.setText(SnippetMessages.getString("JavaSnippetEditor.46"));  //$NON-NLS-1$
+
+		DisplayPopupAdapter adapter = new DisplayPopupAdapter();
+		adapter.setInformation(resultStringText);
+		
+		showPopup(adapter, action);
 	}
 	
 	/**
@@ -743,92 +763,107 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected void showAllErrors(final String[] errors) {
-		if (errors.length > 0) {
-			Runnable r = new Runnable() {
-				public void run() {
-					final IDocument document = getSourceViewer().getDocument();
-					String delimiter = document.getLegalLineDelimiters()[0];
-					
-					final StringBuffer errorString = new StringBuffer();
-					for (int i = 0; i < errors.length; i++) {
-						errorString.append(errors[i] + delimiter);
+		final IDocument document = getSourceViewer().getDocument();
+		String delimiter = document.getLegalLineDelimiters()[0];
+		
+		final StringBuffer errorString = new StringBuffer();
+		for (int i = 0; i < errors.length; i++) {
+			errorString.append(errors[i] + delimiter);
+		}
+		
+		final IAction action = new MoveResultToViewerAction(new Runnable() {
+			public void run() {
+				int insertionPoint = fSnippetStart;
+				try {
+					document.replace(insertionPoint, 0, errorString.toString());
+				} catch (BadLocationException e) {
+				}
+				selectAndReveal(insertionPoint, errorString.length());
+			}
+		});
+		action.setText(SnippetMessages.getString("JavaSnippetEditor.49"));  //$NON-NLS-1$
+		
+		ErrorPopupAdapter adapter = new ErrorPopupAdapter();
+		adapter.setInformation(errorString.toString());
+		
+		showPopup(adapter, action);
+	}
+	
+	
+	private void showPopup(final SnippetPopupAdapter adapter, final IAction action) {
+		final IDocument document = getSourceViewer().getDocument();
+		async(new Runnable() { 
+			public void run() {
+				InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
+					public IInformationControl createInformationControl(Shell parent) {
+						return new PopupInformationControl(parent, adapter, action);
 					}
-					
-					final IAction action = new MoveResultToViewerAction(new Runnable() {
-						public void run() {
-							int insertionPoint = fSnippetStart;
-							try {
-								document.replace(insertionPoint, 0, errorString.toString());
-							} catch (BadLocationException e) {
-							}
-							selectAndReveal(insertionPoint, errorString.length());
-							fSnippetStart = insertionPoint;	
+				});
+				
+				try {
+					String contentType = document.getContentType(fSnippetStart);
+					IInformationProvider infoProvider = new IInformationProvider(){
+						public IRegion getSubject(ITextViewer textViewer, int offset) {						
+							return new Region(fSnippetStart, fSnippetEnd-fSnippetStart);
 						}
-					});
-
-					action.setText(SnippetMessages.getString("JavaSnippetEditor.46"));  //$NON-NLS-1$
-					
-					final IPopupInformationControlAdapter adapter = new IPopupInformationControlAdapter() {
-						public boolean isFocusControl() {
-							return false;
-						}
-
-						public boolean hasContents() {
-							return true;
-						}
-
-						public void setInformation(String information) {
-						}
-
-						public Composite createInformationComposite(Shell parent) {
-							Composite comp = new Composite(parent, parent.getStyle());
-							comp.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-							comp.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-							
-							comp.setLayout(new GridLayout());
-							Label label = new Label(comp, SWT.NONE);
-							label.setText(errorString.toString());
-							label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-							label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-							Dialog.applyDialogFont(comp);
-							label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
-							return comp;
-						}
-
-						public IDialogSettings getDialogSettings() {
-							return JDIDebugUIPlugin.getDefault().getDialogSettings();
+						public String getInformation(ITextViewer textViewer, IRegion subject) {
+							return adapter.getInformation(); //$NON-NLS-1$
 						}
 					};
-							
-					final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
-						public IInformationControl createInformationControl(Shell parent) {
-							return new PopupInformationControl(parent, adapter, action);
-						}
-					});
 					
-					try {
-						String contentType = document.getContentType(fSnippetStart);
-						IInformationProvider infoProvider = new IInformationProvider(){
-							public IRegion getSubject(ITextViewer textViewer, int offset) {						
-								return new Region(fSnippetStart, fSnippetEnd-fSnippetStart);
-							}
-							public String getInformation(ITextViewer textViewer, IRegion subject) {
-								return errorString.toString();
-							}
-						};
-						
-						infoPresenter.setInformationProvider(infoProvider, contentType);				
-						infoPresenter.install(getSourceViewer());
-						infoPresenter.showInformation();
-					} catch (BadLocationException e) {
-						return;
-					}	
-				}
-			};
-			async(r);
-		}
+					infoPresenter.setInformationProvider(infoProvider, contentType);				
+					infoPresenter.install(getSourceViewer());
+					infoPresenter.showInformation();
+				} catch (BadLocationException e) {
+					return;
+				}				
+			}
+		});
 	}
 
+
+	private void showExpression(final JavaInspectExpression expression) {
+		Runnable r = new Runnable() {
+			public void run() {
+				final IAction action = new MoveResultToViewerAction(new Runnable() {
+					public void run() {
+						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
+					}
+				});
+				action.setText(SnippetMessages.getString("JavaSnippetEditor.50")); //$NON-NLS-1$
+				
+				InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
+					public IInformationControl createInformationControl(Shell parent) {
+						IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
+						return new PopupInformationControl(parent, DebugUITools.newExpressionInformationControlAdapter(page, expression), action);		
+					}
+				});
+				
+				IInformationProvider provider = new IInformationProvider() {
+					public IRegion getSubject(ITextViewer textViewer, int offset) {
+						return new Region(fSnippetStart, fSnippetEnd-fSnippetStart);
+					}
+					public String getInformation(ITextViewer textViewer, IRegion subject) {
+						return "nothing"; //$NON-NLS-1$
+					}
+					
+				};
+
+				try {
+					
+					infoPresenter.setInformationProvider(provider, getSourceViewer().getDocument().getContentType(fSnippetStart));
+					infoPresenter.install(getSourceViewer());
+					infoPresenter.showInformation();
+				} catch (BadLocationException e) {
+					return;
+				}
+				
+			}
+		};
+		async(r);
+	}
+	
+	
 	protected void showException(Throwable exception) {
 		if (exception instanceof DebugException) {
 			DebugException de = (DebugException)exception;
@@ -839,11 +874,28 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				return;
 			}
 		}
-		final ByteArrayOutputStream bos= new ByteArrayOutputStream();
+		ByteArrayOutputStream bos= new ByteArrayOutputStream();
 		PrintStream ps= new PrintStream(bos, true);
 		exception.printStackTrace(ps);
 		
-		showAndSelect(bos.toString(), fSnippetEnd);
+		final String exceptionText = bos.toString();
+		final IDocument document = getSourceViewer().getDocument();
+		
+		final IAction action = new MoveResultToViewerAction(new Runnable() {
+			public void run() {
+				try {
+					document.replace(fSnippetEnd, 0, exceptionText);
+				} catch (BadLocationException e) {
+				}
+				selectAndReveal(fSnippetEnd, exceptionText.length());
+			}
+		});
+		action.setText(SnippetMessages.getString("JavaSnippetEditor.51")); //$NON-NLS-1$
+		
+		ExceptionPopupAdapter adapter = new ExceptionPopupAdapter();
+		adapter.setInformation(exceptionText);
+		
+		showPopup(adapter, action);
 	}
 	
 	protected void showUnderlyingException(Throwable t) {
@@ -851,8 +903,23 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			InvocationException ie= (InvocationException)t;
 			ObjectReference ref= ie.exception();
 			String eName= ref.referenceType().name();
-			String message= SnippetMessages.getFormattedString("SnippetEditor.exception", eName); //$NON-NLS-1$
-			showAndSelect(message, fSnippetEnd);
+			final String message= SnippetMessages.getFormattedString("SnippetEditor.exception", eName); //$NON-NLS-1$
+			
+			final IDocument document = getSourceViewer().getDocument();
+			final IAction action = new MoveResultToViewerAction(new Runnable() {
+				public void run() {
+					try {
+						document.replace(fSnippetEnd, 0, message);
+					} catch (BadLocationException e) {
+					}
+					selectAndReveal(fSnippetEnd, message.length());
+				}
+			});			
+			action.setText(SnippetMessages.getString("JavaSnippetEditor.51")); //$NON-NLS-1$
+			ExceptionPopupAdapter adapter = new ExceptionPopupAdapter();
+			adapter.setInformation(message);
+			
+			showPopup(adapter, action);
 		} else {
 			showException(t);
 		}
@@ -1352,5 +1419,49 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		return super.getAdapter(required);
 	}
+
+	private class SnippetPopupAdapter implements IPopupInformationControlAdapter {
+		String labelText;
+		
+		public String getInformation() {
+			return labelText;
+		}
+		
+		public boolean isFocusControl() {
+			return true;
+		}
+		public boolean hasContents() {
+			return true;
+		}
+		public void setInformation(String information) {
+			labelText = information;
+		}
+		public Composite createInformationComposite(Shell parent) {
+			Composite comp = new Composite(parent, parent.getStyle());
+			comp.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			comp.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			
+			comp.setLayout(new GridLayout());
+			Label label = new Label(comp, SWT.NONE);
+			label.setText(labelText);
+			label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			Dialog.applyDialogFont(comp);
+			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
+			return comp;
+		}
+		public IDialogSettings getDialogSettings() {
+			return JDIDebugUIPlugin.getDefault().getDialogSettings();
+		}
+		
+	}
+	//subclasses are used to persist Popup sizes separately from other SnippetPopupAdapter's sizes
+	private class ExceptionPopupAdapter extends SnippetPopupAdapter {
+	}
+	private class DisplayPopupAdapter extends SnippetPopupAdapter {
+	}
+	private class ErrorPopupAdapter extends SnippetPopupAdapter {
+	}
+
 
 }
