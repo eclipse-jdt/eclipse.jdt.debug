@@ -28,9 +28,9 @@ import com.sun.jdi.VirtualMachine;
 public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
 	/**
-	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
+	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 						
 		// Host
 		String hostName = getHostName(configuration);
@@ -59,18 +59,17 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 
 		VirtualMachine vm= connector.connect(hostName, portNumber, monitor);
 		String vmLabel = constructVMLabel(vm, hostName, portNumber);
-		debugTarget= JDIDebugModel.newDebugTarget(vm, vmLabel, null, allowTerminate, true);
+		debugTarget= JDIDebugModel.newDebugTarget(launch, vm, vmLabel, null, allowTerminate, true);
 		
-		// Create & return Launch:
-		//  - set default source locator if none specified
-		ISourceLocator sourceLocator = null;
+		launch.addDebugTarget(debugTarget);
+		
+		//  set default source locator if none specified
 		String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 		if (id == null) {
 			IJavaProject javaProject = JavaLaunchConfigurationUtils.getJavaProject(configuration);
-			sourceLocator = new JavaSourceLocator(javaProject);
+			ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
+			launch.setSourceLocator(sourceLocator);
 		}
-		Launch launch = new Launch(configuration, mode, sourceLocator, null, debugTarget);
-		return launch;		
 	}
 	
 	/**

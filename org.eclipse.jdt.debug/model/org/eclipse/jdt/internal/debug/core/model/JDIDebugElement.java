@@ -122,7 +122,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	protected void fireEvent(DebugEvent event) {
-		DebugPlugin.getDefault().fireDebugEvent(event);
+		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 	}
 
 	/**
@@ -359,8 +359,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @see IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
-		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
-		return mgr.findLaunch(getDebugTarget());
+		return getDebugTarget().getLaunch();
 	}
 	
 	protected void setDebugTarget(JDIDebugTarget debugTarget) {

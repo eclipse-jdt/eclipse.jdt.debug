@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -30,7 +31,6 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jdt.launching.VMRunnerResult;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 /**
@@ -39,9 +39,9 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
 	/**
-	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
+	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 								
 		String mainTypeName = verifyMainTypeName(configuration);
 
@@ -77,21 +77,15 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		runConfig.setBootClassPath(bootpath);
 		
 		// Launch the configuration
-		VMRunnerResult result = runner.run(runConfig, monitor);		
-		if (result == null) {
-			return null;
-		}
+		runner.run(runConfig, launch, monitor);		
 		
-		// Create & return Launch:
-		//  - set default source locator if none specified
-		ISourceLocator sourceLocator = null;
+		//  set default source locator if none specified
 		String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 		if (id == null) {
 			IJavaProject javaProject = JavaLaunchConfigurationUtils.getJavaProject(configuration);
-			sourceLocator = new JavaSourceLocator(javaProject);
+			ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
+			launch.setSourceLocator(sourceLocator);
 		}
-		Launch launch = new Launch(configuration, mode, sourceLocator, result.getProcesses(), result.getDebugTarget());
-		return launch;
 	}	
 			
 }

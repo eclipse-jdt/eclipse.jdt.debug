@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -27,7 +28,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jdt.launching.VMRunnerResult;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
@@ -48,9 +48,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 	}
 
 	/**
-	 * @see IVMRunner#run(VMRunnerConfiguration)
+	 * @see IVMRunner#run(VMRunnerConfiguration, ILaunch, IProgressMonitor)
 	 */
-	public VMRunnerResult run(VMRunnerConfiguration config, IProgressMonitor monitor) throws CoreException {
+	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
@@ -88,7 +88,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		arguments.add("-Xdebug"); //$NON-NLS-1$
 		arguments.add("-Xnoagent"); //$NON-NLS-1$
 		arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
-		arguments.add("-Xrunjdwp:transport=dt_socket,address=localhost:" + port); //$NON-NLS-1$
+		arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
 
 		arguments.add(config.getClassToLaunch());
 		addArguments(config.getProgramArguments(), arguments);
@@ -111,10 +111,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 				File workingDir = getWorkingDir(config);
 				p = exec(cmdLine, workingDir);				
 				if (p == null) {
-					return null;
+					return;
 				}
 				
-				IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
+				IProcess process= DebugPlugin.getDefault().newProcess(launch, p, renderProcessLabel(cmdLine));
 				process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 				
 				boolean retry= false;
@@ -122,8 +122,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 					try {
 						VirtualMachine vm= connector.accept(map);
 						setTimeout(vm);
-						IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
-						return new VMRunnerResult(debugTarget, new IProcess[] { process });
+						IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
+						return;
 					} catch (InterruptedIOException e) {
 						String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
 						if (errorMessage.length() == 0) {
@@ -160,7 +160,6 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (p != null) {
 			p.destroy();
 		}
-		return null;
 	}
 
 			

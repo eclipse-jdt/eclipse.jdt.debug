@@ -7,6 +7,7 @@ package org.eclipse.jdt.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 
@@ -24,27 +25,20 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * </p>
  */
 public interface IVMRunner {
-	
+		
 	/**
-	 * Launches a Java VM as specified in the given configuration.
+	 * Launches a Java VM as specified in the given configuration,
+	 * contributing results (debug targets and processes), to the
+	 * given launch.
 	 *
 	 * @param configuration the configuration settings for this run
-	 * @return a result object containing the create processes and 
-	 *   debug target if the launch was successful, and <code>null</code> otherwise
-	 * @deprecated use run(VMRunnerConfiguration, IProgressMonitor)
-	 */
-	public VMRunnerResult run(VMRunnerConfiguration configuration) throws CoreException;
-	
-	/**
-	 * Launches a Java VM as specified in the given configuration.
-	 *
-	 * @param configuration the configuration settings for this run
+	 * @param launch the lanuch to contribute to
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return a result object containing the create processes and 
 	 *   debug target if the launch was successful, and <code>null</code>
 	 *   otherwise if cancelled
 	 * @exception CoreException if an exception occurrs while launching
 	 */
-	public VMRunnerResult run(VMRunnerConfiguration configuration, IProgressMonitor monitor) throws CoreException;	
+	public void run(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException;	
 	
 }

@@ -15,13 +15,13 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jdt.launching.VMRunnerResult;
 
 public class StandardVMRunner extends AbstractVMRunner {
 	protected IVMInstall fVMInstance;
@@ -121,9 +121,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 
 	/**
-	 * @see IVMRunner#run(VMRunnerConfiguration)
+	 * @see IVMRunner#run(VMRunnerConfiguration, ILaunch, IProgressMonitor)
 	 */
-	public VMRunnerResult run(VMRunnerConfiguration config, IProgressMonitor monitor) throws CoreException {
+	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		
 		String program= constructProgramString();
 		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
@@ -166,12 +166,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		File workingDir = getWorkingDir(config);
 		p= exec(cmdLine, workingDir);
 		if (p == null) {
-			return null;
+			return;
 		}
 		
-		IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
+		IProcess process= DebugPlugin.getDefault().newProcess(launch, p, renderProcessLabel(cmdLine));
 		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
-		return new VMRunnerResult(null, new IProcess[] { process });
 	}
 
 	

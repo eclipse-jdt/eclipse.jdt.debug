@@ -89,12 +89,16 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 				vmLabel.append(':');
 				vmLabel.append(getPort());
 				vmLabel.append(']');
+
+				ILaunch launch= new Launch(launcher, ILaunchManager.DEBUG_MODE, element, null, null, null);
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
+								
 				IDebugTarget target= 
-					JDIDebugModel.newDebugTarget(vm, vmLabel.toString(), null, allowTermination(), true);
+					JDIDebugModel.newDebugTarget(launch,vm, vmLabel.toString(), null, allowTermination(), true);
 				IJavaProject javaProject= JavaCore.create((IProject)element);
 				ISourceLocator sl= new JavaUISourceLocator(javaProject);
-				ILaunch launch= new Launch(launcher, ILaunchManager.DEBUG_MODE, element, sl, null, target);
-				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
+				launch.setSourceLocator(sl);
+
 				return true;
 			} catch (IOException e) {
 				errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_connect_to_specified_address_1"), //$NON-NLS-1$

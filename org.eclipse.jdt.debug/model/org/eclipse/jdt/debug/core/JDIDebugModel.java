@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -76,7 +77,9 @@ public class JDIDebugModel {
 	 * support disconnection (<code>IDisconnect</code>). Launching the actual
 	 * VM is a client responsibility. By default, the target VM will be
 	 * resumed on startup.
+	 * The debug target is added to the given launch.
 	 *
+	 * @param lanuch the launch the new debug target will be contained in
 	 * @param vm the VM to create a debug target for
 	 * @param name the name to associate with the VM, which will be 
 	 *   returned from <code>IDebugTarget.getName</code>. If <code>null</code>
@@ -89,8 +92,8 @@ public class JDIDebugModel {
 	 * @see org.eclipse.debug.core.model.ITerminate
 	 * @see org.eclipse.debug.core.model.IDisconnect
 	 */
-	public static IDebugTarget newDebugTarget(VirtualMachine vm, String name, IProcess process, boolean allowTerminate, boolean allowDisconnect) {
-		return newDebugTarget(vm, name, process, allowTerminate, allowDisconnect, true);
+	public static IDebugTarget newDebugTarget(ILaunch launch, VirtualMachine vm, String name, IProcess process, boolean allowTerminate, boolean allowDisconnect) {
+		return newDebugTarget(launch, vm, name, process, allowTerminate, allowDisconnect, true);
 	}
 
 	/**
@@ -103,7 +106,9 @@ public class JDIDebugModel {
 	 * flag specifies if the target VM should be resumed on startup (has
 	 * no effect if the VM was already running when the connection to the
 	 * VM was esatbished). Launching the actual VM is a client responsibility.
+	 * The debug target is added to the given launch.
 	 *
+	 * @param launch the launch the new debug target will be contained in
 	 * @param vm the VM to create a debug target for
 	 * @param name the name to associate with the VM, which will be 
 	 *   returned from <code>IDebugTarget.getName</code>. If <code>null</code>
@@ -120,11 +125,11 @@ public class JDIDebugModel {
 	 * @see org.eclipse.debug.core.model.IDisconnect
 	 * @since 2.0
 	 */
-	public static IDebugTarget newDebugTarget(final VirtualMachine vm, final String name, final IProcess process, final boolean allowTerminate, final boolean allowDisconnect, final boolean resume) {
+	public static IDebugTarget newDebugTarget(final ILaunch launch, final VirtualMachine vm, final String name, final IProcess process, final boolean allowTerminate, final boolean allowDisconnect, final boolean resume) {
 		final IJavaDebugTarget[] target = new IJavaDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor m) {
-				target[0]= new JDIDebugTarget(vm, name, allowTerminate, allowDisconnect, process, resume);
+				target[0]= new JDIDebugTarget(launch, vm, name, allowTerminate, allowDisconnect, process, resume);
 			}
 		};
 		try {

@@ -35,7 +35,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jdt.launching.VMRunnerResult;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -145,7 +144,8 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 				config.setProgramArguments(new String[0]);
 			}
 			
-			final VMRunnerResult[] result= new VMRunnerResult[1];
+			ISourceLocator sourceLocator= new JavaUISourceLocator(jproject);
+			final Launch newLaunch= new Launch(launcherProxy, mode, mainType, sourceLocator, null, null);
 			
 			IRunnableWithProgress r= new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) throws InvocationTargetException {
@@ -164,7 +164,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 						SubProgressMonitor newMonitor= new SubProgressMonitor(pm, 1);
 						newMonitor.beginTask(LauncherMessages.getString("javaAppLauncher.progress.startVM"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 						
-						result[0]= runner.run(config);
+						runner.run(config, newLaunch, newMonitor);
 						newMonitor.done();
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
@@ -183,11 +183,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 						 LauncherMessages.getString("JavaApplicationLauncherDelegate.Launching_failed._2")); //$NON-NLS-1$ 
 				return false;
 			}
-			if (result[0] != null) {
-				ISourceLocator sourceLocator= new JavaUISourceLocator(jproject);
-				Launch newLaunch= new Launch(launcherProxy, mode, mainType, sourceLocator, result[0].getProcesses(), result[0].getDebugTarget());
-				registerLaunch(newLaunch);
-			}
+			registerLaunch(newLaunch);
 			return true;
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);

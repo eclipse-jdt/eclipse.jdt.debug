@@ -96,16 +96,4 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		return p;
 	}	
 			
-	
-	
-	/**
-	 * @see IVMRunner#run(VMRunnerConfiguration)
-	 * 
-	 * To be removed - delegate with a null progress monitor
-	 */
-	public VMRunnerResult run(VMRunnerConfiguration configuration)
-		throws CoreException {
-			return run(configuration, null);
-	}
-
 }

@@ -161,6 +161,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private boolean fResumeOnStartup = false; 
 	
 	/**
+	 * The launch this target is contained in
+	 */
+	private ILaunch fLaunch;	
+	
+	/**
 	 * List of step filters - each string is a patter/fully qualified
 	 * name of a type to filter.
 	 */
@@ -214,8 +219,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 *  Has no effect if the VM is already resumed/running when
 	 *  the connection is made.  
 	 */
-	public JDIDebugTarget(VirtualMachine jvm, String name, boolean supportTerminate, boolean supportDisconnect, IProcess process, boolean resume) {
+	public JDIDebugTarget(ILaunch launch, VirtualMachine jvm, String name, boolean supportTerminate, boolean supportDisconnect, IProcess process, boolean resume) {
 		super(null);
+		setLaunch(launch);
 		setResumeOnStartup(resume);
 		setDebugTarget(this);
 		setSupportsTerminate(supportTerminate);
@@ -330,6 +336,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		initializeRequests();
 		initializeState();
 		initializeBreakpoints();
+		getLaunch().addDebugTarget(this);
 		fireCreationEvent();
 		new Thread(getEventDispatcher(), JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
 	}
@@ -1987,6 +1994,21 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public boolean hasThreads() throws DebugException {
 		return getThreadList().size() > 0;
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
+	 */
+	public ILaunch getLaunch() {
+		return fLaunch;
+	}
 
+	/**
+	 * Sets the launch this target is contained in
+	 * 
+	 * @param launch the launch this target is contained in
+	 */
+	private void setLaunch(ILaunch launch) {
+		fLaunch = launch;
+	}
 }
 
