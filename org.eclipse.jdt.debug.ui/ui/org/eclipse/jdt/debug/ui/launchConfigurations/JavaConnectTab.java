@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.ComboFieldEditor;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
@@ -55,6 +56,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import com.sun.jdi.connect.Connector;
 /**
@@ -96,6 +98,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
+		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CONNECT_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginHeight = 0;
 		comp.setLayout(topLayout);		

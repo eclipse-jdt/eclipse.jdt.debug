@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.internal.compiler.ast.FalseLiteral;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A control for setting the working directory associated with a launch
@@ -62,6 +63,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 						
 		Composite workingDirComp = new Composite(parent, SWT.NONE);
+		WorkbenchHelp.setHelp(workingDirComp, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);;		
 		GridLayout workingDirLayout = new GridLayout();
 		workingDirLayout.numColumns = 3;
 		workingDirLayout.marginHeight = 0;
