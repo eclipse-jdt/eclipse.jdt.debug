@@ -240,7 +240,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			}
 		}
 		
-		getControl().setRedraw(false);
 		setLaunchConfiguration(configuration);
 		fClassPathDefaultButton.setSelection(useDefault);
 		try {
@@ -255,7 +254,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fBootpathViewer.setEnabled(!useDefault);
 		fClasspathViewer.setLaunchConfiguration(configuration);
 		fBootpathViewer.setLaunchConfiguration(configuration);
-		getControl().setRedraw(true);
 		setDirty(false);
 	}
 
