@@ -98,17 +98,19 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see IJavaEditorTextHover#setEditor(IEditorPart)
 	 */
 	public void setEditor(IEditorPart editor) {
-		fEditor= editor;
-		final IWorkbenchPage page = editor.getSite().getPage();
-		page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		page.addPartListener(this);
-		// initialize selection
-		Runnable r = new Runnable() {
-			public void run() {
-				fSelection = page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-			}
-		};
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
+		if (editor != null) {
+			fEditor= editor;
+			final IWorkbenchPage page = editor.getSite().getPage();
+			page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+			page.addPartListener(this);
+			// initialize selection
+			Runnable r = new Runnable() {
+				public void run() {
+					fSelection = page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+				}
+			};
+			JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
+		}
 	}
 		
 	/**
