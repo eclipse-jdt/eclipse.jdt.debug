@@ -46,9 +46,11 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	
 	/**
-	 * @see IActionDelegate#run(IAction)
+	 * @param search the java elements to search for a main type
+	 * @param mode the mode to launch in
+	 * @param whether activated on an editor (or from a selection in a viewer)
 	 */
-	public void searchAndLaunch(Object[] search, String mode) {
+	public void searchAndLaunch(Object[] search, String mode, boolean editor) {
 		IType[] types = null;
 		if (search != null) {
 			try {
@@ -62,7 +64,13 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 			}
 			IType type = null;
 			if (types.length == 0) {
-				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1")); //$NON-NLS-1$ //$NON-NLS-2$
+				String message = null;
+				if (editor) {
+					message = LauncherMessages.getString("JavaApplicationLaunchShortcut.The_active_editor_does_not_contain_a_main_type._1"); //$NON-NLS-1$
+				} else {
+					message = LauncherMessages.getString("JavaApplicationLaunchShortcut.The_selection_does_not_contain_a_main_type._2"); //$NON-NLS-1$
+				}
+				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), message); //$NON-NLS-1$
 			} else if (types.length > 1) {
 				type = chooseType(types, mode);
 			} else {
@@ -218,9 +226,9 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		IEditorInput input = editor.getEditorInput();
 		IJavaElement je = (IJavaElement) input.getAdapter(IJavaElement.class);
 		if (je != null) {
-			searchAndLaunch(new Object[] {je}, mode);
+			searchAndLaunch(new Object[] {je}, mode, true);
 		} else {
-			// error
+			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_active_editor_does_not_contain_a_main_type._3")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 	}
@@ -230,9 +238,9 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	 */
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
-			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode);
+			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, false);
 		} else {
-			// error
+			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_selection_does_not_contain_a_main_type._4")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
