@@ -69,7 +69,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * Returns this variable's underlying jdi value
 	 */
-	protected abstract Value retrieveValue();
+	protected abstract Value retrieveValue() throws DebugException;
 	
 	/**
 	 * Returns the current value of this variable. The value

@@ -346,14 +346,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Notes that variables will need to be updated on
-	 * the next access.
-	 */
-	protected void invalidateVariables() {
-		fRefreshVariables = true;
-	}
-	
-	/**
 	 * Incrementally updates this stack frames variables.
 	 * 
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
@@ -813,7 +805,21 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 	}
 	
-	protected StackFrame getUnderlyingStackFrame() {
+	/**
+	 * Returns this stack frame's underlying JDI frame.
+	 * 
+	 * @exception DebugException if this stack frame does
+	 *  not currently have an underlying frame (is in an
+	 *  interim state where this frame's thead has been
+	 *  resumed, and is not yet suspended).
+	 */
+	protected StackFrame getUnderlyingStackFrame() throws DebugException {
+		if (fStackFrame == null) {
+			((JDIThread)getThread()).computeStackFrames();
+			if (fStackFrame == null) {
+				requestFailed("Thread non suspended, stack frame unavilable.", null);
+			}
+		}
 		return fStackFrame;
 	}
 	
@@ -825,6 +831,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
 		fStackFrame = frame;
+		fRefreshVariables = true;
 	}
 
 	protected void setThread(JDIThread thread) {

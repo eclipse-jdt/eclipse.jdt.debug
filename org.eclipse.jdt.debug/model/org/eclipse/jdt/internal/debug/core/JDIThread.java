@@ -1033,7 +1033,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		fRefreshChildren = true;
 		Iterator frames = fStackFrames.iterator();
 		while (frames.hasNext()) {
-			((JDIStackFrame)frames.next()).invalidateVariables();
+			((JDIStackFrame)frames.next()).setUnderlyingStackFrame(null);
 		}
 	}
 
@@ -1223,8 +1223,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			boolean last = frame.equals(lastFrame);
 			try {
 				// Pop the drop frame and all frames above it
+				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
 				preserveStackFrames();
-				fThread.popFrames(((JDIStackFrame) frame).getUnderlyingStackFrame());
+				fThread.popFrames(jdiFrame);
 				computeStackFrames();
 				if (last) {
 					fireSuspendEvent(DebugEvent.STEP_END);
