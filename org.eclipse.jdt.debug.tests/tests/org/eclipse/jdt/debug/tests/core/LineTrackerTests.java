@@ -22,8 +22,11 @@ import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.console.JavaExceptionHyperLink;
 import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.console.IHyperlink;
@@ -193,6 +196,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	public void testStackTraces() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
 		fTarget = null;
+		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		boolean suspendOnException = jdiUIPreferences.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		try {
 			fTarget = launchAndTerminate("StackTraces");
 			synchronized (fLock) {
@@ -218,6 +224,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			assertEquals("Wrong number of exception hyperlinks", 100, total);
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
+			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, suspendOnException);
 			terminateAndRemove(fTarget);
 		}	    
 	}

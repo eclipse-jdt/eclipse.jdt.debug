@@ -60,6 +60,7 @@ import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -564,8 +565,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * the target is terminated. This avoids defunct processes on linux.
 	 */
 	protected void terminateAndRemove(IJavaDebugTarget debugTarget) {
-		if (debugTarget != null) {
-			ILaunch launch = debugTarget.getLaunch();
+	    ILaunch launch = debugTarget.getLaunch();
+		if (debugTarget != null && !debugTarget.isTerminated()) {
+			IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+			boolean suspendOnException = jdiUIPreferences.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+			
+			DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.TERMINATE);
 			try {
 				removeAllBreakpoints();
 				IThread[] threads = debugTarget.getThreads();
@@ -579,11 +585,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 					}
 				}
 				debugTarget.getDebugTarget().terminate();
+				waiter.waitForEvent();
 			} catch (CoreException e) {
 			} finally {
-				getLaunchManager().removeLaunch(launch);
+			    jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, suspendOnException);
 			}
 		}
+		getLaunchManager().removeLaunch(launch);
 	}
 	
 	/**
