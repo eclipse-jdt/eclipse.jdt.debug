@@ -32,13 +32,13 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.JavaExceptionBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaPatternBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaRunToLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.VirtualMachine;
 

@@ -46,8 +46,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.JDIValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference; 

@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
+import org.eclipse.jdt.internal.debug.core.model.*;
+
 import com.sun.jdi.event.Event;
 
 /**

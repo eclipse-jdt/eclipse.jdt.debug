@@ -13,6 +13,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.jdt.internal.debug.core.model.*;
+
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
@@ -44,7 +46,7 @@ import com.sun.jdi.request.EventRequest;
  * </p>
  */
 
-class EventDispatcher implements Runnable {
+public class EventDispatcher implements Runnable {
 	/**
 	 * The debug target this event dispatcher belongs to.
 	 */
@@ -73,7 +75,7 @@ class EventDispatcher implements Runnable {
 	 * 
 	 * @param target the target this event dispatcher belongs to
 	 */
-	protected EventDispatcher(JDIDebugTarget target) {
+	public EventDispatcher(JDIDebugTarget target) {
 		fEventHandlers = new HashMap(10);
 		fTarget= target;
 		fShutdown = false;
@@ -174,7 +176,7 @@ class EventDispatcher implements Runnable {
 	 * event queue.	The thread associated with this runnable
 	 * will exit.
 	 */
-	protected void shutdown() {
+	public void shutdown() {
 		fShutdown= true;
 	}
 	
@@ -199,7 +201,7 @@ class EventDispatcher implements Runnable {
 	 * @param reqest the event request associated with events
 	 * 	the listener is interested in
 	 */
-	protected void addJDIEventListener(IJDIEventListener listener, EventRequest request) {
+	public void addJDIEventListener(IJDIEventListener listener, EventRequest request) {
 		fEventHandlers.put(request, listener);
 	}
 
@@ -212,7 +214,7 @@ class EventDispatcher implements Runnable {
 	 * @param listener the listener to deregister
 	 * @param request the event request to deregister
 	 */	
-	protected void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
+	public void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
 		fEventHandlers.remove(request);
 	}
 	

@@ -21,7 +21,7 @@ public class JDIDebugUtils {
 	 * This method takes into account the output directory of 
 	 * Java projects.
 	 */
-	protected static List getQualifiedNames(List resources) {
+	public static List getQualifiedNames(List resources) {
 		List qualifiedNames= new ArrayList(resources.size());
 		Iterator itr= resources.iterator();
 		IProject project = null;
