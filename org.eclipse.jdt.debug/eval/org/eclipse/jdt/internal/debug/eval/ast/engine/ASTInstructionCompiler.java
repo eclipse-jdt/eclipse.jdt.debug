@@ -459,9 +459,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		if (pop) {
-			push(new Pop());
-			storeInstruction();
+			addPopInstruction();
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void addPopInstruction() {
+		Instruction lastInstruction= fInstructions.getInstruction(fInstructions.getEnd());
+		push(new Pop(lastInstruction.getSize() + 1));
+		storeInstruction();
 	}
 
 	/**
@@ -1871,8 +1879,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 						storeInstruction();
 					storeInstruction();
 				storeInstruction();
-				push(new Pop());
-				storeInstruction();
+				addPopInstruction();
 				node.getBody().accept(this);
 			storeInstruction();
 			
@@ -1905,8 +1912,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 						storeInstruction();
 					storeInstruction();
 				storeInstruction();
-				push(new Pop());
-				storeInstruction();
+				addPopInstruction();
 				node.getBody().accept(this);
 			storeInstruction();
 			
@@ -1967,8 +1973,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (Modifier.isStatic(fieldBinding.getModifiers())) {
 			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
 			expression.accept(this);
-			push(new Pop());
-			storeInstruction();
+			addPopInstruction();
 		} else {
 			if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
 				push(new PushArrayLength(fCounter));
@@ -2413,8 +2418,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new SendStaticMessage(typeName, selector, signature, argCount, fCounter));
 			if (expression != null) {
 				node.getExpression().accept(this);
-				push(new Pop());
-				storeInstruction();
+				addPopInstruction();
 			}
 		} else {
 			push(new SendMessage(selector, signature, argCount, null, fCounter));

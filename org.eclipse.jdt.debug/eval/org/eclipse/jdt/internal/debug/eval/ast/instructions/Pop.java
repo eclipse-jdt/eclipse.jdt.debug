@@ -11,7 +11,16 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 
-public class Pop extends SimpleInstruction {
+public class Pop extends Instruction {
+
+	private int fSize;
+	
+	/**
+	 * @param start
+	 */
+	public Pop(int size) {
+		fSize= size;
+	}
 
 	/*
 	 * @see Instruction#execute()
@@ -25,6 +34,13 @@ public class Pop extends SimpleInstruction {
 	 */
 	public String toString() {
 		return InstructionsEvaluationMessages.getString("Pop.pop_1"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#getSize()
+	 */
+	public int getSize() {
+		return fSize;
 	}
 
 }
