@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
@@ -2501,20 +2502,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				runnables= fRunnables;
 				fRunnables= new Vector(5);
 			}
-
+			
+			MultiStatus failed = null;
 			monitor.beginTask(this.getName(), runnables.size()); //$NON-NLS-1$
 			for (Iterator iter= runnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() && !monitor.isCanceled();) {
 				try {
 					((Runnable) iter.next()).run();
 				} catch (Exception e) {
-					JDIDebugPlugin.log(e);
+					if (failed == null) {
+						failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.getString("JDIThread.0"), null); //$NON-NLS-1$
+					}
+					failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.getString("JDIThread.0"), e)); //$NON-NLS-1$
 				}
 				monitor.worked(1);
 			}
 			fJDIThread.fRunningAsyncJob= null;
 			monitor.done();
-			return Status.OK_STATUS;
-			
+			if (failed == null) {
+				return Status.OK_STATUS;
+			}
+			return failed;
 		}
 
 		/*
