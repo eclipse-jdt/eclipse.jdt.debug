@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 public class DivideOperator extends BinaryOperator {
 	public DivideOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
@@ -46,7 +47,7 @@ public class DivideOperator extends BinaryOperator {
 	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		int divisor= ((IJavaPrimitiveValue) rightOperand).getIntValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, InstructionsEvaluationMessages.getString("DivideOperator.Divide_by_zero_1"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("DivideOperator.Divide_by_zero_1"), null)); //$NON-NLS-1$
 		}
 		return ((IJavaPrimitiveValue) leftOperand).getIntValue() / divisor;
 	}
@@ -57,7 +58,7 @@ public class DivideOperator extends BinaryOperator {
 	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		long divisor= ((IJavaPrimitiveValue) rightOperand).getLongValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, InstructionsEvaluationMessages.getString("DivideOperator.Divide_by_zero_2"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("DivideOperator.Divide_by_zero_2"), null)); //$NON-NLS-1$
 		}
 		return ((IJavaPrimitiveValue) leftOperand).getLongValue() / divisor;
 	}

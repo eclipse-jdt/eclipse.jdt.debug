@@ -78,7 +78,7 @@ public class JDIDebugPlugin extends Plugin {
 	 */
 	public static void logTraceMessage(String message) {
 		if (getDefault().isTraceMode()) {
-			IStatus s = new Status(IStatus.WARNING, JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, message, null);
+			IStatus s = new Status(IStatus.WARNING, JDIDebugPlugin.getUniqueIdentifier(), INTERNAL_ERROR, message, null);
 			getDefault().getLog().log(s);
 		}
 	}	
@@ -89,6 +89,19 @@ public class JDIDebugPlugin extends Plugin {
 	 */
 	public static JDIDebugPlugin getDefault() {
 		return fgPlugin;
+	}
+	
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.jdt.debug"; //$NON-NLS-1$
+		}
+		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 		
 	public JDIDebugPlugin(IPluginDescriptor descriptor) {
@@ -149,7 +162,7 @@ public class JDIDebugPlugin extends Plugin {
 		} 
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from JDI Debug: ", top));  //$NON-NLS-1$		
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from JDI Debug: ", top));  //$NON-NLS-1$		
 	}
 	
 	/**
@@ -161,7 +174,7 @@ public class JDIDebugPlugin extends Plugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from JDI Debug: " + message, null));  //$NON-NLS-1$		
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from JDI Debug: " + message, null));  //$NON-NLS-1$		
 		}
 	}
 	

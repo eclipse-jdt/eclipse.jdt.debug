@@ -32,12 +32,12 @@ public class BreakpointUtils {
 	 * Marker attribute storing the handle id of the 
 	 * Java element associated with a Java breakpoint
 	 */
-	private static final String HANDLE_ID = JDIDebugUIPlugin.getPluginId() + ".JAVA_ELEMENT_HANDLE_ID"; //$NON-NLS-1$
+	private static final String HANDLE_ID = JDIDebugUIPlugin.getUniqueIdentifier() + ".JAVA_ELEMENT_HANDLE_ID"; //$NON-NLS-1$
 
 	/**
 	 * Marker attribute used to denote a run to line breakpoint
 	 */
-	private static final String RUN_TO_LINE =  JDIDebugUIPlugin.getPluginId() + ".run_to_line"; //$NON-NLS-1$
+	private static final String RUN_TO_LINE =  JDIDebugUIPlugin.getUniqueIdentifier() + ".run_to_line"; //$NON-NLS-1$
 	/**
 	 * Returns the resource on which a breakpoint marker should
 	 * be created for the given member. The resource returned is the 

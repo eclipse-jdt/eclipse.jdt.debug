@@ -7,8 +7,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
  
@@ -33,7 +33,7 @@ public class PushThis extends SimpleInstruction {
 			if (fEnclosingLevel != 0) {
 				thisInstance= ((JDIObjectValue)thisInstance).getEnclosingObject(fEnclosingLevel);
 				if (thisInstance == null) {
-					throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, InstructionsEvaluationMessages.getString("PushThis.Unable_to_retrieve_the_correct_enclosing_instance_of__this__2"), null)); //$NON-NLS-1$
+					throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("PushThis.Unable_to_retrieve_the_correct_enclosing_instance_of__this__2"), null)); //$NON-NLS-1$
 				}
 			}
 			push(thisInstance);

@@ -8,11 +8,10 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 public class Cast extends CompoundInstruction {
 
@@ -69,7 +68,7 @@ public class Cast extends CompoundInstruction {
 			} else {				
 				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {objectValue}, getContext().getThread(), false);
 				if (!resultValue.getBooleanValue()) {
-					throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.ClassCastException__Cannot_cast_{0}_as_{1}__1"), new String[]{objectValue.toString(), fTypeName}), null)); //$NON-NLS-1$
+					throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.ClassCastException__Cannot_cast_{0}_as_{1}__1"), new String[]{objectValue.toString(), fTypeName}), null)); //$NON-NLS-1$
 				}
 			}
 			

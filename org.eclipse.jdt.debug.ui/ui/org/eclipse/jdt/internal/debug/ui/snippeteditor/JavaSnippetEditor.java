@@ -217,7 +217,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), IMPORTS_CONTEXT));
+		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT));
 		if (property != null) {
 			fImports = JavaDebugOptionsManager.parseList(property);
 		}
@@ -347,7 +347,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		// persist
 		try {
-			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), IMPORTS_CONTEXT), serialized);
+			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT), serialized);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.imports"), null, e.getStatus()); //$NON-NLS-1$
@@ -461,7 +461,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			eThread.block();
 		}
 		if (getThread() == null) {
-			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, 
+			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, 
 				SnippetMessages.getString("SnippetEditor.error.nocontext"), null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, status); //$NON-NLS-1$
 			evaluationEnds();
@@ -597,7 +597,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected void showError(String message) {
-		Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, message, null);
+		Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
 		showError(status);
 	}
 	

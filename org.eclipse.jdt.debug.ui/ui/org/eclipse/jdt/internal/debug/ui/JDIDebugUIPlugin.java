@@ -93,11 +93,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the identifier for the Java Debug UI plug-in
-	 * 
-	 * @return the identifier for the Java Debug UI plug-in
+	 * Convenience method which returns the unique identifier of this plugin.
 	 */
-	public static String getPluginId() {
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
+		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 	
@@ -116,7 +120,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, message, null));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, null));
 	}
 
 	/**
@@ -125,7 +129,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.Internal_Error_1"), e));  //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.Internal_Error_1"), e));  //$NON-NLS-1$
 	}
 	
 	/**
@@ -173,7 +177,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal message logged from JDT Debug UI: " + message, null)); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal message logged from JDT Debug UI: " + message, null)); //$NON-NLS-1$
 		}
 	}
 	
@@ -192,7 +196,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		log(t);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
+			IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
 			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
 		}
 	}

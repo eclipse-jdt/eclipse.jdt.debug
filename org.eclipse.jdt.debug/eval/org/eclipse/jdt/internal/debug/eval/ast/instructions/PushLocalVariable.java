@@ -9,8 +9,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
  
 /**
@@ -38,7 +38,7 @@ public class PushLocalVariable extends SimpleInstruction {
 			}
 		}
 
-		throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushLocalVariable.Cannot_find_the_variable____1"), new String[]{fName}), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushLocalVariable.Cannot_find_the_variable____1"), new String[]{fName}), null)); //$NON-NLS-1$
 	}
 	
 	/**

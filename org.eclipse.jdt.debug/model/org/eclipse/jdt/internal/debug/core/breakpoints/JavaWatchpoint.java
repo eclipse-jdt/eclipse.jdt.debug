@@ -176,7 +176,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 *  are not supported
 	 */
 	protected void notSupported(String message) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
 			DebugException.NOT_SUPPORTED, message, null)); //$NON-NLS-1$		
 	}
 	

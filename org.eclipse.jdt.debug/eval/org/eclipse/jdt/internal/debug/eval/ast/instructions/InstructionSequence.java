@@ -48,7 +48,7 @@ public class InstructionSequence implements ICompiledExpression {
 			fException= exception;
 		} catch (Throwable exception) {
 			JDIDebugPlugin.log(exception);
-			fException= new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
+			fException= new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
 		}
 		return interpreter.getResult();
 	}

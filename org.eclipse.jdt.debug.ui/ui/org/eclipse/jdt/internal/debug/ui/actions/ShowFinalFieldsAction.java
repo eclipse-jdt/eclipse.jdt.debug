@@ -51,7 +51,7 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	 * @see ToggleDelegateAction#initActionId()
 	 */
 	protected void initActionId() {
-		fId= JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + getView().getSite().getId() + ".ShowFinalFieldsAction"; //$NON-NLS-1$
+		fId= JDIDebugUIPlugin.getUniqueIdentifier() + getView().getSite().getId() + ".ShowFinalFieldsAction"; //$NON-NLS-1$
 	}
 }
 

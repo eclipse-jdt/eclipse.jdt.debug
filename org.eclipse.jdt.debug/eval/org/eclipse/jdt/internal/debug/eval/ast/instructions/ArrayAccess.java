@@ -28,7 +28,7 @@ public class ArrayAccess extends ArrayInstruction {
 		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
 		IJavaArray array = (IJavaArray)popValue();
 		if (index >= array.getLength() || index < 0) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("ArrayAccess.illegal_index"), new Object[] {new Integer(index)}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("ArrayAccess.illegal_index"), new Object[] {new Integer(index)}), null)); //$NON-NLS-1$
 		}
 		push(array.getVariables()[index]);
 	}

@@ -762,7 +762,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		if (wrappedException instanceof InvocationException) {
 			InvocationException ie= (InvocationException) wrappedException;
 			ObjectReference ref= ie.exception();		
-			status= new Status(IStatus.ERROR,JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, ref.referenceType().name(), null);
+			status= new Status(IStatus.ERROR,JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ref.referenceType().name(), null);
 		} else {
 			status= exception.getStatus();
 		}
@@ -780,7 +780,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 			message.append(error.getMessage());
 			message.append("\n "); //$NON-NLS-1$
 		}
-		IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, message.toString(), null);
+		IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message.toString(), null);
 		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_compilation_failed_6"), DebugUIMessages.getString("JavaDebugOptionsManager.Errors_detected_compiling_the_condition_for_breakpoint_{0}_7"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	

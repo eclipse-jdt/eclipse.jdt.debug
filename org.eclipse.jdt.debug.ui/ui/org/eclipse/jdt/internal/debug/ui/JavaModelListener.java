@@ -31,7 +31,7 @@ class JavaModelListener implements IElementChangedListener {
 	 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent e) {
-		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier());
+		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
 		IJavaBreakpoint breakpoint= null;
 		for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
 			if (!(breakpoints[i] instanceof IJavaBreakpoint)) {

@@ -135,7 +135,7 @@ public class JDIDebugModel {
 	 * @return plugin identifier
 	 */
 	public static String getPluginIdentifier() {
-		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+		return JDIDebugPlugin.getUniqueIdentifier();
 	}
 	
 	/**

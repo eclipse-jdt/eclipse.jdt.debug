@@ -66,7 +66,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 				String vmName= fLabelProvider.getText(target);
 				IStatus status;
 				if (exception == null) {
-					status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getPluginId(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.The_target_VM_does_not_support_hot_code_replace_1"), null); //$NON-NLS-1$
+					status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.The_target_VM_does_not_support_hot_code_replace_1"), null); //$NON-NLS-1$
 				} else {
 					status= exception.getStatus();
 				}
@@ -98,7 +98,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 				String vmName= fLabelProvider.getText(target);
 				IStatus status;
-				status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getPluginId(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.Stepping_may_be_hazardous_1"), null); //$NON-NLS-1$
+				status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.Stepping_may_be_hazardous_1"), null); //$NON-NLS-1$
 				ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Obsolete_methods_remain_1"), //$NON-NLS-1$
 					MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_contains_obsolete_methods_1"), //$NON-NLS-1$
 					new Object[] {vmName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO, IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS,
