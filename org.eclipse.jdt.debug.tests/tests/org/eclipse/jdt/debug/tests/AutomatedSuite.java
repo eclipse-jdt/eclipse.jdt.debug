@@ -37,6 +37,7 @@ import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
 import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
+import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.eval.TestsArrays;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
@@ -97,6 +98,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(SourceLocationTests.class));
 		addTest(new TestSuite(ProcessTests.class));
 		addTest(new TestSuite(BootpathTests.class));
+		addTest(new TestSuite(TypeTests.class));
 		
 		// Evaluation tests
 		addTest(new TestSuite(TestsOperators1.class));
