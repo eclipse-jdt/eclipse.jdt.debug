@@ -1084,6 +1084,8 @@
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowStaticFields"/>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowFinalFields"/>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display"/>
+        <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect"/>
 		<action id="org.eclipse.jdt.ui.actions.OpenOnConsoleType"/>
 	</debugActionGroup>
 </extension>
