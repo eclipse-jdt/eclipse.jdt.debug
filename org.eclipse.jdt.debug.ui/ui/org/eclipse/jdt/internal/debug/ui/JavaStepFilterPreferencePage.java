@@ -69,7 +69,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 public class JavaStepFilterPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -207,7 +206,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterViewer = new CheckboxTableViewer(fFilterTable);
 		fTableEditor = new TableEditor(fFilterTable);
 		fFilterViewer.setLabelProvider(new FilterLabelProvider());
-		fFilterViewer.setSorter(new WorkbenchViewerSorter());
+		fFilterViewer.setSorter(new FilterViewerSorter());
 		fStepFilterContentProvider = new StepFilterContentProvider(fFilterViewer);
 		fFilterViewer.setContentProvider(fStepFilterContentProvider);
 		// input just needs to be non-null

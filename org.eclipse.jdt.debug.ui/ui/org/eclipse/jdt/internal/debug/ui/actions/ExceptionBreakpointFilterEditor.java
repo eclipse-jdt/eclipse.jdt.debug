@@ -13,7 +13,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -26,6 +25,7 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.Filter;
 import org.eclipse.jdt.internal.debug.ui.FilterLabelProvider;
+import org.eclipse.jdt.internal.debug.ui.FilterViewerSorter;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -69,7 +69,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 public class ExceptionBreakpointFilterEditor extends FieldEditor {
 
@@ -232,7 +231,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		fFilterViewer = new TableViewer(fFilterTable);
 		fTableEditor = new TableEditor(fFilterTable);
 		fFilterViewer.setLabelProvider(new FilterLabelProvider());
-		fFilterViewer.setSorter(new WorkbenchViewerSorter());
+		fFilterViewer.setSorter(new FilterViewerSorter());
 		fFilterContentProvider = new FilterContentProvider(fFilterViewer);
 		fFilterViewer.setContentProvider(fFilterContentProvider);
 		// input just needs to be non-null
