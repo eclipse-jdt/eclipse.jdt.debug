@@ -19,7 +19,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupTab;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.EnvironmentTab;
@@ -27,6 +26,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 import org.eclipse.jdt.debug.testplugin.TestModeLaunchDelegate;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
@@ -165,7 +165,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		assertTrue("Tab 1 should be 'Arguments'", tabs[1] instanceof JavaArgumentsTab);
 		assertTrue("Tab 2 should be 'JRE'", tabs[2] instanceof JavaJRETab);
 		assertTrue("Tab 3 should be 'Classpath'", tabs[3] instanceof JavaClasspathTab);
-		assertTrue("Tab 4 should be 'Sourcepath'", tabs[4] instanceof SourceContainerLookupTab);
+		assertTrue("Tab 4 should be 'Sourcepath'", tabs[4] instanceof SourceLookupTab);
 		assertTrue("Tab 5 should be 'Environment'", tabs[5] instanceof EnvironmentTab);
 		assertTrue("Tab 6 should be 'Common'", tabs[6] instanceof CommonTab);
 		

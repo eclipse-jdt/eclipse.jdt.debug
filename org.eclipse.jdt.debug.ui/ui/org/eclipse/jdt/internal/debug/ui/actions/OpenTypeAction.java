@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import java.util.Iterator;
-
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,6 +37,7 @@ import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
 public abstract class OpenTypeAction extends ObjectActionDelegate {
@@ -148,7 +148,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		if (e instanceof IDebugElement) {
 			IDebugElement de= (IDebugElement)e;
 			ISourceLocator sourceLocator= de.getLaunch().getSourceLocator();
-			IAdaptable element= (IAdaptable)de;
+			IAdaptable element= de;
 		
 			IStackFrame stackFrame= (IStackFrame)element.getAdapter(IJavaStackFrame.class);
 			if (stackFrame != null) {
