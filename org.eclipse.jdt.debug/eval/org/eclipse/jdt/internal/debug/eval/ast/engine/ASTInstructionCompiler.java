@@ -303,6 +303,26 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private String getTypeSignature(ITypeBinding typeBinding) {
 		return Signature.createTypeSignature(getTypeName(typeBinding), true).replace('.', '/');
 	}
+
+	private boolean isALocalType(ITypeBinding typeBinding) {
+		while(typeBinding != null) {
+			if (typeBinding.isLocal()) {
+				return true;
+			}
+			typeBinding= typeBinding.getDeclaringClass();
+		}
+		return false;
+	}
+	
+	private boolean containsALocalType(IMethodBinding methodBinding) {
+		ITypeBinding[] typeBindings= methodBinding.getParameterTypes();
+		for (int i= 0, length= typeBindings.length; i < length; i++) {
+			if (isALocalType(typeBindings[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	private int getEnclosingLevel(ASTNode node, ITypeBinding referenceTypeBinding) {
 		ASTNode parent= node;
@@ -962,6 +982,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		ArrayType arrayType= node.getType();
 		
+		if (isALocalType(arrayType.resolveBinding().getElementType())) {
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Local_type_array_instance_creation_cannot_be_used_in_an_evaluation_expression_29"), node.getStartPosition())); //$NON-NLS-1$
+			setHasError(true);
+			return true;
+		}
+		
 		push(new ArrayAllocation(arrayType.getDimensions(), node.dimensions().size(), node.getInitializer() != null, fCounter));
 		
 		return true;
@@ -976,7 +1002,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		
 		ITypeBinding typeBinding= node.resolveTypeBinding();
-		
 		int dimension= typeBinding.getDimensions();
 		String signature= getTypeSignature(typeBinding.getElementType());
 		
@@ -1190,9 +1215,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ITypeBinding typeBinding= methodBinding.getDeclaringClass();
 		ITypeBinding enclosingTypeBinding= typeBinding.getDeclaringClass();
 		
-		if (typeBinding.isLocal()) {
+		if (isALocalType(typeBinding)) {
 			setHasError(true);
 			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8"), node.getStartPosition())); //$NON-NLS-1$
+		}
+		
+		if (containsALocalType(methodBinding)) {
+			setHasError(true);
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Constructor_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_30"), node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		if (hasErrors()) {
@@ -1346,6 +1376,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new Pop());
 			storeInstruction();
 		} else {
+			if (isALocalType(declaringTypeBinding)) {
+				setHasError(true);
+				addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31"), node.getStartPosition())); //$NON-NLS-1$
+				return false;
+			}
 			push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
 			expression.accept(this);
 		}
@@ -1691,14 +1726,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
+		IMethodBinding methodBinding= (IMethodBinding) node.getName().resolveBinding();
+		
+		if (containsALocalType(methodBinding)) {
+			setHasError(true);
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
+		}
+		
 		if (hasErrors()) {
 			return true;
 		}
 		
-		IMethodBinding methodBinding= (IMethodBinding) node.getName().resolveBinding();
-		
-		ITypeBinding[] parameterTypes= methodBinding.getParameterTypes();
-		int argCount= parameterTypes.length;
+		int argCount= methodBinding.getParameterTypes().length;
 		String selector= methodBinding.getName();
 
 		String signature= getMethodSignature(methodBinding, null).replace('.','/');
@@ -2090,11 +2129,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
+		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
+		
+		if (containsALocalType(methodBinding)) {
+			setHasError(true);
+			addErrorMessage(new Message(EngineEvaluationMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
+		}
+		
 		if (hasErrors()) {
 			return true;
 		}
-		
-		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
 		
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int argCount = parameterTypes.length;
