@@ -54,19 +54,23 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 * @see TestModeLaunchDelegate
 	 */
 	public void testContributedLaunchMode() throws CoreException {
+		ILaunch launch = null;
 		try {
 			fConfiguration = null;
 			fMode = null;
 			TestModeLaunchDelegate.setTestCase(this);
 			ILaunchConfiguration configuration = getLaunchConfiguration("Breakpoints");
 			assertNotNull(configuration);
-			configuration.launch("TEST_MODE", null);
+			launch = configuration.launch("TEST_MODE", null);
 			assertEquals("Launch delegate not invoked", configuration, fConfiguration);
 			assertEquals("Launch delegate not invoked in correct mode", "TEST_MODE", fMode);
 		} finally {
 			TestModeLaunchDelegate.setTestCase(null);
 			fConfiguration = null;
 			fMode = null;
+			if (launch != null) {
+				getLaunchManager().removeLaunch(launch);
+			}
 		}
 	}
 	
