@@ -217,9 +217,8 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				JDIDebugUIPlugin.log(e);
 				return sourceElements[0];
 			}
-		} else {
-			return fSourceLocator.getSourceElement(stackFrame);
 		}
+		return fSourceLocator.getSourceElement(stackFrame);
 	}
 	
 	private Object getSourceElement(IJavaClassType type) {

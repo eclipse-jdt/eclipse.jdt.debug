@@ -130,11 +130,10 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		// Convert the results to an array and return it
 		if (canceled) {
 			return null;
-		} else {
-			IType[] types = null;
-			types = (IType[]) results.toArray(new IType[results.size()]);		
-			return types;
-		} 
+		}
+		IType[] types = null;
+		types = (IType[]) results.toArray(new IType[results.size()]);		
+		return types; 
 	}
 
 	/**

@@ -166,9 +166,8 @@ public class AppletLaunchConfigurationUtils {
 					if (child.equals(parent)) {
 						result.add(target);
 						break;
-					} else {
-						child = child.getParent();
 					}
+					child = child.getParent();
 				}
 			}
 		}

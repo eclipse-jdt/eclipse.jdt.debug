@@ -2174,18 +2174,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (tokenLength < 10) {
 			// Integer.decode can handle tokens with less than 18 digits
 			return Integer.decode(token).intValue();
-		} else {
-			switch (getBase(token)) {
-				case 8:
-					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 3) | Integer.decode("0" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
-				case 10:
-					return Integer.decode(token).intValue();
-				case 16:
-					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 4) | Integer.decode("0x" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
-				default:
-					// getBase(String) only returns 8, 10, or 16. This code is unreachable
-					return 0;
-			}
+		} 
+		switch (getBase(token)) {
+			case 8:
+				return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 3) | Integer.decode("0" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
+			case 10:
+				return Integer.decode(token).intValue();
+			case 16:
+				return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 4) | Integer.decode("0x" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
+			default:
+				// getBase(String) only returns 8, 10, or 16. This code is unreachable
+				return 0;
 		}
 	}
 
@@ -2199,18 +2198,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (tokenLength < 18) {
 			// Long.decode can handle tokens with less than 10 digits
 			return Long.decode(token).longValue();
-		} else {
-			switch (getBase(token)) {
-				case 8:
-					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 3) | Long.decode("0" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
-				case 10:
-					return Long.decode(token).longValue();
-				case 16:
-					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 4) | Long.decode("0x" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
-				default:
-					// getBase(String) only returns 8, 10, or 16. This code is unreachable
-					return 0;
-			}
+		} 
+		switch (getBase(token)) {
+			case 8:
+				return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 3) | Long.decode("0" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
+			case 10:
+				return Long.decode(token).longValue();
+			case 16:
+				return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 4) | Long.decode("0x" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
+			default:
+				// getBase(String) only returns 8, 10, or 16. This code is unreachable
+				return 0;
 		}
 	}
 
@@ -2223,12 +2221,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (token.charAt(0) == '0') {
 			if (token.charAt(1) == 'x') {
 				return 16; // "0x" prefix: Hexadecimal
-			} else {
-				return 8; // "0" prefix: Octal
-			}
-		} else {
-			return 10; // No prefix: Decimal
-		}
+			} 
+			return 8; // "0" prefix: Octal
+		} 
+		return 10; // No prefix: Decimal
 	}
 
 	/**
@@ -2814,9 +2810,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			SimpleType simpleType = (SimpleType) type;
 			if ("java.lang.String".equals(simpleType.getName())){ //$NON-NLS-1$
 				return Instruction.T_String;
-			} else {
-				return Instruction.T_Object;
-			}
+			} 
+			return Instruction.T_Object;
 		} else if (type.isArrayType()) {
 			return Instruction.T_Object;
 		} else {

@@ -30,22 +30,21 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				return entry;
 			}
 			return null;
-		} else {
-			ClasspathEntry newEntry= createEntry((IRuntimeClasspathEntry)entry, null);
-			Iterator entries= childEntries.iterator();
-			while (entries.hasNext()) {
-				Object element = entries.next();
-				if (element instanceof ClasspathGroup) {
-					if(((ClasspathGroup)element).contains(newEntry)) {
-						return null;
-					}
-				} else if (element.equals(newEntry)) {
+		}
+		ClasspathEntry newEntry= createEntry((IRuntimeClasspathEntry)entry, null);
+		Iterator entries= childEntries.iterator();
+		while (entries.hasNext()) {
+			Object element = entries.next();
+			if (element instanceof ClasspathGroup) {
+				if(((ClasspathGroup)element).contains(newEntry)) {
 					return null;
 				}
+			} else if (element.equals(newEntry)) {
+				return null;
 			}
-			childEntries.add(newEntry);
-			return newEntry;
 		}
+		childEntries.add(newEntry);
+		return newEntry;
 	}
 	
 	public Object addEntry(int entryType, IRuntimeClasspathEntry entry) {

@@ -248,17 +248,14 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		if (pattern.charAt(0) == '*') {
 			if (pattern.length() == 1) {
 				return true;
-			} else {
-				return typeName.endsWith(pattern.substring(1));
 			}
-		} else {
-			int length= pattern.length();
-			if (pattern.charAt(length - 1) == '*') {
-				return typeName.startsWith(pattern.substring(0, length - 1));
-			} else {
-				return typeName.startsWith(pattern);
-			}
+			return typeName.endsWith(pattern.substring(1));
 		}
+		int length= pattern.length();
+		if (pattern.charAt(length - 1) == '*') {
+			return typeName.startsWith(pattern.substring(0, length - 1));
+		}
+		return typeName.startsWith(pattern);
 	}
 
 	/**

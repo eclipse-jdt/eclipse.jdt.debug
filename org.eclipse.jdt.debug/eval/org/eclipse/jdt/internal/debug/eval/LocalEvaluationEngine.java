@@ -296,9 +296,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 						DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_initialize_local_variables._4"), null) //$NON-NLS-1$
 					);
-				} else {
-					field.setValue(local.getValue());
 				}
+				field.setValue(local.getValue());
 			}
 		}
 		if (thisObject != null) {
@@ -309,9 +308,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 					DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_initialize___this___context._5"), null) //$NON-NLS-1$
 				);				
-			} else {
-				field.setValue(thisObject);
-			}
+			} 
+			field.setValue(thisObject);
 		}
 	}
 	
@@ -340,9 +338,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 						DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_initialize_local_variables._6"), null) //$NON-NLS-1$
 					);
-				} else {
-					local.setValue(field.getValue());
-				}
+				} 
+				local.setValue(field.getValue());
 			}
 		}
 	}
@@ -868,9 +865,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	protected List getSnippetFiles() {
 		if (fSnippetFiles == null) {
 			return Collections.EMPTY_LIST;
-		} else {
-			return fSnippetFiles;
 		}
+		return fSnippetFiles;
 	}
 	
 	/**
@@ -882,9 +878,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	protected List getDirectories() {
 		if (fDirectories == null) {
 			return Collections.EMPTY_LIST;
-		} else {
-			return fDirectories;
-		}
+		} 
+		return fDirectories;
 	}	
 	
 	/**

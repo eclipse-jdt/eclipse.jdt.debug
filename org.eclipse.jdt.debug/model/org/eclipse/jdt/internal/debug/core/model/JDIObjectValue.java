@@ -150,18 +150,17 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			Field field = ref.fieldByName(name);
 			if (field != null) {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
-			} else {
-				Field enclosingThis= null;
-				Iterator fields= ref.fields().iterator();
-				while (fields.hasNext()) {
-					Field fieldTmp = (Field)fields.next();
-					if (fieldTmp.name().startsWith("this$")) { //$NON-NLS-1$
-						enclosingThis= fieldTmp;
-						break;
-					}
-				}
-				return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
 			}
+			Field enclosingThis= null;
+			Iterator fields= ref.fields().iterator();
+			while (fields.hasNext()) {
+				Field fieldTmp = (Field)fields.next();
+				if (fieldTmp.name().startsWith("this$")) { //$NON-NLS-1$
+					enclosingThis= fieldTmp;
+					break;
+				}
+			}
+			return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}

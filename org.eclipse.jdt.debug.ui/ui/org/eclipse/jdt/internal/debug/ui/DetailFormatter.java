@@ -84,9 +84,8 @@ public class DetailFormatter implements Comparable {
 		if (fTypeName == null) {
 			if (detailFormatter.fTypeName == null) {
 				return 0;
-			} else {
-				return detailFormatter.fTypeName.compareTo(fTypeName);
 			}
+			return detailFormatter.fTypeName.compareTo(fTypeName);
 		}
 		return fTypeName.compareTo(detailFormatter.fTypeName);
 	}

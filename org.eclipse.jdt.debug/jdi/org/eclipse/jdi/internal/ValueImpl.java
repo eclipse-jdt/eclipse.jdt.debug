@@ -170,18 +170,16 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 				throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
 			}
 			return null;
-		} else {
-			vm.checkVM(value);
-			TypeImpl valueType= (TypeImpl)value.type();
-			if ((type instanceof PrimitiveType) ^ (valueType instanceof PrimitiveType)) {
-				throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
-			}
-			if (type instanceof PrimitiveType) {
-				return checkPrimitiveValue((PrimitiveValueImpl) value, (PrimitiveTypeImpl) valueType, (PrimitiveTypeImpl) type);
-			} else {
-				return (ValueImpl)value;
-			}
+		} 
+		vm.checkVM(value);
+		TypeImpl valueType= (TypeImpl)value.type();
+		if ((type instanceof PrimitiveType) ^ (valueType instanceof PrimitiveType)) {
+			throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
 		}
+		if (type instanceof PrimitiveType) {
+			return checkPrimitiveValue((PrimitiveValueImpl) value, (PrimitiveTypeImpl) valueType, (PrimitiveTypeImpl) type);
+		} 
+		return (ValueImpl)value;
 	}
 
 	/**

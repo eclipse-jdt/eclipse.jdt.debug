@@ -91,10 +91,11 @@ public abstract class JdwpPacket {
 	 * @return Returns DataInputStream with reply data, or an empty stream if there is none.
 	 */
 	public DataInputStream dataInStream() {
-		if (fDataBuf != null)
+		if (fDataBuf != null) {
 			return new DataInputStream(new ByteArrayInputStream(fDataBuf));
-		else
-			return new DataInputStream(new ByteArrayInputStream(new byte[0]));
+		}
+		
+		return new DataInputStream(new ByteArrayInputStream(new byte[0]));
 	}
 
 	/**

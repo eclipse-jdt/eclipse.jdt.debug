@@ -177,9 +177,8 @@ public class BreakpointUtils {
 	private static IMember asMember(IJavaElement element) {
 		if (element instanceof IMember) {
 			return (IMember)element;
-		} else {
-			return null;
-		}		
+		}
+		return null;		
 	}
 	
 	/**
@@ -188,9 +187,8 @@ public class BreakpointUtils {
 	protected static IJavaElement getElementAt(IType type, int pos) throws JavaModelException {
 		if (type.isBinary()) {
 			return type.getClassFile().getElementAt(pos);
-		} else {
-			return type.getCompilationUnit().getElementAt(pos);
 		}
+		return type.getCompilationUnit().getElementAt(pos);
 	}
 	
 	/**

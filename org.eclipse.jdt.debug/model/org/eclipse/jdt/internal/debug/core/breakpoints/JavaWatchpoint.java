@@ -152,9 +152,8 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			} 
 			registerRequest(modificationRequest, target);
 			return true;
-		} else {
-			notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
 		}
+		notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
 		return false;
 	}
 	

@@ -45,10 +45,9 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator {
 					if (JREResolution.getAllVMs().length > 0) {
 						IJavaProject project = getJavaProject(marker);
 						return new IMarkerResolution[]{new SelectSystemLibraryQuickFix(path, project)};
-					} else {
-						// define a new JRE
-						return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
 					}
+					// define a new JRE
+					return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
 				}
 				break;
 
@@ -60,10 +59,9 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator {
 					// unbound JRE_LIB
 					if (JREResolution.getAllVMs().length > 0) {
 						return new IMarkerResolution[]{new SelectDefaultSystemLibraryQuickFix()};
-					} else {
-						// define a new default JRE
-						return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
 					}
+					// define a new default JRE
+					return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
 				}
 				break;
 		}

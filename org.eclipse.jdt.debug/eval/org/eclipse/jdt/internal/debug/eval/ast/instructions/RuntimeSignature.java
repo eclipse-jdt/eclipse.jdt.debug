@@ -235,16 +235,15 @@ public class RuntimeSignature {
 							// decrement param count because it is going to be added for return type
 							paramCount--;
 							continue signature;
+						} 
+						if (paramCount > 0) {
+							// remove space for ", " that was added with last parameter and add space for ")"
+							resultLength--;
 						} else {
-							if (paramCount > 0) {
-								// remove space for ", " that was added with last parameter and add space for ")"
-								resultLength--;
-							} else {
-								// add space for ")"
-								resultLength++;
-							}
-							break signature;
+							// add space for ")"
+							resultLength++;
 						}
+						break signature;
 					default :
 						throw new IllegalArgumentException();
 				}

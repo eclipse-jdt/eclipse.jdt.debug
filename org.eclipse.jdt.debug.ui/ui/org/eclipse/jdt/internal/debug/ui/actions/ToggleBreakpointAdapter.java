@@ -295,49 +295,46 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			return getMethods(ss).length > 0;
-		} else {
-			return selection instanceof ITextSelection;
 		}
+		return selection instanceof ITextSelection;
 	}
 	
 	protected IMethod[] getMethods(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return new IMethod[0];
-		} else {
-			List methods = new ArrayList(selection.size());
-			Iterator iterator = selection.iterator();
-			while (iterator.hasNext()) {
-				Object thing = iterator.next();
-				try {
-					if (thing instanceof IMethod && !Flags.isAbstract(((IMethod)thing).getFlags())) {	
-						methods.add(thing);
-					}
-				} catch (JavaModelException e) {
-				}
-			}
-			return (IMethod[]) methods.toArray(new IMethod[methods.size()]);
 		}
+		List methods = new ArrayList(selection.size());
+		Iterator iterator = selection.iterator();
+		while (iterator.hasNext()) {
+			Object thing = iterator.next();
+			try {
+				if (thing instanceof IMethod && !Flags.isAbstract(((IMethod)thing).getFlags())) {	
+					methods.add(thing);
+				}
+			} catch (JavaModelException e) {
+			}
+		}
+		return (IMethod[]) methods.toArray(new IMethod[methods.size()]);
 	}
 	
 	protected IField[] getFields(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return new IField[0];
-		} else {
-			List fields = new ArrayList(selection.size());
-			Iterator iterator = selection.iterator();
-			while (iterator.hasNext()) {
-				Object thing = iterator.next();
-				if (thing instanceof IField) {	
-					fields.add(thing);
-				} else if (thing instanceof IJavaFieldVariable) {
-					IField field= getField((IJavaFieldVariable) thing);
-					if (field != null) {
-						fields.add(field);
-					}
+		}
+		List fields = new ArrayList(selection.size());
+		Iterator iterator = selection.iterator();
+		while (iterator.hasNext()) {
+			Object thing = iterator.next();
+			if (thing instanceof IField) {	
+				fields.add(thing);
+			} else if (thing instanceof IJavaFieldVariable) {
+				IField field= getField((IJavaFieldVariable) thing);
+				if (field != null) {
+					fields.add(field);
 				}
 			}
-			return (IField[]) fields.toArray(new IField[fields.size()]);
 		}
+		return (IField[]) fields.toArray(new IField[fields.size()]);
 	}
 	
 	private boolean isFields(IStructuredSelection selection) {
@@ -575,9 +572,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			return isFields(ss);
-		} else {
-			return selection instanceof ITextSelection;
 		}
+		return selection instanceof ITextSelection;
 	}
 	
 	/**

@@ -126,9 +126,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	 		if (method.name().equals(name) && method.signature().equals(signature)) {
 	 			if (method.isAbstract()) {
 	 				return null;
-	 			} else {
-	 				return method;
-	 			}
+	 			} 
+	 			return method;
 	 		}
 	 	}
 	 	

@@ -211,9 +211,8 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 		IJavaStackFrame frame = getContext(page);
 		if (frame == null) {
 			return getEvaluationContext(page.getWorkbenchWindow());
-		} else {
-			return frame;
 		}
+		return frame;
 	}
 
 	/**
@@ -269,9 +268,8 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 				}
 			}
 			return null;
-		} else {
-			return frame;
 		}
+		return frame;
 	}
 	
 	/**

@@ -393,9 +393,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected Shell getShell() {
 		if (getTargetPart() != null) {
 			return getTargetPart().getSite().getShell();
-		} else {
-			return JDIDebugUIPlugin.getActiveWorkbenchShell();
 		}
+		return JDIDebugUIPlugin.getActiveWorkbenchShell();
 	}
 	
 	protected IDataDisplay getDataDisplay() {
@@ -537,9 +536,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		String[] errors= result.getErrorMessages();
 		if (errors.length == 0) {
 			return getExceptionMessage(result.getException());
-		} else {
-			return getErrorMessage(errors);
 		}
+		return getErrorMessage(errors);
 	}
 	
 	protected String getErrorMessage(String[] errors) {

@@ -125,10 +125,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 			name.append(')'); //$NON-NLS-1$
 			return name.toString();
-		} else {
-			// see bug 43285
-			return String.valueOf(fValue);
 		}
+		// see bug 43285
+		return String.valueOf(fValue);
 	}
 	
 	/**
@@ -154,9 +153,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	public int hashCode() {
 		if (fValue == null) {
 			return getClass().hashCode();
-		} else {
-			return fValue.hashCode();
 		}
+		return fValue.hashCode();
 	}
 
 	/**
@@ -175,9 +173,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				return false;
 			}
 			return fValue.equals(other);
-		} else {
-			return false;
-		}
+		} 
+		return false;
 	}	
 
 	/**
@@ -271,9 +268,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	protected ArrayReference getArrayReference() {
 		if (isArray()) {
 			return (ArrayReference)fValue;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -307,9 +303,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		try {
 			if (fValue != null) {
 				return fValue.type().signature();
-			} else {
-				return null;
 			}
+			return null;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as

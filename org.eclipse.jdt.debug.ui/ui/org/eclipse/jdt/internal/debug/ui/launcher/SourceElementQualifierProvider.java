@@ -52,10 +52,9 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 			if (res == null) {
 				// external
 				return zipFile.getName();
-			} else {
-				// internal
-				return res.getName();
 			}
+			// internal
+			return res.getName();
 		} else if (element instanceof LocalFileStorage) {
 			LocalFileStorage storage = (LocalFileStorage)element;
 			File extFile = storage.getFile();

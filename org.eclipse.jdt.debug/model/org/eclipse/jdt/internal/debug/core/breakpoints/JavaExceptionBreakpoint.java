@@ -285,12 +285,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 					}
 					if (included && !excluded) {
 						return !suspend(thread);
-					} else {
-						return true;
 					}
-				} else {
-					return !suspend(thread);
-				}
+					return true;
+				} 
+			return !suspend(thread);
 		}	
 		return true;
 	}

@@ -116,9 +116,8 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			IJavaObject contendedMonitor= MonitorManager.getDefault().getContendedMonitor(thread);
 			if (ownedMonitors == null && contendedMonitor == null) {
 				return false;
-			} else {
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}

@@ -64,9 +64,8 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 			}
 			ObjectReference result = javaThread.newInstance(clazz, method, arguments);
 			return (IJavaObject)JDIValue.createValue(getDebugTarget(), result);
-		} else {
-			getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$
 		}
+		getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
 		return null;
@@ -93,9 +92,8 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 			}
 			Value result = javaThread.invokeMethod(clazz, null, method, arguments, false);
 			return JDIValue.createValue(getDebugTarget(), result);
-		} else {
-			getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$
 		}
+		getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
 		return null;

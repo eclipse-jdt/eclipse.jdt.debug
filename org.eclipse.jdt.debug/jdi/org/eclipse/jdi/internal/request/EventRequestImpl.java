@@ -142,10 +142,11 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 * @return Returns the value of the property with the specified key.
 	 */
 	public Object getProperty(Object key) {
-		if (fPropertyMap == null)
+		if (fPropertyMap == null) {
 			return null;
-		else
-			return fPropertyMap.get(key);
+		}
+		
+		return fPropertyMap.get(key);
 	}
 	
 	/**

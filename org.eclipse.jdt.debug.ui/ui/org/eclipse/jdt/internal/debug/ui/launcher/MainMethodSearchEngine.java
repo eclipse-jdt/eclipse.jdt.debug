@@ -122,10 +122,8 @@ public class MainMethodSearchEngine{
 			subtypesMonitor.beginTask(LauncherMessages.getString("MainMethodSearchEngine.2"), result.size()); //$NON-NLS-1$
 			Set set = addSubtypes(result, subtypesMonitor);
 			return (IType[]) set.toArray(new IType[set.size()]);
-		} else {
-			return (IType[]) result.toArray(new IType[result.size()]);
 		}
-		
+		return (IType[]) result.toArray(new IType[result.size()]);
 	}
 
 	private Set addSubtypes(List types, IProgressMonitor monitor) {

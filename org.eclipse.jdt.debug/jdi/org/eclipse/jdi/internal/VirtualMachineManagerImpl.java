@@ -129,10 +129,9 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		try {
 			if (JDIDebugModel.getPreferences() != null) {
 				return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
-			} else {
-				// JDI plug-in is not loaded
-				return JDIDebugModel.DEF_REQUEST_TIMEOUT;
-			}
+			} 
+			// JDI plug-in is not loaded
+			return JDIDebugModel.DEF_REQUEST_TIMEOUT;
 		} catch (NoClassDefFoundError e) {
 		}
 		// return the hard coded preference if the jdi debug plug-in does not exist

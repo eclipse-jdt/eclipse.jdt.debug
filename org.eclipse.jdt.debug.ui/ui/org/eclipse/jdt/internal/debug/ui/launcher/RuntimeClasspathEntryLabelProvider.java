@@ -100,9 +100,8 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				}
 				if (resource == null) {
 					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
-				} else {
-					return lp.getImage(resource);
 				}
+				return lp.getImage(resource);
 		}	
 		return null;
 	}
@@ -198,9 +197,8 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				String name = lp.getText(delegate);
 				if (name == null || name.length() == 0) {
 					return ((IRuntimeClasspathEntry2)delegate).getName();
-				} else {
-					return name;
 				}
+				return name;
 		}	
 		return ""; //$NON-NLS-1$
 	}

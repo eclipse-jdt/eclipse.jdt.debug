@@ -1539,13 +1539,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 						break;
 				}
 				return null;
-			} else {
-				IJavaType[] types = new IJavaType[classes.size()];
-				for (int i = 0; i < types.length; i++) {
-					types[i] = JDIType.createType(this, (Type)classes.get(i));
-				}
-				return types;
 			}
+			IJavaType[] types = new IJavaType[classes.size()];
+			for (int i = 0; i < types.length; i++) {
+				types[i] = JDIType.createType(this, (Type)classes.get(i));
+			}
+			return types;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving class for name {1}", new String[]{e.toString(), name}), e); //$NON-NLS-1$
 			// execution will not reach this line, as

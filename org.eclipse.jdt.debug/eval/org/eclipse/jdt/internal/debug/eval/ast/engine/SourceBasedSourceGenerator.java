@@ -229,10 +229,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
 			int endLineNumber= getCorrespondingLineNumber(node.getStartPosition() + node.getLength() - 1);
 			return startLineNumber <= position && position <= endLineNumber;
-		} else {
-			int startPosition= node.getStartPosition();
-			return startPosition <= position && position <= startPosition + node.getLength();
-		}
+		} 
+		int startPosition= node.getStartPosition();
+		return startPosition <= position && position <= startPosition + node.getLength();
 	}
 	
 	private StringBuffer buildTypeBody(StringBuffer buffer, List list) {
@@ -522,14 +521,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			char char0 = typeName.charAt(0);
 			if (char0 == 'v') {
 				return ""; //$NON-NLS-1$
-			} else {
-				char char1 = typeName.charAt(1);
-				if (char0 == 'b' && char1 == 'o') {
-					return "return false;"; //$NON-NLS-1$
-				} else {
-					return "return 0;"; //$NON-NLS-1$
-				}
 			}
+			char char1 = typeName.charAt(1);
+			if (char0 == 'b' && char1 == 'o') {
+				return "return false;"; //$NON-NLS-1$
+			}
+			return "return 0;"; //$NON-NLS-1$
 		}
 		return null;
 	}

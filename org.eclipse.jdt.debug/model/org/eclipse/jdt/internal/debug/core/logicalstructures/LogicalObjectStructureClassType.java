@@ -36,9 +36,8 @@ public abstract class LogicalObjectStructureClassType extends LogicalObjectStruc
 					while (classType != null) {
 						if (classType.getName().equals(targetClass)) {
 							return true;
-						} else {
-							classType = classType.getSuperclass();
 						}
+						classType = classType.getSuperclass();
 					}
 				}
 			} catch (DebugException e) {

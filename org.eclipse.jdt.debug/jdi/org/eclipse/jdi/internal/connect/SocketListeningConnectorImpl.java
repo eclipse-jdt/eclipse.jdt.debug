@@ -124,9 +124,8 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		((SocketTransportImpl)fTransport).accept();
 		if (fTransport.isOpen()) {
 			return establishedConnection();
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 	
 	/**

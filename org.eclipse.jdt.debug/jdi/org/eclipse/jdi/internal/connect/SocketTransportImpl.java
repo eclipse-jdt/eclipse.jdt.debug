@@ -60,10 +60,11 @@ public class SocketTransportImpl extends TransportImpl {
 	 * @return Returns port number that is listened to. 
 	 */
 	public int listeningPort() {
-		if (fServerSocket != null)
+		if (fServerSocket != null) {
 			return fServerSocket.getLocalPort();
-		else
-			return 0;
+		}
+		
+		return 0;
 	}
 	
 	/**

@@ -73,9 +73,8 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	protected Value retrieveValue() {
 		if (getField().isStatic()) {
 			return (getField().declaringType().getValue(getField()));
-		} else {
-			return getObjectReference().getValue(getField());
-		}			
+		}
+		return getObjectReference().getValue(getField());			
 	}
 	
 	/**

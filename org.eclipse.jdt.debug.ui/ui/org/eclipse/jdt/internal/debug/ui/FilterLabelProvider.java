@@ -51,8 +51,7 @@ public class FilterLabelProvider extends LabelProvider implements ITableLabelPro
 		String name = ((Filter) object).getName();
 		if (name.endsWith("*") || name.equals("(default package)")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return IMG_PKG;
-		} else {
-			return IMG_CUNIT;
 		}
+		return IMG_CUNIT;
 	}
 }

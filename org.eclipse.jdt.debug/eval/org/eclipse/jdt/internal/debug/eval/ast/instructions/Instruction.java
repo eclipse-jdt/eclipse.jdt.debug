@@ -208,25 +208,24 @@ public abstract class Instruction {
 		if (types.length == 1) {
 			// Found only one class.
 			return types[0];
-		} else {
-			// Found many classes, look for the right one for this scope.
-			if (classReference == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
-			}
-			for(int i= 0, length= types.length; i < length; i++) {
-				IJavaType type= types[i];
-				if (classReference.equals(getClassObject(type))) {
-					return type;
-				}
-			}
-
-			// At this point a very strange thing has happened,
-			// the VM was able to return multiple types in the classesByName
-			// call, but none of them were the class that was returned in
-			// the classForName call.
-
+		} 
+		// Found many classes, look for the right one for this scope.
+		if (classReference == null) {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
+		for(int i= 0, length= types.length; i < length; i++) {
+			IJavaType type= types[i];
+			if (classReference.equals(getClassObject(type))) {
+				return type;
+			}
+		}
+
+		// At this point a very strange thing has happened,
+		// the VM was able to return multiple types in the classesByName
+		// call, but none of them were the class that was returned in
+		// the classForName call.
+
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 	}
 
 
@@ -249,22 +248,21 @@ public abstract class Instruction {
 		if (types.length == 1) {
 			// Found only one class.
 			return (IJavaArrayType)types[0];
-		} else {
-			// Found many classes, look for the right one for this scope.
-			for(int i= 0, length= types.length; i < length; i++) {
-				IJavaType type= types[i];
-				if (classReference.equals(getClassObject(type))) {
-					return (IJavaArrayType)type;
-				}
-			}
-
-			// At this point a very strange thing has happened,
-			// the VM was able to return multiple types in the classesByName
-			// call, but none of them were the class that was returned in
-			// the classForName call.
-
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
+		// Found many classes, look for the right one for this scope.
+		for(int i= 0, length= types.length; i < length; i++) {
+			IJavaType type= types[i];
+			if (classReference.equals(getClassObject(type))) {
+				return (IJavaArrayType)type;
+			}
+		}
+
+		// At this point a very strange thing has happened,
+		// the VM was able to return multiple types in the classesByName
+		// call, but none of them were the class that was returned in
+		// the classForName call.
+
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 	}
 
 	protected IJavaObject classForName(String qualifiedName) throws CoreException {

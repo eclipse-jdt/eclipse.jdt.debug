@@ -153,9 +153,8 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				BreakpointRequest req = type.virtualMachine().eventRequestManager().createBreakpointRequest(location);
 				configureRequest(req, target);
 				return req;
-			} else {
-				return null;
 			}
+			return null;
 		} catch (RuntimeException e) {
 			JDIDebugPlugin.log(e);
 			return null;

@@ -58,9 +58,8 @@ public class PushFieldVariable extends CompoundInstruction {
 		
 		if (field == null) {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushFieldVariable.Cannot_find_the_field_{0}_for_the_object_{1}_1"), new String[] {fName, receiver.toString()}), null)); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			push(field);
-		}
+		} 
+		push(field);
 	}
 	
 	public String toString() {

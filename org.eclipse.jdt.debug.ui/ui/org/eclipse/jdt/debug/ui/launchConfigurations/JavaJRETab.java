@@ -417,9 +417,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		ILaunchConfigurationTab tab = getDynamicTab();
 		if ((super.getErrorMessage() != null) || (tab == null)) {
 			return super.getErrorMessage();
-		} else {
-			return tab.getErrorMessage();
 		}
+		return tab.getErrorMessage();
 	}
 
 	protected void setLaunchConfigurationWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
@@ -464,16 +463,15 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 						name = vm.getName();
 					}
 					return MessageFormat.format(LauncherMessages.getString("JavaJRETab.8"), new String[]{name}); //$NON-NLS-1$
-				} else {
-					try {
-						IVMInstall vm = JavaRuntime.getVMInstall(project);
-						if (vm != null) {
-							name = vm.getName();
-						}
-					} catch (CoreException e) {
-					}
-					return MessageFormat.format(LauncherMessages.getString("JavaJRETab.9"), new String[]{name}); //$NON-NLS-1$
 				}
+				try {
+					IVMInstall vm = JavaRuntime.getVMInstall(project);
+					if (vm != null) {
+						name = vm.getName();
+					}
+				} catch (CoreException e) {
+				}
+				return MessageFormat.format(LauncherMessages.getString("JavaJRETab.9"), new String[]{name}); //$NON-NLS-1$
 			}
 		};
 	}

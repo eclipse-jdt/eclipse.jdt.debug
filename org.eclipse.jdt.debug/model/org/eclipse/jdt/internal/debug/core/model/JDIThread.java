@@ -1000,9 +1000,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			Value v= getUnderlyingThread().getValue(p);
 			if (v instanceof IntegerValue) {
 				return ((IntegerValue)v).value();
-			} else {
-				requestFailed(JDIDebugModelMessages.getString("JDIThread.priority_not_an_integer"), null); //$NON-NLS-1$
 			}
+			requestFailed(JDIDebugModelMessages.getString("JDIThread.priority_not_an_integer"), null); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_priority"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -1019,9 +1018,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		List c= computeStackFrames();
 		if (c.isEmpty()) {
 			return null;
-		} else {
-			return (IStackFrame) c.get(0);
 		}
+		return (IStackFrame) c.get(0);
 	}
 
 	/**
@@ -1156,11 +1154,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 			}
 			return false;
-		} else {
-			// If the thread is not suspended, there's no way to 
-			// say for certain that it is running out of synch code
-			return false;
 		}
+		// If the thread is not suspended, there's no way to 
+		// say for certain that it is running out of synch code
+		return false;
 	}
 	
 	public boolean mayBeOutOfSynch() {
@@ -1946,10 +1943,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					createSecondaryStepRequest();			
 					return true;		
 				// otherwise, we're done stepping
-				} else {
-					stepEnd();
-					return false;
 				}
+				stepEnd();
+				return false;
 			} catch (DebugException e) {
 				logError(e);
 				stepEnd();
@@ -2192,13 +2188,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				if (numFrames <= getRemainingFrames()) {
 					stepEnd();
 					return false;
-				} else {
-					// reset running state and keep going
-					setRunning(true);
-					deleteStepRequest();
-					createSecondaryStepRequest();
-					return true;
 				}
+				// reset running state and keep going
+				setRunning(true);
+				deleteStepRequest();
+				createSecondaryStepRequest();
+				return true;
 			} catch (DebugException e) {
 				logError(e);
 				stepEnd();

@@ -53,9 +53,8 @@ public class GenericSignature {
 		int exceptionStart= methodSignature.indexOf(C_EXCEPTION_START, parametersEnd + 1);
 		if (exceptionStart == -1) {
 			return methodSignature.substring(parametersEnd + 1);
-		} else {
-			return methodSignature.substring(parametersEnd + 1, exceptionStart);
-		}
+		} 
+		return methodSignature.substring(parametersEnd + 1, exceptionStart);
 	}
 	
 	public static List getArgumentsSignature(String methodSignature) {

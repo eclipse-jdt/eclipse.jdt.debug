@@ -372,9 +372,8 @@ public class JREsComboBlock implements ISelectionProvider {
 		int index = fCombo.getSelectionIndex();
 		if (index >= 0) {
 			return (IVMInstall)fVMs.get(index);
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**

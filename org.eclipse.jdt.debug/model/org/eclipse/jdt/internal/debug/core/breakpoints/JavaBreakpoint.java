@@ -215,9 +215,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		int index = name.indexOf('$');
 		if (index == -1) {
 			return name;
-		} else {
-			return name.substring(0, index);
 		}
+		return name.substring(0, index);
 	}	
 		
 	/**
@@ -254,14 +253,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ClassPrepareEvent) {
 			return handleClassPrepareEvent((ClassPrepareEvent)event, target);
-		} else {
-			ThreadReference threadRef= ((LocatableEvent)event).thread();
-			JDIThread thread= target.findThread(threadRef);	
-			if (thread == null || thread.isIgnoringBreakpoints()) {
-				return true;
-			}
-			return handleBreakpointEvent(event, target, thread);
-		}		
+		}
+		ThreadReference threadRef= ((LocatableEvent)event).thread();
+		JDIThread thread= target.findThread(threadRef);	
+		if (thread == null || thread.isIgnoringBreakpoints()) {
+			return true;
+		}
+		return handleBreakpointEvent(event, target, thread);		
 	}
 
 	/**
@@ -756,9 +754,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public String getTypeName() throws CoreException {
 		if (fInstalledTypeName == null) {
 			return ensureMarker().getAttribute(TYPE_NAME, null);
-		} else {
-			return fInstalledTypeName;
 		}
+		return fInstalledTypeName;
 	}
 	
 	/**

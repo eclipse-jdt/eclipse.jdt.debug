@@ -66,9 +66,8 @@ public class SourceDebugExtensionParser {
 		public int nextLexem() throws AbsentInformationException {
 			if (fEOF) {
 				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.0")); //$NON-NLS-1$
-			} else {
-				startWith();
-			}
+			} 
+			startWith();
 			return fLexemType;
 		}
 

@@ -81,9 +81,8 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
 			if (!genereatedVMDisconnectEvent) {
 				genereatedVMDisconnectEvent = true;
 				return new EventSetImpl(virtualMachineImpl(), new VMDisconnectEventImpl(virtualMachineImpl(), RequestID.nullID));
-			} else {
-				throw e;
-			}
+			} 
+			throw e;
 	 	}
 	}
 }

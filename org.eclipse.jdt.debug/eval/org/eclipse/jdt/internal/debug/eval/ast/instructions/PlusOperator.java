@@ -42,26 +42,25 @@ public class PlusOperator extends BinaryOperator {
 				e.printStackTrace();
 				return null;
 			}		
-		} else {
-			IJavaPrimitiveValue primitiveValue= (IJavaPrimitiveValue)value;
-			switch (typeId) {
-				case T_boolean:
-					return new Boolean(primitiveValue.getBooleanValue()).toString();
-				case T_byte:
-					return new Integer(primitiveValue.getByteValue()).toString();
-				case T_char:
-					return new Character(primitiveValue.getCharValue()).toString();
-				case T_double:
-					return new Double(primitiveValue.getDoubleValue()).toString();
-				case T_float:
-					return new Float(primitiveValue.getFloatValue()).toString();
-				case T_int:
-					return new Integer(primitiveValue.getIntValue()).toString();
-				case T_long:
-					return new Long(primitiveValue.getLongValue()).toString();
-				case T_short:
-					return new Integer(primitiveValue.getShortValue()).toString();
-			}
+		} 
+		IJavaPrimitiveValue primitiveValue= (IJavaPrimitiveValue)value;
+		switch (typeId) {
+			case T_boolean:
+				return new Boolean(primitiveValue.getBooleanValue()).toString();
+			case T_byte:
+				return new Integer(primitiveValue.getByteValue()).toString();
+			case T_char:
+				return new Character(primitiveValue.getCharValue()).toString();
+			case T_double:
+				return new Double(primitiveValue.getDoubleValue()).toString();
+			case T_float:
+				return new Float(primitiveValue.getFloatValue()).toString();
+			case T_int:
+				return new Integer(primitiveValue.getIntValue()).toString();
+			case T_long:
+				return new Long(primitiveValue.getLongValue()).toString();
+			case T_short:
+				return new Integer(primitiveValue.getShortValue()).toString();
 		}
 		return NULL;
 	}	

@@ -400,24 +400,22 @@ public class MonitorManager {
 				return res;
 			}
 			// if owningThread has not already been used
-			else{
-				List newUsedThreadsList= new ArrayList(usedThreadsList);
+			List newUsedThreadsList= new ArrayList(usedThreadsList);
+			
+			//adding current thread to the new used list
+			newUsedThreadsList.add(thread);
+			
+			if(owningThread==null){
+				return null;
+			}
+			// recursive call, one level lower in the deadlock list
+			List newRes = listToDeadlock(owningThread, newUsedThreadsList);
 				
-				//adding current thread to the new used list
-				newUsedThreadsList.add(thread);
-				
-				if(owningThread==null){
-					return null;
-				}
-				// recursive call, one level lower in the deadlock list
-				List newRes = listToDeadlock(owningThread, newUsedThreadsList);
-					
-				if(newRes!=null){
-					res.add(thread);
-					res.add(contendedMonitor);
-					res.addAll(newRes);
-					return res;
-				}
+			if(newRes!=null){
+				res.add(thread);
+				res.add(contendedMonitor);
+				res.addAll(newRes);
+				return res;
 			}
 		} else {
 			// if the thread is not waiting for any monitor

@@ -284,13 +284,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		Key key= new Key(typeName, debugTarget);
 		if (fCacheMap.containsKey(key)) {
 			return (ICompiledExpression) fCacheMap.get(key);
-		} else {
-			String snippet= getDetailFormatter(type);
-			if (snippet != null) {
-				ICompiledExpression res= evaluationEngine.getCompiledExpression(snippet, javaObject);
-				fCacheMap.put(key, res);
-				return res;
-			}
+		}
+		String snippet= getDetailFormatter(type);
+		if (snippet != null) {
+			ICompiledExpression res= evaluationEngine.getCompiledExpression(snippet, javaObject);
+			fCacheMap.put(key, res);
+			return res;
 		}
 		return null;
 	}
@@ -375,9 +374,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			if (obj instanceof Key) {
 				Key key= (Key) obj;
 				return fTypeName != null && fDebugTarget != null && fTypeName.equals(key.fTypeName) && fDebugTarget.equals(key.fDebugTarget);
-			} else {
-				return false;
 			}
+			return false;
 		}
 		
 		public int hashCode() {

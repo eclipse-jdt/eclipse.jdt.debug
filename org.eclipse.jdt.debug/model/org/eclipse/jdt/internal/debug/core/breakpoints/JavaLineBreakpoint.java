@@ -372,9 +372,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				JDIDebugPlugin.log(exception);
 				return !suspendForEvent(event, thread);
 			}
-		} else {
-			return !suspendForEvent(event, thread); // Resume if suspend fails
-		}					
+		}
+		return !suspendForEvent(event, thread); // Resume if suspend fails					
 	}
 	
 	/**

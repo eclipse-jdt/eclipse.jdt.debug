@@ -231,10 +231,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		if (part instanceof ITextEditor) { 
 			ITextEditor editor = (ITextEditor)part;
 			return (ITextSelection)editor.getSelectionProvider().getSelection();
-		} else {
-			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_Java_editor._4")); //$NON-NLS-1$
-			return null;
 		}
+		showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_Java_editor._4")); //$NON-NLS-1$
+		return null;
 	}
 	
 	private IMethod getMethod() {
@@ -322,10 +321,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		if (fWindow != null) {
 			// global action
 			return fWindow.getActivePage().getActiveEditor();
-		} else {
-			// pop-up action
-			return fEditorPart;
 		}
+		// pop-up action
+		return fEditorPart;
 	}
 
 	/**

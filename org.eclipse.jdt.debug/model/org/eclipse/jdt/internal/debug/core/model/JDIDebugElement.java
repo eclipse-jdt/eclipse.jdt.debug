@@ -367,9 +367,8 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 		VirtualMachine vm = getVM();
 		if (vm == null) {
 			return null;
-		} else {
-			return vm.eventRequestManager();
 		}
+		return vm.eventRequestManager();
 	}
 	
 	/**

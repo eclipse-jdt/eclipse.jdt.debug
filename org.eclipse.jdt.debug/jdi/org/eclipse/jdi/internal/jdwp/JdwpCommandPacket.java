@@ -308,8 +308,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 		int i = str.indexOf('_');
 		if (i < 0) {
 			return str;
-		} else {
-			return str.substring(i + 1);
-		}
+		} 
+		return str.substring(i + 1);
 	}
 }

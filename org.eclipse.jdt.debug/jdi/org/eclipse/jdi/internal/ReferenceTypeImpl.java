@@ -1264,9 +1264,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			if (type.classLoader() == null) {	// bootstrap classloader
 				if (classLoader == null) {
 					return type;
-				} else {
-					refTypeBootstrap = type;
 				}
+				refTypeBootstrap = type;
 			}
 			if (classLoader != null && classLoader.equals(type.classLoader())) {
 				return type;
@@ -1585,10 +1584,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_FILE, this);
-			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION)
+			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION) {
 				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.Source_name_is_not_known_7")); //$NON-NLS-1$
-			else
-				defaultReplyErrorHandler(replyPacket.errorCode());
+			}
+			
+			defaultReplyErrorHandler(replyPacket.errorCode());
 		
 			DataInputStream replyData = replyPacket.dataInStream();
 			fSourceName = readString("source name", replyData); //$NON-NLS-1$

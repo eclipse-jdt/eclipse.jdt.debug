@@ -222,9 +222,8 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	protected Value getLastKnownValue() {
 		if (fValue == null) {
 			return null;
-		} else {
-			return fValue.getUnderlyingValue();
-		}
+		} 
+		return fValue.getUnderlyingValue();
 	}
 	
 	/**

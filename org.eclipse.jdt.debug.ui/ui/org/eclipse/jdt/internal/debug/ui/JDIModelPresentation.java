@@ -272,30 +272,26 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (thread.isTerminated()) {
 			if (thread.isSystemThread()) {
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[({0}]_(Terminated)_7"), thread.getName()); //$NON-NLS-1$
-			} else {
-				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[({0}]_(Terminated)_8"), thread.getName()); //$NON-NLS-1$
 			}
+			return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[({0}]_(Terminated)_8"), thread.getName()); //$NON-NLS-1$
 		}
 		if (thread.isStepping()) {
 			if (thread.isSystemThread()) {
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Stepping)_9"), thread.getName()); //$NON-NLS-1$
-			} else {
-				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Stepping)_10"), thread.getName()); //$NON-NLS-1$
-			}
+			} 
+			return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Stepping)_10"), thread.getName()); //$NON-NLS-1$
 		}
 		if (thread.isPerformingEvaluation()) {
 			if (thread.isSystemThread()) {
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Evaluating)_9"), thread.getName()); //$NON-NLS-1$
-			} else {
-				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Evaluating)_10"), thread.getName()); //$NON-NLS-1$
 			}
+			return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Evaluating)_10"), thread.getName()); //$NON-NLS-1$
 		}
 		if (!thread.isSuspended() || (thread instanceof JDIThread && ((JDIThread)thread).isSuspendedQuiet())) {
 			if (thread.isSystemThread()) {
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Running)_11"), thread.getName()); //$NON-NLS-1$
-			} else {
-				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Running)_12"), thread.getName()); //$NON-NLS-1$
-			}
+			} 
+			return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Running)_12"), thread.getName()); //$NON-NLS-1$
 		}
 		IBreakpoint[] breakpoints= thread.getBreakpoints();
 		if (breakpoints.length > 0) {
@@ -318,9 +314,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					String message = problem.getAttribute(IMarker.MESSAGE, DebugUIMessages.getString("JDIModelPresentation.Compilation_error_1")); //$NON-NLS-1$
 					if (thread.isSystemThread()) {
 						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_({1}))_2"), new String[] {thread.getName(), message}); //$NON-NLS-1$
-					} else {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_({1}))_3"), new String[] {thread.getName(), message}); //$NON-NLS-1$
 					}
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_({1}))_3"), new String[] {thread.getName(), message}); //$NON-NLS-1$
 				}
 			}			
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
@@ -333,9 +328,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				} 
 				if (thread.isSystemThread()) {
 					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(exception_{1}))_13"), new String[] {thread.getName(), exName}); //$NON-NLS-1$
-				} else {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exception_{1}))_14"), new String[] {thread.getName(), exName}); //$NON-NLS-1$
 				}
+				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exception_{1}))_14"), new String[] {thread.getName(), exName}); //$NON-NLS-1$
 			}
 			if (breakpoint instanceof IJavaWatchpoint) {
 				IJavaWatchpoint wp = (IJavaWatchpoint)breakpoint;
@@ -343,17 +337,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (wp.isAccessSuspend(thread.getDebugTarget())) {
 					if (thread.isSystemThread()) {
 						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(access_of_field_{1}_in_{2}))_16"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
-					} else {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(access_of_field_{1}_in_{2}))_17"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
 					}
-				} else {
-					// modification
-					if (thread.isSystemThread()) {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(modification_of_field_{1}_in_{2}))_18"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
-					} else {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(modification_of_field_{1}_in_{2}))_19"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
-					}
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(access_of_field_{1}_in_{2}))_17"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
 				}
+				// modification
+				if (thread.isSystemThread()) {
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(modification_of_field_{1}_in_{2}))_18"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
+				} 
+				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(modification_of_field_{1}_in_{2}))_19"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
 			}
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint me= (IJavaMethodBreakpoint)breakpoint;
@@ -361,16 +352,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (me.isEntrySuspend(thread.getDebugTarget())) {
 					if (thread.isSystemThread()) {
 						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
-					} else {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
 					}
-				} else {
-					if (thread.isSystemThread()) {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(exit_of_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
-					} else {
-						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exit_of_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
-					}					
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
 				}
+				if (thread.isSystemThread()) {
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(exit_of_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+				}
+				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exit_of_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$					
 			}
 			if (breakpoint instanceof IJavaLineBreakpoint) {
 				IJavaLineBreakpoint jlbp = (IJavaLineBreakpoint)breakpoint;
@@ -379,16 +367,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					if (thread.isSystemThread()) {
 						if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
 							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(run_to_line_{1}_in_{2}))_23"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
-						} else {
-							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(breakpoint_at_line_{1}_in_{2}))_24"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
 						}
-					} else {
-						if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
-							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(run_to_line_{1}_in_{2}))_25"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
-						} else {
-							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(breakpoint_at_line_{1}_in_{2}))_26"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
-						}
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(breakpoint_at_line_{1}_in_{2}))_24"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
 					}
+					if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(run_to_line_{1}_in_{2}))_25"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
+					}
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(breakpoint_at_line_{1}_in_{2}))_26"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
 				}
 			}
 			if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
@@ -399,9 +384,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		// Otherwise, it's just suspended
 		if (thread.isSystemThread()) {
 			return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended)_27"), thread.getName()); //$NON-NLS-1$
-		} else {
-			return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended)_28"), thread.getName()); //$NON-NLS-1$
 		}
+		return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended)_28"), thread.getName()); //$NON-NLS-1$
 	}
 
 	/**
@@ -659,9 +643,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 		if (breakpoint instanceof IJavaLineBreakpoint && BreakpointUtils.isRunToLineBreakpoint((IJavaLineBreakpoint)breakpoint)) {
 			return null;
-		} else {
-			return getJavaBreakpointImage(breakpoint);
 		}
+		return getJavaBreakpointImage(breakpoint);
 	}
 
 	protected Image getExceptionBreakpointImage(IJavaExceptionBreakpoint exception) throws CoreException {
@@ -1087,9 +1070,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				// occur if the inspected object has been garbage collected.
 				if (exception.getStatus().getException() instanceof ObjectCollectedException) {
 					return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
-				} else {
-					throw exception;
 				}
+				throw exception;
 			}
 			if (showTypes ) {
 				typeName= getQualifiedName(typeName);
@@ -1552,21 +1534,20 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		int parameterStart= qualifiedName.indexOf('<');
 		if (parameterStart == -1) {
 			return getSimpleName(qualifiedName);
-		} else {
-			// get the list of the parameters and generates their simple name
-			List parameters= getNameList(qualifiedName.substring(parameterStart + 1, qualifiedName.length() - 1));
-			StringBuffer name= new StringBuffer(getSimpleName(qualifiedName.substring(0, parameterStart)));
-			name.append('<');
-			Iterator iterator= parameters.iterator();
-			if (iterator.hasNext()) {
-				name.append(removeQualifierFromGenericName((String)iterator.next()));
-				while (iterator.hasNext()) {
-					name.append(',').append(removeQualifierFromGenericName((String)iterator.next()));
-				}
-			}
-			name.append('>');
-			return name.toString();
 		}
+		// get the list of the parameters and generates their simple name
+		List parameters= getNameList(qualifiedName.substring(parameterStart + 1, qualifiedName.length() - 1));
+		StringBuffer name= new StringBuffer(getSimpleName(qualifiedName.substring(0, parameterStart)));
+		name.append('<');
+		Iterator iterator= parameters.iterator();
+		if (iterator.hasNext()) {
+			name.append(removeQualifierFromGenericName((String)iterator.next()));
+			while (iterator.hasNext()) {
+				name.append(',').append(removeQualifierFromGenericName((String)iterator.next()));
+			}
+		}
+		name.append('>');
+		return name.toString();
 	}
 	
 	/**
@@ -1576,9 +1557,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		int index = qualifiedName.lastIndexOf('.');
 		if (index >= 0) {
 			return qualifiedName.substring(index + 1);
-		} else {
-			return qualifiedName;
 		}
+		return qualifiedName;
 	}
 
 	/**

@@ -424,20 +424,17 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			Integer count = (Integer)event.request().getProperty(HIT_COUNT);
 			if (count != null && handleHitCount(event, count)) {
 				return true;
-			} else {
-				// no hit count
-				if (hasCondition()) {
-					try {
-						return handleConditionalBreakpointEvent(event, thread, target);
-					} catch (CoreException exception) {
-						// log error
-						return !suspendForEvent(event, thread);
-					}
-				} else {
-					return !suspendForEvent(event, thread); // Resume if suspend fails
-				}					
 			}
-			
+			// no hit count
+			if (hasCondition()) {
+				try {
+					return handleConditionalBreakpointEvent(event, thread, target);
+				} catch (CoreException exception) {
+					// log error
+					return !suspendForEvent(event, thread);
+				}
+			}
+			return !suspendForEvent(event, thread); // Resume if suspend fails					
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
 		}
@@ -467,14 +464,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 					JDIDebugPlugin.log(e);
 				}
 				return false;
-			}  else {
-				// count still > 0, keep running
-				return true;		
 			}
-		} else {
-			// hit count expired, keep running
-			return true;
+			// count still > 0, keep running
+			return true;		
 		}
+		// hit count expired, keep running
+		return true;
 	}
 	
 	/* (non-Javadoc)

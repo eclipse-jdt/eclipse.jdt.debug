@@ -732,20 +732,19 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				if (frame.supportsDropToFrame()) {
 					affectedFrame= frame;
 					break;
-				} else {
-					// The frame we wanted to drop to cannot be popped.
-					// Set the affected frame to the next lowest poppable
-					// frame on the stack.
-					while (j > 0) {
-						j--;
-						frame= (JDIStackFrame) frames.get(j);
-						if (frame.supportsDropToFrame()) {
-							affectedFrame= frame;
-							break;
-						}
-					}
-					break;
 				}
+				// The frame we wanted to drop to cannot be popped.
+				// Set the affected frame to the next lowest poppable
+				// frame on the stack.
+				while (j > 0) {
+					j--;
+					frame= (JDIStackFrame) frames.get(j);
+					if (frame.supportsDropToFrame()) {
+						affectedFrame= frame;
+						break;
+					}
+				}
+				break;
 			}
 		}
 		return affectedFrame;
