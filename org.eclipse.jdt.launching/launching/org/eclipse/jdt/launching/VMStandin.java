@@ -34,6 +34,12 @@ package org.eclipse.jdt.launching;
  * @since 2.1
  */
 public class VMStandin extends AbstractVMInstall {
+    
+    /**
+     * <code>java.version</code> system property, or <code>null</code>
+     * @since 3.1
+     */
+    private String fJavaVersion = null;
 
 	/*
 	 * @see org.eclipse.jdt.launching.AbstractVMInstall#AbstractVMInstall(org.eclipse.jdt.launching.IVMInstallType, java.lang.String)
@@ -57,6 +63,7 @@ public class VMStandin extends AbstractVMInstall {
 		setLibraryLocations(realVM.getLibraryLocations());
 		setJavadocLocation(realVM.getJavadocLocation());
 		setVMArgs(realVM.getVMArgs());
+        fJavaVersion = realVM.getJavaVersion();
 	}
 	
 	/**
@@ -93,4 +100,10 @@ public class VMStandin extends AbstractVMInstall {
 		return realVM;
 	}
 		
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.launching.IVMInstall#getJavaVersion()
+     */
+    public String getJavaVersion() {
+        return fJavaVersion;
+    }
 }

@@ -68,6 +68,7 @@ import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TypeTests;
+import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
@@ -98,6 +99,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ClasspathVariableTests.class));
 		addTest(new TestSuite(DebugEventTests.class));
 		addTest(new TestSuite(ClasspathContainerTests.class));
+        addTest(new TestSuite(VMInstallTests.class));
 		addTest(new TestSuite(ArgumentTests.class));
 		addTest(new TestSuite(ConsoleTests.class));
 		addTest(new TestSuite(ConsoleInputTests.class));

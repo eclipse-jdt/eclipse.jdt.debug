@@ -11,6 +11,8 @@
 package org.eclipse.jdt.internal.launching;
 
 
+import java.io.File;
+
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -32,4 +34,31 @@ public class StandardVM extends AbstractVMInstall {
 		return null;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.launching.IVMInstall#getJavaVersion()
+     */
+    public String getJavaVersion() {
+        StandardVMType installType = (StandardVMType) getVMInstallType();
+        File installLocation = getInstallLocation();
+        if (installLocation != null) {
+            File executable = StandardVMType.findJavaExecutable(installLocation);
+            if (executable != null) {
+                String vmVersion = installType.getVMVersion(installLocation, executable);
+                // strip off extra info
+                StringBuffer version = new StringBuffer();
+                for (int i = 0; i < vmVersion.length(); i++) {
+                    char ch = vmVersion.charAt(i);
+                    if (Character.isDigit(ch) || ch == '.') {
+                        version.append(ch);
+                    } else {
+                        break;
+                    }
+                }
+                if (version.length() > 0) {
+                    return version.toString();
+                }
+            }
+        }
+        return null;
+    }
 }

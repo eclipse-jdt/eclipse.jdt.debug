@@ -166,4 +166,14 @@ public interface IVMInstall {
 	 * @since 3.1
 	 */
 	public void setVMArgs(String vmArgs);
+    
+    /**
+     * Returns a string representing the <code>java.version</code> system property
+     * of this VM install, or <code>null</code> if unknown.
+     * 
+     * @return a string representing the <code>java.version</code> system property
+     * of this VM install, or <code>null</code> if unknown.
+     * @since 3.1
+     */
+    public String getJavaVersion();
 }
