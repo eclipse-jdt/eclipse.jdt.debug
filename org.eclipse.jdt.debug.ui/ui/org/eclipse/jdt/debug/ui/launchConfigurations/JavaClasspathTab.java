@@ -236,18 +236,19 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	protected void displayDefaultClasspath() {
 		ILaunchConfiguration config = getLaunchConfiguration();
-		if (config.isWorkingCopy()) {
-			config= ((ILaunchConfigurationWorkingCopy)config).getOriginal();
-		}
-		if (config == null) {
-			setClasspathEntries(new IRuntimeClasspathEntry[0]);
-		} else {
-			try {
-				setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(config));
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
+		ILaunchConfigurationWorkingCopy wc = null;
+		try {
+			if (config.isWorkingCopy()) {
+				wc= (ILaunchConfigurationWorkingCopy)config;
+			} else {
+				wc = config.getWorkingCopy();
 			}
-		}		
+			performApply(wc);
+			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(wc));
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+
 	}
 	
 	/**
