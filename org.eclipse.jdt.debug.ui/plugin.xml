@@ -2275,7 +2275,7 @@
       </renameParticipant>
       <renameParticipant
                class="org.eclipse.jdt.internal.debug.core.refactoring.JavaMethodBreakpointIMethodRenameParticipant"
-               name="JavaMethodBreakpointIMethodRenameParticipant.name"
+               name="%JavaMethodBreakpointIMethodRenameParticipant.name"
                id="org.eclipse.jdt.debug.refractoring.javaMethodBreakpointIMethodRename">
          <enablement>
            <with variable="affectedNatures">
@@ -2291,6 +2291,7 @@
 
 <!--      <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeRenameParticipant"
+            name="%JavaBreakpointITypeRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
          <enablement>
            <with variable="affectedNatures">
@@ -2304,9 +2305,10 @@
          </enablement>
       </renameParticipant>  -->
    </extension>
-<!--   <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">
+   <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeMoveParticipant"
+            name="%LaunchConfigurationITypeMoveParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
          <enablement>
            <with variable="affectedNatures">
@@ -2319,7 +2321,7 @@
            </with>
          </enablement>
       </moveParticipant>
-   </extension>-->
+   </extension>
 <!-- Context support -->
    <extension
          point="org.eclipse.ui.contexts">

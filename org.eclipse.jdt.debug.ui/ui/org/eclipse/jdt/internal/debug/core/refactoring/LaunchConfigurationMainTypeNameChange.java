@@ -35,22 +35,18 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class LaunchConfigurationMainTypeNameChange extends Change {
 	
-	public static Change createChangesFor(IType type, String newName) throws CoreException {
+	public static Change createChangesFor(IType type, String newFullyQualifiedName) throws CoreException {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		// generate the new type name
-		if (newName.endsWith(".java")) { //$NON-NLS-1$
-			newName= newName.substring(0, newName.length() - 5);
-		}
 		// Java application launch configurations
 		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfiguration configs[]= manager.getLaunchConfigurations(configurationType);
 		String typeName= type.getFullyQualifiedName();
 		String projectName= type.getJavaProject().getElementName();
-		List changes= changesForITypeChange(configs, newName, typeName, projectName);
+		List changes= changesForITypeChange(configs, newFullyQualifiedName, typeName, projectName);
 		// Java applet launch configurations
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
-		changes.addAll(changesForITypeChange(configs, newName, typeName, projectName));
+		changes.addAll(changesForITypeChange(configs, newFullyQualifiedName, typeName, projectName));
 		int nbChanges= changes.size();
 		if (nbChanges == 0) {
 			return null;
@@ -61,41 +57,33 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		}
 	}
 	
-	private static List changesForITypeChange(ILaunchConfiguration[] configs, String newName, String typeName, String projectName) throws CoreException {
+	private static List changesForITypeChange(ILaunchConfiguration[] configs, String newFullyQualifiedName, String typeName, String projectName) throws CoreException {
 		List changes= new ArrayList();
 		for (int i= 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
 			String mainTypeName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			if (typeName.equals(mainTypeName)) {
 				String lcProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-				
 				if (projectName.equals(lcProjectName)) {
-					int index= mainTypeName.lastIndexOf('.');
-					String newTypeName;
-					if (index == -1) {
-						newTypeName= newName;
-					} else {
-						newTypeName= mainTypeName.substring(0, index + 1) + newName;
-					}
-					changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newTypeName));
+					changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newFullyQualifiedName));
 				}
 			}
 		}
 		return changes;
 	}
 
-	public static Change createChangesFor(IPackageFragment packageFragment, String newName) throws CoreException {
+	public static Change createChangesFor(IPackageFragment packageFragment, String newPackageName) throws CoreException {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		// Java application launch configurations
 		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfiguration configs[]= manager.getLaunchConfigurations(configurationType);
 		String packageFragmentName= packageFragment.getElementName();
 		String projectName= packageFragment.getJavaProject().getElementName();
-		List changes= changesForIPackageFragmentChange(configs, newName, packageFragmentName, projectName);
+		List changes= changesForIPackageFragmentChange(configs, newPackageName, packageFragmentName, projectName);
 		// Java applet launch configurations
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
-		changes.addAll(changesForIPackageFragmentChange(configs, newName, packageFragmentName, projectName));
+		changes.addAll(changesForIPackageFragmentChange(configs, newPackageName, packageFragmentName, projectName));
 		int nbChanges= changes.size();
 		if (nbChanges == 0) {
 			return null;
@@ -106,7 +94,7 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		}
 	}
 	
-	private static List changesForIPackageFragmentChange(ILaunchConfiguration[] configs, String newName, String packageFragmentName, String projectName) throws CoreException {
+	private static List changesForIPackageFragmentChange(ILaunchConfiguration[] configs, String newPackageName, String packageFragmentName, String projectName) throws CoreException {
 		List changes= new ArrayList();
 		for (int i= 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
@@ -114,7 +102,7 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 			if (mainTypeName != null && mainTypeName.startsWith(packageFragmentName)) {
 				String lcProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 				if (projectName.equals(lcProjectName)) {
-					String newTypeName= newName + mainTypeName.substring(packageFragmentName.length());
+					String newTypeName= newPackageName + mainTypeName.substring(packageFragmentName.length());
 					changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newTypeName));
 				}
 			}
