@@ -407,7 +407,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		String[] filters= getClassFilters();
 		if (filters.length > 0 ) {
 			boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
-			String pattern= "";
+			String pattern= ""; //$NON-NLS-1$
 			//JDI / JDWP can only handle a single class / class exclusion filter
 			//emulated for more than one class filter
 			if (filters.length == 1) {	
@@ -438,7 +438,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		String[] filters= null;
 		StringBuffer buff= new StringBuffer();
 		try {
-			filters= parseList(ensureMarker().getAttribute(FILTERS, ""));
+			filters= parseList(ensureMarker().getAttribute(FILTERS, "")); //$NON-NLS-1$
 		} catch(DebugException e) {
 			return buff.toString();
 		}
