@@ -960,7 +960,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	public boolean isOutOfSynch() throws DebugException {
-		if (isSuspended()) {
+		if (isSuspended() && ((JDIDebugTarget)getDebugTarget()).hasHCRFailed()) {
 			List frames= computeStackFrames();
 			Iterator iter= frames.iterator();
 			while (iter.hasNext()) {
