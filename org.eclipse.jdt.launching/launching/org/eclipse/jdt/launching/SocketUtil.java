@@ -66,17 +66,6 @@ public class SocketUtil {
 	 * 
 	 * @return a free port number on localhost, or -1 if unable to find a free port
 	 * @since 3.0
-	 * @deprecated use #findFreePort() instead (there was a spelling mistake in this method)
-	 */
-	public static int findFeePort() {
-		return findFreePort();
-	}
-	
-	/**
-	 * Returns a free port number on localhost, or -1 if unable to find a free port.
-	 * 
-	 * @return a free port number on localhost, or -1 if unable to find a free port
-	 * @since 3.0
 	 */
 	public static int findFreePort() {
 		ServerSocket socket= null;
