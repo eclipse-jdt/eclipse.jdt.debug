@@ -510,8 +510,9 @@ public class SourceDebugExtensionParser {
 		}
 		lexer.nextLexem();
 		// remove the leading white spaces
-		int i= -1;
-		for (char c= string.charAt(++i); c == ' ' || c == '\t'; c= string.charAt(++i));
+		int i= -1, length= string.length();
+		char c;
+		while (++i < length && ((c= string.charAt(i)) == ' ' || c == '\t'));
 		return string.delete(0, i).toString();
 	}
 	
