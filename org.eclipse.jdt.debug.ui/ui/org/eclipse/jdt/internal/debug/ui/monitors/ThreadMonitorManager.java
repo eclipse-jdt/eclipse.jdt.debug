@@ -110,8 +110,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 	
 	private void handleSuspendResume() {
-		for (Iterator iter= ((HashMap)fJavaMonitorThreads.clone()).values().iterator(); iter.hasNext();) {
-			((JavaMonitorThread) iter.next()).setToUpdate();
+		Object[] threads = fJavaMonitorThreads.values().toArray();
+		for (int i = 0; i < threads.length; i++) {
+			((JavaMonitorThread) threads[i]).setToUpdate();
 		}
 		DebugPlugin.getDefault().asyncExec(new RefreshAndDetectDeadlock());
 	}
@@ -128,9 +129,10 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 
 	private void clean(Map map, IJavaDebugTarget debugTarget) {
-		for (Iterator iter= map.keySet().iterator(); iter.hasNext();) {
-			if (((IDebugElement) iter.next()).getDebugTarget().equals(debugTarget)) {
-				iter.remove();
+		Object[] elements = map.keySet().toArray();
+		for (int i = 0; i < elements.length; i++) {
+			if (((IDebugElement) elements[i]).getDebugTarget().equals(debugTarget)) {
+				map.remove(elements[i]);
 			}
 		}
 	}
