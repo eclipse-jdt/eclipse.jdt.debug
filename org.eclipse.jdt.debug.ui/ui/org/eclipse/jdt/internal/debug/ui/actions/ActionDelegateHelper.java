@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -56,15 +58,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		if (part instanceof ITextEditor) {
-			if (part instanceof JavaSnippetEditor) {
-				setTextEditor(null);
-			} else {
-				setTextEditor((ITextEditor)part);
-			}	
-		} else {
-			setTextEditor(null);
-		}
+		checkToSetTextEditor(part);
 	}
 
 	/**
@@ -99,7 +93,16 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		fMember = member;
 	}
 	
-		
+	protected void checkToSetTextEditor(IWorkbenchPart part) {
+		if (part instanceof ITextEditor) {
+			if (part instanceof JavaSnippetEditor) {
+				setTextEditor(null);
+			} else {
+				setTextEditor((ITextEditor)part);
+			}	
+		} 
+	}
+	
 	public IMember getCurrentMember(ISelection currentSelection) {
 		if (currentSelection == getCurrentSelection()) {
 			return getMember();
@@ -163,6 +166,10 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		}
 		fCurrentWindow= window;
 		fCurrentWindow.getPartService().addPartListener(this);
+		IWorkbenchPage page= window.getActivePage();
+		if (page != null) {
+			checkToSetTextEditor(page.getActiveEditor());
+		}
 	}
 
 	/**

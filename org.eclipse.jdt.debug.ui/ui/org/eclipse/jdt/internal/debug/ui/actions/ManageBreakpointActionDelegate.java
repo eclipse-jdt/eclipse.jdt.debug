@@ -169,20 +169,23 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 					if (part instanceof ITextEditor) {
 						if (!(part instanceof JavaSnippetEditor)) {
 							setTextEditor((ITextEditor)part);
+							update();
 						}
 					}
 				}
 			}
 			fInitialized= true;
+		} else {
+			update(selection);
 		}
-		update(selection);
 		
 	}
 		
 	protected void update(ISelection selection) {
 		if (selection instanceof ITextSelection) {
-			//only interested in text selection changes
 			update();
+		} else {
+			getAction().setEnabled(false);
 		}
 	}
 	
@@ -268,16 +271,11 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		if (part instanceof ITextEditor) {
 			if (part instanceof JavaSnippetEditor) {
 				setTextEditor(null);
-				update();
 			} else {
 				setTextEditor((ITextEditor)part);
-				//must call after the editor is fully realized else we
-				//create the working copy...revisist XXX
-				asyncUpdate();
 			}	
 		} else {
 			setTextEditor(null);
-			update();
 		}
 	}
 
@@ -307,7 +305,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			if (getTextEditor() == null) {
 				if (!(part instanceof JavaSnippetEditor)) {
 					setTextEditor((ITextEditor)part);
-					update();
 				}
 			}
 		}

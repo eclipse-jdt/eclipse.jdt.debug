@@ -194,5 +194,6 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		if (targetEditor instanceof ITextEditor) {
 			setTextEditor((ITextEditor)targetEditor);
 		}
+		update();
 	}
 }
