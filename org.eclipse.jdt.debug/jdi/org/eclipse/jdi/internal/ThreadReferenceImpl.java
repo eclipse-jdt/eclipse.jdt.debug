@@ -64,6 +64,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	
 	/** The following are the stored results of JDWP calls. */
 	private String fName = null;
+	/**
+	 * The cached thread group. A thread's thread group cannot be changed.
+	 */
 	private ThreadGroupReferenceImpl fThreadGroup = null;
 
 	/**
@@ -426,6 +429,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 * @return Returns this thread's thread group.
 	 */
 	public ThreadGroupReference threadGroup() {
+		if (fThreadGroup != null) {
+			return fThreadGroup;
+		}
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TR_THREAD_GROUP, this);
@@ -435,7 +441,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return ThreadGroupReferenceImpl.read(this, replyData);
+			fThreadGroup= ThreadGroupReferenceImpl.read(this, replyData);
+			return fThreadGroup;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;

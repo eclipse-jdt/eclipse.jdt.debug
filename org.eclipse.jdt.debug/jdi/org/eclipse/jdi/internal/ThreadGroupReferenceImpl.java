@@ -27,6 +27,16 @@ import com.sun.jdi.ThreadGroupReference;
 public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements ThreadGroupReference {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.THREAD_GROUP_TAG;
+	/**
+	 * The cached name of this thread group. This value is safe to cache because
+	 * there is no API for changing the name of a ThreadGroup.
+	 */
+	private String fName;
+	/**
+	 * The cached parent of this thread group. Once set, this value cannot be changed
+	 */
+	private ThreadGroupReference fParent= fgUnsetParent;
+	private static ThreadGroupReferenceImpl fgUnsetParent= new ThreadGroupReferenceImpl(null, null);
 	
 	/**
 	 * Creates new ThreadGroupReferenceImpl.
@@ -46,12 +56,16 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 	 * @return Returns the name of this thread group.
 	 */
 	public String name() {
+		if (fName != null) {
+			return fName;
+		}
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_NAME, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return readString("name", replyData); //$NON-NLS-1$
+			fName= readString("name", replyData); //$NON-NLS-1$
+			return fName;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
@@ -64,12 +78,16 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 	 * @return Returns the parent of this thread group., or null if there isn't.
 	 */
 	public ThreadGroupReference parent() {
+		if (fParent != fgUnsetParent) {
+			return fParent;
+		}
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_PARENT, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return ThreadGroupReferenceImpl.read(this, replyData);
+			fParent= ThreadGroupReferenceImpl.read(this, replyData);
+			return fParent;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
@@ -189,7 +207,11 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 		if (ID.isNull())
 			return null;
 			
-		ThreadGroupReferenceImpl mirror = new ThreadGroupReferenceImpl(vmImpl, ID);
+		ThreadGroupReferenceImpl mirror = (ThreadGroupReferenceImpl)vmImpl.getCachedMirror(ID);
+		if (mirror == null) {
+			mirror = new ThreadGroupReferenceImpl(vmImpl, ID);
+			vmImpl.addCachedMirror(mirror);
+		}
 		return mirror;
 	}
 }
