@@ -188,12 +188,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		buffer.append('\n');
 		fStartPosOffset= buffer.length() - 2;
 		String codeSnippet= new String(fCodeSnippet).trim();
-
-		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1;
-
-		if (isAnExpression) {
-			codeSnippet = "return " + codeSnippet + ';';
-		}
 		
 		buffer.append(codeSnippet);
 

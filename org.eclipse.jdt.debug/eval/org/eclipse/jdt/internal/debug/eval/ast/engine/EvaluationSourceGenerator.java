@@ -80,16 +80,10 @@ public class EvaluationSourceGenerator {
 	}
 	
 	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) throws DebugException {
-		String codeSnippet = fCodeSnippet;		
-		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1;
-
-		if (isAnExpression) {
-			codeSnippet = "return " + codeSnippet + ';';
-		}
 		
 		setCompilationUnitName(objectToEvaluationSourceMapper.getCompilationUnitName());
 		setStartPosition(objectToEvaluationSourceMapper.getBlockStar());
-		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), codeSnippet).toString());
+		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
 	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
