@@ -1040,9 +1040,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (var instanceof IJavaFieldVariable) {
 			IJavaFieldVariable field = (IJavaFieldVariable)var;
 			if (isDuplicateName(field)) {
-				String decl;
 				try {
-					decl = field.getDeclaringType().getName();
+					String decl = field.getDeclaringType().getName();
 					buff.append(MessageFormat.format(" ({0})", new String[]{getQualifiedName(decl)})); //$NON-NLS-1$
 				} catch (DebugException e) {
 				}
