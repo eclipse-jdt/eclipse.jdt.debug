@@ -32,7 +32,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 
 	private CompilationUnit parseCompilationUnit(ICompilationUnit unit) {
-		ASTParser parser = ASTParser.newParser(AST.LEVEL_2_0);
+		ASTParser parser = ASTParser.newParser(AST.JLS2);
 		parser.setSource(unit);
 		return (CompilationUnit) parser.createAST(null);
 	}
