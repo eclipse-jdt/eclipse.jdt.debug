@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -88,7 +89,10 @@ public class JavaSourceLookupDialog extends Dialog {
 		fSourceLookupBlock.createControl(composite);
 		Control inner = fSourceLookupBlock.getControl();
 		fSourceLookupBlock.initializeFrom(fConfiguration);
-		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		int height = Display.getCurrent().getBounds().height;
+		gd.heightHint = (int)(0.4f * height);
+		inner.setLayoutData(gd);
 		fAskAgainCheckBox= new Button(composite, SWT.CHECK + SWT.WRAP);
 		data= new GridData();
 		data.widthHint= pixelWidth;
