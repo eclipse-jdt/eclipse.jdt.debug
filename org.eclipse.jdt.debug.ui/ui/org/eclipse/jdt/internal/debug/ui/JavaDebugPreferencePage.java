@@ -79,7 +79,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  * Preference page for debug preferences that apply specifically to
  * Java Debugging.
  */
-public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Listener {
+public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
 	
@@ -715,7 +715,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	private void addType() {
-		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
+		Shell shell= getShell();
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
@@ -741,7 +741,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	private void addPackage() {
-		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
+		Shell shell= getShell();
 		SelectionDialog dialog = null;
 		try {
 			dialog = createAllPackagesDialog(shell);
@@ -812,7 +812,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 
 	/**
-	 * @see PreferencePage#performOk()
+	 * @see IPreferencePage#performOk()
 	 * Also, notifies interested listeners
 	 */
 	public boolean performOk() {
@@ -851,8 +851,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private Button createCheckButton(Composite parent, String label) {
 		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
-		button.setText(label);
-		button.addListener(SWT.Selection, this);		
+		button.setText(label);		
 
 		// FieldEditor GridData
 		GridData data = new GridData();	
@@ -906,12 +905,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		vfiller.setLayoutData(gridData);
 	}
 
-	/**
-	 * @see Listener#handleEvent(Event)
-	 */
-	public void handleEvent(Event event) {	
-	}
-	
+		
 	/**
 	 * Set the values of the component widgets based on the
 	 * values in the preference store
