@@ -244,6 +244,7 @@ public class BreakpointUtils {
 	 * breakpoint a run-to-line breakpoint:<ul>
 	 * <li>PERSISTED = false</li>
 	 * <li>RUN_TO_LINE = true</li>
+	 * <li>IMarker.SEVERITY = IMarker.SEVERITY_WARNING</li>
 	 * </ul>
 	 * 
 	 * @param attributes the attribute map to use
