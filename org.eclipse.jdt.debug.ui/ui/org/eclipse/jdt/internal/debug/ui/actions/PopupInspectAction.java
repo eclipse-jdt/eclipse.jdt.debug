@@ -25,7 +25,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -52,11 +51,7 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		if (viewer == null) {
 			super.displayResult(result);
 		} else {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					showPopup(result);
-				}
-			});
+			showPopup(result);
 		}		
 	}
 	
@@ -71,7 +66,7 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		
 
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
+			public void run() { 
 				Point p = viewer.getSelectedRange();
 				IDocument doc = viewer.getDocument();
 				try {
@@ -81,7 +76,9 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 					infoPresenter.showInformation();
 				} catch (BadLocationException e) {
 					return;
-				}				
+				} finally {
+					viewer = null;
+				}
 			}
 		});
 	}

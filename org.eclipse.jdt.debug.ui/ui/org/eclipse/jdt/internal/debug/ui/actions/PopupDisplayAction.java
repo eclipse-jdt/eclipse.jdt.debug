@@ -69,7 +69,9 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 			infoPresenter.showInformation();
 		} catch (BadLocationException e) {
 			return;
-		}				
+		} finally {
+			viewer = null;
+		}
 		
 	}
 
