@@ -29,6 +29,7 @@ import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.IntegerValue;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
+import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
@@ -38,6 +39,7 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.Event;
+import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -155,6 +157,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * the evaluation timeout.
 	 */
 	private boolean fInterrupted = false;
+	
+	/**
+	 * The kind of step that was originally requested.  Zero or
+	 * more 'secondary steps' may be performed programtically after
+	 * the original user-requested step, and this field tracks the
+	 * type (step into, over, return) of the original step.
+	 */
+	private int fOriginalStepKind;
+
+	/**
+	 * The JDI Location from which an original user-requested step began.
+	 */
+	private Location fOriginalStepLocation;
+
+	/**
+	 * The total stack depth at the time an original (user-requested) step
+	 * is initiated.  This is used along with the original step Location
+	 * to determine if a step into comes back to the starting location and
+	 * needs to be 'nudged' forward.  Checking the stack depth eliminates 
+	 * undesired 'nudging' in recursive methods.
+	 */
+	private int fOriginalStepStackDepth;
 
 	/**
 	 * Creates a new thread on the underlying thread reference
@@ -1006,6 +1030,66 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		handler.step();
 	}
 	
+	protected void setOriginalStepKind(int stepKind) {
+		fOriginalStepKind = stepKind;
+	}
+	
+	protected int getOriginalStepKind() {
+		return fOriginalStepKind;
+	}
+	
+	protected void setOriginalStepLocation(Location location) {
+		fOriginalStepLocation = location;
+	}
+	
+	protected Location getOriginalStepLocation() {
+		return fOriginalStepLocation;
+	}
+	
+	protected void setOriginalStepStackDepth(int depth) {
+		fOriginalStepStackDepth = depth;
+	}
+	
+	protected int getOriginalStepStackDepth() {
+		return fOriginalStepStackDepth;
+	}
+	
+	/**
+	 * In cases where a user-requested step into encounters nothing but filtered code
+	 * (static initializers, synthetic methods, etc.), the default JDI behavior is to
+	 * put the instruction pointer back where it was before the step into.  This requires
+	 * a second step to move forward.  Since this is confusing to the user, we do an 
+	 * extra step into in such situations.  This method determines when such an extra 
+	 * step into is necessary.  It compares the current Location to the original
+	 * Location when the user step into was initiated.  It also makes sure the stack depth
+	 * now is the same as when the step was initiated.
+	 */
+	protected boolean shouldDoExtraStepInto(Location location) throws DebugException {
+		if (getOriginalStepKind() != StepRequest.STEP_INTO) {
+			return false;
+		}
+		if (getOriginalStepStackDepth() != getUnderlyingFrames().size()) {
+			return false;
+		}
+		Location origLocation = getOriginalStepLocation();
+		if (origLocation == null) {
+			return false;
+		}	
+		// We cannot simply check if the two Locations are equal using the equals()
+		// method, since this checks the code index within the method.  Even if the
+		// code indices are different, the line numbers may be the same, in which case
+		// we need to do the extra step into.
+		Method origMethod = origLocation.method();
+		Method currMethod = location.method();
+		if (!origMethod.equals(currMethod)) {
+			return false;
+		}	
+		if (origLocation.lineNumber() != location.lineNumber()) {
+			return false;
+		}			
+		return true;
+	}
+	
 	/**
 	 * @see ISuspendResume#suspend()
 	 */
@@ -1379,6 +1463,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * </ul>
 		 */
 		protected void step() throws DebugException {
+			setOriginalStepKind(getStepKind());
+			setOriginalStepLocation(((JDIStackFrame)getTopStackFrame()).getUnderlyingStackFrame().location());
+			setOriginalStepStackDepth(getUnderlyingFrames().size());
 			setStepRequest(createStepRequest());
 			setPendingStepHandler(this);
 			addJDIEventListener(this, getStepRequest());
@@ -1435,9 +1522,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_creating_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}			
 			// this line will never be executed, as the try block
-			// will either return, or the catch block with throw 
+			// will either return, or the catch block will throw 
 			// an exception
 			return null;
+			
 		}
 		
 		/**
@@ -1456,7 +1544,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * @param request step request
 		 */
 		protected void setStepRequest(StepRequest request) {
-			fStepRequest = request;
+			fStepRequest = request; 
 		}
 		
 		/**
@@ -1511,15 +1599,60 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 		
 		/**
-		 * Notification that the step has completed.
+		 * Notification the step request has completed.
+		 * If the current location matches one of the user-specified
+		 * step filter criteria (e.g., synthetic methods, static initializers),
+		 * then continue stepping.
 		 * 
-		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see IJDIDebugEventListener#handleEvent(Event, JDIDebugTarget)
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
-			stepEnd();
-			return false;
+			try {
+				StepEvent stepEvent = (StepEvent) event;
+				Location location = stepEvent.location();
+				Method method = location.method();				
+
+				// if the ending step location is filtered, or if we're back where
+				// we started on a step into, do another step of the same kind
+				if (locationIsFiltered(method) || shouldDoExtraStepInto(location)) {
+					setRunning(true);
+					deleteStepRequest();
+					createSecondaryStepRequest();			
+					return true;		
+				// otherwise, we're done stepping
+				} else {
+					stepEnd();
+					return false;
+				}
+			} catch (DebugException e) {
+				logError(e);
+				stepEnd();
+				return false;
+			}
 		}
 		
+		/**
+		 * Return true if the StepEvent's Location is a Method that the 
+		 * user has indicated (via the step filter preferences) should be 
+		 * filtered.  Return false otherwise.
+		 */
+		protected boolean locationIsFiltered(Method method) {
+			boolean filterStatic = JDIDebugModel.getFilterStatic();
+			boolean filterSynthetic = JDIDebugModel.getFilterSynthetic();
+			boolean filterConstructor = JDIDebugModel.getFilterConstructor();
+			if (!(filterStatic || filterSynthetic  || filterConstructor)) {
+				return false;
+			}			
+			
+			if ((filterStatic && method.isStaticInitializer())	||
+				(filterSynthetic && method.isSynthetic()) ||
+				(filterConstructor && method.isConstructor()) ) {
+				return true;	
+			}
+			
+			return false;
+		}
+
 		/**
 		 * Cleans up when a step completes.<ul>
 		 * <li>Stops the step timer</code>
@@ -1538,6 +1671,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setPendingStepHandler(null);
 			fireSuspendEvent(DebugEvent.STEP_END);
 		}
+		
+		/**
+		 * Creates another step request in the underlying of the
+		 * appropriate kind (over, into, return). This thread will
+		 * be resumed by the event dispatcher as this event handler
+		 * will vote to resume suspended threads. When a step is
+		 * initiated it is registered with its thread as a pending
+		 * step. A pending step could be cancelled if a breakpoint
+		 * suspends execution during the step.
+		 * 
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected void createSecondaryStepRequest() throws DebugException {
+			setStepRequest(createStepRequest());
+			setPendingStepHandler(this);
+			addJDIEventListener(this, getStepRequest());			
+		}	
 		
 		/**
 		 * Aborts this step request if active. The step timer is
@@ -1671,28 +1826,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			}
 		}
 
-		/**
-		 * Creates another step request in the underlying of the
-		 * appropriate kind (over, into, return). This thread will
-		 * be resumed by the event dispatcher as this event handler
-		 * will vote to resume suspended threads. When a step is
-		 * initiated it is registered with its thread as a pending
-		 * step. A pending step could be cancelled if a breakpoint
-		 * suspends execution during the step.
-		 * 
-		 * @exception DebugException if this method fails.  Reasons include:
-		 * <ul>
-		 * <li>Failure communicating with the VM.  The DebugException's
-		 * status code contains the underlying exception responsible for
-		 * the failure.</li>
-		 * </ul>
-		 */
-		protected void createSecondaryStepRequest() throws DebugException {
-			setStepRequest(createStepRequest());
-			setPendingStepHandler(this);
-			addJDIEventListener(this, getStepRequest());
-		}	
-		
 		/**
 		 * Returns <code>false</code>. To step to a particular frame,
 		 * step filters are not used.

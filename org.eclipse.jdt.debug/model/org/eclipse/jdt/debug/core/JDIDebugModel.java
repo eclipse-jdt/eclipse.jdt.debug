@@ -72,8 +72,9 @@ public class JDIDebugModel {
 	/**
 	 * The default list of active step filters
 	 */
-	private static ArrayList fgDefaultActiveStepFilters = new ArrayList(6);
+	private static ArrayList fgDefaultActiveStepFilters = new ArrayList(7);
 	static {
+		fgDefaultActiveStepFilters.add("com.ibm.*");   //$NON-NLS-1$
 		fgDefaultActiveStepFilters.add("com.sun.*");   //$NON-NLS-1$
 		fgDefaultActiveStepFilters.add("java.*");      //$NON-NLS-1$
 		fgDefaultActiveStepFilters.add("javax.*");      //$NON-NLS-1$
@@ -88,6 +89,9 @@ public class JDIDebugModel {
 	private static boolean fStepFiltersModified = false;
 	private static Properties fStepFilterProperties;
 	private static boolean fUseStepFilters = true;
+	private static boolean fFilterSynthetic = true;
+	private static boolean fFilterStatic = true;
+	private static boolean fFilterConstructor = true;
 	private static List fActiveStepFilterList;
 	private static List fInactiveStepFilterList;
 	
@@ -97,6 +101,9 @@ public class JDIDebugModel {
 	private static final String STEP_FILTERS_FILE_NAME = "stepFilters.ini"; //$NON-NLS-1$
 	private static final String STEP_FILTER_PROPERTIES_HEADER = " Step filter properties"; //$NON-NLS-1$
 	private static final String USE_FILTERS_KEY = "use_filters"; //$NON-NLS-1$
+	private static final String FILTER_SYNTHETIC_KEY = "filter_synthetic"; //$NON-NLS-1$
+	private static final String FILTER_STATIC_KEY = "filter_static"; //$NON-NLS-1$
+	private static final String FILTER_CONSTRUCTOR_KEY = "filter_constructor"; //$NON-NLS-1$
 	private static final String ACTIVE_FILTERS_KEY = "active_filters"; //$NON-NLS-1$
 	private static final String INACTIVE_FILTERS_KEY = "inactive_filters"; //$NON-NLS-1$
 	
@@ -324,13 +331,70 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Sets whether to use step filters
+	 * Sets whether to use step filters.
 	 * 
 	 * @param useFilters whether to use step filters
 	 */
 	public static void setUseStepFilters(boolean useFilters) {
 		fUseStepFilters = useFilters;
 		setStepFiltersModified(true);
+	}
+	
+	/**
+	 * Returns whether to filter synthetic methods.
+	 * 
+	 * @return whether to filter synthetic methods
+	 */
+	public static boolean getFilterSynthetic() {
+		return fFilterSynthetic;
+	}
+	
+	/**
+	 * Sets whether to use filter synthetic methods.
+	 * 
+	 * @param filter whether to filter synthetic methods
+	 */
+	public static void setFilterSynthetic(boolean filter) {
+		fFilterSynthetic = filter;
+		setStepFiltersModified(true);		
+	}
+	
+	/**
+	 * Returns whether to filter static initializers.
+	 * 
+	 * @return whether to filter static initializers
+	 */
+	public static boolean getFilterStatic() {
+		return fFilterStatic;
+	}
+	
+	/**
+	 * Sets whether to use filter static initializers.
+	 * 
+	 * @param filter whether to filter static initializers
+	 */
+	public static void setFilterStatic(boolean filter) {
+		fFilterStatic = filter;
+		setStepFiltersModified(true);		
+	}
+	
+	/**
+	 * Returns whether to filter constructors.
+	 * 
+	 * @return whether to filter constructors
+	 */
+	public static boolean getFilterConstructor() {
+		return fFilterConstructor;
+	}
+	
+	/**
+	 * Sets whether to use filter constructors.
+	 * 
+	 * @param filter whether to filter constructors
+	 */
+	public static void setFilterConstructor(boolean filter) {
+		fFilterConstructor = filter;
+		setStepFiltersModified(true);		
 	}
 	
 	/**
@@ -400,7 +464,7 @@ public class JDIDebugModel {
 	}
 	
 	private static void initializeFilters() {
-		setUseStepFilters(getDefaultUseStepFiltersFlag());		
+		setUseStepFilters(getDefaultUseStepFilters());		
 		setActiveStepFilters(getDefaultActiveStepFilters());		
 		setInactiveStepFilters(getDefaultInactiveStepFilters());
 	}
@@ -429,8 +493,38 @@ public class JDIDebugModel {
 	 * 
 	 * @return whether to use step filters by default.
 	 */
-	public static boolean getDefaultUseStepFiltersFlag() {
+	public static boolean getDefaultUseStepFilters() {
 		return true;
+	}
+	
+	/**
+	 * Returns whether to use filter synthetic methods by default.
+	 * Always returns <code>true</code>
+	 * 
+	 * @return whether to use filter synethic methods by default.
+	 */
+	public static boolean getDefaultFilterSynthetic() {
+		return true;	
+	}
+	
+	/**
+	 * Returns whether to use filter static initializers by default.
+	 * Always returns <code>true</code>
+	 * 
+	 * @return whether to use filter static initializers by default.
+	 */
+	public static boolean getDefaultFilterStatic() {
+		return false;	
+	}
+	
+	/**
+	 * Returns whether to use filter constructors by default.
+	 * Always returns <code>true</code>
+	 * 
+	 * @return whether to use filter constructors by default.
+	 */
+	public static boolean getDefaultFilterConstructor() {
+		return false;	
 	}
 	
 	/**
@@ -458,6 +552,9 @@ public class JDIDebugModel {
 		}
 		
 		setUseStepFilters(parseBoolean(getStepFilterProperties().getProperty(USE_FILTERS_KEY, "true"))); //$NON-NLS-1$
+		setFilterSynthetic(parseBoolean(getStepFilterProperties().getProperty(FILTER_SYNTHETIC_KEY, "true"))); //$NON-NLS-1$
+		setFilterStatic(parseBoolean(getStepFilterProperties().getProperty(FILTER_STATIC_KEY, "false"))); //$NON-NLS-1$
+		setFilterConstructor(parseBoolean(getStepFilterProperties().getProperty(FILTER_CONSTRUCTOR_KEY, "false"))); //$NON-NLS-1$
 		setActiveStepFilters(parseList(getStepFilterProperties().getProperty(ACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
 		setInactiveStepFilters(parseList(getStepFilterProperties().getProperty(INACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
 		setStepFiltersModified(false);
@@ -492,6 +589,9 @@ public class JDIDebugModel {
 		FileOutputStream fos= null;
 		try {
 			getStepFilterProperties().setProperty(USE_FILTERS_KEY, serializeBoolean(fUseStepFilters));
+			getStepFilterProperties().setProperty(FILTER_SYNTHETIC_KEY, serializeBoolean(fFilterSynthetic));
+			getStepFilterProperties().setProperty(FILTER_STATIC_KEY, serializeBoolean(fFilterStatic));
+			getStepFilterProperties().setProperty(FILTER_CONSTRUCTOR_KEY, serializeBoolean(fFilterConstructor));
 			getStepFilterProperties().setProperty(ACTIVE_FILTERS_KEY, serializeList(fActiveStepFilterList));
 			getStepFilterProperties().setProperty(INACTIVE_FILTERS_KEY, serializeList(fInactiveStepFilterList));
 			fos = new FileOutputStream(file);
