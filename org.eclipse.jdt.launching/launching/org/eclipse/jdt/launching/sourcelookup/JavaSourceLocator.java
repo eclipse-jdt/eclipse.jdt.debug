@@ -615,7 +615,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			IProject project = resource.getProject();
 			IJavaProject jp = JavaCore.create(project);
 			try {
-				if (jp.exists()) {
+				if (jp != null && jp.exists()) {
 					IPackageFragmentRoot root = jp.getPackageFragmentRoot(resource);
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
