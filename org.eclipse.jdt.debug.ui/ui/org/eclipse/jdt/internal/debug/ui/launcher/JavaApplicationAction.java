@@ -6,7 +6,10 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  */
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -15,14 +18,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.IJavaEditorActionConstants;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
@@ -158,47 +160,105 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	}
 	
 	/**
-	 * Launches the given type
+	 * Launches a configuration for the given type
 	 */
 	protected void launch(IType type) {
 		try { 
 			ILaunchConfiguration config = findLaunchConfiguration(type);
-			if (config == null) {
-				ILaunchConfigurationType configType = getJavaLaunchConfigType();
-				ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, type.getElementName() + " [" + type.getJavaProject().getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
-				wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
-				wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
-				config = wc.doSave();
+			if (config != null) {
+				config.launch(getMode(), null);
 			}			
-			config.launch(getMode(), null);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getStatus()); //$NON-NLS-1$
 		}
 	}
 	
 	/**
-	 * Locate a configuration to relaunch for the given type
+	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.
 	 * 
 	 * @return a re-useable config or <code>null</code> if none
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(IType type) {
 		ILaunchConfigurationType configType = getJavaLaunchConfigType();
+		List candidateConfigs = Collections.EMPTY_LIST;
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
+			candidateConfigs = new ArrayList(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
 				if (config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "").equals(type.getFullyQualifiedName())) { //$NON-NLS-1$
 					if (config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "").equals(type.getJavaProject().getElementName())) { //$NON-NLS-1$
-						return config;
+						candidateConfigs.add(config);
 					}
 				}
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
+		
+		// If there are no existing configs associated with the IType, create one.
+		// If there is exactly one config associated with the IType, return it.
+		// Otherwise, if there is more than one config associated with the IType, prompt the
+		// user to choose one.
+		int candidateCount = candidateConfigs.size();
+		if (candidateCount < 1) {
+			return createConfiguration(type);
+		} else if (candidateCount == 1) {
+			return (ILaunchConfiguration) candidateConfigs.get(0);
+		} else {
+			// Prompt the user to choose a config.  A null result means the user
+			// cancelled the dialog, in which case this method returns null,
+			// since cancelling the dialog should also cancel launching anything.
+			ILaunchConfiguration config = chooseConfiguration(candidateConfigs);
+			if (config != null) {
+				return config;
+			}
+		}
+		
 		return null;
+	}
+	
+	/**
+	 * Show a selection dialog that allows the user to choose one of the specified
+	 * launch configurations.  Return the chosen config, or <code>null</code> if the
+	 * user cancelled the dialog.
+	 */
+	protected ILaunchConfiguration chooseConfiguration(List configList) {
+		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), labelProvider);
+		dialog.setElements(configList.toArray());
+		dialog.setTitle(LauncherMessages.getString("LauncherMessages.Launch_Configuration_Selection_1"));  //$NON-NLS-1$
+		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+			dialog.setMessage(LauncherMessages.getString("LauncherMessages.Choose_a_launch_configuration_to_debug_2"));  //$NON-NLS-1$
+		} else {
+			dialog.setMessage(LauncherMessages.getString("LauncherMessages.Choose_a_launch_configuration_to_run_3")); //$NON-NLS-1$
+		}
+		dialog.setMultipleSelection(false);
+		int result = dialog.open();
+		labelProvider.dispose();
+		if (result == dialog.OK) {
+			return (ILaunchConfiguration) dialog.getFirstResult();
+		}
+		return null;		
+	}
+	
+	/**
+	 * Create & return a new configuration based on the specified <code>IType</code>.
+	 */
+	protected ILaunchConfiguration createConfiguration(IType type) {
+		ILaunchConfiguration config = null;
+		try {
+			ILaunchConfigurationType configType = getJavaLaunchConfigType();
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, type.getElementName() + " [" + type.getJavaProject().getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
+			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
+			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
+			config = wc.doSave();		
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);			
+		}
+		return config;
 	}
 	
 	/**
