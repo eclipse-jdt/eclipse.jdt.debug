@@ -1,5 +1,5 @@
 <!-- build script to create a plugin from org.eclipse.jdt.launching -->
-<project name="org.eclipse.jdt.launching" default="export" basedir="..">
+<project name="org.eclipse.jdt.launching" default="export" basedir=".">
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
@@ -17,12 +17,12 @@
 		<mkdir dir="${dest}" />
 		<jar 
 			jarfile="${dest}/launching.jar"
-			basedir="bin"
+			basedir="../bin"
 		/>
-		<copy file="plugin.xml" todir="${dest}"/>
-		<copy file="plugin.properties" todir="${dest}"/>
+		<copy file="../plugin.xml" todir="${dest}"/>
+		<copy file="../plugin.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/launchingsrc.zip">
-		    <fileset dir="launching" />
+		    <fileset dir="../launching" />
   		</zip>
 	</target>
 </project>
