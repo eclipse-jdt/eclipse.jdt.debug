@@ -1,7 +1,7 @@
 package org.eclipse.jdt.debug.eval.ast.model;
 
 /*
- * (c) Copyright 2001 MyCorporation.
+ * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
  
