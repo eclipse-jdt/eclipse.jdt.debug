@@ -217,7 +217,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				fCondition.refreshValidState();
 				checkState();
 			}
-		});		
+		});	
 	}
 
 	/**
@@ -407,8 +407,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			fConditionTextControl.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
 		} catch (CoreException ce) {
 		}
-		fCondition.setEmptyStringAllowed(false);
+		fCondition.setEmptyStringAllowed(true);
 		addField(fCondition);
+		
 	}
 	
 	protected FieldEditor createLabelEditor(
