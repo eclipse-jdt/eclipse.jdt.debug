@@ -219,6 +219,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 			IRegion line= document.getLineInformation(getVerticalRulerInfo().getLineOfLastMouseButtonActivity());
 
 			IType type= null;
+			IResource resource;
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
 			if (classFile != null) {
 				type= classFile.getType();
@@ -237,6 +238,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						return;
 					}
 				}
+				resource= BreakpointUtils.getBreakpointResource(type);
 			} else if (editorInput instanceof IFileEditorInput) {
 				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
 				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
@@ -251,20 +253,17 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						type= ((IMember)e).getDeclaringType();
 					}
 				}
+				resource= BreakpointUtils.getBreakpointResource(type);
+//				resource= ((IFileEditorInput)editorInput).getFile();
+			} else {
+				resource= ResourcesPlugin.getWorkspace().getRoot();
 			}
 
 			Map attributes= new HashMap(10);
-			IResource resource;
 			String typeName= null;
 			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity() + 1; // Ruler is 0-based; editor is 1-based (nice :-/ )
 			IJavaLineBreakpoint breakpoint= null;
-			if (type == null) {
-				if (editorInput instanceof IFileEditorInput) {
-					resource= ((IFileEditorInput)editorInput).getFile();
-				} else {
-					resource= ResourcesPlugin.getWorkspace().getRoot();
-				}
-			} else {
+			if (type != null) {
 				IJavaProject project= type.getJavaProject();
 				typeName= type.getFullyQualifiedName();
 				if (type.exists() && project != null && project.isOnClasspath(type)) {
@@ -274,7 +273,6 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
 					}
 				}
-				resource= BreakpointUtils.getBreakpointResource(type);
 				breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
 			}
 			new BreakpointLocationVerifierJob(document, line.getOffset(), breakpoint, lineNumber, typeName, type, resource).schedule();
