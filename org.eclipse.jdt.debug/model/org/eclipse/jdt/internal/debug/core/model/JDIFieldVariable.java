@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -24,7 +23,7 @@ import com.sun.jdi.Value;
 /**
  * A field member.
  */
-public class JDIFieldVariable extends JDIModificationVariable implements IJavaFieldVariable {
+public class JDIFieldVariable extends JDIModificationVariable {
 	/**
 	 * The wrappered field
 	 */
@@ -222,6 +221,13 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails
 		return null;
+	}	
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isField() 
+	 */
+	public boolean isField() {
+		return true;
 	}	
 }
 

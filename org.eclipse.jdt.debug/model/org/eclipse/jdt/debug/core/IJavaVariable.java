@@ -72,6 +72,21 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 * <li>The type associated with the signature is not yet loaded</li></ul>
 	 */
 	public IJavaType getJavaType() throws DebugException;	
+	
+	/**
+	 * Returns the declaring type of this variable if this variable
+	 * represents a field, otherwise <code>null</code>.
+	 * 
+	 * @return the declaring type of this field, or <code>null</code>
+	 */
+	public IJavaType getDeclaringType();	
+	
+	/**
+	 * Returns whether this variable contains the value of a field
+	 * 
+	 * @return whether this variable contains the value of a field
+	 */
+	public boolean isField();
 }
 
 

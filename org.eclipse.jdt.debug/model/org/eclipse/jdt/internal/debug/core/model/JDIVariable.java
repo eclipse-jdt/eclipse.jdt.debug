@@ -254,5 +254,18 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 		return getChangeCount() == getJavaDebugTarget().getSuspendCount();
 	}
 
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getDeclaringType()
+	 */
+	public IJavaType getDeclaringType() {
+		return null;
+	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isField() 
+	 */
+	public boolean isField() {
+		return false;
+	}
 }
 

@@ -8,60 +8,58 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Java exception breakpoints are Java breakpoints that suspend
- * execution when an exception is thrown. If the breakpoint is
- * a caught exception breakpoint, it will suspend execution when
- * the associated exception is thrown and caught.If the breakpoint
- * is an uncaught exception breakpoint, it will suspend execution
- * when the associated exception is thrown and not caught.
+ * A breakpoint that suspends execution when a corresponding exception
+ * is thrown in a target VM. An exception breakpoint can be configured
+ * to suspend execution when the corresponding exception is thrown in
+ * a caught or uncaught location. As well, the location can be filtered
+ * inclusively or exclusively by type name patterns.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
+ * @since 2.0
  */
 public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Returns whether this breakpoint suspends execution when the
-	 * associated exception is thrown and caught.
+	 * associated exception is thrown in a caught location (i.e. in
+	 * a try/catch statement).
 	 * 
 	 * @return <code>true</code> if this is a caught exception
 	 *  breakpoint
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public boolean isCaught() throws CoreException;
 	/**
 	 * Returns whether this breakpoint suspends execution when the
-	 * associated exception is thrown and not caught.
+	 * associated exception is thrown in an uncaught location (i.e. not
+	 * caught by a try/catch statement).
 	 * 
 	 * @return <code>true</code> if this is an uncaught exception
 	 *  breakpoint.
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public boolean isUncaught() throws CoreException;		
 	/**
 	 * Sets whether this breakpoint suspends execution when the associated
-	 * exception is thrown and caught.
+	 * exception is thrown in a caught location (i.e. in a try/catch
+	 * statement).
 	 *
 	 * @param caught whether or not this breakpoint suspends execution when the
-	 *  associated exception is thrown and caught
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 *  associated exception is thrown in a caught location
+	 * @exception CoreException if unable to set the property on
+	 * 	this breakpoint's underlying marker
 	 */
 	public void setCaught(boolean caught) throws CoreException;
 	/**
 	 * Sets whether this breakpoint suspends execution when the associated
-	 * exception is thrown and not caught.
+	 * exception is thrown in an uncaught location.
 	 * 
 	 * @param uncaught whether or not this breakpoint suspends execution when the
-	 *  associated exception is thrown and not caught
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 *  associated exception is thrown in an uncaught location
+	 * @exception CoreException if unable to set the property
+	 * 	on this breakpoint's underlying marker
 	 */	
 	public void setUncaught(boolean uncaught) throws CoreException;
 	/**
@@ -70,15 +68,15 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * 
 	 * @return <code>true</code> if the exception associated with this breakpoint
 	 *  is a checked exception
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public boolean isChecked() throws CoreException;
 	
 	/**
 	 * Returns the fully qualified type name of the exception that
 	 * last caused this breakpoint to suspend, of <code>null</code>
-	 * if this breakpoint has not causes a thread to suspend. Note
+	 * if this breakpoint has not caused a thread to suspend. Note
 	 * that this name may be a subtype of the exception that this
 	 * breakpoint is associated with.
 	 * 
@@ -88,29 +86,31 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	
 	/**
 	 * Sets the filters that will define the scope for the associated exception.
+	 * Filters are a collection of strings of type name prefixes.
 	 * 
 	 * @param filters the array of filters to apply
 	 * @param inclusive whether or not to apply the filters as inclusive or exclusive
-	 * @exception CoreException if a <code>CoreException</code> is 
-	 * thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the property on 
+	 *  this breakpoint's underlying marker
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException;
 	
 	/**
 	 * Returns the filters that define the scope for the associated exception.
+	 * Filters are a collection of strings of type name prefixes.
 	 * 
 	 * @return the array of defined filters
-	 * @exception CoreException if a <code>CoreException</code> is 
-	 * thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on
+	 *  this breakpoint's underlying marker
 	 */
 	public String[] getFilters() throws CoreException;
 	
 	/**
-	 * Returns whether or not to apply any filters as
-	 * inclusive or exclusive.
-	 * @return <code>true<code> if the filters are applied as inclusive
-	 * @exception CoreException if a <code>CoreException</code> is 
-	 * thrown accessing this breakpoint's underlying marker
+	 * Returns whether to apply any filters as inclusive or exclusive.
+	 * @return <code>true<code> if the filters are applied as inclusive,
+	 *  <code>false</code> if the filters are applied as exclusive
+	 * @exception CoreException if unable to access the property on 
+	 *  this breakpoint's underlying marker
 	 */
 	public boolean isInclusiveFiltered() throws CoreException;
 }

@@ -61,7 +61,7 @@ public interface IJavaObject extends IJavaValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException;
+	public IJavaVariable getField(String name, boolean superField) throws DebugException;
 	/**
 	 * Returns a variable representing the field in this object
 	 * with the given name, or <code>null</code> if there is no
@@ -76,7 +76,7 @@ public interface IJavaObject extends IJavaValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException;
+	public IJavaVariable getField(String name, String typeSignature) throws DebugException;
 }
 
 
