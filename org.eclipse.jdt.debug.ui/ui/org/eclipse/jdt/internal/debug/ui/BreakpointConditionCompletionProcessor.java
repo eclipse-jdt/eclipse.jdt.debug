@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -48,7 +47,7 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 			configureResultCollector(project, textSelection);	
 			fType.codeComplete(viewer.getDocument().get().toCharArray(), fPosition, documentOffset,
 				 new char[0][], new char[0][],
-				 new int[0], false, (CompletionRequestor)getCollector());
+				 new int[0], false, getCollector());
 				 
 			IJavaCompletionProposal[] results= getCollector().getResults();
 			
