@@ -23,6 +23,7 @@
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.expressions"/>
    </requires>
 
 
@@ -290,4 +291,15 @@
             id="org.eclipse.swt.widgets.Composite">
       </logicalStructureType>           
    </extension>
+   
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+      		namespace="org.eclipse.jdt.debug"
+            properties="isMultiStrata"
+            type="org.eclipse.debug.core.model.IStackFrame"
+            class="org.eclipse.jdt.internal.debug.core.JavaDebugPropertyTester"
+            id="org.eclipse.jdt.debug.PropertyTester">
+      </propertyTester>
+   </extension>      
+   
 </plugin>

@@ -365,6 +365,21 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
+            objectClass="org.eclipse.debug.core.model.IStackFrame"
+            id="org.eclipse.jdt.debug.ui.ShowStratumActions">
+        <action
+               label="%showStratumAction.label"
+               style="pulldown"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowStratumAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.ShowStratum">
+        </action>    
+        <enablement>
+         	<test property="org.eclipse.jdt.debug.isMultiStrata" value="true"/>
+        </enablement>        
+      </objectContribution>         
+      <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint"
             id="org.eclipse.jdt.debug.WatchpointToggleActions">
          <action
