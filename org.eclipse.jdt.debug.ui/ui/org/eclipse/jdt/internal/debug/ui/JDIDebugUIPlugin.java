@@ -180,8 +180,12 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(String message, Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
-		errorDialog(message, status);
+		log(t);
+		Shell shell = getActiveWorkbenchShell();
+		if (shell != null) {
+			IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
+			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
+		}
 	}
 	
 	/**

@@ -17,9 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -45,7 +43,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
@@ -109,14 +106,12 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			jarURL = new URL(pluginInstallURL, "snippetsupport.jar"); //$NON-NLS-1$
 			jarURL = Platform.asLocalURL(jarURL);
 		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-			 new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));
-			JDIDebugUIPlugin.log(e);
+			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);
+			
 			return null;
 		} catch (IOException e) {
-			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-			 new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));
-			JDIDebugUIPlugin.log(e);
+			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);
+			
 			return null;
 		}
 		
@@ -140,9 +135,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			try {
 				u = f.toURL();
 			} catch (MalformedURLException e) {
-				JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-			 		new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));				
-			 	JDIDebugUIPlugin.log(e);
+				JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",e);				
 				return null;
 			}
 			String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(p);
@@ -153,9 +146,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				try {
 					urls[i + 1] = f.toURL().toExternalForm();
 				} catch (MalformedURLException e) {
-					JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-				 		new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));				
-				 	JDIDebugUIPlugin.log(e);
+					JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);				
 				 	return null;
 				}
 			}
@@ -198,8 +189,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				return launch;
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-			ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), SnippetMessages.getString("ScrapbookLauncher.error.title"), "Unable to launch scrapbook VM.", e.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM.", e);
 		}
 		return null;
 	}
@@ -276,7 +266,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				}
 				DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 			}
-			
 		}
 	}
 }
