@@ -11,7 +11,7 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	private IVMInstallType fType;
 	private String fId;
 	private String fName;
-	private File fInstallLocation;	private int fDebuggerTimeout= 3000;	private LibraryLocation[] fSystemLibraryDescriptions;	
+	private File fInstallLocation;	private LibraryLocation[] fSystemLibraryDescriptions;	
 	/**
 	 * Constructs a new AbstractVM.
 	 * @param	type	The IVMType this vm belongs to.
@@ -84,16 +84,6 @@ public abstract class AbstractVMInstall implements IVMInstall {
 		return null;
 	}
 
-	/* (non-Javadoc)	 * @see IVMInstall#setDebuggerTimeout(int)
-	 */
-	public void setDebuggerTimeout(int milliseconds) {		if (milliseconds < 0)			throw new IllegalArgumentException(LaunchingMessages.getString("vmInstall.assert.timeoutPositive")); //$NON-NLS-1$		fDebuggerTimeout= milliseconds;
-	}
-
-	/* (non-Javadoc)	 * @see IVMInstall#getDebuggerTimeout()
-	 */
-	public int getDebuggerTimeout() {
-		return fDebuggerTimeout;
-	}
 	/**	 * @see IVMInstall#getLibraryLocation()	 * 	 * XXX: to be removed	 */	public LibraryLocation getLibraryLocation() {		LibraryLocation[] locs = getLibraryLocations();		if (locs != null && locs.length > 0) {			return locs[0];		}
 		return null;
 	}

@@ -55,7 +55,6 @@ public class AddVMDialog extends StatusDialog {
 	
 	private StringButtonDialogField fJRERoot;
 	private StringDialogField fVMName;
-	private StringDialogField fDebuggerTimeout;
 	private StringButtonDialogField fSystemLibrary;
 	private StringButtonDialogField fSystemLibrarySource;
 	
@@ -124,16 +123,7 @@ public class AddVMDialog extends StatusDialog {
 				}
 			}
 		});
-		
-		fDebuggerTimeout= new StringDialogField();
-		fDebuggerTimeout.setLabelText(LauncherMessages.getString("addVMDialog.dbgTimeout")); //$NON-NLS-1$
-		fDebuggerTimeout.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setDebuggerTimeoutStatus(validateDebuggerTimeout());
-				updateStatusLine();
-			}
-		});
-		
+				
 		fUseDefaultLibrary= new SelectionButtonDialogField(SWT.CHECK);
 		fUseDefaultLibrary.setLabelText(LauncherMessages.getString("addVMDialog.useDefault")); //$NON-NLS-1$
 		fUseDefaultLibrary.setDialogFieldListener(new IDialogFieldListener() {
@@ -180,11 +170,7 @@ public class AddVMDialog extends StatusDialog {
 	protected File getInstallLocation() {
 		return new File(fJRERoot.getText());
 	}
-	
-	protected int getTimeout() {
-		return Integer.valueOf(fDebuggerTimeout.getText()).intValue();
-	}	
-	
+		
 	protected Control createDialogArea(Composite ancestor) {
 		createDialogFields();
 		Composite parent= new Composite(ancestor, SWT.NULL);
@@ -199,8 +185,6 @@ public class AddVMDialog extends StatusDialog {
 
 		fJRERoot.doFillIntoGrid(parent, 3);
 		LayoutUtil.setHorizontalGrabbing(fJRERoot.getTextControl(null));
-		
-		fDebuggerTimeout.doFillIntoGrid(parent, 3);
 
 		fUseDefaultLibrary.doFillIntoGrid(parent, 3);
 				
@@ -260,14 +244,12 @@ public class AddVMDialog extends StatusDialog {
 		if (fEditedVM == null) {
 			fVMName.setText(""); //$NON-NLS-1$
 			fJRERoot.setText(""); //$NON-NLS-1$
-			fDebuggerTimeout.setText("3000"); //$NON-NLS-1$
 			fUseDefaultLibrary.setSelection(true);
 			useDefaultSystemLibrary();
 		} else {
 			fVMTypeCombo.setEnabled(false);
 			fVMName.setText(fEditedVM.getName());
 			fJRERoot.setText(fEditedVM.getInstallLocation().getAbsolutePath());
-			fDebuggerTimeout.setText(String.valueOf(fEditedVM.getDebuggerTimeout()));
 			LibraryLocation desc= fEditedVM.getLibraryLocation();
 			fUseDefaultLibrary.setSelection(desc == null);
 			if (desc == null) {
@@ -306,23 +288,6 @@ public class AddVMDialog extends StatusDialog {
 			}
 		}
 		return status;
-	}
-	
-	private IStatus validateDebuggerTimeout() {
-		StatusInfo status= new StatusInfo();
-		String timeoutText= fDebuggerTimeout.getText();
-		long timeout= 0;
-		try {
-			timeout= Long.valueOf(timeoutText).longValue();
-			if (timeout < 0) {
-				status.setError(LauncherMessages.getString("addVMDialog.timeoutSmall")); //$NON-NLS-1$
-			} else if (timeout > Integer.MAX_VALUE) {
-				status.setError(LauncherMessages.getFormattedString("addVMDialog.timeoutLarge", Integer.toString(Integer.MAX_VALUE))); //$NON-NLS-1$
-			}			
-		} catch (NumberFormatException e) {
-			status.setError(LauncherMessages.getString("addVMDialog.timeoutNotANumber")); //$NON-NLS-1$
-		}
-		return status;		
 	}
 	
 	private void updateStatusLine() {
@@ -559,7 +524,6 @@ public class AddVMDialog extends StatusDialog {
 	protected void setFieldValuesToVM(IVMInstall vm) {
 		vm.setInstallLocation(new File(fJRERoot.getText()).getAbsoluteFile());
 		vm.setName(fVMName.getText());
-		vm.setDebuggerTimeout(getTimeout());
 		if (isCustomLibraryUsed()) {
 			IPath systemLibrary= new Path(fSystemLibrary.getText());
 			IPath source= new Path(fSystemLibrarySource.getText());

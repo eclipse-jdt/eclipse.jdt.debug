@@ -100,9 +100,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Couldn__t_find_an_appropriate_debug_connector_2"), null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
 		}
 		Map map= connector.defaultArguments();
-		int timeout= fVMInstance.getDebuggerTimeout();
 		
-		specifyArguments(map, port, timeout);
+		specifyArguments(map, port);
 		Process p= null;
 		try {
 			try {
@@ -121,7 +120,6 @@ public class StandardVMDebugger extends StandardVMRunner {
 				do  {
 					try {
 						VirtualMachine vm= connector.accept(map);
-						setTimeout(vm);
 						JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
 						return;
 					} catch (InterruptedIOException e) {
@@ -161,17 +159,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 			p.destroy();
 		}
 	}
-
-			
-	private void setTimeout(VirtualMachine vm) {		
-		if (vm instanceof org.eclipse.jdi.VirtualMachine) {
-			int timeout= fVMInstance.getDebuggerTimeout();
-			org.eclipse.jdi.VirtualMachine vm2= (org.eclipse.jdi.VirtualMachine)vm;
-			vm2.setRequestTimeout(timeout);
-		}
-	}
 		
-	protected void specifyArguments(Map map, int portNumber, int timeout) {
+	protected void specifyArguments(Map map, int portNumber) {
 		// XXX: Revisit - allows us to put a quote (") around the classpath
 		Connector.IntegerArgument port= (Connector.IntegerArgument) map.get("port"); //$NON-NLS-1$
 		port.setValue(portNumber);

@@ -347,6 +347,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	protected synchronized void initialize() {
 		setEventDispatcher(new EventDispatcher(this));
+		setRequestTimeout(JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT));
 		initializeRequests();
 		initializeState();
 		initializeBreakpoints();

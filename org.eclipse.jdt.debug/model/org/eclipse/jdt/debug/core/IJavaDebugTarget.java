@@ -289,4 +289,28 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 */
 	public abstract void setStepFilters(String[] list);
 	
+	/**
+	 * Returns whether this debug target supports a request timeout - 
+	 * a maximum time for a JDI request to receive a response. This option
+	 * is only supported by the Eclipse JDI implementation.
+	 * 
+	 * @return  whether this debug target supports a request timeout
+	 */
+	public boolean supportsRequestTimeout();
+	
+	/**
+	 * Sets the timeout value for JDI requests in milliseconds. Has
+	 * no effect if this target does not support a request timeout.
+	 * 
+	 * @param timeout the communication timeout, in milliseconds
+	 */
+	public void setRequestTimeout(int timeout);
+	
+	/**
+	 * Returns the timeout value for JDI requests in milliseconds,
+	 * or -1 if not supported.
+	 * 
+	 * @return timeout value, in milliseconds, or -1 if not supported
+	 */
+	public int getRequestTimeout();	
 }

@@ -64,26 +64,7 @@ public interface IVMInstall {
 	 * @param installLocation the root directory of this VM installation
 	 */
 	void setInstallLocation(File installLocation);
-	
-	/**
-	 * Sets the timeout value that should be used when debugging
-	 * a VM from this VMInstall. Implementers of IVMRunner should
-	 * set up the vm's they start with this timeout if possible.
-	 * @param	miliseconds. The timeout value in milliseconds.
-	 * 						 Must be >= 0.
-	 * @deprecated this method to be deleted
-	 */
-	void setDebuggerTimeout(int milliseconds);
-	
-	/**
-	 * Gets the timeout value that should be used when debugging
-	 * a VM started from this VM install. 
-	 * @return 	The timeout value in milliseconds. Implementers must
-	 * 			return a default value >= 0 when no value was set.
-	 * @deprecated this method to be removed
-	 */
-	int getDebuggerTimeout();
-	
+		
 	/**
 	 * Returns the VM type of this VM.
 	 * 

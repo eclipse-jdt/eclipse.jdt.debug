@@ -9,12 +9,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -24,6 +27,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -31,7 +35,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
  * The plugin class for the JDI Debug Model plug-in.
  */
 
-public class JDIDebugPlugin extends Plugin {
+public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChangeListener {
 	
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -115,6 +119,8 @@ public class JDIDebugPlugin extends Plugin {
 	public void startup() throws CoreException {
 		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
 		fBreakpointListeners = new ListenerList(5);
+		getPluginPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
+		getPluginPreferences().addPropertyChangeListener(this);
 	}
 	
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
@@ -131,6 +137,7 @@ public class JDIDebugPlugin extends Plugin {
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		getPluginPreferences().removePropertyChangeListener(this);
 		fJavaHCRMgr.shutdown();
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		IDebugTarget[] targets= launchManager.getDebugTargets();
@@ -320,4 +327,22 @@ public class JDIDebugPlugin extends Plugin {
 		return true;
 	}	
 	
+	/**
+	 * Save preferences and update all debug targets when the timeout changes.
+	 * 
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(JDIDebugModel.PREF_REQUEST_TIMEOUT)) {
+			savePluginPreferences();
+			int value = getPluginPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+			IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
+			for (int i = 0; i < targets.length; i++) {
+				if (targets[i] instanceof IJavaDebugTarget) {
+					((IJavaDebugTarget)targets[i]).setRequestTimeout(value);
+				}
+			}
+		}
+	}
+
 }

@@ -780,32 +780,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * Sets the timeout interval for jdi requests in milliseconds
-	 * 
-	 * @param timeout the communication timeout, in milliseconds
-	 */
-	protected void setRequestTimeout(int timeout) {
-		VirtualMachine vm = getVM();
-		if (vm instanceof org.eclipse.jdi.VirtualMachine) {
-			((org.eclipse.jdi.VirtualMachine) vm).setRequestTimeout(timeout);
-		}
-	}
-	
-	/**
-	 * Returns the timeout interval for JDI requests in milliseconds,
-	 * or -1 if not supported
-	 * 
-	 * @return timeout value, in milliseconds, or -1 if not supported
-	 */
-	protected int getRequestTimeout() {
-		VirtualMachine vm = getVM();
-		if (vm instanceof org.eclipse.jdi.VirtualMachine) {
-			return ((org.eclipse.jdi.VirtualMachine) vm).getRequestTimeout();
-		}
-		return -1;
-	}
-	
-	/**
 	 * @see IThread#getName()
 	 */
 	public String getName() throws DebugException {

@@ -883,7 +883,6 @@ public final class JavaRuntime {
 		Element element= doc.createElement("vm"); //$NON-NLS-1$
 		element.setAttribute("id", vm.getId());	 //$NON-NLS-1$
 		element.setAttribute("name", vm.getName()); //$NON-NLS-1$
-		element.setAttribute("timeout", String.valueOf(vm.getDebuggerTimeout())); //$NON-NLS-1$
 		String installPath= ""; //$NON-NLS-1$
 		File installLocation= vm.getInstallLocation();
 		if (installLocation != null) {
@@ -1007,13 +1006,6 @@ public final class JavaRuntime {
 			IVMInstall vm= vmType.createVMInstall(id);
 			vm.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
 			vm.setInstallLocation(installLocation);
-			String timeoutString= vmElement.getAttribute("timeout"); //$NON-NLS-1$
-			try {
-				if (timeoutString != null) {
-					vm.setDebuggerTimeout(Integer.parseInt(timeoutString));
-				}
-			} catch (NumberFormatException e) {
-			}
 			
 			NodeList list = vmElement.getChildNodes();
 			int length = list.getLength();

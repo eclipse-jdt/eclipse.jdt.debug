@@ -387,4 +387,30 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 			fDebugTarget.disconnected();
 		}
 	}
+	
+	/**
+	 * @see IJavaDebugTarget#setRequestTimeout(int)
+	 */
+	public void setRequestTimeout(int timeout) {
+		if (supportsRequestTimeout()) {
+			((org.eclipse.jdi.VirtualMachine) getVM()).setRequestTimeout(timeout);
+		}
+	}
+	
+	/**
+	 * @see IJavaDebugTarget#getRequestTimeout()
+	 */
+	public int getRequestTimeout() {
+		if (supportsRequestTimeout()) {
+			return ((org.eclipse.jdi.VirtualMachine) getVM()).getRequestTimeout();
+		}
+		return -1;
+	}	
+	/**
+	 * @see IJavaDebugTarget#supportsRequestTimeout()
+	 */
+	public boolean supportsRequestTimeout() {
+		return getJavaDebugTarget().isAvailable() && getVM() instanceof org.eclipse.jdi.VirtualMachine;
+	}
+	
 }

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
@@ -48,6 +49,16 @@ import com.sun.jdi.VirtualMachine;
  * </p>
  */
 public class JDIDebugModel {
+	
+	/**
+	 * Preference key for default JDI request timeout value.
+	 */
+	public static final String PREF_REQUEST_TIMEOUT = getPluginIdentifier() + ".PREF_REQUEST_TIMEOUT";
+	
+	/**
+	 * The default JDI request timeout when no preference is set.
+	 */
+	public static final int DEF_REQUEST_TIMEOUT = 3000;
 	
 	/**
 	 * Not to be instantiated.
@@ -457,4 +468,13 @@ public class JDIDebugModel {
 		}
 		return null;
 	}	
+	
+	/**
+	 * Returns the preference store for this plug-in.
+	 * 
+	 * @return the preference store for this plug-in
+	 */
+	public static Preferences getPreferences() {
+		return JDIDebugPlugin.getDefault().getPluginPreferences();
+	}
 }
