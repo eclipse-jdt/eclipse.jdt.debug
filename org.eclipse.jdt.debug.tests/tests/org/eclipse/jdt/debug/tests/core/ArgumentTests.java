@@ -63,7 +63,9 @@ public class ArgumentTests extends AbstractDebugTest {
 		 */
 		public void lineAppended(IRegion line) {
 			try {
-				buffer.append(document.get(line.getOffset(), line.getLength()));
+                assertNotNull("received notification of invalid line", line);
+                assertNotNull("buffer is null", buffer); 
+                buffer.append(document.get(line.getOffset(), line.getLength()));
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
