@@ -292,17 +292,19 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				String key = (String)keys.next();
 				Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
 				FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
-				String value = (String)attrMap.get(key);
-				if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
-					editor.getPreferenceStore().setValue(key, value);
-				} else if (arg instanceof Connector.BooleanArgument) {
-					boolean b = new Boolean(value).booleanValue();
-					editor.getPreferenceStore().setValue(key, b);
-				} else if (arg instanceof Connector.IntegerArgument) {
-					int i = new Integer(value).intValue();
-					editor.getPreferenceStore().setValue(key, i);
+				if (arg != null && editor != null) {
+					String value = (String)attrMap.get(key);
+					if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
+						editor.getPreferenceStore().setValue(key, value);
+					} else if (arg instanceof Connector.BooleanArgument) {
+						boolean b = new Boolean(value).booleanValue();
+						editor.getPreferenceStore().setValue(key, b);
+					} else if (arg instanceof Connector.IntegerArgument) {
+						int i = new Integer(value).intValue();
+						editor.getPreferenceStore().setValue(key, i);
+					}
+					editor.load();
 				}
-				editor.load();
 			}						
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
