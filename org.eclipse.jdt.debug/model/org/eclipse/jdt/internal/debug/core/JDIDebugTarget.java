@@ -1494,6 +1494,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						IPath path = new Path(name);
 						if (fTempFiles.get(path) == null) {
 							IFile file = parent.getFile(path);
+							if (file.exists()) {
+								file.delete(true, null);
+							}
 							file.create(new ByteArrayInputStream(classFiles[i]), false, null);
 							fTempFiles.put(path, file);
 						}						
