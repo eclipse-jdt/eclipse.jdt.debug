@@ -21,14 +21,6 @@ public class JdwpMethodID extends JdwpID {
 	}
 	
 	/**
-	 * @return Returns true if two IDs refer to the same entity in the target VM.
-	 * @see java.lang.Object#equals(Object)
-	 */
-	public boolean equals(Object object) {
-		return object != null && object.getClass().equals(this.getClass()) && fValue == ((JdwpMethodID)object).fValue;
-	}
-	
-	/**
 	 * @return Returns VM specific size of ID.
 	 */
 	public int getSize() {

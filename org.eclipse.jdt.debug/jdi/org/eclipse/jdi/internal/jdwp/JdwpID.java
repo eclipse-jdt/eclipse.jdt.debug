@@ -67,7 +67,9 @@ public abstract class JdwpID {
 	 * @return Returns true if two IDs refer to the same entity in the target VM.
 	 * @see java.lang.Object#equals(Object)
 	 */
-	public abstract boolean equals(Object ID);
+	public boolean equals(Object object) {
+		return object != null && object.getClass().equals(this.getClass()) && fValue == ((JdwpID)object).fValue;
+	}
 	
 	/**
 	 * @return Returns a has code for this object.

@@ -46,6 +46,7 @@ public class SocketTransportImpl extends TransportImpl {
 	 * Listens for connections initiated by target VMs. 
 	 */
 	public void listen(int port) throws IOException {
+		closeListen();
 		fServerSocket = new ServerSocket(port);
 	}
 	

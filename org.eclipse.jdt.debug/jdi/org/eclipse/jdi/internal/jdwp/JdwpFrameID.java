@@ -19,15 +19,7 @@ public class JdwpFrameID extends JdwpID {
 	public JdwpFrameID(VirtualMachineImpl vmImpl) {
 		super(vmImpl);
 	}
-	
-	/**
-	 * @return Returns true if two IDs refer to the same entity in the target VM.
-	 * @see java.lang.Object#equals(Object)
-	 */
-	public boolean equals(Object object) {
-		return object != null && object.getClass().equals(this.getClass()) && fValue == ((JdwpFrameID)object).fValue;
-	}
-	
+		
 	/**
 	 * @return Returns VM specific size of ID.
 	 */
