@@ -74,13 +74,9 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	private TableEditor fTableEditor;
 	private TableItem fNewTableItem;
 	private Filter fNewFilter;
-	private Label fTableLabel;
 	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
 	private Composite fOuter;
-	private Label fIncludeExcludeLabel;
-	private Button fInclusiveRadioButton;
-	private Button fExclusiveRadioButton;
 	
 	private FilterContentProvider fFilterContentProvider;
 	
