@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -90,9 +91,16 @@ public class BreakpointLocationVerifierJob extends Job {
 	}
 	
 	public IStatus run(IProgressMonitor monitor) {
-		ASTParser parser = ASTParser.newParser(AST.LEVEL_2_0);
+		IJavaProject project= JavaCore.create(fResource).getJavaProject();
+		int apiLevel;
+		if ("1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) {
+			apiLevel= AST.LEVEL_3_0;
+		} else {
+			apiLevel= AST.LEVEL_2_0;
+		}
+		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(fDocument.get().toCharArray());
-		parser.setProject(JavaCore.create(fResource).getJavaProject());
+		parser.setProject(project);
 		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber);
 		compilationUnit.accept(locator);
