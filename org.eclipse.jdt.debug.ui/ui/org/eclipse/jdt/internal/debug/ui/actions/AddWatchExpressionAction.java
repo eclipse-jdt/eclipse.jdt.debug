@@ -40,7 +40,7 @@ public class AddWatchExpressionAction extends WatchExpressionAction implements I
 		// create a watch expression
 		JavaWatchExpression watchExpression= new JavaWatchExpression(""); //$NON-NLS-1$
 		// open the watch expression dialog
-		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), watchExpression, false).open() == StatusDialog.OK) {
+		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), watchExpression, false).open() == StatusDialog.OK) {
 			// if OK is selected, add the expression to the expression view and try to evaluate the expression.
 			DebugPlugin.getDefault().getExpressionManager().addExpression(watchExpression);
 			watchExpression.evaluateExpression(getStackFrameContext(), true);
