@@ -14,8 +14,9 @@ import java.io.IOException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jface.util.Assert;
+
 
 public class MacOSXLaunchingPlugin extends Plugin {
 	
@@ -23,8 +24,9 @@ public class MacOSXLaunchingPlugin extends Plugin {
 	private static final String RESOURCE_BUNDLE= "org.eclipse.jdt.internal.launching.macosx.MacOSXLauncherMessages";//$NON-NLS-1$
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
-	public MacOSXLaunchingPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public MacOSXLaunchingPlugin() {
+		super();
+		Assert.isTrue(fgPlugin == null);
 		fgPlugin= this;
 	}
 	
@@ -50,7 +52,6 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			// match the plugin id defined in plugin.xml
 			return "org.eclipse.jdt.launching.macosx"; //$NON-NLS-1$
 		}
-//		return getDefault().getDescriptor().getUniqueIdentifier();
 		return getDefault().getBundle().getSymbolicName();
 	}
 
