@@ -195,7 +195,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		action = new AddVariableAction(null);								
 		advancedActions.add(action);		
 		
-		action = new AttachSourceAction(null);								
+		action = new AttachSourceAction(null, SWT.RADIO);								
 		advancedActions.add(action);
 		
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);

@@ -23,6 +23,7 @@ import org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -77,8 +78,14 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 				
 	}
 	
-	public AttachSourceAction(RuntimeClasspathViewer viewer) {
-		super(ActionMessages.getString("AttachSourceAction.Attac&h_Source..._2"), viewer); //$NON-NLS-1$
+	/**
+	 * Creates an action to open a source attachment dialog.
+	 * 
+	 * @param viewer the viewer the action is assocaited with or <code>null</code>
+	 * @param style a button or radio button
+	 */
+	public AttachSourceAction(RuntimeClasspathViewer viewer, int style) {
+		super((style == SWT.RADIO) ? ActionMessages.getString("AttachSourceAction.2") : ActionMessages.getString("AttachSourceAction.3"), viewer); //$NON-NLS-1$ //$NON-NLS-2$
 	}	
 
 	/**

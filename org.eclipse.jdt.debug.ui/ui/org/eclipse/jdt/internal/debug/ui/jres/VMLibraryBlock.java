@@ -138,7 +138,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		action.setButton(button);
 		addAction(action);		
 		
-		action = new AttachSourceAction(null);								
+		action = new AttachSourceAction(null, SWT.PUSH);								
 		button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
 		addAction(action);				
