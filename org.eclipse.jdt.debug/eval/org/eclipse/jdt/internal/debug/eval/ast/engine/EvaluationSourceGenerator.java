@@ -202,6 +202,9 @@ public class EvaluationSourceGenerator {
 		if (sourceElement instanceof ICompilationUnit) {
 			return ((ICompilationUnit)sourceElement).getSource();
 		}
+		if (sourceElement instanceof IClassFile) {
+			return ((IClassFile)sourceElement).getSource();
+		}
 		return null;
 	}
 	
