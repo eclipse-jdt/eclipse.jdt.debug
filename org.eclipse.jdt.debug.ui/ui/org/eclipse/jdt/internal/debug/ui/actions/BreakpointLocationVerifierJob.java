@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -106,7 +107,11 @@ public class BreakpointLocationVerifierJob extends Job {
 	}
 	
 	public IStatus run(IProgressMonitor monitor) {
-		IJavaProject project= JavaCore.create(fResource).getJavaProject();
+		IJavaElement javaElement = JavaCore.create(fResource);
+		IJavaProject project = null;
+		if (javaElement != null) {
+			project= javaElement.getJavaProject();
+		}
 		int apiLevel;
 		if (project != null && "1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) { //$NON-NLS-1$
 			apiLevel= AST.JLS3;
