@@ -455,7 +455,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			} catch (DebugException de) {
 				// target update failed
 				fireHCRFailed(target, de);
-//				notifyFailedHCR(target, resources, qualifiedNames);
 			}
 		}
 		if (!ms.isOK()) {
