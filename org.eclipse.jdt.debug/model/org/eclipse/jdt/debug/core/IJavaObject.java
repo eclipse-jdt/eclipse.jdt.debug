@@ -50,6 +50,40 @@ public interface IJavaObject extends IJavaValue {
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException;	
 	/**
+	 * Returns the result of sending the specified message on the specified declaring type
+	 * to this object with the given arguments in the specified thread. The given
+	 * thread is resumed to perform the method invocation. The thread will suspend
+	 * in its original location when the method invocation is complete. This
+	 * method does not return until the method invocation is complete.
+	 * Invoking a method in the target VM can result in breakpoints being
+	 * hit, infinite loops, and deadlock.
+	 * 
+	 * @param selector the selector of the method to be invoked
+	 * @param signature the JNI style signature of the method to be invoked
+	 * @param args the arguments of the method, which can be
+	 * 	<code>null</code> or emtpy if there are none
+	 * @param thread the thread in which to invoke the method
+	 * @param typeSignature the signature of the type in which the method
+	 *  is defined or <code>null</code> if the method should be invoked normally using
+	 *  polymorphism
+	 * @return the result of invoking the method
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This object does not implement the specified method</li>
+	 * <li>An exception occurs while invoking the specified method</li>
+	 * <li>The given thread is already performing a message send,
+	 * 	(status code <code>IJavaThread.ERR_NESTED_METHOD_INVOCATION</code>)</li>
+	 * <li>The given thread is not currently suspended
+	 *  (status code <code>IJavaThread.ERR_THREAD_NOT_SUSPENDED</code>)</li>
+	 * <li>The given thread was explicitly suspended
+	 *  (status code <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
+	 * </ul>
+	 * @since 2.0.1
+	 */
+	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, String typeSignature) throws DebugException;
+	/**
 	 * Returns a variable representing the field in this object
 	 * with the given name, or <code>null</code> if there is no
 	 * field with the given name, or the name is ambiguous.

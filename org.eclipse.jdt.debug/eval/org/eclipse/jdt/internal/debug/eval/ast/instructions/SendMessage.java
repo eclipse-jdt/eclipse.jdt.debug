@@ -24,14 +24,14 @@ public class SendMessage extends CompoundInstruction {
 	private int fArgCount;
 	private String fSelector;
 	private String fSignature;
-	private boolean fSuperSend;
+	private String fDeclaringType;
 	
-	public SendMessage(String selector, String signature, int argCount, boolean superSend, int start) {
+	public SendMessage(String selector, String signature, int argCount, String declaringType, int start) {
 		super(start);
 		fArgCount= argCount;
 		fSelector= selector;
 		fSignature= signature;
-		fSuperSend= superSend;
+		fDeclaringType= declaringType;
 	}
 	
 	public void execute() throws CoreException {
@@ -48,7 +48,7 @@ public class SendMessage extends CompoundInstruction {
 		}
 		
 		if (receiver instanceof IJavaObject) {
-			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fSuperSend);
+			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fDeclaringType);
 		} else {
 			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendMessage.Attempt_to_send_a_message_to_a_non_object_value_1"), null)); //$NON-NLS-1$
 		}

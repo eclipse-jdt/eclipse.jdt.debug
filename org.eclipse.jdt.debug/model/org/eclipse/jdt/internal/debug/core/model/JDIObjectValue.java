@@ -54,7 +54,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		}
 		ObjectReference object = getUnderlyingObject();
 		Method method = null;
-		ReferenceType refType = getUnderlyingReferenceType();;		
+		ReferenceType refType = getUnderlyingReferenceType();	
 		try {
 			if (superSend) {
 				// begin lookup in superclass
@@ -65,6 +65,39 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
 		Value result = javaThread.invokeMethod(null, object, method, arguments, superSend);
+		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
+	}
+	
+	/**
+	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread, String typeSignature)
+	 */
+	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, String typeSignature) throws DebugException {
+		JDIThread javaThread = (JDIThread)thread;
+		List arguments = null;
+		if (args == null) {
+			arguments = Collections.EMPTY_LIST;
+		} else {
+			arguments= new ArrayList(args.length);
+			for (int i = 0; i < args.length; i++) {
+				arguments.add(((JDIValue)args[i]).getUnderlyingValue());
+			}
+		}
+		ObjectReference object = getUnderlyingObject();
+		Method method = null;
+		ReferenceType refType = getUnderlyingReferenceType();	
+		try {
+			while (typeSignature != null && !refType.signature().equals(typeSignature)) {
+				// lookup correct type through the hierarchy
+				refType = ((ClassType)refType).superclass();
+				if (refType == null) {
+					targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValueMethod_declaring_type_not_found_1"), null); //$NON-NLS-1$
+				}
+			}
+			method = ((ClassType)refType).concreteMethodByName(selector, signature);
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
+		}
+		Value result = javaThread.invokeMethod(null, object, method, arguments, true);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
 	}
 	

@@ -1771,7 +1771,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				storeInstruction();
 			}
 		} else {
-			push(new SendMessage(selector, signature, argCount, false, fCounter));
+			push(new SendMessage(selector, signature, argCount, null, fCounter));
 			if (expression == null) {
 				push(new PushThis(getEnclosingLevel(node, methodBinding.getDeclaringClass())));
 				storeInstruction();	
@@ -2236,10 +2236,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		Name qualifier= node.getQualifier();
 		if (Modifier.isStatic(methodBinding.getModifiers())) {
-			String typeName= getTypeName(methodBinding.getDeclaringClass());
-			push(new SendStaticMessage(typeName, selector, signature, argCount, fCounter));
+			push(new SendStaticMessage(getTypeName(methodBinding.getDeclaringClass()), selector, signature, argCount, fCounter));
 		} else {
-			push(new SendMessage(selector, signature, argCount, true, fCounter));
+			push(new SendMessage(selector, signature, argCount, getTypeSignature(methodBinding.getDeclaringClass()), fCounter));
 			int enclosingLevel= 0;
 			if (qualifier != null) {
 				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
