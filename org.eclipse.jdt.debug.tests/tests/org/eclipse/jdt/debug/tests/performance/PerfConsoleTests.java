@@ -42,6 +42,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     public void testProcessConsolePlainOutput100Lines() throws Exception {
+        tagAsGlobalSummary("Process Console 100 lines: plain output", Dimension.CPU_TIME);
         runConsole80CharsTest(100, 100);
     }
 
@@ -51,6 +52,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     public void testProcessConsoleStackTraceOutput100Lines() throws Exception {
+        tagAsSummary("Process Console 100 lines: stack trace output", Dimension.CPU_TIME);
         runStackTrace(50, 100); // 2 lines * 50 repeats = 100 lines
     }
 
@@ -60,6 +62,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     public void testProcessConsoleWrappedOutput100Lines() throws Exception {
+        tagAsSummary("Process Console 100 lines: wrapped output", Dimension.CPU_TIME);
         runVariableLength(25, 100); // 4 lines * 25 repeats = 100 lines
     }
 
