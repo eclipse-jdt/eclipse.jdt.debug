@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -312,6 +313,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES, true);
 		
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_SYSTEM_THREADS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.PROMPT);
 	}
 	
 	/**

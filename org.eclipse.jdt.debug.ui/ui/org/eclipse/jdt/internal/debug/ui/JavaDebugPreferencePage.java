@@ -14,7 +14,9 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -75,6 +77,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendButton;
 	private Button fSuspendOnCompilationErrors;
 	private Button fSuspendDuringEvaluations;
+	// Cancel launch because compile error radio buttons
+	private Button fPromptContinueWithErrors;
+	private Button fNeverContinueWithErrors;
+	private Button fAlwaysContinueWithErrors;
+	
 	// Hot code replace preference widgets
 	private Button fAlertHCRButton;
 	private Button fAlertHCRNotSupportedButton;
@@ -83,7 +90,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
 	private JavaDebugIntegerFieldEditor fConnectionTimeoutText;
-	
+
 	public JavaDebugPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
@@ -115,6 +122,17 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
 		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_execution_on_co&mpilation_errors_1")); //$NON-NLS-1$
 		fSuspendDuringEvaluations= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.14")); //$NON-NLS-1$
+		
+		createSpacer(composite, 1);
+		
+		comp = createGroupComposite(composite, 3, "Continue Launch if Project Contains Compile Errors"); 
+		fAlwaysContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
+		fAlwaysContinueWithErrors.setText("Always");
+		fNeverContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
+		fNeverContinueWithErrors.setText("Never");
+		fPromptContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
+		fPromptContinueWithErrors.setText("Prompt");
+
 		
 		createSpacer(composite, 1);
 		
@@ -204,6 +222,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(coreStore.getDefaultBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(coreStore.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
+		
+		
 	}
 	
 	/**
@@ -263,6 +283,15 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(coreStore.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(coreStore.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
+		
+		String pref = store.getString(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
+		if(pref.equals(AlwaysNeverDialog.ALWAYS)) {
+			fAlwaysContinueWithErrors.setSelection(true);
+		} else if (pref.equals(AlwaysNeverDialog.NEVER)) {
+			fNeverContinueWithErrors.setSelection(true);
+		} else {
+			fPromptContinueWithErrors.setSelection(true);
+		}
 	}
 	
 	/**
@@ -283,6 +312,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		coreStore.setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
 		coreStore.setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
+		
+		String value = AlwaysNeverDialog.PROMPT;
+		if (fAlwaysContinueWithErrors.getSelection()) {
+			value = AlwaysNeverDialog.ALWAYS;
+		} else if (fNeverContinueWithErrors.getSelection()) {
+			value = AlwaysNeverDialog.NEVER;
+		}
+		store.setValue(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, value);
 	}
 	
 	protected void createSpacer(Composite composite, int columnSpan) {

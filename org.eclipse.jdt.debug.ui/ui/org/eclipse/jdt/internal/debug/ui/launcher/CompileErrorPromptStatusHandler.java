@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
@@ -31,9 +31,9 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		Shell shell = JDIDebugUIPlugin.getActiveWorkbenchShell();
 		String title = LauncherMessages.getString("CompileErrorPromptStatusHandler.1"); //$NON-NLS-1$
 		String message = LauncherMessages.getString("CompileErrorPromptStatusHandler.2"); //$NON-NLS-1$
-		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
+		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore(); 
 		
-		String pref = store.getString(IJavaDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
+		String pref = store.getString(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(AlwaysNeverDialog.ALWAYS)) {
 				return new Boolean(true);
@@ -42,7 +42,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 			}
 		}
 		
-		boolean answer = AlwaysNeverDialog.openQuestion(shell, title, message, IJavaDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
+		boolean answer = AlwaysNeverDialog.openQuestion(shell, title, message, IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
 		return new Boolean(answer);
 	}
 
