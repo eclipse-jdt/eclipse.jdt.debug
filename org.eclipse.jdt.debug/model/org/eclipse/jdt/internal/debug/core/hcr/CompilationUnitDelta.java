@@ -35,7 +35,7 @@ import org.eclipse.jdt.internal.core.JavaElement;
  */
 public class CompilationUnitDelta {
 	
-	private static final boolean DEBUG= true;
+	private static final boolean DEBUG= false;
 	
 	private static class SimpleJavaElement {
 		
