@@ -106,7 +106,6 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 						return true;
 					}
 				} catch (BadLocationException x) {
-					JDIDebugUIPlugin.log(x);
 				}
 			}
 		}
