@@ -339,42 +339,31 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		return true;
 	}
-	
-	/**
-	 * Initialize default attribute values based on the
-	 * given Java element.
-	 */
-	protected void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
-		initializeHardCodedDefaults(config);
-		initializeJavaProject(javaElement, config);
-		initializeMainTypeAndName(javaElement, config);
-	}
 
 	/**
 	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		IJavaElement je = getContext();
-		if (je == null) {
-			initializeHardCodedDefaults(config);
-			
+		IJavaElement javaElement = getContext();
+		initializeHardCodedDefaults(config);
+		if (javaElement != null) {
+			initializeJavaProject(javaElement, config);
+		} else {
 			// We set empty attributes for project & main type so that when one config is
 			// compared to another, the existence of empty attributes doesn't cause an
 			// incorrect result (the performApply() method can result in empty values
 			// for these attributes being set on a config if there is nothing in the
 			// corresponding text boxes)
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-		} else {
-			initializeDefaults(je, config);
 		}
+		initializeMainTypeAndName(javaElement, config);
 	}
 
 	/**
 	 * Set the main type & name attributes on the working copy based on the IJavaElement
 	 */
 	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
-		String name = null;
+		String name= null;
 		if (javaElement instanceof IMember) {
 			IMember member = (IMember)javaElement;
 			if (member.isBinary()) {
@@ -394,16 +383,17 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			} catch (InvocationTargetException ite) {
 			}
 		}
-		if (name != null) {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
-			if (name.length() > 0) {
-				int index = name.lastIndexOf('.');
-				if (index > 0) {
-					name = name.substring(index + 1);
-				}		
-				name = getLaunchConfigurationDialog().generateName(name);
-				config.rename(name);
-			}
+		if (name == null) {
+			name= ""; //$NON-NLS-1$
+		}
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
+		if (name.length() > 0) {
+			int index = name.lastIndexOf('.');
+			if (index > 0) {
+				name = name.substring(index + 1);
+			}		
+			name = getLaunchConfigurationDialog().generateName(name);
+			config.rename(name);
 		}
 	}
 
