@@ -24,34 +24,6 @@
 # How is it used?
 # Basically by replacing the standard Java VM ('/usr/bin/java') with this script.
 # Since this script is a replacement for the VM it takes roughly the same arguments.
-# 
-# Detailled steps:
-# - verify the value of the shell variable SWT_DLL. By default the dll from the 
-#   enclosing Eclipse is used. If you don't build and export your own dll 
-#   the default should be just fine. However if you want to build the dll yourself,
-#   point SWT_DLL to the place where the Ant-script 'make_carbon.xml' places it.
-# - create a "fake" jdk by creating a folder 'swt_jdk' somewhere on your disk
-# - inside swt_jdk create a folder 'bin'
-# - copy this script into 'bin' and rename it to 'java' (or make a symbolic link 'java'
-#   from this file in your workspace)
-# - make sure the script 'java' is executable
-# - within Eclipse create a new JRE 'SWT VM' in 'Preferences/Java/Installed JREs'
-# - When creating a new Launch or Debug Configuration on the JRE tab select your
-#   new 'SWT VM' instead of the standard one
-# - Now you can run or debug your application (however you will have to bring it
-#   to front manually).
-#
-
-#
-# Default place of the SWT dll (in case you are not building your own dll). 
-#
-SWT_DLL="$JAVA_LIBRARY_PATH"/plugins/org.eclipse.swt.carbon_*/os/macosx/ppc/libswt-carbon-*.jnilib
-
-#
-# Since I'm building my own dll, I set SWT_DLL to the place where the
-# Ant-script 'make_carbon.xml' places it.
-#
-#SWT_DLL="somewhere/libswt-carbon-XXXX.jnilib"
 
 #
 # In order to build an application bundle under MacOS X we need
@@ -71,12 +43,22 @@ TMP_APP_DIR="/tmp/swt_stubs"
 #
 CURRENT_DIR="$PWD"
 
+#echo $* > /dev/console
+
+VM_OPTIONS=""
 #
 # Ensure that we get our own JDI implementation
 # 
-VM_OPTIONS="<string>-Xbootclasspath/p:$JAVA_LIBRARY_PATH"/plugins/org.eclipse.jdt.debug*/jdi.jar"</string>"
+#JDI="$JAVA_LIBRARY_PATH"/plugins/org.eclipse.jdt.debug/jdi.jar
+#if test -f "$JDI"
+#then
+#	VM_OPTIONS="$VM_OPTIONS<string>-Xbootclasspath/p:$JDI</string>"
+#	echo $VM_OPTIONS > /dev/console
+#else
+#	echo "$JDI not found" > /dev/console
+#fi
 
-# skip java vm
+# skip 1st argument
 shift
 
 #
@@ -88,9 +70,6 @@ while [ $# -gt 0 ]; do
 			CLASS_PATH="$2"
 			shift;
 			;;	
-		#-Xbootclasspath* )
-			#echo "ignoring Xbootclasspath"
-		#	;;
 		-* )
 			VM_OPTIONS="$VM_OPTIONS<string>$1</string>"
 			;;
@@ -132,12 +111,6 @@ cd $APP_NAME.app/Contents
 # Copy the JavaAppLauncher into the bundle 
 #
 cp $JAVASTUB MacOS/$APP_NAME
-
-#
-# Create a symbolic link to the SWT dll (*.jnilib)
-#
-mkdir -p Resources/Java
-ln -s $SWT_DLL Resources/Java 
 
 #
 # Create the Info.plist file.

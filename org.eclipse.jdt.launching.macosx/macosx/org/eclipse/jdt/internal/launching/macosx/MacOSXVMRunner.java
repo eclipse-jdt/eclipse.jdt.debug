@@ -63,7 +63,7 @@ public class MacOSXVMRunner extends StandardVMRunner {
 		
 		String[] cmdLine2= new String[cmdLine.length + 2];
 		
-		String wrapper= createWrapper("start_carbon.sh");
+		String wrapper= MacOSXLaunchingPlugin.createWrapper(getClass(), "start_carbon.sh");
 		
 		int j= 0;
 		cmdLine2[j++]= "/bin/sh";
@@ -72,45 +72,5 @@ public class MacOSXVMRunner extends StandardVMRunner {
 			cmdLine2[j++]= cmdLine[i];
 		
 		return super.exec(cmdLine2, workingDirectory);
-	}
-
-	private String createWrapper(String filename) {
-
-		String output= "/tmp/start_carbon.sh";	
-		FileOutputStream os= null;
-		try {
-			os= new FileOutputStream(output);
-		} catch (FileNotFoundException ex) {
-			return null;
-		}
-				
-		InputStream is= null;
-		try {
-			is= getClass().getResourceAsStream(filename);
-			if (is != null) {
-				while (true) {
-					int c= is.read();
-					if (c == -1)
-						break;
-					os.write(c);
-				}
-			}
-			os.flush();
-		} catch (IOException io) {
-			return null;
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-				}
-			}
-			try {
-				os.close();
-			} catch(IOException e) {
-			}
-		}
-		
-		return output;
 	}
 }
