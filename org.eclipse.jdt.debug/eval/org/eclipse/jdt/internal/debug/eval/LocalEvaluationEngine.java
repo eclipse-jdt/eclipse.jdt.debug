@@ -49,7 +49,6 @@ import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.InvocationException;
@@ -1183,8 +1182,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			// same as the receiving type, we must guess at the receiver's source
 			// file
 			int dollarIndex= typeName.indexOf('$');
-			if (dollarIndex >= 0)
+			if (dollarIndex >= 0) {
 				typeName= typeName.substring(0, dollarIndex);
+			}
 			typeName = typeName.replace('.', IPath.SEPARATOR);
 			typeName+= ".java";			 //$NON-NLS-1$
 		} else {
@@ -1225,7 +1225,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			);
 		}
 		
-		if (type.getParent() instanceof IType) {
+		if (type.getDeclaringType() != null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_in_context_of_inner_type_not_supported._19"), null) //$NON-NLS-1$
@@ -1248,8 +1248,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		String typeName = object.getJavaType().getName();
 		// we must guess at the receiver's source file name
 		int dollarIndex= typeName.indexOf('$');
-		if (dollarIndex >= 0)
+		if (dollarIndex >= 0) {
 			typeName= typeName.substring(0, dollarIndex);
+		}
 		return getType(typeName);
 	}
 
@@ -1317,8 +1318,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	protected String[] getNestedTypeNames(String typeName) throws DebugException {
 		int index = typeName.lastIndexOf('.');
-		if (index >= 0)
+		if (index >= 0) {
 			typeName= typeName.substring(index + 1);
+		}
 		index = typeName.indexOf('$');
 		ArrayList list = new ArrayList(1);
 		while (index >= 0) {
