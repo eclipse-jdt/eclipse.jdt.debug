@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class PushFieldVariable extends CompoundInstruction {
 		if (value instanceof JDINullValue) {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.getString("PushFieldVariable.0"), null)); //$NON-NLS-1$
 		}
-		IJavaObject receiver=(IJavaObject) popValue();
+		IJavaObject receiver=(IJavaObject) value;
 		
 		IJavaVariable field= null;
 		
