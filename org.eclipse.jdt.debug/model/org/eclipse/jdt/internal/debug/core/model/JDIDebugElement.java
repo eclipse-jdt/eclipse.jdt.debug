@@ -223,7 +223,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param code status code
 	 * @throws DebugException a new exception with given status code
 	 */
-	public void requestFailed(String message,  Exception e, int code) throws DebugException {
+	public void requestFailed(String message,  Throwable e, int code) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 			code, message, e));	
 	}

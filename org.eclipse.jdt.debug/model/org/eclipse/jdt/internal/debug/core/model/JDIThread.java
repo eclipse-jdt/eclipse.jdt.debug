@@ -93,13 +93,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private boolean fRunning;
 	/**
-	 * <code>true</code> when suspended by an event in the
-	 * VM such as a breakpoint or step, and <code>false</code>
-	 * when suspended by an explicit user request (i.e. when
-	 * a call is made to <code>#suspend()</code>).
-	 */
-	private boolean fEventSuspend = false;
-	/**
 	 * Whether terminated.
 	 */
 	private boolean fTerminated;
@@ -624,9 +617,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				if (isInvokingMethod()) {
 					requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$
 				}
-				if (!fEventSuspend) {
-					requestFailed(JDIDebugModelMessages.getString("JDIThread.Thread_must_be_suspended_by_step_or_breakpoint_to_perform_method_invocation_1"), null, IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE); //$NON-NLS-1$
-				}
 				// set the request timeout to be infinite
 				setRequestTimeout(Integer.MAX_VALUE);
 				setRunning(true);
@@ -643,7 +633,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (ClassNotLoadedException e) {
 			invokeFailed(e, timeout);
 		} catch (IncompatibleThreadStateException e) {
-			invokeFailed(e, timeout);
+			invokeFailed(JDIDebugModelMessages.getString("JDIThread.Thread_must_be_suspended_by_step_or_breakpoint_to_perform_method_invocation_1"), IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE, e, timeout); //$NON-NLS-1$
 		} catch (InvocationException e) {
 			invokeFailed(e, timeout);
 		} catch (RuntimeException e) {
@@ -739,9 +729,30 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * </ul>
 	 */
 	protected void invokeFailed(Throwable e, int restoreTimeout) throws DebugException {
-		invokeComplete(restoreTimeout);
-		targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_invoking_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		invokeFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_invoking_method"), new String[] {e.toString()}), DebugException.TARGET_REQUEST_FAILED, e, restoreTimeout); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Called when an invocation fails. Performs cleanup
+	 * and throws an exception.
+	 * 
+	 * @param message error message
+	 * @param code status code
+	 * @param e the exception that caused the failure
+	 * @param restoreTimeout the communication timeout value,
+	 * 	in milliseconds, that should be reset
+	 * @see #invokeComplete(int)
+	 * @exception DebugException.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	protected void invokeFailed(String message, int code, Throwable e, int restoreTimeout) throws DebugException {
+		invokeComplete(restoreTimeout);
+		requestFailed(message, e, code);
+	}	
 	
 	/**
 	 * Called when a method invocation has returned, successfully
@@ -1368,34 +1379,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		return null;
 	}
-	
-	/**
-	 * When a suspend event is fired, a thread keeps track of the
-	 * cause of the suspend. If the suspend is due to a an event
-	 * request in the underlying VM, evaluations may be performed,
-	 * otherwise evaluations are disallowed.
-	 * 
-	 * @see JDIDebugElement#fireSuspendEvent(int)
-	 */
-	public void fireSuspendEvent(int detail) {
-		if (detail != DebugEvent.EVALUATION && detail != DebugEvent.EVALUATION_IMPLICIT) {
-			fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
-		}
-		super.fireSuspendEvent(detail);
-	}
 		
-	/**
-	 * Queues a suspend event. If the suspend is due to a an event
-	 * request in the underlying VM, evaluations may be performed,
-	 * otherwise evaluations are disallowed.
-	 * 
-	 * @see JDIDebugElement#queueSuspendEvent(int)
-	 */
-	public void queueSuspendEvent(int detail) {
-		fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
-		super.queueSuspendEvent(detail);
-	}
-	
 	/**
 	 * Notification this thread has terminated - update state
 	 * and fire a terminate event.
