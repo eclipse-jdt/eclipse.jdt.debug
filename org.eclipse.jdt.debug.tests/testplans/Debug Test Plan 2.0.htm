@@ -1,0 +1,659 @@
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>Debug Test Plan</title>
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1>Debug Test Plan</h1>
+
+<h2>Virtual Machines&amp; Platforms</h2>
+
+<h3>VMs</h3>
+
+<p class=MsoNormal>Sun</p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l4 level1 lfo1;tab-stops:list .5in'>1.3.1_01
+     or higher</li>
+ <li class=MsoNormal style='mso-list:l4 level1 lfo1;tab-stops:list .5in'>1.4.1
+     B10 or higher</li>
+</ul>
+
+<p class=MsoNormal>IBM</p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l0 level1 lfo2;tab-stops:list .5in'>1.3.0
+     (build 1.3.0, J2RE 1.3.0 IBM build cn130-20010925)</li>
+ <li class=MsoNormal style='mso-list:l0 level1 lfo2;tab-stops:list .5in'>1.3.1
+     (build 1.3.1, J2RE 1.3.1 IBM Windows 32 build cn131-20020403)</li>
+</ul>
+
+<p class=MsoNormal>J9</p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>20020206
+     or higher</li>
+</ul>
+
+<h3>Platforms</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Windows
+     2000/NT</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Windows
+     XP</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Linux</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Double
+     byte (Japanese)</li>
+</ul>
+
+<h2>Function</h2>
+
+<h3>Breakpoints {Joe S}</h3>
+
+<p class=MsoNormal>(Breakpoint tests are a good candidate for automation)</p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0in 5.4pt 0in 5.4pt'>
+ <tr>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Enable</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Disable</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Hit count</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Condition</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Suspend VM</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Suspend thread</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Caught</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Uncaught</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Entry</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Exit</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Access</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Modification</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Thread filter</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Scope</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Line Breakpoint</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Exception Breakpoint</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Watchpoint</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=39 valign=top style='width:29.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Method Breakpoint</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.5pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>X</p>
+  </td>
+  <td width=39 valign=top style='width:29.55pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Suspend
+     on uncaught exceptions</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Suspend
+     on compilation errors</li>
+</ul>
+
+<h3>HotSwap {Jed A/Luc B}</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l3 level1 lfo9;tab-stops:list .5in'>J9 and
+     Sun</li>
+ <li class=MsoNormal style='mso-list:l3 level1 lfo9;tab-stops:list .5in'>Negative
+     cases (i.e. handle failures)</li>
+</ul>
+
+<h3>Launch Configurations {Darin S}</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Local
+     &amp; Remote Java Applications</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Creation
+     of default launch configurations in dialog the dialog (via new button,
+     based on workbench selection)</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Creation
+     of default launch configurations using “Debug/Run As…” actions</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Auto-creation
+     &amp; launch using “Run/Debug Java Application”</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Using
+     non-default class path &amp; source lookup path</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Using
+     non-default working directory</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Sharing
+     default and non-default launch configurations</li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l7 level2 lfo3;tab-stops:list 1.0in'>Sharing
+      of classpaths</li>
+  <li class=MsoNormal style='mso-list:l7 level2 lfo3;tab-stops:list 1.0in'>Sharing
+      of JREs via new “container” support</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Launching
+     java programs not contained in the workspace (i.e. just use as a tool to
+     launch external Java programs)</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Using
+     new “Container” support to reference JREs (instead of JRE_LIB).</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Using
+     JREs with &gt; 1 jar</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Starting
+     a workspace after deleting/renaming all installed JREs (can we handle it
+     gracefully?)</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Hot
+     keys for re-launch</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Perspective
+     switching</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Favorites</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Handling
+     of launch configurations with missing plug-in. I.e. create a runtime
+     workbench configuration, and then run the workbench without PDE.</li>
+ <li class=MsoNormal style='mso-list:l7 level1 lfo3;tab-stops:list .5in'>Saving
+     &amp; building before launching, based on preferences</li>
+</ul>
+
+<h3>Source Lookup {Darin S}</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo4;tab-stops:list .5in'>Debugging
+     with non-workspace source</li>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo4;tab-stops:list .5in'>Prompting
+     for source (should update associated launch configuration)</li>
+</ul>
+
+<h3>Evaluation {Darin W}</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l8 level1 lfo5;tab-stops:list .5in'>Debugger</li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Local</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Remote</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Display
+      view</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Variables
+      view – using “this” context as selected variable</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Expression
+      view</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Java
+      editor</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Error
+      handling – i.e. expressions with errors</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>In
+      compilation units (i.e .with source)</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Binaries
+      w/wo source</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Inner
+      types/anonymous types</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Array
+      elements</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Code
+      assist</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l8 level1 lfo5;tab-stops:list .5in'>Scrapbook</li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>JREs</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Working
+      directory</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Use
+      code from pre-req projects</li>
+  <li class=MsoNormal style='mso-list:l8 level2 lfo5;tab-stops:list 1.0in'>Imports</li>
+ </ul>
+</ul>
+
+<h3>Console {Darin W}</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l6 level1 lfo6;tab-stops:list .5in'>Appearing
+     automatically based on preferences</li>
+ <li class=MsoNormal style='mso-list:l6 level1 lfo6;tab-stops:list .5in'>Reading
+     Input</li>
+ <li class=MsoNormal style='mso-list:l6 level1 lfo6;tab-stops:list .5in'>Coloring
+     and fonts</li>
+ <li class=MsoNormal style='mso-list:l6 level1 lfo6;tab-stops:list .5in'>Navigating
+     from stack traces and Java doc errors to associated types</li>
+ <li class=MsoNormal style='mso-list:l6 level1 lfo6;tab-stops:list .5in'>Flooding
+     with output</li>
+ <li class=MsoNormal style='mso-list:l6 level1 lfo6;tab-stops:list .5in'>Wrap
+     &amp; non-wrap modes</li>
+</ul>
+
+<h3>Stepping {Jared B}</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Variables
+     appearing/disappearing</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Changing
+     variables (red)</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Rapid
+     stepping</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Rapid
+     stepping &amp; showing ‘toString()’</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Hot keys</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Step
+     filters [Could add tests to test suite]</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Primitive
+     display options (preferences in java-&gt; debug -&gt; appearance)</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Filter
+     options (preferences java -&gt; debug -&gt; appearance)</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Suspending
+     a running program</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Stepping
+     in non-top stack frame</li>
+ <li class=MsoNormal style='mso-list:l5 level1 lfo7;tab-stops:list .5in'>Stepping
+     “thru” breakpoints – i.e. should hit breakpoints when stepping over code
+     with breakpoints</li>
+</ul>
+
+<h2>Presentation</h2>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo8;tab-stops:list .5in'>All
+     action labels in all menus</li>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo8;tab-stops:list .5in'>All
+     tool tips in toolbars</li>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo8;tab-stops:list .5in'>F1
+     help in all views</li>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo8;tab-stops:list .5in'>Debug
+     Action groups (turn on/off)</li>
+ <li class=MsoNormal style='mso-list:l2 level1 lfo8;tab-stops:list .5in'>Debug keyboard navigation</li>
+</ul>
+
+</div>
+
+</body>
+
+</html>
