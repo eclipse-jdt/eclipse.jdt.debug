@@ -300,19 +300,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				setSelection(ss);
 				return ss;
 			}
-		} else {
-			IWorkbenchPart part = getTargetPart();
-			if (part != null) {
-				//look for an editor
-				IEditorPart editorPart= part.getSite().getPage().getActiveEditor();
-				if (editorPart != null) {
-					setTargetPart(editorPart);
-					ITextSelection tSelection= (ITextSelection)getTargetSelection();
-					if (tSelection != null) {
-						return tSelection.getText();
-					}
-				}
-			}
 		}
 		return null;
 	}
