@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -14,6 +15,9 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -172,6 +176,48 @@ public class ManageMethodBreakpointAction extends Action implements IObjectActio
 		action.setText(getText());
 		action.setDescription(getDescription());
 	}
+	
+	protected String resolveMethodSignature(IMethod method) {
+		try {
+			IType type= method.getDeclaringType();
+			String signature= method.getSignature();
+			String[] pTypes= Signature.getParameterTypes(signature);
+			String returnType= Signature.getReturnType(signature);
+			String[] resolvedTypes= new String[pTypes.length];
+			for (int i = 0; i < pTypes.length; i++) {
+				String unresolvedTypeName= pTypes[i];
+				unresolvedTypeName= unresolvedTypeName.substring(1, unresolvedTypeName.length() - 2);
+				String[][] resolvedTypeNames= type.resolveType(unresolvedTypeName);
+				if (resolvedTypeNames == null || resolvedTypeNames.length > 1) {
+					//cannot be uniquely resolved
+					return null;
+				}
+				StringBuffer buf= new StringBuffer();
+				for (int j= 0; j < resolvedTypeNames[0].length; j++) {
+					buf.append(resolvedTypeNames[0][j]);
+				}
+				resolvedTypes[i]= buf.toString();
+			}
+			
+			
+			/*String[][] resolvedTypeNames= type.resolveType(returnType);
+			if (resolvedTypeNames == null || resolvedTypeNames.length > 1) {
+					//cannot be uniquely resolved
+					return null;
+			}
+			StringBuffer buf= new StringBuffer();
+			for (int j= 0; j < resolvedTypeNames[0].length; j++) {
+				buf.append(resolvedTypeNames[0][j]);
+			}
+			returnType= buf.toString();*/
+			return Signature.createMethodSignature(resolvedTypes, returnType);	
+		} catch (JavaModelException jme) {
+			JDIDebugUIPlugin.logError(jme);
+			return null;
+		} 
+		
+	}
+
 	protected IMethod getMethod() {
 		return fMethod;
 	}
