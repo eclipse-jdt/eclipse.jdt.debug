@@ -306,13 +306,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaVariable) {
 				return getVariableText((IJavaVariable) item);
 			} else if (item instanceof IStackFrame) {
-				String label= getStackFrameText((IStackFrame) item);
+				StringBuffer label= new StringBuffer(getStackFrameText((IStackFrame) item));
 				if (item instanceof IJavaStackFrame) {
 					if (((IJavaStackFrame)item).isOutOfSynch()) {
-						label= label + " (out of synch)";
+						label.append(" (out of synch)");
 					}
 				}
-				return label;
+				return label.toString();
 			} else if (item instanceof IMarker) {
 				IBreakpoint breakpoint = getBreakpoint((IMarker)item);
 				if (breakpoint != null) {
@@ -322,37 +322,39 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else if (item instanceof IBreakpoint) {
 				return getBreakpointText((IBreakpoint)item);
 			} else {
-				String label= null;
+				StringBuffer label= new StringBuffer();;
 				if (item instanceof IJavaThread) {
-					label= getThreadText((IJavaThread) item, showQualified);
+					label.append(getThreadText((IJavaThread) item, showQualified));
 					if (((IJavaThread)item).isOutOfSynch()) {
-						label= label + " (out of synch)";
+						label.append(" (out of synch)");
 					} else if (((IJavaThread)item).mayBeOutOfSynch()) {
-						label= label + " (may be out of synch)";
+						label.append(" (may be out of synch)");
 					}
 				} else if (item instanceof IJavaDebugTarget) {
-					label= getDebugTargetText((IJavaDebugTarget) item, showQualified);
+					label.append(getDebugTargetText((IJavaDebugTarget) item, showQualified));
 					if (((IJavaDebugTarget)item).isOutOfSynch()) {
-						label= label + " (out of synch)";
+						label.append(" (out of synch)");
 					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
-						label= label + " (may be out of synch)";
+						label.append(" (may be out of synch)");
 					}
 				} else if (item instanceof IJavaValue) {
-					label= getValueText((IJavaValue) item);
+					label.append(getValueText((IJavaValue) item));
 				}
 				if (item instanceof ITerminate) {
 					if (((ITerminate) item).isTerminated()) {
-						label= DebugUIMessages.getString("JDIModelPresentation.<terminated>_2") + " " + label; //$NON-NLS-2$ //$NON-NLS-1$
-						return label;
+						label.insert(0, DebugUIMessages.getString("JDIModelPresentation.<terminated>_2")); //$NON-NLS-1$
+						label.insert(0, ' '); //$NON-NLS-1$
+						return label.toString();
 					}
 				}
 				if (item instanceof IDisconnect) {
 					if (((IDisconnect) item).isDisconnected()) {
-						label= DebugUIMessages.getString("JDIModelPresentation.<disconnected>_4") + " " + label; //$NON-NLS-2$ //$NON-NLS-1$
-						return label;
+						label.insert(0, DebugUIMessages.getString("JDIModelPresentation.<disconnected>_4")); //$NON-NLS-1$
+						label.insert(0, ' '); //$NON-NLS-1$
+						return label.toString();
 					}
 				}
-				return label;
+				return label.toString();
 			}
 		} catch (CoreException e) {
 			return DebugUIMessages.getString("JDIModelPresentation.<not_responding>_6"); //$NON-NLS-1$
@@ -678,24 +680,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			default :
 				return null;
 		};
-		String c = ""; //$NON-NLS-1$
+		StringBuffer charText = new StringBuffer();
 		if (Character.getType((char) intValue) == Character.CONTROL) {
 			Character ctrl = new Character((char) (intValue + 64));
-			c = "^" + ctrl; //$NON-NLS-1$
+			charText.append('^'); //$NON-NLS-1$
+			charText.append(ctrl);
 			switch (intValue) { // common use
-				case 0: c += " (NUL)"; break; //$NON-NLS-1$
-				case 8: c += " (BS)"; break; //$NON-NLS-1$
-				case 9: c += " (TAB)"; break; //$NON-NLS-1$
-				case 10: c += " (LF)"; break; //$NON-NLS-1$
-				case 13: c += " (CR)"; break; //$NON-NLS-1$
-				case 21: c += " (NL)"; break; //$NON-NLS-1$
-				case 27: c += " (ESC)"; break; //$NON-NLS-1$
-				case 127: c += " (DEL)"; break; //$NON-NLS-1$
+				case 0: charText.append(" (NUL)"); break; //$NON-NLS-1$
+				case 8: charText.append(" (BS)"); break; //$NON-NLS-1$
+				case 9: charText.append(" (TAB)"); break; //$NON-NLS-1$
+				case 10: charText.append(" (LF)"); break; //$NON-NLS-1$
+				case 13: charText.append(" (CR)"); break; //$NON-NLS-1$
+				case 21: charText.append(" (NL)"); break; //$NON-NLS-1$
+				case 27: charText.append(" (ESC)"); break; //$NON-NLS-1$
+				case 127: charText.append(" (DEL)"); break; //$NON-NLS-1$
 			}
 		} else {
-			c += new Character((char)intValue);
+			charText.append(new Character((char)intValue));
 		}
-		return c;
+		return charText.toString();
 	}
 
 	protected String getMarkerTypeName(IJavaBreakpoint breakpoint, boolean qualified) throws CoreException {
