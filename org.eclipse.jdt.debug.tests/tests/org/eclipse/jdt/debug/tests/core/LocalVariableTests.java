@@ -38,14 +38,18 @@ public class LocalVariableTests extends AbstractDebugTest {
 			assertEquals("Should be no visible locals", 0, vars.length);
 			
 			stepOver(frame);
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			stepOver(frame);
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			
 			vars = frame.getLocalVariables();
 			assertEquals("Should be one visible local", 1, vars.length);			
 			assertEquals("Visible var should be 'i1'", "i1", vars[0].getName());
 			
 			stepOver(frame);
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			stepOver(frame);
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			
 			vars = frame.getLocalVariables();
 			assertEquals("Should be two visible locals", 2, vars.length);			
