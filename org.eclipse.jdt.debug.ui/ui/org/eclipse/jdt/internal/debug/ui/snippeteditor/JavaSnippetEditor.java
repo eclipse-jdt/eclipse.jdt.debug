@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -255,9 +255,12 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT));
-		if (property != null) {
-			fImports = JavaDebugOptionsManager.parseList(property);
+		IFile file= getFile();
+		if (file != null) {
+			String property= file.getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT));
+			if (property != null) {
+				fImports = JavaDebugOptionsManager.parseList(property);
+			}
 		}
 	}
 		
@@ -278,12 +281,14 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	protected void createActions() {
 		super.createActions();
-		Action action = new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", action);//$NON-NLS-1$
-		setAction("ShowInPackageView", new ShowInPackageViewAction(this)); //$NON-NLS-1$
-		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
-		setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
+		if (getFile() != null) {
+			Action action = new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+			action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+			setAction("ContentAssistProposal", action);//$NON-NLS-1$
+			setAction("ShowInPackageView", new ShowInPackageViewAction(this)); //$NON-NLS-1$
+			setAction("Stop", new StopAction(this));  //$NON-NLS-1$
+			setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
+		}
 	} 
 	
 	/* (non-Javadoc)
@@ -294,10 +299,12 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);		
 		addGroup(menu, ITextEditorActionConstants.GROUP_FIND, IContextMenuConstants.GROUP_SEARCH);		
 		addGroup(menu, IContextMenuConstants.GROUP_SEARCH,  IContextMenuConstants.GROUP_SHOW);
-		addAction(menu, IContextMenuConstants.GROUP_SHOW, "ShowInPackageView"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Run"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Stop"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "SelectImports"); //$NON-NLS-1$
+		if (getFile() != null) {
+			addAction(menu, IContextMenuConstants.GROUP_SHOW, "ShowInPackageView"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Run"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Stop"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "SelectImports"); //$NON-NLS-1$
+		}
 	}
 
 	protected boolean isVMLaunched() {
@@ -342,15 +349,19 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * Checks if the page has been copied/moved to a different project or the project has been renamed.
 	 * Updates the launch configuration template if a copy/move/rename has occurred.
 	 */
-	protected void checkCurrentProject() {
+	protected void checkCurrentProject() {	
+		IFile file= getFile();
+		if (file == null) {
+			return;
+		}
 		try {
-			ILaunchConfiguration config = ScrapbookLauncher.getLaunchConfigurationTemplate(getPage());
+			ILaunchConfiguration config = ScrapbookLauncher.getLaunchConfigurationTemplate(file);
 			if (config != null) {
 				String projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-				IJavaProject pro = JavaCore.create(getPage().getProject());
+				IJavaProject pro = JavaCore.create(file.getProject());
 				if (!pro.getElementName().equals(projectName)) {
 					//the page has been moved to a "different" project
-					ScrapbookLauncher.setLaunchConfigMemento(getPage(), null);
+					ScrapbookLauncher.setLaunchConfigMemento(file, null);
 				}
 			}
 		} catch (CoreException ce) {
@@ -397,7 +408,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		if (launch && fVM == null) {
 			launchVM();
-			fVM= ScrapbookLauncher.getDefault().getDebugTarget(getPage());
+			fVM= ScrapbookLauncher.getDefault().getDebugTarget(getFile());
 		}
 	}
 	
@@ -426,7 +437,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected void checkMultipleEditors() {
-		fVM= ScrapbookLauncher.getDefault().getDebugTarget(getPage());
+		fVM= ScrapbookLauncher.getDefault().getDebugTarget(getFile());
 		//multiple editors are opened on the same page
 		if (fVM != null) {
 			DebugPlugin.getDefault().addDebugEventFilter(this);
@@ -446,13 +457,17 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected void setImports(String[] imports) {
 		fImports= imports;
+		IFile file= getFile();
+		if (file == null) {
+			return;
+		}
 		String serialized= null;
 		if (imports != null) {
 			serialized= JavaDebugOptionsManager.serializeList(imports);
 		}
 		// persist
 		try {
-			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT), serialized);
+			file.setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT), serialized);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.imports"), null, e.getStatus()); //$NON-NLS-1$
@@ -1199,14 +1214,23 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		fLaunchedVM = getVMInstall();
 		Runnable r = new Runnable() {
 			public void run() {
-				ScrapbookLauncher.getDefault().launch(getPage());
+				ScrapbookLauncher.getDefault().launch(getFile());
 			}
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 	
-	protected IFile getPage() {
-		return ((FileEditorInput)getEditorInput()).getFile();
+	/**
+     * Return the <code>IFile</code> associated with the current
+     * editor input. Will return <code>null</code> if the current
+     * editor input is for an external file
+     */
+	public IFile getFile() {
+		IEditorInput input= getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			return ((IFileEditorInput)input).getFile();
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -1361,10 +1385,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * Returns the working directory attribute for this scrapbook
 	 */
 	protected String getWorkingDirectoryAttribute() {
-		try {
-			return ScrapbookLauncher.getWorkingDirectoryAttribute(getPage());
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+		IFile file= getFile();
+		if (file != null) {
+			try {
+				return ScrapbookLauncher.getWorkingDirectoryAttribute(file);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		return null;
 	}
@@ -1373,10 +1400,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * Returns the working directory attribute for this scrapbook
 	 */
 	protected String getVMArgsAttribute() {
-		try {
-			return ScrapbookLauncher.getVMArgsAttribute(getPage());
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+		IFile file= getFile();
+		if (file != null) {
+			try {
+				return ScrapbookLauncher.getVMArgsAttribute(file);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		return null;
 	}	
@@ -1385,10 +1415,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * Returns the vm install for this scrapbook
 	 */
 	protected IVMInstall getVMInstall() {
-		try {
-			return ScrapbookLauncher.getVMInstall(getPage());
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+		IFile file= getFile();
+		if (file != null) {
+			try {
+				return ScrapbookLauncher.getVMInstall(file);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		return null;
 	}	
@@ -1432,16 +1465,16 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 
 	private class SnippetPopupAdapter implements IPopupInformationControlAdapter {
-		String information;
-		String label;
-		String actionDefinitionId;
+		private String fInformation;
+		private String fLabel;
+		private String fActionDefinitionId;
 		
 		SnippetPopupAdapter(String label, String actionDefinitionId) {
-			this.label = label;
-			this.actionDefinitionId = actionDefinitionId;
+			fLabel = label;
+			this.fActionDefinitionId = actionDefinitionId;
 		}
 		public String getInformation() {
-			return information;
+			return fInformation;
 		}
 		
 		public boolean isFocusControl() {
@@ -1451,7 +1484,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			return true;
 		}
 		public void setInformation(String information) {
-			this.information = information;
+			fInformation = information;
 		}
 		public Composite createInformationComposite(Shell parent) {
 			Composite comp = new Composite(parent, parent.getStyle());
@@ -1459,12 +1492,12 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			comp.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			
 			comp.setLayout(new GridLayout());
-			Label label = new Label(comp, SWT.NONE);
-			label.setText(information);
-			label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			Label infoLabel = new Label(comp, SWT.NONE);
+			infoLabel.setText(fInformation);
+			infoLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			infoLabel.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			Dialog.applyDialogFont(comp);
-			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
+			infoLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 			return comp;
 		}
 		public IDialogSettings getDialogSettings() {
@@ -1474,13 +1507,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getLabel()
 		 */
 		public String getLabel() {
-			return label;
+			return fLabel;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getActionDefinitionId()
 		 */
 		public String getActionDefinitionId() {
-			return actionDefinitionId;
+			return fActionDefinitionId;
 		}
 		
 	}
