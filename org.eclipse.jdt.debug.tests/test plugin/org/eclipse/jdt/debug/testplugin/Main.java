@@ -1,17 +1,28 @@
 package org.eclipse.jdt.debug.testplugin;
 
 // copied from startup.jar. planned to be removed soon
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
 
+Contributors:
+    IBM Corporation - Initial implementation
+*********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+import java.io.File;
+import java.io.FileFilter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import java.net.*;
-import java.lang.reflect.*;
-import java.io.*;
-import java.util.*;
 /**
  * Startup class for Eclipse. Creates a class loader using
  * supplied URL of platform installation, loads and calls

@@ -1,8 +1,15 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 package org.eclipse.jdt.debug.testplugin;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+*********************************************************************/
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,11 +17,8 @@ import java.lang.reflect.Method;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
 import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.ui.internal.Workbench;
 
 public class TestWorkbench extends Workbench {

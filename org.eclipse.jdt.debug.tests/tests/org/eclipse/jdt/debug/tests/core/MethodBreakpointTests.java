@@ -1,13 +1,16 @@
 package org.eclipse.jdt.debug.tests.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
 
-/**
- * Tests method breakpoints.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+*********************************************************************/
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,9 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
+/**
+ * Tests method breakpoints.
+ */
 public class MethodBreakpointTests extends AbstractDebugTest {
 	
 	public MethodBreakpointTests(String name) {
