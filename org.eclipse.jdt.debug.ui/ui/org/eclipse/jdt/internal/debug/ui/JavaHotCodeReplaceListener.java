@@ -39,7 +39,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceFailed(DebugException)
 	 */
 	public void hotCodeReplaceFailed(final IJavaDebugTarget target, final DebugException exception) {
-		if (!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED)) {
+		if (!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED)) {
 			return;
 		}
 		// do not report errors for snippet editor targets
@@ -72,7 +72,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 				}
 				ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), //$NON-NLS-1$
 					MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), //$NON-NLS-1$
-					new Object[] {vmName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO, IJDIPreferencesConstants.ALERT_HCR_FAILED,
+					new Object[] {vmName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO, IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED,
 					DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_hot_code_replace_failure_1"), JDIDebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
 				dialog.open();
 			}
@@ -83,7 +83,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 	 * @see IJavaHotCodeReplaceListener#obsoleteMethods(IJavaDebugTarget)
 	 */
 	public void obsoleteMethods(final IJavaDebugTarget target) {
-		if (!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS)) {
+		if (!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS)) {
 			return;
 		}
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
@@ -101,7 +101,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 				status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.Stepping_may_be_hazardous_1"), null); //$NON-NLS-1$
 				ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Obsolete_methods_remain_1"), //$NON-NLS-1$
 					MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_contains_obsolete_methods_1"), //$NON-NLS-1$
-					new Object[] {vmName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO, IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS,
+					new Object[] {vmName}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO, IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS,
 					DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_obsolete_methods_1"), JDIDebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
 				dialog.open();
 			}

@@ -177,7 +177,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		// use filters checkbox
 		fUseFiltersCheckbox = new Button(container, SWT.CHECK);
-		fUseFiltersCheckbox.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Use_&step_filters_7")); //$NON-NLS-1$
+		fUseFiltersCheckbox.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Use_&step_filters_7")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fUseFiltersCheckbox.setLayoutData(gd);	
@@ -191,7 +191,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		//table label
 		fTableLabel= new Label(container, SWT.NONE);
-		fTableLabel.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Defined_step_fi&lters__8")); //$NON-NLS-1$
+		fTableLabel.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Defined_step_fi&lters__8")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
@@ -244,21 +244,21 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private void createStepFilterCheckboxes(Composite container) {
 		// filter synthetic checkbox
 		fFilterSyntheticButton = new Button(container, SWT.CHECK);
-		fFilterSyntheticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_s&ynthetic_methods_(requires_VM_support)_17")); //$NON-NLS-1$
+		fFilterSyntheticButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Filter_s&ynthetic_methods_(requires_VM_support)_17")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fFilterSyntheticButton.setLayoutData(gd);
 		
 		// filter static checkbox
 		fFilterStaticButton = new Button(container, SWT.CHECK);
-		fFilterStaticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_static_&initializers_18")); //$NON-NLS-1$
+		fFilterStaticButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Filter_static_&initializers_18")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fFilterStaticButton.setLayoutData(gd);
 		
 		// filter constructor checkbox
 		fFilterConstructorButton = new Button(container, SWT.CHECK);
-		fFilterConstructorButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_co&nstructors_19")); //$NON-NLS-1$
+		fFilterConstructorButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Filter_co&nstructors_19")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fFilterConstructorButton.setLayoutData(gd);
@@ -283,8 +283,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		// Add filter button
 		fAddFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fAddFilterButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Filter_9")); //$NON-NLS-1$
-		fAddFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Key_in_the_name_of_a_new_step_filter_10")); //$NON-NLS-1$
+		fAddFilterButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_&Filter_9")); //$NON-NLS-1$
+		fAddFilterButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Key_in_the_name_of_a_new_step_filter_10")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAddFilterButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(fAddFilterButton);
@@ -298,8 +298,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Type..._11")); //$NON-NLS-1$
-		fAddTypeButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_Java_type_and_add_it_to_step_filters_12")); //$NON-NLS-1$
+		fAddTypeButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_&Type..._11")); //$NON-NLS-1$
+		fAddTypeButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Choose_a_Java_type_and_add_it_to_step_filters_12")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(fAddTypeButton);
@@ -313,8 +313,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
-		fAddPackageButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Package..._13")); //$NON-NLS-1$
-		fAddPackageButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_package_and_add_it_to_step_filters_14")); //$NON-NLS-1$
+		fAddPackageButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_&Package..._13")); //$NON-NLS-1$
+		fAddPackageButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Choose_a_package_and_add_it_to_step_filters_14")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(fAddPackageButton);
@@ -328,8 +328,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		// Remove button
 		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFilterButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.&Remove_15")); //$NON-NLS-1$
-		fRemoveFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Remove_all_selected_step_filters_16")); //$NON-NLS-1$
+		fRemoveFilterButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.&Remove_15")); //$NON-NLS-1$
+		fRemoveFilterButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Remove_all_selected_step_filters_16")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveFilterButton);
 		fRemoveFilterButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(fRemoveFilterButton);
@@ -457,7 +457,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText= trimmedValue;
-			fEditorText.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Invalid_step_filter._Return_to_continue;_escape_to_exit._1")); //$NON-NLS-1$
+			fEditorText.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Invalid_step_filter._Return_to_continue;_escape_to_exit._1")); //$NON-NLS-1$
 			getShell().getDisplay().beep();			
 			return;
 		// otherwise, commit the new value if not a duplicate
@@ -538,14 +538,14 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_20"); //$NON-NLS-1$
-			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_type_selection_dialog_for_step_filters_21"); //$NON-NLS-1$
+			String title= DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_type_to_step_filters_20"); //$NON-NLS-1$
+			String message= DebugUIMessages.getString("JavaStepFilterPreferencePage.Could_not_open_type_selection_dialog_for_step_filters_21"); //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_20")); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Select_a_type_to_filter_when_stepping_23")); //$NON-NLS-1$
+		dialog.setTitle(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_type_to_step_filters_20")); //$NON-NLS-1$
+		dialog.setMessage(DebugUIMessages.getString("JavaStepFilterPreferencePage.Select_a_type_to_filter_when_stepping_23")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -563,14 +563,14 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null);
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_24"); //$NON-NLS-1$
-			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_package_selection_dialog_for_step_filters_25"); //$NON-NLS-1$
+			String title= DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_package_to_step_filters_24"); //$NON-NLS-1$
+			String message= DebugUIMessages.getString("JavaStepFilterPreferencePage.Could_not_open_package_selection_dialog_for_step_filters_25"); //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;			
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_24")); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Select_a_package_to_filter_when_stepping_27")); //$NON-NLS-1$
+		dialog.setTitle(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_package_to_step_filters_24")); //$NON-NLS-1$
+		dialog.setMessage(DebugUIMessages.getString("JavaStepFilterPreferencePage.Select_a_package_to_filter_when_stepping_27")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -580,7 +580,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
 			if (filter.length() < 1) {
-				filter = DebugUIMessages.getString("JavaDebugPreferencePage.(default_package)_28"); //$NON-NLS-1$
+				filter = DebugUIMessages.getString("JavaStepFilterPreferencePage.(default_package)_28"); //$NON-NLS-1$
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}

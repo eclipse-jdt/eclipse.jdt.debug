@@ -6,8 +6,10 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 
@@ -54,5 +56,9 @@ public class ShowQualifiedAction extends ToggleDelegateAction {
 	protected void initActionId() {
 		fId= JDIDebugUIPlugin.getUniqueIdentifier() + getView().getSite().getId() + ".ShowQualifiedAction"; //$NON-NLS-1$
 	}
+	
+	protected void setAction(IAction action) {
+		super.setAction(action);
+		action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
+	}
 }
-

@@ -292,21 +292,18 @@
 			label="%showQualifiedAction.label"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowStaticFields"
 			label="%showStaticAction.label"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/static_co.gif"
-			state="false"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowFinalFields"
 			label="%showFinalAction.label"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/final_co.gif"
-			state="false"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
 	</viewerContribution>
@@ -317,21 +314,18 @@
 			label="%showQualifiedAction.label"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>	
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowStaticFields"
 			label="%showStaticAction.label"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/static_co.gif"
-			state="false"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowFinalFields"
 			label="%showFinalAction.label"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/final_co.gif"
-			state="false"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>		
 	</viewerContribution>
@@ -382,7 +376,6 @@
 			disabledIcon="icons/full/dlcl16/final_co.gif"
 			hoverIcon="icons/full/clcl16/final_co.gif"
 			tooltip="%showFinalAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"
@@ -392,7 +385,6 @@
 			disabledIcon="icons/full/dlcl16/static_co.gif"
 			hoverIcon="icons/full/clcl16/static_co.gif"
 			tooltip="%showStaticAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
@@ -400,7 +392,6 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
@@ -414,7 +405,6 @@
 			disabledIcon="icons/full/dlcl16/final_co.gif"
 			hoverIcon="icons/full/clcl16/final_co.gif"
 			tooltip="%showFinalAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"
@@ -424,7 +414,6 @@
 			disabledIcon="icons/full/dlcl16/static_co.gif"
 			hoverIcon="icons/full/clcl16/static_co.gif"
 			tooltip="%showStaticAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 			<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
@@ -432,7 +421,6 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>	

@@ -206,12 +206,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		super.initializeDefaultPreferences(store);
-		
-		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_PORT, "8000"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_HOST, "localhost"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.ALERT_HCR_FAILED, true);
-		store.setDefault(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, true);
-		
 		JavaDebugPreferencePage.initDefaults(store);
 		JavaStepFilterPreferencePage.initDefaults(store);
 	}

@@ -110,6 +110,7 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 		fAction = action;
 		action.addPropertyChangeListener(this);
 	}
+	
 	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */

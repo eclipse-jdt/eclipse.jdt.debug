@@ -8,7 +8,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -51,6 +53,11 @@ public class ShowStaticFieldsAction extends ToggleFilterAction {
 	 */
 	protected void initActionId() {
 		fId= JDIDebugUIPlugin.getUniqueIdentifier() + getView().getSite().getId() + ".ShowStaticFieldsAction"; //$NON-NLS-1$
+	}
+	
+	protected void setAction(IAction action) {
+		super.setAction(action);
+		action.setChecked(!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS));
 	}
 }
 

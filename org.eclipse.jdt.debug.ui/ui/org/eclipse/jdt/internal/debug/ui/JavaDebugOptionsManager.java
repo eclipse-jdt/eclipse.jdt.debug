@@ -402,7 +402,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
 			setSuspendOnCompilationErrors(((Boolean)event.getNewValue()).booleanValue());
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
 			setSuspendOnUncaughtExceptions(((Boolean)event.getNewValue()).booleanValue());
 		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS)) {
 			notifyTargetsOfFilters();
@@ -476,7 +476,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * enabled
 	 */
 	protected boolean isSuspendOnUncaughtExceptions() {
-		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
 	}	
 
 
