@@ -78,7 +78,7 @@ public class JavaSourceLookupUtil {
 					break;
 				case IRuntimeClasspathEntry.PROJECT:
 					IResource resource = entry.getResource();
-					if (resource.getType() == IResource.PROJECT) {
+					if (resource != null && resource.getType() == IResource.PROJECT) {
 						ISourceContainer container = new JavaProjectSourceContainer(JavaCore.create((IProject)resource));
 						if (!containers.contains(container)) {
 							containers.add(container);
