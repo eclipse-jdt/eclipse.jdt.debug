@@ -464,7 +464,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			if (getType() == r.getType()) {
 				if (getType() == IRuntimeClasspathEntry.CONTAINER) {
 					// containers are equal if their ID is equal
-					return getPath().segment(0).equals(r.getPath().segment(0));
+					return getPath().equals(r.getPath());
 				} else if (getPath().equals(r.getPath())) {
 					IPath sa1 = getSourceAttachmentPath();
 					IPath root1 = getSourceAttachmentRootPath();

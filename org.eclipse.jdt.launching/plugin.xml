@@ -105,4 +105,15 @@
 		container = "org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </extension>
 
+<extension point = "org.eclipse.debug.core.launchConfigurationComparators">
+	<launchConfigurationComparator
+		id = "org.eclipse.jdt.launching.classpathComparator"
+		class = "org.eclipse.jdt.internal.launching.RuntimeClasspathEntryListComparator"
+		attribute = "org.eclipse.jdt.launching.CLASSPATH"/>
+	<launchConfigurationComparator
+		id = "org.eclipse.jdt.launching.sourcepathComparator"
+		class = "org.eclipse.jdt.internal.launching.RuntimeClasspathEntryListComparator"
+		attribute = "org.eclipse.jdt.launching.SOURCE_PATH"/>		
+</extension>
+
 </plugin>
