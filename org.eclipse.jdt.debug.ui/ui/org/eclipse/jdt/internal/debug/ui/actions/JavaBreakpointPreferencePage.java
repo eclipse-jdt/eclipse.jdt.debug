@@ -14,6 +14,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -352,12 +354,20 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				try {
 					getCompletionProcessor().setType(type);			
 					String source= null;
-					source= type.getSource();
+					ICompilationUnit compilationUnit= type.getCompilationUnit();
+					if (compilationUnit != null) {
+						source= compilationUnit.getSource();
+					} else {
+						IClassFile classFile= type.getClassFile();
+						if (classFile != null) {
+							source= classFile.getSource();
+						}
+					}
 					int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 					int position= -1;
 					if (source != null && lineNumber != -1) {
 						try {
-							position= new Document(source).getLineOffset(lineNumber);
+							position= new Document(source).getLineOffset(lineNumber - 1);
 						} catch (BadLocationException e) {
 						}
 					}
