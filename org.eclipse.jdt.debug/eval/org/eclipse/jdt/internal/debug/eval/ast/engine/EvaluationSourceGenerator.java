@@ -148,7 +148,8 @@ public class EvaluationSourceGenerator {
 		if (fSource == null) {
 			try {
 				String baseSource= getSourceFromFrame(frame);
-				if (baseSource != null) {
+				int lineNumber= frame.getLineNumber();
+				if (baseSource != null && lineNumber != -1) {
 					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true);
 				} else {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
