@@ -86,9 +86,12 @@ public class JDKLauncher extends JavaLauncher {
 				p= createProcess(null, cmdLine);
 			}
 		}
-			IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
-			process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
-			return new VMRunnerResult(null, new IProcess[] { process });
+		if (p == null) {
+			return null;
+		}
+		IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
+		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		return new VMRunnerResult(null, new IProcess[] { process });
 	}
 
 	protected String convertClassPath(String[] cp) {
