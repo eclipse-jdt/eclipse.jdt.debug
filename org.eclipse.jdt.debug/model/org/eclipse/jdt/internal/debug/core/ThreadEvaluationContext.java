@@ -200,6 +200,24 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				runSnippet(codeSnippetClassName);
 			} catch (DebugException e) {
 				fDebugException = e;
+				// dump stack trace if invocation exception
+				Throwable underlyingException = e.getStatus().getException();
+				if (underlyingException instanceof InvocationException) {
+					ObjectReference theException = ((InvocationException)underlyingException).exception();
+					if (theException != null) {
+						try {
+							List methods = theException.referenceType().methodsByName("printStackTrace", "()V");
+							if (!methods.isEmpty()) {
+								try {
+									getModelThread().invokeMethod(null, theException, (Method)methods.get(0), Collections.EMPTY_LIST);
+								} catch (DebugException de) {
+								}
+							}
+						} catch (RuntimeException re) {
+							getModelThread().logError(re);
+						}
+					}
+				}
 				return false;
 			}
 		}
