@@ -100,7 +100,9 @@ public class VMRunnerConfiguration {
 	 * Sets the environment for the Java program. The Java VM will be
 	 * launched in the given environment.
 	 * 
-	 * @param environment the environment for the Java program
+	 * @param environment the environment for the Java program specified as an array
+	 *  of strings, each element specifying an environment variable setting in the
+	 *  format <i>name</i>=<i>value</i>
 	 * @since 3.0
 	 */
 	public void setEnvironment(String[] environment) {
