@@ -12,19 +12,21 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.PropertyChangeEvent;
 
-/**
- *  <b>IMPLEMENTATION IN PROGRESS</b>
- * 
+/** 
  * JRE Container - resolves a classpath container variable to a JRE
  */
 public class JREContainer implements IClasspathContainer {
@@ -38,6 +40,65 @@ public class JREContainer implements IClasspathContainer {
 	 * Container path used to resolve to this JRE
 	 */
 	private IPath fPath = null;
+	
+	/**
+	 * Cache of classpath entries per VM install. Cleared when a VM changes.
+	 */
+	private static Map fgClasspathEntries = null;
+	
+	/**
+	 * Returns the classpath entries associated with the given VM.
+	 * 
+	 * @param vm
+	 * @return classpath entries
+	 */
+	private static IClasspathEntry[] getClasspathEntries(IVMInstall vm) {
+		if (fgClasspathEntries == null) {
+			fgClasspathEntries = new HashMap(10);
+			// add a listener to clear cached value when a VM changes or is removed
+			IVMInstallChangedListener listener = new IVMInstallChangedListener() {
+				public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+				}
+
+				public void vmChanged(PropertyChangeEvent event) {
+					if (event.getSource() != null) {
+						fgClasspathEntries.remove(event.getSource());
+					}
+				}
+
+				public void vmAdded(IVMInstall vm) {
+				}
+
+				public void vmRemoved(IVMInstall vm) {
+					fgClasspathEntries.remove(vm);
+				}
+			};
+			JavaRuntime.addVMInstallChangedListener(listener);
+		}
+		IClasspathEntry[] entries = (IClasspathEntry[])fgClasspathEntries.get(vm);
+		if (entries == null) {
+			entries = computeClasspathEntries(vm);
+			fgClasspathEntries.put(vm, entries);
+		}
+		return entries;
+	}
+	
+	/**
+	 * Computes the classpath entries associated with a VM - one entry per library.
+	 * 
+	 * @param vm
+	 * @return classpath entries
+	 */
+	private static IClasspathEntry[] computeClasspathEntries(IVMInstall vm) {
+		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
+		List entries = new ArrayList(libs.length);
+		for (int i = 0; i < libs.length; i++) {
+			if (!libs[i].getSystemLibraryPath().isEmpty()) {
+				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), libs[i].getSystemLibrarySourcePath(), libs[i].getPackageRootPath()));
+			}
+		}
+		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);		
+	}
 	
 	/**
 	 * Constructs a JRE classpath conatiner on the given VM install
@@ -54,14 +115,7 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(fVMInstall);
-		List entries = new ArrayList(libs.length);
-		for (int i = 0; i < libs.length; i++) {
-			if (!libs[i].getSystemLibraryPath().isEmpty()) {
-				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), libs[i].getSystemLibrarySourcePath(), libs[i].getPackageRootPath()));
-			}
-		}
-		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
+		return getClasspathEntries(fVMInstall);
 	}
 
 	/**
