@@ -113,6 +113,7 @@ public class SWTUtil {
 	 */
 	public static Button createPushButton(Composite parent, String label, Image image) {
 		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
 		if (image != null) {
 			button.setImage(image);
 		}
