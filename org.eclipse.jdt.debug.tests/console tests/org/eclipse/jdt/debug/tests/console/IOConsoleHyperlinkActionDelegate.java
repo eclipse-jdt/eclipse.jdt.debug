@@ -31,7 +31,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
 
-public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindowActionDelegate {
+public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
  
     public void run(IAction action) {
         final IOConsole console = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
