@@ -29,7 +29,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	/**
 	 * A flag indicating if this value is still allocated (valid)
 	 */
-	protected boolean fAllocated = true;
+	private boolean fAllocated = true;
 	
 	public JDIValue(JDIDebugTarget target, Value value) {
 		super(target);
