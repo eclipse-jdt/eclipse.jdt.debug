@@ -116,9 +116,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		        fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
             		    }
             		    if (fieldVariable != null) {
-            		        StringBuffer buf = new StringBuffer();
-            		        appendVariable(buf, fieldVariable);
-            		        return buf.toString();
+            		        return getVariableText(fieldVariable);
             		    }
             			break;
             		}
@@ -175,34 +173,67 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	}	
 	
 	private String generateHoverForLocal(IJavaStackFrame frame, String varName) {
-		StringBuffer buffer= new StringBuffer();	
+	    String variableText= null;
 		try {
 			IVariable variable= frame.findVariable(varName);
 			if (variable != null) {
-				appendVariable(buffer, variable);
+				variableText= getVariableText(variable);
 			}
 		} catch (DebugException x) {
 			if (x.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 				JDIDebugUIPlugin.log(x);
 			}
 		}
+		return variableText;
+	}
+
+	/**
+	 * Returns HTML text for the given variable
+	 */
+	private static String getVariableText(IVariable variable) {
+	    StringBuffer buffer= new StringBuffer();
+		JDIModelPresentation modelPresentation = getModelPresentation();
+		buffer.append("<p><pre>"); //$NON-NLS-1$
+		String variableText= modelPresentation.getVariableText((IJavaVariable) variable);
+		buffer.append(replaceHTMLChars(variableText));
+		buffer.append("</pre></p>"); //$NON-NLS-1$
 		if (buffer.length() > 0) {
 			return buffer.toString();
 		}
 		return null;
 	}
-
-	/**
-	 * Append HTML for the given variable to the given buffer
-	 */
-	private static void appendVariable(StringBuffer buffer, IVariable variable) {		
-		JDIModelPresentation modelPresentation = getModelPresentation();
-		buffer.append("<p><pre>"); //$NON-NLS-1$
-		buffer.append(modelPresentation.getVariableText((IJavaVariable) variable));
-		buffer.append("</pre></p>"); //$NON-NLS-1$
-	}
 	
 	/**
+	 * Replaces reserved HTML characters in the given string with
+	 * their escaped equivalents. This is to ensure that variable
+	 * values containing reserved characters are correctly displayed.
+     */
+    private static String replaceHTMLChars(String variableText) {
+        StringBuffer buffer= new StringBuffer(variableText.length());
+        char[] characters = variableText.toCharArray();
+        for (int i = 0; i < characters.length; i++) {
+            char character= characters[i];
+            switch (character) {
+            	case '<':
+            	    buffer.append("&lt;"); //$NON-NLS-1$
+            	    break;
+            	case '>':
+            	    buffer.append("&gt;"); //$NON-NLS-1$
+            	    break;
+            	case '&':
+            	    buffer.append("&amp;"); //$NON-NLS-1$
+            	    break;
+            	case '"':
+            	    buffer.append("&quot;"); //$NON-NLS-1$
+            	    break;
+            	default:
+            	    buffer.append(character);
+            }
+        }
+        return buffer.toString();
+    }
+
+    /**
 	 * Returns a configured model presentation for use displaying variables.
 	 */
 	private static JDIModelPresentation getModelPresentation() {
