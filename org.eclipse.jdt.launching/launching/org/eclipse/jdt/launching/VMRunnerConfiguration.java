@@ -113,38 +113,59 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
-	 * Set the classpath to prepend to the boot classpath.
+	 * Sets the classpath entries to prepend to the boot classpath - <code>null</code>
+	 * or empty if none.
 	 * 
-	 * @param prependBootClassPath
+	 * @param prependBootClassPath the classpath entries to prepend to the boot classpath - <code>null</code>
+	 * or empty if none
+	 * @since 3.0
 	 */
 	public void setPrependBootClassPath(String[] prependBootClassPath) {
 		fPrependBootClassPath= prependBootClassPath;
+		if (prependBootClassPath != null && prependBootClassPath.length == 0) {
+			fPrependBootClassPath = null;
+		}
 	}
 	
 	/**
-	 * Set the main part of the boot classpath.
-	 * <code>null</code> represent the default boot classpath.
+	 * Sets the main boot classpath entries. A value of 
+	 * <code>null</code> indicates the default boot classpath should be used
+	 * (i.e. not specified on the command line), and empty array indicates
+	 * an empty boot classpath attribute.
 	 * 
-	 * @param bootClassPath the main part of the boot classpath.
+	 * @param bootClassPath the main boot classpath entries, possibly <code>null</code>
+	 * @since 3.0
 	 */
 	public void setMainBootClassPath(String[] bootClassPath) {
 		fMainBootClassPath= bootClassPath;
 	}
 	
 	/**
-	 * Set the classpath to append to the boot classpath.
+	 * Sets the classpath entries to append to the boot classpath - <code>null</code>
+	 * or empty if none.
 	 * 
-	 * @param appendBootClassPath
+	 * @param appendBootClassPath the entries to append to the boot classpath - 
+	 *  <code>null</code> or empty indicates none.
+	 * @since 3.0
 	 */
 	public void setAppendBootClassPath(String[] appendBootClassPath) {
 		fAppendBootClassPath= appendBootClassPath;
+		if (appendBootClassPath != null && appendBootClassPath.length == 0) {
+			fAppendBootClassPath = null;
+		}
 	}
 	
 	/**
 	 * Sets the boot classpath. Note that the boot classpath will be passed to the 
 	 * VM "as is". This means it has to be complete. Interpretation of the boot class path
 	 * is up to the VM runner this object is passed to.
-	 *
+	 * <p>
+	 * In release 3.0, support has been added for appending and prepending the
+	 * boot classpath. Generally an <code>IVMRunner</code> should use the prepend,
+	 * main, and append boot classpaths provided. However, in the case that an
+	 * <code>IVMRunner</code> does not support these options, a complete boothpath
+	 * should also be specified.
+	 * </p>
 	 * @param bootClassPath The boot classpath. An emptry array indicates an empty
 	 *  bootpath and <code>null</code> indicates a default bootpath.
 	 */
@@ -182,28 +203,35 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
-	 * Return the classpath to prepend to the boot classpath.
+	 * Return the classpath entries to prepend to the boot classpath,
+	 * or <code>null</code> if none.
 	 * 
-	 * @return the classpath to prepend to the boot classpath.
+	 * @return the classpath entries to prepend to the boot classpath, or
+	 *  <code>null</code> if none
+	 * @since 3.0
 	 */
 	public String[] getPrependBootClassPath() {
 		return fPrependBootClassPath;
 	}
 	
 	/**
-	 * Return the main part of the boot classpath.
+	 * Return the main part of the boot classpath -
 	 * <code>null</code> represents the default boot classpath.
 	 * 
-	 * @return the main part of the boot classpath.
+	 * @return the main part of the boot classpath
+	 * @since 3.0
 	 */
 	public String[] getMainBootClassPath() {
 		return fMainBootClassPath;
 	}
 	
 	/**
-	 * Return the classpath to append to the boot classpath.
+	 * Return the classpath entries to append to the boot classpath,
+	 * or <code>null</code> null if none
 	 * 
-	 * @return the classpath to append to the boot classpath.
+	 * @return the classpath entries to append to the boot classpath,
+	 *  or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public String[] getAppendBootClassPath() {
 		return fAppendBootClassPath;
@@ -212,11 +240,15 @@ public class VMRunnerConfiguration {
 	/**
 	 * Returns the boot classpath. An empty array indicates an empty
 	 * bootpath and <code>null</code> indicates a default bootpah.
-	 * 
-	 * #getPrependBootClassPath(), #getMainBootClassPath() and
-	 * #getAppendBootClassPath() should be used instead of this method,
-	 * as they return more accurate information.
-	 *
+	 * <p>
+	 * In 3.0, support has been added for prepending and appending to the boot classpath.
+	 * The methods <code>#getPrependBootClassPath()</code>, <code>#getMainBootClassPath()</code>,
+	 * and <code>#getAppendBootClassPath()</code> should be used instead of this method
+	 * if an <code>IVMRunner</code> supports the options, as they may return more accurate
+	 * information. In the case that the other options are not specified, and a single
+	 * boot classpath is provided, an <code>IVMRunner</code> should honor the
+	 * boot classpath specified by this method.
+	 * </p>
 	 * @return The boot classpath. An emptry array indicates an empty
 	 *  bootpath and <code>null</code> indicates a default bootpah.
 	 * @see #setBootClassPath

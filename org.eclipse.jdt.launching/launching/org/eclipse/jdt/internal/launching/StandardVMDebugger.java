@@ -149,6 +149,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 		String[] prependBootCP= config.getPrependBootClassPath();
 		String[] bootCP= config.getMainBootClassPath();
 		String[] appendBootCP= config.getAppendBootClassPath();
+		if (prependBootCP == null && bootCP == null && appendBootCP == null) {
+			// use old single attribute instead of new attributes if not specified
+			bootCP = config.getBootClassPath();
+		}
 		if (prependBootCP != null) {
 			arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$
 		}

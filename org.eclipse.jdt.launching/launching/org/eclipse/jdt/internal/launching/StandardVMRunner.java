@@ -215,6 +215,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] prependBootCP= config.getPrependBootClassPath();
 		String[] bootCP= config.getMainBootClassPath();
 		String[] appendBootCP= config.getAppendBootClassPath();
+		
+		if (prependBootCP == null && bootCP == null && appendBootCP == null) {
+			// use old 'single' attribute when new attributes not specified
+			bootCP = config.getBootClassPath();
+		}
 		if (prependBootCP != null) {
 			arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$
 		}

@@ -194,6 +194,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	public String[] getBootpath(ILaunchConfiguration configuration) throws CoreException {
+		String[][] paths = getBootpathExt(configuration);
+		String[] pre = paths[0];
+		String[] main = paths[1];
+		String[] app = paths[2];
+		if (pre == null && main == null && app == null) {
+			// default
+			return null;
+		}		
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 		List bootEntries = new ArrayList(entries.length);
@@ -221,17 +229,18 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	/**
 	 * Returns three sets of entries which represent the boot classpath specified in the
 	 * launch configuration, as an array of three arrays of resolved strings.
-	 * The first array represents the classpath that should be prepend to the
+	 * The first array represents the classpath that should be prepended to the
 	 * boot classpath.
-	 * The second array represents the main part of the boot classpath. <code>null</code>
+	 * The second array represents the main part of the boot classpath - <code>null</code>
 	 * represents the default bootclasspath.
-	 * The third array represents the classpath that should be append to the
+	 * The third array represents the classpath that should be appended to the
 	 * boot classpath.
 	 * 
 	 * @param configuration launch configuration
 	 * @return a description of the boot classpath specified by the given launch
 	 *  configuration.
 	 * @exception CoreException if unable to retrieve the attribute
+	 * @since 3.0
 	 */
 	public String[][] getBootpathExt(ILaunchConfiguration configuration) throws CoreException {
 		String [][] bootpathInfo= new String[3][];
