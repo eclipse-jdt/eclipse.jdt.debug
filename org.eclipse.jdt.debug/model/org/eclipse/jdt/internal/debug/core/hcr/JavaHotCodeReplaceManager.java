@@ -292,7 +292,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!noHotSwapTargets.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
-					notifyUnsupportedHCR(noHotSwapTargets, resources, qualifiedNames);
+					notifyUnsupportedHCR(noHotSwapTargets, qualifiedNames);
 				}
 			};
 			fork(wRunnable);
@@ -303,17 +303,17 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Notify the given targets that HCR failed for classes
 	 * with the given fully qualified names.
 	 */
-	protected void notifyUnsupportedHCR(List targets, List resources, List qualifiedNames) {
+	protected void notifyUnsupportedHCR(List targets, List qualifiedNames) {
 		Iterator iter= targets.iterator();
 		JDIDebugTarget target= null;
 		while (iter.hasNext()) {	
 			target= (JDIDebugTarget) iter.next();	
 			fireHCRFailed(target, null);
-			notifyFailedHCR(target, resources, qualifiedNames);
+			notifyFailedHCR(target, qualifiedNames);
 		}
 	}
 	
-	protected void notifyFailedHCR(JDIDebugTarget target, List resources, List qualifiedNames) {
+	protected void notifyFailedHCR(JDIDebugTarget target, List qualifiedNames) {
 		if (target.isAvailable()) {
 			target.addOutOfSynchTypes(qualifiedNames);
 			target.fireChangeEvent(DebugEvent.STATE);
@@ -672,7 +672,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		for (int i = 0; i < numThreads; i++) {
 			thread= (JDIThread) threads[i];
 			if (thread.isSuspended()) {
-				affectedFrame= getAffectedFrame(thread, resources, replacedClassNames);
+				affectedFrame= getAffectedFrame(thread, replacedClassNames);
 				if (affectedFrame == null) {
 					// No frame to drop to in this thread
 					continue;
@@ -701,7 +701,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * stack frames whose methods were directly affected (and not simply all frames
 	 * in affected types) will be returned.
 	 */
-	protected JDIStackFrame getAffectedFrame(JDIThread thread, IResource[] resources, List replacedClassNames) throws DebugException {
+	protected JDIStackFrame getAffectedFrame(JDIThread thread, List replacedClassNames) throws DebugException {
 		List frames= thread.computeStackFrames();
 		JDIStackFrame affectedFrame= null;
 		JDIStackFrame frame= null;
