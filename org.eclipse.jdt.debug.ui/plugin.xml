@@ -449,19 +449,6 @@
 		</action>
 	</viewerContribution>
 	<viewerContribution
-		id="org.eclipse.jdt.debug.OpenOnConsoleTypeActions"
-		targetID="org.eclipse.debug.ui.ConsoleView">
-		<action
-			id="org.eclipse.jdt.ui.actions.OpenOnConsoleType"
-			label="%openOnConsoleTypeAction.label"
-			icon="../org.eclipse.jdt.ui/icons/full/ctool16/opentype.gif"
-			tooltip="%openOnConsoleTypeAction.tooltip"
-			menubarPath="additions"
-			helpContextId="open_on_console_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnConsoleTypeAction">
-		</action>
-	</viewerContribution>
-	<viewerContribution
 		id="org.eclipse.jdt.debug.DebugViewPopupActions"
 		targetID="org.eclipse.debug.ui.DebugView">
 		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"
