@@ -199,4 +199,11 @@ public class InterpreterVariable implements IJavaVariable {
 	public boolean isSynthetic() throws DebugException {
 		return true;
 	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
+	 */
+	public boolean isLocal() throws DebugException {
+		return false;
+	}
 }

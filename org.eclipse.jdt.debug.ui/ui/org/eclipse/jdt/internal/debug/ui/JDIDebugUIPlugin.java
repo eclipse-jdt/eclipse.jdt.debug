@@ -242,6 +242,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		super.initializeDefaultPreferences(store);
 		JavaDebugPreferencePage.initDefaults(store);
 		JavaStepFilterPreferencePage.initDefaults(store);
+		JavaVariablesFilterPreferencePage.initDefaults(store);
 	}
 	
 	/**

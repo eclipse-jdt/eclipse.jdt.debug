@@ -77,6 +77,9 @@ public class JavaDebugImages {
 	
 	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_obj.gif";  //$NON-NLS-1$
 	
+	public static final String IMG_OBJS_PLUS_SIGN = NAME_PREFIX + "plus_sign.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MINUS_SIGN = NAME_PREFIX + "minus_sign.gif";  //$NON-NLS-1$
+	
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -146,6 +149,9 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_DISABLED= create(T_DTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
+	
+	public static final ImageDescriptor DESC_OBJS_PLUS_SIGN= createManaged(T_OBJ, IMG_OBJS_PLUS_SIGN);
+	public static final ImageDescriptor DESC_OBJS_MINUS_SIGN= createManaged(T_OBJ, IMG_OBJS_MINUS_SIGN);
 
 	public static final ImageDescriptor DESC_OBJ_JAVA_INSPECT_EXPRESSION= create(T_OBJ, "insp_sbook.gif"); 			//$NON-NLS-1$
 

@@ -184,6 +184,13 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	}
 	
 	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
+	 */
+	public boolean isLocal() throws DebugException {
+		return false;
+	}
+
+	/**
 	 * @see IJavaVariable#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {
@@ -239,5 +246,6 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public boolean hasValueChanged() throws DebugException {
 		return getChangeCount() == getJavaDebugTarget().getSuspendCount();
 	}
+
 }
 

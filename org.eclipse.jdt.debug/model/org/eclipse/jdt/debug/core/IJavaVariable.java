@@ -44,6 +44,18 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 */
 	public IJavaType getJavaType() throws DebugException;	
 	
+	/**
+	 * Returns whether this variable is local.
+	 * 
+	 * @return whether this variable is a local variable
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
+	 * @since 2.1
+	 */
+	public boolean isLocal() throws DebugException;
+	
 }
 
 

@@ -491,22 +491,6 @@
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
-		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowStaticFields"
-			label="%showStaticAction.label"
-			tooltip="%showStaticAction.tooltip"
-			menubarPath="renderGroup"
-			icon="icons/full/clcl16/static_co.gif"
-			helpContextId="show_static_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
-		</action>
-		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowFinalFields"
-			label="%showFinalAction.label"
-			tooltip="%showFinalAction.tooltip"
-			menubarPath="renderGroup"
-			icon="icons/full/clcl16/final_co.gif"
-			helpContextId="show_final_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
-		</action>
 	</viewerContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.ExpressionViewPopupActions"
@@ -519,22 +503,6 @@
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>	
-		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowStaticFields"
-			label="%showStaticAction.label"
-			tooltip="%showStaticAction.tooltip"
-			menubarPath="renderGroup"
-			icon="icons/full/clcl16/static_co.gif"
-			helpContextId="show_static_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
-		</action>
-		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowFinalFields"
-			label="%showFinalAction.label"
-			tooltip="%showFinalAction.tooltip"
-			menubarPath="renderGroup"
-			icon="icons/full/clcl16/final_co.gif"
-			helpContextId="show_final_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
-		</action>		
          <action
                label="%addWatchExpressionAction.label"
                icon="icons/full/ctool16/expression_obj.gif"
@@ -615,26 +583,6 @@
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.VariableViewActions"
 		targetID="org.eclipse.debug.ui.VariableView">
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowFinalFields"
-			label="%showFinalAction.label"
-			toolbarPath="javaVariableFilters"
-			icon="icons/full/elcl16/final_co.gif"
-			disabledIcon="icons/full/dlcl16/final_co.gif"
-			hoverIcon="icons/full/clcl16/final_co.gif"
-			tooltip="%showFinalAction.tooltip"
-			helpContextId="show_final_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
-		</action>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"
-			label="%showStaticAction.label"
-			toolbarPath="javaVariableFilters"
-			icon="icons/full/elcl16/static_co.gif"
-			disabledIcon="icons/full/dlcl16/static_co.gif"
-			hoverIcon="icons/full/clcl16/static_co.gif"
-			tooltip="%showStaticAction.tooltip"
-			helpContextId="show_static_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
-		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
@@ -643,37 +591,33 @@
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
+		<action id="org.eclipse.jdt.ui.variableViewActions.FilterPreferences"
+			label="%filterPreferencesAction.label"
+			menubarPath="filterActions"
+			icon="icons/full/obj16/var_filters.gif"
+			tooltip="%filterPreferencesAction.tooltip"
+			helpContextId="java_variables_filter_preference_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesFilterPreferenceAction">
+		</action>
 	</viewContribution>
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
 		targetID="org.eclipse.debug.ui.ExpressionView">
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowFinalFields"
-			label="%showFinalAction.label"
-			toolbarPath="javaVariableFilters"
-			icon="icons/full/elcl16/final_co.gif"
-			disabledIcon="icons/full/dlcl16/final_co.gif"
-			hoverIcon="icons/full/clcl16/final_co.gif"
-			tooltip="%showFinalAction.tooltip"
-			helpContextId="show_final_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
-		</action>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"
-			label="%showStaticAction.label"
-			toolbarPath="javaVariableFilters"
-			icon="icons/full/elcl16/static_co.gif"
-			disabledIcon="icons/full/dlcl16/static_co.gif"
-			hoverIcon="icons/full/clcl16/static_co.gif"
-			tooltip="%showStaticAction.tooltip"
-			helpContextId="show_static_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
-		</action>
-			<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+		</action>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.FilterPreferences"
+			label="%filterPreferencesAction.label"
+			menubarPath="filterActions"
+			icon="icons/full/obj16/var_filters.gif"
+			tooltip="%filterPreferencesAction.tooltip"
+			helpContextId="java_variables_filter_preference_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesFilterPreferenceAction">
 		</action>
 	</viewContribution>	
 	<viewContribution
