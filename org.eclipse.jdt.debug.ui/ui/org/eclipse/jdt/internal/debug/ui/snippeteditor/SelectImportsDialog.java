@@ -216,7 +216,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 				IPackageFragmentRoot root = roots[i];
 				projects.add(root.getParent());
 			}
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, (IJavaProject[])projects.toArray(new IJavaProject[projects.size()]));
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, (IJavaProject[])projects.toArray(new IJavaProject[projects.size()]), false);
 		} catch (JavaModelException jme) {
 			String title= SnippetMessages.getString("SelectImportsDialog.Add_package_as_import_7"); //$NON-NLS-1$
 			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_package_selection_dialog_8");  //$NON-NLS-1$
@@ -233,11 +233,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		if (packages != null && packages.length > 0) {
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
-			if (filter.length() < 1) {
-				return;
-			} else {
-				filter += ".*"; //$NON-NLS-1$
-			}
+			filter += ".*"; //$NON-NLS-1$
 			fImportContentProvider.addImport(filter);
 		}		
 	}

@@ -43,7 +43,7 @@ public class FilterLabelProvider extends LabelProvider implements ITableLabelPro
 	 */
 	public Image getColumnImage(Object object, int column) {
 		String name = ((Filter) object).getName();
-		if (name.endsWith("*")) { //$NON-NLS-1$
+		if (name.endsWith("*") || name.equals("(default package)")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return IMG_PKG;
 		} else {
 			return IMG_CUNIT;

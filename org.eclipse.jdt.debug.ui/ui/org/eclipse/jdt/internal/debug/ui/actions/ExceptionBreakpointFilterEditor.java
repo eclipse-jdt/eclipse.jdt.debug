@@ -464,7 +464,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, true);
 		} catch (JavaModelException jme) {
 			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_Package_to_Scope_14"); //$NON-NLS-1$
 			String message= ActionMessages.getString("ExceptionBreakpointFilterEditor.Could_not_open_package_selection_dialog_for_scope_definition_13");  //$NON-NLS-1$
@@ -482,7 +482,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
 			if (filter.length() < 1) {
-				filter = ActionMessages.getString("ExceptionBreakpointFilterEditor.(default_package)_16");  //$NON-NLS-1$
+				filter = "(default package)";  //$NON-NLS-1$
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}

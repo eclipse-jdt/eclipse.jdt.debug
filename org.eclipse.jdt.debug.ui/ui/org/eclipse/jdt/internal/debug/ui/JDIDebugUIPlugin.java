@@ -304,7 +304,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * are included.  If no Java projects are provided, all Java projects in the
 	 * workspace are considered.
 	 */
-	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] originals) throws JavaModelException{
+	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] originals, final boolean includeDefaultPackage) throws JavaModelException{
 		final List packageList = new ArrayList();
 		if (originals == null) {
 			IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
@@ -326,7 +326,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 							if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
 								continue;
 							}
-							if (packageNameSet.add(pkg.getElementName())) {
+							String pkgName= pkg.getElementName();
+							if (!includeDefaultPackage && pkgName.length() == 0) {
+								continue;
+							}
+							if (packageNameSet.add(pkgName)) {
 								packageList.add(pkg);
 							}
 						}
