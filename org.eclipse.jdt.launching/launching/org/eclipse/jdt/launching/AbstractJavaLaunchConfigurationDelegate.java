@@ -34,8 +34,8 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -56,7 +56,7 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
  * </p>
  * @since 2.0
  */
-public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunchConfigurationDelegate, IDebugEventSetListener {
+public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements IDebugEventSetListener {
 	
 	/**
 	 * Convenience method to get the launch manager.
