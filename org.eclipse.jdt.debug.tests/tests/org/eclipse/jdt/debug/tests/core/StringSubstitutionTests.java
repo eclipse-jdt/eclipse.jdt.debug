@@ -18,6 +18,7 @@ import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
@@ -33,6 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+
 
 /**
  * Tests string substitutions
@@ -194,6 +196,89 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		} finally {
 			manager.removeVariables(new IValueVariable[]{variable});
 		}
+	}
+	
+	/**
+	 * Test for simple cycling references like ${A} -> ${B} -> ${A}
+	 */
+	public void testSimpleReferenceCycle() throws CoreException {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		IValueVariable var1 = manager.newValueVariable("var_A", null);
+		IValueVariable var2 = manager.newValueVariable("var_B", null);
+		try {
+			manager.addVariables(new IValueVariable[]{var1, var2});
+			var1.setValue("${var_B}");
+			var2.setValue("${var_A}");
+			String expression = "something ${var_A} else";
+			try {
+				doSubs(expression);
+				assertTrue("Expected cycle to cause exception", false);
+			} catch (CoreException ce){
+				IStatus status = ce.getStatus();
+				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR)
+					throw ce;				
+			}
+		} finally {
+			manager.removeVariables(new IValueVariable[]{var1, var2});
+		}
+	}
+	
+	/**
+	 * Test for cycling references in cases where original expression is never duplicated
+	 * eg. ${A} -> ${B}z -> ${A}z -> ${B}zz
+	 */
+	public void testReferenceCycleWithUniqueExpression() throws CoreException {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		IValueVariable var1 = manager.newValueVariable("var_A", null);
+		IValueVariable var2 = manager.newValueVariable("var_B", null);
+		try {
+			manager.addVariables(new IValueVariable[]{var1, var2});
+			var1.setValue("${var_B} plus foo");
+			var2.setValue("${var_A}");
+			String expression = "something ${var_A} else";
+			try {
+				doSubs(expression);
+				assertTrue("Expected cycle to cause exception", false);
+			} catch (CoreException ce){
+				IStatus status = ce.getStatus();
+				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR)
+					throw ce;				
+			}
+		} finally {
+			manager.removeVariables(new IValueVariable[]{var1, var2});
+		}
+	}
+	
+	/**
+	 * Test for proper handling of infinite variable reference cycles in cases where
+	 * resolving two variables results in a third
+	 * eg 	${A} = "${"
+	 * 		${B} = "C}
+	 * 		${C} = ${A}${B}
+	 * 		In this case any references to ${C} or ${A}${B} cannot be resolved 
+	 */
+	public void testDividedRecursiveReferenceCycles() throws CoreException {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		IValueVariable var1 = manager.newValueVariable("var_A", null);
+		IValueVariable var2 = manager.newValueVariable("var_B", null);
+		IValueVariable var3 = manager.newValueVariable("var_C", null);
+		try {
+			manager.addVariables(new IValueVariable[]{var1, var2, var3});
+			var1.setValue("${");
+			var2.setValue("var_C}");
+			var3.setValue("${var_A}${var_B}");
+			String expression = "${var_A}${var_B}";
+			try {
+				doSubs(expression);
+				assertTrue("Expected cycle to cause exception", false);
+			} catch (CoreException ce){
+				IStatus status = ce.getStatus();
+				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR)
+					throw ce;				
+			}
+		} finally {
+			manager.removeVariables(new IValueVariable[]{var1, var2, var3});
+		}		
 	}
 	
 	/**
