@@ -963,9 +963,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					IClassFileReader reader= ToolFactory.createDefaultClassFileReader(classFile, IClassFileReader.CLASSFILE_ATTRIBUTES);
 					if (reader != null) {
 						ISourceAttribute source= reader.getSourceFileAttribute();
-						unit= (ICompilationUnit)project.findElement(new Path(new String(source.getSourceFileName())));
-						if (unit != null) {
-							return unit.getCorrespondingResource();
+						if (source != null) { 
+							unit= (ICompilationUnit)project.findElement(new Path(new String(source.getSourceFileName())));
+							if (unit != null) {
+								return unit.getCorrespondingResource();
+							}
 						}
 					}
 				}
