@@ -33,9 +33,7 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -583,7 +581,7 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
-					
+					return computeDefaultContainerEntries(entry, configuration);
 				} else {
 					return resolver.resolveForClasspath(entry, configuration);
 				}
@@ -619,7 +617,7 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
-					
+					return computeDefaultContainerEntries(entry, configuration);
 				} else {
 					return resolver.resolveForSourceLookupPath(entry, configuration);
 				}
@@ -634,21 +632,41 @@ public final class JavaRuntime {
 	 * Delegates to the Java model.
 	 */
 	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config) throws CoreException {
-		IJavaProject project = getJavaProject(config);
+		return computeDefaultContainerEntries(entry, getJavaProject(config));
+	}
+	
+	/**
+	 * Performs default resolution for a container entry.
+	 * Delegates to the Java model.
+	 */
+	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
 		if (project == null) {
 			// cannot resolve without project context
 			return new IRuntimeClasspathEntry[0];
-		} else {
+		} else {							
 			IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
 			IClasspathEntry[] cpes = container.getClasspathEntries();
+			int property = -1;
+			switch (container.getKind()) {
+				case IClasspathContainer.K_APPLICATION:
+					property = IRuntimeClasspathEntry.USER_CLASSES;
+					break;
+				case IClasspathContainer.K_DEFAULT_SYSTEM:
+					property = IRuntimeClasspathEntry.STANDARD_CLASSES;
+					break;	
+				case IClasspathContainer.K_SYSTEM:
+					property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+					break;
+			}			
 			IRuntimeClasspathEntry[] resolved = new IRuntimeClasspathEntry[cpes.length];
 			for (int i = 0; i < resolved.length; i++) {
 				resolved[i] = newRuntimeClasspathEntry(cpes[i]);
+				resolved[i].setClasspathProperty(property);
 			}
 			return resolved;
 		}
 	}
-		
+			
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
@@ -846,7 +864,7 @@ public final class JavaRuntime {
 	 * @return list of classpath entries and runtime classpath entries for containers
 	 * @exception CoreException if unable to expand the classpath
 	 */
-	protected static List expandProject(IClasspathEntry projectEntry) throws CoreException {
+	private static List expandProject(IClasspathEntry projectEntry) throws CoreException {
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
 		IPath projectPath = projectEntry.getPath();
@@ -880,41 +898,54 @@ public final class JavaRuntime {
 			if (entry == projectEntry) {
 				expandedPath.add(entry);
 			} else {
-				if (entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-					if (!expandedPath.contains(entry)) {
-						List projectEntries = expandProject(entry);
-						if (projectEntries != null) {
-							Iterator entries = projectEntries.iterator();
-							while (entries.hasNext()) {
-								IClasspathEntry e = (IClasspathEntry)entries.next();
-								if (!expandedPath.contains(e)) {
-									expandedPath.add(e);
+				switch (entry.getEntryKind()) {
+					case IClasspathEntry.CPE_PROJECT:
+						if (!expandedPath.contains(entry)) {
+							List projectEntries = expandProject(entry);
+							if (projectEntries != null) {
+								Iterator entries = projectEntries.iterator();
+								while (entries.hasNext()) {
+									IClasspathEntry e = (IClasspathEntry)entries.next();
+									if (!expandedPath.contains(e)) {
+										expandedPath.add(e);
+									}
 								}
 							}
 						}
-					}
-				} else if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-					IClasspathContainer conatiner = JavaCore.getClasspathContainer(entry.getPath(), project);
-					int property = -1;
-					switch (conatiner.getKind()) {
-						case IClasspathContainer.K_APPLICATION:
-							property = IRuntimeClasspathEntry.USER_CLASSES;
+						break;
+					case IClasspathEntry.CPE_CONTAINER:
+						IClasspathContainer conatiner = JavaCore.getClasspathContainer(entry.getPath(), project);
+						int property = -1;
+						switch (conatiner.getKind()) {
+							case IClasspathContainer.K_APPLICATION:
+								property = IRuntimeClasspathEntry.USER_CLASSES;
+								break;
+							case IClasspathContainer.K_DEFAULT_SYSTEM:
+								property = IRuntimeClasspathEntry.STANDARD_CLASSES;
+								break;	
+							case IClasspathContainer.K_SYSTEM:
+								property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+								break;
+						}
+						IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
+						if (!expandedPath.contains(r)) {
+							expandedPath.add(r);
+						}	
+					case IClasspathEntry.CPE_VARIABLE:
+						if (entry.getPath().segment(0).equals(JRELIB_VARIABLE)) {
+							r = newVariableRuntimeClasspathEntry(JRELIB_VARIABLE);
+							r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
+							r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
+							r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+							expandedPath.add(r);
 							break;
-						case IClasspathContainer.K_DEFAULT_SYSTEM:
-							property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-							break;	
-						case IClasspathContainer.K_SYSTEM:
-							property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-							break;
-					}
-					IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
-					if (!expandedPath.contains(r)) {
-						expandedPath.add(r);
-					}
-				} else {
-					if (!expandedPath.contains(entry)) {
-						expandedPath.add(entry);
-					}
+						}
+						// fall through if not the special JRELIB variable
+					default:
+						if (!expandedPath.contains(entry)) {
+							expandedPath.add(entry);
+						}
+						break;
 				}
 			}
 		}
@@ -922,69 +953,37 @@ public final class JavaRuntime {
 	}
 		
 	/**
-	 * Computes the default classpath for a given <code>project</code> 
-	 * from it's build classpath following this algorithm:
-	 * <ul>
-	 * <li>traverse the build class path:</li>
-	 * <li>if it's the first source folder found, add the projects output location
-	 * <li>if it's a project entry, recursively compute it's classpath and append the result to the classpath</li>
-	 * <li>if it's a library entry, append the entry to the classpath.</li>
-	 * </ul>
-	 * @param	jproject	The project to compute the classpath for
+	 * Computes the default application classpath entries for the given 
+	 * project.
+	 * 
+	 * @param	jproject The project to compute the classpath for
 	 * @return	The computed classpath. May be empty, but not null.
-	 * @throws	CoreException	When accessing the underlying resources or when a project
-	 					has no output folder.
+	 * @throws	CoreException if unable to compute the default classpath
 	 */
 	public static String[] computeDefaultRuntimeClassPath(IJavaProject jproject) throws CoreException {
-		ArrayList visited= new ArrayList();
-		ArrayList resultingPaths= new ArrayList();
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		collectClasspathEntries(root, jproject, visited, resultingPaths);
-		return (String[]) resultingPaths.toArray(new String[resultingPaths.size()]);
-	}	
-	
-	private static void collectClasspathEntries(IWorkspaceRoot root, IJavaProject jproject, List visited, List resultingPaths) throws CoreException {
-		if (visited.contains(jproject)) {
-			return;
-		}
-		visited.add(jproject);
-	
-		boolean sourceFolderFound= false;
-		
-		IClasspathEntry[] entries= jproject.getResolvedClasspath(true);
-		for (int i= 0; i < entries.length; i++) {
-			IClasspathEntry curr= entries[i];
-			switch (curr.getEntryKind()) {
-				case IClasspathEntry.CPE_LIBRARY:
-					IResource library= root.findMember(curr.getPath());
-					// can be external or in workspace
-					String libraryLocation= (library != null) ? library.getLocation().toOSString() : curr.getPath().toOSString();
-					if (!resultingPaths.contains(libraryLocation)) {
-						resultingPaths.add(libraryLocation);
-					}
-					break;
-				case IClasspathEntry.CPE_PROJECT:
-					IProject reqProject= (IProject) root.findMember(curr.getPath().lastSegment());
-					IJavaProject javaProject = JavaCore.create(reqProject);
-					if (javaProject != null && javaProject.getProject().isOpen()) {
-						collectClasspathEntries(root, javaProject, visited, resultingPaths);
-					}
-					break;
-				case IClasspathEntry.CPE_SOURCE:
-					if (!sourceFolderFound) {
-						// add the output location for the first source folder found
-						IPath outputLocation= jproject.getOutputLocation();
-						IResource resource= root.findMember(outputLocation);
-						if (resource != null) {
-							resultingPaths.add(resource.getLocation().toOSString());
+		IRuntimeClasspathEntry[] unresolved = computeRuntimeClasspath(jproject);
+		// 1. remove bootpath entries
+		// 2. resolve & translate to local file system paths
+		List resolved = new ArrayList(unresolved.length);
+		for (int i = 0; i < unresolved.length; i++) {
+			IRuntimeClasspathEntry entry = unresolved[i];
+			if (unresolved[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				switch (entry.getType()) {
+					case IRuntimeClasspathEntry.CONTAINER:
+						IRuntimeClasspathEntry[] contained = computeDefaultContainerEntries(entry, jproject);
+						for (int j = 0; j < contained.length; j++) {
+							resolved.add(contained[j].getLocation());
 						}
-						sourceFolderFound= true;
-					}			
-					break;
+						break;
+					default:
+						resolved.add(entry.getLocation());
+						break;
+				}
 			}
-		}		
-	}
-	
+		}
+		return (String[])resolved.toArray(new String[resolved.size()]);
+	}	
+		
 	/**
 	 * Saves the VM configuration information to disk. This includes
 	 * the following information:
