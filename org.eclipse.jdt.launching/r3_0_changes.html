@@ -42,5 +42,16 @@
   The attributes are computed dynamically at launch time based on the classpath 
   attribute associated with a launch configiuration. The boothpath attributes 
   themselves are not stored in launch configurations.</p>
+<h3>Default VM Arguments</h3>
+<p>To allow a specific set of VM arguments to be used every time a specific VM 
+  is launched (without having to specify the arguments on all associated launch 
+  configurations), a new &quot;VM arguments&quot; attribute has been added to 
+  <code>IVMInstall</code>, along with getter and setter methods. Although clients 
+  may implement this interface, the additional API is intended to be non-breaking, 
+  since clients who implement the interface should be subclassing <code>AbstractVMInstall</code>, 
+  where the new feature is implemented. Existing VM runners need to honor the 
+  new attributes when launching a VM. A convenience method (<code>combineVmArgs</code>) 
+  has been added to <code>AbstractVMRunner</code> to combine VM arguments specified 
+  on a runner configuration and a VM install.</p>
 </body>
 </html>
