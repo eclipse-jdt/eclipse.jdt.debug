@@ -79,7 +79,8 @@ public class CreateStepFilterDialog extends StatusDialog {
 		int textStyles = SWT.SINGLE | SWT.LEFT;
 		Label label= new Label(container, textStyles);
 		label.setText(DebugUIMessages.getString("CreateStepFilterDialog.3")); //$NON-NLS-1$
-
+		label.setFont(container.getFont());
+		
 		// create & configure Text widget for editor
 		// Fix for bug 1766.  Border behavior on for text fields varies per platform.
 		// On Motif, you always get a border, on other platforms,
@@ -95,6 +96,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		gridData.horizontalSpan=1;
 		gridData.widthHint = 300;
 		text.setLayoutData(gridData);
+		text.setFont(container.getFont());
 		
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
