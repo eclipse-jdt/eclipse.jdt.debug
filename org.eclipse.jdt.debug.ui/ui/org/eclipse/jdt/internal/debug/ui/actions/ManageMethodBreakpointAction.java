@@ -42,9 +42,6 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 	}
 		
 	protected void update() {
-		if (getAction() == null) {
-			return;
-		}
 		IMethod method= (IMethod)getElement();
 		if (method != null && method.isBinary()) { // only add to class files
 			getAction().setEnabled(true);
@@ -52,6 +49,8 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 			boolean doesNotExist= getBreakpoint() == null;
 			getAction().setText(doesNotExist ? fAddText : fRemoveText);
 			getAction().setDescription(doesNotExist ? fAddDescription : fRemoveDescription);
+		} else {
+			getAction().setEnabled(false);
 		}
 	}
 	
