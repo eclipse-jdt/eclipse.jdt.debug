@@ -41,7 +41,7 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 				throw new CoreException(new Status(IStatus.ERROR, JavaTestPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 				 0, "No test case registered.", null));
 			} else {
-				fgTestCase.launch(configuration, mode, launch);
+				fgTestCase.launch(configuration, mode);
 			}
 
 	}
