@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
  
 /**
@@ -46,6 +47,10 @@ public class PushFieldVariable extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
+		Object value= popValue();
+		if (value instanceof JDINullValue) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.getString("PushFieldVariable.0"), null)); //$NON-NLS-1$
+		}
 		IJavaObject receiver=(IJavaObject) popValue();
 		
 		IJavaVariable field= null;
