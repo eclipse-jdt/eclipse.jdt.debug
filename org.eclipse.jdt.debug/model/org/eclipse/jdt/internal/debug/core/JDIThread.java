@@ -550,6 +550,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		setRunning(false);
 		fInEvaluation = false;
 		setRequestTimeout(restoreTimeout);
+		// update preserved stack frames
+		try {
+			getStackFrames0();
+		} catch (DebugException e) {
+			logError(e);
+		}
 		if (interrupted) {
 			fireSuspendEvent(-1);
 		}
