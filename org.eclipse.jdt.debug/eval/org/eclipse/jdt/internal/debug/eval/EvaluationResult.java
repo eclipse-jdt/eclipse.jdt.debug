@@ -7,12 +7,12 @@ package org.eclipse.jdt.internal.debug.eval;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import sun.net.ftp.FtpClient;
  
 /**
  * The result of an evaluation.
