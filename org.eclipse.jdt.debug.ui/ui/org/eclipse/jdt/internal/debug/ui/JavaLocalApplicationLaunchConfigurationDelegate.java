@@ -407,9 +407,8 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		int index = 1;
 		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
 			StringBuffer buffer = new StringBuffer(startingName);
-			buffer.append(" (#");
+			buffer.append('_');
 			buffer.append(String.valueOf(index));
-			buffer.append(')');	
 			index++;
 			newName = buffer.toString();		
 		}		
@@ -417,7 +416,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	}
 	
 	/**
-	 * Convenience method to return the launch manager.
+	 * Convenience method to get the launch manager.
 	 * 
 	 * @return the launch manager
 	 */
