@@ -220,15 +220,19 @@
 			id="org.eclipse.jdt.debug.ui.actions.DebugAction"
 			label="%debugAction.label"
 			tooltip="%debugAction.toolTip"
+			icon="icons/full/ctool16/debug_exc.gif"
+			helpContextId="debug_action_context"
 			menubarPath="additions"
-			class="org.eclipse.debug.ui.DebugAction">
+			class="org.eclipse.debug.ui.actions.DebugAction">
 		</action>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.RunAction"
 			label="%runAction.label"
 			tooltip="%runAction.toolTip"
+			icon="icons/full/ctool16/run_exc.gif"
+			helpContextId="run_action_context"
 			menubarPath="additions"
-			class="org.eclipse.debug.ui.RunAction">
+			class="org.eclipse.debug.ui.actions.RunAction">
 		</action>		
 	</viewerContribution>	
 </extension>
