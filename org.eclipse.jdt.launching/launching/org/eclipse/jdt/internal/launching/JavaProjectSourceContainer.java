@@ -60,13 +60,6 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	public ISourceContainerType getType() {
 		return SourceLookupUtils.getSourceContainerType(JavaProjectSourceContainerTypeDelegate.TYPE_ID);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		fProject = null;
-	}
 	
 	/**
 	 * Returns the Java project associated with this source container.
@@ -106,5 +99,20 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 			}
 		}
 		return (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof JavaProjectSourceContainer) {
+			return getJavaProject().equals(((JavaProjectSourceContainer)obj).getJavaProject());
+		}
+		return super.equals(obj);
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getJavaProject().hashCode();
 	}
 }

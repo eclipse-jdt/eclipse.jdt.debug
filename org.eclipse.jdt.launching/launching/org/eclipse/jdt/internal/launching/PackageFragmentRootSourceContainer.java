@@ -80,12 +80,6 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	public ISourceContainerType getType() {
 		return SourceLookupUtils.getSourceContainerType(PackageFragmentRootSourceContainerTypeDelegate.TYPE_ID);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		fRoot = null;
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

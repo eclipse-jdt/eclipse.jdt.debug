@@ -88,10 +88,28 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public void dispose() {
-		super.dispose();
-		fContainer = null;
+	public boolean equals(Object obj) {
+		if (obj instanceof ClasspathContainerSourceContainer) {
+			return getClasspathContainer().equals(((ClasspathContainerSourceContainer)obj).getClasspathContainer());
+		}
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getClasspathContainer().hashCode();
+	}
+	
+	/**
+	 * Returns the classpath container associated with this source
+	 * container.
+	 * 
+	 * @return classpath container
+	 */
+	public IClasspathContainer getClasspathContainer() {
+		return fContainer;
 	}
 }
