@@ -107,7 +107,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					if (target instanceof IAdaptable) {
 						IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
 						if (debugTarget != null) {
-							prepareSkipBreakpoints(debugTarget, breakpoint);
+							prepareSkipBreakpoints(breakpoint);
 							debugTarget.getDebugTarget().breakpointAdded(breakpoint);
 							target.resume();
 							return;
@@ -134,10 +134,9 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 * a listener to reenable the manager when the run to line breakpoint
 	 * is hit.
 	 * 
-	 * @param target the target that will be resumed for this action
 	 * @param breakpoint the run to line breakpoint
 	 */
-	protected void prepareSkipBreakpoints(final IDebugTarget target, final IBreakpoint breakpoint) {
+	protected void prepareSkipBreakpoints(final IBreakpoint breakpoint) {
 		final DebugPlugin plugin= DebugPlugin.getDefault();
 		final IBreakpointManager manager = plugin.getBreakpointManager();
 		if (!manager.isEnabled() || !DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE)) {
