@@ -15,7 +15,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -63,7 +62,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	protected TabItem fJRETabItem;
 	protected List fBootPathList;
 	protected List fClassPathList;
-	protected List fExtensionPathList;
 	protected Button fClassPathDefaultButton;
 	protected Button fPathAddArchiveButton;
 	protected Button fPathAddDirectoryButton;
@@ -157,17 +155,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fBootPathTabItem.setText(LauncherMessages.getString("JavaEnvironmentTab.&Bootpath_11")); //$NON-NLS-1$
 		fBootPathTabItem.setControl(fBootPathList);
 		fBootPathTabItem.setData(fBootPathList);
-		
-		fExtensionPathList = new List(fPathTabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		fExtensionPathList.setLayoutData(gd);
-		fExtensionPathList.setData(IJavaLaunchConfigurationConstants.ATTR_EXTPATH);
-		fExtensionPathList.addSelectionListener(getListSelectionAdapter());
-		fExtensionPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 2);
-		fExtensionPathTabItem.setText(LauncherMessages.getString("JavaEnvironmentTab.E&xtension_Path_12")); //$NON-NLS-1$
-		fExtensionPathTabItem.setControl(fExtensionPathList);
-		fExtensionPathTabItem.setData(fExtensionPathList);
-		
+				
 		// JRE
 		Composite jreComp = new Composite(fPathTabFolder, SWT.NONE);
 		GridLayout jreLayout = new GridLayout();
@@ -386,7 +374,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
 		updateBootPathFromConfig(config);
 		updateClassPathFromConfig(config);
-		updateExtensionPathFromConfig(config);
 		updateEnvVarsFromConfig(config);
 	}
 	
@@ -417,19 +404,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			JDIDebugUIPlugin.log(ce);		
 		}
 	}
-	
-	protected void updateExtensionPathFromConfig(ILaunchConfiguration config) {		
-		try {
-			java.util.List extpath = null;
-			if (config != null) {
-				extpath = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXTPATH, (java.util.List)null);
-			}
-			updatePathList(extpath, fExtensionPathList);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
-	}
-	
+		
 	protected void updateEnvVarsFromConfig(ILaunchConfiguration config) {
 		Map envVars = null;
 		try {
@@ -856,7 +831,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		updateBootPathFromConfig(configuration);
 		updateClassPathFromConfig(configuration);
 		updateEnvVarsFromConfig(configuration);
-		updateExtensionPathFromConfig(configuration);
 		updateJREFromConfig(configuration);
 	}
 	
@@ -879,7 +853,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			updateConfigFromPathList(fClassPathList, configuration);
 		}
 		updateConfigFromPathList(fBootPathList, configuration);
-		updateConfigFromPathList(fExtensionPathList, configuration);
 		
 		int vmIndex = fJRECombo.getSelectionIndex();
 		if (vmIndex > -1) {

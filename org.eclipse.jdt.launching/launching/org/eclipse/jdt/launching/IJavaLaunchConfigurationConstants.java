@@ -112,12 +112,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * of <code>CLASSPATH_ATTR</code> are ignored.
 	 */
 	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.PLUGIN_ID + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
-	
-	/**
-	 * Extension path launch configuration attribute name.
-	 */
-	public static final String ATTR_EXTPATH = LaunchingPlugin.PLUGIN_ID + ".EXTPATH";	 //$NON-NLS-1$
-	
+		
 	/**
 	 * Environment variables launch configuration attribute name.
 	 * This attribute is a map containing name value pairs specifiying environment variables
