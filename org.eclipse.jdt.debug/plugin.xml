@@ -22,7 +22,13 @@
    <library name="jdimodel.jar">
       <export name="*"/>
    </library>
+   <library name="tools.jar">
+   	  <export name="*"/>
+   </library>
 </runtime>
+
+<!-- Not to be extended com.sun.tools.jdi.VirtualMachineManagerImpl or org.eclipse.jdi.internal.VirtualMachineManagerImpl -->
+<extension-point name="org.eclipse.jdi.internal.VirtualMachineManagerImpl" id="jdiclient"/>
 
 <!-- Extensions -->
 

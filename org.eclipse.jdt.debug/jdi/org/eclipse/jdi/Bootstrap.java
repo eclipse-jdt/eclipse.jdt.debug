@@ -1,5 +1,7 @@
 package org.eclipse.jdi;
 
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -14,8 +16,25 @@ public class Bootstrap
 	public static synchronized com.sun.jdi.VirtualMachineManager virtualMachineManager() {
 		if (fVirtualMachineManager != null)
 			return fVirtualMachineManager;
-			
-		fVirtualMachineManager = new org.eclipse.jdi.internal.VirtualMachineManagerImpl();
+		
+		try {
+			String className= JDIDebugPlugin.getDefault().getDescriptor().getExtensionPoint("jdiclient").getLabel();
+			Class clazz= null;
+			if (className != null) {
+				clazz= Class.forName(className);
+			}
+			if (clazz != null) {
+				fVirtualMachineManager = (com.sun.jdi.VirtualMachineManager)clazz.newInstance();
+			}
+		} catch (ClassNotFoundException exception) { // fall through
+		} catch (InstantiationException exception) { // fall through
+		} catch (IllegalAccessException exception) { // fall through
+		}
+		if (fVirtualMachineManager == null) {
+			// If any exceptions occurred, we'll end up here
+			fVirtualMachineManager= new org.eclipse.jdi.internal.VirtualMachineManagerImpl();
+		}
+		
 		return fVirtualMachineManager;
 	}
 }
