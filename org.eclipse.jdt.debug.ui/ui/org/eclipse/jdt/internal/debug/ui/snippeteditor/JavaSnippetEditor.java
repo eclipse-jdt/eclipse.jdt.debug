@@ -80,7 +80,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -287,8 +286,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
 	} 
 	
-	/**
-	 * @see AbstractTextEditor#editorContextMenuAboutToShow(MenuManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
