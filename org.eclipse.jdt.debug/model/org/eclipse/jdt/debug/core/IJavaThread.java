@@ -66,11 +66,13 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	
 	/**
 	 * Returns a variable with the given name, or <code>null</code> if
-	 * unable to resolve a variable with the name.
+	 * unable to resolve a variable with the name, or if this
+	 * thread is not currently suspended.
 	 * <p>
-	 * Variable lookup works only when this thread is suspended.
+	 * Variable lookup works only when a thread is suspended.
 	 * Lookup is performed in all stack frames, in a top-down
-	 * order, returning the first successful match.
+	 * order, returning the first successful match, or <code>null</code>
+	 * if no match if found.
 	 * </p>
 	 * @param variableName the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
@@ -79,7 +81,6 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
-	 * <li>This thread is not currently suspended.</li>
 	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
