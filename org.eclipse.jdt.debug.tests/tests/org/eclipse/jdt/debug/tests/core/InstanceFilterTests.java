@@ -55,7 +55,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertEquals("hit un-registered breakpoint", breakpoint, hit);
 			
 			// can only do test if the VM supports instance filters
-			if (supportsIntsanceBreakpoints(thread)) {
+			if (supportsInstanceBreakpoints(thread)) {
 				// add instance filter
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				IJavaObject thisObject = frame.getThis();
@@ -71,8 +71,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				assertNotNull("suspended, but not by breakpoint", hit2);
 				assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
 			}
-			
-			
 		} finally {
 			terminateAndRemove(thread);
 			terminateAndRemove(thread2);
@@ -97,7 +95,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertEquals("hit un-registered breakpoint", breakpoint, hit);
 			
 			// can only do test if the VM supports instance filters
-			if (supportsIntsanceBreakpoints(thread)) { 
+			if (supportsInstanceBreakpoints(thread)) { 
 				// add instance filter
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				IJavaObject thisObject = frame.getThis();
@@ -113,8 +111,6 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				assertNotNull("suspended, but not by breakpoint", hit2);
 				assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
 			}
-			
-			
 		} finally {
 			terminateAndRemove(thread);
 			terminateAndRemove(thread2);
@@ -139,7 +135,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertEquals("did not hit watch point", wp, hit);
 			
 			// can only do test if the VM supports instance filters
-			if (supportsIntsanceBreakpoints(thread)) {			
+			if (supportsInstanceBreakpoints(thread)) {			
 
 				// add instance filter
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -156,14 +152,12 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				assertNotNull("suspended, but not by breakpoint", hit2);
 				assertEquals("did not hit line breakpoint", bp, hit2);			
 			}
-			
 		} finally {
 			terminateAndRemove(thread);
 			terminateAndRemove(thread2);
 			removeAllBreakpoints();
 		}		
 	}
-	
 	
 	public void testException() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -182,7 +176,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertEquals("did not hit exception breakpoint", ex, hit);
 
 			// can only do test if the VM supports instance filters
-			if (supportsIntsanceBreakpoints(thread)) {
+			if (supportsInstanceBreakpoints(thread)) {
 			
 				// add instance filter
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -214,9 +208,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	 * @param thread
 	 * @return boolean
 	 */
-	private boolean supportsIntsanceBreakpoints(IJavaThread thread) {
+	private boolean supportsInstanceBreakpoints(IJavaThread thread) {
 		IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 		return target.supportsInstanceBreakpoints();
 	}	
-
 }
