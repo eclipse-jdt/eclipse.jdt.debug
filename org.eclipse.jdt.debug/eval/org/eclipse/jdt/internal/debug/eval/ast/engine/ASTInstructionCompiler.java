@@ -342,10 +342,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		do {
 			parent= parent.getParent();
 		} while (!(parent instanceof TypeDeclaration || parent instanceof AnonymousClassDeclaration));
-		if (parent == null) {
-			// throw an exception
-			return 9999;
-		}
 		ITypeBinding parentBinding;
 		if (parent instanceof TypeDeclaration) {
 			parentBinding= ((TypeDeclaration)parent).resolveBinding();
@@ -369,12 +365,19 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (current.equals(reference)) {
 			return true;
 		}
+		
+		ITypeBinding[] interfaces= current.getInterfaces();
+		for (int i= 0; i < interfaces.length; i++) {
+			if (isInstanceOf(interfaces[i], reference)) {
+				return true;
+			}
+		}
+		
 		ITypeBinding superClass= current.getSuperclass();
-		if (superClass == null) {
-			return false;
-		} else {
+		if (superClass != null) {
 			return isInstanceOf(current.getSuperclass(), reference);
 		}
+		return false;
 	}
 
 	/**
