@@ -31,16 +31,38 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
-		IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
-		return resolveLibraryLocations(configJRE, entry.getClasspathProperty());
+		IVMInstall jre = null;
+		if (entry.getType() == IRuntimeClasspathEntry.CONTAINER && entry.getPath().segmentCount() > 1) {
+			// a specific VM
+			jre = JREContainerInitializer.resolveVM(entry.getPath()); 
+		} else {
+			// default VM for config
+			jre = JavaRuntime.computeVMInstall(configuration);
+		}
+		if (jre == null) {
+			// cannot resolve JRE
+			return new IRuntimeClasspathEntry[0];
+		}
+		return resolveLibraryLocations(jre, entry.getClasspathProperty());
 	}
 	
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, IJavaProject)
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
-		IVMInstall projectJRE = JavaRuntime.getVMInstall(project);
-		return resolveLibraryLocations(projectJRE, entry.getClasspathProperty());
+		IVMInstall jre = null;
+		if (entry.getType() == IRuntimeClasspathEntry.CONTAINER && entry.getPath().segmentCount() > 1) {
+			// a specific VM
+			jre = JREContainerInitializer.resolveVM(entry.getPath()); 
+		} else {
+			// default VM for project
+			jre = JavaRuntime.getVMInstall(project);
+		}
+		if (jre == null) {
+			// cannot resolve JRE
+			return new IRuntimeClasspathEntry[0];
+		}		
+		return resolveLibraryLocations(jre, entry.getClasspathProperty());
 	}
 
 	/**
