@@ -555,15 +555,13 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		}
 	}
 
-	/*
+	/**
 	 * @see IJavaBreakpointListener#breakpointAdded(IJavaDebugTarget, IJavaBreakpoint)
 	 */
-	public void breakpointAdded(
-		IJavaDebugTarget target,
-		IJavaBreakpoint breakpoint) {
+	public void breakpointAdded(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
-	/*
+	/**
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */
 	public boolean breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
@@ -581,20 +579,16 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		return true;
 	}
 
-	/*
+	/**
 	 * @see IJavaBreakpointListener#breakpointInstalled(IJavaDebugTarget, IJavaBreakpoint)
 	 */
-	public void breakpointInstalled(
-		IJavaDebugTarget target,
-		IJavaBreakpoint breakpoint) {
+	public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
-	/*
+	/**
 	 * @see IJavaBreakpointListener#breakpointRemoved(IJavaDebugTarget, IJavaBreakpoint)
 	 */
-	public void breakpointRemoved(
-		IJavaDebugTarget target,
-		IJavaBreakpoint breakpoint) {
+	public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 	
 	/**
