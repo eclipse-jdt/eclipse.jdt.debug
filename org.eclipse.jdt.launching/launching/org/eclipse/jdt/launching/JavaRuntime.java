@@ -272,9 +272,9 @@ public final class JavaRuntime {
 	 * The project needs to exist.
 	 * 
 	 * @param project the Java project
-	 * @param javaRuntime the VM instance. May be null to clear the
+	 * @param javaRuntime the VM instance. May be <code>null</code> to clear the
 	 * 					  property.
-	 * @throws	CoreException	If the propety could not be set to
+	 * @throws	CoreException	If the property could not be set to
 	 * 							the underlying project.
 	 */
 	public static void setVM(IJavaProject project, IVMInstall javaRuntime) throws CoreException {
@@ -290,7 +290,7 @@ public final class JavaRuntime {
 	 * Sets a VM as the system-wide default VM, and notifies registered VM install
 	 * change listeners of the change.
 	 * 
-	 * @param	vm	The vm to make the default. May be null to clear 
+	 * @param vm	The vm to make the default. May be <code>null</code> to clear 
 	 * 				the default.
 	 * @param monitor progress monitor or <code>null</code>
 	 */
