@@ -2207,6 +2207,23 @@
            </with>
          </enablement>
       </renameParticipant>
+      <renameParticipant
+      		class="org.eclipse.jdt.internal.debug.core.refactoring.JavaWatchpointIFieldRenameParticipant"
+      		id="org.eclipse.jdt.debug.refractoring.javaWatchpointIFieldRename">
+         <enablement>
+           <with variable="affectedProjects">
+             <iterate>
+               <test property="org.eclipse.jdt.ui.projectNature" value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="selection">
+             <count value="1"/>
+             <iterate>
+   	           <instanceof value="org.eclipse.jdt.core.IField"/>
+             </iterate>
+           </with>
+         </enablement>
+      </renameParticipant>
 <!--      <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeRenameParticipant"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
