@@ -40,7 +40,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.editors.text.WorkspaceOperationRunner;
 
 public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 

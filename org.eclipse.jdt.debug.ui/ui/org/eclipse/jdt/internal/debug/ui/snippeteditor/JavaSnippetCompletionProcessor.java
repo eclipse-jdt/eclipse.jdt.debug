@@ -28,7 +28,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -47,7 +47,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fCollector= new ResultCollector();
 		fEditor= editor;
-		ContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
+		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
