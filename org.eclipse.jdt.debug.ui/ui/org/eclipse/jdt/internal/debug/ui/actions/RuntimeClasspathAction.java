@@ -137,6 +137,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 				run();
 			}
 		});
+		fButton.setEnabled(false);
 	}
 	/**
 	 * @see IAction#setEnabled(boolean)
