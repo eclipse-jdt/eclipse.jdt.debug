@@ -2,7 +2,6 @@
 <project-description>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<reference project-name="org.eclipse.debug.core"/>
-	<reference project-name="org.eclipse.jdt.core"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 </project-description>

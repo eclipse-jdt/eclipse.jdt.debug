@@ -5,7 +5,6 @@
     <classpathentry kind="lib" path="jdi.jar"/>
     <classpathentry kind="src" path="Eclipse Java Core Debug"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
-    <classpathentry kind="src" path="/org.eclipse.jdt.core"/>
     <classpathentry kind="var" path="JRE_LIB"/>
     <classpathentry kind="lib"
         path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar" sourcepath="C:/eclipse/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
