@@ -27,19 +27,23 @@ import org.eclipse.debug.core.model.IVariable;
 public interface IJavaVariable extends IVariable, IJavaModifiers {
 	
 	/**
-	 * Returns whether this variable has been declared as transient.
+	 * Returns whether this variable is declared as transient.
 	 *
 	 * @return whether this variable has been declared as transient
-	 * @exception DebugException if unable to determine if this
-	 *   element has been declared as transient
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
 	 */
 	public boolean isTransient() throws DebugException;
 	/**
-	 * Returns whether this variable has been declared as volatile.
+	 * Returns whether this variable is declared as volatile.
 	 * 
 	 * @return whether this variable has been declared as volatile
-	 * @exception DebugException if unable to determine if this
-	 *   element has been declared as volatile
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
 	 */
 	public boolean isVolatile() throws DebugException;
 	
@@ -49,8 +53,11 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 * signature is not yet loaded in the target VM.
 	 *
 	 * @return signature, or <code>null</code> if not accessible
-	 * @exception DebugException if unable to retrieve this
-	 *   variable's signature from the target 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The type associated with the signature is not yet loaded</li></ul>
 	 */
 	public String getSignature() throws DebugException;
 }
