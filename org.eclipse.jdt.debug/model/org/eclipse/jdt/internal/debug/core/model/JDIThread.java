@@ -959,22 +959,22 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public String getName() throws DebugException {
 		try {
-			fPreviousName = getUnderlyingThread().name(); 
-			return fPreviousName;
+			fPreviousName = getUnderlyingThread().name();
 		} catch (RuntimeException e) {
 			// Don't bother reporting the exception when retrieving the name (bug 30785 & bug 33276)
 			if (e instanceof ObjectCollectedException) {
 				if (fPreviousName == null) {
-					return JDIDebugModelMessages.getString("JDIThread.garbage_collected_1"); //$NON-NLS-1$
-				} else {
-					return fPreviousName;
+					fPreviousName= JDIDebugModelMessages.getString("JDIThread.garbage_collected_1"); //$NON-NLS-1$
 				}
+			} else if (e instanceof VMDisconnectedException) {
+				if (fPreviousName == null) {
+					fPreviousName= JDIDebugModelMessages.getString("JDIThread.42"); //$NON-NLS-1$
+				}
+			} else {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not fall through, as
-			// #targetRequestFailed will thrown an exception
 		}
-		return null;
+		return fPreviousName;
 	}
 
 	/**
