@@ -201,7 +201,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void evaluationCleanup() {
 		setEvaluating(false);
 		setTargetPart(fNewTargetPart);
-		setNewTargetPart(null);
 	}
 	/**
 	 * Display the given evaluation result.
