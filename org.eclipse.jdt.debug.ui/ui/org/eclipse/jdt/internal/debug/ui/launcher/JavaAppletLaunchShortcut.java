@@ -272,10 +272,10 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter 
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
-		if ("ContextualLaunchActionFilter".equals(name)) {
+		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
 			return isApplet(target);
 			// return false;
-		} else if ("NameMatches".equals(name)) {
+		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
 			return nameMatches(target, value);
 		}
 		return false;
