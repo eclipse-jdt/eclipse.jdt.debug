@@ -29,6 +29,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @param filters the array of filters to apply
 	 * @exception CoreException if unable to set the property on 
 	 *  this breakpoint's underlying marker
+	 * @since 2.1
 	 */
 	public void setInclusionFilters(String[] filters) throws CoreException;
 
@@ -39,6 +40,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @return the array of defined inclusive filters
 	 * @exception CoreException if unable to access the property on
 	 *  this breakpoint's underlying marker
+	 * @since 2.1
 	 */
 	public String[] getInclusionFilters() throws CoreException;
 
@@ -128,6 +130,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @param filters the array of filters to apply
 	 * @exception CoreException if unable to set the property on 
 	 *  this breakpoint's underlying marker
+	 * @since 2.1
 	 */
 	public void setExclusionFilters(String[] filters) throws CoreException;
 	
@@ -149,6 +152,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @return the array of defined inclusive filters
 	 * @exception CoreException if unable to access the property on
 	 *  this breakpoint's underlying marker
+	 * @since 2.1
 	 */
 	public String[] getExclusionFilters() throws CoreException;
 	
