@@ -111,7 +111,10 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 					}
 				}
 			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
+				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+					// do not log "thread not suspended" errors
+					JDIDebugUIPlugin.log(e);
+				}
 			}
 		}
 		action.setEnabled(enabled);
