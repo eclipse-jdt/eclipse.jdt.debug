@@ -57,6 +57,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaStatusConstants;
@@ -83,6 +84,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewPart;
@@ -125,7 +127,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private int fSnippetStart;
 	private int fSnippetEnd;
 	
-	private String fPackageHandle= null;
+	private String[] fImports= null;
 	
 	private Image fOldTitleImage= null;
 	private IClassFileEvaluationEngine fEngine= null;
@@ -152,7 +154,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		fPackageHandle = getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT));
+		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT));
+		if (property != null) {
+			fImports = JavaDebugOptionsManager.parseList(property);
+		}
 	}
 		
 	public void dispose() {
@@ -172,7 +177,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setAction("OpenOnSelection", new SnippetOpenOnSelectionAction(this));			 //$NON-NLS-1$
 		setAction("OpenHierarchyOnSelection", new SnippetOpenHierarchyOnSelectionAction(this));  //$NON-NLS-1$
 		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
-		setAction("RunIn", new RunInPackageAction(this));  //$NON-NLS-1$
+		setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
 	} 
 	
 	/**
@@ -188,7 +193,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		addAction(menu, IContextMenuConstants.GROUP_SHOW, "OpenHierarchyOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Run"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Stop"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "RunIn"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "SelectImports"); //$NON-NLS-1$
 	}
 
 	public boolean isVMLaunched() {
@@ -268,19 +273,20 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 	
-	public void setPackage(String packageHandle) {
-		fPackageHandle= packageHandle;
+	public void setImports(String[] imports) {
+		fImports= imports;
+		String serialized= JavaDebugOptionsManager.serializeList(imports);
 		// persist
 		try {
-			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT), packageHandle);
+			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT), serialized);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e.getStatus());
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.packagecontext"), null, e.getStatus()); //$NON-NLS-1$
 		}
 	}
 	
-	public String getPackage() {
-		return fPackageHandle;
+	public String[] getImports() {
+		return fImports;
 	}
 			
 	protected IEvaluationContext getEvaluationContext() {
@@ -290,9 +296,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				fEvaluationContext= project.newEvaluationContext();
 			}
 		}
-		if (fEvaluationContext != null && fPackageHandle != null) {		
-			String packageName = JavaCore.create(fPackageHandle).getElementName();	
-			fEvaluationContext.setPackageName(packageName);
+		if (fEvaluationContext != null && getImports() != null) {		
+			fEvaluationContext.setImports(getImports());
 		}
 		return fEvaluationContext;
 	}
@@ -393,9 +398,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			return;
 		}
 		try {
-			if (fPackageHandle != null) {
-				String packageName = JavaCore.create(fPackageHandle).getElementName();		
-				getEvaluationEngine().setPackageName(packageName);
+			if (getImports() != null) {
+				getEvaluationEngine().setImports(getImports());
 			}
 			getEvaluationEngine().evaluate(snippet,getThread(), this);
 		} catch (DebugException e) {
@@ -939,7 +943,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	/**
-	 * @see IEditorPart
+	 * @see IEditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;

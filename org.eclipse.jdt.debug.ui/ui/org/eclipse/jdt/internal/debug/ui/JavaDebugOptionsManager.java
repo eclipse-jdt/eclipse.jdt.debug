@@ -495,7 +495,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * 
 	 * @return list
 	 */
-	protected static String[] parseList(String listString) {
+	public static String[] parseList(String listString) {
 		List list = new ArrayList(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
@@ -512,7 +512,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * @param list array of strings
 	 * @return a single string composed of the given list
 	 */
-	protected static String serializeList(String[] list) {
+	public static String serializeList(String[] list) {
 		if (list == null) {
 			return ""; //$NON-NLS-1$
 		}

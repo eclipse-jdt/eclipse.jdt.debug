@@ -18,23 +18,26 @@ package org.eclipse.jdt.debug.eval;
  */ 
 public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	/**
-	 * Returns the name of the package in which code snippets are to be compiled and
-	 * run. Returns an empty string for the default package (the default if the
-	 * package name has never been set). For example, <code>"com.example.myapp"</code>.
+	 * Returns the import declarations for this evaluation context. An empty
+	 * list indicates there are no imports. The syntax for the import corresponds to a 
+	 * fully qualified type name, or to an on-demand package name as defined by
+	 * ImportDeclaration (JLS2 7.5). For example, <code>"java.util.Hashtable"</code>
+	 * or <code>"java.util.*"</code>.
 	 *
-	 * @return the dot-separated package name, or the empty string indicating the
-	 *   default package
+	 * @param imports the list of import names
 	 */
-	public String getPackageName();
+	public String[] getImports();
 	
 	/**
-	 * Sets the dot-separated name of the package in which code snippets are 
-	 * to be compiled and run. For example, <code>"com.example.myapp"</code>.
+	 * Sets the import declarations for this evaluation context. An empty
+	 * list indicates there are no imports. The syntax for the import corresponds to a 
+	 * fully qualified type name, or to an on-demand package name as defined by
+	 * ImportDeclaration (JLS2 7.5). For example, <code>"java.util.Hashtable"</code>
+	 * or <code>"java.util.*"</code>.
 	 *
-	 * @param packageName the dot-separated package name, or the empty string 
-	 *   indicating the default package
+	 * @param imports the list of import names
 	 */
-	public void setPackageName(String packageName);
+	public void setImports(String[] imports);
 	
 }
 

@@ -1336,17 +1336,17 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 	
 	/**
-	 * @see IClassFileEvaluationEngine#getPackageName()
+	 * @see IClassFileEvaluationEngine#getImports()
 	 */
-	public String getPackageName() {
-		return getEvaluationContext().getPackageName();
+	public String[] getImports() {
+		return getEvaluationContext().getImports();
 	}
 
 	/**
-	 * @see IClassFileEvaluationEngine#setPackageName(String)
+	 * @see IClassFileEvaluationEngine#setImports(String[])
 	 */
-	public void setPackageName(String packageName) {
-		getEvaluationContext().setPackageName(packageName);
+	public void setImports(String[] imports) {
+		getEvaluationContext().setImports(imports);
 	}
 	
 	/**

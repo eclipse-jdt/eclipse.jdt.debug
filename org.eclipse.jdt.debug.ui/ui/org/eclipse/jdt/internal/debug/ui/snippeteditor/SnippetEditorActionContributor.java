@@ -11,10 +11,8 @@ import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.part.EditorActionBarContributor;
 
 /**
  * Contributions of the Java Snippet Editor to the Workbench's tool and menu bar.
@@ -25,7 +23,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	
 	private RunAction fRunAction;
 	private StopAction fStopAction;
-	private RunInPackageAction fRunInAction;
+	private SelectImportsAction fSelectImportsAction;
 	private SnippetOpenOnSelectionAction fOpenOnSelectionAction;
 	private SnippetOpenHierarchyOnSelectionAction fOpenOnTypeSelectionAction;
 	
@@ -44,7 +42,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 		toolBarManager.add(fRunAction);
 		toolBarManager.add(fStopAction);
-		toolBarManager.add(fRunInAction);
+		toolBarManager.add(fSelectImportsAction);
 	}
 			
 	/**
@@ -69,12 +67,13 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		super.setActiveEditor(part);
 		
 		fSnippetEditor= null;
-		if (part instanceof JavaSnippetEditor)
+		if (part instanceof JavaSnippetEditor) {
 			fSnippetEditor= (JavaSnippetEditor) part;
+		}
 			
 		fStopAction.setEditor(fSnippetEditor);		
 		fRunAction.setEditor(fSnippetEditor);
-		fRunInAction.setEditor(fSnippetEditor);
+		fSelectImportsAction.setEditor(fSnippetEditor);
 		fOpenOnSelectionAction.setContentEditor(fSnippetEditor);
 		fOpenOnTypeSelectionAction.setContentEditor(fSnippetEditor);
 		updateStatus(fSnippetEditor);			
@@ -86,15 +85,16 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		fOpenOnTypeSelectionAction= new SnippetOpenHierarchyOnSelectionAction(fSnippetEditor);
 		fRunAction= new RunAction(fSnippetEditor);
 		fStopAction= new StopAction(fSnippetEditor);
-		fRunInAction= new RunInPackageAction(null);
+		fSelectImportsAction= new SelectImportsAction(null);
 	}	
 	
 	protected void updateStatus(JavaSnippetEditor editor) {
 		String message;
-		if (editor.isEvaluating())
+		if (editor.isEvaluating()) {
 			message= SnippetMessages.getString("SnippetActionContributor.evalMsg");  //$NON-NLS-1$
-		else
+		} else {
 			message= ""; //$NON-NLS-1$
+		}
 		getActionBars().getStatusLineManager().setMessage(message);
 	}
 }
