@@ -11,16 +11,27 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICodeAssist;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.ILocalVariable;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.AbstractDisplayOptionsAction;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.text.BadLocationException;
@@ -33,15 +44,19 @@ import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
 
 public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension {
+    
+    private IEditorPart fEditor;
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setEditor(IEditorPart editor) {
+	    fEditor = editor;
 	}
 		
 	/* (non-Javadoc)
@@ -70,37 +85,91 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-		IJavaStackFrame frame = getFrame();				
+	    IJavaStackFrame frame = getFrame();
+	    if (frame != null) {
+		    ICodeAssist codeAssist = null;
+		    if (fEditor != null) {
+				IEditorInput input = fEditor.getEditorInput();
+				Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
+				if (element == null) {
+					element = input.getAdapter(IClassFile.class);
+				}
+				if (element instanceof ICodeAssist) {
+					codeAssist = ((ICodeAssist)element);
+				} 	        
+		    }
+		    if (codeAssist == null) {
+		        return getRemoteHoverInfo(frame, textViewer, hoverRegion);
+		    } else {
+				try {
+					IJavaElement[] resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
+					for (int i = 0; i < resolve.length; i++) {
+						IJavaElement javaElement = resolve[i];
+						if (javaElement instanceof IField) {
+						    IField field = (IField)javaElement;
+						    IJavaFieldVariable fieldVariable = frame.getThis().getField(field.getElementName(), Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true));
+						    if (fieldVariable != null) {
+						        StringBuffer buf = new StringBuffer();
+						        appendVariable(buf, fieldVariable);
+						        return buf.toString();
+						    }
+							break;
+						}
+						if (javaElement instanceof ILocalVariable) {
+						    ILocalVariable var = (ILocalVariable)javaElement;
+						    IJavaElement parent = var.getParent();
+						    while (!(parent instanceof IMethod) && parent != null) {
+						    	parent = parent.getParent();
+						    }
+						    if (parent instanceof IMethod) {
+								IMethod method = (IMethod) parent;
+								if (method.getSignature().equals(frame.getSignature())) {
+									return generateHoverForLocal(frame, var.getElementName());
+								}
+							}
+						    break;
+						}
+					}
+				} catch (CoreException e) {
+					JDIDebugPlugin.log(e);
+				}	        
+		    }
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Generate hover info via a variable search, if the java element is not avilable.
+	 */
+	private String getRemoteHoverInfo(IJavaStackFrame frame, ITextViewer textViewer, IRegion hoverRegion) {
 		if (frame != null) {
 			try {
-				
 				IDocument document= textViewer.getDocument();
-				if (document == null)
-					return null;
-					
-				String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
-																
-				StringBuffer buffer= new StringBuffer();	
-				try {
-					IVariable variable= frame.findVariable(variableName);
-					if (variable != null) {
-						appendVariable(buffer, variable);
-					}
-				} catch (DebugException x) {
-					if (x.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-						JDIDebugUIPlugin.log(x);
-					}
+				if (document != null) {
+					String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
+					return generateHoverForLocal(frame, variableName);
 				}
-				
-				if (buffer.length() > 0) {
-					return buffer.toString();
-				}
-			
 			} catch (BadLocationException x) {
+			}
+		}
+		return null;
+	}	
+	
+	private String generateHoverForLocal(IJavaStackFrame frame, String varName) {
+		StringBuffer buffer= new StringBuffer();	
+		try {
+			IVariable variable= frame.findVariable(varName);
+			if (variable != null) {
+				appendVariable(buffer, variable);
+			}
+		} catch (DebugException x) {
+			if (x.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 				JDIDebugUIPlugin.log(x);
 			}
 		}
-
+		if (buffer.length() > 0) {
+			return buffer.toString();
+		}
 		return null;
 	}
 
