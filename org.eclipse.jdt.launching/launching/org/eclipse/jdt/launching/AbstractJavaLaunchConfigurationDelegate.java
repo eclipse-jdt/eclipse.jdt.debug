@@ -14,29 +14,41 @@ package org.eclipse.jdt.launching;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -57,6 +69,20 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
  * @since 2.0
  */
 public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements IDebugEventSetListener {
+	
+	protected static final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, "org.eclipse.jdt.debug", 201, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.jdt.debug", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	/**
+	 * The project containing the class file being launched
+	 */
+	private IProject project;
+	/**
+	 * A list of prequisite projects ordered by their build order.
+	 */
+	private List orderedProjects;
+	
 	
 	/**
 	 * Convenience method to get the launch manager.
@@ -671,6 +697,215 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			}
 		}
 	}
+	
+
+
+	/**
+	 * Builds an ordered list of prerequisite projects (order by build order).  
+	 * 
+	 * If mode is RUN (not DEBUG), check workspace for breakpoints. If breakpoints 
+	 * exist gives the user a chance to cancel current launch and relaunch in DEBUG mode.
+	 * 
+	 * @param configuration configuration being lanuched
+	 * @param mode launch mode
+	 * @param monitor progress monitor
+	 * @return whether the launch should proceed
+	 * @throws CoreException if an exception occurs while building the list of prerequisite projects, or while checking for 
+	 * 		breakpoints in a RUN_MODE launch. 
+	 */
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		IJavaProject javaProject;
+		try {
+			if (mode.equals(LaunchManager.RUN_MODE)  && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
+				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.18"), 2); //$NON-NLS-1$
+			} else {
+				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.19"), 1); //$NON-NLS-1$
+			}
+			
+			
+			monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
+			javaProject = JavaRuntime.getJavaProject(configuration);
+			project = javaProject.getProject();
+			HashSet projectSet = new HashSet();
+			getReferencedProjectSet(project, projectSet);
+			orderedProjects = getBuildOrder(new ArrayList(projectSet));
+			
+			if (mode.equals(ILaunchManager.RUN_MODE) && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) { // check if any breakpoints exist!
+				monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.21")); //$NON-NLS-1$
+				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+				IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
+				if (breakpoints.length > 0) {
+					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+					if (prompter != null) {
+						boolean lauchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
+						if (lauchInDebugModeInstead) { 
+							return false; //kill this launch
+						}
+					}
+										
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Recursively creates a set of projects referenced by the current project
+	 * @param project The current project
+	 * @param referencedProjSet A set of referenced projects
+	 * @throws CoreException if an error occurs while getting referenced projects from the current project
+	 */
+	private void getReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException{
+		IProject[] projects = project.getReferencedProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (!referencedProjSet.contains(projects[i])) {
+				referencedProjSet.add(projects[i]);
+				getReferencedProjectSet(projects[i], referencedProjSet);
+			}
+		}
+		
+	}
+	
+	/**
+	 * creates a list of project ordered by their build order from an unordered list of projects.
+	 * @param resourceCollection The list of projects to sort.
+	 * @return A new list of projects, ordered by build order.
+	 */
+	private List getBuildOrder(List resourceCollection) {
+		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
+		if (orderedNames != null) {
+			List orderedProjects = new ArrayList(resourceCollection.size());
+			//Projects may not be in the build order but should be built if selected
+			List unorderedProjects = new ArrayList(resourceCollection.size());
+			unorderedProjects.addAll(resourceCollection);
+		
+			for (int i = 0; i < orderedNames.length; i++) {
+				String projectName = orderedNames[i];
+				for (int j = 0; j < resourceCollection.size(); j++) {
+					IProject project = (IProject) resourceCollection.get(j);
+					if (project.getName().equals(projectName)) {
+						orderedProjects.add(project);
+						unorderedProjects.remove(project);
+						break;
+					}
+				}
+			}
+			//Add anything not specified before we return
+			orderedProjects.addAll(unorderedProjects);
+			return orderedProjects;
+		}
+
+		// Try the project prerequisite order then
+		IProject[] projects = new IProject[resourceCollection.size()];
+		projects = (IProject[]) resourceCollection.toArray(projects);
+		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
+		ArrayList orderedProjects = new ArrayList();
+		orderedProjects.addAll(Arrays.asList(po.projects));
+		return orderedProjects;		
+	}
+	
+	/**
+	 * Builds the current project and all of it's prerequisite projects if necessary. Respects 
+	 * specified build order if any exists.
+	 * 
+	 * @param configuration the configuration being launched
+	 * @param mode the mode the configuration is being launched in
+	 * @param monitor progress monitor
+	 * @return whether the debug platform should perform an incremental workspace
+	 *  build before the launch
+	 * @throws CoreException if an exception occurrs while building
+	 */
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		if (orderedProjects != null) {
+			monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.22"), orderedProjects.size() + 1); //$NON-NLS-1$
+			
+			for (Iterator i = orderedProjects.iterator(); i.hasNext(); ) {
+				IProject proj = (IProject)i.next();
+				monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.23") + proj.getName()); //$NON-NLS-1$
+				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			}
+			
+			monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.24") + project.getName()); //$NON-NLS-1$
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+		}
+		monitor.done();
+		return false; //don't build. I already did it or I threw an exception. 
+	}
+	
+
+	
+	/**
+	 * Searches for compile errors in the current project and any of its prerequisite
+	 * projects. If any compile errors, give the user a chance to abort the launch and correct
+	 * the errors.
+	 * 
+	 * @param configuration
+	 * @param mode
+	 * @param monitor
+	 * @return whether the launch should proceed
+	 * @throws CoreException if an exception occurs while checking for compile errors.
+	 */
+	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		try {
+			boolean continueLaunch = true;
+			if (orderedProjects != null) {
+				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.25"), orderedProjects.size() + 1); //$NON-NLS-1$
+				
+				boolean compileErrorsInProjs = false;
+				
+				//check prerequisite projects for compile errors.
+				for(Iterator i = orderedProjects.iterator(); i.hasNext(); ) {
+					IProject proj = (IProject)i.next();
+					monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.26") + proj.getName()); //$NON-NLS-1$
+					compileErrorsInProjs = existsErrors(proj);
+					if (compileErrorsInProjs) {
+						break;
+					}
+				}
+				
+				//check current project, if prerequite projects were ok
+				if (!compileErrorsInProjs) {
+					monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.27") + project.getName()); //$NON-NLS-1$
+					compileErrorsInProjs = existsErrors(project);
+				}
+				
+				//if compile errors exist, ask the user before continuing.
+				if (compileErrorsInProjs) {
+					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+					if (prompter != null) {
+						continueLaunch = ((Boolean)prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
+					}
+				}
+			}
+			return continueLaunch;
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Searches for compile errors in the specified project
+	 * @param proj The project to search
+	 * @return true if compile errors exist, otherwise false
+	 */
+	private boolean existsErrors(IProject proj) throws CoreException {
+		IMarker[] markers = proj.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		
+		if (markers.length > 0) {
+			for (int j = 0; j < markers.length; j++) {
+				if (((Integer)markers[j].getAttribute(IMarker.SEVERITY)).intValue() == IMarker.SEVERITY_ERROR) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	
 
 }
 
