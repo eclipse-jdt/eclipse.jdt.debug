@@ -129,11 +129,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	public final static String SHOW_CHAR_VALUES= "SHOW_CHAR_VALUES"; //$NON-NLS-1$
 	
 	/**
-	 * @see IJDIPreferencesConstants#PREF_SHOW_DETAILS
-	 */
-	public static final String SHOW_DETAILS="SHOW_DETAILS"; //$NON-NLS-1$
-	
-	/**
 	 * Qualified names presentation property (value <code>"SHOW_UNSIGNED_VALUES"</code>).
 	 * When <code>SHOW_UNSIGNED_VALUES</code> is set to <code>True</code>,
 	 * this label provider should show unsigned values when rendering
@@ -1192,7 +1187,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	protected boolean isShowLabelDetails(IJavaValue value) {
 		boolean showDetails= false;
-		String details= (String) fAttributes.get(SHOW_DETAILS);
+		String details= JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
 		if (details != null) {
 			if (details.equals(IJDIPreferencesConstants.INLINE_ALL)) {
 				showDetails= true;

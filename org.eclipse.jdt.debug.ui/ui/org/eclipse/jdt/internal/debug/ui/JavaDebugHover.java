@@ -258,8 +258,6 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 */
 	private static JDIModelPresentation getModelPresentation() {
 		JDIModelPresentation presentation = new JDIModelPresentation();
-		String showDetails = JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
-		presentation.setAttribute(JDIModelPresentation.SHOW_DETAILS, showDetails);
 		
 		String[][] booleanPrefs= {{IJDIPreferencesConstants.PREF_SHOW_HEX, JDIModelPresentation.SHOW_HEX_VALUES},
         {IJDIPreferencesConstants.PREF_SHOW_CHAR, JDIModelPresentation.SHOW_CHAR_VALUES},
