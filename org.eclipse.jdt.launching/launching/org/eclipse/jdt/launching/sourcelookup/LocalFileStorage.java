@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.jdt.launching.sourcelookup;
 
 import java.io.File;
-import org.eclipse.core.resources.IStorage;
-
 
 /**
  * Implementation of storage for a local file
@@ -21,7 +19,7 @@ import org.eclipse.core.resources.IStorage;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @see DirectorySourceLocation
- * @see IStorage
+ * @see org.eclipse.core.resources.IStorage
  * @since 2.0
  * @deprecated In 3.0 this class is now provided by the debug platform. Clients
  *  should use the replacement class
