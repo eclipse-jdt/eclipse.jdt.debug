@@ -1428,9 +1428,8 @@
 		<action id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression"/>
 		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute"/>
-		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display"/>
-        <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.FilterPreferences"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.FilterPreferences"/>
 	</debugActionGroup>
 </extension>
 
