@@ -43,13 +43,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -61,7 +61,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
@@ -199,21 +199,28 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * changes.
 		 */
 		public void process() throws CoreException {
+			JREUpdateJob job = new JREUpdateJob(this);
+			job.schedule();
+		}
+		
+		protected void doit(IProgressMonitor monitor) throws CoreException {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					rebind();
+					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+					monitor.beginTask(LaunchingMessages.getString("LaunchingPlugin.0"), projects.length + 1); //$NON-NLS-1$
+					rebind(monitor, projects);
+					monitor.done();
 				}
 			};
-			JavaCore.run(runnable, null, new NullProgressMonitor());
+			JavaCore.run(runnable, null, monitor);
 		}
 				
 		/**
 		 * Re-bind classpath variables and containers affected by the JRE
 		 * changes.
+		 * @param monitor
 		 */
-		private void rebind() throws CoreException {
-			
-			IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+		private void rebind(IProgressMonitor monitor, IJavaProject[] projects) throws CoreException {
 			 
 			if (fDefaultChanged) {
 				// re-bind JRELIB if the default VM changed
@@ -222,8 +229,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				initializer.initialize(JavaRuntime.JRESRC_VARIABLE);
 				initializer.initialize(JavaRuntime.JRESRCROOT_VARIABLE);
 			}
+			monitor.worked(1);
 														
-			// re-bind all container entries, noting which project need to be re-built
+			// re-bind all container entries
 			for (int i = 0; i < projects.length; i++) {
 				IJavaProject project = projects[i];
 				IClasspathEntry[] entries = project.getRawClasspath();
@@ -263,10 +271,34 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				if (replace) {
 					project.setRawClasspath(entries, null);
 				}
+				monitor.worked(1);
 			}
 
 		}
 
+	}
+	
+	class JREUpdateJob extends Job {
+		private VMChanges fChanges;
+		
+		public JREUpdateJob(VMChanges changes) {
+			super(LaunchingMessages.getString("LaunchingPlugin.1")); //$NON-NLS-1$
+			fChanges = changes;
+			setSystem(true);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				fChanges.doit(monitor);
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+		
 	}
 	
 	public LaunchingPlugin() {
