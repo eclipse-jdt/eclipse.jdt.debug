@@ -26,7 +26,7 @@ import com.sun.jdi.request.EventRequest;
 
 public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPatternBreakpoint {
 
-	private static final String PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.patternBreakpointMarker"; //$NON-NLS-1$
+	private static final String PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.javaPatternBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint attribute storing the pattern identifier of the source

@@ -41,6 +41,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -703,7 +704,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getMarkerTypeName(IJavaBreakpoint breakpoint, boolean qualified) throws CoreException {
-		String typeName= breakpoint.getTypeName();
+		String typeName= null;
+		if (breakpoint instanceof IJavaPatternBreakpoint) {
+			typeName = breakpoint.getMarker().getResource().getName();
+		} else {
+			typeName = breakpoint.getTypeName();
+		}
 		if (!qualified) {
 			int index= typeName.lastIndexOf('.');
 			if (index != -1) {
