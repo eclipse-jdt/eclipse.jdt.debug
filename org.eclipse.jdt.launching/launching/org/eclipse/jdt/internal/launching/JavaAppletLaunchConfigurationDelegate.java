@@ -76,14 +76,6 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		String mainTypeName = verifyMainTypeName(configuration);
 
 		IJavaProject javaProject = getJavaProject(configuration);
-		if (javaProject != null) {
-			IType type = JavaLaunchConfigurationUtils.getMainType(mainTypeName, javaProject);
-			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
-			IType javaLangApplet = JavaLaunchConfigurationUtils.getMainType("java.applet.Applet", javaProject); //$NON-NLS-1$
-			if (!hierarchy.contains(javaLangApplet)) {
-				abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.error.not_an_applet"), null, IJavaLaunchConfigurationConstants.ERR_NOT_AN_APPLET); //$NON-NLS-1$
-			}
-		}
 
 		IVMInstall vm = verifyVMInstall(configuration);
 

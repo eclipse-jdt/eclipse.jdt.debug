@@ -419,16 +419,6 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.maintab.type.error.doesnotexist")); //$NON-NLS-1$
 			return false;
 		}
-		IJavaProject jp = getJavaProject();
-		if (jp != null) {
-			// only verify type exists if Java project is specified
-			try {
-				AppletLaunchConfigurationUtils.getMainType(name, jp);
-			} catch (CoreException e) {
-				setErrorMessage(e.getMessage());
-				return false;
-			}
-		}	
 		
 		// Verify appletviewer class
 		name = fAppletViewerClassText.getText().trim();
