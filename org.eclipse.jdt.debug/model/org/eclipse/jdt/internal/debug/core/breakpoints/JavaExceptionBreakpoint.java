@@ -408,8 +408,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (filters.length > 0 ) {
 			boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
 			String pattern= ""; //$NON-NLS-1$
-			//JDI / JDWP can only handle a single class / class exclusion filter
 			//emulated for more than one class filter
+			//as class filters must all be satisfied for the event to occur
 			if (filters.length == 1) {	
 				pattern= filters[0];
 			} else {
