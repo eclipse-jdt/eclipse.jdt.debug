@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -26,7 +27,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
  * 
  * @since 3.0
  */
-public class JDIPlaceholderVariable implements IJavaVariable {
+public class JDIPlaceholderVariable extends PlatformObject implements IJavaVariable  {
 
 	private String fName;
 	private IJavaValue fValue;
@@ -196,7 +197,7 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 			IJavaModifiers.class.equals(adapter)) {
 			return this;
 		}
-		return null;
+		return super.getAdapter(adapter);
 	}
 
 	/* (non-Javadoc)
