@@ -1115,6 +1115,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			try {
 				((JavaBreakpoint)breakpoint).removeFromTarget(this);
 				getBreakpoints().remove(breakpoint);
+				Iterator threads = getThreadList().iterator();
+				while (threads.hasNext()) {
+					((JDIThread)threads.next()).removeCurrentBreakpoint(breakpoint);
+				}
 			} catch (CoreException e) {
 				logError(e);
 			}

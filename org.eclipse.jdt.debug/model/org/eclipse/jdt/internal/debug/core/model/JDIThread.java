@@ -221,6 +221,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
+	 * Removes the given breakpoint from the list of breakpoints
+	 * this thread is suspended at (called when a breakpoint is
+	 * deleted, in case we are suspended at that breakpoint)
+	 */
+	protected void removeCurrentBreakpoint(IBreakpoint bp) {
+		fCurrentBreakpoints.remove(bp);
+	}	
+	
+	/**
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
 	 */
 	public IBreakpoint[] getBreakpoints() {
