@@ -299,7 +299,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!noHotSwapTargets.isEmpty()) {
 			Runnable runnable= new Runnable() {
 				public void run() {
-					notifyUnsupportedHCR(noHotSwapTargets, qualifiedNames);
+					notifyUnsupportedHCR(noHotSwapTargets, resources, qualifiedNames);
 				}
 			};
 			DebugPlugin.getDefault().asyncExec(runnable);
@@ -307,19 +307,53 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	/**
+	 * Filters elements out of the given collections of resources and qualified names
+	 * if there is no type corresponding tyep loaded in the given debug target. This
+	 * method allows us to avoid bogus HCR attempts and "HCR failed" notifications.
+	 *   
+     * @param target the debug target
+     * @param resources the list of resources to filter
+     * @param qualifiedNames the list of qualified names to filter, which corresponds
+     *  to the list of resources on a one-to-one-basis
+     */
+    private void filterUnloadedTypes(JDIDebugTarget target, List resources, List qualifiedNames) {
+		for (int i= 0, numElements= qualifiedNames.size(); i < numElements; i++) {
+		    String name= (String) qualifiedNames.get(i);
+		    List list = target.jdiClassesByName(name);
+		    if (list.isEmpty()) {
+		        // If no classes with the given name are loaded in the VM, don't waste
+		        // cycles trying to replace.
+		        qualifiedNames.remove(i);
+		        resources.remove(i);
+		        // Decrement the index and number of elements to compensate for item removal
+		        i--;
+		        numElements--;
+		    }
+	    }
+    }
+    /**
 	 * Notify the given targets that HCR failed for classes
 	 * with the given fully qualified names.
 	 */
-	protected void notifyUnsupportedHCR(List targets, List qualifiedNames) {
+	protected void notifyUnsupportedHCR(List targets, List resources, List qualifiedNames) {
 		Iterator iter= targets.iterator();
 		JDIDebugTarget target= null;
 		while (iter.hasNext()) {	
 			target= (JDIDebugTarget) iter.next();
 			if (target.isAvailable()) {
-			    fireHCRFailed(target, null);
-			    notifyFailedHCR(target, qualifiedNames);
+			    // Make a local copy of the resources/names to swap so we can filter
+			    // unloaded types on a per-target basis.
+			    List resourcesToReplace= new ArrayList(resources);
+			    List qualifiedNamesToReplace= new ArrayList(qualifiedNames);
+				filterUnloadedTypes(target, resourcesToReplace, qualifiedNamesToReplace);
+				
+				if (!qualifiedNamesToReplace.isEmpty()) {
+				    // Don't notify if the changed types aren't loaded.
+				    fireHCRFailed(target, null);
+				    notifyFailedHCR(target, qualifiedNamesToReplace);
+				}
 			} else {
-			    // Targets should be unregistered when the terminate,
+			    // Targets should be unregistered when they terminate,
 			    // but this is a fallback.
 			    deregisterTarget(target);
 			}
@@ -377,6 +411,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			    deregisterTarget(target);
 				continue;
 			}
+		    // Make a local copy of the resources/names to swap so we can filter
+		    // unloaded types on a per-target basis.
+		    List resourcesToReplace= new ArrayList(resources);
+		    List qualifiedNamesToReplace= new ArrayList(qualifiedNames);
+			filterUnloadedTypes(target, resourcesToReplace, qualifiedNamesToReplace);
+			if (qualifiedNamesToReplace.isEmpty()) {
+			    // If none of the changed types are loaded, do nothing.
+			    continue;
+			}
+			
 			List poppedThreads= new ArrayList();
 			target.setIsPerformingHotCodeReplace(true);
 			try {
@@ -388,7 +432,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					// Thus, pop the frames that contain affected methods
 					// *before* the class redefinition to avoid problems.
 					try {
-						attemptPopFrames(target, resources, qualifiedNames, poppedThreads);
+						attemptPopFrames(target, resourcesToReplace, qualifiedNamesToReplace, poppedThreads);
 						framesPopped= true; // No exception occurred
 					} catch (DebugException de) {
 					    if (shouldLogHCRException(de)) {
@@ -396,11 +440,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					    }
 					}
 				}
-				target.removeOutOfSynchTypes(qualifiedNames);
+				target.removeOutOfSynchTypes(qualifiedNamesToReplace);
 				if (target.supportsJDKHotCodeReplace()) {
-					redefineTypesJDK(target, resources, qualifiedNames);
+					redefineTypesJDK(target, resourcesToReplace, qualifiedNamesToReplace);
 				} else if (target.supportsJ9HotCodeReplace()) {
-					redefineTypesJ9(target, qualifiedNames);
+					redefineTypesJ9(target, qualifiedNamesToReplace);
 				}
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
@@ -417,7 +461,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					} else {
 						// J9 drop to frame support:
 						// After redefining classes, drop to frame
-						attemptDropToFrame(target, resources, qualifiedNames);
+						attemptDropToFrame(target, resourcesToReplace, qualifiedNamesToReplace);
 					}
 				} catch (DebugException de) {
 				    if (shouldLogHCRException(de)) {
