@@ -334,8 +334,10 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		fClasspathViewer.removeEntriesChangedListener(this);
-		fBootpathViewer.removeEntriesChangedListener(this);
+		if (fClasspathViewer != null) {
+			fClasspathViewer.removeEntriesChangedListener(this);
+			fBootpathViewer.removeEntriesChangedListener(this);
+		}
 		super.dispose();
 	}
 
