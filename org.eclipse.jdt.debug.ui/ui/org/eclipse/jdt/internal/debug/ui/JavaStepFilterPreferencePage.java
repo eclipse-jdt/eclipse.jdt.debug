@@ -26,7 +26,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -37,7 +36,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Font;
@@ -51,9 +49,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -62,8 +58,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class JavaStepFilterPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	
-
 	// Step filter widgets
 	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
@@ -78,8 +72,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private Button fEnableAllButton;
 	private Button fDisableAllButton;
 	
-	private Text fEditorText;
-	private TableEditor fTableEditor;
 	private TableItem fNewTableItem;
 	private Label fTableLabel;
 	
@@ -151,29 +143,27 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fTableLabel.setLayoutData(gd);
 		fTableLabel.setFont(font);
 		
-		// filter table
-		fFilterTable= new Table(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fFilterTable.setLayoutData(gd);
-		fFilterTable.setFont(font);
-		
-		TableLayout tableLayout= new TableLayout();
-		ColumnLayoutData[] columnLayoutData= new ColumnLayoutData[1];
-		columnLayoutData[0]= new ColumnWeightData(100);		
-		tableLayout.addColumnData(columnLayoutData[0]);
-		fFilterTable.setLayout(tableLayout);
-		new TableColumn(fFilterTable, SWT.NONE);
-		fFilterViewer = new CheckboxTableViewer(fFilterTable);
-		fTableEditor = new TableEditor(fFilterTable);
+		fFilterViewer = CheckboxTableViewer.newCheckList(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		fFilterViewer.setLabelProvider(new FilterLabelProvider());
 		fFilterViewer.setSorter(new FilterViewerSorter());
 		fStepFilterContentProvider = new StepFilterContentProvider(fFilterViewer);
 		fFilterViewer.setContentProvider(fStepFilterContentProvider);
 		// input just needs to be non-null
 		fFilterViewer.setInput(this);
+		
+		// filter table
+		fFilterTable= fFilterViewer.getTable();
+		fFilterTable.setFont(font);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		fFilterViewer.getTable().setLayoutData(gd);
+		gd.widthHint=1; // just set it to something small and let ig "GRAB" the rest.
+		fFilterTable.setLayoutData(gd);		
+		
+		TableLayout tableLayout= new TableLayout();
+		ColumnWeightData columnLayoutData = new ColumnWeightData(100);	
+		columnLayoutData.resizable=true;
+		tableLayout.addColumnData(columnLayoutData);
+		fFilterTable.setLayout(tableLayout);
+				
 		fFilterViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Filter filter = (Filter)event.getElement();
@@ -355,7 +345,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			Filter filter = (Filter)filters[i];
 			if (filter.getName().equals(newFilterName)) {
 				fStepFilterContentProvider.setChecked(filter, true);
-				cleanupEditor();
+//				cleanupEditor();
 				return;
 			}	
 		}
@@ -363,20 +353,20 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fNewTableItem = fFilterTable.getItem(0);
 		fNewTableItem.setText(newFilterName);
 		fFilterViewer.refresh();
-		cleanupEditor();
+//		cleanupEditor();
 	}
 	
 	/**
 	 * Cleanup all widgetry & resources used by the in-place editing
 	 */
-	private void cleanupEditor() {
-		if (fEditorText != null) {
-			fNewTableItem = null;
-			fTableEditor.setEditor(null, null, 0);	
-			fEditorText.dispose();
-			fEditorText = null;
-		}
-	}
+//	private void cleanupEditor() {
+//		if (fEditorText != null) {
+//			fNewTableItem = null;
+//			fTableEditor.setEditor(null, null, 0);	
+//			fEditorText.dispose();
+//			fEditorText = null;
+//		}
+//	}
 	
 	private void addType() {
 		Shell shell= getShell();
