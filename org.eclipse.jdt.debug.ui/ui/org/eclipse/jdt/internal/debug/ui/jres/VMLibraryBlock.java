@@ -265,7 +265,10 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 						JREMessages.getString("VMLibraryBlock.Default_libraries_do_not_exist._1"), null); //$NON-NLS-1$
 				}				
 			}
+			// avoid updating in response to own update
+			fInCallback = true;
 			fPathViewer.setEntries(entries);
+			fInCallback = false;
 		}
 		fPathViewer.setEnabled(!useDefault);		
 		if (getEntries().length == 0 && !isDefaultSystemLibrary()) {

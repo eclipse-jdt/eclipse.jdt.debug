@@ -69,6 +69,7 @@ public class AddVMDialog extends StatusDialog {
 	private boolean fAutoDetectJavadocLocation = false;
 	
 	private IStatus[] fStati;
+	private int fPrevIndex = -1;
 		
 	public AddVMDialog(IAddVMDialogRequestor requestor, Shell shell, IVMInstallType[] vmInstallTypes, IVMInstall editedVM) {
 		super(shell);
@@ -99,20 +100,9 @@ public class AddVMDialog extends StatusDialog {
 		fVMTypeCombo= new ComboDialogField(SWT.READ_ONLY);
 		fVMTypeCombo.setLabelText(JREMessages.getString("addVMDialog.jreType")); //$NON-NLS-1$
 		fVMTypeCombo.setItems(getVMTypeNames());
-		fVMTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				updateVMType();
-			}
-		});
 		
 		fVMName= new StringDialogField();
 		fVMName.setLabelText(JREMessages.getString("addVMDialog.jreName")); //$NON-NLS-1$
-		fVMName.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setVMNameStatus(validateVMName());
-				updateStatusLine();
-			}
-		});
 		
 		fJRERoot= new StringButtonDialogField(new IStringButtonAdapter() {
 			public void changeControlPressed(DialogField field) {
@@ -121,12 +111,6 @@ public class AddVMDialog extends StatusDialog {
 		});
 		fJRERoot.setLabelText(JREMessages.getString("addVMDialog.jreHome")); //$NON-NLS-1$
 		fJRERoot.setButtonLabel(JREMessages.getString("addVMDialog.browse1")); //$NON-NLS-1$
-		fJRERoot.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setJRELocationStatus(validateJRELocation());
-				updateStatusLine();
-			}
-		});
 	
 		fJavadocURL = new StringButtonDialogField(new IStringButtonAdapter() {
 			public void changeControlPressed(DialogField field) {
@@ -135,12 +119,35 @@ public class AddVMDialog extends StatusDialog {
 		});
 		fJavadocURL.setLabelText(JREMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
 		fJavadocURL.setButtonLabel(JREMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
+	}
+	
+	protected void createFieldListeners() {
+		fVMTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
+			public void dialogFieldChanged(DialogField field) {
+				updateVMType();
+			}
+		});
+		
+		fVMName.setDialogFieldListener(new IDialogFieldListener() {
+			public void dialogFieldChanged(DialogField field) {
+				setVMNameStatus(validateVMName());
+				updateStatusLine();
+			}
+		});
+		
+		fJRERoot.setDialogFieldListener(new IDialogFieldListener() {
+			public void dialogFieldChanged(DialogField field) {
+				setJRELocationStatus(validateJRELocation());
+				updateStatusLine();
+			}
+		});
+	
 		fJavadocURL.setDialogFieldListener(new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
 				setJavadocURLStatus(validateJavadocURL());
 				updateStatusLine();
 			}
-		});
+		});		
 	}
 	
 	protected String getVMName() {
@@ -190,12 +197,17 @@ public class AddVMDialog extends StatusDialog {
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		
 		initializeFields();
+		createFieldListeners();
 		
 		return parent;
 	}
 	
 	private void updateVMType() {
 		int selIndex= fVMTypeCombo.getSelectionIndex();
+		if (selIndex == fPrevIndex) {
+			return;
+		}
+		fPrevIndex = selIndex;
 		if (selIndex >= 0 && selIndex < fVMTypes.length) {
 			fSelectedVMType= fVMTypes[selIndex];
 		}
@@ -244,7 +256,6 @@ public class AddVMDialog extends StatusDialog {
 			} else {
 				fJavadocURL.setText(url.toExternalForm());
 			}
-			fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
 		}
 	}
 	
