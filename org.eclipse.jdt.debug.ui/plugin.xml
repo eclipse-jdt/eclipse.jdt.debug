@@ -69,7 +69,7 @@
                label="%AddBreakpoint.label"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
                actionID="RulerDoubleClick"
-               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction">
+               id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerAction">
          </action>
       </editorContribution>
       <editorContribution
@@ -79,7 +79,7 @@
                label="%AddBreakpoint.label"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
                actionID="RulerDoubleClick"
-               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction">
+               id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerAction">
          </action>
       </editorContribution>
    </extension>
@@ -461,7 +461,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
                menubarPath="emptyBreakpointGroup"
                enablesFor="1"
-               id="org.eclipse.jdt.ui.actions.BreakpointHitCount">
+               id="org.eclipse.jdt.debug.ui.actions.BreakpointHitCount">
          </action>
          <action
                label="%suspendPolicy.label"
@@ -470,7 +470,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointSuspendPolicyToggleAction"
                menubarPath="emptyBreakpointGroup"
                enablesFor="1"
-               id="org.eclipse.jdt.ui.actions.SuspendPolicy">
+               id="org.eclipse.jdt.debug.ui.actions.SuspendPolicy">
          </action>
          <action
                label="%breakpointPropertiesAction.label"
@@ -478,7 +478,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.jdt.ui.actions.JavaBreakpointProperties">
+               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointProperties">
          </action>
       </objectContribution>
       <objectContribution
@@ -491,7 +491,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
                menubarPath="emptyBreakpointGroup"
                enablesFor="+"
-               id="org.eclipse.jdt.ui.actions.CaughtToggle">
+               id="org.eclipse.jdt.debug.ui.actions.CaughtToggle">
          </action>
          <action
                label="%uncaughtAction.label"
@@ -500,7 +500,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionUncaughtToggleAction"
                menubarPath="emptyBreakpointGroup"
                enablesFor="+"
-               id="org.eclipse.jdt.ui.actions.UncaughtToggle">
+               id="org.eclipse.jdt.debug.ui.actions.UncaughtToggle">
          </action>
       </objectContribution>
       <objectContribution
@@ -517,7 +517,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.TerminateEvaluationAction"
                menubarPath="emptyThreadGroup"
                enablesFor="1"
-               id="org.eclipse.jdt.ui.actions.TerminateEvaluation">
+               id="org.eclipse.jdt.debug.ui.actions.TerminateEvaluation">
          </action>
       </objectContribution>
       <objectContribution
@@ -534,7 +534,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ExcludeExceptionLocationAction"
                menubarPath="emptyThreadGroup"
                enablesFor="1"
-               id="org.eclipse.jdt.ui.actions.ExcludeExceptionLocation">
+               id="org.eclipse.jdt.debug.ui.actions.ExcludeExceptionLocation">
          </action>
       </objectContribution>
       <objectContribution
@@ -551,7 +551,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
                menubarPath="emptyThreadGroup"
                enablesFor="1"
-               id="org.eclipse.jdt.ui.actions.DropToFrame">
+               id="org.eclipse.jdt.debug.ui.actions.DropToFrame">
          </action>
       </objectContribution>
       <objectContribution
@@ -564,7 +564,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.AddPackageStepFilterAction"
                menubarPath="emptyThreadGroup"
                enablesFor="+"
-               id="org.eclipse.jdt.ui.actions.AddPackageStepFilterAction">
+               id="org.eclipse.jdt.debug.ui.actions.AddPackageStepFilterAction">
          </action>
          <action
                label="%addTypeStepFilterAction.label"
@@ -573,7 +573,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.AddTypeStepFilterAction"
                menubarPath="emptyThreadGroup"
                enablesFor="+"
-               id="org.eclipse.jdt.ui.actions.AddTypeStepFilterAction">
+               id="org.eclipse.jdt.debug.ui.actions.AddTypeStepFilterAction">
          </action>
       </objectContribution>
       <viewerContribution
@@ -720,7 +720,7 @@
                tooltip="%MonitorTraceAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
                menubarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.MonitorTraceAction">
+               id="org.eclipse.jdt.debug.ui.actions.MonitorTraceAction">
          </action>
          <action
                label="%MonitorQuitAction.label"
@@ -729,7 +729,7 @@
                tooltip="%MonitorQuitAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
                menubarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.MonitorQuitAction">
+               id="org.eclipse.jdt.debug.ui.actions.MonitorQuitAction">
          </action>
       </viewerContribution>
    </extension>
@@ -737,19 +737,19 @@
          point="org.eclipse.ui.viewActions">
       <viewContribution
             targetID="org.eclipse.debug.ui.VariableView"
-            id="org.eclipse.jdt.ui.debug.VariableViewActions">
+            id="org.eclipse.jdt.debug.ui.VariableViewActions">
          <action
                label="%primitiveOptionsAction.label"
                helpContextId="primitive_options_action_context"
                tooltip="%primitiveOptionsAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
                menubarPath="javaActions"
-               id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions">
+               id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
          </action>
          <action
                state="true"
                style="toggle"
-               id="org.eclipse.jdt.ui.variableViewActions.ShowNullEntries"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
                helpContextId="show_null_entries_action_context"
                label="%showNullEntriesAction.label"
@@ -759,7 +759,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
                icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
@@ -770,7 +770,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowStatic"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
                icon="icons/full/clcl16/static_co.gif"
                helpContextId="show_static_action_context"
@@ -781,7 +781,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowConstants"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
                icon="icons/full/clcl16/constant_co.gif"
                helpContextId="show_constants_action_context"
@@ -792,19 +792,19 @@
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.jdt.ui.debug.ExpressionViewActions">
+            id="org.eclipse.jdt.debug.ui.ExpressionViewActions">
          <action
                label="%primitiveOptionsAction.label"
                helpContextId="primitive_options_action_context"
                tooltip="%primitiveOptionsAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
                menubarPath="javaActions"
-               id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions">
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.PrimitiveOptions">
          </action>
          <action
                state="true"
                style="toggle"
-               id="org.eclipse.jdt.ui.variableViewActions.ShowNullEntries"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
                helpContextId="show_null_entries_action_context"
                label="%showNullEntriesAction.label"
@@ -814,7 +814,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
                icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
@@ -825,7 +825,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowStatic"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
                icon="icons/full/clcl16/static_co.gif"
                helpContextId="show_static_action_context"
@@ -836,7 +836,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowConstants"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
                icon="icons/full/clcl16/constant_co.gif"
                helpContextId="show_constants_action_context"
@@ -862,7 +862,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"
+               id="org.eclipse.jdt.debug.ui.breakpointViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
                icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
@@ -877,7 +877,7 @@
          <action
                state="false"
                style="toggle"
-               id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"
+               id="org.eclipse.jdt.debug.ui.launchViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
                icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
@@ -981,7 +981,7 @@
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsActions">
          <action
-               id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
+               id="org.eclipse.jdt.debug.ui.actions.MonitorTraceAction"
                toolbarPath="vmGroup"
                hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
@@ -992,7 +992,7 @@
                tooltip="%MonitorTraceAction.tooltip">
          </action>
          <action
-               id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
+               id="org.eclipse.jdt.debug.ui.actions.MonitorQuitAction"
                toolbarPath="vmGroup"
                hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/resume_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
@@ -1005,7 +1005,7 @@
          <action
                state="false"
                toolbarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.DeadlockView"
+               id="org.eclipse.jdt.debug.ui.actions.DeadlockView"
                hoverIcon="icons/full/clcl16/deadlock_view.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleDeadLocksViewAction"
                disabledIcon="icons/full/dlcl16/deadlock_view.gif"
@@ -1017,7 +1017,7 @@
          <action
                state="false"
                toolbarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.ThreadView"
+               id="org.eclipse.jdt.debug.ui.actions.ThreadView"
                hoverIcon="icons/full/clcl16/thread_view.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleThreadsViewAction"
                disabledIcon="icons/full/dlcl16/thread_view.gif"
@@ -1029,7 +1029,7 @@
          <action
                state="true"
                toolbarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.MonitorView"
+               id="org.eclipse.jdt.debug.ui.actions.MonitorView"
                hoverIcon="icons/full/clcl16/monitor_view.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleMonitorsViewAction"
                disabledIcon="icons/full/dlcl16/monitor_view.gif"
@@ -1312,21 +1312,21 @@
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerActionDelegate">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1337,21 +1337,21 @@
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerActionDelegate">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1800,19 +1800,19 @@
             name="%javaDebugPrefName"
             category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
-            id="org.eclipse.jdt.ui.JavaDebugPreferencePage">
+            id="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage">
       </page>
       <page
             name="%javaStepFilterPrefName"
-            category="org.eclipse.jdt.ui.JavaDebugPreferencePage"
+            category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
-            id="org.eclipse.jdt.ui.JavaStepFilterPreferencePage">
+            id="org.eclipse.jdt.debug.ui.JavaStepFilterPreferencePage">
       </page>
       <page
             name="%javaDetailFormattersPrefName"
-            category="org.eclipse.jdt.ui.JavaDebugPreferencePage"
+            category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
-            id="org.eclipse.jdt.ui.JavaDetailFormattersPreferencePage">
+            id="org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage">
       </page>
    </extension>
    <extension
@@ -1893,37 +1893,37 @@
                id="org.eclipse.jdt.debug.ui.actions.AddException">
          </action>
          <action
-               id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified">
+               id="org.eclipse.jdt.debug.ui.breakpointViewActions.ShowQualified">
          </action>
          <action
-               id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified">
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowQualified">
          </action>
          <action
-               id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression">
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.AddWatchExpression">
          </action>
          <action
-               id="org.eclipse.jdt.ui.launchViewActions.ShowQualified">
+               id="org.eclipse.jdt.debug.ui.launchViewActions.ShowQualified">
          </action>
          <action
-               id="org.eclipse.jdt.ui.variableViewActions.ShowQualified">
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowQualified">
          </action>
          <action
-               id="org.eclipse.jdt.ui.variableViewActions.ShowStatic">
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowStatic">
          </action>
          <action
-               id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic">
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowStatic">
          </action>
          <action
-               id="org.eclipse.jdt.ui.variableViewActions.ShowConstants">
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowConstants">
          </action>
          <action
-               id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants">
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowConstants">
          </action>
          <action
-               id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions">
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.PrimitiveOptions">
          </action>
          <action
-               id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions">
+               id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
          </action>
       </debugActionGroup>
    </extension>
@@ -2231,6 +2231,33 @@
             class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerObjectBrowser"
             id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerObjectBrowser">
       </javaObjectBrowser>
+   </extension>
+   
+<!-- Roles and Activities -->
+   <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            name="Debugging Java"
+            description=""
+            id="org.eclipse.debugging.java">
+      </activity>
+      <patternBinding
+            inclusive="true"
+            activityId="org.eclipse.debugging.java"
+            pattern="org.eclipse.jdt.debug.*">
+      </patternBinding>
+      <patternBinding
+            inclusive="true"
+            activityId="org.eclipse.debugging.java"
+            pattern="org.eclipse.jdt.launching.*">
+      </patternBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.roles"> 
+      <activityBinding
+            activityId="org.eclipse.debugging.java"
+            roleId="org.eclipse.roles.javaRole">
+      </activityBinding>
    </extension>
 
 </plugin>
