@@ -21,7 +21,7 @@
 		<delete dir="${temp.folder}/lib/launchingsupport.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/launchingsupport.jar.bin"/>
 		<!-- compile the source code -->
-		<javac target="1.3" source="1.3" destdir="${temp.folder}/lib/launchingsupport.jar.bin" failonerror="false" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
+		<javac target="1.2" source="1.3" destdir="${temp.folder}/lib/launchingsupport.jar.bin" failonerror="false" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
 			 bootclasspath="${bootclasspath}" classpath="">
 			<src path="support/"/>
 		</javac>

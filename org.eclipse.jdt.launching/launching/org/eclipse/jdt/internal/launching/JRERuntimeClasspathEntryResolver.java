@@ -11,8 +11,11 @@
 package org.eclipse.jdt.internal.launching;
 
 
+import java.io.File;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -70,6 +73,22 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 */
 	protected IRuntimeClasspathEntry[] resolveLibraryLocations(IVMInstall vm, int kind) {
 		IRuntimeClasspathEntry[] resolved = null;
+		if (kind == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
+			File vmInstallLocation= vm.getInstallLocation();
+			if (vmInstallLocation != null) {
+				LibraryInfo libraryInfo= LaunchingPlugin.getLibraryInfo(vmInstallLocation.getAbsolutePath());
+				if (libraryInfo != null) {
+					String[] bootpath= libraryInfo.getBootpath();
+					int length= bootpath.length;
+					resolved= new IRuntimeClasspathEntry[length];
+					for (int i= 0; i < length; i++) {
+						resolved[i]= JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(bootpath[i]));
+						resolved[i].setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+					}
+					return resolved;
+				}
+			}
+		}
 		LibraryLocation[] libs = vm.getLibraryLocations();
 		if (libs == null) {
 			// default system libs

@@ -146,28 +146,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		// options like '-client' & '-server' which are required to be the first options
 		addArguments(config.getVMArguments(), arguments);
 
-		// bootpath
-		String[] prependBootCP= config.getPrependBootClassPath();
-		String[] bootCP= config.getMainBootClassPath();
-		String[] appendBootCP= config.getAppendBootClassPath();
-		if (prependBootCP == null && bootCP == null && appendBootCP == null) {
-			// use old single attribute instead of new attributes if not specified
-			bootCP = config.getBootClassPath();
-		}
-		if (prependBootCP != null) {
-			arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$
-		}
-		if (bootCP != null) {
-			if (bootCP.length > 0) {
-				arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
-			} else {
-				// empty
-				arguments.add("-Xbootclasspath:"); //$NON-NLS-1$	
-			}
-		}
-		if (appendBootCP != null) {
-			arguments.add("-Xbootclasspath/a:" + convertClassPath(appendBootCP)); //$NON-NLS-1$
-		}
+		addBootClassPathArguments(arguments, config);
 		
 		String[] cp= config.getClassPath();
 		if (cp.length > 0) {
