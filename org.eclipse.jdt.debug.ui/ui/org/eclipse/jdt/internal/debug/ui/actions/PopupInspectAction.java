@@ -66,8 +66,8 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 						showExpressionView();						
 					}
 				};
-				action.setText(ActionMessages.getString("InspectAction.1")); //$NON-NLS-1$
-				action.setToolTipText(ActionMessages.getString("InspectAction.2")); //$NON-NLS-1$
+				action.setText(ActionMessages.getString("PopupInspectAction.1")); //$NON-NLS-1$
+				action.setToolTipText(ActionMessages.getString("PopupInspectAction.1")); //$NON-NLS-1$
 				return new PopupInformationControl(parent, DebugUITools.newExpressionInformationControlAdapter(page, expression), action);
 			}
 		});

@@ -56,8 +56,8 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 				moveToViewer();
 			}
 		};
-		action.setText(ActionMessages.getString("DisplayAction.6")); //$NON-NLS-1$
-		action.setToolTipText(ActionMessages.getString("DisplayAction.7")); //$NON-NLS-1$
+		action.setText(ActionMessages.getString("PopupDisplayAction.6")); //$NON-NLS-1$
+		action.setToolTipText(ActionMessages.getString("PopupDisplayAction.6")); //$NON-NLS-1$
 		
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
