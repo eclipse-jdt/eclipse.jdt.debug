@@ -65,7 +65,6 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 	 * Test JDI parent() and JDWP 'ThreadGroup - Get parent'.
 	 */
 	public void testJDIParent() {
-		assertTrue("1", fThreadGroup.parent() instanceof ThreadGroupReference);
 		ThreadGroupReference systemThreadGroup = fThreadGroup.parent();
 		assertEquals("2", "main", systemThreadGroup.name());
 		// assertTrue("3", systemThreadGroup.parent() == null);
