@@ -258,11 +258,35 @@ public class StandardVMType extends AbstractVMInstallType {
 				
 		// Add all extension directories
 		Iterator iter = extensions.iterator();
-		while (iter.hasNext()) {		
-			allLibs.add(iter.next());
+		while (iter.hasNext()) {
+			LibraryLocation lib = (LibraryLocation)iter.next();
+			// check for dups, in case bootpath contains an ext dir entry (see bug 50201)
+			if (!isDuplicateLibrary(allLibs, lib)) {
+				allLibs.add(lib);
+			}
 		}
 				
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
+	}
+	
+	/**
+	 * Returns whether the given library is already contained in the given list.
+	 * Rather than checking the library for equality (which considers source attachments),
+	 * we check the actual OS path to the library for equality.
+	 * 
+	 * @param libs list of library locations
+	 * @param dup possible dup
+	 * @return whether dup is contained in list of libraries
+	 */
+	private boolean isDuplicateLibrary(List libs, LibraryLocation dup) {
+		String osPath = dup.getSystemLibraryPath().toOSString();
+		for (int i = 0; i < libs.size(); i++) {
+			LibraryLocation location = (LibraryLocation) libs.get(i);
+			if (location.getSystemLibraryPath().toOSString().equalsIgnoreCase(osPath)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
