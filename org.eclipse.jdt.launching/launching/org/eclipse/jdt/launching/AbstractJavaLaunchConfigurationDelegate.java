@@ -77,16 +77,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * A list of prequisite projects ordered by their build order.
 	 */
 	private List orderedProjects;
-
-	/**
-	 * Resolved classpath entries as returned by JavaRuntime
-	 */
-	protected IRuntimeClasspathEntry[] resolvedClasspathEntries;
-	
-	/**
-	 * Unresolved classpath entries as returned by JavaRuntime
-	 */
-	protected IRuntimeClasspathEntry[] unresolvedClasspathEntries;
 	
 	
 	/**
@@ -234,17 +224,18 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			// default
 			return null;
 		}		
-
-		List bootEntries = new ArrayList(resolvedClasspathEntries.length);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
+		List bootEntries = new ArrayList(entries.length);
 		boolean empty = true;
 		boolean allStandard = true;
-		for (int i = 0; i < resolvedClasspathEntries.length; i++) {
-			if (resolvedClasspathEntries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = resolvedClasspathEntries[i].getLocation();
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+				String location = entries[i].getLocation();
 				if (location != null) {
 					empty = false;
 					bootEntries.add(location);
-					allStandard = allStandard && resolvedClasspathEntries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
+					allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
 				}
 			}
 		}
@@ -273,13 +264,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * @exception CoreException if unable to retrieve the attribute
 	 * @since 3.0
 	 */
-	public String[][] getBootpathExt(ILaunchConfiguration configuration) throws CoreException {		
+	public String[][] getBootpathExt(ILaunchConfiguration configuration) throws CoreException {
 		String [][] bootpathInfo= new String[3][];
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		List bootEntriesPrepend= new ArrayList();
 		int index= 0;
 		boolean jreContainerFound= false;
-		while (!jreContainerFound && index < unresolvedClasspathEntries.length) {
-			IRuntimeClasspathEntry entry= unresolvedClasspathEntries[index++];
+		while (!jreContainerFound && index < entries.length) {
+			IRuntimeClasspathEntry entry= entries[index++];
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES || entry.getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES) {
 				int entryKind= entry.getClasspathEntry().getEntryKind();
 				String segment0= entry.getPath().segment(0);
@@ -301,8 +293,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		if (jreContainerFound) {
 			List bootEntriesAppend= new ArrayList();
-			for (; index < unresolvedClasspathEntries.length; index ++) {
-				IRuntimeClasspathEntry entry= unresolvedClasspathEntries[index];
+			for (; index < entries.length; index ++) {
+				IRuntimeClasspathEntry entry= entries[index];
 				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
 						bootEntriesAppend.add(entry);
 				}
@@ -357,10 +349,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
-		List userEntries = new ArrayList(resolvedClasspathEntries.length);
-		for (int i = 0; i < resolvedClasspathEntries.length; i++) {
-			if (resolvedClasspathEntries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = resolvedClasspathEntries[i].getLocation();
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
+		List userEntries = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				String location = entries[i].getLocation();
 				if (location != null) {
 					userEntries.add(location);
 				}
@@ -829,7 +823,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 					}
 				}
 			}
-			
 			return continueLaunch;
 		} finally {
 			monitor.done();
@@ -871,11 +864,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			getReferencedProjectSet(project, projectSet);
 			orderedProjects = getBuildOrder(new ArrayList(projectSet));
 		}
-		
-		//compute classpath
-		unresolvedClasspathEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
-		resolvedClasspathEntries = JavaRuntime.resolveRuntimeClasspath(unresolvedClasspathEntries, configuration);
-		
 		// do generic launch checks
 		return super.preLaunchCheck(configuration, mode, monitor);
 	}
