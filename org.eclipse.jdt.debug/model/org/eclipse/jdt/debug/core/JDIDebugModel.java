@@ -159,10 +159,10 @@ public class JDIDebugModel {
 	 * @param pattern the class name pattern in which the pattern breakpoint should
 	 *   be installed. The pattern breakpoint will install itself in every class which
 	 *   matches the pattern.
-	 * @param lineNumber the line number in the generated java file on which
-	 *   this breakpoint should be placed. Note that clients are responsible
-	 *   for determining which line in the java file corresponds to the desired
-	 *   line in the original source
+	 * @param lineNumber the line number on which this breakpoint should be placed.
+	 *   Note that the line number refers to the debug attributes in the generated
+	 * 	 class file. Gernerally, this refers to a line number in the original
+	 *   source, but the attribute is client defined.
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
 	 * @return a pattern breakpoint
