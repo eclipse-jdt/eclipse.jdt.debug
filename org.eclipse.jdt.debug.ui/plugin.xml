@@ -450,9 +450,7 @@
             id="org.eclipse.jdt.debug.JavaBreakpointActions">
          <action
                id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
-               hoverIcon="icons/full/clcl16/sethitcount_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
-               disabledIcon="icons/full/dlcl16/sethitcount_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/sethitcount_co.gif"
                helpContextId="hit_count_action_context"
@@ -767,9 +765,7 @@
             id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
          <action
                id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
-               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/suspend_co.gif"
                icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
                helpContextId="monitor_trace_action_context"
                label="%MonitorTraceAction.label"
@@ -778,9 +774,7 @@
          </action>
          <action
                id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
-               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/resume_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"
                icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
                helpContextId="monitor_quit_action_context"
                label="%MonitorQuitAction.label"
