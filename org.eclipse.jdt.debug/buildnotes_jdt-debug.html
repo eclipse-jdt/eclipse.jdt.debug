@@ -17,7 +17,9 @@ What's new in this drop</h3>
  to the "headless" launching plug-in (org.eclipse.jdt.launching). This facilitates headless,
  programmatic launching. This is a breaking API change. As well, pre-existing launch configurations
  are deleted on workbench startup, as they are incompatible with the chages made.</li>
-
+<li>Java Exception breakpoints can be scoped.  Package, type and limited regular expressions can
+be set as the scope for the breakpoint.  The breakpoint is only "hit" if the exception is generated
+from one of these locations.  Can be set off of the properties dialog for the breakpoint.</li>
 <h3>
 Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=9171">9171</a>: NPE attempting JDI test TestAll<br>
@@ -42,6 +44,13 @@ Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=9896">9896</a>: Wrong warning in Add/Edit JRE dialog<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10147">10147</a>: Moving VMs is not handled well.<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10772">10772</a>: Single-click launching generates exception on class with no main method<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=9678">9678</a>: Unable to enter & save classpath entry<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10638">10638</a>: Launch configuration wizard not honoring selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10644">10644</a>: NPE pressing apply button on launch configuration with no name<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10645">10645</a>: NPE pressing apply button twice<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10646">10646</a>: Can add empty environment variable for launch configurations<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10782">10782</a>: Exception applying changes to Launch configuration<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=9241">9241</a>: API - java launch configs whould be headless<br>
 <h3>
 Problem Reports Closed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=10641">10641</a>: NPE verifying name in launch configurations<br>
