@@ -93,7 +93,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
 				setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
 			} catch (JavaModelException exception) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), "The selected field is not visible in the currently selected debug context. A stack frame or suspended thread which contains the declaring type of this field must be selected.");
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), "The selected field is not visible in the currently selected debug context. A stack frame or suspended thread which contains the declaring type of this field must be selected."); //$NON-NLS-1$
 			} catch (CoreException x) {
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
@@ -199,7 +199,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		} else {
 			// Launch configuration support
 			try {
-				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 				if (projectName != null) {
 					javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
 				}
