@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,28 +25,66 @@ import org.eclipse.jdt.launching.LibraryLocation;
  */
 public class MacOSXVMInstallType extends AbstractVMInstallType {
 	
+	private static final String JAVA_VM_NAME= "Java HotSpot(TM) Client VM";	//$NON-NLS-1$
+	
+	/*
+	 * The directory structure for Java VMs is as follows:
+	 * 	/System/Library/Frameworks/JavaVM.framework/Versions/
+	 * 		1.3.1
+	 * 			Home
+	 * 		1.4.1
+	 * 			Home
+	 * 		CurrentJDK -> 1.3.1
+	 */
+	
+	/** The OS keeps all the JVM versions in this directory */
 	private static final String JVM_VERSION_LOC= "/System/Library/Frameworks/JavaVM.framework/Versions/";	//$NON-NLS-1$
+	/** The name of a Unix link to MacOS X's default VM */
 	private static final String CURRENT_JVM= "CurrentJDK";	//$NON-NLS-1$
-	private static final String JVM_SUBDIR= "Home";	//$NON-NLS-1$
-	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/api";	//$NON-NLS-1$
+	/** The root of a JVM */
+	private static final String JVM_ROOT= "Home";	//$NON-NLS-1$
+	/** The doc (for all JVMs) lives here (if the developer kit has been expanded)*/
+	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/";	//$NON-NLS-1$
 	
 	private String fDefaultJDKID;
 	
 	public IVMInstall doCreateVMInstall(String id) {
 		MacOSXVMInstall vm= new MacOSXVMInstall(this, id);
-		String path= JVM_VERSION_LOC + id + File.separator + JVM_SUBDIR;
+		String path= JVM_VERSION_LOC + id + File.separator + JVM_ROOT;
 		File home = new File(path);
 		vm.setInstallLocation(home);
-		String name= "JVM " + id;
-		if (id.equals(fDefaultJDKID))
-			name +=  " (MacOS X Default)";
-		vm.setName(name);
+		
+		String format= MacOSXLauncherMessages.getString(id.equals(fDefaultJDKID)
+									? "MacOSXVMType.jvmDefaultName"
+									: "MacOSXVMType.jvmName");
+		vm.setName(MessageFormat.format(format, new Object[] { id } ));
+		
 		vm.setLibraryLocations(getDefaultLibraryLocations(home));
-		try {
-			URL doc= new URL("file", "", JAVADOC_LOC);	//$NON-NLS-1$ //$NON-NLS-2$
-			vm.setJavadocLocation(doc);
-		} catch (MalformedURLException ex) {
+		
+		URL doc= null;
+		
+		// first try in local filesystem
+		File docLocation= new File(JAVADOC_LOC + id);
+		if (docLocation.exists()) {
+			try {
+				doc= new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MalformedURLException ex) {
+			}
 		}
+		if (doc == null) {
+			// now try in a standard place on the web
+			String version= id;
+			if ("1.3.1".equals(id))
+				version= "1.3";
+			try {
+				doc= new URL("http://java.sun.com/j2se/"+version+"/docs/api/");	//$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MalformedURLException ex) {
+			}			
+		}
+		
+		if (doc != null)
+			vm.setJavadocLocation(doc);
+		
 		return vm;
 	}
 	
@@ -66,7 +105,8 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	 */
 	public File detectInstallLocation() {
 		
-		if (!"Java HotSpot(TM) Client VM".equals(System.getProperty("java.vm.name"))) //$NON-NLS-2$ //$NON-NLS-1$
+		String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
+		if (javaVMName == null || !JAVA_VM_NAME.equals(javaVMName)) 
 			return null;
 	
 		// find all installed VMs
@@ -80,7 +120,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 			File[] versions= versionDir.listFiles();
 			for (int i= 0; i < versions.length; i++) {
 				String version= versions[i].getName();
-				File home=  new File(versions[i], JVM_SUBDIR);
+				File home=  new File(versions[i], JVM_ROOT);
 				if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
 					if (currentJDK.equals(versions[i])) {
 						if (fDefaultJDKID == null)
@@ -91,6 +131,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 							try {
 								JavaRuntime.setDefaultVMInstall(vm, null);
 							} catch (CoreException e) {
+								// exception intentionally ignored
 							}
 						}
 					} else
@@ -121,5 +162,4 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 				new LibraryLocation(uilib, source, srcPkgRoot)
 		};
 	}
-
 }
