@@ -314,9 +314,15 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		Iterator iter= targets.iterator();
 		JDIDebugTarget target= null;
 		while (iter.hasNext()) {	
-			target= (JDIDebugTarget) iter.next();	
-			fireHCRFailed(target, null);
-			notifyFailedHCR(target, qualifiedNames);
+			target= (JDIDebugTarget) iter.next();
+			if (target.isAvailable()) {
+			    fireHCRFailed(target, null);
+			    notifyFailedHCR(target, qualifiedNames);
+			} else {
+			    // Targets should be unregistered when the terminate,
+			    // but this is a fallback.
+			    deregisterTarget(target);
+			}
 		}
 	}
 	
@@ -368,6 +374,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
 			if (!target.isAvailable()) {
+			    deregisterTarget(target);
 				continue;
 			}
 			List poppedThreads= new ArrayList();
@@ -1167,7 +1174,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				JDIDebugTarget target = (JDIDebugTarget)jt;
 				if (target.supportsHotCodeReplace()) {
 					addHotSwapTarget(target);
-				} else {
+				} else if (target.isAvailable()){
 					addNonHotSwapTarget(target);
 				}				
 			}
