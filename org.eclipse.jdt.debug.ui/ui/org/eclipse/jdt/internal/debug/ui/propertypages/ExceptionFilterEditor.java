@@ -85,10 +85,8 @@ public class ExceptionFilterEditor {
 	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
 	private FilterContentProvider fFilterContentProvider;
-	private JavaExceptionBreakpointAdvancedPage fPage;
 
 	public ExceptionFilterEditor(Composite parent, JavaExceptionBreakpointAdvancedPage page) {
-		fPage = page;
 		fBreakpoint = (IJavaExceptionBreakpoint) page.getBreakpoint();
 		// top level container
 		Composite outer = new Composite(parent, SWT.NONE);
