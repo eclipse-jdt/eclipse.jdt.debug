@@ -141,6 +141,7 @@ public class ExceptionFilterEditor {
 		fFilterViewer.setInput(this);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		gd.widthHint = 100;
+		gd.heightHint = 100;
 		fFilterViewer.getTable().setLayoutData(gd);
 		fFilterViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
