@@ -342,21 +342,24 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		setShuttingDown(true);
-		JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
-		JavaDebugOptionsManager.getDefault().shutdown();
-		if (fImageDescriptorRegistry != null) {
-			fImageDescriptorRegistry.dispose();
+		try {
+			setShuttingDown(true);
+			JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
+			JavaDebugOptionsManager.getDefault().shutdown();
+			if (fImageDescriptorRegistry != null) {
+				fImageDescriptorRegistry.dispose();
+			}
+			fEvaluationEngineManager.dispose();
+			IAdapterManager manager= Platform.getAdapterManager();
+			manager.unregisterAdapters(fActionFilterAdapterFactory);
+			manager.unregisterAdapters(fSourceLocationAdapterFactory);
+			manager.unregisterAdapters(fBreakpointAdapterFactory);
+			if (fUtilPresentation != null) {
+				fUtilPresentation.dispose();
+			} 
+		} finally {
+			super.stop(context);
 		}
-		fEvaluationEngineManager.dispose();
-		IAdapterManager manager= Platform.getAdapterManager();
-		manager.unregisterAdapters(fActionFilterAdapterFactory);
-		manager.unregisterAdapters(fSourceLocationAdapterFactory);
-		manager.unregisterAdapters(fBreakpointAdapterFactory);
-		if (fUtilPresentation != null) {
-			fUtilPresentation.dispose();
-		}
-		super.stop(context);
 	}
 	
 	/**
