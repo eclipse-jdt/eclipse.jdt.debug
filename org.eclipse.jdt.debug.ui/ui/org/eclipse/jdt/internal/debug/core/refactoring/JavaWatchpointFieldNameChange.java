@@ -13,10 +13,12 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
@@ -25,7 +27,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.corext.refactoring.base.Change;
 import org.eclipse.jdt.internal.corext.refactoring.base.RefactoringStatus;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  */
@@ -33,7 +34,9 @@ public class JavaWatchpointFieldNameChange extends Change {
 	
 	private IJavaWatchpoint fWatchpoint;
 	private String fNewName;
+	private String fOldName;
 	private IType fDeclaringType;
+	private IBreakpointsListener fBreakpointlistener;
 
 	public static Change createChange(IField field, String newName) throws CoreException {
 		String typeName= field.getDeclaringType().getFullyQualifiedName();
@@ -52,9 +55,10 @@ public class JavaWatchpointFieldNameChange extends Change {
 		return null;
 	}
 
-	public JavaWatchpointFieldNameChange(IJavaWatchpoint watchpoint, String newName) {
+	public JavaWatchpointFieldNameChange(IJavaWatchpoint watchpoint, String newName) throws CoreException {
 		fWatchpoint= watchpoint;
 		fNewName= newName;
+		fOldName= fWatchpoint.getFieldName();
 		fDeclaringType= BreakpointUtils.getType(watchpoint);
 	}
 
@@ -62,18 +66,36 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#getName()
 	 */
 	public String getName() {
-		try {
-			return MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.1"), new String[] {fWatchpoint.getTypeName(), fWatchpoint.getFieldName()}); //$NON-NLS-1$
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		return ""; //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.1"), new String[] {fDeclaringType.getElementName(), fOldName}); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+		fBreakpointlistener= new IBreakpointsListener() {
+			public void breakpointsAdded(IBreakpoint[] breakpoints) {
+			}
+			public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+				for (int i= 0; i < breakpoints.length; i++) {
+					if (breakpoints[i].equals(fWatchpoint)) {
+						fWatchpoint= null;
+						DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+					}
+				}	
+			}
+			public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+			}
+		};
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(fBreakpointlistener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointlistener);
 	}
 
 	/* (non-Javadoc)
@@ -81,8 +103,8 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus status= new RefactoringStatus();
-		if (!fWatchpoint.isRegistered()) {
-			status.addFatalError(MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.2"), new String[] {fWatchpoint.getTypeName(), fWatchpoint.getFieldName()})); //$NON-NLS-1$
+		if (fWatchpoint == null) {
+			status.addFatalError(MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.2"), new String[] {fDeclaringType.getElementName(), fOldName})); //$NON-NLS-1$
 		}
 		return status;
 	}
@@ -91,7 +113,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		String oldName= fWatchpoint.getFieldName();
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointlistener);
 		IField newField= fDeclaringType.getField(fNewName);
 		Map attributes= fWatchpoint.getMarker().getAttributes();
 		boolean isAccess= fWatchpoint.isAccess();
@@ -103,7 +125,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 		newWatchpoint.setModification(isModification);
 		newWatchpoint.setEnabled(isEnable);
 		fWatchpoint.delete();
-		return new JavaWatchpointFieldNameChange(newWatchpoint, oldName);
+		return new JavaWatchpointFieldNameChange(newWatchpoint, fOldName);
 	}
 
 	/* (non-Javadoc)
