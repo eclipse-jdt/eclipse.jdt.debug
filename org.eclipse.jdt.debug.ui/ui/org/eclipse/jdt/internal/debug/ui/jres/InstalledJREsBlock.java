@@ -825,9 +825,12 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	
 	private float getColumnWeight(int col) {
 		Table table = fVMList.getTable();
-		Point size = table.getSize();
-		TableColumn column = table.getColumn(col);
-		return ((float)column.getWidth()) / size.x;
+		int tableWidth = table.getSize().x;
+		int columnWidth= table.getColumn(col).getWidth();
+		if (tableWidth > columnWidth) {
+			return ((float)columnWidth) / tableWidth;
+		}
+		return 1/3F;
 	}
 	
 	/**
