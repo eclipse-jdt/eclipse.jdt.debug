@@ -376,7 +376,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			start = range.getOffset();
 			stop = start + range.getLength() - 1;
 		}
-		super.setLineBreakpointAttributes(getPluginIdentifier(), true, -1, start, stop);
+		super.setLineBreakpointAttributes(getModelIdentifier(), true, -1, start, stop);
 	}		
 
 	/**

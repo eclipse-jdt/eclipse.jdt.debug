@@ -44,7 +44,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	
 				// create the marker
 				setMarker(resource.createMarker(markerType));
-				setLineBreakpointAttributes(getPluginIdentifier(), true, lineNumber, -1, -1);
+				setLineBreakpointAttributes(getModelIdentifier(), true, lineNumber, -1, -1);
 	
 				// configure the hit count and pattern handle
 				setPatternAndHitCount(pattern, hitCount);

@@ -73,7 +73,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 					end = start + range.getLength() - 1;
 				}
 				// configure the standard attributes
-				setLineBreakpointAttributes(getPluginIdentifier(), true, -1, start, end);
+				setLineBreakpointAttributes(getModelIdentifier(), true, -1, start, end);
 				// configure the type handle and hit count
 				setTypeAndHitCount(method.getDeclaringType(), hitCount);
 

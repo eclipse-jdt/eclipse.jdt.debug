@@ -81,15 +81,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */	
 	protected static final String[] fgExpiredEnabledAttributes= new String[]{EXPIRED, ENABLED};
 	
-	/**
-	 * Returns the identifier for this JDI debug model plug-in
-	 *
-	 * @return plugin identifier
-	 */
-	public static String getPluginIdentifier() {
-		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
-	}		
-	
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap(1);
 	}	
