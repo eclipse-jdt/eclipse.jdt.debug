@@ -9,11 +9,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
@@ -51,10 +53,10 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	public static final int SUSPEND_STATUS_SUSPENDED = 0x01;
 	
 	/** Mapping of command codes to strings. */
-	private static HashMap fThreadStatusMap = null;
+	private static Map fgThreadStatusMap = null;
 
 	/** Map with Strings for flag bits. */
-	private static Vector fSuspendStatusVector = null;
+	private static String[] fgSuspendStatusStrings = null;
 
 	/** JDWP Tag. */
 	protected static final byte tag = JdwpID.THREAD_TAG;
@@ -188,11 +190,12 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			Vector frames = new Vector();
+			List frames = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				StackFrameImpl frame = StackFrameImpl.readWithLocation(this, this, replyData);
-				if (frame == null)
+				if (frame == null) {
 					continue;
+				}
 				frames.add(frame);
 			}
 			return frames;
@@ -240,7 +243,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			DataInputStream replyData = replyPacket.dataInStream();
 			//remove the thread status reply
 			readInt("thread status", threadStatusMap(), replyData); //$NON-NLS-1$
-			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData); //$NON-NLS-1$
+			int suspendStatus = readInt("suspend status", suspendStatusStrings(), replyData); //$NON-NLS-1$
 			boolean result = suspendStatus == SUSPEND_STATUS_SUSPENDED;
 			return result;
 		} catch (IOException e) {
@@ -289,10 +292,12 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector result = new Vector();
+			
 			int nrOfMonitors = readInt("nr of monitors", replyData); //$NON-NLS-1$
-			for (int i = 0; i < nrOfMonitors; i++)
+			List result = new ArrayList(nrOfMonitors);
+			for (int i = 0; i < nrOfMonitors; i++) {
 				result.add(ObjectReferenceImpl.readObjectRefWithTag(this, replyData));
+			}
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -337,7 +342,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int threadStatus = readInt("thread status", threadStatusMap(), replyData); //$NON-NLS-1$
-			readInt("suspend status", suspendStatusVector(), replyData); //$NON-NLS-1$
+			readInt("suspend status", suspendStatusStrings(), replyData); //$NON-NLS-1$
 			switch (threadStatus) {
 				case JDWP_THREAD_STATUS_ZOMBIE:
 					return THREAD_STATUS_ZOMBIE;
@@ -537,17 +542,17 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fThreadStatusMap != null)
+		if (fgThreadStatusMap != null) {
 			return;
+		}
 		
-		java.lang.reflect.Field[] fields = ThreadReferenceImpl.class.getDeclaredFields();
-		fThreadStatusMap = new HashMap();
-		fSuspendStatusVector = new Vector();
-		fSuspendStatusVector.setSize(32); // Int
+		Field[] fields = ThreadReferenceImpl.class.getDeclaredFields();
+		fgThreadStatusMap = new HashMap();
+		fgSuspendStatusStrings = new String[32]; // Int
 
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
 				
 			try {
@@ -557,12 +562,12 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 
 				if (name.startsWith("JDWP_THREAD_STATUS_")) { //$NON-NLS-1$
 					name = name.substring(19);
-					fThreadStatusMap.put(intValue, name);
+					fgThreadStatusMap.put(intValue, name);
 				} else if (name.startsWith("SUSPEND_STATUS_")) { //$NON-NLS-1$
 					name = name.substring(15);
-					for (int j = 0; j < fSuspendStatusVector.size(); j++) {
+					for (int j = 0; j < fgSuspendStatusStrings.length; j++) {
 						if ((1 << j & value) != 0) {
-							fSuspendStatusVector.set(j, name);
+							fgSuspendStatusStrings[j]= name;
 							break;
 						}
 					}
@@ -582,15 +587,15 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 */
 	 public static Map threadStatusMap() {
 	 	getConstantMaps();
-	 	return fThreadStatusMap;
+	 	return fgThreadStatusMap;
 	 }
 
 	/**
 	 * @return Returns a map with string representations of tags.
 	 */
-	 public static Vector suspendStatusVector() {
+	 public static String[] suspendStatusStrings() {
 	 	getConstantMaps();
-	 	return fSuspendStatusVector;
+	 	return fgSuspendStatusStrings;
 	 }
 
 	/**

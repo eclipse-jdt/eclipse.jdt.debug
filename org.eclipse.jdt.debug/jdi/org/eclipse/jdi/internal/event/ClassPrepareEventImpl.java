@@ -47,7 +47,7 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 		ClassPrepareEventImpl event = new ClassPrepareEventImpl(vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, dataInStream);
-		event.fStatus = target.readInt("class status", ReferenceTypeImpl.classStatusVector(), dataInStream); //$NON-NLS-1$
+		event.fStatus = target.readInt("class status", ReferenceTypeImpl.classStatusStrings(), dataInStream); //$NON-NLS-1$
 		return event;
    	}
    	

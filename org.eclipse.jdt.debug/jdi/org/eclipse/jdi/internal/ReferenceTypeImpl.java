@@ -11,16 +11,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpFieldID;
@@ -56,7 +55,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public static final int JDWP_CLASS_STATUS_ERROR = 8;
 
 	/** Mapping of command codes to strings. */
-	private static Vector fgClassStatusVector = null;
+	private static String[] fgClassStatusStrings = null;
 	
 	/** ReferenceTypeID that corresponds to this reference. */
 	private JdwpReferenceTypeID fReferenceTypeID;
@@ -203,7 +202,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_MODIFIERS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fModifierBits = readInt("modifiers", AccessibleImpl.modifierVector(), replyData); //$NON-NLS-1$
+			fModifierBits = readInt("modifiers", AccessibleImpl.getModifierStrings(), replyData); //$NON-NLS-1$
 			return fModifierBits;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -490,7 +489,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_STATUS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			int status = readInt("status", classStatusVector(), replyData); //$NON-NLS-1$
+			int status = readInt("status", classStatusStrings(), replyData); //$NON-NLS-1$
 			return status;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -827,10 +826,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// Note that the VM gives an empty reply on RT_NESTED_TYPES, therefore we search for the
 		// nested types in the loaded types.
 		List result = new ArrayList();
-		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
-		while (enum.hasMoreElements()) {
+		Iterator itr = virtualMachineImpl().allRefTypes();
+		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
+				ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
 				String refName = refType.name();
 				if (refName.length() > name().length() && refName.startsWith(name()) && refName.charAt(name().length()) == '$') {
 					result.add(refType);
@@ -1047,30 +1046,32 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fgClassStatusVector != null)
+		if (fgClassStatusStrings != null) {
 			return;
+		}
 		
 		java.lang.reflect.Field[] fields = ReferenceTypeImpl.class.getDeclaredFields();
-		fgClassStatusVector = new Vector();
-		fgClassStatusVector.setSize(32);	// Integer
+		fgClassStatusStrings = new String[32];
 		
 		for (int i = 0; i < fields.length; i++) {
 			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 				
 			String name = field.getName();
-			if (!name.startsWith("JDWP_CLASS_STATUS_")) //$NON-NLS-1$
+			if (!name.startsWith("JDWP_CLASS_STATUS_")) { //$NON-NLS-1$
 				continue;
+			}
 				
 			name = name.substring(18);
 			
 			try {
 				int value = field.getInt(null);
 				
-				for (int j = 0; j < fgClassStatusVector.size(); j++) {
+				for (int j = 0; j < fgClassStatusStrings.length; j++) {
 					if ((1 << j & value) != 0) {
-						fgClassStatusVector.set(j, name);
+						fgClassStatusStrings[j]= name;
 						break;
 					}
 				}
@@ -1087,9 +1088,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/**
 	 * @return Returns a map with string representations of tags.
 	 */
-	 public static Vector classStatusVector() {
+	 public static String[] classStatusStrings() {
 	 	getConstantMaps();
-	 	return fgClassStatusVector;
+	 	return fgClassStatusStrings;
 	 }
 	 
 	/**

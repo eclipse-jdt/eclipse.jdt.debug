@@ -17,7 +17,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet
@@ -30,7 +31,7 @@ public abstract class JdwpPacket {
 	protected static final int MIN_PACKET_LENGTH = 11;
 	
 	/** Map with Strings for flag bits. */
-	private static Vector fFlagVector = null;
+	private static String[] fgFlagStrings = null;
 
 	/** Header fields. */
 	protected int fId = 0;
@@ -169,8 +170,9 @@ public abstract class JdwpPacket {
 	 * Writes data of packet.
 	 */
 	protected void writeData(DataOutputStream dataOutStream) throws IOException {
-		if (fDataBuf != null)
+		if (fDataBuf != null) {
 			dataOutStream.write(fDataBuf);
+		}
 	}
 
 
@@ -178,30 +180,32 @@ public abstract class JdwpPacket {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fFlagVector != null)
+		if (fgFlagStrings != null) {
 			return;
+		}
 		
-		java.lang.reflect.Field[] fields = JdwpPacket.class.getDeclaredFields();
-		fFlagVector = new Vector();
-		fFlagVector.setSize(8);	// Byte
+		Field[] fields = JdwpPacket.class.getDeclaredFields();
+		fgFlagStrings = new String[8];
 		
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 				
 			String name = field.getName();
-			if (!name.startsWith("FLAG_")) //$NON-NLS-1$
+			if (!name.startsWith("FLAG_")) {//$NON-NLS-1$
 				continue;
+			}
 				
 			name = name.substring(5);
 			
 			try {
 				byte value = field.getByte(null);
 				
-				for (int j = 0; j < fFlagVector.size(); j++) {
+				for (int j = 0; j < fgFlagStrings.length; j++) {
 					if ((1 << j & value) != 0) {
-						fFlagVector.set(j, name);
+						fgFlagStrings[j]= name;
 						break;
 					}
 				}
@@ -218,8 +222,8 @@ public abstract class JdwpPacket {
 	/**
 	 * @return Returns a mapping with string representations of flags.
 	 */
-	public static Vector flagVector() {
+	public static String[] getFlagMap() {
 		getConstantMaps();
-		return fFlagVector;
+		return fgFlagStrings;
 	}
 }

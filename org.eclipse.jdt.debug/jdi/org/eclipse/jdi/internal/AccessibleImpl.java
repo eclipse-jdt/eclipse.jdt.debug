@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Vector;
 
 import com.sun.jdi.Accessible;
 
@@ -44,7 +43,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	public static final int MODIFIER_ACC_ABSTRACT = 0x0400;
 	
 	/** Mapping of command codes to strings. */
-	private static Vector fModifierVector = null;
+	private static String[] fgModifiers = null;
 	
 	/**
 	 * Creates new instance.
@@ -90,31 +89,31 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fModifierVector != null) {
+		if (fgModifiers != null) {
 			return;
 		}
 		
 		Field[] fields = AccessibleImpl.class.getDeclaredFields();
-		fModifierVector = new Vector();
-		fModifierVector.setSize(32);	// Integer
+		fgModifiers = new String[32];
 		
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
 				
 			String name = field.getName();
-			if (!name.startsWith("MODIFIER_")) //$NON-NLS-1$
+			if (!name.startsWith("MODIFIER_")) {//$NON-NLS-1$
 				continue;
+			}
 				
 			name = name.substring(9);
 			
 			try {
 				int value = field.getInt(null);
 				
-				for (int j = 0; j < fModifierVector.size(); j++) {
+				for (int j = 0; j < 32; j++) {
 					if ((1 << j & value) != 0) {
-						fModifierVector.set(j, name);
+						fgModifiers[j]= name;
 						break;
 					}
 				}
@@ -129,10 +128,10 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	}
 	
 	/**
-	 * @return Returns a map with string representations of tags.
+	 * @return Returns an array with string representations of tags.
 	 */
-	 public static Vector modifierVector() {
+	 public static String[] getModifierStrings() {
 	 	getConstantMaps();
-	 	return fModifierVector;
+	 	return fgModifiers;
 	 }
 }

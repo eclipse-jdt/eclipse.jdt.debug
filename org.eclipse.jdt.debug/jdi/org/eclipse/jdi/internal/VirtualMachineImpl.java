@@ -9,15 +9,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.connect.ConnectorImpl;
 import org.eclipse.jdi.internal.connect.PacketReceiveManager;
@@ -66,7 +66,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private int fRequestTimeout;
 	/** Mapping of command codes to strings. */
 	
-	private static HashMap fHCRResultMap = null;
+	private static Map fgHCRResultMap = null;
 
 	/** EventRequestManager that creates event objects on request. */
 	private EventRequestManagerImpl fEventReqMgr;
@@ -297,14 +297,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		 	JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_ALL_CLASSES);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
+			List elements = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTagAndSignature(this, replyData);
 				if (elt == null) {
 					continue;
 				}
-				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData); //$NON-NLS-1$
+				readInt("status", ReferenceTypeImpl.classStatusStrings(), replyData); //$NON-NLS-1$
 				elements.add(elt);
 			}
 			return elements;
@@ -317,18 +317,18 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 
 	}
 
-	/*
-	 * @return Returns all loaded classes.
+	/**
+	 * @return Returns an iterator over all loaded classes.
 	 */
-	public final Enumeration allRefTypesEnum() {
-		return ((Vector)allClasses()).elements();
+	protected final Iterator allRefTypes() {
+		return allClasses().iterator();
 	}
 
-	/*
-	 * @return Returns all cached classes.
+	/**
+	 * @return Returns an iterator over all cached classes.
 	 */
-	public final Enumeration allCachedRefTypesEnum() {
-		return ((Vector)(fCachedReftypes.values())).elements();
+	protected final Iterator allCachedRefTypes() {
+		return fCachedReftypes.values().iterator();
 	}
 
 	/**
@@ -342,12 +342,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_ALL_THREADS);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
+			List elements = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ThreadReferenceImpl elt = ThreadReferenceImpl.read(this, replyData);
-				if (elt == null)
+				if (elt == null) {
 					continue;
+				}
 				elements.add(elt);
 			}
 			return elements;
@@ -482,11 +483,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_CLASSES_BY_SIGNATURE, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
+			List elements = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
-				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData); //$NON-NLS-1$
+				readInt("status", ReferenceTypeImpl.classStatusStrings(), replyData); //$NON-NLS-1$
 				if (elt == null) {
 					continue;
 				}
@@ -928,22 +929,24 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fHCRResultMap != null)
+		if (fgHCRResultMap != null) {
 			return;
+		}
 		
-		java.lang.reflect.Field[] fields = VirtualMachineImpl.class.getDeclaredFields();
-		fHCRResultMap = new HashMap();
+		Field[] fields = VirtualMachineImpl.class.getDeclaredFields();
+		fgHCRResultMap = new HashMap();
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 				
 			try {
 				String name = field.getName();
-				Integer intValue = new Integer(field.getInt(null));
 				if (name.startsWith("HCR_RELOAD_")) { //$NON-NLS-1$
+					Integer intValue = new Integer(field.getInt(null));
 					name = name.substring(4);
-					fHCRResultMap.put(intValue, name);
+					fgHCRResultMap.put(intValue, name);
 				}
 			} catch (IllegalAccessException e) {
 				// Will not occur for own class.
@@ -960,7 +963,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	 public static Map resultHCRMap() {
 	 	getConstantMaps();
-	 	return fHCRResultMap;
+	 	return fgHCRResultMap;
 	 }
 	 
 	/**

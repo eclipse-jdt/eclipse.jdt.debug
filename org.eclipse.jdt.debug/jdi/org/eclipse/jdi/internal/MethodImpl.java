@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
@@ -47,7 +46,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	public static final int INVOKE_NONVIRTUAL_JDWP = 0x02;
 	
 	/** Map with Strings for flag bits. */
-	private static Vector fgInvokeOptionsVector = null;
+	private static String[] fgInvokeOptions = null;
 	
 	/** MethodTypeID that corresponds to this reference. */
 	private JdwpMethodID fMethodID;
@@ -662,7 +661,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		String name = target.readString("name", in); //$NON-NLS-1$
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		int modifierBits = target.readInt("modifiers", AccessibleImpl.modifierVector(), in); //$NON-NLS-1$
+		int modifierBits = target.readInt("modifiers", AccessibleImpl.getModifierStrings(), in); //$NON-NLS-1$
 
 		MethodImpl mirror = new MethodImpl(vmImpl, referenceType, ID, name, signature, modifierBits);
 		return mirror;
@@ -672,29 +671,27 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fgInvokeOptionsVector != null) {
+		if (fgInvokeOptions != null) {
 			return;
 		}
 		
 		Field[] fields = MethodImpl.class.getDeclaredFields();
-		fgInvokeOptionsVector = new Vector();
-		fgInvokeOptionsVector.setSize(32); // Int
+		fgInvokeOptions = new String[32];
 
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
+			Field field = fields[i];
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
 			}
 				
 			try {
 				String name = field.getName();
-				int value = field.getInt(null);
 
 				if (name.startsWith("INVOKE_")) { //$NON-NLS-1$
-					//fInvokeOptionsMap.put(intValue, name);
-					for (int j = 0; j < fgInvokeOptionsVector.size(); j++) {
+					int value = field.getInt(null);
+					for (int j = 0; j < fgInvokeOptions.length; j++) {
 						if ((1 << j & value) != 0) {
-							fgInvokeOptionsVector.set(j, name);
+							fgInvokeOptions[j]= name;
 							break;
 						}
 					}
@@ -712,9 +709,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @return Returns a map with string representations of tags.
 	 */
-	 protected static Vector invokeOptionsVector() {
+	 protected static String[] getInvokeOptions() {
 	 	getConstantMaps();
-	 	return fgInvokeOptionsVector;
+	 	return fgInvokeOptions;
 	 }
 	/**
 	 * @see Method#isObsolete()

@@ -8,7 +8,7 @@ package org.eclipse.jdi.internal;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdi.internal.jdwp.JdwpClassObjectID;
@@ -64,9 +64,9 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		super.flushStoredJdwpResults();
 
 		// For all reftypes that have this interface cached, this cache must be undone.
-		Enumeration enum = virtualMachineImpl().allCachedRefTypesEnum();
-		while (enum.hasMoreElements()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
+		Iterator itr = virtualMachineImpl().allCachedRefTypes();
+		while (itr.hasNext()) {
+			ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
 			if (refType.fInterfaces != null && refType.fInterfaces.contains(this)) {
 				refType.flushStoredJdwpResults();
 			}
@@ -80,15 +80,16 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	public List implementors() {
 		// Note that this information should not be cached.
 		List implementors = new ArrayList();
-		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
-		while (enum.hasMoreElements()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
+		Iterator itr = virtualMachineImpl().allRefTypes();
+		while (itr.hasNext()) {
+			ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
 			if (refType instanceof ClassTypeImpl) {
 				try {
 					ClassTypeImpl classType = (ClassTypeImpl)refType;
 					List interfaces = classType.interfaces();
-					if (interfaces.contains(this))
+					if (interfaces.contains(this)) {
 						implementors .add(classType);
+					}
 				} catch (ClassNotPreparedException e) {
 					continue;
 				}
@@ -103,15 +104,16 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	public List subinterfaces() {
 		// Note that this information should not be cached.
 		List implementors = new ArrayList();
-		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
-		while (enum.hasMoreElements()) {
+		Iterator itr = virtualMachineImpl().allRefTypes();
+		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
+				ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
 				if (refType instanceof InterfaceTypeImpl) {
 					InterfaceTypeImpl interFaceType = (InterfaceTypeImpl)refType;
 					List interfaces = interFaceType.superinterfaces();
-					if (interfaces.contains(this))
+					if (interfaces.contains(this)) {
 						implementors.add(interFaceType);
+					}
 				}
 			} catch (ClassNotPreparedException e) {
 				continue;
@@ -141,11 +143,13 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
-		if (target.fVerboseWriter != null)
+		if (target.fVerboseWriter != null) {
 			target.fVerboseWriter.println("interfaceType", ID.value()); //$NON-NLS-1$
+		}
 
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 			
 		InterfaceTypeImpl mirror = (InterfaceTypeImpl)vmImpl.getCachedMirror(ID);
 		if (mirror == null) {
@@ -162,12 +166,14 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
-		if (target.fVerboseWriter != null)
+		if (target.fVerboseWriter != null) {
 			target.fVerboseWriter.println("interfaceType", ID.value()); //$NON-NLS-1$
+		}
 
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 			
 		InterfaceTypeImpl mirror = (InterfaceTypeImpl)vmImpl.getCachedMirror(ID);
 		if (mirror == null) {

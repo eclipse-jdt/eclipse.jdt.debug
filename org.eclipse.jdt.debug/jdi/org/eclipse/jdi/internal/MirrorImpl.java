@@ -11,13 +11,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpString;
-import org.eclipse.jdi.internal.spy.VerboseWriter;
 
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.InternalException;
@@ -37,6 +35,7 @@ import com.sun.jdi.VirtualMachine;
  *
  */
 public class MirrorImpl implements Mirror {
+	
 	/** Description of Mirror object. */
 	protected String fDescription;
 	/** Virtual Machine of Mirror object. */
@@ -97,7 +96,7 @@ public class MirrorImpl implements Mirror {
 			fVerboseWriter.println("Received event set"); //$NON-NLS-1$
 			fVerboseWriter.println("length", commandPacket.getLength()); //$NON-NLS-1$
 			fVerboseWriter.println("id", commandPacket.getId()); //$NON-NLS-1$
-			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.flagVector()); //$NON-NLS-1$
+			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.getFlagMap()); //$NON-NLS-1$
 			fVerboseWriter.println("command set", (byte)(commandPacket.getCommand() >>> 8)); //$NON-NLS-1$
 			fVerboseWriter.println("command", (byte)commandPacket.getCommand()); //$NON-NLS-1$
 		}
@@ -136,7 +135,7 @@ public class MirrorImpl implements Mirror {
 			fVerboseWriter.println(")"); //$NON-NLS-1$
 			fVerboseWriter.println("length", commandPacket.getLength()); //$NON-NLS-1$
 			fVerboseWriter.println("id", commandPacket.getId()); //$NON-NLS-1$
-			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.flagVector()); //$NON-NLS-1$
+			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.getFlagMap()); //$NON-NLS-1$
 			fVerboseWriter.println("command set", (byte)(command >>> 8)); //$NON-NLS-1$
 			fVerboseWriter.println("command", (byte)command); //$NON-NLS-1$
 			fVerboseWriter.gotoPosition(currentPosition);
@@ -171,7 +170,7 @@ public class MirrorImpl implements Mirror {
 			fVerboseWriter.println("Received reply"); //$NON-NLS-1$
 			fVerboseWriter.println("length", reply.getLength()); //$NON-NLS-1$
 			fVerboseWriter.println("id", reply.getId()); //$NON-NLS-1$
-			fVerboseWriter.println("flags", reply.getFlags(), JdwpPacket.flagVector()); //$NON-NLS-1$
+			fVerboseWriter.println("flags", reply.getFlags(), JdwpPacket.getFlagMap()); //$NON-NLS-1$
 			fVerboseWriter.println("error code", reply.errorCode(), JdwpReplyPacket.errorMap()); //$NON-NLS-1$
 		}
 		
@@ -183,7 +182,7 @@ public class MirrorImpl implements Mirror {
 	 * @return Returns reply data.
 	 */
 	public JdwpReplyPacket requestVM(int command, ByteArrayOutputStream outData) {
-			return requestVM(command, outData.toByteArray());
+		return requestVM(command, outData.toByteArray());
 	}
 	
 	/**
@@ -374,42 +373,6 @@ public class MirrorImpl implements Mirror {
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
 	 * @return Returns value that has been read.
 	 */
-	public byte readByte(String description, Vector bitNames, DataInputStream in) throws IOException {
-		byte result = in.readByte();
-		if (fVerboseWriter != null) {
-			fVerboseWriter.println(description, result, bitNames); 
-		}
-		return result;
-	}
-	
-	/**
-	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * @return Returns value that has been read.
-	 */
-	public short readShort(String description, Vector bitNames, DataInputStream in) throws IOException {
-		short result = in.readShort();
-		if (fVerboseWriter != null) {
-			fVerboseWriter.println(description, result, bitNames);
-		}
-		return result;
-	}
-	
-	/**
-	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * @return Returns value that has been read.
-	 */
-	public int readInt(String description, Vector bitNames, DataInputStream in) throws IOException {
-		int result = in.readInt();
-		if (fVerboseWriter != null) {
-			fVerboseWriter.println(description, result, bitNames);
-		}
-		return result;
-	}
-	
-	/**
-	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * @return Returns value that has been read.
-	 */
 	public String readString(String description, DataInputStream in) throws IOException {
 		String result = JdwpString.read(in);
 		if (fVerboseWriter != null) {
@@ -552,36 +515,6 @@ public class MirrorImpl implements Mirror {
 	/**
 	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
 	 */
-	public void writeByte(byte value, String description, Vector bitNames, DataOutputStream out) throws IOException {
-		out.writeByte(value);
-		if (fVerboseWriter != null) {
-			fVerboseWriter.println(description, value, bitNames);
-		}
-	}
-	
-	/**
-	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
-	 */
-	public void writeShort(short value, String description, Vector bitNames, DataOutputStream out) throws IOException {
-		out.writeShort(value);
-		if (fVerboseWriter != null) {
-			fVerboseWriter.println(description, value, bitNames);
-		}
-	}
-	
-	/**
-	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
-	 */
-	public void writeInt(int value, String description, Vector bitNames, DataOutputStream out) throws IOException {
-		out.writeInt(value);
-		if (fVerboseWriter != null) {
-			fVerboseWriter.println(description, value, bitNames);
-		}
-	}
-	
-	/**
-	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
-	 */
 	public void writeString(String value, String description, DataOutputStream out) throws IOException {
 		JdwpString.write(value, out);
 		if (fVerboseWriter != null) {
@@ -626,6 +559,72 @@ public class MirrorImpl implements Mirror {
 		out.writeFloat(value);
 		if (fVerboseWriter != null) {
 			fVerboseWriter.println(description, value);
+		}
+	}
+	
+	/**
+	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
+	 */
+	public void writeShort(short value, String description, String[] bitNames, DataOutputStream out) throws IOException {
+		out.writeShort(value);
+		if (fVerboseWriter != null) {
+			fVerboseWriter.println(description, value, bitNames);
+		}
+	}
+
+	/**
+	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
+	 */
+	public void writeInt(int value, String description, String[] bitNames, DataOutputStream out) throws IOException {
+		out.writeInt(value);
+		if (fVerboseWriter != null) {
+			fVerboseWriter.println(description, value, bitNames);
+		}
+	}
+
+	/**
+	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
+	 * @return Returns value that has been read.
+	 */
+	public byte readByte(String description, String[] bitNames, DataInputStream in) throws IOException {
+		byte result = in.readByte();
+		if (fVerboseWriter != null) {
+			fVerboseWriter.println(description, result, bitNames); 
+		}
+		return result;
+	}
+
+	/**
+	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
+	 * @return Returns value that has been read.
+	 */
+	public short readShort(String description, String[] bitNames, DataInputStream in) throws IOException {
+		short result = in.readShort();
+		if (fVerboseWriter != null) {
+			fVerboseWriter.println(description, result, bitNames);
+		}
+		return result;
+	}
+
+	/**
+	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
+	 * @return Returns value that has been read.
+	 */
+	public int readInt(String description, String[] bitNames, DataInputStream in) throws IOException {
+		int result = in.readInt();
+		if (fVerboseWriter != null) {
+			fVerboseWriter.println(description, result, bitNames);
+		}
+		return result;
+	}
+
+	/**
+	 * Writes Jdwp data and, if verbose is on, outputs verbose info.
+	 */
+	public void writeByte(byte value, String description, String[] bitNames, DataOutputStream out) throws IOException {
+		out.writeByte(value);
+		if (fVerboseWriter != null) {
+			fVerboseWriter.println(description, value, bitNames);
 		}
 	}
 	

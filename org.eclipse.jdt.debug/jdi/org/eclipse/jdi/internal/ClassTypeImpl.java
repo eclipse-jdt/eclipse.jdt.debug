@@ -9,10 +9,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpClassID;
 import org.eclipse.jdi.internal.jdwp.JdwpClassObjectID;
@@ -96,9 +95,9 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		super.flushStoredJdwpResults();
 
 		// For all classes that have this class cached as superclass, this cache must be undone.
-		Enumeration enum = virtualMachineImpl().allCachedRefTypesEnum();
-		while (enum.hasMoreElements()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
+		Iterator itr = virtualMachineImpl().allCachedRefTypes();
+		while (itr.hasNext()) {
+			ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
 			if (refType instanceof ClassTypeImpl) {
 				ClassTypeImpl classType = (ClassTypeImpl)refType;
 				if (classType.fSuperclass != null && classType.fSuperclass.equals(this)) {
@@ -223,7 +222,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 				}
 			}
 			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData); //$NON-NLS-1$
+			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_INVOKE_METHOD, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -291,7 +290,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 				}
 			}
 			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData); //$NON-NLS-1$
+			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_NEW_INSTANCE, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -362,15 +361,16 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	 */
 	public List subclasses() {
 		// Note that this information should not be cached.
-		Vector subclasses = new Vector();
-		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
-		while (enum.hasMoreElements()) {
+		List subclasses = new ArrayList();
+		Iterator itr = virtualMachineImpl().allRefTypes();
+		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
+				ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
 				if (refType instanceof ClassTypeImpl) {
 					ClassTypeImpl classType = (ClassTypeImpl)refType;
-					if (classType.superclass() != null && classType.superclass().equals(this))
+					if (classType.superclass() != null && classType.superclass().equals(this)) {
 						subclasses.add(classType);
+					}
 				}
 			} catch (ClassNotPreparedException e) {
 				continue;

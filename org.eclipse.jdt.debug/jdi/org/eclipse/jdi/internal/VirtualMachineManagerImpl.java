@@ -92,6 +92,8 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		// Get jdi.ini info.
 		URL url = getClass().getResource("/jdi.ini"); //$NON-NLS-1$
 		if (url == null) {
+			fVerbose= true;
+			fVerboseFile= "c://temp//trace.out";
 			return;
 		}
 			

@@ -14,9 +14,10 @@ Contributors:
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet
@@ -160,10 +161,10 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int HCR_CAPABILITIES = 5				 + (CSET_HOT_CODE_REPLACEMENT << 8);
 
 	/** Mapping of command codes to strings. */
-	private static HashMap fCommandMap = null;
+	private static Map fgCommandMap = null;
 
 	/** Next id to be assigned. */
-	private static int fNextId = 1;
+	private static int fgNextId = 1;
 	/** Command, note that this field is 256 * JDWP CommandSet (unsigned) + JDWP Command. */
 	private int fCommand;
 
@@ -185,7 +186,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	 * @return Returns unique id for command packet.
 	 */
 	public static synchronized int getNewId() {
-		return fNextId++;
+		return fgNextId++;
 	}
 
 	/**
@@ -229,28 +230,27 @@ public class JdwpCommandPacket extends JdwpPacket {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fCommandMap != null)
+		if (fgCommandMap != null) {
 			return;
+		}
 		
-		java.lang.reflect.Field[] fields = JdwpCommandPacket.class.getDeclaredFields();
+		Field[] fields = JdwpCommandPacket.class.getDeclaredFields();
 		
 		// First get the set names.
-		Vector setNames = new Vector();
+		Map setNames = new HashMap(fields.length);
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
 
 			try {
 				String name = field.getName();
-				int value = field.getInt(null);
 				// If it is not a set, continue.
-				if (!name.startsWith("CSET_")) //$NON-NLS-1$
+				if (!name.startsWith("CSET_")) {//$NON-NLS-1$
 					continue;
-					
-				if (setNames.size() <= value)
-					setNames.setSize(value + 1);
-				setNames.set(value, removePrefix(name));
+				}
+				int value = field.getInt(null);
+				setNames.put(new Integer(value), removePrefix(name));
 			} catch (IllegalAccessException e) {
 				// Will not occur for own class.
 			} catch (IllegalArgumentException e) {
@@ -261,25 +261,27 @@ public class JdwpCommandPacket extends JdwpPacket {
 		}
 		
 		// Get the commands.	
-		fCommandMap = new HashMap();
+		fgCommandMap = new HashMap();
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
+			}
 				
 			try {
 				String name = field.getName();
-				Integer val = (Integer)field.get(null);
-				int value = val.intValue();
+				
 				// If it is a set, continue.
-				if (name.startsWith("CSET_")) //$NON-NLS-1$
+				if (name.startsWith("CSET_")) { //$NON-NLS-1$
 					continue;
-					
+				}
+				Integer val = (Integer)field.get(null);
+				int value = val.intValue();	
 				int set = value >>> 8;
-				String setName = (String)setNames.elementAt(set);
+				String setName = (String)setNames.get(new Integer(set));
 				String entryName = setName + " - " + removePrefix(name); //$NON-NLS-1$
 				
-				fCommandMap.put(val, entryName);
+				fgCommandMap.put(val, entryName);
 				
 			} catch (IllegalAccessException e) {
 				// Will not occur for own class.
@@ -288,20 +290,22 @@ public class JdwpCommandPacket extends JdwpPacket {
 	}
 
 	/**
-	 * @return Returns a map with string representations of commands.
+	 * @return Returns a map with string representations of error codes.
 	 */
 	public static Map commandMap() {
-		if (fCommandMap == null) {
-			getConstantMaps();
-		}
-		return fCommandMap;
+		getConstantMaps();
+		return fgCommandMap;
 	}
 	
-	private static String removePrefix(String str) {
+	/**
+	 * @return Returns string without XXX_ prefix.
+	 */
+	public static String removePrefix(String str) {
 		int i = str.indexOf('_');
-		if (i < 0)
+		if (i < 0) {
 			return str;
-		else
+		} else {
 			return str.substring(i + 1);
-	}	
+		}
+	}
 }

@@ -8,6 +8,8 @@ package org.eclipse.jdi.internal.jdwp;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,14 +122,15 @@ public class JdwpReplyPacket extends JdwpPacket {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fErrorMap != null)
+		if (fErrorMap != null) {
 			return;
+		}
 		
-		java.lang.reflect.Field[] fields = JdwpReplyPacket.class.getDeclaredFields();
-		fErrorMap = new HashMap();
+		Field[] fields = JdwpReplyPacket.class.getDeclaredFields();
+		fErrorMap = new HashMap(fields.length);
 		for (int i = 0; i < fields.length; i++) {
-			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			Field field = fields[i];
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
 				
 			try {

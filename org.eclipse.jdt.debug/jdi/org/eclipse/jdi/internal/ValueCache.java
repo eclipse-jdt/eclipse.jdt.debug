@@ -8,10 +8,12 @@ package org.eclipse.jdi.internal;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is used to cache values.
@@ -25,15 +27,15 @@ import java.util.Vector;
  */
 public class ValueCache {
 	/**
-	 * Table to store <key, Reference> pairs,
+	 * Map to store <key, Reference> pairs,
 	 * where Reference is a soft reference to an Object.
 	 */
-	private Hashtable cacheTable = new Hashtable();
+	private Map cacheTable = new HashMap();
 	/**
-	 * Table to store <Reference, key> pairs,
+	 * Map to store <Reference, key> pairs,
 	 * to find the cacheTable-key of a garbage collected Reference.
 	 */
-	private Hashtable refTable = new Hashtable();
+	private Map refTable = new HashMap();
 	
 	/**
 	 * The reference-queue that is registered with the soft references.
@@ -75,8 +77,9 @@ public class ValueCache {
 		cleanup();
 		Object value = null;
 		SoftReference ref = (SoftReference)cacheTable.get(key);
-		if (ref != null)
+		if (ref != null) {
 			value = (Object)ref.get();
+		}
 		return value;
 	}
 	
@@ -85,7 +88,7 @@ public class ValueCache {
 	 */
 	public Collection values() {
 		cleanup();
-		Vector returnValues = new Vector();
+		List returnValues = new ArrayList();
 		synchronized (cacheTable) {
 			Iterator iter = cacheTable.values().iterator();
 			SoftReference ref;
@@ -107,7 +110,7 @@ public class ValueCache {
 	 */
 	public Collection valuesWithType(Class type) {
 		cleanup();
-		Vector returnValues = new Vector();
+		List returnValues = new ArrayList();
 		synchronized (cacheTable) {
 			Iterator iter = cacheTable.values().iterator();
 			SoftReference ref;

@@ -367,7 +367,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 				}
 			}
 			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData); //$NON-NLS-1$
+			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
 			
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.OR_INVOKE_METHOD, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -396,7 +396,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			handledJdwpRequest();
 		}
 	}
- 
 	
 	/**
 	 * @return Returns if this object has been garbage collected in the target VM.

@@ -170,7 +170,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 			return null;
 		String name = target.readString("name", in); //$NON-NLS-1$
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		int modifierBits = target.readInt("modifiers", AccessibleImpl.modifierVector(), in); //$NON-NLS-1$
+		int modifierBits = target.readInt("modifiers", AccessibleImpl.getModifierStrings(), in); //$NON-NLS-1$
 		
 		FieldImpl mirror = new FieldImpl(vmImpl, referenceType, ID, name, signature, modifierBits);
 		return mirror;

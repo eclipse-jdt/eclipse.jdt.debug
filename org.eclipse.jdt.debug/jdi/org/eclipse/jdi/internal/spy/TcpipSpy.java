@@ -168,14 +168,14 @@ public class TcpipSpy extends Thread {
 		}
 	}
 
-	public static int getCommand(JdwpPacket packet) throws UnableToParseData {
+	public static int getCommand(JdwpPacket packet) throws UnableToParseDataException {
 		JdwpCommandPacket command= null;
 		if (packet instanceof JdwpCommandPacket) {
 			command= (JdwpCommandPacket) packet;
 		} else {
 			command= getCommand(packet.getId());
 			if (command == null) {
-				throw new UnableToParseData(TcpIpSpyMessages.getString("TcpIpSpy.This_packet_is_marked_as_reply,_but_there_is_no_command_with_the_same_id._1"), null); //$NON-NLS-1$
+				throw new UnableToParseDataException(TcpIpSpyMessages.getString("TcpIpSpy.This_packet_is_marked_as_reply,_but_there_is_no_command_with_the_same_id._1"), null); //$NON-NLS-1$
 			}
 		}
 		return command.getCommand();
