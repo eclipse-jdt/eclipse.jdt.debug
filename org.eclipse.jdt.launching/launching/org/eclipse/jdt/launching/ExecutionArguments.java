@@ -116,8 +116,12 @@ public class ExecutionArguments {
 		}
 		
 		private String parseString() {
-			StringBuffer buf= new StringBuffer();
 			ch= getNext();
+			if (ch == '"') {
+				ch= getNext();
+				return "\"\""; // empty string argument //$NON-NLS-1$
+			}
+			StringBuffer buf= new StringBuffer();
 			while (ch > 0 && ch != '"') {
 				if (ch == '\\') {
 					ch= getNext();
@@ -137,10 +141,6 @@ public class ExecutionArguments {
 			}
 	
 			ch= getNext();
-			
-			if (buf.length() == 0) {
-				return "\"\""; // empty string argument //$NON-NLS-1$
-			}
 			return buf.toString();
 		}
 		
