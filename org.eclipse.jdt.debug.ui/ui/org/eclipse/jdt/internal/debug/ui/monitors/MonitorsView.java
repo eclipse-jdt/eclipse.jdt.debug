@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel - bug 63472
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
@@ -406,4 +407,13 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 			});
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView#dispose()
+	 */
+	public void dispose() {
+		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		super.dispose();
+	}
+
 }
