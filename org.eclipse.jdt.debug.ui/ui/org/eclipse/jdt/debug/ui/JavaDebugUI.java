@@ -90,30 +90,36 @@ public class JavaDebugUI {
 	 * specify a VM Install
 	 */
 	public static final int UNSPECIFIED_VM_INSTALL = 102;
-	
+
 	/**
 	 * Status code indicating a launch configuration's VM install
 	 * could not be found.
 	 */
-	public static final int VM_INSTALL_DOES_NOT_EXIST = 103;
+	public static final int VM_INSTALL_TYPE_DOES_NOT_EXIST = 103;
+		
+	/**
+	 * Status code indicating a launch configuration's VM install
+	 * could not be found.
+	 */
+	public static final int VM_INSTALL_DOES_NOT_EXIST = 104;
 	
 	/**
 	 * Status code indicating a VM runner could not be located
 	 * for the VM install specified by a lanuch configuration.
 	 */
-	public static final int VM_RUNNER_DOES_NOT_EXIST = 104;	
+	public static final int VM_RUNNER_DOES_NOT_EXIST = 105;	
 	
 	/**
 	 * Status code indicating the project associated with
 	 * a launch configuration is not a Java project.
 	 */
-	public static final int NOT_A_JAVA_PROJECT = 105;	
+	public static final int NOT_A_JAVA_PROJECT = 106;	
 	
 	/**
 	 * Status code indicating the specified working directory
 	 * does not exist.
 	 */
-	public static final int WORKING_DIRECTORY_DOES_NOT_EXIST = 106;	
+	public static final int WORKING_DIRECTORY_DOES_NOT_EXIST = 107;	
 		
 	/**
 	 * Status code indicating an unexpected internal error.
