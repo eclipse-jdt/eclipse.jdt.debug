@@ -6,13 +6,14 @@ package org.eclipse.jdi.internal.spy;
  */
 
 import java.io.PrintWriter;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BufWriter {
 	/** PrintWriter that is written to. */
 	private PrintWriter fOutput;
 	/** Buffer for output: one StringBuffer entry per line. */
-	private Vector fLineBuffer;
+	private List fLineBuffer;
 	/** Position from where buffer is written to. */
 	private int fPosition;
 	/** True if the current line has not yet been written to. */
@@ -24,7 +25,7 @@ public class BufWriter {
 	 */
 	public BufWriter(PrintWriter out) {
 		fOutput = out;
-		fLineBuffer = new Vector();
+		fLineBuffer = new ArrayList();
 		fPosition = 0;
 		fLineBuffer.add(new StringBuffer());
 	}
@@ -35,7 +36,7 @@ public class BufWriter {
 	 */
 	private void checkForNewLine() {
 		if (fNewLine) {
-			((StringBuffer)(fLineBuffer.elementAt(fPosition))).setLength(0);
+			((StringBuffer)(fLineBuffer.get(fPosition))).setLength(0);
 			fNewLine = false;
 		}
 	}
@@ -45,7 +46,7 @@ public class BufWriter {
 	 */
 	public void print(String str) {
 		checkForNewLine();
-		((StringBuffer)(fLineBuffer.elementAt(fPosition))).append(str);
+		((StringBuffer)(fLineBuffer.get(fPosition))).append(str);
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class BufWriter {
 	 */
 	public void print(char c) {
 		checkForNewLine();
-		((StringBuffer)(fLineBuffer.elementAt(fPosition))).append(c);
+		((StringBuffer)(fLineBuffer.get(fPosition))).append(c);
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class BufWriter {
 	 */
 	public void print(char[] c) {
 		checkForNewLine();
-		((StringBuffer)(fLineBuffer.elementAt(fPosition))).append(c);
+		((StringBuffer)(fLineBuffer.get(fPosition))).append(c);
 	}
 
 	/**
@@ -91,10 +92,10 @@ public class BufWriter {
 			int bufSize = fLineBuffer.size();
 				
 			for (int i = 0; i < bufSize - 1; i++)
-				fOutput.println(new String((StringBuffer)fLineBuffer.elementAt(i)));
+				fOutput.println(new String((StringBuffer)fLineBuffer.get(i)));
 	
 			// The last line should be printed without an extra newline
-			StringBuffer lastLine = (StringBuffer)fLineBuffer.elementAt(bufSize - 1);
+			StringBuffer lastLine = (StringBuffer)fLineBuffer.get(bufSize - 1);
 			if (lastLine.length() > 0)
 				fOutput.print(new String(lastLine));
 	
