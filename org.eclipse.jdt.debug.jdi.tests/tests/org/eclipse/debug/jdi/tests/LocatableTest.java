@@ -14,7 +14,6 @@ import java.util.ListIterator;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
-import com.sun.jdi.Method;
 import com.sun.jdi.request.AccessWatchpointRequest;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ModificationWatchpointRequest;
