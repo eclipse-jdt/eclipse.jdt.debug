@@ -121,12 +121,28 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		try {
 			Field field = ((ClassType)getUnderlyingType()).fieldByName(name);
 			if (field != null) {
-				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, null);
+				return new JDIFieldVariable(getDebugTarget(), field, null);
 			}			
 		} catch (RuntimeException e) {
 			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_field"), new String[] {e.toString(), name}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null		
+		return null;
+	}
+
+	/*
+	 * @see IJavaClassType#getSuperclass()
+	 */
+	public IJavaClassType getSuperclass() throws DebugException {
+		try {
+			ClassType superclazz = ((ClassType)getUnderlyingType()).superclass();
+			if (superclazz != null) {
+				return (IJavaClassType)JDIType.createType(getDebugTarget(), superclazz);
+			}
+		} catch (RuntimeException e) {
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_superclass"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		// it is possible to return null
 		return null;
 	}
 
