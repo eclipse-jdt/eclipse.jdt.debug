@@ -161,6 +161,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 				String text = fConsole.getDocument().get(line.getOffset(), line.getLength());
 				fLinesRead.add(text);
 			} catch (BadLocationException e) {
+				assertTrue("BadLocationException occurred: " + e.toString(), false);
 			}
 		}
 	}
