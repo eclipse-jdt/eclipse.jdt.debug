@@ -72,7 +72,7 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 * Variable lookup works only when a thread is suspended.
 	 * Lookup is performed in all stack frames, in a top-down
 	 * order, returning the first successful match, or <code>null</code>
-	 * if no match if found.
+	 * if no match is found.
 	 * </p>
 	 * @param variableName the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
