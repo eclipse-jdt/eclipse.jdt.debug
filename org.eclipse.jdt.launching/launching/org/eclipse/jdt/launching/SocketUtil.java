@@ -1,4 +1,4 @@
-/*******************************************************************************
+	/*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
@@ -31,6 +31,9 @@ public class SocketUtil {
 	 * @param searchFrom the port number from which to start searching 
 	 * @param searchTo the port number at which to stop searching
 	 * @return a free port in the specified range, or -1 of none found
+	 * @deprecated Use <code>findFreePort()</code> instead. It is possible that this
+	 * 	 method can return a port that is already in use since the implementation does
+	 *   not bind to the given port to ensure that it is free.
 	 */
 	public static int findUnusedLocalPort(String host, int searchFrom, int searchTo) {
 
