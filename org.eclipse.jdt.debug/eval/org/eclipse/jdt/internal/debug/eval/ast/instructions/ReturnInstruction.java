@@ -23,5 +23,9 @@ public class ReturnInstruction extends CompoundInstruction {
 	public void execute() throws CoreException {
 		stop();
 	}
+	
+	public String toString() {
+		return InstructionsEvaluationMessages.getString("ReturnInstruction.return"); //$NON-NLS-1$
+	}
 
 }
