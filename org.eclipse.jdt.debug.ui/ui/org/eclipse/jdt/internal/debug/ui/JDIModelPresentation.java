@@ -277,7 +277,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		IBreakpoint[] breakpoints= thread.getBreakpoints();
 		if (breakpoints.length > 0) {
-			IJavaBreakpoint breakpoint = (IJavaBreakpoint)breakpoints[0];
+			IJavaBreakpoint breakpoint= (IJavaBreakpoint)breakpoints[0];
+			for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
+				if (BreakpointUtils.isProblemBreakpoint(breakpoints[i])) {
+					// If a compilation error breakpoint exists, display it instead of the first breakpoint
+					breakpoint= (IJavaBreakpoint)breakpoints[i];
+					break;
+				}
+			}
 			String typeName= getMarkerTypeName(breakpoint, qualified);
 			if (BreakpointUtils.isProblemBreakpoint(breakpoint)) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
