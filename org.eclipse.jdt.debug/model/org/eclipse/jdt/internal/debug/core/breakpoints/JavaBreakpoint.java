@@ -787,8 +787,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setHitCount(int count) throws CoreException {	
 		if (!isEnabled() && count > -1) {
-			setAttributes(new String []{HIT_COUNT, EXPIRED, ENABLED},
-				new Object[]{new Integer(count), Boolean.FALSE, Boolean.TRUE});
+			setAttributes(new String []{HIT_COUNT, EXPIRED},
+				new Object[]{new Integer(count), Boolean.FALSE});
+			setEnabled(true);
 		} else {
 			setAttributes(new String[]{HIT_COUNT, EXPIRED},
 				new Object[]{new Integer(count), Boolean.FALSE});

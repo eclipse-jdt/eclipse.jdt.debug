@@ -552,10 +552,25 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		super.setEnabled(enabled);
 		if (isEnabled()) {
 			if (!(isEntry() || isExit())) {
-				setEntry(true);
+				setDefaultEntryAndExit();
 			}
 		}
 	}
+	
+	/**
+	 * Sets the default entry and exit attributes of the method breakpoint
+	 * The default values are:
+	 * <ul>
+	 * <li>entry = <code>true</code>
+	 * <li>exit = <code>false</code>
+	 * <ul>
+	 */
+	protected void setDefaultEntryAndExit() throws CoreException {
+		Object[] values= new Object[]{Boolean.TRUE, Boolean.FALSE};
+		String[] attributes= new String[]{ENTRY, EXIT};
+		setAttributes(attributes, values);
+	}
+	
 	/**
 	 * @see IJavaLineBreakpoint#supportsCondition()
 	 */
