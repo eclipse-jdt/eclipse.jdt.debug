@@ -247,7 +247,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		createVerticalSpacer(comp, 2);
 		
 		fEnvLabel = new Label(comp, SWT.NONE);
-		fEnvLabel.setText("Environment Variables:");
+		fEnvLabel.setText("Environment &Variables:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fEnvLabel.setLayoutData(gd);
@@ -495,7 +495,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		// Show the dialog and get the results
 		FileDialog dialog= new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
 		dialog.setFilterPath(fLastBrowsedDirectory);
-		dialog.setText("Select archive file");
+		dialog.setText("Select Archive File");
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip"});   //$NON-NLS-1$
 		dialog.open();
 		String[] results = dialog.getFileNames();
@@ -538,7 +538,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		// Show the dialog and get the result
 		DirectoryDialog dialog= new DirectoryDialog(getShell(), SWT.OPEN);
 		dialog.setFilterPath(fLastBrowsedDirectory);
-		dialog.setMessage("Select directory to add to path");
+		dialog.setMessage("Select &directory to add to path:");
 		String result = dialog.open();
 		if (result == null) {
 			return;
@@ -661,10 +661,10 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	
 	protected void handleEnvAddButtonSelected() {
 		NameValuePairDialog dialog = new NameValuePairDialog(getShell(), 
-												"Add new environment variable", 
-												new String[] {"Name", "Value"}, 
+												"Add Environment Variable", 
+												new String[] {"&Name:", "&Value:"}, 
 												new String[] {"", ""});
-		doEnvVarDialog(dialog);
+		doEnvVarDialog(dialog, null);
 		setEnvButtonsEnableState();
 	}
 	
@@ -673,31 +673,50 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		String name = selectedItem.getText(0);
 		String value = selectedItem.getText(1);
 		NameValuePairDialog dialog = new NameValuePairDialog(getShell(), 
-												"Edit environment variable", 
-												new String[] {"Name", "Value"}, 
+												"Edit Environment Variable", 
+												new String[] {"&Name", "&Value"}, 
 												new String[] {name, value});
-		doEnvVarDialog(dialog);		
+		doEnvVarDialog(dialog, selectedItem);		
 	}
 	
 	/**
 	 * Show the specified dialog and update the env var table based on its results.
+	 * 
+	 * @param updateItem the item to update, or <code>null</code> if
+	 *  adding a new item
 	 */
-	protected void doEnvVarDialog(NameValuePairDialog dialog) {
+	protected void doEnvVarDialog(NameValuePairDialog dialog, TableItem updateItem) {
 		if (dialog.open() != Window.OK) {
 			return;
 		}
 		String[] nameValuePair = dialog.getNameValuePair();
-		TableItem tableItem = getTableItemForName(nameValuePair[0]);
-		if (tableItem != null) {
-			tableItem.setText(1, nameValuePair[1]);
-		} else {
-			tableItem = new TableItem(fEnvTable, SWT.NONE);
-			tableItem.setText(nameValuePair);
+		TableItem tableItem = updateItem;
+		if (tableItem == null) {
+			tableItem = getTableItemForName(nameValuePair[0]);
+			if (tableItem == null) {
+				tableItem = new TableItem(fEnvTable, SWT.NONE);
+			}
 		}
+		tableItem.setText(nameValuePair);
 		fEnvTable.setSelection(new TableItem[] {tableItem});
 		updateLaunchConfigurationDialog();	
 	}
 
+	/**
+	 * Helper method that indicates whether the specified env var name is already present 
+	 * in the env var table.
+	 */
+	protected TableItem getTableItemForName(String candidateName) {
+		TableItem[] items = fEnvTable.getItems();
+		for (int i = 0; i < items.length; i++) {
+			String name = items[i].getText(0);
+			if (name.equals(candidateName)) {
+				return items[i];
+			}
+		}
+		return null;
+	}
+	
 	protected void handleEnvRemoveButtonSelected() {
 		int[] selectedIndices = fEnvTable.getSelectionIndices();
 		fEnvTable.remove(selectedIndices);
@@ -724,21 +743,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fEnvAddButton.setEnabled(true);
 	}
 	
-	/**
-	 * Helper method that indicates whether the specified env var name is already present 
-	 * in the env var table.
-	 */
-	protected TableItem getTableItemForName(String candidateName) {
-		TableItem[] items = fEnvTable.getItems();
-		for (int i = 0; i < items.length; i++) {
-			String name = items[i].getText(0);
-			if (name.equals(candidateName)) {
-				return items[i];
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Return the List widget that is currently visible in the paths tab folder.
 	 */

@@ -69,7 +69,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		workingDirComp.setLayoutData(gd);
 		
 		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText("Wor&king Directory:");
+		fWorkingDirLabel.setText("Wor&king directory:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fWorkingDirLabel.setLayoutData(gd);
@@ -104,7 +104,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 				
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText("&Program Arguments:");
+		fPrgmArgumentsLabel.setText("&Program arguments:");
 						
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -117,7 +117,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fVMArgumentsLabel = new Label(comp, SWT.NONE);
-		fVMArgumentsLabel.setText("VM Ar&guments:");
+		fVMArgumentsLabel.setText("VM ar&guments:");
 		
 		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -191,7 +191,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage("Select a working directory for the launch configuration");
+		dialog.setMessage("Select a &working directory for the launch configuration:");
 		String currentWorkingDir = fWorkingDirText.getText();
 		if (!currentWorkingDir.trim().equals("")) {
 			File path = new File(currentWorkingDir);

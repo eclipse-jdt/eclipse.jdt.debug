@@ -221,8 +221,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 															 constraints, 
 															 false, 
 															 "");
-		dialog.setTitle("Choose main type");
-		dialog.setMessage("Choose a main type to launch");
+		dialog.setTitle("Choose Main Type");
+		dialog.setMessage("Choose a main &type to launch:");
 		if (dialog.open() == dialog.CANCEL) {
 			return;
 		}
@@ -269,8 +269,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle("Project selection");
-		dialog.setMessage("Choose a project to constrain the search for main types");
+		dialog.setTitle("Project Selection");
+		dialog.setMessage("Choose a &project to constrain the search for main types:");
 		dialog.setElements(projects);
 		
 		IJavaProject javaProject = getJavaProject();
