@@ -75,7 +75,6 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 */
 	protected void displayResult(IEvaluationResult result) {
 		IJavaValue value= result.getValue();
-		IJavaThread thread= result.getThread();
 		String resultString= " "; //$NON-NLS-1$
 		IDataDisplay dataDisplay= getDataDisplay();
 		try {
