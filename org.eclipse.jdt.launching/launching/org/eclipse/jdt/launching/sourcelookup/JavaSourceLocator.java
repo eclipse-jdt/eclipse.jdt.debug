@@ -159,8 +159,15 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					// build source name from debug attributes using
 					// the source file name and the package of the declaring
 					// type
+					
+					// @see bug# 12966 - remove absolute path prefix
+					int index = sourceName.lastIndexOf(File.pathSeparatorChar);
+					if (index >= 0) {
+						sourceName = sourceName.substring(index + 1);
+					}
+					
 					String declName= frame.getDeclaringTypeName();
-					int index = declName.lastIndexOf('.');
+					index = declName.lastIndexOf('.');
 					if (index >= 0) {
 						name = declName.substring(0, index + 1);
 					} else {
