@@ -24,10 +24,15 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -36,7 +41,12 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -48,7 +58,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <li>Step filters</li>
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventListener, IPropertyChangeListener, IJavaBreakpointListener {
+public class JavaDebugOptionsManager implements ILaunchListener, IResourceChangeListener, IDebugEventListener, IPropertyChangeListener, IJavaBreakpointListener {
 	
 	/**
 	 * Singleton options manager
@@ -167,6 +177,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void startup() throws CoreException {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JDIDebugModel.addJavaBreakpointListener(this);
 		initialize();
@@ -178,6 +189,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void shutdown() throws CoreException {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JDIDebugModel.removeJavaBreakpointListener(this);
 		fProblemMap.clear();
@@ -629,5 +641,49 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		};
 		new Thread(runnable).start();
 	}		
+
+	/**
+	 * Replaces source locator with UI source locator
+	 * 
+	 * @see ILaunchListener#launchAdded(ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {
+		
+		if (launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
+			// do not use UI source locator for scrapbook
+			return;
+		}
+		
+		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		try {
+			if (config != null && 
+				((config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION))
+				|| (config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION)))) {
+					ISourceLocator sl = launch.getSourceLocator();
+					if (sl != null && sl instanceof JavaSourceLocator) {
+						IJavaProject jp = JavaLaunchConfigurationHelper.getJavaProject(config);
+						if (jp != null) {
+							
+								JavaUISourceLocator jsl = new JavaUISourceLocator(jp);
+								launch.setSourceLocator(jsl);
+						}
+					}
+				}
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+
+	}
+	/*
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+
+	/*
+	 * @see ILaunchListener#launchRemoved(ILaunch)
+	 */
+	public void launchRemoved(ILaunch launch) {
+	}
 
 }

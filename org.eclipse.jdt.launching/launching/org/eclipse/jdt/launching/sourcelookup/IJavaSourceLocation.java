@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * file, or a directory in the file system.
  * </p>
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This interface is not intended to be implemented.
  * </p>
  * <p>
  * Note: This class/interface is part of an interim API that is still under development and expected to 

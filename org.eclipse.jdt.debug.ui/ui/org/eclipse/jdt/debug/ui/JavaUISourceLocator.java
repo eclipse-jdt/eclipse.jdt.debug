@@ -15,6 +15,8 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
+import org.eclipse.jdt.launching.ProjectSourceLocator;
+import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -60,7 +62,8 @@ public class JavaUISourceLocator implements ISourceLocator {
 	/**
 	 * Constructs a source locator that searches for source
 	 * in the given Java project, and all of its required projects,
-	 * as specified by its build path.
+	 * as specified by its build path or default source lookup
+	 * settings.
 	 * 
 	 * @param project Java project
 	 * @exception CoreException if unable to read the project's
@@ -68,7 +71,11 @@ public class JavaUISourceLocator implements ISourceLocator {
 	 */
 	public JavaUISourceLocator(IJavaProject project) throws CoreException {
 		fJavaProject= project;
+		IJavaSourceLocation[] sls = ProjectSourceLocator.getPersistedSourceLocations(project);
 		fSourceLocator= new JavaSourceLocator(project);
+		if (sls != null) {
+			fSourceLocator.setSourceLocations(sls);
+		}
 		fAllowedToAsk= true;
 	}
 

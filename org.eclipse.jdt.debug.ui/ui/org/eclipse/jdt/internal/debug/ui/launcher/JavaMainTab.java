@@ -16,8 +16,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
@@ -28,13 +30,19 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
-import org.eclipse.jdt.internal.debug.ui.JavaLocalApplicationLaunchConfigurationHelper;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.ProjectSourceLocator;
+import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
@@ -213,7 +221,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = "";
 		try {
-			projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);	
+			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
 		}
 		fProjText.setText(projectName);
@@ -222,7 +230,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
 		String mainTypeName = "";
 		try {
-			mainTypeName = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
+			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 		} catch (CoreException ce) {			
 		}	
 		fMainText.setText(mainTypeName);	
@@ -231,7 +239,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
 		String vmID = null;
 		try {
-			vmID = config.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, EMPTY_STRING);
+			vmID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, EMPTY_STRING);
 		} catch (CoreException ce) {			
 		}
 		if (vmID == null) {
@@ -245,15 +253,15 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(JavaDebugUI.PROJECT_ATTR, (String)fProjText.getText());
-		config.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getText());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)fProjText.getText());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)fMainText.getText());
 		int vmIndex = fJRECombo.getSelectionIndex();
 		if (vmIndex > -1) {
 			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
 			String vmID = vmStandin.getId();
-			config.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmID);
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmID);
 			String vmTypeID = vmStandin.getVMInstallType().getId();
-			config.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmTypeID);
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 		}		
 	}
 			
@@ -519,7 +527,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		if (jp != null) {
 			// only verify type exists if java project is specified
 			try {
-				IType type = JavaLocalApplicationLaunchConfigurationHelper.getMainType(name, jp);
+				IType type = JavaLaunchConfigurationHelper.getMainType(name, jp);
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 				return false;
@@ -565,7 +573,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		} catch (InterruptedException ie) {
 		} catch (InvocationTargetException ite) {
 		}
-		config.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, name);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
 		int index = name.lastIndexOf('.');
 		if (index > 0) {
 			name = name.substring(index + 1);
@@ -580,11 +588,11 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	protected void initializeDefaultVM(ILaunchConfigurationWorkingCopy config) {
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
 		if (vmInstall == null) {
-			config.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, (String)null);
-			config.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, (String)null);
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 		} else {
-			config.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmInstall.getId());
-			config.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmInstall.getVMInstallType().getId());
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmInstall.getId());
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstall.getVMInstallType().getId());
 		}
 	}
 

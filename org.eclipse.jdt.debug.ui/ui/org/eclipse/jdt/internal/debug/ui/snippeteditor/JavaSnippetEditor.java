@@ -251,7 +251,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 		if (launch) {
 			launchVM();
-			fVM= ScrapbookLauncherDelegate.getDefault().getDebugTarget(getPage());
+			fVM= ScrapbookLauncher.getDefault().getDebugTarget(getPage());
 		}
 	}
 	
@@ -301,7 +301,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		IDebugTarget target= fVM;
 		if (fVM != null) {
 			try {
-				IBreakpoint bp = ScrapbookLauncherDelegate.getDefault().getMagicBreakpoint(fVM);
+				IBreakpoint bp = ScrapbookLauncher.getDefault().getMagicBreakpoint(fVM);
 				if (bp != null) {
 					fVM.breakpointRemoved(bp, null);
 				}
@@ -314,7 +314,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				return;
 			}
 			vmTerminated();
-			ScrapbookLauncherDelegate.getDefault().cleanup(target);
+			ScrapbookLauncher.getDefault().cleanup(target);
 		}
 	}
 	
@@ -322,7 +322,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * The VM has terminated, update state
 	 */
 	protected void vmTerminated() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunch(fVM.getLaunch());
 		fVM= null;
 		fThread= null;
 		fEvaluationContext= null;
@@ -742,7 +741,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							IBreakpoint bp = jt.getBreakpoint();
 							if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
 								fThread = jt;
-							} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bp != null && bp.equals(ScrapbookLauncherDelegate.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
+							} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bp != null && bp.equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
 								// locate the 'eval' method and step over
 								IStackFrame[] frames = jt.getStackFrames();
 								for (int i = 0; i < frames.length; i++) {
@@ -792,10 +791,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected void launchVM() {
 		DebugPlugin.getDefault().addDebugEventListener(JavaSnippetEditor.this);
 		fLaunchedClassPath = getClassPath(getJavaProject());
-		final ILauncher launcher = ScrapbookLauncherDelegate.getLauncher();
 		Runnable r = new Runnable() {
 			public void run() {
-				launcher.launch(new Object[] {getPage()}, ILaunchManager.DEBUG_MODE);
+				ScrapbookLauncher.getDefault().launch(getPage());
 			}
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);

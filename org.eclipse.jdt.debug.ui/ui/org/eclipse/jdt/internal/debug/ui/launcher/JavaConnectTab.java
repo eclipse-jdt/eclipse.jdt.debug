@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
@@ -156,7 +157,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = "";
 		try {
-			projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);	
+			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
 		}
 		fProjText.setText(projectName);
@@ -165,7 +166,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	protected void updateHostNameFromConfig(ILaunchConfiguration config) {
 		String hostName = "";
 		try {
-			hostName = config.getAttribute(JavaDebugUI.HOSTNAME_ATTR, EMPTY_STRING);
+			hostName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, EMPTY_STRING);
 		} catch (CoreException ce) {			
 		}		
 		fHostText.setText(hostName);
@@ -174,7 +175,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	protected void updatePortNumberFromConfig(ILaunchConfiguration config) {
 		int portNumber = 8000;
 		try {
-			portNumber = config.getAttribute(JavaDebugUI.PORT_ATTR, 8000);
+			portNumber = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, 8000);
 		} catch (CoreException ce) {			
 		}	
 		fPortText.setText(String.valueOf(portNumber));	
@@ -183,7 +184,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	protected void updateAllowTerminateFromConfig(ILaunchConfiguration config) {
 		boolean allowTerminate = false;
 		try {
-			allowTerminate = config.getAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);	
+			allowTerminate = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);	
 		} catch (CoreException ce) {			
 		}
 		fAllowTerminateButton.setSelection(allowTerminate);	
@@ -200,16 +201,16 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(JavaDebugUI.PROJECT_ATTR, fProjText.getText().trim());
-		config.setAttribute(JavaDebugUI.HOSTNAME_ATTR, fHostText.getText().trim());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, fHostText.getText().trim());
 		String portString = fPortText.getText();
 		int port = -1;
 		try {
 			port = Integer.parseInt(portString);
 		} catch (NumberFormatException nfe) {				
 		}
-		config.setAttribute(JavaDebugUI.PORT_ATTR, port);		
-		config.setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, fAllowTerminateButton.getSelection());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, port);		
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, fAllowTerminateButton.getSelection());
 	}
 		
 	/**
@@ -335,9 +336,9 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 * Initialize those attributes whose default values are independent of any context.
 	 */
 	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(JavaDebugUI.HOSTNAME_ATTR, "localhost");
-		config.setAttribute(JavaDebugUI.PORT_ATTR, 8000);
-		config.setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost");
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, 8000);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 	}
 	
 	/**

@@ -693,42 +693,15 @@
    		modes="debug" />
 </extension>	
 
-<extension point = "org.eclipse.debug.core.launchConfigurationTypes">
-   <launchConfigurationType
-   	   id="org.eclipse.jdt.debug.ui.localJavaApplication"
-	   name="%localJavaApplication"
-	   delegate="org.eclipse.jdt.internal.debug.ui.JavaLocalApplicationLaunchConfigurationDelegate"
-	   modes= "run, debug">
-	   <fileExtension
-	   		extension="java"
-	   		default="true"/>
-	   <fileExtension
-	   		extension="class"
-	   		default="true"/>
-   </launchConfigurationType>
-   <launchConfigurationType
-   	   id="org.eclipse.jdt.debug.ui.remoteJavaApplication"
-	   name="%remoteJavaApplication"
-	   delegate="org.eclipse.jdt.internal.debug.ui.JavaRemoteApplicationLaunchConfigurationDelegate"
-	   modes= "debug">
-	   <fileExtension
-	   		extension="java"
-	   		default="false"/>
-	   <fileExtension
-	   		extension="class"
-	   		default="false"/>
-   </launchConfigurationType>
-</extension>
-
 <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
 	<launchConfigurationTypeImage
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.localJavaApplication"
-		configTypeID="org.eclipse.jdt.debug.ui.localJavaApplication"
+		configTypeID="org.eclipse.jdt.launching.localJavaApplication"
 		icon="icons/full/ctool16/java_app.gif">
 	</launchConfigurationTypeImage>	
 	<launchConfigurationTypeImage
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.remoteJavaApplication"
-		configTypeID="org.eclipse.jdt.debug.ui.remoteJavaApplication"
+		configTypeID="org.eclipse.jdt.launching.remoteJavaApplication"
 		icon="icons/full/ctool16/java_attach.gif">
 	</launchConfigurationTypeImage>	
 </extension>
@@ -736,25 +709,25 @@
 <extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaMain"
-		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
+		type ="org.eclipse.jdt.launching.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaMainTab"
 		name="%javaMainTabName">
 	</launchConfigurationTab>
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaArguments"
-		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
+		type ="org.eclipse.jdt.launching.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaArgumentsTab"
 		name="%javaArgumentsTabName">
 	</launchConfigurationTab>
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaEnvironment"
-		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
+		type ="org.eclipse.jdt.launching.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaEnvironmentTab"
 		name="%javaEnvironmentTabName">
 	</launchConfigurationTab>
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaConnect"
-		type ="org.eclipse.jdt.debug.ui.remoteJavaApplication"
+		type ="org.eclipse.jdt.launching.remoteJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaConnectTab"
 		name="%javaConnectTabName">
 	</launchConfigurationTab>

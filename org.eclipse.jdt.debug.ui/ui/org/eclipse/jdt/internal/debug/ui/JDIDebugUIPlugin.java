@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILauncherDelegate;
@@ -31,8 +32,9 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -289,13 +291,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		// a new class loader for each evaluation
 		ILaunch launch = target.getLaunch();
 		if (launch != null) {
-			ILauncher launcher = launch.getLauncher();
-			if (launcher != null) {
-				ILauncherDelegate delegate = launcher.getDelegate();
-				if (delegate instanceof ScrapbookLauncherDelegate) {
-					if (!target.supportsHotCodeReplace()) {
-						return;
-					}
+			if (launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
+				if (!target.supportsHotCodeReplace()) {
+					return;
 				}
 			}
 		}

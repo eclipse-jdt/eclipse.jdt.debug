@@ -18,6 +18,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -143,7 +144,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		try {
 			String pgmArgs = EMPTY_STRING;
 			if (config != null) {
-				pgmArgs = config.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, EMPTY_STRING);
+				pgmArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, EMPTY_STRING);
 			}
 			fPrgmArgumentsText.setText(pgmArgs);
 		} catch (CoreException ce) {			
@@ -154,7 +155,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		try {
 			String vmArgs = EMPTY_STRING;
 			if (config != null) {
-				vmArgs = config.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, EMPTY_STRING);
+				vmArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, EMPTY_STRING);
 			}
 			fVMArgumentsText.setText(vmArgs);
 		} catch (CoreException ce) {			
@@ -165,7 +166,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		try {
 			String workingDir = EMPTY_STRING;
 			if (config != null) {
-				workingDir = config.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, EMPTY_STRING);
+				workingDir = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, EMPTY_STRING);
 			}
 			fWorkingDirText.setText(workingDir);
 		} catch (CoreException ce) {			
@@ -244,9 +245,9 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, (String)null);
-		config.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, (String)null);
-		config.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, (String)null);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 	}
 
 	/**
@@ -254,9 +255,9 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fPrgmArgumentsText.setText(configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, ""));
-			fWorkingDirText.setText(configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, ""));
-			fVMArgumentsText.setText(configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, ""));
+			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
+			fWorkingDirText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""));
+			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""));
 		} catch (CoreException e) {
 			setErrorMessage("Exception occurred reading configuration: " + e.getStatus().getMessage());
 		}
@@ -266,9 +267,9 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, getAttributeValueFrom(fPrgmArgumentsText));
-		configuration.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, getAttributeValueFrom(fVMArgumentsText));
-		configuration.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, getAttributeValueFrom(fWorkingDirText));
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getAttributeValueFrom(fPrgmArgumentsText));
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getAttributeValueFrom(fVMArgumentsText));
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getAttributeValueFrom(fWorkingDirText));
 	}
 
 	/**

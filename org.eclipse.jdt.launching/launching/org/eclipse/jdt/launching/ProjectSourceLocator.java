@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
@@ -184,7 +185,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY));
 			if (property == null)
 				return null;
-			return decodeSourceLocations(property);
+			return JavaLaunchConfigurationHelper.decodeSourceLocations(property);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
 		} catch (IOException e) {
@@ -227,7 +228,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		String property= null;
 		try {
 			if (locations != null)
-				property= encodeSourceLocations(locations);
+				property= JavaLaunchConfigurationHelper.encodeSourceLocations(locations);
 			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY), property);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
@@ -257,66 +258,6 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		}
 		return buf.toString();
 	}
-	
-	private static IJavaSourceLocation[] decodeSourceLocations(String property) throws IOException {
-		BufferedReader reader= new BufferedReader(new StringReader(property));
-		ArrayList locations= new ArrayList();
-		String line= reader.readLine();
-		while (line != null && line.length() > 0) {
-			IJavaSourceLocation location = null;
-			if (line.equals(JavaProjectSourceLocation.class.getName())) {
-				// next line is a project name
-				line = reader.readLine();
-				IJavaProject proj = (IJavaProject)JavaCore.create(line);
-				if (proj != null) {
-					location = new JavaProjectSourceLocation(proj);
-				}
-			} else if (line.equals(DirectorySourceLocation.class.getName())) {
-				// next line is directory name
-				line = reader.readLine();
-				File file = new File(line);
-				if (file.exists() && file.isDirectory()) {
-					location = new DirectorySourceLocation(file);
-				}
-			} else if (line.equals(ArchiveSourceLocation.class.getName())) {
-				// next two lines are zip file and source root
-				String zipName = reader.readLine();
-				String root = reader.readLine();
-				location = new ArchiveSourceLocation(zipName, root);
-			}
-			if (location != null)
-				locations.add(location);
-			line= reader.readLine();
-		}
-		return (IJavaSourceLocation[]) locations.toArray(new IJavaSourceLocation[locations.size()]);
-	}	
-	
-	private static String encodeSourceLocations(IJavaSourceLocation[] locations) throws IOException {
-		StringBuffer buf= new StringBuffer();
-		for (int i= 0; i < locations.length; i++) {
-			buf.append(locations[i].getClass().getName());
-			buf.append('\n');
-			if (locations[i] instanceof JavaProjectSourceLocation) {
-				JavaProjectSourceLocation location = (JavaProjectSourceLocation)locations[i];
-				buf.append(location.getJavaProject().getHandleIdentifier());
-			} else if (locations[i] instanceof DirectorySourceLocation) {
-				DirectorySourceLocation location = (DirectorySourceLocation)locations[i];
-				buf.append(location.getDirectory().getCanonicalPath());
-			} else if (locations[i] instanceof ArchiveSourceLocation) {
-				ArchiveSourceLocation location = (ArchiveSourceLocation)locations[i];
-				buf.append(location.getArchive().getName());
-				buf.append('\n');
-				IPath root = location.getRootPath();
-				if (root == null) {
-					buf.append(" ");
-				} else {
-					buf.append(root.toString());
-				}
-			}
-			buf.append('\n');
-		}
-		return buf.toString();		
-	}	
 	
 	/**
 	 *@see ISourceLocator#getSourceElement

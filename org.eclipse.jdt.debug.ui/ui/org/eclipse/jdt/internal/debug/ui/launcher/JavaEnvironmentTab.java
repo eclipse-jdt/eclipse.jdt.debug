@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
@@ -114,7 +115,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		fClassPathList = new List(classPathComp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		fClassPathList.setLayoutData(gd);
-		fClassPathList.setData(JavaDebugUI.CLASSPATH_ATTR);
+		fClassPathList.setData(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
 		fClassPathList.addSelectionListener(getListSelectionAdapter());
 		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
 		fClassPathTabItem.setText("Class&path");
@@ -134,7 +135,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		fBootPathList = new List(fPathTabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		fBootPathList.setLayoutData(gd);
-		fBootPathList.setData(JavaDebugUI.BOOTPATH_ATTR);
+		fBootPathList.setData(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);
 		fBootPathList.addSelectionListener(getListSelectionAdapter());
 		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
 		fBootPathTabItem.setText("&Bootpath");
@@ -144,7 +145,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		fExtensionPathList = new List(fPathTabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		fExtensionPathList.setLayoutData(gd);
-		fExtensionPathList.setData(JavaDebugUI.EXTPATH_ATTR);
+		fExtensionPathList.setData(IJavaLaunchConfigurationConstants.ATTR_EXTPATH);
 		fExtensionPathList.addSelectionListener(getListSelectionAdapter());
 		fExtensionPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 2);
 		fExtensionPathTabItem.setText("E&xtension path");
@@ -231,7 +232,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		fEnvLabel.setLayoutData(gd);
 		
 		fEnvTable = new Table(comp, SWT.BORDER | SWT.MULTI);
-		fEnvTable.setData(JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR);
+		fEnvTable.setData(IJavaLaunchConfigurationConstants.ATTR_ENVIRONMENT_VARIABLES);
 		TableLayout tableLayout = new TableLayout();
 		fEnvTable.setLayout(tableLayout);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -349,7 +350,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		try {
 			java.util.List bootpath = null;
 			if (config != null) {
-				bootpath = config.getAttribute(JavaDebugUI.BOOTPATH_ATTR, (java.util.List)null);
+				bootpath = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, (java.util.List)null);
 			}
 			updatePathList(bootpath, fBootPathList);
 		} catch (CoreException ce) {			
@@ -360,7 +361,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		try {
 			java.util.List classpath = null;
 			if (config != null) {
-				classpath = config.getAttribute(JavaDebugUI.CLASSPATH_ATTR, (java.util.List)null);
+				classpath = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (java.util.List)null);
 			}
 			if (classpath == null) {
 				fClassPathDefaultButton.setSelection(true);
@@ -376,7 +377,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		try {
 			java.util.List extpath = null;
 			if (config != null) {
-				extpath = config.getAttribute(JavaDebugUI.EXTPATH_ATTR, (java.util.List)null);
+				extpath = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXTPATH, (java.util.List)null);
 			}
 			updatePathList(extpath, fExtensionPathList);
 		} catch (CoreException ce) {			
@@ -387,7 +388,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		Map envVars = null;
 		try {
 			if (config != null) {
-				envVars = config.getAttribute(JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR, (Map)null);
+				envVars = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ENVIRONMENT_VARIABLES, (Map)null);
 			}
 			updateTable(envVars, fEnvTable);
 		} catch (CoreException ce) {
@@ -782,7 +783,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromEnvTable(fEnvTable, configuration);
 		if (isUseDefaultClasspath()) {
-			configuration.setAttribute(JavaDebugUI.CLASSPATH_ATTR, (String)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
 		} else {
 			updateConfigFromPathList(fClassPathList, configuration);
 		}

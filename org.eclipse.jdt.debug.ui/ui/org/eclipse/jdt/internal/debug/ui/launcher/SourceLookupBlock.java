@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -49,7 +50,10 @@ import org.eclipse.swt.widgets.Text;
 
 public class SourceLookupBlock {
 	
+	// works on one of a project or launch configuration
 	private IJavaProject fJavaProject;
+	private ILaunchConfiguration fLaunchConfiguration;
+	
 	
 	private SelectionButtonDialogField fUseDefaultRadioButton;
 	private SelectionButtonDialogField fUseDefinedRadioButton;
@@ -111,9 +115,28 @@ public class SourceLookupBlock {
 		}
 	}
 	
+	/**
+	 * Creates a source lookup block for a java project.
+	 * 
+	 * @deprecated to be replaced with launch config
+	 */
 	public SourceLookupBlock(IJavaProject project) {
-		fJavaProject= project;
-		
+		setJavaProject(project);
+		createFields();
+	}
+	
+	/**
+	 * Creates a source lookup block for a launch configuration.
+	 */
+	public SourceLookupBlock(ILaunchConfiguration config) {
+		setLaunchConfiguration(config);
+		createFields();
+	}	
+	
+	/**
+	 * Create fields
+	 */
+	protected void createFields() {
 		SourceLookupAdapter adapter= new SourceLookupAdapter();
 		
 		fUseDefaultRadioButton= new SelectionButtonDialogField(SWT.RADIO);
@@ -148,7 +171,7 @@ public class SourceLookupBlock {
 		fZipSourceRootField.setLabelText(LauncherMessages.getString("SourceLookupBlock.Source_root")); //$NON-NLS-1$
 		fZipSourceRootField.setDialogFieldListener(adapter);
 		
-		initializeFields();
+		initializeFields();		
 	}
 
 	public void initializeFields() {
@@ -157,14 +180,14 @@ public class SourceLookupBlock {
 		boolean useClasspath= true;
 		
 		try {
-			IJavaSourceLocation[] locations = ProjectSourceLocator.getPersistedSourceLocations(fJavaProject);
+			IJavaSourceLocation[] locations = ProjectSourceLocator.getPersistedSourceLocations(getJavaProject());
 			if (locations != null) {
 				allLocations.addAll(Arrays.asList(locations));
 				useClasspath= false;
 			} else {
 				IJavaProject[] projects = ProjectSourceLocator.getSourceLookupPath(fJavaProject);
 				if (projects == null) {
-					allLocations.addAll(Arrays.asList(JavaSourceLocator.getDefaultSourceLocations(fJavaProject)));
+					allLocations.addAll(Arrays.asList(JavaSourceLocator.getDefaultSourceLocations(getJavaProject())));
 				} else {
 					for (int i = 0; i < projects.length; i++) {
 						allLocations.add(new JavaProjectSourceLocation(projects[i]));
@@ -172,7 +195,7 @@ public class SourceLookupBlock {
 				}
 			}
 			checked= new ArrayList(allLocations);
-			IJavaProject[] allProjects= fJavaProject.getJavaModel().getJavaProjects();
+			IJavaProject[] allProjects= getJavaProject().getJavaModel().getJavaProjects();
 			for (int i= 0; i < allProjects.length; i++) {
 				IJavaSourceLocation curr= new JavaProjectSourceLocation(allProjects[i]);
 				if (!allLocations.contains(curr)) {
@@ -194,7 +217,7 @@ public class SourceLookupBlock {
 	 * Returns all java project source locations
 	 */
 	protected List getAllJavaProjectSourceLocations() throws JavaModelException {
-		IJavaProject[] allProjects= fJavaProject.getJavaModel().getJavaProjects();
+		IJavaProject[] allProjects= getJavaProject().getJavaModel().getJavaProjects();
 		ArrayList allLocations = new ArrayList(allProjects.length);
 		for (int i= 0; i < allProjects.length; i++) {
 			allLocations.add(new JavaProjectSourceLocation(allProjects[i]));
@@ -247,7 +270,7 @@ public class SourceLookupBlock {
 	private void buttonPressed() {
 		if (fUseDefaultRadioButton.isSelected()) {
 			try {
-				IJavaSourceLocation[] defaultLocations = JavaSourceLocator.getDefaultSourceLocations(fJavaProject);
+				IJavaSourceLocation[] defaultLocations = JavaSourceLocator.getDefaultSourceLocations(getJavaProject());
 				List list = new ArrayList(defaultLocations.length);
 				for (int i = 0; i < defaultLocations.length; i++) {
 					list.add(defaultLocations[i]);
@@ -285,8 +308,8 @@ public class SourceLookupBlock {
 	
 	public void applyChanges() throws JavaModelException {
 		if (fUseDefaultRadioButton.isSelected()) {
-			ProjectSourceLocator.setSourceLookupPath(fJavaProject, null);
-			ProjectSourceLocator.setPersistedSourceLocations(fJavaProject, null);
+			ProjectSourceLocator.setSourceLookupPath(getJavaProject(), null);
+			ProjectSourceLocator.setPersistedSourceLocations(getJavaProject(), null);
 		} else {
 			Iterator allLocations = fProjectList.getElements().iterator();
 			List orderedLocations = new ArrayList();
@@ -300,7 +323,7 @@ public class SourceLookupBlock {
 					}
 				}
 			}
-			ProjectSourceLocator.setPersistedSourceLocations(fJavaProject, (IJavaSourceLocation[]) orderedLocations.toArray(new IJavaSourceLocation[orderedLocations.size()]));
+			ProjectSourceLocator.setPersistedSourceLocations(getJavaProject(), (IJavaSourceLocation[]) orderedLocations.toArray(new IJavaSourceLocation[orderedLocations.size()]));
 		}	
 	}
 	
@@ -341,5 +364,49 @@ public class SourceLookupBlock {
 			}
 		}
 	}
+	/**
+	 * Returns the Java project this dialog was opened on,
+	 * or <code>null</code> if this dialog is operating on
+	 * a launch configuration.
+	 * 
+	 * @return a Java project or <code>null</code>
+	 */
+	protected IJavaProject getJavaProject() {
+		return fJavaProject;
+	}
+
+	/**
+	 * Sets the Java project this control was opened on,
+	 * or <code>null</code> if this control is operating on
+	 * a launch configuration.
+	 * 
+	 * @param  javaProject Java project or <code>null</code>
+	 */
+	private void setJavaProject(IJavaProject javaProject) {
+		fJavaProject = javaProject;
+	}
+
+	/**
+	 * Returns the launch configuration this control
+	 * is operating on, or <code>null</code> if operating
+	 * on a Java project.
+	 * 
+	 * @return launch configuration or <code>null</code>
+	 */
+	protected ILaunchConfiguration getLaunchConfiguration() {
+		return fLaunchConfiguration;
+	}
+
+	/**
+	 * Sets the launch configuration this control
+	 * is operating on, or <code>null</code> if operating
+	 * on a Java project.
+	 * 
+	 * @param launchConfiguration launch configuration or <code>null</code>
+	 */
+	public void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
+		fLaunchConfiguration = launchConfiguration;
+	}
+
 }
 

@@ -42,6 +42,9 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
@@ -57,6 +60,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
  */
 
 public class ScrapbookLauncher implements IDebugEventListener {
+	
+	public static final String SCRAPBOOK_LAUNCH = JavaDebugUI.PLUGIN_ID + ".scrapbook_launch";
 	
 	private IJavaLineBreakpoint fMagicBreakpoint;
 	
@@ -125,7 +130,7 @@ public class ScrapbookLauncher implements IDebugEventListener {
 
 	private ILaunch doLaunch(IJavaProject p, IFile page, String[] classPath) {
 		try {
-			ILaunchConfigurationType lcType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(JavaDebugUI.JAVA_APPLICATION_LAUNCH_CONFIGURATION_ID);
+			ILaunchConfigurationType lcType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 			String name = page.getName() + "-Scrapbook-" + System.currentTimeMillis();
 			ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 			wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
@@ -162,14 +167,23 @@ public class ScrapbookLauncher implements IDebugEventListener {
 			for (int i = 0; i < classPath.length; i++) {
 				classpathList.add(classPath[i]);
 			}
-			wc.setAttribute(JavaDebugUI.CLASSPATH_ATTR, classpathList);
-			wc.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain");
-			wc.setAttribute(JavaDebugUI.PROJECT_ATTR, p.getElementName());
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain");
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
+			IVMInstall vm = JavaRuntime.getVMInstall(p);
+			if (vm == null) {
+				vm = JavaRuntime.getDefaultVMInstall();
+			}
+			if (vm != null) {
+				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vm.getId());
+				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vm.getVMInstallType().getId());
+			}
+			
 			String urlsString = "";
 			for (int i = 0; i < urls.length; i++) {
 				urlsString += " " + urls[i];
 			}
-			wc.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, urlsString);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString);
 			ILaunchConfiguration config = wc.doSave();
 			
 			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE);
@@ -183,6 +197,7 @@ public class ScrapbookLauncher implements IDebugEventListener {
 				IDebugUIEventFilter filter = new ScrapbookEventFilter(launch);
 				fVMsToFilters.put(dt, filter);
 				DebugUITools.addEventFilter(filter);
+				launch.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
 				return launch;
 			}
 		} catch (CoreException e) {
@@ -249,14 +264,19 @@ public class ScrapbookLauncher implements IDebugEventListener {
 			fVMsToBreakpoints.remove(target);
 			IDebugUIEventFilter filter = (IDebugUIEventFilter)fVMsToFilters.remove(target);
 			DebugUITools.removeEventFilter(filter);
-			ILaunchConfiguration config = target.getLaunch().getLaunchConfiguration();
-			if (config != null) {
-				try {
-					config.delete();
-				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
+			ILaunch launch = target.getLaunch();
+			if (launch != null) {
+				ILaunchConfiguration config = launch.getLaunchConfiguration();
+				if (config != null) {
+					try {
+						config.delete();
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+					}
 				}
+				DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 			}
+			
 		}
 	}
 }
