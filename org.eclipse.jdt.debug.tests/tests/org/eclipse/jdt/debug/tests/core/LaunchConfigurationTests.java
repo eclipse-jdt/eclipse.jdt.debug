@@ -12,6 +12,8 @@ Contributors:
 *********************************************************************/
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -100,7 +102,71 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		 assertTrue("Config should not exist after deletion", !handle.exists());
 	}
 	
+	/**
+	 * Ensures that a launch configuration returns a complete attribute map
+	 */
+	public void testGetAttributes() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
+		 IPath location = wc.getLocation();
+		 ILaunchConfiguration handle = wc.doSave();
+		 File file = location.toFile();
+		 assertTrue("Configuration file should exist", file.exists());
+
+		 Map attributes = handle.getAttributes();
+		 // retrieve attributes
+		 assertEquals("String1 should be String1", "String1", attributes.get("String1"));
+		 assertEquals("Int1 should be 1", new Integer(1), attributes.get("Int1"));
+		 assertEquals("Boolean1 should be true", new Boolean(true), attributes.get("Boolean1"));
+		 assertEquals("Boolean2 should be false", new Boolean(false), attributes.get("Boolean2"));
+
+		 // cleanup
+		 handle.delete();
+		 assertTrue("Config should not exist after deletion", !handle.exists());
+	}	
 	
+	/**
+	 * Ensures that set attributes works
+	 */
+	public void testSetAttributes() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
+		 Map map = new HashMap();
+		 map.put("ATTR1", "ONE");
+		 map.put("ATTR2", "TWO");
+		 wc.setAttributes(map);
+		 IPath location = wc.getLocation();
+		 ILaunchConfiguration handle = wc.doSave();
+		 File file = location.toFile();
+		 assertTrue("Configuration file should exist", file.exists());
+
+		 Map attributes = handle.getAttributes();
+		 assertEquals("should have two attributes", 2, attributes.size());
+		 // retrieve attributes
+		 assertEquals("ATTR1 should be ONE", "ONE", attributes.get("ATTR1"));
+		 assertEquals("ATTR2 should be TWO", "TWO", attributes.get("ATTR2"));
+
+		 // cleanup
+		 handle.delete();
+		 assertTrue("Config should not exist after deletion", !handle.exists());
+	}	
+	
+	/**
+	 * Ensures that set attributes to <code>null</code> works
+	 */
+	public void testSetNullAttributes() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
+		 wc.setAttributes(null);
+		 IPath location = wc.getLocation();
+		 ILaunchConfiguration handle = wc.doSave();
+		 File file = location.toFile();
+		 assertTrue("Configuration file should exist", file.exists());
+
+		 Map attributes = handle.getAttributes();
+		 assertEquals("should have no attributes", 0, attributes.size());
+		 // cleanup
+		 handle.delete();
+		 assertTrue("Config should not exist after deletion", !handle.exists());
+	}
+		
 	/**
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
