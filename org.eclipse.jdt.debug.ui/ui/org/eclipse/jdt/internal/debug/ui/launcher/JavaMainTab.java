@@ -65,7 +65,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	private Button fSearchButton;
 	private Button fSearchExternalJarsCheckButton;
 			
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -90,7 +90,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		projComp.setLayoutData(gd);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText("&Project:");
+		fProjLabel.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -104,7 +104,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fProjButton = createPushButton(projComp, "&Browse...", null);
+		fProjButton = createPushButton(projComp, LauncherMessages.getString("JavaMainTab.&Browse_3"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
@@ -121,7 +121,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		mainComp.setLayoutData(gd);
 		
 		fMainLabel = new Label(mainComp, SWT.NONE);
-		fMainLabel.setText("Main cla&ss:");
+		fMainLabel.setText(LauncherMessages.getString("JavaMainTab.Main_cla&ss__4")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fMainLabel.setLayoutData(gd);
@@ -135,7 +135,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fSearchButton = createPushButton(mainComp,"Searc&h...", null);
+		fSearchButton = createPushButton(mainComp,LauncherMessages.getString("JavaMainTab.Searc&h_5"), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
@@ -143,8 +143,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fSearchExternalJarsCheckButton = new Button(mainComp, SWT.CHECK);
-		fSearchExternalJarsCheckButton.setText("E&xt. jars");
-		fSearchExternalJarsCheckButton.setToolTipText("Include external jars when searching for a main class");
+		fSearchExternalJarsCheckButton.setText(LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
+		fSearchExternalJarsCheckButton.setToolTipText(LauncherMessages.getString("JavaMainTab.Include_external_jars_when_searching_for_a_main_class_7")); //$NON-NLS-1$
 		
 				
 	}
@@ -158,7 +158,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
-		String projectName = "";
+		String projectName = ""; //$NON-NLS-1$
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
@@ -168,7 +168,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
-		String mainTypeName = "";
+		String mainTypeName = ""; //$NON-NLS-1$
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 		} catch (CoreException ce) {
@@ -222,9 +222,9 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 															 searchScope, 
 															 constraints, 
 															 false, 
-															 "");
-		dialog.setTitle("Choose Main Type");
-		dialog.setMessage("Choose a main &type to launch:");
+															 ""); //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.getString("JavaMainTab.Choose_Main_Type_11")); //$NON-NLS-1$
+		dialog.setMessage(LauncherMessages.getString("JavaMainTab.Choose_a_main_&type_to_launch__12")); //$NON-NLS-1$
 		if (dialog.open() == dialog.CANCEL) {
 			return;
 		}
@@ -271,8 +271,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle("Project Selection");
-		dialog.setMessage("Choose a &project to constrain the search for main types:");
+		dialog.setTitle(LauncherMessages.getString("JavaMainTab.Project_Selection_13")); //$NON-NLS-1$
+		dialog.setMessage(LauncherMessages.getString("JavaMainTab.Choose_a_&project_to_constrain_the_search_for_main_types__14")); //$NON-NLS-1$
 		dialog.setElements(projects);
 		
 		IJavaProject javaProject = getJavaProject();
@@ -323,14 +323,14 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage("Project does not exist.");
+				setErrorMessage(LauncherMessages.getString("JavaMainTab.Project_does_not_exist_15")); //$NON-NLS-1$
 				return false;
 			}
 		}
 
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage("Main type not specified.");
+			setErrorMessage(LauncherMessages.getString("JavaMainTab.Main_type_not_specified_16")); //$NON-NLS-1$
 			return false;
 		}
 		IJavaProject jp = getJavaProject();
@@ -370,8 +370,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			// incorrect result (the performApply() method can result in empty values
 			// for these attributes being set on a config if there is nothing in the
 			// corresponding text boxes)
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "");
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 		} else {
 			initializeDefaults(je, config);
 		}
@@ -439,7 +439,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "&Main";
+		return LauncherMessages.getString("JavaMainTab.&Main_19"); //$NON-NLS-1$
 	}
 
 }

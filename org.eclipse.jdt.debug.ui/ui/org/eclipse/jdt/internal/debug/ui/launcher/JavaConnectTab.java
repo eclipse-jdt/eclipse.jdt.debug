@@ -58,7 +58,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	private Combo fConnectorCombo;
 	private IVMConnector[] fConnectors = JavaRuntime.getVMConnectors();
 	
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -84,7 +84,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		projComp.setLayoutData(gd);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText("&Project:");
+		fProjLabel.setText(LauncherMessages.getString("JavaConnectTab.&Project__2")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -99,7 +99,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fProjButton = new Button(projComp, SWT.PUSH);
-		fProjButton.setText("&Browse...");
+		fProjButton.setText(LauncherMessages.getString("JavaConnectTab.&Browse_3")); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
@@ -109,7 +109,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		createVerticalSpacer(comp);		
 		
 		fHostLabel = new Label(comp, SWT.NONE);
-		fHostLabel.setText("&Host name:");
+		fHostLabel.setText(LauncherMessages.getString("JavaConnectTab.&Host_name__4")); //$NON-NLS-1$
 
 		fHostText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -121,7 +121,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fPortLabel = new Label(comp, SWT.NONE);
-		fPortLabel.setText("P&ort #:");
+		fPortLabel.setText(LauncherMessages.getString("JavaConnectTab.P&ort_#__5")); //$NON-NLS-1$
 
 		fPortText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -133,7 +133,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		});
 
 		fAllowTerminateButton = new Button(comp, SWT.CHECK);
-		fAllowTerminateButton.setText("&Allow termination of remote VM");
+		fAllowTerminateButton.setText(LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
 		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -152,7 +152,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		connectorComp.setLayoutData(gd);
 		
 		Label l = new Label(connectorComp, SWT.NONE);
-		l.setText("Connect&ion Type:");
+		l.setText(LauncherMessages.getString("JavaConnectTab.Connect&ion_Type__7")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
@@ -187,7 +187,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
-		String projectName = "";
+		String projectName = ""; //$NON-NLS-1$
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
@@ -197,7 +197,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	}
 	
 	protected void updateHostNameFromConfig(ILaunchConfiguration config) {
-		String hostName = "";
+		String hostName = ""; //$NON-NLS-1$
 		try {
 			hostName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, EMPTY_STRING);
 		} catch (CoreException ce) {
@@ -291,8 +291,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle("Project selection");
-		dialog.setMessage("Choose a project to constrain the search for main types");
+		dialog.setTitle(LauncherMessages.getString("JavaConnectTab.Project_selection_10")); //$NON-NLS-1$
+		dialog.setMessage(LauncherMessages.getString("JavaConnectTab.Choose_a_project_to_constrain_the_search_for_main_types_11")); //$NON-NLS-1$
 		dialog.setElements(projects);
 		
 		IJavaProject javaProject = getJavaProject();
@@ -357,7 +357,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 * specified element's parental hierarchy, and use this as the default name.
 	 */
 	protected void initializeName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
-		String name = "";
+		String name = ""; //$NON-NLS-1$
 		try {
 			IResource resource = javaElement.getUnderlyingResource();
 			name = resource.getName();
@@ -376,7 +376,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 * Initialize those attributes whose default values are independent of any context.
 	 */
 	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost");
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, 8000);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 	}
@@ -393,7 +393,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage("Project does not exist.");
+				setErrorMessage(LauncherMessages.getString("JavaConnectTab.Project_does_not_exist_14")); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -401,11 +401,11 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		// Host
 		String hostName = fHostText.getText().trim();
 		if (hostName.length() < 1) {
-			setErrorMessage("Host name not specified.");
+			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Host_name_not_specified_15")); //$NON-NLS-1$
 			return false;
 		}
 		if (hostName.indexOf(' ') > -1) {
-			setErrorMessage("Invalid host name.");
+			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Invalid_host_name_16")); //$NON-NLS-1$
 			return false;
 		}
 		
@@ -415,15 +415,15 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		try {
 			portNumber = Integer.parseInt(portString);
 		} catch (NumberFormatException e) {
-			setErrorMessage("Invalid port number specified");
+			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Invalid_port_number_specified_17")); //$NON-NLS-1$
 			return false;
 		}
 		if (portNumber == Integer.MIN_VALUE) {
-			setErrorMessage("Port number not specified.");
+			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Port_number_not_specified_18")); //$NON-NLS-1$
 			return false;
 		}
 		if (portNumber < 1) {
-			setErrorMessage("Invalid port number specified");
+			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Invalid_port_number_specified_19")); //$NON-NLS-1$
 			return false;
 		}
 				
@@ -434,6 +434,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Conn&ect";
+		return LauncherMessages.getString("JavaConnectTab.Conn&ect_20"); //$NON-NLS-1$
 	}			
 }

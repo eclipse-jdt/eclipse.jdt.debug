@@ -45,7 +45,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	private Button fWorkingDirBrowseButton;
 	private Button fUseDefaultWorkingDirButton;
 	
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -70,7 +70,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		workingDirComp.setLayoutData(gd);
 		
 		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText("Wor&king directory:");
+		fWorkingDirLabel.setText(LauncherMessages.getString("JavaArgumentsTab.Wor&king_directory__2")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fWorkingDirLabel.setLayoutData(gd);
@@ -84,7 +84,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkingDirBrowseButton = createPushButton(workingDirComp, "&Browse...", null);
+		fWorkingDirBrowseButton = createPushButton(workingDirComp, LauncherMessages.getString("JavaArgumentsTab.&Browse_3"), null); //$NON-NLS-1$
 		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkingDirBrowseButtonSelected();
@@ -92,7 +92,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText("Use de&fault working directory");
+		fUseDefaultWorkingDirButton.setText(LauncherMessages.getString("JavaArgumentsTab.Use_de&fault_working_directory_4")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
@@ -105,7 +105,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 				
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText("&Program arguments:");
+		fPrgmArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
 						
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -118,7 +118,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fVMArgumentsLabel = new Label(comp, SWT.NONE);
-		fVMArgumentsLabel.setText("VM ar&guments:");
+		fVMArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
 		
 		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -195,9 +195,9 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage("Select a &working directory for the launch configuration:");
+		dialog.setMessage(LauncherMessages.getString("JavaArgumentsTab.Select_a_&working_directory_for_the_launch_configuration__7")); //$NON-NLS-1$
 		String currentWorkingDir = fWorkingDirText.getText();
-		if (!currentWorkingDir.trim().equals("")) {
+		if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
 			File path = new File(currentWorkingDir);
 			if (path.exists()) {
 				dialog.setFilterPath(currentWorkingDir);
@@ -228,7 +228,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * Returns the default working directory
 	 */
 	protected String getDefaultWorkingDir() {
-		return System.getProperty("user.dir");
+		return System.getProperty("user.dir"); //$NON-NLS-1$
 	}
 
 	/**
@@ -243,11 +243,11 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		if (workingDirPath.length() > 0) {
 			File dir = new File(workingDirPath);
 			if (!dir.exists()) {
-				setErrorMessage("Working directory does not exist.");
+				setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Working_directory_does_not_exist_10")); //$NON-NLS-1$
 				return false;
 			}
 			if (!dir.isDirectory()) {
-				setErrorMessage("Working directory is not a directory.");
+				setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Working_directory_is_not_a_directory_11")); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -271,10 +271,10 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
-			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""));
+			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
+			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
 			
-			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "");
+			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
 			if (wd.trim().length() == 0) {
 				fUseDefaultWorkingDirButton.setSelection(true);
 			} else {
@@ -283,7 +283,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage("Exception occurred reading configuration: " + e.getStatus().getMessage());
+			setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);
 		}
 	}
@@ -318,7 +318,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "&Arguments";
+		return LauncherMessages.getString("JavaArgumentsTab.&Arguments_16"); //$NON-NLS-1$
 	}	
 }
 

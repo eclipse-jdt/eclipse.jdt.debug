@@ -94,18 +94,18 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	// Java project context
 	private IJavaProject fJavaProject;
 	
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	// Constants used in reading & persisting XML documents containing path entries
-	private static final String PATH_XML_ENTRIES = "pathEntries";
-	private static final String PATH_XML_ENTRY = "pathEntry";
-	private static final String PATH_XML_PATH = "path";
+	private static final String PATH_XML_ENTRIES = "pathEntries"; //$NON-NLS-1$
+	private static final String PATH_XML_ENTRY = "pathEntry"; //$NON-NLS-1$
+	private static final String PATH_XML_PATH = "path"; //$NON-NLS-1$
 	
 	// Constants used in reading & persisting XML documents containing env. vars.
-	private static final String ENV_XML_ENTRIES = "envVarEntries";
-	private static final String ENV_XML_ENTRY = "envVarEntry";
-	private static final String ENV_XML_NAME = "envVarName";
-	private static final String ENV_XML_VALUE = "envVarValue";
+	private static final String ENV_XML_ENTRIES = "envVarEntries"; //$NON-NLS-1$
+	private static final String ENV_XML_ENTRY = "envVarEntry"; //$NON-NLS-1$
+	private static final String ENV_XML_NAME = "envVarName"; //$NON-NLS-1$
+	private static final String ENV_XML_VALUE = "envVarValue"; //$NON-NLS-1$
 		
 	/**
 	 * @see ILaunchConfigurationTab#createTabControl(ILaunchConfigurationDialog, TabItem)
@@ -135,12 +135,12 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fClassPathList.setData(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
 		fClassPathList.addSelectionListener(getListSelectionAdapter());
 		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
-		fClassPathTabItem.setText("Class&path");
+		fClassPathTabItem.setText(LauncherMessages.getString("JavaEnvironmentTab.Class&path_9")); //$NON-NLS-1$
 		fClassPathTabItem.setControl(classPathComp);
 		fClassPathTabItem.setData(fClassPathList);
 		
 		fClassPathDefaultButton = new Button(classPathComp, SWT.CHECK);
-		fClassPathDefaultButton.setText("Use defau&lt classpath");
+		fClassPathDefaultButton.setText(LauncherMessages.getString("JavaEnvironmentTab.Use_defau&lt_classpath_10")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fClassPathDefaultButton.setLayoutData(gd);
 		fClassPathDefaultButton.addSelectionListener(new SelectionAdapter() {
@@ -155,7 +155,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fBootPathList.setData(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);
 		fBootPathList.addSelectionListener(getListSelectionAdapter());
 		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
-		fBootPathTabItem.setText("&Bootpath");
+		fBootPathTabItem.setText(LauncherMessages.getString("JavaEnvironmentTab.&Bootpath_11")); //$NON-NLS-1$
 		fBootPathTabItem.setControl(fBootPathList);
 		fBootPathTabItem.setData(fBootPathList);
 		
@@ -165,7 +165,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fExtensionPathList.setData(IJavaLaunchConfigurationConstants.ATTR_EXTPATH);
 		fExtensionPathList.addSelectionListener(getListSelectionAdapter());
 		fExtensionPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 2);
-		fExtensionPathTabItem.setText("E&xtension Path");
+		fExtensionPathTabItem.setText(LauncherMessages.getString("JavaEnvironmentTab.E&xtension_Path_12")); //$NON-NLS-1$
 		fExtensionPathTabItem.setControl(fExtensionPathList);
 		fExtensionPathTabItem.setData(fExtensionPathList);
 		
@@ -191,7 +191,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 		});
 		
-		fJREAddButton =createPushButton(jreComp,"N&ew...", null);
+		fJREAddButton =createPushButton(jreComp,LauncherMessages.getString("JavaEnvironmentTab.N&ew_13"), null); //$NON-NLS-1$
 		fJREAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleJREAddButtonSelected();
@@ -199,7 +199,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		});
 				
 		fJRETabItem = new TabItem(fPathTabFolder, SWT.NONE);
-		fJRETabItem.setText("&JRE");
+		fJRETabItem.setText(LauncherMessages.getString("JavaEnvironmentTab.&JRE_14")); //$NON-NLS-1$
 		fJRETabItem.setControl(jreComp);
 		
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
@@ -212,7 +212,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		
 		createVerticalSpacer(pathButtonComp, 1);
 		
-		fPathAddArchiveButton = createPushButton(pathButtonComp,"Add Ja&r...", null);
+		fPathAddArchiveButton = createPushButton(pathButtonComp,LauncherMessages.getString("JavaEnvironmentTab.Add_Ja&r_15"), null); //$NON-NLS-1$
 		fPathAddArchiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathAddArchiveButtonSelected();
@@ -220,28 +220,28 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		});
 		gd = (GridData)fPathAddArchiveButton.getLayoutData();
 		
-		fPathAddDirectoryButton = createPushButton(pathButtonComp, "Add &Folder...", null);
+		fPathAddDirectoryButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Add_&Folder_16"), null); //$NON-NLS-1$
 		fPathAddDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathAddDirectoryButtonSelected();
 			}
 		});
 		
-		fPathRemoveButton = createPushButton(pathButtonComp,"R&emove", null);
+		fPathRemoveButton = createPushButton(pathButtonComp,LauncherMessages.getString("JavaEnvironmentTab.R&emove_17"), null); //$NON-NLS-1$
 		fPathRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathRemoveButtonSelected();
 			}
 		});
 				
-		fPathMoveUpButton = createPushButton(pathButtonComp, "&Up", null);
+		fPathMoveUpButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.&Up_18"), null); //$NON-NLS-1$
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(true);
 			}
 		});
 		
-		fPathMoveDownButton = createPushButton(pathButtonComp, "D&own", null);
+		fPathMoveDownButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.D&own_19"), null); //$NON-NLS-1$
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(false);
@@ -253,7 +253,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		createVerticalSpacer(comp, 2);
 		
 		fEnvLabel = new Label(comp, SWT.NONE);
-		fEnvLabel.setText("Environment Variable&s:");
+		fEnvLabel.setText(LauncherMessages.getString("JavaEnvironmentTab.Environment_Variable&s__20")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fEnvLabel.setLayoutData(gd);
@@ -265,9 +265,9 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		gd = new GridData(GridData.FILL_BOTH);
 		fEnvTable.setLayoutData(gd);
 		TableColumn column1 = new TableColumn(fEnvTable, SWT.NONE);
-		column1.setText("Name");
+		column1.setText(LauncherMessages.getString("JavaEnvironmentTab.Name_21")); //$NON-NLS-1$
 		TableColumn column2 = new TableColumn(fEnvTable, SWT.NONE);
-		column2.setText("Value");		
+		column2.setText(LauncherMessages.getString("JavaEnvironmentTab.Value_22"));		 //$NON-NLS-1$
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		fEnvTable.setHeaderVisible(true);
@@ -294,21 +294,21 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		envButtonComp.setLayoutData(gd);
 		
-		fEnvAddButton = createPushButton(envButtonComp ,"A&dd...", null);
+		fEnvAddButton = createPushButton(envButtonComp ,LauncherMessages.getString("JavaEnvironmentTab.A&dd_23"), null); //$NON-NLS-1$
 		fEnvAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleEnvAddButtonSelected();
 			}
 		});
 		
-		fEnvEditButton = createPushButton(envButtonComp, "Ed&it...", null);
+		fEnvEditButton = createPushButton(envButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Ed&it_24"), null); //$NON-NLS-1$
 		fEnvEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleEnvEditButtonSelected();
 			}
 		});
 		
-		fEnvRemoveButton = createPushButton(envButtonComp, "Rem&ove", null);
+		fEnvRemoveButton = createPushButton(envButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Rem&ove_25"), null); //$NON-NLS-1$
 		fEnvRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleEnvRemoveButtonSelected();
@@ -504,7 +504,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		// Show the dialog and get the results
 		FileDialog dialog= new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
 		dialog.setFilterPath(fLastBrowsedDirectory);
-		dialog.setText("Select Archive File");
+		dialog.setText(LauncherMessages.getString("JavaEnvironmentTab.Select_Archive_File_26")); //$NON-NLS-1$
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip"});   //$NON-NLS-1$
 		dialog.open();
 		String[] results = dialog.getFileNames();
@@ -547,7 +547,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		// Show the dialog and get the result
 		DirectoryDialog dialog= new DirectoryDialog(getShell(), SWT.OPEN);
 		dialog.setFilterPath(fLastBrowsedDirectory);
-		dialog.setMessage("Select &directory to add to path:");
+		dialog.setMessage(LauncherMessages.getString("JavaEnvironmentTab.Select_&directory_to_add_to_path__27")); //$NON-NLS-1$
 		String result = dialog.open();
 		if (result == null) {
 			return;
@@ -686,9 +686,9 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	
 	protected void handleEnvAddButtonSelected() {
 		NameValuePairDialog dialog = new NameValuePairDialog(getShell(), 
-												"Add Environment Variable", 
-												new String[] {"&Name:", "&Value:"}, 
-												new String[] {"", ""});
+												LauncherMessages.getString("JavaEnvironmentTab.Add_Environment_Variable_28"),  //$NON-NLS-1$
+												new String[] {LauncherMessages.getString("JavaEnvironmentTab.&Name__29"), LauncherMessages.getString("JavaEnvironmentTab.&Value__30")},  //$NON-NLS-1$ //$NON-NLS-2$
+												new String[] {"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
 		doEnvVarDialog(dialog, null);
 		setEnvButtonsEnableState();
 	}
@@ -698,8 +698,8 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		String name = selectedItem.getText(0);
 		String value = selectedItem.getText(1);
 		NameValuePairDialog dialog = new NameValuePairDialog(getShell(), 
-												"Edit Environment Variable", 
-												new String[] {"&Name", "&Value"}, 
+												LauncherMessages.getString("JavaEnvironmentTab.Edit_Environment_Variable_33"),  //$NON-NLS-1$
+												new String[] {LauncherMessages.getString("JavaEnvironmentTab.&Name_34"), LauncherMessages.getString("JavaEnvironmentTab.&Value_35")},  //$NON-NLS-1$ //$NON-NLS-2$
 												new String[] {name, value});
 		doEnvVarDialog(dialog, selectedItem);		
 	}
@@ -834,15 +834,15 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			IVMInstall vm = vmStandin.convertToRealVM();
 			File location = vm.getInstallLocation();
 			if (location == null) {
-				setErrorMessage("JRE home directory not specified.");
+				setErrorMessage(LauncherMessages.getString("JavaEnvironmentTab.JRE_home_directory_not_specified_36")); //$NON-NLS-1$
 				return false;
 			}
 			if (!location.exists()) {
-				setErrorMessage("JRE home directory does not exist.");
+				setErrorMessage(LauncherMessages.getString("JavaEnvironmentTab.JRE_home_directory_does_not_exist_37")); //$NON-NLS-1$
 				return false;
 			}			
 		} else {
-			setErrorMessage("JRE not specified.");
+			setErrorMessage(LauncherMessages.getString("JavaEnvironmentTab.JRE_not_specified_38")); //$NON-NLS-1$
 			return false;
 		}		
 		
@@ -1024,6 +1024,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "En&vironment";
+		return LauncherMessages.getString("JavaEnvironmentTab.En&vironment_39"); //$NON-NLS-1$
 	}	
 }
