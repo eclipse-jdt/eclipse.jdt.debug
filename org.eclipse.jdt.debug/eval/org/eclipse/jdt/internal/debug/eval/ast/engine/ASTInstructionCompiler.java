@@ -681,7 +681,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(EmptyStatement)
 	 */
 	public void endVisit(EmptyStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
 	}
 
 	/**
@@ -1644,6 +1646,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
+		push(new NoOp(fCounter));
 		return true;
 	}
 
