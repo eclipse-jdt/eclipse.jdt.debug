@@ -113,7 +113,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * <li>Method exit (value <code>EXIT_EVENT</code>)</li>
 	 * </ol>
 	 */
-	private HashMap fLastEventTypes= new HashMap(10); // $NON-NLS-1$
+	private HashMap fLastEventTypes= new HashMap(10); //$NON-NLS-1$
 	
 	/**
 	 * Used to match type names 

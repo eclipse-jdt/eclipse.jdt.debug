@@ -69,12 +69,12 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Flag indicating that this breakpoint last suspended execution
 	 * due to a field access
 	 */
-	protected static final Integer ACCESS_EVENT= new Integer(0); // $NON-NLS-1$
+	protected static final Integer ACCESS_EVENT= new Integer(0); //$NON-NLS-1$
 	/**
 	 * Flag indicating that this breakpoint last suspended execution
 	 * due to a field modification
 	 */	
-	protected static final Integer MODIFICATION_EVENT= new Integer(1); // $NON-NLS-1$
+	protected static final Integer MODIFICATION_EVENT= new Integer(1); //$NON-NLS-1$
 	/**
 	 * Maps each debug target that is suspended for this breakpiont to reason that 
 	 * this breakpoint suspended it. Reasons include:
@@ -83,7 +83,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * <li>Field modification (value <code>MODIFICATION_EVENT</code>)</li>
 	 * </ol>
 	 */
-	private HashMap fLastEventTypes= new HashMap(10); // $NON-NLS-1$
+	private HashMap fLastEventTypes= new HashMap(10); //$NON-NLS-1$
 	
 	public JavaWatchpoint() {
 	}
