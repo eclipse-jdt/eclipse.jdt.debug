@@ -31,15 +31,15 @@ public class SocketTransportService extends TransportService {
 
     private Capabilities fCapabilities = new Capabilities() {
         public boolean supportsAcceptTimeout() {
-            return false;
+            return true;
         }
 
         public boolean supportsAttachTimeout() {
-            return false;
+            return true;
         }
 
         public boolean supportsHandshakeTimeout() {
-            return false;
+            return true;
         }
 
         public boolean supportsMultipleConnections() {
