@@ -86,7 +86,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	static final Point BIG_SIZE= new Point(22, 16);
 	protected ImageDescriptorRegistry fJavaElementImageRegistry= JavaPlugin.getImageDescriptorRegistry();
-	protected ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
+	protected org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
 
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
 	

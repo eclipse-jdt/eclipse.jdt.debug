@@ -24,7 +24,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
-import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -192,12 +191,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
-		Display.getDefault().asyncExec(
-			new Runnable() {
-				public void run() {
-					createImageRegistry();
-				}
-			});
 	}
 	
 	public void shutdown() throws CoreException {
@@ -289,5 +282,19 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	public static ImageDescriptorRegistry getImageDescriptorRegistry() {
 		return getDefault().fImageDescriptorRegistry;
 	}
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated disaply. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display;
+		display= Display.getCurrent();
+		if (display == null)
+			display= Display.getDefault();
+		return display;		
+	}
+		
 }
 
