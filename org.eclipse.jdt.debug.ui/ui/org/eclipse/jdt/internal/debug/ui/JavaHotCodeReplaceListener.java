@@ -46,11 +46,9 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		// that do not support HCR. HCR is simulated by using
 		// a new class loader for each evaluation
 		ILaunch launch = target.getLaunch();
-		if (launch != null) {
-			if (launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
-				if (!target.supportsHotCodeReplace()) {
+		if (launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
+			if (!target.supportsHotCodeReplace()) {
 					return;
-				}
 			}
 		}
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
