@@ -48,7 +48,9 @@ import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaStatusConstants;
@@ -64,9 +66,15 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -114,9 +122,19 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private Image fOldTitleImage= null;
 	private IEvaluationEngine fEngine= null;
 	
-	/**
-	 * Default constructor.
-	 */
+	private IPropertyChangeListener fJavaPluginPreferenceStoreListener= new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			JDISourceViewer isv= (JDISourceViewer) getSourceViewer();
+			if (isv != null) {
+				IContentAssistant assistant= isv.getContentAssistant();
+				if (assistant instanceof ContentAssistant) {
+					JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
+				}				
+			}
+		}
+	};
+	
+	
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
@@ -124,6 +142,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(textTools, this));		
 		fSnippetStateListeners= new ArrayList(4);
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		JavaPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fJavaPluginPreferenceStoreListener);
 	}
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
@@ -134,6 +153,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void dispose() {
 		shutDownVM();
 		fSnippetStateListeners= Collections.EMPTY_LIST;
+		JavaPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fJavaPluginPreferenceStoreListener);
 		super.dispose();
 	}
 	
@@ -149,8 +169,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setAction("ContentAssistProposal", new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS));			 //$NON-NLS-2$ //$NON-NLS-1$
 		setAction("OpenOnSelection", new SnippetOpenOnSelectionAction(this));			 //$NON-NLS-1$
 		setAction("OpenHierarchyOnSelection", new SnippetOpenHierarchyOnSelectionAction(this));  //$NON-NLS-1$
-		setAction("Stop", new StopAction(this));
-		setAction("RunIn", new RunInPackageAction(this));
+		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
+		setAction("RunIn", new RunInPackageAction(this));  //$NON-NLS-1$
 	} 
 	
 	/**
@@ -747,11 +767,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			IProject p= file.getFile().getProject();
 			projectName= p.getName();
 		}
-		String message= "";
+		String message= ""; //$NON-NLS-1$
 		if (projectName != null) {
-			message = projectName + " is not a Java Project.\n";
+			message = projectName + SnippetMessages.getString("JavaSnippetEditor._is_not_a_Java_Project._n_1"); //$NON-NLS-1$
 		}
-		showError(message + "Unable to perform evaluation outside of a Java Project");
+		showError(message + SnippetMessages.getString("JavaSnippetEditor.Unable_to_perform_evaluation_outside_of_a_Java_Project_2")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -788,8 +808,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			success= true;
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
-			String title= "Problems During Save As..."; 
-			String msg= "Save could not be completed. " +  x.getTargetException().getMessage();
+			String title= SnippetMessages.getString("JavaSnippetEditor.Problems_During_Save_As..._3");  //$NON-NLS-1$
+			String msg= SnippetMessages.getString("JavaSnippetEditor.Save_could_not_be_completed.__4") +  x.getTargetException().getMessage(); //$NON-NLS-1$
 			MessageDialog.openError(shell, title, msg);
 		} finally {
 			getDocumentProvider().changed(newInput);
@@ -817,5 +837,12 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			fEngine = EvaluationManager.newLocalEvaluationEngine(getJavaProject(), (IJavaDebugTarget)getThread().getDebugTarget(), f);
 		}
 		return fEngine;
+	}
+	
+	/**
+	 * @see AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
+	 */
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		return new JDISourceViewer(parent, ruler, styles);
 	}
 }
