@@ -158,7 +158,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		
 		private Object fLock;
 		/**
-		 * Creates a eval thread
+		 * Creates a "wait" thread
 		 * 
 		 * @param display the display to be used to read and dispatch events
 		 * @param lock the monitor to wait on
