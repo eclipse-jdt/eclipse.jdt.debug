@@ -14,6 +14,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
@@ -39,6 +41,8 @@ public class BinaryBasedSourceGenerator {
 	
 	private boolean fIsInStaticMethod;
 	
+	private int fApiLevel;
+	
 	private StringBuffer fSource;
 	
 	private int fRunMethodStartOffset;
@@ -47,10 +51,11 @@ public class BinaryBasedSourceGenerator {
 	
 	private String fCompilationUnitName;
 	
-	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) {
+	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod, int apiLevel) {
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fIsInStaticMethod= isInStaticMethod;
+		fApiLevel= apiLevel;
 	}
 	
 	/**
@@ -179,7 +184,7 @@ public class BinaryBasedSourceGenerator {
 				if (interfaceList.size() != 0) {
 					source.append(" implements ").append(getDotName(((InterfaceType)interfaceList.get(0)).name())); //$NON-NLS-1$
 				} else {
-					source.append(" implements ").append(getDotName(superClassName)); //$NON-NLS-1$
+					source.append(" extends ").append(getDotName(superClassName)); //$NON-NLS-1$
 				}
 			}
 			
@@ -200,27 +205,60 @@ public class BinaryBasedSourceGenerator {
 				}
 			
 				source.append("class "); //$NON-NLS-1$
-				
-				source.append(getSimpleName(typeName)).append(' ');
-				
-				ClassType superClass= classType.superclass();
-				if (superClass != null) {
-					source.append("extends ").append(getDotName(superClass.name())).append(' '); //$NON-NLS-1$
-				}
 
-				List interfaces;
-				try {
-					interfaces= classType.interfaces();
-				} catch (ClassNotPreparedException e) {
-					return new StringBuffer();
-				}
-				if (interfaces.size() != 0) {
-					source.append("implements "); //$NON-NLS-1$
-					Iterator iterator= interfaces.iterator();
-					InterfaceType interface_= (InterfaceType)iterator.next();
-					source.append(getDotName(interface_.name()));
-					while (iterator.hasNext()) {
-						source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
+				source.append(getSimpleName(typeName)).append(' ');
+
+				String genericSignature= referenceType.genericSignature();
+				if (fApiLevel == AST.JLS3 && genericSignature != null) {
+					source.append('<');
+					String[] typeParameters= Signature.getTypeParameters(genericSignature);
+					source.append(Signature.getTypeVariable(typeParameters[0]));
+					String[] typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[0]);
+					source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+					for (int i= 1; i < typeParameterBounds.length; i++) {
+						source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
+					}
+					for (int j= 1; j < typeParameters.length; j++) {
+						source.append(',').append(Signature.getTypeVariable(typeParameters[j]));
+						typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[j]);
+						source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+						for (int i= 1; i < typeParameterBounds.length; i++) {
+							source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
+						}
+					}
+					source.append("> "); //$NON-NLS-1$
+					String[] superClassInterfaces= SignatureExt.getTypeSuperClassInterfaces(genericSignature);
+					int length= superClassInterfaces.length;
+					if (length > 0) {
+						source.append("extends ").append(Signature.toString(superClassInterfaces[0]).replace('/', '.')); //$NON-NLS-1$
+						if (length > 1) {
+							source.append(" implements ").append(Signature.toString(superClassInterfaces[1]).replace('/', '.')); //$NON-NLS-1$
+							for (int i = 2; i < length; i++) {
+								source.append(',').append(Signature.toString(superClassInterfaces[1]));
+							}
+						}
+					}
+				} else {
+				
+					ClassType superClass= classType.superclass();
+					if (superClass != null) {
+						source.append("extends ").append(getDotName(superClass.name())).append(' '); //$NON-NLS-1$
+					}
+	
+					List interfaces;
+					try {
+						interfaces= classType.interfaces();
+					} catch (ClassNotPreparedException e) {
+						return new StringBuffer();
+					}
+					if (interfaces.size() != 0) {
+						source.append("implements "); //$NON-NLS-1$
+						Iterator iterator= interfaces.iterator();
+						InterfaceType interface_= (InterfaceType)iterator.next();
+						source.append(getDotName(interface_.name()));
+						while (iterator.hasNext()) {
+							source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
+						}
 					}
 				}
 			} else if (referenceType instanceof InterfaceType) {
@@ -275,7 +313,7 @@ public class BinaryBasedSourceGenerator {
 		List methods= referenceType.methods();
 		for (Iterator iterator = methods.iterator(); iterator.hasNext();) {
 			Method method= (Method) iterator.next();
-			if (!method.isConstructor() && !method.isStaticInitializer()) {
+			if (!method.isConstructor() && !method.isStaticInitializer() && !method.isBridge()) {
 				source.append(buildMethodDeclaration(method));
 			}
 		}
@@ -355,31 +393,72 @@ public class BinaryBasedSourceGenerator {
 			source.append("protected "); //$NON-NLS-1$
 		}
 		
-		source.append(getDotName(method.returnTypeName())).append(' ').append(method.name()).append('(');
-		
-		List arguments= method.argumentTypeNames();
-		int i= 0;
-		if (arguments.size() != 0) {
-			Iterator iterator= arguments.iterator();
-			source.append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
-			if (method.isVarargs()) {
-				while (iterator.hasNext()) {
-					source.append(',');
-					String argName = getDotName((String) iterator.next());
-					if (!iterator.hasNext()) {
-						source.append(argName.substring(0,argName.length() - 2)).append("..."); //$NON-NLS-1$
-					} else {
-						source.append(argName);
-					}
-					source.append(" arg").append(i++); //$NON-NLS-1$
-				}
-			} else {
-				while (iterator.hasNext()) {
-					source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
+		String genericSignature= method.genericSignature();
+		if (fApiLevel == AST.JLS3 && genericSignature != null) {
+			source.append('<');
+			String[] typeParameters= Signature.getTypeParameters(genericSignature);
+			source.append(Signature.getTypeVariable(typeParameters[0]));
+			String[] typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[0]);
+			source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+			for (int i= 1; i < typeParameterBounds.length; i++) {
+				source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
+			}
+			for (int j= 1; j < typeParameters.length; j++) {
+				source.append(',').append(Signature.getTypeVariable(typeParameters[j]));
+				typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[j]);
+				source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+				for (int i= 1; i < typeParameterBounds.length; i++) {
+					source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
 				}
 			}
+			source.append("> "); //$NON-NLS-1$
+			
+			source.append(Signature.toString(Signature.getReturnType(genericSignature)).replace('/', '.')).append(' ').append(method.name()).append('(');
+			
+			String[] parameterTypes= Signature.getParameterTypes(genericSignature);
+			int i= 0;
+			if (parameterTypes.length != 0) {
+				source.append(Signature.toString(parameterTypes[0]).replace('/', '.')).append(" arg").append(i++); //$NON-NLS-1$
+				if (method.isVarargs()) {
+					for (int j= 1; j < parameterTypes.length - 1; j++) {
+						source.append(',').append(Signature.toString(parameterTypes[j]).replace('/', '.')).append(" arg").append(i++); //$NON-NLS-1$
+					}
+					String typeName= Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.');
+					source.append(',').append(typeName.substring(0,typeName.length() - 2)).append("...").append(" arg").append(i++); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					for (int j= 1; j < parameterTypes.length; j++) {
+						source.append(',').append(Signature.toString(parameterTypes[j]).replace('/', '.')).append(" arg").append(i++); //$NON-NLS-1$
+					}
+				}
+			}
+			source.append(')');
+		} else {
+			source.append(getDotName(method.returnTypeName())).append(' ').append(method.name()).append('(');
+			
+			List arguments= method.argumentTypeNames();
+			int i= 0;
+			if (arguments.size() != 0) {
+				Iterator iterator= arguments.iterator();
+				source.append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
+				if (method.isVarargs()) {
+					while (iterator.hasNext()) {
+						source.append(',');
+						String argName = getDotName((String) iterator.next());
+						if (!iterator.hasNext()) {
+							source.append(argName.substring(0,argName.length() - 2)).append("..."); //$NON-NLS-1$
+						} else {
+							source.append(argName);
+						}
+						source.append(" arg").append(i++); //$NON-NLS-1$
+					}
+				} else {
+					while (iterator.hasNext()) {
+						source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
+					}
+				}
+			}
+			source.append(')');
 		}
-		source.append(')');
 		
 		if (method.isAbstract() || method.isNative()) {
 			// No body for abstract and native methods
