@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -85,8 +86,20 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			URL url= BootLoader.getInstallURL();
 			java_swt= url.getPath() + "Eclipse.app/Contents/MacOS/java_swt"; //$NON-NLS-1$
 		}
+		
 		if (java_swt == null)
 			return cmdLine;		// give up
+		
+		try {
+			// copy java_swt to /tmp in order to get the app name right
+			Process process= Runtime.getRuntime().exec(new String[] { "/bin/cp", java_swt, "/tmp" }); //$NON-NLS-1$ //$NON-NLS-2$
+			process.waitFor();
+			java_swt= "/tmp/java_swt"; //$NON-NLS-1$
+		} catch (IOException e) {
+			// ignore and run java_swt in place
+		} catch (InterruptedException e) {
+			// ignore and run java_swt in place
+		}
 		
 		String[] newCmdLine= new String[cmdLine.length+1];
 		int argCount= 0;
@@ -96,5 +109,5 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			newCmdLine[argCount++]= cmdLine[i];
 		
 		return newCmdLine;
-	}	
+	}
 }
