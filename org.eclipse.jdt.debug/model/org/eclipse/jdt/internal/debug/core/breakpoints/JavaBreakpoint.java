@@ -100,7 +100,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected Map fFilteredThreadsByTarget;
 	
 	/**
-	 * Stores the type that this breakpoint was actually installed
+	 * Stores the type that this breakpoint was last installed
 	 * in. When a breakpoint is created, the TYPE_NAME attribute assigned to it
 	 * is that of its top level enclosing type. When installed, the type
 	 * may actually be an inner type. We need to keep track of the type 
