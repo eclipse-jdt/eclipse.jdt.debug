@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 * Using the specified launch configuration, build an HTML file that specifies the
 	 * applet to launch.  Return the name of the HTML file.
 	 * 
-	 * @param dir the directoru in which to make the file
+	 * @param dir the directory in which to make the file
 	 */
 	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
 		FileWriter writer = null;
