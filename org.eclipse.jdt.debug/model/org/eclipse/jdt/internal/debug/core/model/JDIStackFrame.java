@@ -205,7 +205,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	protected synchronized List getVariables0() throws DebugException {
 		if (fVariables == null) {
 			
-			// throw exception if native method, so varaiable view will upate
+			// throw exception if native method, so variable view will update
 			// with information message
 			if (isNative()) {
 				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Variable_information_unavailable_for_native_methods"), null); //$NON-NLS-1$
@@ -267,7 +267,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
+	 * @see IStackFrame#getName()
 	 */
 	public String getName() throws DebugException {
 		return getMethodName();
@@ -541,10 +541,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#findVariable(String)
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
-		IVariable[] variables = getVariables();
+		if (isNative()) {
+			return null;
+		}
+		List variables = getVariables0();
 		JDIThisVariable thisVariable= null;
-		for (int i = 0; i < variables.length; i++) {
-			IVariable var= (IVariable) variables[i];
+		Iterator iterator= variables.iterator();
+		while (iterator.hasNext()) {
+			IVariable var = (IVariable) iterator.next();
 			if (var.getName().equals(varName)) {
 				return var;
 			}
@@ -569,7 +573,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Retrieves visible varialbes in this stack frame
+	 * Retrieves visible variables in this stack frame
 	 * handling any exceptions. Returns an empty list if there are no
 	 * variables.
 	 * 
