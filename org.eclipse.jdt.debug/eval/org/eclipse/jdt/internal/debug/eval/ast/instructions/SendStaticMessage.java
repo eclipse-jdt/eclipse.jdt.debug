@@ -42,7 +42,7 @@ public class SendStaticMessage extends CompoundInstruction {
 			args[i] = (IJavaValue)popValue();
 		}
 		
-		IJavaType receiver= getType(Signature.toString(fTypeSignature));
+		IJavaType receiver= getType(Signature.toString(fTypeSignature).replace('/', '.'));
 		IJavaValue result;
 		if (receiver instanceof IJavaClassType) {
 			result= ((IJavaClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
