@@ -238,8 +238,6 @@ abstract class Differencer {
 					
 					if (pm.isCanceled())
 						throw new OperationCanceledException();
-						
-					updateProgress(pm, keyChild);
 				}
 				
 				Object ancestorChild= ancestorSet != null ? ancestorSet.get(keyChild) : null;
@@ -391,18 +389,5 @@ abstract class Differencer {
 	 * @param input the object for which to return children
 	 */
 	abstract protected Object[] getChildren(Object input);
-	
-	/**
-	 * Called for every leaf or node compare to update progress information.
-	 * <p>
-	 * The <code>Differencer</code> implementation does nothing.
-	 * Subclasses may override.
-	 * </p>
-	 *
-	 * @param progressMonitor the progress monitor for reporting progress
-	 * @name input a non-<code>null</code> input object
-	 */
-	protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
-	}
 }
 
