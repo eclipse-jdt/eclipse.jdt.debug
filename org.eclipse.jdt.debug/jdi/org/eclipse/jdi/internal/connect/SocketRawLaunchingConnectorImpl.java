@@ -23,7 +23,7 @@ import com.sun.jdi.connect.VMStartException;
 
 public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements LaunchingConnector {
 	/** Time that a launched VM is given to connect to us. */
-	private static final int ACCEPT_TIMEOUT = 10*1000;
+	private static final int ACCEPT_TIMEOUT = 10000;
 
 	/** Raw command to start the debugged application VM. */
 	private String fCommand;
@@ -47,7 +47,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 	 * @return Returns the default arguments.
 	 */	
 	public Map defaultArguments() {
-		HashMap arguments = new HashMap(6);
+		HashMap arguments = new HashMap(3);
 		
 		// Command
 		StringArgumentImpl strArg = new StringArgumentImpl("command", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Raw_command_to_start_the_debugged_application_VM_1"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Command_2"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
