@@ -95,4 +95,13 @@ public class DeferredJavaThread extends DeferredMonitorElement {
         }
         collector.done();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object element) {
+		return ((IJavaThread)element).getDebugTarget();
+	}
+    
+    
 }
