@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -94,25 +96,28 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @exception DebugException if unable to create the associated marker due
 	 *  to a lower level exception.
 	 */	
-	public JavaExceptionBreakpoint(IResource resource, String exceptionName, boolean caught, boolean uncaught, boolean checked, boolean add, Map attributes) throws DebugException {
-		try {
-			// create the marker
-			setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
-					
-			// add attributes
-			attributes.put(IBreakpoint.ID, getModelIdentifier());
-			attributes.put(TYPE_NAME, exceptionName);
-			attributes.put(ENABLED, new Boolean(true));
-			attributes.put(CAUGHT, new Boolean(caught));
-			attributes.put(UNCAUGHT, new Boolean(uncaught));
-			attributes.put(CHECKED, new Boolean(checked));
-			
-			setAttributes(attributes);
-			
-			register(add);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}	
+	public JavaExceptionBreakpoint(final IResource resource, final String exceptionName, final boolean caught, final boolean uncaught, final boolean checked, final boolean add, final Map attributes) throws DebugException {
+		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {				
+				// create the marker
+				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
+				
+				// add attributes
+				attributes.put(IBreakpoint.ID, getModelIdentifier());
+				attributes.put(TYPE_NAME, exceptionName);
+				attributes.put(ENABLED, new Boolean(true));
+				attributes.put(CAUGHT, new Boolean(caught));
+				attributes.put(UNCAUGHT, new Boolean(uncaught));
+				attributes.put(CHECKED, new Boolean(checked));
+				
+				ensureMarker().setAttributes(attributes);
+				
+				register(add);
+			}
+
+		};
+		run(wr);
 	}
 		
 	/**
