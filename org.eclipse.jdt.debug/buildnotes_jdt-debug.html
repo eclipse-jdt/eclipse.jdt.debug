@@ -7,7 +7,6 @@
    <title>Java Debug Release Notes</title>
 </head>
 <body>
-
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Java Debug</h1>
@@ -15,11 +14,16 @@ November ??, 2001
 <h3>
 What's new in this drop</h3>
 <ul>
+<li> The debugger suspends execution when an uncaught exception is thrown.
+	Can be configured using the Java Debug Options preference page.
+	@see  <A HREF="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5653">5653</A> for
+	details and on step filtering settings migration.
 </ul>
 
 <h3>
 Problem Reports Fixed</h3>
-
+<A HREF="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5653">5653</A>: DCR: Debugger should catch uncaught exception by default<br>
+<A HREF= "http://bugs.eclipse.org/bugs/show_bug.cgi?id=6209">6209</A>: Step filtering should be off by default
 <h3>
 Problem Reports Closed</h3>
 
