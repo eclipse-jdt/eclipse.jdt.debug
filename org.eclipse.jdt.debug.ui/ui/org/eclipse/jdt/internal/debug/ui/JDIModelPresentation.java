@@ -518,13 +518,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	/**
-	 * Fire a debug event
-	 */
-	public void fireEvent(DebugEvent event) {
-		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{event});
-	}	
-
-	/**
 	 * Given a JNI-style signature String for a IJavaValue, return true
 	 * if the signature represents an Object or an array of Objects.
 	 */
