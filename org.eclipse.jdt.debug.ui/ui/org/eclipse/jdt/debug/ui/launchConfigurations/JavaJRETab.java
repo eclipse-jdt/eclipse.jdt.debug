@@ -113,7 +113,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			}
 		});
 		
-		fJREAddButton = createPushButton(topComp, LauncherMessages.getString("JavaJRETab.New_1"), null);  //$NON-NLS-1$
+		fJREAddButton = createPushButton(topComp, LauncherMessages.getString("JavaJRETab.Add"), null);  //$NON-NLS-1$
 		fJREAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleJREAddButtonSelected();
@@ -356,7 +356,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 */
 	protected void handleJREAddButtonSelected() {
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), fVMTypes, null);
-		dialog.setTitle(LauncherMessages.getString("vmPreferencePage.editJRE.title")); //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.getString("vmPreferencePage.addJRE.title")); //$NON-NLS-1$
 		if (dialog.open() != dialog.OK) {
 			return;
 		}
