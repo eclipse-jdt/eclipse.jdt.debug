@@ -150,8 +150,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				IPath newId = getContainerId(vm);
 				IPath oldId = new Path(JavaRuntime.JRE_CONTAINER);
 				oldId = oldId.append(vm.getVMInstallType().getId());
-				oldId = oldId.append((String)event.getOldValue());
-				fRenamedContainerIds.put(oldId, newId);
+				String oldName = (String)event.getOldValue();
+				// bug 33746 - if there is no old name, then this is not a re-name.
+				if (oldName != null) {
+					oldId = oldId.append(oldName);
+					fRenamedContainerIds.put(oldId, newId);					
+				}
 			}
 		}
 
