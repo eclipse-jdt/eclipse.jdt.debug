@@ -448,8 +448,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, false);		
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
 		store.setDefault(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
-		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, ""); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.PREF_USE_FILTERS, true);
 	}
 
 	/**
