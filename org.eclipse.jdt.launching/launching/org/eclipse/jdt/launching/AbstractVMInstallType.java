@@ -1,4 +1,26 @@
-package org.eclipse.jdt.launching;/**********************************************************************Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.This file is made available under the terms of the Common Public License v1.0which accompanies this distribution, and is available athttp://www.eclipse.org/legal/cpl-v10.html**********************************************************************/import java.io.File;import java.net.URL;import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import org.eclipse.core.runtime.IExecutableExtension;import org.eclipse.jdt.internal.launching.LaunchingMessages;
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jdt.launching;
+
+
+import java.io.File;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 /**
  * Abstract implementation of a VM install type.
@@ -7,13 +29,19 @@ package org.eclipse.jdt.launching;/*******************************************
  * <li><code>IVMInstall doCreateVMInstall(String id)</code></li>
  * <li><code>String getName()</code></li>
  * <li><code>IStatus validateInstallLocation(File installLocation)</code></li>
- * </ul> * <p> * Clients implementing VM install types should subclass this class. * </p>
+ * </ul>
+ * <p>
+ * Clients implementing VM install types should subclass this class.
+ * </p>
  */
 
 public abstract class AbstractVMInstallType implements IVMInstallType, IExecutableExtension {
 	private List fVMs;
 	private String fId;
-		/**	 * Constructs a new VM install type.	 */
+	
+	/**
+	 * Constructs a new VM install type.
+	 */
 	protected AbstractVMInstallType() {
 		fVMs= new ArrayList(10);
 	}
@@ -35,7 +63,8 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 		for (int i= 0; i < fVMs.size(); i++) {
 			IVMInstall vm= (IVMInstall)fVMs.get(i);
 			if (vm.getId().equals(id)) {
-				fVMs.remove(i);				JavaRuntime.fireVMRemoved(vm);
+				fVMs.remove(i);
+				JavaRuntime.fireVMRemoved(vm);
 				return;
 			}
 		}
@@ -60,11 +89,13 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see IVMType#createVM(String)
 	 */
 	public IVMInstall createVMInstall(String id) throws IllegalArgumentException {
-		if (findVMInstall(id) != null) {			String format= LaunchingMessages.getString("vmInstallType.duplicateVM"); //$NON-NLS-1$
+		if (findVMInstall(id) != null) {
+			String format= LaunchingMessages.getString("vmInstallType.duplicateVM"); //$NON-NLS-1$
 			throw new IllegalArgumentException(MessageFormat.format(format, new String[] { id }));
 		}
 		IVMInstall vm= doCreateVMInstall(id);
-		fVMs.add(vm);		return vm;
+		fVMs.add(vm);
+		return vm;
 	}
 	
 	/* (non-Javadoc)
@@ -95,4 +126,37 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	public String getId() {
 		return fId;
 	}
-	/**	 * @see IVMInstallType#findVMInstallByName(String)	 */	public IVMInstall findVMInstallByName(String name) {		for (int i= 0; i < fVMs.size(); i++) {			IVMInstall vm= (IVMInstall)fVMs.get(i);			if (vm.getName().equals(name)) {				return vm;			}		}		return null;	}	/**	 * Returns a URL for the default javadoc location of a VM installed at the	 * given home location, or <code>null</code> if none. The default	 * implementation returns <code>null</code>, subclasses must override as	 * appropriate.	 * <p>	 * Note, this method would ideally be added to <code>IVMInstallType</code>,	 * but it would have been a breaking API change between 2.0 and 2.1. Thus,	 * it has been added to the abstract base class that VM install types should	 * subclass.	 * </p>	 * 	 * @param installLocation home location	 * @return default javadoc location or <code>null</code>	 * @since 2.1	 */	public URL getDefaultJavadocLocation(File installLocation) {		return null;			}}
+
+	/**
+	 * @see IVMInstallType#findVMInstallByName(String)
+	 */
+	public IVMInstall findVMInstallByName(String name) {
+		for (int i= 0; i < fVMs.size(); i++) {
+			IVMInstall vm= (IVMInstall)fVMs.get(i);
+			if (vm.getName().equals(name)) {
+				return vm;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a URL for the default javadoc location of a VM installed at the
+	 * given home location, or <code>null</code> if none. The default
+	 * implementation returns <code>null</code>, subclasses must override as
+	 * appropriate.
+	 * <p>
+	 * Note, this method would ideally be added to <code>IVMInstallType</code>,
+	 * but it would have been a breaking API change between 2.0 and 2.1. Thus,
+	 * it has been added to the abstract base class that VM install types should
+	 * subclass.
+	 * </p>
+	 * 
+	 * @param installLocation home location
+	 * @return default javadoc location or <code>null</code>
+	 * @since 2.1
+	 */
+	public URL getDefaultJavadocLocation(File installLocation) {
+		return null;		
+	}
+}

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
  
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -324,7 +328,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		}
 		
 		/**
-		 * Return the completion processor associated with this viewer.		 * @return BreakPointConditionCompletionProcessor		 */
+		 * Return the completion processor associated with this viewer.
+		 * @return BreakPointConditionCompletionProcessor
+		 */
 		private BreakpointConditionCompletionProcessor getCompletionProcessor() {
 			if (fCompletionProcessor == null) {
 				fCompletionProcessor= new BreakpointConditionCompletionProcessor(null);
@@ -333,7 +339,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		}
 		
 		/**
-		 * Set the defaults value of this fields which can't be set in doFillIntoGrid().		 */
+		 * Set the defaults value of this fields which can't be set in doFillIntoGrid().
+		 */
 		public void setDefaults() {
 			// we can only do code assist if there is an associated type
 			IType type = null;

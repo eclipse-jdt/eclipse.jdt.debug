@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
@@ -139,7 +143,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	
 	/**
 	 * Returns the active editor or <code>null</code>.
-	 * 	 * @return active editor or <code>null</code>	 */
+	 * 
+	 * @return active editor or <code>null</code>
+	 */
 	protected IEditorPart getActiveEditor() {
 		if (fWindow != null) {
 			// global action
@@ -158,7 +164,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 
 	/**
 	 * Returns the current stack frame context, or <code>null</code> if none.
-	 * 	 * @return the current stack frame context, or <code>null</code> if none	 */
+	 * 
+	 * @return the current stack frame context, or <code>null</code> if none
+	 */
 	protected IJavaStackFrame getStackFrame() {
 		return EvaluationContextManager.getEvaluationContext(getActiveEditor());
 	}

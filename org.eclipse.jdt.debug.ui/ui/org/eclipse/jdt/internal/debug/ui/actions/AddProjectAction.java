@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -195,7 +201,11 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	/**
 	 * Adds all exported entries defined by <code>proj</code> to the list
 	 * <code>runtimeEntries</code>.
-	 * 	 * @param proj	 * @param runtimeEntries	 * @throws JavaModelException	 */
+	 * 
+	 * @param proj
+	 * @param runtimeEntries
+	 * @throws JavaModelException
+	 */
 	protected void collectExportedEntries(IJavaProject proj, List runtimeEntries) throws CoreException {
 		IClasspathEntry[] entries = proj.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {

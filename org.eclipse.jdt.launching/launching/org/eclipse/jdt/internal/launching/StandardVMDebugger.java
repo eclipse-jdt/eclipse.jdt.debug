@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +51,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 	/**
 	 * Used to attach to a VM in a seperate thread, to allow for cancellation
 	 * and detect that the associated System process died before the connect
-	 * occurred.	 */
+	 * occurred.
+	 */
 	class ConnectRunnable implements Runnable {
 		
 		private VirtualMachine fVirtualMachine = null;
@@ -56,7 +63,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 		/**
 		 * Constructs a runnable to connect to a VM via the given connector
 		 * with the given connection arguments.
-		 * 		 * @param connector		 * @param map		 */
+		 * 
+		 * @param connector
+		 * @param map
+		 */
 		public ConnectRunnable(ListeningConnector connector, Map map) {
 			fConnector = connector;
 			fConnectionMap = map;
@@ -75,14 +85,17 @@ public class StandardVMDebugger extends StandardVMRunner {
 		/**
 		 * Returns the VM that was attached to, or <code>null</code> if none.
 		 * 
-		 * @return the VM that was attached to, or <code>null</code> if none		 */
+		 * @return the VM that was attached to, or <code>null</code> if none
+		 */
 		public VirtualMachine getVirtualMachine() {
 			return fVirtualMachine;
 		}
 		
 		/**
 		 * Returns any exception that occurred while attaching, or <code>null</code>.
-		 * 		 * @return IOException or IllegalConnectorArgumentsException		 */
+		 * 
+		 * @return IOException or IllegalConnectorArgumentsException
+		 */
 		public Exception getException() {
 			return fException;
 		}

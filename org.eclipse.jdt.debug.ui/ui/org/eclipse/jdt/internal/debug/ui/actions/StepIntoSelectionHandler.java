@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.text.MessageFormat;
 
@@ -31,34 +35,41 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 public class StepIntoSelectionHandler implements IDebugEventFilter {
 	
 	/**
-	 * The method to step into	 */
+	 * The method to step into
+	 */
 	private IMethod fMethod;
 	
 	/**
-	 * Resolved signature of the method to step into	 */
+	 * Resolved signature of the method to step into
+	 */
 	private String fResolvedSignature;
 	
 	/**
-	 * The thread in which to step	 */
+	 * The thread in which to step
+	 */
 	private IJavaThread fThread;
 
 	/**
-	 * The initial stack frame	 */
+	 * The initial stack frame
+	 */
 	private String fOriginalName;
 	private String fOriginalSignature;
 	private String fOriginalTypeName;
 	private int fOriginalStackDepth;
 	
 	/**
-	 * Whether this is the first step into.	 */
+	 * Whether this is the first step into.
+	 */
 	private boolean fFirstStep = true;
 	
 	/**
-	 * The state of step filters before the step.	 */
+	 * The state of step filters before the step.
+	 */
 	private boolean fStepFilterEnabledState;
 	
 	/**
-	 * Empty event set.	 */
+	 * Empty event set.
+	 */
 	private static final DebugEvent[] fgEmptyEvents = new DebugEvent[0];
 
 	/**
@@ -84,7 +95,9 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	
 	/**
 	 * Returns the target thread for the step.
-	 * 	 * @return the target thread for the step	 */
+	 * 
+	 * @return the target thread for the step
+	 */
 	protected IJavaThread getThread() {
 		return fThread;
 	}
@@ -94,8 +107,10 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	}
 	
 	/**
-	 * Returns the method to step into	 * 
-	 * @return the method to step into	 */
+	 * Returns the method to step into
+	 * 
+	 * @return the method to step into
+	 */
 	protected IMethod getMethod() {
 		return fMethod;
 	}
@@ -248,7 +263,8 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	}
 
 	/**
-	 * Performs the step.	 */
+	 * Performs the step.
+	 */
 	public void step() {
 		// add event filter and turn off step filters
 		DebugPlugin.getDefault().addDebugEventFilter(this);
@@ -265,7 +281,8 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	}
 	
 	/**
-	 * Cleans up when the step is complete/aborted.	 */
+	 * Cleans up when the step is complete/aborted.
+	 */
 	protected void cleanup() {
 		DebugPlugin.getDefault().removeDebugEventFilter(this);
 		// restore step filter state

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.launching;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -418,7 +422,8 @@ public final class JavaRuntime {
 	 * 
 	 * @param vm the instance of IVMInstallType to be indentified
 	 * 
-	 * @since 2.1	 */
+	 * @since 2.1
+	 */
 	public static String getCompositeIdFromVM(IVMInstall vm) {
 		if (vm == null) {
 			return null;
@@ -433,7 +438,8 @@ public final class JavaRuntime {
 	 * Return the VM corrseponding to the specified composite Id.  The id uniquely
 	 * identifies a VM across all vm types.  
 	 * 
-	 * @param idString the composite id that specifies an instance of IVMInstall	 * 
+	 * @param idString the composite id that specifies an instance of IVMInstall
+	 * 
 	 * @since 2.1
 	 */
 	public static IVMInstall getVMFromCompositeId(String idString) {
@@ -1314,7 +1320,8 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * For each VMStandin object in the specified VM container, convert it into a 'real' VM.	 */
+	 * For each VMStandin object in the specified VM container, convert it into a 'real' VM.
+	 */
 	private static void loadVMDefsIntoMemory(VMDefinitionsContainer vmContainer) {
 		fgDefaultVMId = vmContainer.getDefaultVMInstallCompositeID();
 		fgDefaultVMConnectorId = vmContainer.getDefaultVMInstallConnectorTypeID();
@@ -1478,7 +1485,8 @@ public final class JavaRuntime {
 	
 	/**
 	 * Make the name of a detected VM stand out.
-	 */	private static String generateDetectedVMName(IVMInstall vm) {
+	 */
+	private static String generateDetectedVMName(IVMInstall vm) {
 		return vm.getInstallLocation().getName();
 	}
 	

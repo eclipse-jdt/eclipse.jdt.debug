@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -60,24 +64,29 @@ import org.xml.sax.SAXException;
 public class VMDefinitionsContainer {
 		
 	/**
-	 * Map of VMInstallTypes to Lists of corresponding VMInstalls.	 */
+	 * Map of VMInstallTypes to Lists of corresponding VMInstalls.
+	 */
 	private Map fVMTypeToVMMap;
 	
 	/**
-	 * VMs managed by this container whose install locations don't actually exist.	 */
+	 * VMs managed by this container whose install locations don't actually exist.
+	 */
 	private List fInvalidVMList;
 		
 	/**
-	 * The number of VMs managed by this container.	 */
+	 * The number of VMs managed by this container.
+	 */
 	private int fVMCount = 0;
 	
 	/**
 	 * The composite identifier of the default VM.  This consists of the install type ID
-	 * plus an ID for the VM.	 */
+	 * plus an ID for the VM.
+	 */
 	private String fDefaultVMInstallCompositeID;
 	
 	/**
-	 * The identifier of the connector to use for the default VM.	 */
+	 * The identifier of the connector to use for the default VM.
+	 */
 	private String fDefaultVMInstallConnectorTypeID;
 	
 	/**
@@ -96,7 +105,8 @@ public class VMDefinitionsContainer {
 	 * location doesn't exist.
 	 * </p>
 	 * 
-	 * @param vm the VM to be added to this container	 */
+	 * @param vm the VM to be added to this container
+	 */
 	public void addVM(IVMInstall vm) {	
 		IVMInstallType vmInstallType = vm.getVMInstallType();
 		List vmList = (List) fVMTypeToVMMap.get(vmInstallType);
@@ -119,7 +129,8 @@ public class VMDefinitionsContainer {
 	 * location doesn't exist.
 	 * </p>
 	 * 
-	 * @param vmList a list of VMs to be added to this container	 */
+	 * @param vmList a list of VMs to be added to this container
+	 */
 	public void addVMList(List vmList) {
 		Iterator iterator = vmList.iterator();
 		while (iterator.hasNext()) {
@@ -131,8 +142,11 @@ public class VMDefinitionsContainer {
 	/**
 	 * Return <code>true</code> if the specified VM's install location exists on the
 	 * file system, <code>false</code> otherwise.
-	 * 	 * @param vm the instance of <code>IVMInstall</code> whose install location will be verified	 * @return boolean <code>true</code> if the specified VMs install location exists on the
-	 * 			file system, <code>false</code> otherwise.	 */
+	 * 
+	 * @param vm the instance of <code>IVMInstall</code> whose install location will be verified
+	 * @return boolean <code>true</code> if the specified VMs install location exists on the
+	 * 			file system, <code>false</code> otherwise.
+	 */
 	private boolean verifyInstallLocation(IVMInstall vm) {
 		File installLocation = vm.getInstallLocation();
 		if (installLocation != null) {
@@ -146,7 +160,8 @@ public class VMDefinitionsContainer {
 	 * <code>IVMInstallType</code>.  The values are instances of <code>java.util.List</code>
 	 * which contain instances of <code>IVMInstall</code>.  
 	 * 
-	 * @return Map the mapping of VM install types to lists of VMs	 */
+	 * @return Map the mapping of VM install types to lists of VMs
+	 */
 	public Map getVMTypeToVMMap() {
 		return fVMTypeToVMMap;
 	}
@@ -156,7 +171,8 @@ public class VMDefinitionsContainer {
 	 * VM is one whose install location does not exist on the file system.
 	 * The order of the list is not specified.
 	 * 
-	 * @return List the data structure containing all VMs managed by this container	 */
+	 * @return List the data structure containing all VMs managed by this container
+	 */
 	public List getVMList() {
 		List resultList = new ArrayList(fVMCount);
 		
@@ -175,7 +191,8 @@ public class VMDefinitionsContainer {
 	 * Return a list of all valid VMs in this container.  A valid VM is one whose install
 	 * location exists on the file system.  The order of the list is not specified.
 	 * 
-	 * @return List 	 */
+	 * @return List 
+	 */
 	public List getValidVMList() {
 		List resultList = getVMList();
 		resultList.removeAll(fInvalidVMList);
@@ -234,7 +251,8 @@ public class VMDefinitionsContainer {
 	 * @throws IOException if this method fails. Reasons include:<ul>
 	 * <li>serialization of the XML document failed</li>
 	 * </ul>
-	 */	public String getAsXML() throws IOException{
+	 */
+	public String getAsXML() throws IOException{
 		
 		// Create the Document and the top-level node
 		Document doc = new DocumentImpl();
@@ -265,7 +283,8 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
-	 * Create and return a node for the specified VM install type in the specified Document.	 */
+	 * Create and return a node for the specified VM install type in the specified Document.
+	 */
 	private Element vmTypeAsElement(Document doc, IVMInstallType vmType) {
 		
 		// Create a node for the vm type and set its 'id' attribute
@@ -285,7 +304,8 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
-	 * Create and return a node for the specified VM in the specified Document.	 */
+	 * Create and return a node for the specified VM in the specified Document.
+	 */
 	private Element vmAsElement(Document doc, IVMInstall vm) {
 		
 		// Create the node for the VM and set its 'id' & 'name' attributes
@@ -320,7 +340,8 @@ public class VMDefinitionsContainer {
 	/**
 	 * Create and return a 'libraryLocations' node.  This node owns subordinate nodes that
 	 * list individual library locations.
-	 */	private static Element libraryLocationsAsElement(Document doc, LibraryLocation[] locations) {
+	 */
+	private static Element libraryLocationsAsElement(Document doc, LibraryLocation[] locations) {
 		Element root = doc.createElement("libraryLocations");       //$NON-NLS-1$
 		for (int i = 0; i < locations.length; i++) {
 			Element element = doc.createElement("libraryLocation");  //$NON-NLS-1$
@@ -353,7 +374,8 @@ public class VMDefinitionsContainer {
 	 * <li>the XML in <code>inputStream</code> was badly formatted</li>
 	 * <li>the top-level node was not 'vmSettings'</li>
 	 * </ul>
-	 */	public static VMDefinitionsContainer parseXMLIntoContainer(InputStream inputStream) throws IOException {
+	 */
+	public static VMDefinitionsContainer parseXMLIntoContainer(InputStream inputStream) throws IOException {
 		
 		// Create the container to populate
 		VMDefinitionsContainer container = new VMDefinitionsContainer();
@@ -488,7 +510,8 @@ public class VMDefinitionsContainer {
 	
 	/**
 	 * Create & return a LibraryLocation object populated from the attribute values
-	 * in the specified node.	 */
+	 * in the specified node.
+	 */
 	private static LibraryLocation getLibraryLocation(Element libLocationElement) {
 		String jreJar= libLocationElement.getAttribute("jreJar"); //$NON-NLS-1$
 		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$

@@ -1,15 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-/**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -318,7 +318,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 		
 		/**
-		 * Save the detail formatter list.		 */
+		 * Save the detail formatter list.
+		 */
 		public void saveDetailFormatters() {
 			String[] values= new String[fDetailFormattersSet.size() * 3];
 			int i= 0;
@@ -334,7 +335,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 		
 		/**
-		 * Add a detail formatter.		 */
+		 * Add a detail formatter.
+		 */
 		public void addDetailFormatter(DetailFormatter detailFormatter) {
 			fDetailFormattersSet.add(detailFormatter);
 			fDefinedTypes.add(detailFormatter.getTypeName());
@@ -346,7 +348,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 		
 		/**
-		 * Remove a detailFormatter		 */
+		 * Remove a detailFormatter
+		 */
 		public void removeDetailFormatter(DetailFormatter detailFormatter) {
 			fDetailFormattersSet.remove(detailFormatter);
 			fDefinedTypes.remove(detailFormatter.getTypeName());
@@ -371,7 +374,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 		
 		/**
-		 * Refresh the formatter list viewer. 		 */
+		 * Refresh the formatter list viewer. 
+		 */
 		private void refreshViewer() {
 			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersSet.size()];
 			int i= 0;

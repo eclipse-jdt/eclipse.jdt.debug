@@ -1,15 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-/**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,13 +53,15 @@ import com.sun.jdi.InvocationException;
 
 public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
 	/**
-	 * The default detail formatters manager.	 */
+	 * The default detail formatters manager.
+	 */
 	static private JavaDetailFormattersManager fgDefault;
 	
 	/**
 	 * Return the default detail formatters manager.
 	 * 
-	 * @return default detail formatters manager.	 */
+	 * @return default detail formatters manager.
+	 */
 	static public JavaDetailFormattersManager getDefault() {
 		if (fgDefault == null) {
 			fgDefault= new JavaDetailFormattersManager();
@@ -75,11 +77,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	/**
 	 * Cache of compiled expressions.
-	 * Associate a pair type name/debug target to a compiled expression.	 */
+	 * Associate a pair type name/debug target to a compiled expression.
+	 */
 	private HashMap fCacheMap;
 	
 	/**
-	 * JavaDetailFormattersManager constructor.	 */
+	 * JavaDetailFormattersManager constructor.
+	 */
 	private JavaDetailFormattersManager() {
 		populateDetailFormattersMap();
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -278,7 +282,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 
 	/**
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)	 */
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST)) {
 			populateDetailFormattersMap();

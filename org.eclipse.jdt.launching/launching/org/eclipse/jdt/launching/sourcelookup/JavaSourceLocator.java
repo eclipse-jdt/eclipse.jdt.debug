@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.launching.sourcelookup;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.File;
 import java.io.IOException;
@@ -517,8 +521,12 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Returns whether the given objects are equal, allowing
 	 * for <code>null</code>.
-	 * 	 * @param a	 * @param b	 * @return whether the given objects are equal, allowing
-	 *   for <code>null</code>	 */
+	 * 
+	 * @param a
+	 * @param b
+	 * @return whether the given objects are equal, allowing
+	 *   for <code>null</code>
+	 */
 	private static boolean equalOrNull(Object a, Object b) {
 		if (a == null) {
 			return b == null;
@@ -532,8 +540,13 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Returns whether the source attachments of the given package fragment
 	 * root and runtime classpath entry are equal.
-	 * 	 * @param root package fragment root	 * @param entry runtime classpath entry	 * @return whether the source attachments of the given package fragment
-	 * root and runtime classpath entry are equal	 * @throws JavaModelException 	 */
+	 * 
+	 * @param root package fragment root
+	 * @param entry runtime classpath entry
+	 * @return whether the source attachments of the given package fragment
+	 * root and runtime classpath entry are equal
+	 * @throws JavaModelException 
+	 */
 	private static boolean isSourceAttachmentEqual(IPackageFragmentRoot root, IRuntimeClasspathEntry entry) throws JavaModelException {
 		return equalOrNull(root.getSourceAttachmentPath(), entry.getSourceAttachmentPath());
 	}
@@ -543,7 +556,10 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * in the workspace as a package fragment root. Returns the associated
 	 * package fragment root source location if possible, otherwise
 	 * <code>null</code>.
-	 *  	 * @param entry archive runtime classpath entry	 * @return IJavaSourceLocation or <code>null</code>	 */
+	 *  
+	 * @param entry archive runtime classpath entry
+	 * @return IJavaSourceLocation or <code>null</code>
+	 */
 	private static IJavaSourceLocation getArchiveSourceLocation(IRuntimeClasspathEntry entry) {
 		IResource resource = entry.getResource();
 		if (resource == null) { 

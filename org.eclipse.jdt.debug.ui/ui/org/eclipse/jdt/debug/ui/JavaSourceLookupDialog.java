@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.ui;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -50,8 +54,12 @@ public class JavaSourceLookupDialog extends Dialog {
 	 * <code>IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH</code>. If the user
 	 * changes the source lookup path and presses "ok", the launch configuration
 	 * is updated with the new source lookup path. 
-	 * 	 * @param shell the shell to open the dialog on	 * @param message the message to display in the dialog	 * @param configuration the launch configuration from which the source lookup
-	 *  path is retrieved and (possibly) updated	 */
+	 * 
+	 * @param shell the shell to open the dialog on
+	 * @param message the message to display in the dialog
+	 * @param configuration the launch configuration from which the source lookup
+	 *  path is retrieved and (possibly) updated
+	 */
 	public JavaSourceLookupDialog(Shell shell, String message, ILaunchConfiguration configuration) {
 		super(shell);
 		fSourceLookupBlock= new SourceLookupBlock();
@@ -63,12 +71,16 @@ public class JavaSourceLookupDialog extends Dialog {
 	
 	/**
 	 * Returns whether the "do not ask again" check box is selected in the dialog.
-	 * 	 * @return whether the "do not ask again" check box is selected in the dialog	 */
+	 * 
+	 * @return whether the "do not ask again" check box is selected in the dialog
+	 */
 	public boolean isNotAskAgain() {
 		return fNotAskAgain;
 	}
 			
-	/**	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)	 */
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
+	 */
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
@@ -103,7 +115,9 @@ public class JavaSourceLookupDialog extends Dialog {
 		return composite;
 	}
 
-	/**	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()	 */
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
 	protected void okPressed() {
 		try {
 			if (fAskAgainCheckBox != null) {
