@@ -54,6 +54,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -278,7 +279,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				}
 				breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
 			}
-			new BreakpointLocationVerifierJob(document, line.getOffset(), breakpoint, lineNumber, typeName, type, resource).schedule();
+			new BreakpointLocationVerifierJob(document, line.getOffset(), breakpoint, lineNumber, typeName, type, resource, (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class)).schedule();
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (CoreException e) {

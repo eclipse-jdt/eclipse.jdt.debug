@@ -136,7 +136,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 					}
 					breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
 				}
-				new BreakpointLocationVerifierJob(document, offset, breakpoint, lineNumber, typeName, type, resource).schedule();
+				new BreakpointLocationVerifierJob(document, offset, breakpoint, lineNumber, typeName, type, resource, (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class)).schedule();
 			} catch (CoreException ce) {
 				ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
