@@ -34,6 +34,19 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	
 	static String fMarkerType= IJavaDebugConstants.JAVA_WATCHPOINT;
 	
+	/**
+	 * Watchpoint attribute storing the access value (value <code>"access"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether a
+	 * watchpoint is an access watchpoint.
+	 */
+	private static final String ACCESS= "access"; //$NON-NLS-1$
+	/**
+	 * Watchpoint attribute storing the auto_disabled value (value <code>"auto_disabled"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether a
+	 * watchpoint has been auto-disabled (as opposed to being disabled explicitly by the user)
+	 */
+	private static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$	
+	
 	private final static Integer ACCESS_EVENT= new Integer(0);
 	private final static Integer MODIFICATION_EVENT= new Integer(1);
 	private HashMap fLastEventTypes= new HashMap(10); // maps targets to reason for suspension
@@ -254,7 +267,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * @see IJavaWatchpoint#isAccess
 	 */
 	public boolean isAccess() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.ACCESS, false);
+		return ensureMarker().getAttribute(ACCESS, false);
 	}
 	
 	/**
@@ -264,7 +277,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (access == isAccess()) {
 			return;
 		}		
-		ensureMarker().setAttribute(IJavaDebugConstants.ACCESS, access);
+		ensureMarker().setAttribute(ACCESS, access);
 		if (access && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(access || isModification())) {
@@ -304,7 +317,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	private void setDefaultAccessAndModification() throws CoreException {
 		Object[] values= new Object[]{Boolean.FALSE, Boolean.TRUE};
-		String[] attributes= new String[]{IJavaDebugConstants.ACCESS, IJavaDebugConstants.MODIFICATION};
+		String[] attributes= new String[]{ACCESS, IJavaDebugConstants.MODIFICATION};
 		ensureMarker().setAttributes(attributes, values);
 	}
 
@@ -343,7 +356,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Sets the <code>AUTO_DISABLED</code> attribute of this watchpoint.
 	 */
 	private void setAutoDisabled(boolean autoDisabled) throws CoreException {
-		ensureMarker().setAttribute(IJavaDebugConstants.AUTO_DISABLED, autoDisabled);
+		ensureMarker().setAttribute(AUTO_DISABLED, autoDisabled);
 	}
 
 	/**

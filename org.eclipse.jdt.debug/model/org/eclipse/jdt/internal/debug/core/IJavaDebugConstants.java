@@ -117,13 +117,7 @@ public interface IJavaDebugConstants {
 	 */
 	public static final String EXPIRED = "expired"; //$NON-NLS-1$
 		
-	/**
-	 * Exception breakpoint attribute storing the suspend on caught value
-	 * (value <code>"caught"</code>). This attribute is stored as a <code>boolean</code>.
-	 * When this attribute is <code>true</code>, a caught exception of the associated
-	 * type will cause excecution to suspend .
-	 */
-	public static final String CAUGHT = "caught"; //$NON-NLS-1$
+
 	
 	/**
 	 * Exception breakpoint attribute storing the suspend on uncaught value
@@ -140,12 +134,7 @@ public interface IJavaDebugConstants {
 	 */
 	public static final String CHECKED = "checked"; //$NON-NLS-1$
 	
-	/**
-	 * Watchpoint attribute storing the access value (value <code>"access"</code>).
-	 * This attribute is stored as a <code>boolean</code>, indicating whether a
-	 * watchpoint is an access watchpoint.
-	 */
-	public static final String ACCESS= "access"; //$NON-NLS-1$
+
 	
 	/**
 	 * Watchpoint attribute storing the modification value (value <code>"modification"</code>).
@@ -154,11 +143,6 @@ public interface IJavaDebugConstants {
 	 */
 	public static final String MODIFICATION= "modification"; //$NON-NLS-1$
 	
-	/**
-	 * Watchpoint attribute storing the auto_disabled value (value <code>"auto_disabled"</code>).
-	 * This attribute is stored as a <code>boolean</code>, indicating whether a
-	 * watchpoint has been auto-disabled (as opposed to being disabled explicitly by the user)
-	 */
-	public static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$
+
 
 }

@@ -43,10 +43,9 @@ import com.sun.jdi.VirtualMachine;
 
 /**
  * The JDI debug model plug-in provides an implementation of a debug
- * model based on JDI. This class provides utility methods for
- * creating debug targets and breakpoints specific to the JDI debug
- * model, as well as accessing attributes of breakpoints created by
- * this debug model.
+ * model based on the standard "Java Debug Interface" (JDI). This class provides utility
+ * methods for creating debug targets and breakpoints specific to the JDI debug
+ * model.
  * <p>
  * To provide access to behavior and information specific to the JDI
  * debug model, a set of interfaces are defined which extend the base

@@ -29,9 +29,9 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 */	
 	public boolean isAccess() throws CoreException;
 	/**
-	 * Sets the access attribute of this watchpoint. If access is set to true
-	 * and the watchpoint is disabled, enable the watchpoint. If both access and 
-	 * modification are false, disable the watchpoint.
+	 * Sets whether this breakpoint will suspend execution when its associated
+	 * field is accessed. If true and this watchpoint is disabled, this watchpoint
+	 * is enabled. If both access and modification are false, disable this watchpoint.
 	 * 
 	 * @param access whether or not this watchpoint will be an access watchpoint
 	 * @exception CoreException if a <code>CoreException</code> is
@@ -47,9 +47,9 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 */		
 	public boolean isModification() throws CoreException;
 	/**
-	 * Sets the modification attribute of this watchpoint. If modification is set to true
-	 * and the watchpoint is disabled, enable the watchpoint. If both access and 
-	 * modification are false, disable the watchpoint.
+	 * Sets whether this breakpoint will suspend execution when its associated
+	 * field is modified. If true and this watchpoint is disabled, this watchpoint
+	 * is enabled. If both access and modification are false, disable this watchpoint.
 	 * 
 	 * @param modification whether or not this watchpoint will be a
 	 *  modification watchpoint
@@ -58,7 +58,7 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 */
 	public void setModification(boolean modification) throws CoreException;	
 	/**
-	 * Generate the field associated with this watchpoint
+	 * Returns the field associated with this watchpoint
 	 * 
 	 * @return field the field on which this watchpoint is installed
 	 * @exception CoreException if a <code>CoreException</code> is
@@ -67,10 +67,10 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	public IField getField() throws CoreException;	
 	
 	/**
-	 * Returns whether this breakpoint last suspended in this target for an access
+	 * Returns whether this breakpoint last suspended in this target due to an access
 	 * (<code>true</code>) or modification (<code>false</code>).
 	 * 
-	 * @return true if this watchpoint last suspended in this target for an access
+	 * @return true if this watchpoint last suspended in this target due to an access
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */

@@ -27,6 +27,14 @@ import com.sun.jdi.request.ExceptionRequest;
 
 public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExceptionBreakpoint {
 	
+	/**
+	 * Exception breakpoint attribute storing the suspend on caught value
+	 * (value <code>"caught"</code>). This attribute is stored as a <code>boolean</code>.
+	 * When this attribute is <code>true</code>, a caught exception of the associated
+	 * type will cause excecution to suspend .
+	 */
+	public static final String CAUGHT = "caught"; //$NON-NLS-1$
+	
 	// Attribute strings
 	protected static final String[] fgExceptionBreakpointAttributes= new String[]{IJavaDebugConstants.CHECKED, IJavaDebugConstants.TYPE_HANDLE};	
 	
@@ -96,7 +104,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			
 	public void setDefaultCaughtAndUncaught() throws CoreException {
 		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
-		String[] attributes= new String[]{IJavaDebugConstants.CAUGHT, IJavaDebugConstants.UNCAUGHT};
+		String[] attributes= new String[]{CAUGHT, IJavaDebugConstants.UNCAUGHT};
 		ensureMarker().setAttributes(attributes, values);
 	}
 	
@@ -194,7 +202,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#isCaught()
 	 */
 	public boolean isCaught() throws CoreException {
-		return ensureMarker().getAttribute(IJavaDebugConstants.CAUGHT, false);
+		return ensureMarker().getAttribute(CAUGHT, false);
 	}
 	
 	/**
@@ -204,7 +212,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (caught == isCaught()) {
 			return;
 		}
-		ensureMarker().setAttribute(IJavaDebugConstants.CAUGHT, caught);
+		ensureMarker().setAttribute(CAUGHT, caught);
 		if (caught && !isEnabled()) {
 			setEnabled(true);
 		} else if (!(caught || isUncaught())) {
