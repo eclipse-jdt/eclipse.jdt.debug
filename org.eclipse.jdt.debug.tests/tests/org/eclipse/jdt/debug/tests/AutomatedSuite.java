@@ -92,7 +92,61 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		
+		addTest(new TestSuite(LaunchModeTests.class));
+		addTest(new TestSuite(ClasspathVariableTests.class));
+		addTest(new TestSuite(DebugEventTests.class));
+		addTest(new TestSuite(ClasspathContainerTests.class));
+		addTest(new TestSuite(CommandArgumentTests.class));
+		addTest(new TestSuite(LaunchConfigurationTests.class));
+		addTest(new TestSuite(DeferredBreakpointTests.class));
+		addTest(new TestSuite(ConditionalBreakpointsTests.class));
+		addTest(new TestSuite(HitCountBreakpointsTests.class));
+		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
+		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
+
+		addTest(new TestSuite(StepFilterTests.class));
+
+		addTest(new TestSuite(InstanceVariableTests.class));
+		addTest(new TestSuite(LocalVariableTests.class));
+		addTest(new TestSuite(StaticVariableTests.class));
+		addTest(new TestSuite(MethodBreakpointTests.class));
+		addTest(new TestSuite(ExceptionBreakpointTests.class));
+		addTest(new TestSuite(WatchpointTests.class));
+		addTest(new TestSuite(PatternBreakpointTests.class));
+		addTest(new TestSuite(TargetPatternBreakpointTests.class));
+		addTest(new TestSuite(EventSetTests.class));
+		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
+		addTest(new TestSuite(ClasspathProviderTests.class));
+		addTest(new TestSuite(SourceLocationTests.class));
+		addTest(new TestSuite(ProcessTests.class));
+		addTest(new TestSuite(BootpathTests.class));
+		addTest(new TestSuite(TypeTests.class));
+		addTest(new TestSuite(InstanceFilterTests.class));
 		addTest(new TestSuite(BreakpointListenerTests.class));
+		addTest(new TestSuite(JavaBreakpointListenerTests.class));
+		
+		// Evaluation tests
+//		addTest(new TestSuite(TestsOperators1.class));
+//		addTest(new TestSuite(TestsOperators2.class));
+//		addTest(new TestSuite(TestsArrays.class));
+//		addTest(new TestSuite(TestsNestedTypes1.class));
+//		addTest(new TestSuite(TestsNestedTypes2.class));
+//		addTest(new TestSuite(TestsTypeHierarchy1.class));
+//		addTest(new TestSuite(TestsTypeHierarchy2.class));
+		
+		addTest(new TestSuite(SourceLookupTests.class));
+		addTest(new TestSuite(DirectorySourceLookupTests.class));
+		addTest(new TestSuite(ArchiveSourceLookupTests.class));
+		addTest(new TestSuite(MiscBreakpointsTests.class));
+		addTest(new TestSuite(WorkingDirectoryTests.class));
+		addTest(new TestSuite(RemoteAttachTests.class));
+		addTest(new TestSuite(StepIntoSelectionTests.class));
+		addTest(new TestSuite(LaunchVariableTests.class));
+		addTest(new TestSuite(StringSubstitutionTests.class));
+		addTest(new TestSuite(RefreshTabTests.class));
+		addTest(new TestSuite(WatchExpressionTests.class));
+		// HCR tests are last - they modify resources
+		addTest(new TestSuite(HcrTests.class));
 	}
 	
 	/**

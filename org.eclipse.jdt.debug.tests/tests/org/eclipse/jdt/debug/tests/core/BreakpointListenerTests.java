@@ -43,6 +43,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	}
 
 	protected void resetCallbacks() {
+		waitForAutoBuild();
 		fAddCallbacks = 0;
 		fTotalAdded = 0;
 	
@@ -204,6 +205,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			
 			resetCallbacks();
 			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			waitForAutoBuild();
 			assertEquals("Should have received one add notification", 1, fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
 			//assertEquals("Should be 1 change callback for IMarker.MESSAGE update", 1, fChangeCallabcks);
@@ -244,6 +246,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			
 			resetCallbacks();
 			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			waitForAutoBuild();
 			assertEquals("Should have received one add notification", bps.size(), fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
 			//assertEquals("Should be no changes", 0, fChangeCallabcks);
