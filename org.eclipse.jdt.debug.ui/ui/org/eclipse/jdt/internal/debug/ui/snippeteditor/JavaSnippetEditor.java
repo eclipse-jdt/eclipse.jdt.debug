@@ -33,6 +33,7 @@ import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -696,7 +697,14 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
 								fThread = jt;
 							} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bp != null && bp.equals(ScrapbookLauncherDelegate.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
-								jt.stepOver();
+								// locate the 'eval' method and step over
+								IStackFrame[] frames = jt.getStackFrames();
+								for (int i = 0; i < frames.length; i++) {
+									IJavaStackFrame frame = (IJavaStackFrame)frames[i];
+									if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) {
+										frame.stepOver();
+									}
+								}
 							}
 						}
 					} catch (DebugException ex) {
