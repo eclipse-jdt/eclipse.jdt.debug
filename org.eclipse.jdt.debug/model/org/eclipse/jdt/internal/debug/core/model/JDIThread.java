@@ -256,7 +256,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && (!isSuspendedQuiet()) && !getDebugTarget().isSuspended();
+		return isSuspended() && !isSuspendedQuiet() && (!isPerformingEvaluation() || isInvokingMethod()) && !getDebugTarget().isSuspended();
 	}
 
 	/**
@@ -303,7 +303,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected boolean canStep() {
 		try {
-			return isSuspended() && (!isSuspendedQuiet()) && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
+			return isSuspended() && (!isSuspendedQuiet())  && (!isPerformingEvaluation() || isInvokingMethod()) && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
 		} catch (DebugException e) {
 			return false;
 		}
@@ -1092,7 +1092,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * is <code>true</code>.
 	 */
 	private void resumeThread(boolean fireNotification) throws DebugException {
-		if (!isSuspended()) {
+		if (!isSuspended() || (isPerformingEvaluation() && !isInvokingMethod())) {
 			return;
 		}
 		try {
@@ -1350,6 +1350,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
+		terminateEvaluation();
 		getDebugTarget().terminate();
 	}
 
