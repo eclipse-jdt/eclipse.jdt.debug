@@ -206,6 +206,32 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		refresh(configuration);
+		fClasspathViewer.expandToLevel(2);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		boolean useDefault = true;
+		setErrorMessage(null);
+		try {
+			useDefault = workingCopy.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+			if (useDefault) {
+				if (!isDefaultClasspath(getCurrentClasspath(), workingCopy)) {
+					initializeFrom(workingCopy);
+				}
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
+	/**
+	 * Refreshes the classpath entries based on the current state of the given
+	 * launch configuration.
+	 */
+	private void refresh(ILaunchConfiguration configuration) {
 		boolean useDefault = true;
 		setErrorMessage(null);
 		try {
@@ -434,4 +460,5 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}
 		return true;
 	}
+	
 }
