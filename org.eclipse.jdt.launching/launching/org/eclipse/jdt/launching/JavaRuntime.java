@@ -256,10 +256,11 @@ public final class JavaRuntime {
 
 	/**
 	 * Returns the VM assigned to build the given Java project.
-	 * The project must exist.
+	 * The project must exist. The VM assigned to a project is
+	 * determined from its build path.
 	 * 
 	 * @return the VM instance that is selected for the given Java project
-	 * 		   Returns null if no VM was previously set.
+	 * 		   Returns null if no VM is reference on the project's build path.
 	 * @throws CoreException if unable to determine the project's VM install
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
@@ -899,22 +900,6 @@ public final class JavaRuntime {
 		}
 		
 		return getDefaultVMInstall();
-	}
-	/**
-	 * Returns the VM install used to build the given Java project - either an
-	 * explicitly set VM install, or the workspace default.
-	 * 
-	 * @param project Java proect
-	 * @return vm install
-	 * @exception CoreException if unable to compute a vm install
-	 * @since 2.0
-	 */
-	public static IVMInstall computeVMInstall(IJavaProject project) throws CoreException {
-		IVMInstall vm = getVMInstall(project);
-		if (vm == null) {
-			vm = getDefaultVMInstall();
-		}
-		return vm;
 	}
 	
 	/**

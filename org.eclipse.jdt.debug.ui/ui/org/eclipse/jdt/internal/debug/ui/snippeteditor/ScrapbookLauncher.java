@@ -381,7 +381,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		ILaunchConfiguration config = getLaunchConfigurationTemplate(file);
 		if (config == null) {
 			IJavaProject pro = JavaCore.create(file.getProject());
-			return JavaRuntime.computeVMInstall(pro);
+			return JavaRuntime.getVMInstall(pro);
 		} else {
 			return JavaRuntime.computeVMInstall(config);
 		}

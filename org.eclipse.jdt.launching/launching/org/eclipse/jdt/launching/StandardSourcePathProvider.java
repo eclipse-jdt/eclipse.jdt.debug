@@ -55,7 +55,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 		// omit JRE from source lookup path if the runtime JRE is the same as the build JRE
 		// (so we retrieve source from the workspace, and not an external jar)
 		if (!includeJRE) {
-			IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
+			IVMInstall buildVM = JavaRuntime.getVMInstall(pro);
 			IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
 			includeJRE = !buildVM.equals(runVM);
 		}

@@ -35,7 +35,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, IJavaProject)
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
-		IVMInstall projectJRE = JavaRuntime.computeVMInstall(project);
+		IVMInstall projectJRE = JavaRuntime.getVMInstall(project);
 		return resolveLibraryLocations(projectJRE);
 	}
 
