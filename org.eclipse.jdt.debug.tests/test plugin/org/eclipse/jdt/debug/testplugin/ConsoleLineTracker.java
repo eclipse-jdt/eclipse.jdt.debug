@@ -11,19 +11,19 @@
 package org.eclipse.jdt.debug.testplugin;
 
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
  * Simple console line tracker extension point that delegates messages 
  */
-public class ConsoleLineTracker implements IConsoleLineTracker {
+public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	
 	/**
 	 * Forwards messages to the delegate when not <code>null</code> 
 	 */
-	private static IConsoleLineTracker fDelegate;
+	private static IConsoleLineTrackerExtension fDelegate;
 	private static IConsole fConsole;
 	
 	/**
@@ -31,7 +31,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	 *  
 	 * @param tracker
 	 */
-	public static void setDelegate(IConsoleLineTracker tracker) {
+	public static void setDelegate(IConsoleLineTrackerExtension tracker) {
 		fDelegate = tracker;
 	}
 
@@ -71,6 +71,9 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
 	public void consoleClosed() {
+		if (fDelegate != null) {
+			fDelegate.consoleClosed();
+		}		
 	}
 	
 }

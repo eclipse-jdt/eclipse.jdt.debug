@@ -13,8 +13,12 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -24,7 +28,7 @@ import org.eclipse.jface.text.IRegion;
 /**
  * Tests console line tracker.
  */
-public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineTracker {
+public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineTrackerExtension {
 	
 	protected String[] fLines = new String[] {
 		"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
@@ -44,6 +48,11 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 		super(name);
 	}
 	
+	protected void setUp() {
+		fStarted = false;
+		fStopped = false;
+	}
+	
 	public void testSimpleLineCounter() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
 		fTarget = null;
@@ -55,8 +64,36 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 				attempts++;
 				Thread.sleep(100);
 			}
-			assertEquals("Should be " + fLines.length + " lines", fLines.length, fLinesRead.size());
-			for (int i = 0; i < fLines.length; i++) {
+			// there are 10 lines and one "empty line" (i.e. the last "new line")
+			assertEquals("Wrong number of lines output", 11, fLinesRead.size());
+			for (int i = 0; i < 10; i++) {
+				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));			
+			}
+			assertEquals("Should be an empty last line", "", fLinesRead.get(10));
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			terminateAndRemove(fTarget);
+		}
+	} 
+	
+	/**
+	 * This program prints the final line without a new line
+	 * @throws Exception
+	 */
+	public void testNoPrintln() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		fTarget = null;
+		try {
+			fTarget = launchAndTerminate("OneToTenPrint");
+			int attempts = 0;
+			while (!fStopped) {
+				assertTrue("did not get output within 30 seconds", attempts < 300);
+				attempts++;
+				Thread.sleep(100);
+			}
+			// just 10 lines this time
+			assertEquals("Wrong number of lines", 10, fLinesRead.size());
+			for (int i = 0; i < 10; i++) {
 				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));			
 			}
 		} finally {
@@ -64,6 +101,34 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			terminateAndRemove(fTarget);
 		}
 	} 
+	
+	/**
+	 * Test 10,000 lines of output.
+	 * 
+	 * @throws Exception
+	 */
+	public void testFlood() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		ILaunch launch = null;
+		try {
+			ILaunchConfiguration config = getLaunchConfiguration("FloodConsole");
+			assertNotNull("Could not locate launch configuration", config);
+			launch = config.launch(ILaunchManager.RUN_MODE, null);
+			
+			int attempts = 0;
+			while (!fStopped) {
+				assertTrue("did not get output within 60 seconds", attempts < 600);
+				attempts++;
+				Thread.sleep(100);
+			}
+			// Should be 10,000 lines
+			assertEquals("Wrong number of lines", 10000, fLinesRead.size());
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			launch.getProcesses()[0].terminate();
+			DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
+		}
+	} 	
 	
 	public void testHyperLink() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
@@ -75,19 +140,14 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
 	public void dispose() {
-		if (fStarted) {
-			fStopped = true;
-		}
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
 	public void init(IConsole console) {
-		if (console.getProcess().getLaunch().getLaunchConfiguration().getName().equals("OneToTen")) {
-			fConsole = console;
-			fStarted = true;
-		}
+		fConsole = console;
+		fStarted = true;
 	}
 
 	/**
@@ -98,10 +158,6 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			try {
 				String text = fConsole.getDocument().get(line.getOffset(), line.getLength());
 				fLinesRead.add(text);
-				if (fLinesRead.size() == 10) {
-					// terminate and remove the program so it gets disposed
-					terminateAndRemove(fTarget);
-				}
 			} catch (BadLocationException e) {
 			}
 		}
@@ -111,6 +167,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
 	public void consoleClosed() {
+		if (fStarted) {
+			fStopped = true;
+		}		
 	}
 
 }

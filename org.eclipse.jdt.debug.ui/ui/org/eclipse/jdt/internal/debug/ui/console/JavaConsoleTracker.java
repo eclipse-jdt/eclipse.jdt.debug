@@ -81,10 +81,4 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 		fNativeMatcher = null;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
-	 */
-	public void consoleClosed() {
-	}
-
 }
