@@ -602,6 +602,9 @@
 	   name="%javaApplication"
 	   delegate="org.eclipse.jdt.internal.debug.ui.JavaApplicationLaunchConfigurationDelegate"
 	   modes= "run, debug">
+	   <fileExtension
+	   		extension="java"
+	   		default="true"/>
    </launchConfigurationType>
 </extension>
 

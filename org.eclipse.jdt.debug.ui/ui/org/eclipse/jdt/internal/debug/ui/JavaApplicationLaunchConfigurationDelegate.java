@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.ui;
  */
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -31,6 +32,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaUISourceLocator;
+import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodFinder;
+import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -62,9 +65,50 @@ public class JavaApplicationLaunchConfigurationDelegate
 	/**
 	 * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
 	 */
-	public void initializeDefaults(
-		ILaunchConfigurationWorkingCopy configuration,
-		Object object) {
+	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object) {
+		if (object instanceof ICompilationUnit) {
+			initializeCompilationUnitDefaults(configuration, (ICompilationUnit)object);
+		}
+	}
+	
+	/**
+	 * Initialize working copy defaults for an ICompilationUnit
+	 */
+	protected void initializeCompilationUnitDefaults(ILaunchConfigurationWorkingCopy workingCopy, ICompilationUnit compilationUnit) {
+		
+		// Java project
+		IJavaProject javaProject = compilationUnit.getJavaProject();
+		if ((javaProject == null) || !javaProject.exists()) {
+			return;
+		}
+		workingCopy.setAttribute(JavaDebugUI.PROJECT_ATTR, javaProject.getElementName());
+		
+		// Main type
+		String name = "";
+		try {
+			IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {compilationUnit});
+			if ((types == null) || (types.length < 1)) {
+				return;
+			}
+			name = types[0].getElementName();
+			workingCopy.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, name);
+		} catch (InterruptedException ie) {
+		} catch (InvocationTargetException ite) {
+		}	
+		
+		// Name
+		//workingCopy.rename(name);	
+		
+		// VM install type
+		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+		IVMInstallType vmInstallType = vmInstall.getVMInstallType();
+		String vmInstallTypeID = vmInstallType.getId();
+		workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmInstallTypeID);
+
+		// VM
+		String vmInstallID = vmInstall.getId();
+		workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmInstallID);
+		
 	}
 	
 	/**
