@@ -95,7 +95,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
 		
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);

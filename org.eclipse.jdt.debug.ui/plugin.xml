@@ -96,7 +96,7 @@
         <action id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
   			label="%manageWatchpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
-  			helpContextId="manage_watchpoint_breakpoint_action_context"
+  			helpContextId="manage_watchpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
   	    </action>
@@ -167,7 +167,7 @@
             icon="icons/full/etool16/java_app.gif"
             disabledIcon="icons/full/dtool16/java_app.gif"
             hoverIcon="icons/full/ctool16/java_app.gif"
-            helpContextId="debug_java_app"
+            helpContextId="debug_java_application_action_context"
             tooltip="%DebugJavaApplicationAction.tooltip"
             class="org.eclipse.jdt.internal.debug.ui.launcher.DebugJavaApplicationAction"
             menubarPath="org.eclipse.ui.run/debugGroup"
@@ -178,7 +178,7 @@
             icon="icons/full/etool16/java_app.gif"
             disabledIcon="icons/full/dtool16/java_app.gif"
             hoverIcon="icons/full/ctool16/java_app.gif"
-            helpContextId="debug_java_app"
+            helpContextId="run_java_application_context"
             tooltip="%RunJavaApplicationAction.tooltip"
             class="org.eclipse.jdt.internal.debug.ui.launcher.RunJavaApplicationAction"
             menubarPath="org.eclipse.ui.run/runGroup"
@@ -245,6 +245,7 @@
 			label="%accessAction.label"
 			menubarPath="emptyBreakpointGroup"
 			state="false"
+			helpContextId="access_toggle_action_context" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
 			enablesFor="+">
 		</action>
@@ -253,6 +254,7 @@
 			label="%modificationAction.label"
 			menubarPath="emptyBreakpointGroup"
 			state="true"
+			helpContextId="modification_toggle_action_context" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.ModificationWatchpointToggleAction"
 			enablesFor="+">
 		</action>
@@ -265,6 +267,7 @@
 			label="%entryAction.label"
 			menubarPath="emptyBreakpointGroup"
 			state="false"
+			helpContextId="entry_toggle_action_context" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.EntryToggleAction"
 			enablesFor="+">
 		</action>
@@ -273,6 +276,7 @@
 			label="%exitAction.label"
 			menubarPath="emptyBreakpointGroup"
 			state="false"
+			helpContextId="exit_toggle_action_context" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExitToggleAction"
 			enablesFor="+">
 		</action>		
@@ -287,6 +291,7 @@
 			disabledIcon="icons/full/dlcl16/sethitcount_co.gif"
 			hoverIcon="icons/full/clcl16/sethitcount_co.gif"
 			menubarPath="emptyBreakpointGroup"
+			helpContextId="hit_count_action_context" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
 			enablesFor="1">
 		</action>
@@ -295,13 +300,15 @@
 			label="%suspendPolicy.label"
 			icon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
 			menubarPath="emptyBreakpointGroup"
-			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointThreadToggleAction"
+			helpContextId="breakpoint_suspend_policy_toggle_action_context" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointSuspendPolicyToggleAction"
 			enablesFor="1">
 		</action>
 		<action
 			id="org.eclipse.jdt.ui.actions.JavaBreakpointProperties"
 			label="%breakpointPropertiesAction.label"
 			menubarPath="additions"
+			helpContextId="breakpoint_properties_action_context" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
 			enablesFor="1">
 		</action>
@@ -314,6 +321,7 @@
 			label="%caughtAction.label"
 			menubarPath="emptyBreakpointGroup"
 			state="true"
+			helpContextId="exception_caught_toggle_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
 			enablesFor="+">
 		</action>
@@ -322,6 +330,7 @@
 			label="%uncaughtAction.label"
 			menubarPath="emptyBreakpointGroup"
 			state="true"
+			helpContextId="exception_uncaught_toggle_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionUncaughtToggleAction"
 			enablesFor="+">
 		</action>
@@ -334,6 +343,7 @@
 			label="%dropFrameAction.label"
 			tooltip="%dropFrameAction.tooltip"
 			menubarPath="emptyThreadGroup"
+			helpContextId="drop_to_frame_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
 			enablesFor="1">
 		</action>
@@ -349,6 +359,7 @@
 			hoverIcon="icons/full/clcl16/stepfilter_co.gif"
 			tooltip="%toggleStepFilter.tooltip"
 			menubarPath="additions"
+			helpContextId="toggle_step_filter_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ToggleStepFilterAction">
 		</action>
 	</viewerContribution>
@@ -361,6 +372,7 @@
 			icon="../org.eclipse.jdt.ui/icons/full/ctool16/opentype.gif"
 			tooltip="%openOnConsoleTypeAction.tooltip"
 			menubarPath="additions"
+			helpContextId="open_on_console_type_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnConsoleTypeAction">
 		</action>
 	</viewerContribution>
@@ -372,6 +384,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewerContribution>
@@ -383,6 +396,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewerContribution>
@@ -394,6 +408,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowStaticFields"
@@ -401,6 +416,7 @@
 			tooltip="%showStaticAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/static_co.gif"
+			helpContextId="show_static_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowFinalFields"
@@ -408,6 +424,7 @@
 			tooltip="%showFinalAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/final_co.gif"
+			helpContextId="show_final_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
 	</viewerContribution>
@@ -419,6 +436,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>	
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowStaticFields"
@@ -426,6 +444,7 @@
 			tooltip="%showStaticAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/static_co.gif"
+			helpContextId="show_static_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowFinalFields"
@@ -433,6 +452,7 @@
 			tooltip="%showFinalAction.tooltip"
 			menubarPath="renderGroup"
 			icon="icons/full/clcl16/final_co.gif"
+			helpContextId="show_final_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>		
 	</viewerContribution>
@@ -443,12 +463,14 @@
 			label="%Display.label" 
 			menubarPath="variableGroup" 
 			icon="icons/full/ctool16/disp_sbook.gif"
+			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="variableGroup" 
 			icon="icons/full/ctool16/insp_sbook.gif" 
+			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 	</viewerContribution>
@@ -483,6 +505,7 @@
 			disabledIcon="icons/full/dlcl16/final_co.gif"
 			hoverIcon="icons/full/clcl16/final_co.gif"
 			tooltip="%showFinalAction.tooltip"
+			helpContextId="show_final_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"
@@ -492,6 +515,7 @@
 			disabledIcon="icons/full/dlcl16/static_co.gif"
 			hoverIcon="icons/full/clcl16/static_co.gif"
 			tooltip="%showStaticAction.tooltip"
+			helpContextId="show_static_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
@@ -499,6 +523,7 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
@@ -512,6 +537,7 @@
 			disabledIcon="icons/full/dlcl16/final_co.gif"
 			hoverIcon="icons/full/clcl16/final_co.gif"
 			tooltip="%showFinalAction.tooltip"
+			helpContextId="show_final_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"
@@ -521,6 +547,7 @@
 			disabledIcon="icons/full/dlcl16/static_co.gif"
 			hoverIcon="icons/full/clcl16/static_co.gif"
 			tooltip="%showStaticAction.tooltip"
+			helpContextId="show_static_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
 			<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
@@ -528,6 +555,7 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>	
@@ -541,6 +569,7 @@
 			disabledIcon="icons/full/dlcl16/exc_catch.gif"
 			hoverIcon="icons/full/clcl16/exc_catch.gif"
 			tooltip="%exceptionAction.tooltip"
+			helpContextId="add_exception_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
 		</action>
 			<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"
@@ -548,6 +577,7 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
@@ -559,13 +589,14 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
+			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
 	<viewContribution
 		id="org.eclipse.jdt.debug.ui.DisplayViewActions"
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
-			<action id="org.eclipse.jdt.debug.ui.Display" 
+		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup"
@@ -612,6 +643,7 @@
 			label="%openRecType.label"
 			tooltip="%openRecType.tooltip"
 			menubarPath="org.eclipse.jdt.debug.ui.actions.OpenOnMenu/group.openOn"
+			helpContextId="open_on_receiving_type_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnReceivingTypeAction">
 		</action>
 	</objectContribution>
@@ -623,6 +655,7 @@
 			label="%openDeclVarType.label"
 			tooltip="%openDeclVarType.tooltip"
 			menubarPath="openOnGroup"
+			helpContextId="open_on_variable_type_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnVariableAction">
 		</action>
 		<action
@@ -630,6 +663,7 @@
 			label="%Inspect.label"
 			menubarPath="openOnGroup"
 			icon="icons/full/ctool16/insp_sbook.gif"
+			helpContextId="variable_inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
 		</action>		
@@ -642,6 +676,7 @@
 			label="%openDeclType.label"
 			tooltip="%openDeclType.tooltip"
 			menubarPath="org.eclipse.jdt.debug.ui.actions.OpenOnMenu/group.openOn"
+			helpContextId="open_on_declaring_type_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnDeclaringTypeAction">
 		</action>
 	</objectContribution>
@@ -651,13 +686,15 @@
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
-			icon="icons/full/ctool16/disp_sbook.gif" 
+			icon="icons/full/ctool16/disp_sbook.gif"
+			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/ctool16/insp_sbook.gif" 
+			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
@@ -669,18 +706,21 @@
 			id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
 			label="%JavaBreakpointProperties.label"
 			menubarPath="debug"
+			helpContextId="breakpoint_properties_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
 		</action>
     	<action
 			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
 			label="%EnableBreakpoint.label"
 			menubarPath="debug"
+			helpContextId="enable_disable_breakpoint_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
 		</action>
 		<action
 			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
 			label="%AddBreakpoint.label"
 			menubarPath="debug"
+			helpContextId="manage_breakpoint_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
 		</action>
 	</viewerContribution>
@@ -691,18 +731,21 @@
 			id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
 			label="%JavaBreakpointProperties.label"
 			menubarPath="debug"
+			helpContextId="breakpoint_properties_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
 		</action>
 		<action
 			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
 			label="%EnableBreakpoint.label"
 			menubarPath="debug"
+			helpContextId="enable_disable_breakpoint_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
 		</action>
 		<action
 			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
 			label="%AddBreakpoint.label"
 			menubarPath="debug"
+			helpContextId="manage_breakpoint_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
 		</action>
 	</viewerContribution>	
@@ -713,18 +756,21 @@
     		label="%runToLineAction.label"
     		icon="icons/full/clcl16/runtoline_co.gif"
     		menubarPath="additions"
+    		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
 		</action>
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/ctool16/disp_sbook.gif"
+			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/ctool16/insp_sbook.gif"
+			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
@@ -735,18 +781,21 @@
  		   	icon="icons/full/clcl16/runtoline_co.gif"
     		label="%runToLineAction.label"
     		menubarPath="additions"
+     		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
 		</action> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions"
-			icon="icons/full/ctool16/disp_sbook.gif" 
+			icon="icons/full/ctool16/disp_sbook.gif"
+			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions"
-			icon="icons/full/ctool16/insp_sbook.gif" 
+			icon="icons/full/ctool16/insp_sbook.gif"
+			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
      </viewerContribution>
@@ -755,8 +804,8 @@
      	objectClass="org.eclipse.jdt.core.IMethod">
 		<action id="org.eclipse.jdt.debug.ui.MethodBreakpoint"
 		 	label="%manageMethodBreakpointAction.label"
-		 	helpContextId="manage_methodbreakpoint_action_context"
-		 	menubarPath="additions" 
+		 	helpContextId="manage_method_breakpoint_action_context"
+		 	menubarPath="additions"
 		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
 		 	enablesFor="1">
 	  </action>
@@ -796,6 +845,7 @@
 			icon="icons/full/etool16/disp_sbook.gif"
 			disabledIcon="icons/full/dtool16/disp_sbook.gif"
 			hoverIcon="icons/full/ctool16/disp_sbook.gif"
+			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
@@ -805,6 +855,7 @@
 			icon="icons/full/etool16/insp_sbook.gif"
 			disabledIcon="icons/full/dtool16/insp_sbook.gif"
 			hoverIcon="icons/full/ctool16/insp_sbook.gif"
+			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
       </editorContribution> 

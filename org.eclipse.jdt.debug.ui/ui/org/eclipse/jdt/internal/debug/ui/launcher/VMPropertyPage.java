@@ -7,7 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -74,7 +74,7 @@ public class VMPropertyPage extends JavaProjectPropertyPage {
 		
 		initFromProject(getJavaProject());
 		
-		WorkbenchHelp.setHelp(ancestor, IHelpContextIds.LAUNCH_JRE_PROPERTY_PAGE);			
+		WorkbenchHelp.setHelp(ancestor, IJavaDebugHelpContextIds.LAUNCH_JRE_PROPERTY_PAGE);			
 		return parent;
 	}
 	

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
@@ -87,7 +87,7 @@ public class AddVMDialog extends StatusDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.EDIT_JRE_DIALOG);
+		WorkbenchHelp.setHelp(newShell, IJavaDebugHelpContextIds.EDIT_JRE_DIALOG);
 	}		
 	
 	

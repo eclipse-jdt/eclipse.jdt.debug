@@ -99,7 +99,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
 		
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
