@@ -406,7 +406,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			switch (entry.getType()) {
 				case IRuntimeClasspathEntry.PROJECT:
 					IProject project = (IProject)entry.getResource();
-					if (project.exists() && project.isOpen()) {
+					if (project != null && project.exists() && project.isOpen()) {
 						location = new JavaProjectSourceLocation(JavaCore.create(project));
 					}
 					break;
