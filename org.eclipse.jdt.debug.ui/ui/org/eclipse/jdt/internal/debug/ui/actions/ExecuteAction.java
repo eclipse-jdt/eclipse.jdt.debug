@@ -12,8 +12,10 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ExecuteAction extends EvaluateAction {
@@ -21,7 +23,19 @@ public class ExecuteAction extends EvaluateAction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction#displayResult(org.eclipse.jdt.debug.eval.IEvaluationResult)
 	 */
-	protected void displayResult(IEvaluationResult result) {
+	protected void displayResult(final IEvaluationResult result) {
+		if (result.hasErrors()) {
+			final Display display = JDIDebugUIPlugin.getStandardDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if (display.isDisposed()) {
+						return;
+					}
+					reportErrors(result);
+					evaluationCleanup();
+				}
+			});
+		} 			
 	}
 
 	/**

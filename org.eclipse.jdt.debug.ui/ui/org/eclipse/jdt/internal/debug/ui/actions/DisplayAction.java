@@ -33,7 +33,21 @@ public class DisplayAction extends EvaluateAction {
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	protected void displayResult(IEvaluationResult evaluationResult) {
+	protected void displayResult(final IEvaluationResult evaluationResult) {
+		if (evaluationResult.hasErrors()) {
+			final Display display = JDIDebugUIPlugin.getStandardDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if (display.isDisposed()) {
+						return;
+					}
+					reportErrors(evaluationResult);
+					evaluationCleanup();
+				}
+			});
+			return;
+		} 		
+		
 		final String snippet= evaluationResult.getSnippet();
 		IJavaValue resultValue= evaluationResult.getValue();
 		try {
