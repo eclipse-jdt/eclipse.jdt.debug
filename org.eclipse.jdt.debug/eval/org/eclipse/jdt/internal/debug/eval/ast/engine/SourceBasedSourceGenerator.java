@@ -308,24 +308,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			source.append(getDotName(getTypeName(singleVariableDeclaration.getType())));
 			source.append(' ');
 			source.append(singleVariableDeclaration.getName().getIdentifier());
-			int extraDimension= singleVariableDeclaration.getExtraDimensions();
-			if (extraDimension > 0) {
-				source.append(' ');
-				for (int i= 0; i < extraDimension; i ++) {
-					source.append("[]");
-				}
-			}
+			appendExtraDimensions(source, singleVariableDeclaration.getExtraDimensions());
 		}
 		
 		source.append(')');
 		
-		int extraDimension= methodDeclaration.getExtraDimensions();
-		if (extraDimension > 0) {
-			source.append(' ');
-			for (int i= 0; i < extraDimension; i ++) {
-				source.append("[]");
-			}
-		}
+		appendExtraDimensions(source, methodDeclaration.getExtraDimensions());
 		
 		first = true;
 		for (Iterator iterator = methodDeclaration.thrownExceptions().iterator(); iterator.hasNext();) {
@@ -349,6 +337,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		
 		return source;
+	}
+
+	private void appendExtraDimensions(StringBuffer source, int extraDimension) {
+		if (extraDimension > 0) {
+			source.append(' ');
+			for (int i= 0; i < extraDimension; i ++) {
+				source.append("[]"); //$NON-NLS-1$
+			}
+		}
 	}
 	
 	private StringBuffer buildTypeDeclaration(StringBuffer buffer, TypeDeclaration typeDeclaration) {
