@@ -2281,7 +2281,7 @@
          <enablement>
            <with variable="affectedProjects">
              <iterate>
-               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+               <test property="org.eclipse.jdt.ui.projectNature" value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
            <with variable="selection">
@@ -2298,7 +2298,7 @@
          <enablement>
            <with variable="affectedProjects">
              <iterate>
-               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+               <test property="org.eclipse.jdt.ui.projectNature" value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
            <with variable="selection">
@@ -2315,7 +2315,7 @@
          <enablement>
            <with variable="affectedProjects">
              <iterate>
-               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+               <test property="org.eclipse.jdt.ui.projectNature" value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
            <with variable="selection">
@@ -2334,7 +2334,7 @@
          <enablement>
            <with variable="affectedProjects">
              <iterate>
-               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+               <test property="org.eclipse.jdt.ui.projectNature" value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
            <with variable="selection">
