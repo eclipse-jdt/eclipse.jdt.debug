@@ -37,7 +37,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -85,25 +84,27 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	private Composite fTitleArea;
 	private Label fTitleImage;
 	private CLabel fMessageLabel;
-	private Color fTitleAreaColor;
 	
 	private String fMessage;
 	private Color fNormalMsgAreaBackground;
-	private Color fErrorMsgAreaBackground;
 	private Image fErrorMsgImage;
+
 	
 	private JavaBreakpointPreferencePage fPage;
 	
 	private Button fOkButton;
 	
+	/**
+	 * Must declare our own images as the JFaceResource images will not be created unless
+	 * a property/preference dialog has been shown
+	 */
 	protected static final String PREF_DLG_TITLE_IMG = "breakpoint_preference_dialog_title_image";//$NON-NLS-1$
 	protected static final String PREF_DLG_IMG_TITLE_ERROR = "breakpoint_preference_dialog_title_error_image";//$NON-NLS-1$
 	static {
 		ImageRegistry reg = JDIDebugUIPlugin.getDefault().getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
-		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/title_error.gif"));//$NON-NLS-1$
+		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/message_error.gif"));//$NON-NLS-1$
 	}
-	private static final RGB ERROR_BACKGROUND_RGB = new RGB(230, 226, 221);
 	
 	/**
 	 * The Composite in which a page is shown.
@@ -328,19 +329,6 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		fTitleArea.setLayoutData(layoutData);
 		fTitleArea.setBackground(bg);
 	
-		// Add a dispose listener
-		fTitleArea.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (fTitleAreaColor != null) {
-					fTitleAreaColor.dispose();
-				}
-				if (fErrorMsgAreaBackground != null) {
-					fErrorMsgAreaBackground.dispose();
-				}
-			}
-		});
-	
-	
 		// Message label
 		fMessageLabel = new CLabel(fTitleArea, SWT.LEFT);
 		fMessageLabel.setBackground(bg);
@@ -425,14 +413,13 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 				// we were not previously showing an error
 							
 				// lazy initialize the error background color and image
-				if (fErrorMsgAreaBackground == null) {
-					fErrorMsgAreaBackground = new Color(fMessageLabel.getDisplay(), ERROR_BACKGROUND_RGB);
+				if (fErrorMsgImage == null) {
 					fErrorMsgImage = JDIDebugUIPlugin.getDefault().getImageRegistry().get(PREF_DLG_IMG_TITLE_ERROR);
 				}
 	
 				// show the error	
 				fNormalMsgAreaBackground = fMessageLabel.getBackground();
-				fMessageLabel.setBackground(fErrorMsgAreaBackground);
+				fMessageLabel.setBackground(JFaceColors.getErrorBackground(fMessageLabel.getDisplay()));
 				fMessageLabel.setImage(fErrorMsgImage);
 				fTitleImage.setImage(null);
 				fTitleArea.layout(true);
