@@ -131,7 +131,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 			} else if (de instanceof IStackFrame) {
 				thread= ((IStackFrame)de).getThread();
 			}
-			if (thread != null && thread.canResume()) {
+			if (thread != null && thread.isSuspended()) {
 				return thread;
 			}
 		}
