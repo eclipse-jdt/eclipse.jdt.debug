@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
+import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IContainer;
@@ -106,9 +107,13 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 			case IRuntimeClasspathEntry.ARCHIVE:
 				res = entry.getResource();
 				if (res == null) {
-					return entry.getPath().toString();
+					return entry.getPath().toOSString();
 				} else {
-					return lp.getText(res);				
+					String[] segments = entry.getPath().segments();
+					StringBuffer displayPath = new StringBuffer();
+					for (int i = 0; i < segments.length-1; i++) 
+						displayPath.append(segments[i] + File.separator);					
+					return lp.getText(res) + " - " + displayPath.toString(); //$NON-NLS-1$
 				}
 			case IRuntimeClasspathEntry.VARIABLE:
 				IPath path = entry.getPath();
