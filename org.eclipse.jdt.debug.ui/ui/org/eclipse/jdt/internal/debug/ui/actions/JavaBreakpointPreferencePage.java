@@ -44,6 +44,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	class BreakpointIntegerFieldEditor extends IntegerFieldEditor {
 		public BreakpointIntegerFieldEditor(String name, String labelText, Composite parent) {
 			super(name, labelText, parent);
+			setErrorMessage(ActionMessages.getString("BreakpointHitCountAction.Value_must_be_positive_integer"));//$NON-NLS-1$
 		}
 
 		/**

@@ -150,7 +150,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					hitCount= -1;
 				}
 				if (hitCount < 1) {
-					return ActionMessages.getString("BreakpointHitCountAction.Value_is_not_a_valid_hit_count_4"); //$NON-NLS-1$
+					return ActionMessages.getString("BreakpointHitCountAction.Value_must_be_positive_integer"); //$NON-NLS-1$
 				}
 				//no error
 				return null;
