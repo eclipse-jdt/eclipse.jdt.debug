@@ -28,13 +28,13 @@ public class PrefixMinusMinusOperator extends XfixOperator {
 		
 		switch (fVariableTypeId) {
 			case T_byte :
-				variable.setValue(newValue((byte)((IJavaPrimitiveValue)variable.getValue()).getByteValue() - 1));
+				variable.setValue(newValue((byte)(((IJavaPrimitiveValue)variable.getValue()).getByteValue() - 1)));
 				break;
 			case T_short :
-				variable.setValue(newValue((short)((IJavaPrimitiveValue)variable.getValue()).getShortValue() - 1));
+				variable.setValue(newValue((short)(((IJavaPrimitiveValue)variable.getValue()).getShortValue() - 1)));
 				break;
 			case T_char :
-				variable.setValue(newValue((char)((IJavaPrimitiveValue)variable.getValue()).getCharValue() - 1));
+				variable.setValue(newValue((char)(((IJavaPrimitiveValue)variable.getValue()).getCharValue() - 1)));
 				break;
 			case T_int :
 				variable.setValue(newValue(((IJavaPrimitiveValue)variable.getValue()).getIntValue() - 1));
