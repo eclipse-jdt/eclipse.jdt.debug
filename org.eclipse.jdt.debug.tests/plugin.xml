@@ -123,6 +123,12 @@
             </separator>
          </menu>
          <action
+               label="Test Bufferred Output"
+               class="org.eclipse.jdt.debug.tests.console.TestBufferredOutputActionDelegate"
+               menubarPath="org.eclipse.ui.run/TestGroup"
+               id="org.eclipse.jdt.debug.tests.testBufferredOutputAction">
+         </action>         
+         <action
                label="Test Message Console"
                class="org.eclipse.jdt.debug.tests.console.TestMessageConsoleActionDelegate"
                menubarPath="org.eclipse.ui.run/TestGroup"
