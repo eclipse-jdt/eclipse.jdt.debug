@@ -209,6 +209,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * The default classpath button has been toggled
 	 */
 	protected void handleClasspathDefaultButtonSelected() {
+		setDirty(true);
 		boolean useDefault = fClassPathDefaultButton.getSelection();
 		fClassPathDefaultButton.setSelection(useDefault);
 		if (useDefault) {
@@ -216,7 +217,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}
 		fClasspathViewer.setEnabled(!useDefault);
 		fBootpathViewer.setEnabled(!useDefault);
-		setDirty(true);
 		updateLaunchConfigurationDialog();
 	}
 

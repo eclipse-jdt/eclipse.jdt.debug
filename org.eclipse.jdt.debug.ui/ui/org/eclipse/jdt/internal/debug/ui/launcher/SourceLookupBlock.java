@@ -193,6 +193,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * The "default" button has been toggled
 	 */
 	protected void handleDefaultButtonSelected() {
+		setDirty(true);
 		boolean def = fDefaultButton.getSelection();
 		if (def) {
 			try {
@@ -211,7 +212,6 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 			}
 		}
 		fPathViewer.setEnabled(!def);
-		setDirty(true);
 		updateLaunchConfigurationDialog();
 	}
 	
