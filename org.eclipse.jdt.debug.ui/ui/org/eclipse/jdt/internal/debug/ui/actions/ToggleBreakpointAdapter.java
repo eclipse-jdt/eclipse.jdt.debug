@@ -607,14 +607,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		}
 		return selection;
 	}
-
+	
 	/**
-	 * Returns a list of matching types (IType - Java model) that correspond to the 
-	 * declaring type (ReferenceType - JDI model) of the given variable.
+	 * Returns a list of matching types (IType - Java model) that correspond to
+	 * the given type name in the context of the given launch.
 	 */
-	protected static List searchForDeclaringType(IJavaFieldVariable variable) {
+	protected static List searchForTypes(String typeName, ILaunch launch) {
 		List types= new ArrayList();
-		ILaunch launch = variable.getDebugTarget().getLaunch();
 		if (launch == null) {
 			return types;
 		}
@@ -651,19 +650,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 
 		SearchEngine engine= new SearchEngine();
 		IJavaSearchScope scope= SearchEngine.createJavaSearchScope(javaProjects, true);
-		String declaringType= null;
-		try {
-			declaringType= variable.getDeclaringType().getName();
-		} catch (DebugException x) {
-			JDIDebugUIPlugin.log(x);
-			return types;
-		}
 		ArrayList typeRefsFound= new ArrayList(3);
 		ITypeNameRequestor requestor= new TypeInfoRequestor(typeRefsFound);
 		try {
 			engine.searchAllTypeNames( 
-				getPackage(declaringType), 
-				getTypeName(declaringType), 
+				getPackage(typeName), 
+				getTypeName(typeName), 
 				SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE, 
 				IJavaSearchConstants.CLASS, 
 				scope, 
@@ -685,14 +677,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			}
 		}
 		return types;
-	}
+	}	
 	
 	/**
 	 * Returns the package name of the given fully qualified type name.
 	 * The package name is assumed to be the dot-separated prefix of the 
 	 * type name.
 	 */
-	protected static char[] getPackage(String fullyQualifiedName) {
+	private static char[] getPackage(String fullyQualifiedName) {
 		int index= fullyQualifiedName.lastIndexOf('.');
 		if (index == -1) {
 			return new char[0];
@@ -705,12 +697,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * The type name is assumed to be the last contiguous segment of the 
 	 * fullyQualifiedName not containing a '.' or '$'
 	 */
-	protected static char[] getTypeName(String fullyQualifiedName) {
+	private static char[] getTypeName(String fullyQualifiedName) {
 		int index= fullyQualifiedName.lastIndexOf('.');
-		String typeName= fullyQualifiedName.substring(index + 1);
-		int lastInnerClass= typeName.lastIndexOf('$');
-		if (lastInnerClass != -1) {
-			typeName= typeName.substring(lastInnerClass + 1);
+		String typeName = fullyQualifiedName;
+		if (index >= 0) {
+			typeName= fullyQualifiedName.substring(index + 1);
+		}
+		index = typeName.lastIndexOf('$');
+		if (index >= 0) {
+			typeName = typeName.substring(index + 1);
 		}
 		return typeName.toCharArray();
 	}
@@ -728,7 +723,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			return null;
 		}
 		IField field;
-		List types= searchForDeclaringType(variable);
+		String declaringType= null;
+		try {
+			declaringType= variable.getDeclaringType().getName();
+		} catch (DebugException x) {
+			JDIDebugUIPlugin.log(x);
+			return null;
+		}
+		List types= searchForTypes(declaringType, variable.getLaunch());
 		Iterator iter= types.iterator();
 		while (iter.hasNext()) {
 			IType type= (IType)iter.next();

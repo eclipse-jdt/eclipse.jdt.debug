@@ -13,6 +13,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -154,11 +156,15 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	protected Object getSourceElement(Object e) {
 		if (e instanceof IDebugElement) {
 			IDebugElement de= (IDebugElement)e;
-			ISourceLocator sourceLocator= de.getLaunch().getSourceLocator();
 			String typeName = null;
 			try {
 				typeName = getTypeNameToOpen(de);
-				return findSourceElement(typeName, sourceLocator);
+				if (typeName != null) {
+					List list = ToggleBreakpointAdapter.searchForTypes(typeName, de.getLaunch());
+					if (!list.isEmpty()) {
+						return list.get(0);
+					}
+				}
 			} catch (CoreException ex) {
 				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenTypeAction.2"), ex.getStatus()); //$NON-NLS-1$
 			}	
