@@ -5,11 +5,11 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
 
+import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.core.IJavaProject;
-import java.util.List;
 
 /**
  * A Java stack frame is an extension of a regular stack
@@ -33,10 +33,12 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	/**
 	 * Drops to this stack frame by popping stack frames in this stack
 	 * frame's owning thread until this stack frame is the top stack frame.
+	 * Execution marker is set to the beginning of this stack frame's
+	 * associated method.
 	 *
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
-	 * <li>NOT_SUPPORTED - The capability is not supported by the target
+	 * @exception DebugException If this method fails. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - The request failed in the target.
+	 * <li>NOT_SUPPORTED - The capability is not supported by the target.
 	 * </ul>
 	 */
 	void dropToFrame() throws DebugException;
@@ -50,35 +52,36 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	boolean supportsDropToFrame();
 	
 	/**
-	 * Returns whether this element has been declared as abstract.
+	 * Returns whether the method associated with this stack frame
+	 * has been declared as native.
 	 * 
-	 * @return whether this element has been declared as abstract
-	 * @exception DebugException if unable to determine if this
-	 *   element has been declared as abstract
-	 */
-	public boolean isAbstract() throws DebugException;
-	/**
-	 * Returns whether this element has been declared as native.
-	 * 
-	 * @return whether this element has been declared as native
-	 * @exception DebugException if unable to determine if this
-	 *   element has been declared as native
+	 * @return whether this stack frame has been declared as native
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to determine if this
+	 *   stack frame has been declared as native.
+	 * </ul>
 	 */
 	public boolean isNative() throws DebugException;
 	/**
-	 * Returns whether this element is a static initializer.
+	 * Returns whether the method associated with this stack frame
+	 * is a static initializer.
 	 * 
-	 * @return whether this element is a static initializer
-	 * @exception DebugException if unable to determine if this
-	 *   element is a static initializer 
+	 * @return whether this stack frame is a static initializer
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to determine if this
+	 *   stack frame is a static initializer.
+	 * </ul>
 	 */
 	public boolean isStaticInitializer() throws DebugException;
 	/**
-	 * Returns whether this element has been declared as synchronized.
+	 * Returns whether the method associated with this stack frame
+	 * has been declared as synchronized.
 	 *
-	 * @return whether this element has been declared as synchronized
-	 * @exception DebugException if unable to determine if this
-	 *   element has been declared as synchronized
+	 * @return whether this stack frame has been declared as synchronized
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to determine if this
+	 *   stack frame has been declared as synchronized.
+	 * </ul>
 	 */
 	public boolean isSynchronized() throws DebugException;
 	/**
@@ -91,12 +94,14 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 */
 	public String getDeclaringTypeName() throws DebugException;
 	/**
-	 * Returns the fully qualified type name of the receiver object associated
-	 * with this stack frame
+	 * Returns the fully qualified name of the type that is the receiver object
+	 * associated with this stack frame
 	 *
 	 * @return receiving type name
-	 * @exception DebugException if unable to retrieve this stack frame's
-	 *    reveiving type name from the target
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack frame's
+	 *    receiving type name from the target.
+	 * </ul>
 	 */
 	public String getReceivingTypeName() throws DebugException;
 	
@@ -105,18 +110,22 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * The signature is in JNI format.
 	 *
 	 * @return signature
-	 * @exception DebugException if unable to retrieve this stack frame's
-	 *    signature from the target
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack frame's
+	 *    signature from the target.
+	 * </ul>
 	 */
 	public String getSignature() throws DebugException;
 	
 	/**
-	 * Returns a list of fully qualified types of the arguments for the method
+	 * Returns a list of fully qualified type names of the arguments for the method
 	 * associated with this stack frame.
 	 *
 	 * @return argument type names, or an empty list if this method has no arguments
-	 * @exception DebugException if unable to retrieve this stack
-	 *   frame's argument names from the target
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack
+	 *   frame's argument names from the target.
+	 * </ul>
 	 */
 	public List getArgumentTypeNames() throws DebugException;
 	
@@ -124,8 +133,10 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * Returns the name of the method associated with this stack frame
 	 *
 	 * @return method name
-	 * @exception DebugException if unable to retrieve this stack frame's
-	 *    method name from the target
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack frame's
+	 *    method name from the target.
+	 * </ul>
 	 */
 	public String getMethodName() throws DebugException;
 	
@@ -135,8 +146,10 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 *
 	 * @param variableName the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
-	 * @exception DebugException if an exception occurrs while searching
-	 *    for the variable on the target
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - while searching for the variable
+	 * on the target.
+	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
 	
@@ -147,7 +160,10 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * the associated source name would be "Example.java".
 	 * 
 	 * @return unqualified source file name, or <code>null</code>
-	 * @exception DebugException if an exception occurs retrieving the name from the target
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - unable to retrieve the source
+	 *    name from the target.
+	 * </ul>
 	 */
 	public String getSourceName() throws DebugException;
 }
