@@ -167,8 +167,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	protected void createFieldEditors() {
 		IJavaBreakpoint breakpoint = getBreakpoint();
 		try {
-			String type = breakpoint.getTypeName();
-			addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), type)); //$NON-NLS-1$
+			String typeName = breakpoint.getTypeName();
+			if (typeName != null) {
+				addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), typeName)); //$NON-NLS-1$
+			}
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
