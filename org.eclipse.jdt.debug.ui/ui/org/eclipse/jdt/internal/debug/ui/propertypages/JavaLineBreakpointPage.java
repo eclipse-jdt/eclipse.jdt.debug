@@ -223,7 +223,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			}
 		});
 		
-		fConditionEditor = new BreakpointConditionEditor(conditionComposite, PropertyPageMessages.getString("JavaLineBreakpointPage.14"), this); //$NON-NLS-1$
+		fConditionEditor = new BreakpointConditionEditor(conditionComposite, this); //$NON-NLS-1$
 		
 		fSuspendWhenLabel= createLabel(conditionComposite, PropertyPageMessages.getString("JavaLineBreakpointPage.15")); //$NON-NLS-1$
 		fConditionIsTrue= createRadioButton(conditionComposite, PropertyPageMessages.getString("JavaLineBreakpointPage.16")); //$NON-NLS-1$
