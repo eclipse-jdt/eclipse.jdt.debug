@@ -5,15 +5,15 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.ArrayReference;
-import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.Value;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.sun.jdi.*;
 
 /**
  * A sub-range of an array.
@@ -22,24 +22,21 @@ import java.util.List;
 public class JDIArrayPartition extends JDIVariable {
 	private int fStart;
 	private int fEnd;
-
+	protected ArrayReference fArray;
 	/**
 	 * Cache of value
 	 */
 	protected JDIArrayPartitionValue fArrayPartitionValue;
 
-	public JDIArrayPartition(JDIDebugElement parent, int start, int end) {
-		super(parent);
+	public JDIArrayPartition(JDIDebugTarget target, ArrayReference array, int start, int end) {
+		super(target);
+		fArray= array;
 		fStart= start;
 		fEnd= end;
 	}
 
 	public String getName() throws DebugException {
 		StringBuffer name = new StringBuffer();
-		IJavaVariable jv = getRootVariable();
-		if (jv != null) {
-			name.append(jv.getName());
-		}
 		name.append('[');
 		name.append(fStart);
 		name.append("..");
@@ -68,7 +65,7 @@ public class JDIArrayPartition extends JDIVariable {
 
 	/**
 	 */
-	public static List splitArray(JDIDebugElement parent, int start, int end) {
+	public static List splitArray(JDIDebugTarget target, ArrayReference array, int start, int end) {
 		ArrayList children= new ArrayList();
 		int perSlot = 1;
 		int l= end - start;
@@ -82,23 +79,14 @@ public class JDIArrayPartition extends JDIVariable {
 			}
 			JDIVariable var= null;
 			if (perSlot == 1) {
-				var= new JDIArrayEntryVariable(parent, start);
+				var= new JDIArrayEntryVariable(target, array, start);
 			} else {
-				var= new JDIArrayPartition(parent, start, start + perSlot - 1);
+				var= new JDIArrayPartition(target, array, start, start + perSlot - 1);
 			}
 			children.add(var);
 			start += perSlot;
 		}
 		return children;
-	}
-
-	protected IJavaVariable getRootVariable() {
-		IDebugElement parent = getParent();
-		if (parent instanceof JDIValue) {
-			return (JDIVariable)((JDIValue)parent).getVariable();
-		} else {
-			return ((JDIArrayPartition)((JDIArrayPartitionValue)parent).getVariable()).getRootVariable();
-		}
 	}
 	
 	public int getStart() {
@@ -111,120 +99,71 @@ public class JDIArrayPartition extends JDIVariable {
 	
 
 	public ArrayReference getArrayReference() {
-		IDebugElement parent = getParent();
-		if (parent instanceof JDIValue) {
-			return ((JDIValue)parent).getArrayReference();
-		} else {
-			return ((JDIArrayPartitionValue)parent).getArrayReference();
-		}
+		return fArray;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isVolatile() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isVolatile();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isTransient() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isTransient();
-		}
+		return false;
+
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isSynthetic() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isSynthetic();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isPublic() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isPublic();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isPrivate() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isPrivate();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isProtected() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isProtected();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isPackagePrivate() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isPackagePrivate();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isStatic() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isStatic();
-		}
+		return false;
 	}
 	
 	/**
 	 * @see IJavaVariable
 	 */
 	public boolean isFinal() throws DebugException {
-		IJavaVariable jv = getRootVariable();
-		if (jv == null) {
-			return false;
-		} else {
-			return jv.isFinal();
-		}
+		return false;
 	}
 
 	/**

@@ -5,19 +5,15 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import java.util.*;
+
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.*;
-import java.util.*;
+
+import com.sun.jdi.*;
 
 /**
  * Proxy to a stack frame on the target.
@@ -42,6 +38,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Underlying stack frame
 	 */
 	protected StackFrame fStackFrame;
+	/**
+	 * Containing thread
+	 */
+	protected JDIThread fThread;
+	/**
+	 * Visible variables
+	 */
+	protected List fVariables;
 	
 	/**
 	 * The method this stack frame is associated with. Cached
@@ -58,8 +62,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Creates a new stack frame in the given thread.
 	 */
 	public JDIStackFrame(JDIThread thread, StackFrame stackFrame) {
-		super(thread);
+		super((JDIDebugTarget)thread.getDebugTarget());
 		fStackFrame= stackFrame;
+		fThread= thread;
 	}
 	
 	/**
@@ -67,20 +72,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public int getElementType() {
 		return STACK_FRAME;
-	}
+	}	
 	
-	/**
-	 * @see IDebugElement
-	 */
-	public IStackFrame getStackFrame() {
-		return this;
-	}
 	
 	/**
 	 * @see IDebugElement
 	 */
 	public IThread getThread() {
-		return (IThread)fParent;
+		return fThread;
 	}
 
 	/**
@@ -124,7 +123,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepReturn() {
 		try {
-			List frames = ((JDIThread)getThread()).getChildren0();
+			List frames = ((JDIThread)getThread()).getStackFrames0();
 			if (frames != null && !frames.isEmpty()) {
 				Object bottomFrame = frames.get(frames.size() - 1);
 				return exists() && !this.equals(bottomFrame) && getThread().canStepReturn();
@@ -149,12 +148,20 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IDebugElement
+	 * @see IStackFrame
 	 */
-	protected List getChildren0() throws DebugException {
-		if (fChildren == null) {
+	public IVariable[] getVariables() throws DebugException {
+		List list = getVariables0();
+		return (IVariable[])list.toArray(new IVariable[list.size()]);
+	}
+	
+	/**
+	 *
+	 */
+	protected List getVariables0() throws DebugException {
+		if (fVariables == null) {
 			Method method= getUnderlyingMethod();
-			fChildren= new ArrayList();
+			fVariables= new ArrayList();
 			// #isStatic() does not claim to throw any exceptions - so it is not try/catch coded
 			if (method.isStatic()) {
 				// add statics
@@ -171,10 +178,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					while (fields.hasNext()) {
 						Field field= (Field) fields.next();
 						if (field.isStatic()) {
-							fChildren.add(new JDIFieldVariable(this, field));
+							fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, null));
 						}
 					}
-					Collections.sort(fChildren, new Comparator() {
+					Collections.sort(fVariables, new Comparator() {
 						public int compare(Object a, Object b) {
 							return sortStaticChildren(a, b);
 						}
@@ -191,20 +198,20 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					targetRequestFailed(ERROR_GET_CHILDREN, e);
 				}
 				if (t != null) {
-					fChildren.add(new JDIThisVariable(this, t));
+					fVariables.add(new JDIThisVariable((JDIDebugTarget)getDebugTarget(), t));
 				}
 			}
 			// add locals
 			Iterator variables= getUnderlyingVisibleVariables().iterator();
 			while (variables.hasNext()) {
 				LocalVariable var= (LocalVariable) variables.next();
-				fChildren.add(new JDILocalVariable(this, var));
+				fVariables.add(new JDILocalVariable(this, var));
 			}
 		} else if (fRefreshVariables) {
 			updateVariables();
 		}
 		fRefreshVariables = false;
-		return fChildren;
+		return fVariables;
 	}
 
 	/**
@@ -313,7 +320,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (isTopStackFrame()) {
 			getThread().stepReturn();
 		} else {
-			List frames = ((JDIThread)getThread()).getChildren0();
+			List frames = ((JDIThread)getThread()).getStackFrames0();
 			int index = frames.indexOf(this);
 			if (index >= 0 && index < frames.size() - 1) {
 				IStackFrame nextFrame = (IStackFrame)frames.get(index + 1);
@@ -341,7 +348,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Update my variables incrementally.
 	 */
 	protected void updateVariables() throws DebugException {
-		if (fChildren == null) {
+		if (fVariables == null) {
 			return;
 		}
 
@@ -349,7 +356,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		int index= 0;
 		if (method.isStatic()) {
 			// update statics
-			while (index < fChildren.size() && fChildren.get(index) instanceof JDIFieldVariable) {
+			while (index < fVariables.size() && fVariables.get(index) instanceof JDIFieldVariable) {
 				index++;
 			}
 		} else {
@@ -363,18 +370,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				targetRequestFailed(ERROR_GET_CHILDREN, e);
 			}
 			JDIThisVariable oldThisObject= null;
-			if (!fChildren.isEmpty() && fChildren.get(0) instanceof JDIThisVariable) {
-				oldThisObject= (JDIThisVariable) fChildren.get(0);
+			if (!fVariables.isEmpty() && fVariables.get(0) instanceof JDIThisVariable) {
+				oldThisObject= (JDIThisVariable) fVariables.get(0);
 			}
 			if (thisObject == null && oldThisObject != null) {
 				// removal of 'this'
-				fChildren.remove(0);
+				fVariables.remove(0);
 				index= 0;
 			} else {
 				if (oldThisObject == null && thisObject != null) {
 					// creation of 'this'
-					oldThisObject= new JDIThisVariable(this, thisObject);
-					fChildren.add(0, oldThisObject);
+					oldThisObject= new JDIThisVariable((JDIDebugTarget)getDebugTarget(),thisObject);
+					fVariables.add(0, oldThisObject);
 					index= 1;
 				} else {
 					if (oldThisObject != null) {
@@ -398,8 +405,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			targetRequestFailed(ERROR_GET_CHILDREN, e);
 		}
 		int localIndex= -1;
-		while (index < fChildren.size()) {
-			JDILocalVariable local= (JDILocalVariable) fChildren.get(index);
+		while (index < fVariables.size()) {
+			JDILocalVariable local= (JDILocalVariable) fVariables.get(index);
 			localIndex= locals.indexOf(local.getLocal());
 			if (localIndex >= 0) {
 				// update variable with new underling JDI LocalVariable
@@ -408,7 +415,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				index++;
 			} else {
 				// remove variable
-				fChildren.remove(index);
+				fVariables.remove(index);
 			}
 		}
 
@@ -416,7 +423,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		Iterator newOnes= locals.iterator();
 		while (newOnes.hasNext()) {
 			JDILocalVariable local= new JDILocalVariable(this, (LocalVariable) newOnes.next());
-			fChildren.add(local);
+			fVariables.add(local);
 		}
 	}
 
@@ -433,7 +440,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (supported) {
 				// Also ensure that this frame and no frames above this
 				// frame are native. Unable to pop native stack frames.
-				IDebugElement[] frames = thread.getChildren();
+				IStackFrame[] frames = thread.getStackFrames();
 				for (int i = 0; i < frames.length; i++) {
 					JDIStackFrame frame = (JDIStackFrame)frames[i];
 					if (frame.isNative()) {
@@ -469,7 +476,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IVariableLookup
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
-		IDebugElement[] variables = getChildren();
+		IVariable[] variables = getVariables();
 		JDIThisVariable thisVariable= null;
 		for (int i = 0; i < variables.length; i++) {
 			IVariable var= (IVariable) variables[i];
@@ -483,7 +490,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 
 		if (thisVariable != null) {
-			Iterator thisChildren = ((JDIValue)thisVariable.getValue()).getChildren0().iterator();
+			Iterator thisChildren = ((JDIValue)thisVariable.getValue()).getVariables0().iterator();
 			while (thisChildren.hasNext()) {
 				IVariable var= (IVariable) thisChildren.next();
 				if (var.getName().equals(varName)) {
@@ -726,7 +733,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	protected boolean exists() throws DebugException {
-		return ((JDIThread)getThread()).getChildren0().indexOf(this) != -1;
+		return ((JDIThread)getThread()).getStackFrames0().indexOf(this) != -1;
 	}
 	
 	/**

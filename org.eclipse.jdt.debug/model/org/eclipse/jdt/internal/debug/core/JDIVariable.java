@@ -34,13 +34,9 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	
 	//non NLS
 	protected final static String jdiStringSignature= "Ljava/lang/String;";
-
-	/**
-	 * Creates a new variable with the given parent. Parents can 
-	 * be stack frames (for locals), or values for field members.	
-	 */
-	public JDIVariable(JDIDebugElement parent) {
-		super(parent);
+	
+	public JDIVariable(JDIDebugTarget target) {
+		super(target);
 	}
 	
 	/**
@@ -94,16 +90,16 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public IValue getValue() throws DebugException {
 		Value currentValue = getCurrentValue();
 		if (fValue == null) {
-			fValue = new JDIValue(this, currentValue);
+			fValue = new JDIValue((JDIDebugTarget)getDebugTarget(), currentValue);
 		} else {
 			Value previousValue = fValue.getUnderlyingValue();
 			if (currentValue == previousValue) {
 				return fValue;
 			}
 			if (previousValue == null || currentValue == null) {
-				fValue = new JDIValue(this, currentValue);
+				fValue = new JDIValue((JDIDebugTarget)getDebugTarget(), currentValue);
 			} else if (!previousValue.equals(currentValue)) {
-				fValue = new JDIValue(this, currentValue);
+				fValue = new JDIValue((JDIDebugTarget)getDebugTarget(), currentValue);
 			}
 		}
 		return fValue;
@@ -129,20 +125,6 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public boolean verifyValue(String expression) {
 		return false;
 	}	
-
-	/**
-	 * @see IDebugElement
-	 */
-	public IStackFrame getStackFrame() {
-		return getParent().getStackFrame();
-	}
-	
-	/**
-	 * @see IDebugElement
-	 */
-	public IThread getThread() {
-		return getParent().getThread();
-	}
 	 
 	/**
 	 * @see IJavaVariable

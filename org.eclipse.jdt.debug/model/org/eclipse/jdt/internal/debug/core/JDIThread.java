@@ -48,6 +48,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * Underlying thread.
 	 */
 	protected ThreadReference fThread;
+	
+	/**
+	 * Collection of stack frames
+	 */
+	protected List fStackFrames;
 
 	/**
 	 * Underlying thread group.
@@ -296,81 +301,82 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			fStepRequest.addClassExclusionFilter(filter);
 		}
 	}
-	
-	/**
-	 * @see IDebugElement
-	 */
-	public boolean hasChildren() {
-		return isSuspended();
-	}
 
 	/**
-	 * @see IDebugElement
+	 * @see IThread
 	 */
-	protected List getChildren0() throws DebugException {
+	public IStackFrame[] getStackFrames() throws DebugException {
+		List list = getStackFrames0();
+		return (IStackFrame[])list.toArray(new IStackFrame[list.size()]);
+	}
+	
+	/**
+	 *
+	 */
+	protected List getStackFrames0() throws DebugException {
 		if (isSuspended()) {
 			if (isTerminated()) {
-				fChildren = Collections.EMPTY_LIST;
-				return fChildren;
+				fStackFrames = Collections.EMPTY_LIST;
+				return fStackFrames;
 			}
 			if (fRefreshChildren) {
-				if (fChildren == null || fChildren.isEmpty()) {
-					fChildren = createAllStackFrames();
+				if (fStackFrames == null || fStackFrames.isEmpty()) {
+					fStackFrames = createAllStackFrames();
 				} else {
 					// compute new or removed stack frames
 					List frames= getUnderlyingFrames();
 					int offset= 0, length= frames.size();
-					if (length > fChildren.size()) {
+					if (length > fStackFrames.size()) {
 						// compute new children
-						offset= length - fChildren.size();
+						offset= length - fStackFrames.size();
 						for (int i= offset - 1; i >= 0; i--) {
 							JDIStackFrame newStackFrame= new JDIStackFrame(this, (StackFrame) frames.get(i));
 							// addChild appends - we need a stack, so insert manually
-							fChildren.add(0, newStackFrame);
+							fStackFrames.add(0, newStackFrame);
 						}
-						length= fChildren.size() - offset;
+						length= fStackFrames.size() - offset;
 					} else
-						if (length < fChildren.size()) {
+						if (length < fStackFrames.size()) {
 							// compute removed children
-							int removed= fChildren.size() - length;
+							int removed= fStackFrames.size() - length;
 							for (int i= 0; i < removed; i++) {
-								fChildren.remove(0);
+								fStackFrames.remove(0);
 							}
 						} else {
 							if (frames.isEmpty()) {
-								fChildren = Collections.EMPTY_LIST;
-								return fChildren;
+								fStackFrames = Collections.EMPTY_LIST;
+								return fStackFrames;
 							} else {
 								// same number of stack frames - if the TOS is different, remove/replace all stack frames
-								Method oldMethod= ((JDIStackFrame) fChildren.get(0)).getUnderlyingMethod();
+								Method oldMethod= ((JDIStackFrame) fStackFrames.get(0)).getUnderlyingMethod();
 								if (oldMethod == null) {
-									fChildren = createAllStackFrames();
-									return fChildren;
+									fStackFrames = createAllStackFrames();
+									return fStackFrames;
 								}
 								StackFrame newTOS= (StackFrame) frames.get(0);
 								Method newMethod= getUnderlyingMethod(newTOS);
 								if (newMethod == null) {
-									fChildren = createAllStackFrames();
-									return fChildren;
+									fStackFrames = createAllStackFrames();
+									return fStackFrames;
 								}
 								if (!oldMethod.equals(newMethod)) {
 									// remove & replace all stack frames
-									fChildren= createAllStackFrames();
+									fStackFrames= createAllStackFrames();
 									// no stack frames to update
-									offset= fChildren.size();
+									offset= fStackFrames.size();
 								}
 							}
 						}
 					// update existing frames
-					if (offset < fChildren.size()) {
-						updateStackFrames(frames, offset, fChildren, length);
+					if (offset < fStackFrames.size()) {
+						updateStackFrames(frames, offset, fStackFrames, length);
 					}
 				}
 				fRefreshChildren = false;
 			}
 		} else
 			return Collections.EMPTY_LIST;
-		return fChildren;
+		return fStackFrames;
 	}
 
 	/**
@@ -593,7 +599,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	public IStackFrame getTopStackFrame() throws DebugException {
 		if (isSuspended()) {
-			List c= getChildren0();
+			List c= getStackFrames0();
 			if (c.isEmpty()) {
 				return null;
 			} else {
@@ -620,7 +626,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			try {
 				if (getTopStackFrame().equals(fDestinationFrame)) {
 					fDestinationFrame = null;
-				} else if (getChildren0().indexOf(fDestinationFrame) == -1) {
+				} else if (getStackFrames0().indexOf(fDestinationFrame) == -1) {
 					fDestinationFrame = null;
 				} else {
 					if (hasPendingEvents()) {
@@ -747,7 +753,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 						startStepTimer();
 					}
 				} else {
-					fChildren = null;
+					fStackFrames = null;
 				}
 				if (!fStepping || fStepCount == 1) {
 					fireResumeEvent(detail);
@@ -760,7 +766,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					stopStepTimer();
 					// update underlying stack frames
 					try {
-						getChildren0();
+						getStackFrames0();
 					} catch (DebugException e) {
 						internalError(e);
 					}
@@ -777,8 +783,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	protected void invalidateStackFrames() {
-		if (fChildren != null) {
-			Iterator frames = fChildren.iterator();
+		if (fStackFrames != null) {
+			Iterator frames = fStackFrames.iterator();
 			while (frames.hasNext()) {
 				((JDIStackFrame)frames.next()).invalidateVariables();
 			}
@@ -801,7 +807,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * A step has timed out. Children are disposed.
 	 */
 	public void timeout() {
-		fChildren = Collections.EMPTY_LIST;
+		fStackFrames = Collections.EMPTY_LIST;
 		fireChangeEvent();
 	}
 
@@ -909,7 +915,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected void dropToFrame(IStackFrame frame) throws DebugException {
 
-		fFramesToDrop= getChildren0().indexOf(frame);
+		fFramesToDrop= getStackFrames0().indexOf(frame);
 		fDropping= fFramesToDrop > 0;
 		if (fDropping) {
 			dropTopFrame();
@@ -1018,7 +1024,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
-			IDebugElement[] stackframes= getChildren();
+			IStackFrame[] stackframes= getStackFrames();
 			for (int i = 0; i < stackframes.length; i++) {
 				JDIStackFrame sf= (JDIStackFrame) stackframes[i];
 				IVariable var= sf.findVariable(varName);

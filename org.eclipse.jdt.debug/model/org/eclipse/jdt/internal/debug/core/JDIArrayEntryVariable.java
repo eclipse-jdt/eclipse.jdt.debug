@@ -22,10 +22,16 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	protected int fIndex;
 	
 	/**
+	 * The array object
+	 */
+	protected ArrayReference fArray;
+	
+	/**
 	 * Constructs an array entry at the given index in an array.
 	 */
-	public JDIArrayEntryVariable(JDIDebugElement parent, int index) {
-		super(parent);
+	public JDIArrayEntryVariable(JDIDebugTarget target, ArrayReference array, int index) {
+		super(target);
+		fArray= array;
 		fIndex= index;
 	}
 
@@ -66,12 +72,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	}
 
 	protected ArrayReference getArrayReference() {
-		IDebugElement parent = getParent();
-		if (parent instanceof JDIValue) {
-			return ((JDIValue)parent).getArrayReference();
-		} else {
-			return ((JDIArrayPartitionValue)parent).getArrayReference();
-		}
+		return fArray;
 	}
 	
 	/**

@@ -52,14 +52,14 @@ public interface IJavaValue extends IValue {
 	 * <code>toString()</code> to this value. If this value
 	 * represents a primitive data type, the returned value
 	 * is the same as that returned from <code>getValueString()</code>.
-	 * The evaluation is performed in the thread that this value
-	 * orginiated from. If the thread is not suspended, an exception
-	 * is thrown.
+	 * The evaluation is performed in the specified thread.
+	 * If the thread is not suspended, an exception is thrown.
 	 *
+	 * @param thread the thread used to perform the evaluation
 	 * @exception DebugException if unable to perform the evaluation,
 	 * 	or if an exception occurrs while performing the evaluation
 	 */
-	public String evaluateToString() throws DebugException;
+	public String evaluateToString(IJavaThread thread) throws DebugException;
 }
 
 

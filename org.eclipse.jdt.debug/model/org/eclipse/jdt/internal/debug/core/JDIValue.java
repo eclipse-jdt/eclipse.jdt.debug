@@ -13,8 +13,8 @@ import java.util.*;import org.eclipse.debug.core.DebugException;import org.ecl
 
 public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	
-	protected JDIVariable fVariable;
 	public Value fValue;
+	protected List fVariables;
 	
 	protected static final String PREFIX = "jdi_value.";
 	protected static final String NULL= PREFIX + "null";
@@ -42,9 +42,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 */
 	protected boolean fAllocated = true;
 	
-	public JDIValue(JDIVariable variable, Value value) {
-		super(null);
-		fVariable = variable;
+	public JDIValue(JDIDebugTarget target, Value value) {
+		super(target);
 		fValue = value;
 	}
 	
@@ -54,12 +53,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}			
 		return super.getAdapter(adapter);
 	}
-
-	public JDIValue(Value value, IJavaThread thread) {
-		this((JDIVariable)null, value);
-		fJavaThread = thread;
-	}
-	
 
 	public int getElementType() {
 		return VALUE;
@@ -127,14 +120,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		return getUnknownMessage();
 	}
 
-
-	/**
-	 * @see IValue
-	 */
-	public IVariable getVariable() {
-		return fVariable;
-	}
-
 	public int hashCode() {
 		if (fValue == null) {
 			return getClass().hashCode();
@@ -161,27 +146,31 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}
 	}	
 
-
 	/**
-	 * @see IDebugElement
+	 * @see IValue
 	 */
-	protected List getChildren0() throws DebugException {
+	public IVariable[] getVariables() throws DebugException {
+		List list = getVariables0();
+		return (IVariable[])list.toArray(new IVariable[list.size()]);
+	}
+	
+	/**
+	 *
+	 */
+	protected List getVariables0() throws DebugException {
 		if (!isAllocated()) {
 			return Collections.EMPTY_LIST;
 		}
-		if (fChildren != null) {
-			return fChildren;
+		if (fVariables != null) {
+			return fVariables;
 		} else
-			if (hasChildren()) {
-				if (fValue == null) {
-					return Collections.EMPTY_LIST;
-				}
-				fChildren= new ArrayList();
+			if (fValue instanceof ObjectReference) {
+				ObjectReference object= (ObjectReference) fValue;
+				fVariables= new ArrayList();
 				if (isArray()) {
 					int length= getArrayLength();
-					fChildren= JDIArrayPartition.splitArray(this, 0, length - 1);
+					fVariables= JDIArrayPartition.splitArray((JDIDebugTarget)getDebugTarget(), (ArrayReference)object, 0, length - 1);
 				} else {		
-					ObjectReference object= (ObjectReference) fValue;
 					List fields= null;
 					try {
 						ReferenceType refType= object.referenceType();
@@ -194,16 +183,16 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 					Iterator list= fields.iterator();
 					while (list.hasNext()) {
 						Field field= (Field) list.next();
-						fChildren.add(new JDIFieldVariable(this, field));
+						fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, object));
 					}
-					Collections.sort(fChildren, new Comparator() {
+					Collections.sort(fVariables, new Comparator() {
 						public int compare(Object a, Object b) {
 							return sortChildren(a, b);
 						}
 					});
 				}
 				
-				return fChildren;
+				return fVariables;
 			} else {
 				return Collections.EMPTY_LIST;
 			}
@@ -231,19 +220,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			internalError(de);
 			return -1;
 		}
-	}
-	/**
-	 * @see IDebugElement
-	 */
-	public boolean hasChildren() throws DebugException {
-		if (isAllocated() && fValue instanceof ObjectReference) {
-			if (isArray()) {
-				return getArrayLength() > 0;
-			} else {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -283,34 +259,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 		}
 		return fAllocated;
-	}
-
-	/**
-	 * Returns the debug target this value originated from
-	 */
-	public IDebugTarget getDebugTarget() {
-		return getThread().getDebugTarget();
-	}
-	
-	/**
-	 * Returns the stack frame this value originated from
-	 */
-	public IStackFrame getStackFrame() {
-		if (getVariable() != null) {
-			return getVariable().getStackFrame();
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the thread this value originated from
-	 */
-	public IThread getThread() {
-		if (fJavaThread == null) {
-			return getVariable().getThread();
-		} else {
-			return fJavaThread;
-		}
 	}
 	
 	/**
@@ -355,7 +303,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	/**
 	 * @see IJavaValue
 	 */
-	public synchronized String evaluateToString() throws DebugException {
+	public synchronized String evaluateToString(final IJavaThread thread) throws DebugException {
 		String sig = getSignature();
 		if (sig == null) {
 			return DebugJavaUtils.getResourceString(NULL);
@@ -365,7 +313,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return getValueString();
 		}
 
-		if (!getThread().isSuspended()) {
+		if (thread.isSuspended()) {
 			requestFailed(ERROR_TO_STRING_NOT_SUSPENDED, null);
 		}
 		
@@ -375,7 +323,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		Runnable eval= new Runnable() {
 			public void run() {
 				try {
-					toString[0] = evaluateToString0();
+					toString[0] = evaluateToString0((JDIThread)thread);
 				} catch (DebugException e) {
 					ex[0]= e;
 				}					
@@ -385,7 +333,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 		};
 		
-		int timeout = ((JDIThread)getThread()).getRequestTimeout();
+		int timeout = ((JDIThread)thread).getRequestTimeout();
 		Thread evalThread = new Thread(eval);
 		evalThread.start();
 		try {
@@ -407,7 +355,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	
-	protected String evaluateToString0() throws DebugException {
+	protected String evaluateToString0(JDIThread thread) throws DebugException {
 		String toString = null;
 		try {
 			ObjectReference object = (ObjectReference)fValue;
@@ -417,7 +365,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				requestFailed(ERROR_TO_STRING_NOT_IMPLEMENTED, null);
 			}
 			Method method = (Method)methods.get(0);
-			JDIThread thread = (JDIThread)getThread();
 			StringReference string = (StringReference)thread.invokeMethod(null, object, method, Collections.EMPTY_LIST);
 			toString = string.value();
 		} catch (VMDisconnectedException e) {

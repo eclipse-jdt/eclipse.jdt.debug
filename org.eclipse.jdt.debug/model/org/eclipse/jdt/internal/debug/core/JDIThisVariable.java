@@ -22,8 +22,8 @@ public class JDIThisVariable extends JDIVariable {
 	/**
 	 * Constructs a variable representing 'this' in a stack frame.
 	 */
-	public JDIThisVariable(JDIStackFrame parent, ObjectReference object) {
-		super(parent);
+	public JDIThisVariable(JDIDebugTarget target, ObjectReference object) {
+		super(target);
 		fObject= object;
 	}
 

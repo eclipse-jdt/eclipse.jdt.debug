@@ -49,6 +49,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private static final int MAX_THREAD_DEATH_ATTEMPTS = 1;
 	
 	/**
+	 * Threads contained in this debug target.
+	 */
+	protected List fThreads;
+	/**
 	 * Associated system process, or <code>null</code> if not available.
 	 */
 	protected IProcess fProcess;
@@ -135,6 +139,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 	public JDIDebugTarget(VirtualMachine jvm, String name, boolean supportTerminate, boolean supportDisconnect, IProcess process) {
 		super(null);
+		fDebugTarget = this;
 		fSupportsTerminate= supportTerminate;
 		fSupportsDisconnect= supportDisconnect;
 		fVirtualMachine= jvm;
@@ -145,6 +150,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 		fClassPrepareRequestsByClass= new HashMap(5);
 		fBreakpoints = new ArrayList(5);
+		fThreads = new ArrayList(5);
 		initialize();
 	}
 
@@ -156,13 +162,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public void handleVMStart(VMStartEvent event) {
 		try {
-			try {
-				List threads= getChildren0();
-				for (int i= 0; i < threads.size(); i++) {
-					((JDIThread) threads.get(i)).setRunning(true);
-				}
-			} catch (DebugException e) {
-				internalError(e);
+			for (int i= 0; i < fThreads.size(); i++) {
+				((JDIThread) fThreads.get(i)).setRunning(true);
 			}
 			fVirtualMachine.resume();
 		} catch (RuntimeException e) {
@@ -199,7 +200,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (threads != null) {
 			Iterator initialThreads= threads.iterator();
 			while (initialThreads.hasNext()) {
-				createChild((ThreadReference) initialThreads.next());
+				createThread((ThreadReference) initialThreads.next());
 			}
 		}
 	}
@@ -247,14 +248,27 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 	}
 	
+	protected EventRequestManager getEventRequestManager() {
+		return fVirtualMachine.eventRequestManager();
+	}
+	
 	/**
-	 * Creates, adds and returns a child for the given underlying thread reference.
+	 * Creates, adds and returns a thread for the given underlying thread reference.
 	 */
-	protected JDIThread createChild(ThreadReference thread) {
+	protected JDIThread createThread(ThreadReference thread) {
 		JDIThread jdiThread= new JDIThread(this, thread);
-		addChild(jdiThread);
+		fThreads.add(jdiThread);
+		jdiThread.fireCreationEvent();
 		return jdiThread;
 	}
+	
+	/**
+	 * @see IDebugTarget
+	 */
+	public IThread[] getThreads() {
+		return (IThread[])fThreads.toArray(new IThread[fThreads.size()]);
+	}
+	
 	/**
 	 * @see IDebugTarget
 	 */
@@ -447,15 +461,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * or <code>null</code> if not found.
 	 */
 	protected JDIThread findThread(ThreadReference tr) {
-		List threads= null;
-		try { 
-			threads = getChildren0();
-		} catch (DebugException e) {
-			internalError(e);
-			return null;
-		}
-		for (int i= 0; i < threads.size(); i++) {
-			JDIThread t= (JDIThread) threads.get(i);
+		for (int i= 0; i < fThreads.size(); i++) {
+			JDIThread t= (JDIThread) fThreads.get(i);
 			if (t.getUnderlyingThread().equals(tr))
 				return t;
 		}
@@ -521,7 +528,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void handleThreadDeath(ThreadDeathEvent event) {
 		JDIThread thread= findThread(event.thread());
 		if (thread != null) {
-			fChildren.remove(thread);
+			fThreads.remove(thread);
 			thread.terminated();
 		}
 	}
@@ -533,7 +540,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		ThreadReference thread= event.thread();
 		JDIThread jdiThread= findThread(thread);
 		if (jdiThread == null) {
-			jdiThread = createChild(thread);
+			jdiThread = createThread(thread);
 		}
 		jdiThread.setRunning(true);
 	}
@@ -744,11 +751,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Removes all of the children from this element.
 	 */
 	public void removeAllChildren() {
-		if  (fChildren == null) {
-			return;
-		}
-		Iterator itr= fChildren.iterator();
-		fChildren= null;
+		Iterator itr= fThreads.iterator();
+		fThreads= Collections.EMPTY_LIST;
 		while (itr.hasNext()) {
 			JDIThread child= (JDIThread) itr.next();
 			child.terminated();
@@ -775,18 +779,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Adds this child to the collection of children for this element.
 	 */
 	public void addChild(IDebugElement child) {
-		boolean added= false;
-		if (fChildren == null) {
-			fChildren= new ArrayList();
-		} 
-		if (!fChildren.contains(child)) {
-			fChildren.add(child);
-			added= true;
-		}
 
-		if (added) {
-			((JDIDebugElement) child).fireCreationEvent();
-		}
 	}
 
 	/**
@@ -823,7 +816,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see IJavaDebugTarget
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
-		IDebugElement[] threads = getChildren();
+		IThread[] threads = getThreads();
 		for (int i = 0; i < threads.length; i++) {
 			JDIThread thread = (JDIThread)threads[i];
 			IVariable var = thread.findVariable(varName);

@@ -5,20 +5,15 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The hot code replace manager listens for changes to
@@ -156,11 +151,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	 * stack frames in the target.
 	 */
 	protected void attemptDropToFrame(IDebugTarget target, List replacedClassNames) throws DebugException {
-		IDebugElement[] threads= target.getChildren();
+		IThread[] threads= target.getThreads();
 		for (int i = 0; i < threads.length; i++) {
 			IThread thread= (IThread) threads[i];
 			if (thread.isSuspended()) {
-				IDebugElement[] frames= thread.getChildren();
+				IStackFrame[] frames= thread.getStackFrames();
 				IJavaStackFrame dropFrame= null;
 				for (int j= frames.length - 1; j >= 0; j--) {
 					IJavaStackFrame f= (IJavaStackFrame) frames[j];

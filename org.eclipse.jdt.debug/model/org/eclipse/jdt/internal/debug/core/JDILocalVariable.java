@@ -18,12 +18,19 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * The wrappered local variable
 	 */
 	protected LocalVariable fLocal;
+	
+	/**
+	 * The stack frame the local is contained in
+	 */
+	protected JDIStackFrame fStackFrame;
+	
 	/**
 	 * Constructs a local variable wrappering the given local from
 	 * in a stack frame.
 	 */
-	public JDILocalVariable(JDIStackFrame parent, LocalVariable local) {
-		super(parent);
+	public JDILocalVariable(JDIStackFrame frame, LocalVariable local) {
+		super((JDIDebugTarget)frame.getDebugTarget());
+		fStackFrame= frame;
 		fLocal= local;
 	}
 
@@ -31,7 +38,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * Returns this variable's current Value.
 	 */
 	protected Value retrieveValue() {
-		return ((JDIStackFrame) getParent()).fStackFrame.getValue(fLocal);
+		return fStackFrame.getUnderlyingStackFrame().getValue(fLocal);
 	}
 
 	/**
@@ -52,7 +59,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public void setValue(Value value) throws DebugException {
 		try {
-			((JDIStackFrame) getParent()).fStackFrame.setValue(fLocal, value);
+			fStackFrame.getUnderlyingStackFrame().setValue(fLocal, value);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(ERROR_SET_VALUE, e);
 		} catch (InvalidTypeException e) {

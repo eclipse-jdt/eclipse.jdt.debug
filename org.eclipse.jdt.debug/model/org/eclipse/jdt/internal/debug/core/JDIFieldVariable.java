@@ -19,11 +19,18 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	 */
 	protected Field fField;
 	/**
+	 * The object containing the field,
+	 * or <code>null</code> for a static field.
+	 */
+	protected ObjectReference fObject;
+	
+	/**
 	 * Constructs a field wrappering the given field.
 	 */
-	public JDIFieldVariable(JDIDebugElement parent, Field field) {
-		super(parent);
+	public JDIFieldVariable(JDIDebugTarget target, Field field, ObjectReference objectRef) {
+		super(target);
 		fField= field;
+		fObject= objectRef;
 	}
 
 	/**
@@ -33,12 +40,7 @@ public class JDIFieldVariable extends JDIModificationVariable {
 		if (fField.isStatic()) {
 			return (fField.declaringType().getValue(fField));
 		} else {
-			IDebugElement parent= getParent();
-			ObjectReference or= (ObjectReference) ((JDIValue) parent).fValue;
-			if (or == null) {
-				return null;
-			}
-			return or.getValue(fField);
+			return fObject.getValue(fField);
 		}			
 	}
 
@@ -57,15 +59,10 @@ public class JDIFieldVariable extends JDIModificationVariable {
 
 	protected void setValue(Value value) throws DebugException {
 		try {
-			IDebugElement parent= getParent();
 			if (isStatic()) { 
 				((ClassType)fField.declaringType()).setValue(fField, value);
 			} else {
-				ObjectReference or= (ObjectReference) ((JDIValue) parent).fValue;
-				if (or == null) {
-					requestFailed(ERROR_SET_VALUE, null);
-				}
-				or.setValue(fField, value);
+				fObject.setValue(fField, value);
 			}
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(ERROR_SET_VALUE, e);

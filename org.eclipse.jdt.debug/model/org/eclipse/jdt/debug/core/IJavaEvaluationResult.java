@@ -95,4 +95,11 @@ public interface IJavaEvaluationResult {
 	 * @return exception
 	 */
 	Throwable getException();
+	
+	/**
+	 * Returns the thread in which the evaluation was performed.
+	 * 
+	 * @return the thread in which the evaluation was performed
+	 */
+	IJavaThread getThread();
 }

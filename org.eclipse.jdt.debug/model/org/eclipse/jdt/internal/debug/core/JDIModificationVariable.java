@@ -31,8 +31,8 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		fgValidSignatures.add(jdiStringSignature); // String
 	};
 
-	public JDIModificationVariable(JDIDebugElement parent) {
-		super(parent);
+	public JDIModificationVariable(JDIDebugTarget target) {
+		super(target);
 	}
 	
 	public boolean supportsValueModification() {
@@ -58,7 +58,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	
 		String signature= null;
 		Value cValue= getCurrentValue();
-		VirtualMachine vm= getVirtualMachine();
+		VirtualMachine vm= getVM();
 		if (cValue == null) {
 			//String with null value
 			signature = jdiStringSignature;
@@ -178,35 +178,12 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		} 
 
 		setValue(value);
-		fireValueChanged();
+		fireChangeEvent();
 	}
 
 	/**
 	 * Set my value to the given value
 	 */
 	protected abstract void setValue(Value value) throws DebugException;
-
-	/**
-	 * Returns the virtual machine to which this variable belongs.
-	 */
-	protected abstract VirtualMachine getVirtualMachine();
 	
-	/**
-	 * The value of this variable has changed.
-	 * Fire an event that will update the root variable and
-	 * children.
-	 */
-	protected void fireValueChanged() {
-		IDebugElement parent= getParent();
-		IDebugElement varRoot= this;
-		while (!(parent instanceof JDIStackFrame) && parent != null) {
-			varRoot= parent;
-			if (parent instanceof IValue) {
-				parent= ((IValue)parent).getVariable();
-			} else {
-				parent= parent.getParent();
-			}
-		}
-		((JDIDebugElement)varRoot).fireChangeEvent();
-	}
 }

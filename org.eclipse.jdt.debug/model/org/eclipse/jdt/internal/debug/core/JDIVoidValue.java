@@ -7,7 +7,6 @@ package org.eclipse.jdt.internal.debug.core;
  
 import java.util.Collections;
 import java.util.List;
-import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
  * Represents a value of "void"
@@ -15,24 +14,14 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 public class JDIVoidValue extends JDIValue {
 	
 	
-	public JDIVoidValue(IJavaThread thread) {
-		super(null, thread);
+	public JDIVoidValue(JDIDebugTarget target) {
+		super(target, null);
 	}
 
-	/**
-	 * @see IDebugElement
-	 */
-	protected List getChildren0() {
+	protected List getVariables0() {
 		return Collections.EMPTY_LIST;
 	}
 	
-	/**
-	 * @see IDebugElement
-	 */
-	public boolean hasChildren() {
-		return false;
-	}
-
 	/**
 	 * @see IValue
 	 */

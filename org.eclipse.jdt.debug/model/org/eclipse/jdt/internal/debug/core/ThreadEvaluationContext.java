@@ -131,7 +131,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				if (valueField != null) {
 					try {
 						Value v= fResult.getValue(valueField);
-						fValue = new JDIValue(v, getModelThread());
+						fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), v);
 						return;
 					} catch (RuntimeException e) {
 						getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
@@ -139,7 +139,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				}
 			}
 			// not a primite type
-			fValue = new JDIValue(fResult, getModelThread());
+			fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), fResult);
 		} else {
 			if (fResultType != null) {
 				try {
@@ -147,7 +147,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 					String sig = ref.signature();
 					if (sig.equals("V") || sig.equals("Lvoid;")) {
 						// void
-						fValue = new JDIVoidValue(getModelThread());
+						fValue = new JDIVoidValue((JDIDebugTarget)getModelThread().getDebugTarget());
 						return;
 					}
 				} catch (RuntimeException e) {
@@ -158,7 +158,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 				fValue= null;
 			} else {
 				// null
-				fValue = new JDIValue(null, getModelThread());
+				fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), null);
 			}
 		}
 	}
@@ -329,6 +329,9 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 		return fModelThread;
 	}
 
+	public IJavaThread getThread() {
+		return getModelThread();
+	}
 	
 	/**
 	 * Helper method - returns the jdi VM

@@ -5,12 +5,16 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
+import java.util.List;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
+
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.VMDisconnectedException;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.jdt.debug.core.IJavaValue;
-import java.util.List;
 
 /**
  * The value for an array partition.
@@ -26,10 +30,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	
 	public int getElementType() {
 		return VALUE;
-	}
-
-	public IVariable getVariable() {
-		return fPartition;
 	}
 
 	public String getName() {
@@ -48,7 +48,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 		return "";
 	}
 	
-	public String evaluateToString() {
+	public String evaluateToString(IJavaThread thread) {
 		return getValueString();
 	}
 		
@@ -56,8 +56,16 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 		return true;
 	}
 	
-	protected List getChildren0() {
-		return JDIArrayPartition.splitArray(this, fPartition.getStart(), fPartition.getEnd());
+	/**
+	 * @see IValue
+	 */
+	public IVariable[] getVariables() throws DebugException {
+		List list = getVariables0();
+		return (IVariable[])list.toArray(new IVariable[list.size()]);
+	}
+	
+	protected List getVariables0() {
+		return JDIArrayPartition.splitArray((JDIDebugTarget)fPartition.getDebugTarget(), fPartition.getArrayReference(), fPartition.getStart(), fPartition.getEnd());
 	}
 
 	public ArrayReference getArrayReference() {
@@ -68,21 +76,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	 * @see IDebugElement
 	 */
 	public IDebugTarget getDebugTarget() {
-		return getVariable().getDebugTarget();
-	}
-	
-	/**
-	 * Returns the stack frame this value originated from
-	 */
-	public IStackFrame getStackFrame() {
-		return getVariable().getStackFrame();
-	}
-	
-	/**
-	 * Returns the thread this value originated from
-	 */
-	public IThread getThread() {
-		return getVariable().getThread();
+		return fPartition.getDebugTarget();
 	}
 
 	/**

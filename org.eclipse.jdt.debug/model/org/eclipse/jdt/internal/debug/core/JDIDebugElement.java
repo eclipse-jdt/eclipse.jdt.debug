@@ -12,21 +12,16 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	// Resource String keys
 	protected static final String UNKNOWN= "jdi.common.unknown";
 	protected static final String ERROR_GET_CHILDREN= "jdi.common.error.get_children";
-	
-	/**
-	 * This element's parent, or <code>null</code> if this
-	 * element does not have a parent.
-	 */
-	protected JDIDebugElement fParent= null;
-	/**
-	 * A collection of the children of this element.
-	 */
-	protected List fChildren= null;
-	
+		
 	/**
 	 * Collection of possible JDI exceptions
 	 */
 	protected static List fgJDIExceptions;
+	
+	/**
+	 * Debug target
+	 */
+	protected JDIDebugTarget fDebugTarget;
 	
 	static {
 		fgJDIExceptions = new ArrayList(15);
@@ -49,11 +44,8 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 		fgJDIExceptions.add(OperationRefusedException.class);
 	}
 	
-	/**
-	 * Constructs a new <code>JDIDebugElement</code>.
-	 */
-	public JDIDebugElement(JDIDebugElement parent) {
-		fParent= parent;
+	public JDIDebugElement(JDIDebugTarget target) {
+		fDebugTarget = target;
 	}
 
 	/**
@@ -61,13 +53,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	public static void logError(Exception e) {
 		DebugJavaUtils.logError(e);
-	}
-	
-	/**
-	 * Returns the EventRequestManager for this element's VirtualMachine
-	 */
-	protected EventRequestManager getEventRequestManager() {
-		return getVM().eventRequestManager();
 	}
 	
 	/**
@@ -86,62 +71,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	public String getModelIdentifier() {
 		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
-	}
-	
-	/**
-	 * Retursn the VM this element is contained in
-	 */
-	public VirtualMachine getVM() {
-		return ((JDIDebugTarget)getDebugTarget()).getVM();
-	}
-	
-	
-	/**
-	 * @see IDebugElement
-	 */
-	public IDebugTarget getDebugTarget() {
-		return getParent().getDebugTarget();
-
-	}
-		
-	/**
-	 * @see IDebugElement
-	 */
-	public IStackFrame getStackFrame() {
-		return null;
-	}
-	
-	/**
-	 * @see IDebugElement
-	 */
-	public IThread getThread() {
-		return null;
-	}
-	
-	/**
-	 * @see IProcess
-	 */
-	public ILaunch getLaunch() {
-		return getDebugPlugin().getLaunchManager().findLaunch(getDebugTarget());
-	}
-
-	/**
-	 * Return children as a list
-	 */
-	protected List getChildren0() throws DebugException {
-		if (fChildren == null) {
-			return Collections.EMPTY_LIST;
-		} else {
-			return fChildren;
-		}
-	}
-	
-	/**
-	 * @see IDebugElement
-	 */
-	public IDebugElement[] getChildren() throws DebugException {
-		List list = getChildren0();
-		return (IDebugElement[])list.toArray(new IDebugElement[list.size()]);
 	}
 	
 	/**
@@ -208,45 +137,12 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public IBreakpointManager getBreakpointManager() {
 		return getDebugPlugin().getBreakpointManager();
 	}
-	
-	/**
-	 * Returns the source locator for this debug element
-	 */
-	public ISourceLocator getSourceLocator() {
-		ILaunch launch= getLaunch();
-		if (launch == null) {
-			return null;
-		}
-		
-		return launch.getSourceLocator();
-	}
 
 	/**
 	 * @see IDebugElement
 	 */
 	public DebugPlugin getDebugPlugin() {
 		return DebugPlugin.getDefault();
-	}
-
-	/**
-	 * @see IDebugElement
-	 */
-	public IDebugElement getParent() {
-		return fParent;
-	}
-
-	/**
-	 * @see IDebugElement
-	 */
-	public IProcess getProcess() {
-		return getDebugTarget().getProcess();
-	}
-
-	/**
-	 * @see IDebugElement
-	 */
-	public boolean hasChildren() throws DebugException {
-		return !getChildren0().isEmpty();
 	}
 	
 	/**
@@ -331,5 +227,22 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	protected boolean hasPendingEvents() {
 		return ((JDIDebugTarget)getDebugTarget()).fEventDispatcher.hasPendingEvents();
+	}
+	
+	public IDebugTarget getDebugTarget() {
+		return fDebugTarget;
+	}
+
+	protected VirtualMachine getVM() {
+		return fDebugTarget.getVM();
+	}
+	
+	protected EventRequestManager getEventRequestManager() {
+		return getVM().eventRequestManager();
+	}
+	
+	public ILaunch getLaunch() {
+		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
+		return mgr.findLaunch(getDebugTarget());
 	}
 }
