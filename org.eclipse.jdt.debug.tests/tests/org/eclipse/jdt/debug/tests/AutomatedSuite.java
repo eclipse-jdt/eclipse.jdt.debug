@@ -99,7 +99,6 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(BootpathTests.class));
 		
 		// Evaluation tests
-		addTest(new TestSuite(ProjectCreationDecorator.class));		
 		addTest(new TestSuite(TestsOperators1.class));
 		addTest(new TestSuite(TestsOperators2.class));
 		addTest(new TestSuite(TestsArrays.class));
