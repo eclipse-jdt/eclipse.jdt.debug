@@ -509,13 +509,18 @@ public class JDIDebugModel {
 	}	
 	
 	/**
-	 * Returns the preference store for this plug-in.
+	 * Returns the preference store for this plug-in or <code>null</code>
+	 * if the store is not available.
 	 * 
 	 * @return the preference store for this plug-in
 	 * @since 2.0
 	 */
 	public static Preferences getPreferences() {
-		return JDIDebugPlugin.getDefault().getPluginPreferences();
+		JDIDebugPlugin deflt= JDIDebugPlugin.getDefault();
+		if (deflt != null) {
+			return deflt.getPluginPreferences();
+		}
+		return null;
 	}
 	
 	/**

@@ -1,9 +1,11 @@
 package org.eclipse.jdi.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +24,6 @@ import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketRawLaunchingConnectorImpl;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.LaunchingConnector;
@@ -113,18 +114,17 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		
 	}
 
-	
 	/**
 	 * @return Returns Timeout value for requests to VM, if not overridden for the VM.
 	 * This value is used to throw the exception TimeoutException in JDI calls.
 	 * NOTE: This is not in compliance with the Sun's JDI.
 	 */
 	public int getGlobalRequestTimeout() {
-		if (JDIDebugPlugin.getDefault() == null) {
+		if (JDIDebugModel.getPreferences() != null) {
+			return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+		} else {
 			// JDI plug-in is not loaded
 			return JDIDebugModel.DEF_REQUEST_TIMEOUT;
-		} else {
-			return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 		}
 	}
 	
