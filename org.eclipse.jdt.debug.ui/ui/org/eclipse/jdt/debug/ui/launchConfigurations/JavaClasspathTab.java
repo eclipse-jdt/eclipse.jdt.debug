@@ -65,7 +65,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	protected RuntimeClasspathViewer fBootpathViewer;
 	protected Button fClassPathDefaultButton;
 	protected List fActions = new ArrayList(10);
-	protected Image fImage = null;
 
 	/**
 	 * The last launch config this tab was initialized from
@@ -310,10 +309,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		if (fImage == null) {
-			fImage = JavaPluginImages.DESC_TOOL_CLASSPATH_ORDER.createImage();
-		}
-		return fImage;
+		return JavaPluginImages.DESC_TOOL_CLASSPATH_ORDER.createImage();
 	}		
 	
 	/**
@@ -355,9 +351,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		if (fClasspathViewer != null) {
 			fClasspathViewer.removeEntriesChangedListener(this);
 			fBootpathViewer.removeEntriesChangedListener(this);
-		}
-		if (fImage != null) {
-			fImage.dispose();
 		}
 		super.dispose();
 	}
