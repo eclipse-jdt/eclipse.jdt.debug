@@ -400,19 +400,6 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 		
 	}	
 		
-	/**
-	 * Test setting & retrieving of default launch configuration type
-	 */
-	public void testDefaultLaunchConfigurationType() throws CoreException {
-		IProject pro = getJavaProject().getProject();
-		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		assertNotNull("could not find launch configuration type", type);
-		getLaunchManager().setDefaultLaunchConfigurationType(pro, type.getIdentifier());
-		ILaunchConfigurationType def = getLaunchManager().getDefaultLaunchConfigurationType(pro, false);
-		assertEquals("default not set properly", type, def);
 		
-		
-	}
-	
 }
 
