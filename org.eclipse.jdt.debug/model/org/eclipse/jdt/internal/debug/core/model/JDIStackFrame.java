@@ -548,7 +548,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#supportsDropToFrame()
 	 */
 	public boolean supportsDropToFrame() {
-		//FIXME 1GH3XDA: ITPDUI:ALL - Drop to frame hangs if after invoke
 		JDIThread thread= (JDIThread) getThread();
 		JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
 		try {
