@@ -288,7 +288,6 @@ public class MonitorManager {
 				updateDeadlock(thread);
 			}
 		} catch(DebugException e){
-			JDIDebugUIPlugin.log(e);
 		}
 	}
 
