@@ -175,6 +175,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
+		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
 		return (IJavaThread)suspendee;		
 	}
 	
