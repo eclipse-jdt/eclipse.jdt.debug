@@ -360,10 +360,13 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					break;
 				case IRuntimeClasspathEntry.VARIABLE:
 					if (entry.getVariableName().equals(JavaRuntime.JRELIB_VARIABLE)) {
-						IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
+						IJavaProject pro = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+						IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
+						IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
 						// omit from path unless JRE_LIB resolves to a library different
 						// than the config's project's JRE
-						if (rs.length == 1 && !rs[0].equals(entry)) {
+						if (!buildVM.equals(runVM)) {
+							IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
 							// add to the beginning
 							for (int j = 0; j < rs.length; j++) {
 								resolved.add(j, rs[j]);
@@ -375,16 +378,20 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					break;
 				case IRuntimeClasspathEntry.CONTAINER:
 					if (entry.getVariableName().equals(JavaRuntime.JRE_CONTAINER)) {
-						IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
+						IJavaProject pro = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+						IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
+						IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
 						// omit from path unless JRE_LIB resolves to a library different
 						// than the config's project's JRE
-						if (rs.length == 1 && !rs[0].equals(entry)) {
+						if (!buildVM.equals(runVM)) {
+							IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
 							// add to the beginning
 							for (int j = 0; j < rs.length; j++) {
 								resolved.add(j, rs[j]);
 							}
 						}
 					} else {
+						// XXX: need to expand & resolve
 						resolved.add(entry);
 					}				
 					break;

@@ -689,7 +689,24 @@ public final class JavaRuntime {
 		
 		return getDefaultVMInstall();
 	}
-
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Returns the VMInstall used to build the given Java project - either an
+	 * explicitly set VM install, or the workspace default.
+	 * 
+	 * @param project Java proect
+	 * @return vm install
+	 * @exception CoreException if unable to compute a vm install
+	 */
+	public static IVMInstall computeVMInstall(IJavaProject project) throws CoreException {
+		IVMInstall vm = getVMInstall(project);
+		if (vm == null) {
+			vm = getDefaultVMInstall();
+		}
+		return vm;
+	}
+	
 	/**
 	 * Throws a core exception with an internal error status.
 	 * 
