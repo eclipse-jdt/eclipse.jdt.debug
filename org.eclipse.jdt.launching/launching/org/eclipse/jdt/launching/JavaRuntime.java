@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -114,7 +115,19 @@ public final class JavaRuntime {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER";
+	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key for launch/connect timeout. VM Runners should honor this timeout
+	 * value when attempting to launch and connect to a debuggable VM. The value is
+	 * an int, indicating a number of millieseconds.
+	 */
+	public static final String PREF_CONNECT_TIMEOUT = LaunchingPlugin.getUniqueIdentifier() + ".PREF_CONNECT_TIMEOUT"; //$NON-NLS-1$
+	
+	/**
+	 * Default launch/connect timeout (ms).
+	 */
+	public static final int DEF_CONNECT_TIMEOUT = 20000;
 	
 	/**
 	 * The class org.eclipse.debug.core.model.IProcess allows attaching
@@ -1102,4 +1115,13 @@ public final class JavaRuntime {
 	public static IVMConnector[] getVMConnectors() {
 		return LaunchingPlugin.getDefault().getVMConnectors();
 	}	
+	
+	/**
+	 * Returns the preference store for the launching plug-in.
+	 * 
+	 * @return the preference store for the launching plug-in
+	 */
+	public static Preferences getPreferences() {
+		return LaunchingPlugin.getDefault().getPluginPreferences();
+	}
 }

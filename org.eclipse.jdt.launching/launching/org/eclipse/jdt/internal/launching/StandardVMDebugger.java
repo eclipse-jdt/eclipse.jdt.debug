@@ -166,9 +166,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 		port.setValue(portNumber);
 		
 		Connector.IntegerArgument timeoutArg= (Connector.IntegerArgument) map.get("timeout"); //$NON-NLS-1$
-		// bug #5163
 		if (timeoutArg != null) {
-			timeoutArg.setValue(20000);
+			int timeout = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+			timeoutArg.setValue(timeout);
 		}
 	}
 

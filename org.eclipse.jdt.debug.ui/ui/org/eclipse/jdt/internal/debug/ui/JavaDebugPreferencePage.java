@@ -9,6 +9,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -47,6 +48,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fAlertObsoleteButton;
 	// Timeout
 	private IntegerFieldEditor fTimeoutText;
+	private IntegerFieldEditor fConnectTimetoutText;
 	
 	private PropertyChangeListener fPropertyChangeListener;
 	
@@ -125,6 +127,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		comp = createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Communication_1")); //$NON-NLS-1$
 		fTimeoutText = new IntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), comp); //$NON-NLS-1$
+		fConnectTimetoutText = new IntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), comp); //$NON-NLS-1$
 		// cannot set preference store, as it is a core preference
 				
 		setValues();
@@ -201,6 +204,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
 		fTimeoutText.setStringValue(new Integer(JDIDebugModel.DEF_REQUEST_TIMEOUT).toString());
+		fConnectTimetoutText.setStringValue(new Integer(JavaRuntime.DEF_CONNECT_TIMEOUT).toString());
 	}
 	
 	/**
@@ -252,6 +256,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
 		fTimeoutText.setStringValue(new Integer(JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
+		fConnectTimetoutText.setStringValue(new Integer(JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 	}
 	
 	/**
@@ -265,6 +270,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
+		JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectTimetoutText.getIntValue());
 	}
 	
 	protected PropertyChangeListener getPropertyChangeListener() {

@@ -16,13 +16,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMConnector;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
-public class LaunchingPlugin extends Plugin {
+public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener {
 	
 	/**
 	 * Identifier for 'vmConnectors' extension point
@@ -73,8 +76,10 @@ public class LaunchingPlugin extends Plugin {
 	 * 
 	 * @see Plugin#shutdown()
 	 */
-	public void shutdown() {
+	public void shutdown() throws CoreException {
 		ArchiveSourceLocation.shutdown();
+		getPluginPreferences().removePropertyChangeListener(this);
+		super.shutdown();
 	}
 		
 	/**
@@ -94,6 +99,10 @@ public class LaunchingPlugin extends Plugin {
 
 		optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter", filters);  //$NON-NLS-1$
 		JavaCore.setOptions(optionsMap);
+		
+		// set default preference values
+		getPluginPreferences().setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
+		getPluginPreferences().addPropertyChangeListener(this);
 	}
 	
 	/**
@@ -142,5 +151,17 @@ public class LaunchingPlugin extends Plugin {
 			LaunchingPlugin.log(status);
 		}			
 	}
+	
+	/**
+	 * Save preferences whenever they change.
+	 * 
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(JavaRuntime.PREF_CONNECT_TIMEOUT)) {
+			savePluginPreferences();
+		}
+	}
+
 }
 
