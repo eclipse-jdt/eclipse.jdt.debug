@@ -1059,7 +1059,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see computeStackFrames()
 	 */
-	protected void preserveStackFrames() {
+	protected synchronized void preserveStackFrames() {
 		fRefreshChildren = true;
 		Iterator frames = fStackFrames.iterator();
 		while (frames.hasNext()) {

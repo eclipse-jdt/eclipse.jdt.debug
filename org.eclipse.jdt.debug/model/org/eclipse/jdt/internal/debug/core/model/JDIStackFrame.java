@@ -944,10 +944,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (frame != null) {
 			if (fLastStackFrame != null && !equalFrame(fLastStackFrame, frame)) {
 				clearCachedData();
-		}
+			}
 			fLastStackFrame = frame;
 		} else {
-			fLastStackFrame = fStackFrame;
+			if (fStackFrame != null) {
+				// only set the last stack frame if the current frame is not null:
+				//     * last stack frame should never be null
+				fLastStackFrame = fStackFrame;
+			}
 		}
 		fStackFrame = frame;
 		fRefreshVariables = true;
