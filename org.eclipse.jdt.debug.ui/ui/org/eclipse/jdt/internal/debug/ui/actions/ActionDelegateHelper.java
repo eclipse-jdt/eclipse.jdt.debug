@@ -22,7 +22,6 @@ import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -112,7 +111,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		} 
 	}
 	
-	public IMember getCurrentMember(ISelection currentSelection) {
+	public IMember getCurrentMember(ITextSelection currentSelection) {
 		if (currentSelection == getCurrentSelection()) {
 			return getMember();
 		}
@@ -122,16 +121,11 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 			return null;
 		}
 		IEditorInput editorInput= editor.getEditorInput();
-		ISelectionProvider sp= editor.getSelectionProvider();
-		if (sp == null) {
-			return null;
-		}
-		ITextSelection selection= (ITextSelection)sp.getSelection();
 		IMember m= null;
 		try {
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
 			if (classFile != null) {
-				IJavaElement e= classFile.getElementAt(selection.getOffset());
+				IJavaElement e= classFile.getElementAt(currentSelection.getOffset());
 				if (e instanceof IMember) {
 					m= (IMember)e;
 				}
@@ -142,7 +136,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 					synchronized (unit) {
 						unit.reconcile(ICompilationUnit.NO_AST /*don't create ast*/, false/*don't force problem detection*/, null/*use primary owner*/, null/*no progress monitor*/);
 					}
-					IJavaElement e = unit.getElementAt(selection.getOffset());
+					IJavaElement e = unit.getElementAt(currentSelection.getOffset());
 					if (e instanceof IMember) {
 						m= (IMember)e;
 					}
