@@ -122,7 +122,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public void startup() {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		// Register build watchers with each project
+		// Unregister build watchers with each project (Bug 8157)
 		IProject[] projects= getWorkspace().getRoot().getProjects();
 		for (int i= 0, numProjects= projects.length;  i < numProjects; i++) {
 			unregisterBuildWatcherForProject(projects[i]);
@@ -183,6 +183,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 	}
 	
+	/**
+	 * Removes references to the obsolete "hcrbuilder" from
+	 * the given project (Bug 8157).
+	 */
 	private void unregisterBuildWatcherForProject(IProject project) {
 		try {
 			IProjectDescription description = project.getDescription();
