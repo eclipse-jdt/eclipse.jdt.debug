@@ -4,6 +4,8 @@ package org.eclipse.jdt.internal.debug.ui.display;
  * All Rights Reserved.
  */
 
+import java.util.Comparator;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -33,13 +35,24 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Java snippet completion processor.
+ * Display snippet completion processor.
  */
 public class DisplayCompletionProcessor implements IContentAssistProcessor {
-	
+		
 	private ResultCollector fCollector;
 	private DisplayView fView;
 	private IContextInformationValidator fValidator;
+	
+	private char[] fProposalAutoActivationSet;
+	private Comparator fComparator;
+	
+	private static class CompletionProposalComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			ICompletionProposal c1= (ICompletionProposal) o1;
+			ICompletionProposal c2= (ICompletionProposal) o2;
+			return c1.getDisplayString().compareTo(c2.getDisplayString());
+		}
+	};
 	
 	public DisplayCompletionProcessor(DisplayView view) {
 		fCollector= new ResultCollector();
@@ -126,14 +139,23 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 			}
 		} catch (JavaModelException x) {
 			Shell shell= viewer.getTextWidget().getShell();
-			ErrorDialog.openError(shell,"Problems during completion", "An exception occurred during code completion", x.getStatus()); 
+			ErrorDialog.openError(shell,
+				DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
+				DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$ 
+				x.getStatus());  
 		} catch (DebugException de) {
 			Shell shell= viewer.getTextWidget().getShell();
-			ErrorDialog.openError(shell,"Problems during completion", "An exception occurred during code completion", de.getStatus()); 
+			ErrorDialog.openError(shell,
+				DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
+				DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$
+				de.getStatus());  
 		} catch (BadLocationException ble) {
 			Shell shell= viewer.getTextWidget().getShell();
 			IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, ble.getMessage(), ble);
-			ErrorDialog.openError(shell,"Problems during completion", "An exception occurred during code completion", status); 
+			ErrorDialog.openError(shell, 
+				DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
+				DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$
+				status); 
 		}
 		return null;
 
@@ -172,5 +194,24 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 			return (ICompilationUnit)sourceElement;
 		}
 		return null;
+	}
+	
+	/**
+	 * Tells this processor to order the proposals alphabetically.
+	 * 
+	 * @param order <code>true</code> if proposals should be ordered.
+	 */
+	public void orderProposalsAlphabetically(boolean order) {
+		fComparator= order ? new CompletionProposalComparator() : null;
+	}
+	
+	/**
+	 * Sets this processor's set of characters triggering the activation of the
+	 * completion proposal computation.
+	 * 
+	 * @param activationSet the activation set
+	 */
+	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
+		fProposalAutoActivationSet= activationSet;
 	}
 }
