@@ -72,6 +72,11 @@ public class JDIDebugModel {
 	public static final String PREF_HCR_WITH_COMPILATION_ERRORS= getPluginIdentifier() + ".PREF_HCR_WITH_COMPILATION_ERRORS"; //$NON-NLS-1$
 	
 	/**
+	 * Preference key for the list of user defined Java logical structures
+	 */
+	public static final String PREF_JAVA_LOGICAL_STRUCTURES= getPluginIdentifier() + ".PREF_JAVA_LOGICAL_STRUCTURES"; //$NON-NLS-1$
+	
+	/**
 	 * The default JDI request timeout when no preference is set.
 	 */
 	public static final int DEF_REQUEST_TIMEOUT = 3000;

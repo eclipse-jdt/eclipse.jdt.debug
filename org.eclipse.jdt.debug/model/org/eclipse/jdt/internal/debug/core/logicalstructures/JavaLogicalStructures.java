@@ -11,8 +11,10 @@
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,20 +26,45 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILogicalStructureTypeDelegate2 {
 	
+	// preference values
+	static final char IS_SUBTYPE_TRUE= 'T';
+	static final char IS_SUBTYPE_FALSE= 'F';
+	
+	/**
+	 * The list of java logical structures.
+	 */
+	private static List fJavaLogicalStructures= initJavaLogicalStructures();
+
 	/**
 	 * The list of java logical structures in this Eclipse install.
 	 */
-	private static List fJavaLogicalStructures= initJavaLogicalStructureExtension();
+	private static List fPluginContributedJavaLogicalStructures;
 	
 	/**
-	 * Get the configuration elements for the extension point and create the list 
-	 * of JavaLogicalStructure.
+	 * The list of java logical structures defined by the user.
 	 */
-	private static List initJavaLogicalStructureExtension() {
+	private static List fUserDefinedJavaLogicalStructures;
+	
+	/**
+	 * Get the logical structure from the extension point and the preference store.
+	 */
+	private static List initJavaLogicalStructures() {
+		fPluginContributedJavaLogicalStructures= initPluginContributedJavaLogicalStructure();
+		fUserDefinedJavaLogicalStructures= initUserDefinedJavaLogicalStructures();
+		List logicalStructures= new ArrayList(fPluginContributedJavaLogicalStructures);
+		logicalStructures.addAll(fUserDefinedJavaLogicalStructures);
+		return logicalStructures;
+	}
+	
+	/**
+	 * Get the configuration elements for the extension point.
+	 */
+	private static List initPluginContributedJavaLogicalStructure() {
 		List javaLogicalStructures= new ArrayList();
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES);
 		IConfigurationElement[] javaLogicalStructureElements= extensionPoint.getConfigurationElements();
@@ -75,9 +102,71 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILo
 				}
 				variables[j][1]= variableValue;
 			}
-			javaLogicalStructures.add(new JavaLogicalStructure(type, subtypes, value, description, variables));
+			javaLogicalStructures.add(new JavaLogicalStructure(type, subtypes, value, description, variables, true));
 		}
 		return javaLogicalStructures;
+	}
+	
+	/**
+	 * Get the user defined logical structures (from the preference store).
+	 */
+	static private List initUserDefinedJavaLogicalStructures() {
+		List logicalStructures= new ArrayList();
+		String logicalStructuresString= JDIDebugModel.getPreferences().getString(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES);
+		StringTokenizer tokenizer= new StringTokenizer(logicalStructuresString, "\0", true); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String type= tokenizer.nextToken();
+			tokenizer.nextToken();
+			String description= tokenizer.nextToken();
+			tokenizer.nextToken();
+			String isSubtypeValue= tokenizer.nextToken();
+			boolean isSubtype= isSubtypeValue.charAt(0) == IS_SUBTYPE_TRUE;
+			tokenizer.nextToken();
+			String value= tokenizer.nextToken();
+			if (value.charAt(0) == '\0') {
+				value= null;
+			} else {
+				tokenizer.nextToken();
+			}
+			String variablesCounterValue= tokenizer.nextToken();
+			int variablesCounter= Integer.parseInt(variablesCounterValue);
+			tokenizer.nextToken();
+			String[][] variables= new String[variablesCounter][2];
+			for (int i= 0; i < variablesCounter; i++) {
+				variables[i][0]= tokenizer.nextToken();
+				tokenizer.nextToken();
+				variables[i][1]= tokenizer.nextToken();
+				tokenizer.nextToken();
+			}
+			logicalStructures.add(new JavaLogicalStructure(type, isSubtype, value, description, variables, false));
+		}
+		return logicalStructures;
+	}
+	
+	/**
+	 * Save the user defined logical structures in the preference store.
+	 */
+	static private void saveUserDefinedJavaLogicalStructures() {
+		StringBuffer logicalStructuresString= new StringBuffer();
+		for (Iterator iter= fUserDefinedJavaLogicalStructures.iterator(); iter.hasNext();) {
+			JavaLogicalStructure logicalStructure= (JavaLogicalStructure) iter.next();
+			logicalStructuresString.append(logicalStructure.getQualifiedTypeName()).append('\0');
+			logicalStructuresString.append(logicalStructure.getDescription()).append('\0');
+			logicalStructuresString.append(logicalStructure.isSubtypes() ? IS_SUBTYPE_TRUE : IS_SUBTYPE_FALSE).append('\0');
+			String value= logicalStructure.getValue();
+			if (value != null) {
+				logicalStructuresString.append(value);
+			}
+			logicalStructuresString.append('\0');
+			String[][] variables= logicalStructure.getVariables();
+			logicalStructuresString.append(variables.length).append('\0');
+			for (int i= 0; i < variables.length; i++) {
+				String[] strings= variables[i];
+				logicalStructuresString.append(strings[0]).append('\0');
+				logicalStructuresString.append(strings[1]).append('\0');
+			}
+		}
+		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES, logicalStructuresString.toString());
 	}
 
 	/* (non-Javadoc)
@@ -134,6 +223,23 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILo
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Return the logical structure.
+	 */
+	static public JavaLogicalStructure[] getJavaLogicalStructures() {
+	    return (JavaLogicalStructure[])fJavaLogicalStructures.toArray(new JavaLogicalStructure[fJavaLogicalStructures.size()]);
+	}
+
+	/**
+	 * Set the user defined logical structure.
+	 */
+	static public void setUserDefinedJavaLogicalStructures(JavaLogicalStructure[] logicalStructures) {
+		fUserDefinedJavaLogicalStructures= Arrays.asList(logicalStructures);
+		fJavaLogicalStructures= new ArrayList(fPluginContributedJavaLogicalStructures);
+		fJavaLogicalStructures.addAll(fUserDefinedJavaLogicalStructures);
+		saveUserDefinedJavaLogicalStructures();
 	}
 
 }

@@ -57,24 +57,28 @@ public class JavaLogicalStructure {
 	/**
 	 * Fully qualified type name.
 	 */
-	private final String fType;
+	private String fType;
 	/**
 	 * Indicate if this java logical structure should be used on object
 	 * instance of subtype of the specified type.
 	 */
-	private final boolean fSubtypes;
+	private boolean fSubtypes;
 	/**
 	 * Code snippet to evaluate to create the logical value.
 	 */
-	private final String fValue;
+	private String fValue;
 	/**
 	 * Description of the logical structure.
 	 */
-	private final String fDescription;
+	private String fDescription;
 	/**
 	 * Name and associated code snippet of the variables of the logical value.
 	 */
-	private final String[][] fVariables;
+	private String[][] fVariables;
+	/**
+	 * Whethever this logical structure was contributed in a plugin.xml or not.
+	 */
+    private boolean fIsContributed;
 	
 	/**
 	 * Performs the evaluations.
@@ -149,12 +153,13 @@ public class JavaLogicalStructure {
 		}
 	}
 
-	public JavaLogicalStructure(String type, boolean subtypes, String value, String description, String[][] variables) {
+	public JavaLogicalStructure(String type, boolean subtypes, String value, String description, String[][] variables, boolean isContributed) {
 		fType= type;
 		fSubtypes= subtypes;
 		fValue= value;
 		fDescription= description;
 		fVariables= variables;
+		fIsContributed= isContributed;
 	}
 	
 	/**
@@ -297,8 +302,76 @@ public class JavaLogicalStructure {
 		return fgStackFrameProvider;
 	}
 	
+	/**
+	 * Returns if this logical structure should be used for subtypes too.
+	 */
+	public boolean isSubtypes() {
+		return fSubtypes;
+	}
+	
+	/**
+	 * Sets if this logical structure should be used for subtypes or not.
+	 */
+	public void setSubtypes(boolean subtypes) {
+		fSubtypes = subtypes;
+	}
+	
+	/**
+	 * Returns the name of the type this logical structure should be used for.
+	 */
+	public String getQualifiedTypeName() {
+		return fType;
+	}
+	/**
+	 * Sets the name of the type this logical structure should be used for.
+	 */
+	public void setType(String type) {
+		fType = type;
+	}
+	/**
+	 * Returns the code snippet to use to generate the logical structure.
+	 */
+	public String getValue() {
+		return fValue;
+	}
+	/**
+	 * Sets the code snippet to use to generate the logical structure.
+	 */
+	public void setValue(String value) {
+		fValue = value;
+	}
+	/**
+	 * Returns the variables of this logical structure.
+	 */
+	public String[][] getVariables() {
+		return fVariables;
+	}
+	/**
+	 * Sets the variables of this logical structure.
+	 */
+	public void setVariables(String[][] variables) {
+		fVariables = variables;
+	}
+	/**
+	 * Set the description of this logical structure.
+	 */
+	public void setDescription(String description) {
+		fDescription = description;
+	}
+
+	/**
+	 * Returns the description of this logical structure.
+	 */
 	public String getDescription() {
 		return fDescription;
 	}
-
+	
+	/**
+	 * Indicates if this logical structure was contributed by a plug-in
+	 * or defined by a user.
+	 */
+	public boolean isContributed() {
+	    return fIsContributed;
+	}
+	
 }
