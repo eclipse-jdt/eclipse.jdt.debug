@@ -88,6 +88,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * The source name debug attribute. Cached lazily on first access.
 	 */
 	private String fSourceName;
+	
+	/**
+	 * Whether local variable information was available
+	 */
+	private boolean fLocalsAvailable = true;
 
 	/**
 	 * Creates a new stack frame in the given thread.
@@ -197,6 +202,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	
 	protected synchronized List getVariables0() throws DebugException {
 		if (fVariables == null) {
+			
+			// throw exception if native method, so varaiable view will upate
+			// with information message
+			if (isNative()) {
+				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Variable_information_unavailable_for_native_methods"), null); //$NON-NLS-1$
+			}
+			
 			Method method= getUnderlyingMethod();
 			fVariables= new ArrayList();
 			// #isStatic() does not claim to throw any exceptions - so it is not try/catch coded
@@ -555,7 +567,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		try {
 			variables= getUnderlyingStackFrame().visibleVariables();
 		} catch (AbsentInformationException e) {
+			setLocalsAvailable(false);
 		} catch (NativeMethodException e) {
+			setLocalsAvailable(false);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -969,4 +983,27 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		fReceivingTypeName= null;	
 		fSourceName= null;
 	}
+	
+	/**
+	 * @see IJavaStackFrame#wereLocalsAvailable()
+	 */
+	public boolean wereLocalsAvailable() {
+		return fLocalsAvailable;
+	}
+	
+	/**
+	 * Sets whether locals were available. If the setting is
+	 * not the same as the current value, a change event is
+	 * fired such that a UI client can update.
+	 * 
+	 * @param available whether local variable information is
+	 * 	available for this stack frame.
+	 */
+	private void setLocalsAvailable(boolean available) {
+		if (available != fLocalsAvailable) {
+			fLocalsAvailable = available;
+			fireChangeEvent();
+		}
+	}	
+
 }

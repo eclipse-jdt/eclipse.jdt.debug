@@ -1249,6 +1249,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					label.append(DebugUIMessages.getString("JDIModelPresentation.native_method")); //$NON-NLS-1$
 				}
 			}
+			
+			if (!frame.wereLocalsAvailable()) {
+				label.append(' ');
+				label.append(DebugUIMessages.getString("JDIModelPresentation.local_variables_unavailable")); //$NON-NLS-1$
+			}
+			
 			return label.toString();
 
 		}

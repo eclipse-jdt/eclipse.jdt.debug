@@ -310,6 +310,19 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * </ul>
 	 */
 	public IJavaClassType getDeclaringType() throws DebugException;	
+	
+	/**
+	 * Returns whether local variable information was available
+	 * when variables were retrieved from the target. Returns
+	 * <code>true</code> if locals have never been retrieved. This
+	 * data is available after the fact, since variable retrieval
+	 * is expensive.
+	 * 
+	 * @return whether local variable information was available
+	 * when variables were retrieved from the target. Returns
+	 * <code>true</code> if locals have never been retrieved
+	 */
+	public boolean wereLocalsAvailable();
 }
 
 
