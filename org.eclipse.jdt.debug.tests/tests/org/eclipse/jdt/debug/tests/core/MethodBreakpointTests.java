@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -48,6 +49,24 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 
 		} finally {
 			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+	
+	public void testDisabledEntryAndExitBreakpoints() throws Exception {
+		String typeName = "DropTests";
+		// method 4 - entry
+		IBreakpoint bp1 = createMethodBreakpoint(typeName, "method4", "()V", true, false);
+		bp1.setEnabled(false);
+		// method 1 - exit
+		IBreakpoint bp2 = createMethodBreakpoint(typeName, "method1", "()V", false, true);
+		bp2.setEnabled(false);		
+		
+		IJavaDebugTarget debugTarget= null;
+		try {
+			debugTarget= launchAndTerminate(typeName, 3000);
+		} finally {
+			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
 		}		
 	}
