@@ -161,10 +161,6 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		try {
 			evaluationListener.valueToString(value);
 		} catch (DebugException e) {
-			if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-				// don't log 'thread not suspended' errors
-				JDIDebugUIPlugin.log(e);
-			}
 			listener.detailComputed(value, e.getStatus().getMessage());
 		}
 	}
@@ -429,10 +425,6 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				try {
 					valueToString(result.getValue());
 				} catch (DebugException e) {
-					if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-						// don't log 'thread not suspended' errors
-						JDIDebugUIPlugin.log(e);
-					}
 					fListener.detailComputed(fValue, e.getStatus().getMessage());
 				}
 			}
