@@ -1,6 +1,8 @@
 package org.eclipse.jdt.internal.debug.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -208,6 +210,11 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @return IJavaStackFrame
 	 */
 	public static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window) {
+		List alreadyVisited= new ArrayList();
+		return getEvaluationContext(window, alreadyVisited);
+	}
+	
+	private static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window, List alreadyVisited) {
 		IWorkbenchPage activePage = window.getActivePage();
 		IJavaStackFrame frame = null;
 		if (activePage != null) {
@@ -223,10 +230,13 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 					}
 				}
 			}
+			
+			alreadyVisited.add(window);
+			
 			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 			for (int i = 0; i < windows.length; i++) {
-				if (window != windows[i]) {
-					frame = getEvaluationContext(windows[i]);
+				if (!alreadyVisited.contains(windows[i])) {
+					frame = getEvaluationContext(windows[i], alreadyVisited);
 					if (frame != null) {
 						return frame;
 					}
