@@ -44,6 +44,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -1369,7 +1370,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	interface IValueDetailProvider {
-		public void computeDetail(IValue value, IThread thread, IValueDetailListener listener) throws DebugException;
+		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException;
 	}
 	
 	class DefaultJavaValueDetailProvider implements IValueDetailProvider {		
@@ -1387,40 +1388,46 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fListener.detailComputed(fValue, fResultBuffer.toString());
 		}
 		
-		public void computeDetail(final IValue value, final IThread thread, final IValueDetailListener listener) throws DebugException {
-			fRequestedValues.put(listener, value);
+		public void computeDetail(final IValue value, final IJavaThread thread, final IValueDetailListener listener) throws DebugException {
+			
 			fValue = value;
 			fListener = listener;
+			
+			if (value == null) {
+				// no need to spawn a thread for a null value
+				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
+				notifyListener();
+				return;
+			} else if (value instanceof IJavaPrimitiveValue || thread == null) {
+				// no need to spawn a thread for a primitive value
+				appendJDIValueString(value);
+				notifyListener();
+				return;
+			}
+			
+			fRequestedValues.put(listener, value);
+			
 			Runnable detailRunnable = new Runnable() {	
 				public void run() {	
-					if (value == null) {
-						fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
-					} else if (thread instanceof IJavaThread) {
-						IJavaThread javaThread = (IJavaThread) thread;
-						IEvaluationRunnable er = new IEvaluationRunnable() {
-							public void run(IJavaThread jt, IProgressMonitor pm) {
-								if (jt.isSuspended()) {
-									if (value instanceof IJavaArray) {
-										appendArrayDetail((IJavaArray)value, jt);
-									} else if (fValue instanceof IJavaObject) {
-										appendObjectDetail((IJavaObject)value, jt);
-									} else {
-										appendJDIValueString(value);															
-									}
-								} else {
-									appendJDIValueString(value);							
+					IEvaluationRunnable er = new IEvaluationRunnable() {
+						public void run(IJavaThread jt, IProgressMonitor pm) {
+							if (jt.isSuspended()) {
+								if (value instanceof IJavaArray) {
+									appendArrayDetail((IJavaArray)value, jt);
+								} else if (fValue instanceof IJavaObject) {
+									appendObjectDetail((IJavaObject)value, jt);
 								}
+							} else {
+								appendJDIValueString(value);							
 							}
-						};
-						try {
-							javaThread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT);
-						} catch (DebugException e) {
-							JDIDebugUIPlugin.log(e);
 						}
-					} else {
-						appendJDIValueString(value);
+					};
+					try {
+						thread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT);
+					} catch (DebugException e) {
+						JDIDebugUIPlugin.log(e);
 					}
-					if (value == fRequestedValues.get(fListener)) {
+					if (value == fRequestedValues.remove(fListener)) {
 						// If another evaluation occurs before this one finished,
 						// don't display this result
 						notifyListener();
@@ -1428,10 +1435,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			};
 			
-			fDetailThread = new Thread(detailRunnable);
-			fDetailThread.start();
+			if (thread.isSuspended()) {
+				fDetailThread = new Thread(detailRunnable);
+				fDetailThread.start();
+			} else {
+				appendJDIValueString(value);
+				fRequestedValues.remove(fListener);
+				notifyListener();
+			}
+
 		}
-		
+				
 		protected void appendJDIValueString(IValue value) {
 			try {
 				String result= value.getValueString();
