@@ -53,6 +53,7 @@ public interface IJavaArrayType extends IJavaType {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * </ul>
+	 * @since 2.1
 	 */
 	public IJavaClassObject getClassObject() throws DebugException;
 }
