@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.internal.ui.views.launch.DeferredDebugElementWorkbenchAdapter;
+import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
