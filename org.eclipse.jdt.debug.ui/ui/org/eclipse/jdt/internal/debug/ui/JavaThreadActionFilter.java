@@ -36,7 +36,9 @@ public class JavaThreadActionFilter implements IActionFilter {
 				for (int i = 0; i < breakpoints.length; i++) {
 					IBreakpoint breakpoint= breakpoints[i];
 					try {
-						return breakpoint.isRegistered() && breakpoint instanceof IJavaExceptionBreakpoint;
+						if (breakpoint.isRegistered() && breakpoint instanceof IJavaExceptionBreakpoint) {
+							return true;
+						}
 					} catch (CoreException e) {
 					}	
 				}
