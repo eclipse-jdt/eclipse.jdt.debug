@@ -46,7 +46,7 @@
       		namespace="org.eclipse.jdt.debug.ui"
             properties="hasMainType, isApplet"
             type="org.eclipse.core.runtime.IAdaptable"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.ResourceExtender"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JavaElementPropertyTester"
             id="org.eclipse.jdt.debug.IResourceExtender">
       </propertyTester>
    </extension>
@@ -1917,9 +1917,8 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-                   <test property="org.eclipse.debug.ui.instanceof" value="org.eclipse.jdt.core.IJavaElement"/>
+                   <instanceof value="org.eclipse.core.resources.IResource"/>
+                   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
                </iterate>
@@ -1952,9 +1951,8 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-				   <test property="org.eclipse.debug.ui.instanceof" value="org.eclipse.jdt.core.IJavaElement"/>
+                   <instanceof value="org.eclipse.core.resources.IResource"/>
+				   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.isApplet"/>
                </iterate>
@@ -2428,6 +2426,11 @@
             adaptableType="org.eclipse.jdt.core.IJavaElement">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.core.resources.IResource">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>         
     </extension>
        
    <!-- Adapters for retargettable actions -->

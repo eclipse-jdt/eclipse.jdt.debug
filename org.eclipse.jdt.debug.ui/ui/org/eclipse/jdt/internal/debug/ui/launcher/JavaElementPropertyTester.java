@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -31,7 +32,7 @@ import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
  * ResourceExtender provides propertyTester(s) for IResource types
  * for use in XML Expression Language syntax.
  */
-public class ResourceExtender extends PropertyTester {
+public class JavaElementPropertyTester extends PropertyTester {
 
 	private static final String PROPERTY_IS_APPLET= "isApplet";	 //$NON-NLS-1$
 	private static final String PROPERTY_HAS_MAIN_TYPE= "hasMainType";	 //$NON-NLS-1$
@@ -40,18 +41,26 @@ public class ResourceExtender extends PropertyTester {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.properties.IPropertyEvaluator#test(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
-		if (receiver instanceof IJavaProject ||
-			receiver instanceof IPackageFragmentRoot ||
-			receiver instanceof IPackageFragment) {
+		IJavaElement javaElement = null;
+		if (receiver instanceof IAdaptable) {
+			javaElement = (IJavaElement) ((IAdaptable)receiver).getAdapter(IJavaElement.class);
+		}
+		if (javaElement != null) {
+			if (!javaElement.exists()) {
+				return false;
+			}
+		}
+		if (javaElement instanceof IJavaProject ||
+			javaElement instanceof IPackageFragmentRoot ||
+			javaElement instanceof IPackageFragment) {
 				// optomistic
 				return true;
 		}
-		if (receiver instanceof IJavaElement) {
-			IJavaElement element = (IJavaElement) receiver;
+		if (javaElement != null) {
 			if (PROPERTY_IS_APPLET.equals(method)) { //$NON-NLS-1$
-				return isApplet(element);
+				return isApplet(javaElement);
 			} else if (PROPERTY_HAS_MAIN_TYPE.equals(method)) {
-				return hasMain(element);
+				return hasMain(javaElement);
 			}
 		}
 		return false;
