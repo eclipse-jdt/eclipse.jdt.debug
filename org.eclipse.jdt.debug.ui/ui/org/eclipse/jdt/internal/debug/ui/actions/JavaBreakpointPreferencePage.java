@@ -263,10 +263,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			fViewer.getTextWidget().setFont(font);
 			
 			Control control= fViewer.getControl();
-			GridData gd = new GridData();
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = numColumns - 1;
-			gd.horizontalAlignment = GridData.FILL;
-			gd.grabExcessHorizontalSpace = true;
 			control.setLayoutData(gd);
 		
 			// listener for activate the code assist

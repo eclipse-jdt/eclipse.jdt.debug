@@ -16,7 +16,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 public class InstanceFilterViewer extends FieldEditor {
 	
 	private IJavaBreakpoint fBreakpoint;
-	private CheckboxTreeViewer fInstanceViewer;
+	private CheckboxTableViewer fInstanceViewer;
 	private Composite fOuter;
 	private InstanceFilterContentProvider fContentProvider;
 	private CheckHandler fCheckHandler;
@@ -52,14 +52,12 @@ public class InstanceFilterViewer extends FieldEditor {
 	 * Create and initialize the thread filter tree viewer.
 	 */
 	protected void createViewer() {
-		GridData data= new GridData();
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
+		GridData data= new GridData(GridData.FILL_BOTH);
 		data.heightHint= 100;
 
-		fInstanceViewer= new CheckboxTreeViewer(fOuter, SWT.BORDER);
+		fInstanceViewer= CheckboxTableViewer.newCheckList(fOuter, SWT.BORDER);
 		fInstanceViewer.addCheckStateListener(fCheckHandler);
-		fInstanceViewer.getTree().setLayoutData(data);
+		fInstanceViewer.getTable().setLayoutData(data);
 		fInstanceViewer.setContentProvider(fContentProvider);
 		IDebugModelPresentation pres = new DelegatingModelPresentation();
 		pres.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, new Boolean(true));
@@ -105,9 +103,7 @@ public class InstanceFilterViewer extends FieldEditor {
 		layout.numColumns = numColumns;
 		fOuter.setLayout(layout);
 		
-		GridData data= new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
+		GridData data= new GridData(GridData.FILL_BOTH);
 		fOuter.setLayoutData(data);
 		
 		data = new GridData();

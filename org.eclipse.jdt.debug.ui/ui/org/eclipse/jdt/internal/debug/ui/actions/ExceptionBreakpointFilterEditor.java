@@ -201,9 +201,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		layout.marginWidth = 0;
 		
 		fOuter.setLayout(layout);
-		GridData gd = new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		fOuter.setLayoutData(gd);
 		
 		gd = new GridData();
