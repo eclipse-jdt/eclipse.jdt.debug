@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -246,6 +248,14 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		fEnvTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				setEnvButtonsEnableState();
+			}
+		});
+		fEnvTable.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				setEnvButtonsEnableState();
+				if (fEnvEditButton.isEnabled()) {
+					handleEnvEditButtonSelected();
+				}
 			}
 		});
 	
