@@ -390,16 +390,22 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 		int localIndex= -1;
 		while (index < fVariables.size()) {
-			JDILocalVariable local= (JDILocalVariable) fVariables.get(index);
-			localIndex= locals.indexOf(local.getLocal());
-			if (localIndex >= 0) {
-				// update variable with new underling JDI LocalVariable
-				local.setLocal((LocalVariable) locals.get(localIndex));
-				locals.remove(localIndex);
-				index++;
+			Object var= fVariables.get(index);
+			if (var instanceof JDILocalVariable) {
+				JDILocalVariable local= (JDILocalVariable) fVariables.get(index);
+				localIndex= locals.indexOf(local.getLocal());
+				if (localIndex >= 0) {
+					// update variable with new underling JDI LocalVariable
+					local.setLocal((LocalVariable) locals.get(localIndex));
+					locals.remove(localIndex);
+					index++;
+				} else {
+					// remove variable
+					fVariables.remove(index);
+				}
 			} else {
-				// remove variable
-				fVariables.remove(index);
+				//field variable of a static frame
+				index++;
 			}
 		}
 
