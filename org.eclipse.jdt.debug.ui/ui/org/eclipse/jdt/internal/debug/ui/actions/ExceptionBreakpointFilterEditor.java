@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class ExceptionBreakpointFilterEditor extends FieldEditor {
@@ -462,7 +463,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 	private void addPackage() {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
-		SelectionDialog dialog = null;
+		ElementListSelectionDialog dialog = null;
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, true);
 		} catch (JavaModelException jme) {
@@ -474,19 +475,22 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 		dialog.setTitle(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_Package_to_Scope_14"));  //$NON-NLS-1$
 		dialog.setMessage(ActionMessages.getString("ExceptionBreakpointFilterEditor.&Select_a_package_to_add_to_the_scope_of_the_breakpoint_15")); //$NON-NLS-1$
+		dialog.setMultipleSelection(true);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
 		Object[] packages= dialog.getResult();
-		if (packages != null && packages.length > 0) {
-			IJavaElement pkg = (IJavaElement)packages[0];
-			String filter = pkg.getElementName();
-			if (filter.length() < 1) {
-				filter = "(default package)";  //$NON-NLS-1$
-			} else {
-				filter += ".*"; //$NON-NLS-1$
+		if (packages != null) {
+			for (int i = 0; i < packages.length; i++) {
+				IJavaElement pkg = (IJavaElement)packages[i];
+				String filter = pkg.getElementName();
+				if (filter.length() < 1) {
+					filter = "(default package)";  //$NON-NLS-1$
+				} else {
+					filter += ".*"; //$NON-NLS-1$
+				}
+				fFilterContentProvider.addFilter(filter);
 			}
-			fFilterContentProvider.addFilter(filter);
 		}		
 	}
 				
@@ -510,9 +514,11 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		}
 		
 		Object[] types= dialog.getResult();
-		if (types != null && types.length > 0) {
-			IType type = (IType)types[0];
-			fFilterContentProvider.addFilter(type.getFullyQualifiedName());
+		if (types != null) {
+			for (int i = 0; i < types.length; i++) {
+				IType type = (IType)types[i];
+				fFilterContentProvider.addFilter(type.getFullyQualifiedName());
+			}
 		}		
 	}
 	

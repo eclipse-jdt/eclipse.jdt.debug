@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -581,7 +582,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	
 	private void addPackage() {
 		Shell shell= getShell();
-		SelectionDialog dialog = null;
+		ElementListSelectionDialog dialog = null;
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, true);
 		} catch (JavaModelException jme) {
@@ -593,20 +594,24 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	
 		dialog.setTitle(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_package_to_step_filters_24")); //$NON-NLS-1$
 		dialog.setMessage(DebugUIMessages.getString("JavaStepFilterPreferencePage.Select_a_package_to_filter_when_stepping_27")); //$NON-NLS-1$
+		dialog.setMultipleSelection(true);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
 		
 		Object[] packages= dialog.getResult();
-		if (packages != null && packages.length > 0) {
-			IJavaElement pkg = (IJavaElement)packages[0];
-			String filter = pkg.getElementName();
-			if (filter.length() < 1) {
-				filter = "(default package)" ; //$NON-NLS-1$
-			} else {
-				filter += ".*"; //$NON-NLS-1$
+		if (packages != null) {
+			for (int i = 0; i < packages.length; i++) {
+				IJavaElement pkg = (IJavaElement)packages[i];
+				
+				String filter = pkg.getElementName();
+				if (filter.length() < 1) {
+					filter = "(default package)" ; //$NON-NLS-1$
+				} else {
+					filter += ".*"; //$NON-NLS-1$
+				}
+				fStepFilterContentProvider.addFilter(filter, true);
 			}
-			fStepFilterContentProvider.addFilter(filter, true);
 		}		
 	}
 	private void removeFilters() {

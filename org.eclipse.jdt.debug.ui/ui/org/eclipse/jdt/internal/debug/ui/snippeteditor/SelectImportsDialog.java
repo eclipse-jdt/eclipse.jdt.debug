@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class SelectImportsDialog extends TitleAreaDialog {
@@ -206,7 +207,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	
 	private void addPackage() {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
-		SelectionDialog dialog = null;
+		ElementListSelectionDialog dialog = null;
 		try {
 			IJavaProject project= fEditor.getJavaProject();
 			List projects= new ArrayList();
@@ -226,15 +227,18 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	
 		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_package_as_import_7"));  //$NON-NLS-1$
 		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_package_to_add_as_an_Import_10")); //$NON-NLS-1$
+		dialog.setMultipleSelection(true);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
 		Object[] packages= dialog.getResult();
-		if (packages != null && packages.length > 0) {
-			IJavaElement pkg = (IJavaElement)packages[0];
-			String filter = pkg.getElementName();
-			filter += ".*"; //$NON-NLS-1$
-			fImportContentProvider.addImport(filter);
+		if (packages != null) {
+			for (int i = 0; i < packages.length; i++) {
+				IJavaElement pkg = (IJavaElement)packages[i];
+				String filter = pkg.getElementName();
+				filter += ".*"; //$NON-NLS-1$
+				fImportContentProvider.addImport(filter);
+			}
 		}		
 	}
 				
