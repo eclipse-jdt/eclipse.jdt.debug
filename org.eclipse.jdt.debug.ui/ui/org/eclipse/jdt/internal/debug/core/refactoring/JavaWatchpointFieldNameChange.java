@@ -25,6 +25,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.corext.refactoring.base.Change;
 import org.eclipse.jdt.internal.corext.refactoring.base.RefactoringStatus;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  */
@@ -61,7 +62,12 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#getName()
 	 */
 	public String getName() {
-		return "Update the watchpoint associated to this field";
+		try {
+			return MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.1"), new String[] {fWatchpoint.getTypeName(), fWatchpoint.getFieldName()}); //$NON-NLS-1$
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -76,7 +82,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus status= new RefactoringStatus();
 		if (!fWatchpoint.isRegistered()) {
-			status.addFatalError(MessageFormat.format("The watchpoint for field \"{1}\" of type \"{0}\" no more exists", new String[] {fWatchpoint.getTypeName(), fWatchpoint.getFieldName()}));
+			status.addFatalError(MessageFormat.format(RefactoringMessages.getString("JavaWatchpointFieldNameChange.2"), new String[] {fWatchpoint.getTypeName(), fWatchpoint.getFieldName()})); //$NON-NLS-1$
 		}
 		return status;
 	}
