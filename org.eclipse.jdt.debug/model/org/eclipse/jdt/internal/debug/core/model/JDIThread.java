@@ -252,8 +252,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		ObjectReference threadDeath= ((JDIDebugTarget) getDebugTarget()).getThreadDeathInstance();
-		return threadDeath != null && !isSystemThread() && !isTerminated();
+		return getDebugTarget().canTerminate();
 	}
 
 	/**
@@ -1264,25 +1263,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-
-		ObjectReference threadDeath= ((JDIDebugTarget) getDebugTarget()).getThreadDeathInstance();
-		if (threadDeath != null) {
-			try {
-				getUnderlyingThread().stop(threadDeath);
-			} catch (InvalidTypeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_terminating_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				// execution will not reach this line, as
-				// #targetRequestFailed will thrown an exception							
-				return;
-			}
-			// Resume the thread so that stop will work
-			resume();
-		} else {
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.unable_to_terminate"), null); //$NON-NLS-1$
-		}
-
+		getDebugTarget().terminate();
 	}
 
 	/**
