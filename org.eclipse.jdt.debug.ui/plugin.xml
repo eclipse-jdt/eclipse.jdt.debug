@@ -613,7 +613,7 @@
 			icon="icons/full/obj16/var_filters.gif"
 			tooltip="%filterPreferencesAction.tooltip"
 			helpContextId="java_variables_filter_preference_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesFilterPreferenceAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesViewFilterPreferenceAction">
 		</action>
 	</viewContribution>
 	<viewContribution
@@ -634,7 +634,7 @@
 			icon="icons/full/obj16/var_filters.gif"
 			tooltip="%filterPreferencesAction.tooltip"
 			helpContextId="java_variables_filter_preference_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesFilterPreferenceAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaExpressionsViewFilterPreferenceAction">
 		</action>
 	</viewContribution>	
 	<viewContribution
@@ -1327,6 +1327,11 @@
 	<page name="%javaDetailFormattersPrefName"
          id="org.eclipse.jdt.ui.JavaDetailFormattersPreferencePage"
          class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
+         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
+	</page>
+	<page name="%javaVariableFiltersPrefName"
+         id="org.eclipse.jdt.ui.JavaVariablesFilterPreferencePage"
+         class="org.eclipse.jdt.internal.debug.ui.JavaVariablesFilterPreferencePage"
          category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
 	</page>
 </extension>

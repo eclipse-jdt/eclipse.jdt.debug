@@ -116,7 +116,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 															"normal", //$NON-NLS-1$
 															"synthetic"}; //$NON-NLS-1$
 
-	public static final String VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + "variables_filter"; //$NON-NLS-1$
+	public static final String DEFAULT_VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + ".default_variables_filters"; //$NON-NLS-1$
+	public static final String VARIABLES_VIEW_FILTER_PREFIX = getUniqueIdentifier() + ".variables_view_filters"; //$NON-NLS-1$
+	public static final String EXPRESSIONS_VIEW_FILTER_PREFIX = getUniqueIdentifier() + ".expressions_view_filters"; //$NON-NLS-1$
+
+	private static final String SHOW_HEX_PREFERENCE_SUFFIX = "show_hex"; //$NON-NLS-1$
+	private static final String SHOW_CHAR_PREFERENCE_SUFFIX = "show_char"; //$NON-NLS-1$
+	private static final String SHOW_UNSIGNED_PREFERENCE_SUFFIX = "show_unsigned"; //$NON-NLS-1$
 
 	/**
 	 * @see Plugin(IPluginDescriptor)
@@ -268,10 +274,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if(isShuttingDown()) {
 			return;
 		}
-		//JavaDebugPreferencePage
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, false);
+		// JavaDebugPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
@@ -284,40 +287,59 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
 		store.setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
 		
-		//JavaStepFilterPreferencePage
+		// JavaStepFilterPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
 		
-		initializeDefaultJavaVariablesPreferences(store);
+		// JavaVariableFilterPreferencePage
+		initializeDefaultDefaultJavaVariablesPreferences(store);
+		initializeDefaultJavaVariablesPreferences(store, VARIABLES_VIEW_FILTER_PREFIX);
+		initializeDefaultJavaVariablesPreferences(store, EXPRESSIONS_VIEW_FILTER_PREFIX);
+	}
+	
+	private void initializeDefaultJavaVariablesPreferences(IPreferenceStore store, String preferencePrefix) {
+		for (int row = 0; row < fgModeModifierNames.length; row++) {
+			for (int col = 0; col < fgAccessModifierNames.length; col++) {
+				boolean value = store.getBoolean(generateVariableFilterPreferenceName(row, col, DEFAULT_VARIABLES_FILTER_PREFIX));
+				store.setDefault(generateVariableFilterPreferenceName(row, col, preferencePrefix), value);				
+			}
+		}
+		
+		// Hex, char & unsigned options
+		store.setDefault(getShowHexPreferenceKey(preferencePrefix), store.getBoolean(getShowHexPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX)));
+		store.setDefault(getShowCharPreferenceKey(preferencePrefix), store.getBoolean(getShowCharPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX)));
+		store.setDefault(getShowUnsignedPreferenceKey(preferencePrefix), store.getBoolean(getShowUnsignedPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX)));
 	}
 	
 	/**
 	 * Set the default values for all variable filtering combinations.
 	 */
-	private void initializeDefaultJavaVariablesPreferences(IPreferenceStore store) {
+	private void initializeDefaultDefaultJavaVariablesPreferences(IPreferenceStore store) {
 		// static
-		initializeDefaultJavaVariablesPreferences(store, 0, 0, 3, false);
-		initializeDefaultJavaVariablesPreferences(store, 0, 4, 4, true);
+		initializeDefaultJavaVariablesRowPrefs(store, 0, new boolean[] {false, false, false, false, true});
 
 		// final
-		initializeDefaultJavaVariablesPreferences(store, 1, 0, 3, false);
-		initializeDefaultJavaVariablesPreferences(store, 1, 4, 4, true);
+		initializeDefaultJavaVariablesRowPrefs(store, 1, new boolean[] {false, false, false, false, true});
 
 		// normal
-		initializeDefaultJavaVariablesPreferences(store, 2, 0, 4, true);
+		initializeDefaultJavaVariablesRowPrefs(store, 2, new boolean[] {true, true, true, true, true});
 
 		// synthetic
-		initializeDefaultJavaVariablesPreferences(store, 3, 0, 4, true);
+		initializeDefaultJavaVariablesRowPrefs(store, 3, new boolean[] {true, true, true, true, true});
+	
+		// Hex, char & unsigned options
+		store.setDefault(getShowHexPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX), false);
+		store.setDefault(getShowCharPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX), false);
+		store.setDefault(getShowUnsignedPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX), false);		
 	}
 
 	/**
-	 * Set the specified default pref. value for the given row and range of
-	 * columns.
+	 * Set the specified default pref. values for the given row.
 	 */
-	private void initializeDefaultJavaVariablesPreferences(IPreferenceStore store, int row, int firstCol, int lastCol, boolean value) {
-		for (int col = firstCol; col <= lastCol; col++) {
-			String prefName = generateVariableFilterPreferenceName(row, col);
-			store.setDefault(prefName, value);
+	private void initializeDefaultJavaVariablesRowPrefs(IPreferenceStore store, int row, boolean[] values) {
+		for (int col = 0; col < values.length; col++) {
+			String prefName = generateVariableFilterPreferenceName(row, col, DEFAULT_VARIABLES_FILTER_PREFIX);
+			store.setDefault(prefName, values[col]);
 		}
 	}
 
@@ -325,13 +347,25 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * Use the specified row & column indices to generate preference names that
 	 * have the specified prefix.
 	 */
-	public static String generateVariableFilterPreferenceName(int rowIndex, int colIndex) {
-		StringBuffer buffer = new StringBuffer(VARIABLES_FILTER_PREFIX);
+	public static String generateVariableFilterPreferenceName(int rowIndex, int colIndex, String preferencePrefix) {
+		StringBuffer buffer = new StringBuffer(preferencePrefix);
 		buffer.append('_');
 		buffer.append(fgModeModifierNames[rowIndex]);
 		buffer.append('_');
 		buffer.append(fgAccessModifierNames[colIndex]);
 		return buffer.toString();
+	}
+	
+	public static String getShowHexPreferenceKey(String prefix) {
+		return prefix + '.' + SHOW_HEX_PREFERENCE_SUFFIX;
+	}
+
+	public static String getShowCharPreferenceKey(String prefix) {
+		return prefix + '.' + SHOW_CHAR_PREFERENCE_SUFFIX;
+	}
+
+	public static String getShowUnsignedPreferenceKey(String prefix) {
+		return prefix + '.' + SHOW_UNSIGNED_PREFERENCE_SUFFIX;
 	}
 
 	/**

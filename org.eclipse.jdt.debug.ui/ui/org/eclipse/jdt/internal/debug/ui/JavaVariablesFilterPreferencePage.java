@@ -7,12 +7,14 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesFilterPreferenceAction;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -21,8 +23,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -32,44 +37,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * represent 'modes' (static, final, etc.).  A check mark means that the
  * corresponding access/mode pair will be shown.
  */
-public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage {
+public class JavaVariablesFilterPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	/**
-	 * A boolean field editor that aligns its checkbox in the center of the
-	 * column.  This field editor does NOT support the 'SEPARATE label' mode
-	 * that its superclass supports.
-	 */
-	private class CenterAlignedBooleanFieldEditor extends BooleanFieldEditor {
-		
-		public CenterAlignedBooleanFieldEditor(String name, String label, Composite parent) {
-			super(name, label, parent);
-		}
-
-		/**
-		 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
-		 */
-		protected void doFillIntoGrid(Composite parent, int numColumns) {
-			String text = getLabelText();
-			Button checkBox = getChangeControl(parent);
-			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-			gd.horizontalSpan = numColumns;
-			checkBox.setLayoutData(gd);
-			checkBox.setFont(parent.getFont());
-			if (text != null) {
-				checkBox.setText(text);
-			}
-		}
-		
-		/**
-		 * This method essentially serves to provide public access to the
-		 * underlying checkbox button.  This is required so that the +/-
-		 * buttons can do their job.
-		 */
-		public Button getCheckbox(Composite parent) {
-			return getChangeControl(parent);
-		}
-	}
-	
 	/**
 	 * This listener responds to selection events for the +/- buttons at the top
 	 * of each column and the beginning of each row of the filter grid.  The +
@@ -95,15 +64,15 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		
 		private void processRow(boolean select, int row) {
 			for (int j = 0; j < JDIDebugUIPlugin.fgAccessModifierNames.length; j++) {
-				CenterAlignedBooleanFieldEditor bfe = fCheckboxes[row][j];
-				bfe.getCheckbox(getFieldEditorParent()).setSelection(select);
+				Button button = fCheckboxes[row][j];
+				button.setSelection(select);
 			}
 		}
 		
 		private void processCol(boolean select, int col) {
 			for (int i = 0; i < JDIDebugUIPlugin.fgModeModifierNames.length; i++) {
-				CenterAlignedBooleanFieldEditor bfe = fCheckboxes[i][col];
-				bfe.getCheckbox(getFieldEditorParent()).setSelection(select);
+				Button button = fCheckboxes[i][col];
+				button.setSelection(select);
 			}			
 		}
 
@@ -124,15 +93,21 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	private static final String PLUS_KEY = "plus"; //$NON-NLS-1$
 	private static final String ROW_COL_KEY = "row_col"; //$NON-NLS-1$
 
+	private String fPreferencePrefix;
+	
 	private StructuredViewer fViewer;
-
+	
+	private boolean fRunningInPreferenceDialog = false;
+	
 	public static final Image fgPlusSignImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_PLUS_SIGN);
 	public static final Image fgMinusSignImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_MINUS_SIGN);
 	
 	private static Image[] fgAccessImages;
 	
-	private CenterAlignedBooleanFieldEditor[][] fCheckboxes =
-			new CenterAlignedBooleanFieldEditor[JDIDebugUIPlugin.fgModeModifierNames.length][JDIDebugUIPlugin.fgAccessModifierNames.length];
+	private Button[][] fCheckboxes = new Button[JDIDebugUIPlugin.fgModeModifierNames.length][JDIDebugUIPlugin.fgAccessModifierNames.length];
+	private Button fHexButton;
+	private Button fCharButton;
+	private Button fUnsignedButton;	
 	
 	static {
 		fgAccessImages = new Image[JDIDebugUIPlugin.fgAccessModifierNames.length];
@@ -143,9 +118,22 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		fgAccessImages[4] = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_DEFAULT);		
 	}
 	
-	public JavaVariablesFilterPreferencePage(StructuredViewer viewer) {
-		super(GRID);
+	public JavaVariablesFilterPreferencePage() {
+		this(null, JDIDebugUIPlugin.DEFAULT_VARIABLES_FILTER_PREFIX, true);
+	}
+	
+	public JavaVariablesFilterPreferencePage(StructuredViewer viewer, String preferencePrefix) {
+		this(viewer, preferencePrefix, false);
+	}
+	
+	public JavaVariablesFilterPreferencePage(StructuredViewer viewer, String preferencePrefix, boolean runningInPrefDialog) {
 		setViewer(viewer);
+		fRunningInPreferenceDialog = runningInPrefDialog;
+		if (isRunningInPreferenceDialog()) {
+			setDescription("Default filter settings for Java variable views");
+		}
+		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		setPreferencePrefix(preferencePrefix);		
 	}
 
 	/**
@@ -154,46 +142,59 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		setTitle(DebugUIMessages.getString("JavaVariablesFilterPreferencePage.Java_Variable_Filter_Preferences_1")); //$NON-NLS-1$
-		setControl(getFieldEditorParent());
-		WorkbenchHelp.setHelp(
-			parent,
-			IJavaDebugHelpContextIds.JAVA_VARIABLES_FILTER_PREFERENCE_PAGE);
 	}
 
 	/**
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void createFieldEditors() {
+	protected Control createContents(Composite parent) {
+		WorkbenchHelp.setHelp(parent, IJavaDebugHelpContextIds.JAVA_VARIABLES_FILTER_PREFERENCE_PAGE);
+
 		GridData gd;
 		Label label;
 		
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout compositeLayout = new GridLayout();
+		int numColumns = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
+		compositeLayout.numColumns = numColumns;
+		compositeLayout.marginWidth = 0;
+		compositeLayout.marginHeight = 0;
+		composite.setLayout(compositeLayout);
+		gd = new GridData();
+		gd.verticalAlignment = GridData.FILL;
+		gd.horizontalAlignment = GridData.FILL;
+		composite.setLayoutData(gd);
+		composite.setFont(parent.getFont());
+		
+		createSpacer(composite, numColumns);
+		
 		// Create header images
-		createSpacer(getFieldEditorParent(), 1);
+		createSpacer(composite, 1);
 		for (int i = 0; i < JDIDebugUIPlugin.fgAccessModifierNames.length; i++) {
-			label = new Label(getFieldEditorParent(), SWT.NONE);
+			label = new Label(composite, SWT.NONE);
 			label.setImage(fgAccessImages[i]);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			label.setLayoutData(gd);
-			label.setFont(getFieldEditorParent().getFont());
+			label.setFont(composite.getFont());
 		}		
 				
 		// Create column headers for the checkbox table
-		createSpacer(getFieldEditorParent(), 1);
+		createSpacer(composite, 1);
 		for (int i = 0; i < JDIDebugUIPlugin.fgAccessModifierNames.length; i++) {
-			label = new Label(getFieldEditorParent(), SWT.NONE);
+			label = new Label(composite, SWT.NONE);
 			label.setText(JDIDebugUIPlugin.fgAccessModifierNames[i]);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			label.setLayoutData(gd);
-			label.setFont(getFieldEditorParent().getFont());
+			label.setFont(composite.getFont());
 		}
 
 		// Create one listener for all +/- buttons
 		PlusMinusButtonListener buttonListener = new PlusMinusButtonListener();
 		
 		// Create the +/- buttons for the columns
-		createSpacer(getFieldEditorParent(), 1);
+		createSpacer(composite, 1);
 		for (int i = 0; i < JDIDebugUIPlugin.fgAccessModifierNames.length; i++) {
-			Composite buttonComp = createPlusMinusButtons(getFieldEditorParent(), true, buttonListener, i);
+			Composite buttonComp = createPlusMinusButtons(composite, true, buttonListener, i);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			buttonComp.setLayoutData(gd);
 		}
@@ -202,7 +203,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		for (int i = 0; i < JDIDebugUIPlugin.fgModeModifierNames.length; i++) {
 			
 			// Create a container for the row label and +/- buttons
-			Composite rowComp = new Composite(getFieldEditorParent(), SWT.NONE);
+			Composite rowComp = new Composite(composite, SWT.NONE);
 			GridLayout rowLayout = new GridLayout();
 			rowLayout.numColumns = 2;
 			rowLayout.marginHeight = 0;
@@ -210,7 +211,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			rowComp.setLayout(rowLayout);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			rowComp.setLayoutData(gd);
-			rowComp.setFont(getFieldEditorParent().getFont());
+			rowComp.setFont(composite.getFont());
 			
 			// Create the row label
 			label = new Label(rowComp, SWT.NONE);
@@ -224,34 +225,40 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			
 			// Create the checkboxes for the row
 			for (int j = 0; j < JDIDebugUIPlugin.fgAccessModifierNames.length; j++) {
-				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(i, j);
-				CenterAlignedBooleanFieldEditor bfe = new CenterAlignedBooleanFieldEditor(prefName, EMPTY_STRING, getFieldEditorParent());
-				addField(bfe);
-				fCheckboxes[i][j] = bfe;
+				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(i, j, getPreferencePrefix());
+				Button button = new Button(composite, SWT.CHECK);
+				gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+				button.setLayoutData(gd);
+				button.setData(prefName);
+				fCheckboxes[i][j] = button;
 			}
 		}	
 		
-		createSpacer(getFieldEditorParent(), JDIDebugUIPlugin.fgAccessModifierNames.length + 1);
+		createSpacer(composite, numColumns);
 		
 		// Create a group for the 3 primitive display options
-		Group primitiveGroup = new Group(getFieldEditorParent(), SWT.NONE);
+		Group primitiveGroup = new Group(composite, SWT.NONE);
 		GridLayout primitiveLayout = new GridLayout();
 		primitiveGroup.setLayout(primitiveLayout);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = numColumns;
 		primitiveGroup.setLayoutData(gd);
-		primitiveGroup.setFont(getFieldEditorParent().getFont());
+		primitiveGroup.setFont(composite.getFont());
 		primitiveGroup.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2")); //$NON-NLS-1$
 
 		// Create the 3 primitive display checkboxes
-		BooleanFieldEditor hexCheckbox = new BooleanFieldEditor(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, DebugUIMessages.getString("JavaDebugPreferencePage.Display_&hexadecimal_values_(byte,_short,_char,_int,_long)_3"), primitiveGroup);	//$NON-NLS-1$	
-		addField(hexCheckbox);
-		BooleanFieldEditor charCheckbox = new BooleanFieldEditor(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, DebugUIMessages.getString("JavaDebugPreferencePage.Display_ASCII_&character_values_(byte,_short,_int,_long)_4"), primitiveGroup); //$NON-NLS-1$
-		addField(charCheckbox);
-		BooleanFieldEditor unsignedCheckbox = new BooleanFieldEditor(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5"), primitiveGroup); //$NON-NLS-1$
-		addField(unsignedCheckbox);
-
-		createSpacer(getFieldEditorParent(), JDIDebugUIPlugin.fgAccessModifierNames.length + 1);
+		fHexButton = new Button(primitiveGroup, SWT.CHECK);
+		fHexButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&hexadecimal_values_(byte,_short,_char,_int,_long)_3")); //$NON-NLS-1$
+		fCharButton = new Button(primitiveGroup, SWT.CHECK);
+		fCharButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_ASCII_&character_values_(byte,_short,_int,_long)_4")); //$NON-NLS-1$
+		fUnsignedButton = new Button(primitiveGroup, SWT.CHECK);
+		fUnsignedButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5")); //$NON-NLS-1$
+		
+		createSpacer(composite, numColumns);
+		
+		setValues();
+		
+		return composite;
 	}
 	
 	/**
@@ -292,20 +299,13 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		boolean ok= super.performOk();
+		storeValues();
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
-		JavaVariablesFilterPreferenceAction.applyFilterToViewers();
-		return ok;
-	}
-
-	/**
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#adjustGridLayout()
-	 */
-	protected void adjustGridLayout() {
-		GridLayout gridLayout = (GridLayout)getFieldEditorParent().getLayout();
-		gridLayout.numColumns = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
-		gridLayout.horizontalSpacing = HORIZONTAL_GRID_SPACING;
-		gridLayout.verticalSpacing = VERTICAL_GRID_SPACING;
+		StructuredViewer viewer = getViewer();
+		if (viewer != null) {
+			applyFilterToViewer(viewer, getPreferencePrefix());
+		}
+		return true;
 	}
 
 	private void createSpacer(Composite parent, int numColumns) {
@@ -321,6 +321,155 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 
 	private StructuredViewer getViewer() {
 		return fViewer;
+	}
+
+	private void setPreferencePrefix(String preferencePrefix) {
+		fPreferencePrefix = preferencePrefix;
+	}
+
+	private String getPreferencePrefix() {
+		return fPreferencePrefix;
+	}
+	
+	private boolean isRunningInPreferenceDialog() {
+		return fRunningInPreferenceDialog;
+	}
+	
+	/**
+	 * Read the current preference values out of the preference store and set
+	 * the values on the corresponding widgets.
+	 */
+	private void setValues() {
+		IPreferenceStore store = getPreferenceStore();		
+		String prefix = getPreferencePrefix();
+		
+		for (int row = 0; row < JDIDebugUIPlugin.fgModeModifierNames.length; row++) {
+			for (int col = 0; col < JDIDebugUIPlugin.fgAccessModifierNames.length; col++) {
+				Button checkbox = fCheckboxes[row][col];
+				String prefName = (String) checkbox.getData();
+				boolean value = store.getBoolean(prefName);
+				checkbox.setSelection(value);
+			}
+		}
+		
+		fHexButton.setSelection(store.getBoolean(JDIDebugUIPlugin.getShowHexPreferenceKey(prefix)));
+		fCharButton.setSelection(store.getBoolean(JDIDebugUIPlugin.getShowCharPreferenceKey(prefix)));
+		fUnsignedButton.setSelection(store.getBoolean(JDIDebugUIPlugin.getShowUnsignedPreferenceKey(prefix)));		
+	}
+	
+	/**
+	 * Read the values out of the widgets on this page and set the corresponding
+	 * preference values in the preference store.
+	 */
+	private void storeValues() {
+		IPreferenceStore store = getPreferenceStore();
+		String prefix = getPreferencePrefix();
+
+		for (int row = 0; row < JDIDebugUIPlugin.fgModeModifierNames.length; row++) {
+			for (int col = 0; col < JDIDebugUIPlugin.fgAccessModifierNames.length; col++) {
+				Button checkbox = fCheckboxes[row][col];
+				String prefName = (String) checkbox.getData();
+				store.setValue(prefName, checkbox.getSelection());
+			}
+		}
+		
+		store.setValue(JDIDebugUIPlugin.getShowHexPreferenceKey(prefix), fHexButton.getSelection());
+		store.setValue(JDIDebugUIPlugin.getShowCharPreferenceKey(prefix), fCharButton.getSelection());
+		store.setValue(JDIDebugUIPlugin.getShowUnsignedPreferenceKey(prefix), fUnsignedButton.getSelection());				
+	}
+
+	/**
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		setDefaultValues();
+		super.performDefaults();
+	}
+	
+	private void setDefaultValues() {
+		IPreferenceStore store = getPreferenceStore();
+		String prefix = getPreferencePrefix();
+
+		for (int row = 0; row < JDIDebugUIPlugin.fgModeModifierNames.length; row++) {
+			for (int col = 0; col < JDIDebugUIPlugin.fgAccessModifierNames.length; col++) {
+				Button checkbox = fCheckboxes[row][col];
+				boolean value = false;
+				if (isRunningInPreferenceDialog()) {
+					String prefName = (String) checkbox.getData();
+					value = store.getDefaultBoolean(prefName);
+				} else {
+					String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(row, col, JDIDebugUIPlugin.DEFAULT_VARIABLES_FILTER_PREFIX);
+					value = store.getBoolean(prefName);
+				}
+				checkbox.setSelection(value);
+			}
+		}
+		
+		boolean hexValue = false, charValue = false, unsignedValue = false;
+		if (isRunningInPreferenceDialog()) {
+			hexValue = store.getDefaultBoolean(JDIDebugUIPlugin.getShowHexPreferenceKey(prefix));
+			charValue = store.getDefaultBoolean(JDIDebugUIPlugin.getShowCharPreferenceKey(prefix));
+			unsignedValue = store.getDefaultBoolean(JDIDebugUIPlugin.getShowUnsignedPreferenceKey(prefix));						
+		} else {
+			hexValue = store.getBoolean(JDIDebugUIPlugin.getShowHexPreferenceKey(JDIDebugUIPlugin.DEFAULT_VARIABLES_FILTER_PREFIX));
+			charValue = store.getBoolean(JDIDebugUIPlugin.getShowCharPreferenceKey(JDIDebugUIPlugin.DEFAULT_VARIABLES_FILTER_PREFIX));
+			unsignedValue = store.getBoolean(JDIDebugUIPlugin.getShowUnsignedPreferenceKey(JDIDebugUIPlugin.DEFAULT_VARIABLES_FILTER_PREFIX));									
+		}
+		fHexButton.setSelection(hexValue);
+		fCharButton.setSelection(charValue);
+		fUnsignedButton.setSelection(unsignedValue);									
+	}
+
+	/**
+	 * Apply a new filter to the viewer.  If one is already present, refresh it.
+	 */
+	public static void applyFilterToViewer(StructuredViewer viewer, String preferencePrefix) {
+		JavaVariablesViewerFilter filter = retrieveViewerFilter(viewer);
+		boolean refreshRequired = false;
+		if (filter == null) {
+			filter = new JavaVariablesViewerFilter(preferencePrefix);
+			viewer.addFilter(filter);
+		} else {
+			filter.resetState();
+			refreshRequired = true;
+		}
+		
+		ILabelProvider labelProvider= (ILabelProvider) viewer.getLabelProvider();
+		if (labelProvider instanceof IDebugModelPresentation) {
+			IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation) labelProvider;			
+			IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+			boolean showHex = store.getBoolean(JDIDebugUIPlugin.getShowHexPreferenceKey(preferencePrefix));
+			boolean showChar = store.getBoolean(JDIDebugUIPlugin.getShowCharPreferenceKey(preferencePrefix));
+			boolean showUnsigned = store.getBoolean(JDIDebugUIPlugin.getShowUnsignedPreferenceKey(preferencePrefix));			
+			debugLabelProvider.setAttribute(JDIModelPresentation.SHOW_HEX_VALUES, (showHex ? Boolean.TRUE : Boolean.FALSE));			
+			debugLabelProvider.setAttribute(JDIModelPresentation.SHOW_CHAR_VALUES, (showChar ? Boolean.TRUE : Boolean.FALSE));			
+			debugLabelProvider.setAttribute(JDIModelPresentation.SHOW_UNSIGNED_VALUES, (showUnsigned ? Boolean.TRUE : Boolean.FALSE));						
+			refreshRequired = true;
+		}
+		
+		if (refreshRequired) {
+			viewer.refresh();
+		}
+	}
+
+	/**
+	 * Find & return the first instance of
+	 * <code>JavaVariablesViewerFilter</code> that is registered as a filter on
+	 * the viewer.
+	 */
+	public static JavaVariablesViewerFilter retrieveViewerFilter(StructuredViewer viewer) {
+		ViewerFilter[] filters = viewer.getFilters();
+		for (int i = 0; i < filters.length; i++) {
+			if (filters[i] instanceof JavaVariablesViewerFilter) {
+				return (JavaVariablesViewerFilter) filters[i];
+			}
+		}
+		return null;
+	}	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	public void init(IWorkbench workbench) {
 	}
 
 }

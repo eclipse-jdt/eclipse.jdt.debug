@@ -26,10 +26,19 @@ public class JavaVariablesViewerFilter extends ViewerFilter {
 	private boolean fFilterPreferencesLoaded = false;
 
 	/**
+	 * The prefix for all preference keys.
+	 */
+	private String fPreferencePrefix;
+
+	/**
 	 * A table containing the current preferences that relate to variable
 	 * filtering.
 	 */
 	private boolean[][] fFilterGrid = new boolean[JDIDebugUIPlugin.fgModeModifierNames.length][JDIDebugUIPlugin.fgAccessModifierNames.length];																									
+
+	public JavaVariablesViewerFilter(String preferencePrefix) {
+		setPreferencePrefix(preferencePrefix);
+	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -136,7 +145,7 @@ public class JavaVariablesViewerFilter extends ViewerFilter {
 		IPreferenceStore prefStore = getPreferenceStore();
 		for (int i = 0; i < JDIDebugUIPlugin.fgModeModifierNames.length; i++) {
 			for (int j = 0; j < JDIDebugUIPlugin.fgAccessModifierNames.length; j++) {
-				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(i, j);
+				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(i, j, getPreferencePrefix());
 				boolean value = prefStore.getBoolean(prefName);
 				fFilterGrid[i][j] = value;
 			}
@@ -146,6 +155,14 @@ public class JavaVariablesViewerFilter extends ViewerFilter {
 
 	private IPreferenceStore getPreferenceStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();
+	}
+
+	private void setPreferencePrefix(String preferencePrefix) {
+		fPreferencePrefix = preferencePrefix;
+	}
+
+	private String getPreferencePrefix() {
+		return fPreferencePrefix;
 	}
 	
 }

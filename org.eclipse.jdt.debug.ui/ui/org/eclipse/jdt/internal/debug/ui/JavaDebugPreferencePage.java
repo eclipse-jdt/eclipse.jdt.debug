@@ -7,8 +7,6 @@ package org.eclipse.jdt.internal.debug.ui;
  
 import java.text.MessageFormat;
 
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.FieldEditor;
@@ -18,10 +16,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,11 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -55,32 +47,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private IntegerFieldEditor fTimeoutText;
 	private IntegerFieldEditor fConnectionTimeoutText;
 	
-	private PropertyChangeListener fPropertyChangeListener;
-	
-	protected class PropertyChangeListener implements IPropertyChangeListener {
-		private boolean fHasStateChanged= false;
-		
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES)) {
-				fHasStateChanged= true;
-			} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES)) {
-				fHasStateChanged= true;
-			} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES)) {
-				fHasStateChanged= true;
-			}
-		}
-		
-		protected boolean hasStateChanged() {
- 			return fHasStateChanged;
- 		}
-	}
-	
-
-		
 	public JavaDebugPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		getPreferenceStore().addPropertyChangeListener(getPropertyChangeListener());
 		setDescription(DebugUIMessages.getString("JavaDebugPreferencePage.description")); //$NON-NLS-1$
 	}
 
@@ -178,50 +147,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public boolean performOk() {
 		storeValues();
-		if (getPropertyChangeListener().hasStateChanged()) {
-			refreshViews();
-		}
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		JDIDebugModel.savePreferences();
 		JavaRuntime.savePreferences();
 		return true;
-	}
-	
-	/**
-	 * Refresh the variables and expression views as changes
-	 * have occurred that affects these views.
-	 */
-	private void refreshViews() {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				// Refresh interested views
-				IWorkbenchWindow[] windows= JDIDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-				IWorkbenchPage page= null;
-				for (int i= 0; i < windows.length; i++) {
-					page= windows[i].getActivePage();
-					if (page != null) {
-						refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
-						refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
-					}
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Refresh all views in the given workbench page with the given view id
-	 */
-	private void refreshViews(IWorkbenchPage page, String viewID) {
-		IViewPart part= page.findView(viewID);
-		if (part != null) {
-			IDebugView adapter= (IDebugView)part.getAdapter(IDebugView.class);
-			if (adapter != null) {
-				Viewer viewer= adapter.getViewer();
-				if (viewer instanceof StructuredViewer) {
-					((StructuredViewer)viewer).refresh();
-				}
-			}
-		}
 	}
 	
 	/**
@@ -315,21 +244,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
-	}
-	
-	protected PropertyChangeListener getPropertyChangeListener() {
-		if (fPropertyChangeListener == null) {
-			fPropertyChangeListener= new PropertyChangeListener();
-		}
-		return fPropertyChangeListener;
-	}
-	
-	/**
-	 * @see DialogPage#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		getPreferenceStore().removePropertyChangeListener(getPropertyChangeListener());
 	}
 	
 	protected void createSpacer(Composite composite, int columnSpan) {

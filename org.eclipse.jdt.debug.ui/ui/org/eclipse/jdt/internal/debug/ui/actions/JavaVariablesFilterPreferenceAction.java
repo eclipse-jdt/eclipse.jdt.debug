@@ -8,18 +8,16 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaVariablesFilterPreferenceDialog;
-import org.eclipse.jdt.internal.debug.ui.JavaVariablesViewerFilter;
+import org.eclipse.jdt.internal.debug.ui.JavaVariablesFilterPreferencePage;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
@@ -30,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Open the variable filtering dialog for the view part that init'd this action.
  */
-public class JavaVariablesFilterPreferenceAction implements IViewActionDelegate {
+public abstract class JavaVariablesFilterPreferenceAction implements IViewActionDelegate {
 
 	/**
 	 * This part listener cleans up when the specified viewer is closed.
@@ -82,7 +80,6 @@ public class JavaVariablesFilterPreferenceAction implements IViewActionDelegate 
 		 */
 		public void partOpened(IWorkbenchPart part) {
 		}
-
 	}
 
 	/**
@@ -100,7 +97,7 @@ public class JavaVariablesFilterPreferenceAction implements IViewActionDelegate 
 	 */
 	public void run(IAction action) {
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-		JavaVariablesFilterPreferenceDialog dialog = new JavaVariablesFilterPreferenceDialog(shell, getViewer());
+		JavaVariablesFilterPreferenceDialog dialog = new JavaVariablesFilterPreferenceDialog(shell, getViewer(), getPreferencePrefix());
 		dialog.open();
 	}
 
@@ -111,9 +108,10 @@ public class JavaVariablesFilterPreferenceAction implements IViewActionDelegate 
 		if (view instanceof IDebugView) {
 			Viewer viewer = ((IDebugView)view).getViewer();
 			if (viewer instanceof StructuredViewer) {
-				setViewer((StructuredViewer) viewer);
+				StructuredViewer structuredViewer = (StructuredViewer) viewer;
+				setViewer(structuredViewer);
 				initializeCleanupInfrastructure(view);
-				applyFilterToViewer(getViewer());
+				JavaVariablesFilterPreferencePage.applyFilterToViewer(structuredViewer, getPreferencePrefix());
 			}
 		}
 	}
@@ -140,45 +138,9 @@ public class JavaVariablesFilterPreferenceAction implements IViewActionDelegate 
 	}
 
 	/**
-	 * Create filters or refresh the existing filter for all viewers that
-	 * require them.
+	 * Return the prefix to use for preference keys.  This allows subclasses to
+	 * use the same widgetry to collect different preferences.
 	 */
-	public static void applyFilterToViewers() {
-		Iterator iterator = fgViewerSet.iterator();
-		while (iterator.hasNext()) {
-			StructuredViewer viewer = (StructuredViewer) iterator.next();
-			applyFilterToViewer(viewer);
-		}
-	}
-
-	/**
-	 * Apply a new filter to the specified viewer.  If one is already present,
-	 * refresh it.
-	 */
-	public static void applyFilterToViewer(StructuredViewer viewer) {
-		JavaVariablesViewerFilter filter = retrieveViewerFilter(viewer);
-		if (filter == null) {
-			filter = new JavaVariablesViewerFilter();
-			viewer.addFilter(filter);
-		} else {
-			filter.resetState();
-			viewer.refresh();
-		}
-	}
-
-	/**
-	 * Find & return the first instance of
-	 * <code>JavaVariablesViewerFilter</code> that is registered as a filter on
-	 * the specified viewer.
-	 */
-	private static JavaVariablesViewerFilter retrieveViewerFilter(StructuredViewer viewer) {
-		ViewerFilter[] filters = viewer.getFilters();
-		for (int i = 0; i < filters.length; i++) {
-			if (filters[i] instanceof JavaVariablesViewerFilter) {
-				return (JavaVariablesViewerFilter) filters[i];
-			}
-		}
-		return null;
-	}
+	protected abstract String getPreferencePrefix();
 
 }

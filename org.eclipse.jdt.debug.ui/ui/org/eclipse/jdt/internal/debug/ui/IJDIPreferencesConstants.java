@@ -12,24 +12,6 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 public interface IJDIPreferencesConstants {
 	
 	/**
-	 * Boolean preference controlling whether primitive types
-	 * types display hexidecimal values.
-	 */	
-	public static final String PREF_SHOW_HEX_VALUES= IJavaDebugUIConstants.PLUGIN_ID + "javaDebug.showHexValues"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference controlling whether primitive types
-	 * types display char values.
-	 */	
-	public static final String PREF_SHOW_CHAR_VALUES= IJavaDebugUIConstants.PLUGIN_ID + "javaDebug.showCharValues"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference controlling whether primitive types
-	 * types display unsigned values.
-	 */	
-	public static final String PREF_SHOW_UNSIGNED_VALUES= IJavaDebugUIConstants.PLUGIN_ID + "javaDebug.showUnsignedValues"; //$NON-NLS-1$
-	
-	/**
 	 * Boolean preference controlling whether to suspend
 	 * execution when an uncaught Java exceptionis encountered
 	 * (while debugging).

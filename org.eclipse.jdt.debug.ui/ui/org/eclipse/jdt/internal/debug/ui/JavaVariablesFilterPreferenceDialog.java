@@ -99,6 +99,11 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 	 * The Composite in which a page is shown.
 	 */
 	private Composite fPageContainer;
+	
+	/**
+	 * The prefix used when storing preference values.
+	 */
+	private String fPreferencePrefix;
 
 	/**
 	 * The minimum page size; 200 by 200 by default.
@@ -123,9 +128,10 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 	/**
 	 * Constructor
 	 */
-	public JavaVariablesFilterPreferenceDialog(Shell shell, StructuredViewer viewer) {
+	public JavaVariablesFilterPreferenceDialog(Shell shell, StructuredViewer viewer, String preferencePrefix) {
 		super(shell);
 		setViewer(viewer);
+		setPreferencePrefix(preferencePrefix);
 	}
 
 	/**
@@ -157,7 +163,7 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 		fPageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPageContainer.setFont(parent.getFont());
 
-		fPrefPage= new JavaVariablesFilterPreferencePage(getViewer());
+		fPrefPage= new JavaVariablesFilterPreferencePage(getViewer(), getPreferencePrefix());
 		fPrefPage.setContainer(this);
 		fPrefPage.createControl(fPageContainer);
 
@@ -382,6 +388,14 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 	
 	private void setViewer(StructuredViewer viewer) {
 		fViewer = viewer;
+	}
+
+	private void setPreferencePrefix(String preferencePrefix) {
+		fPreferencePrefix = preferencePrefix;
+	}
+
+	private String getPreferencePrefix() {
+		return fPreferencePrefix;
 	}
 
 }
