@@ -72,20 +72,6 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 	}
 	
 	/**
-	 * Set the default preferences for this page.
-	 */
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, false);		
-		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
-		
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
-	}
-	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {

@@ -12,7 +12,6 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -306,18 +305,6 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		GridData gd = new GridData();
 		gd.horizontalSpan = numColumns;
 		label.setLayoutData(gd);
-	}
-	
-	/**
-	 * By default, ALL filter options are set on.
-	 */
-	public static void initDefaults(IPreferenceStore store) {
-		for (int row = 0; row < JDIDebugUIPlugin.fgModeModifierNames.length; row++) {
-			for (int col = 0; col < JDIDebugUIPlugin.fgAccessModifierNames.length; col++) {
-				String prefName = JDIDebugUIPlugin.generateVariableFilterPreferenceName(row, col);
-				store.setDefault(prefName, true);
-			}
-		}
 	}
 
 	private void setViewer(StructuredViewer viewer) {
