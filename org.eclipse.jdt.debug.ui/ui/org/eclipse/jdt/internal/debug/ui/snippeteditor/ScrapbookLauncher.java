@@ -142,7 +142,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			
 			return doLaunch(javaProject, page, classPath);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e.getStatus()); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -226,7 +226,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				return launch;
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e.getStatus()); //$NON-NLS-1$
 		}
 		return null;
 	}
