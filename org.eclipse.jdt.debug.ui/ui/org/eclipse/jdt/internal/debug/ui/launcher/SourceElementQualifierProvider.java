@@ -14,18 +14,16 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.io.File;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
 import org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -36,14 +34,16 @@ import org.eclipse.ui.PlatformUI;
  * A label provider for source element qaulifiers found with a JavaSourceLocator
  */
 public class SourceElementQualifierProvider extends LabelProvider implements ILabelProvider {
+	
+	private JavaElementLabelProvider fJavaLabels;
 
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
 		if (element instanceof IJavaElement) {
-			IJavaProject project = ((IJavaElement)element).getJavaProject();
-			return project.getElementName();
+			IJavaElement parent = ((IJavaElement)element).getParent();
+			return fJavaLabels.getText(parent);
 		} else if (element instanceof ZipEntryStorage) {
 			ZipEntryStorage storage = (ZipEntryStorage)element;
 			ZipFile zipFile = storage.getArchive();
@@ -60,15 +60,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 		} else if (element instanceof LocalFileStorage) {
 			LocalFileStorage storage = (LocalFileStorage)element;
 			File extFile = storage.getFile();
-			IPath path = new Path(extFile.getAbsolutePath());
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-			if (file == null) {
-				// external
-				return extFile.getParent();
-			} else {
-				// internal
-				return file.getProject().getName();
-			}
+			return extFile.getParent();
 		}
 		return super.getText(element);
 	}
@@ -78,13 +70,31 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof IJavaElement) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
+			IJavaElement parent = ((IJavaElement)element).getParent();
+			return fJavaLabels.getImage(parent);
 		} else if (element instanceof ZipEntryStorage) {
 			return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_JAR_WSRC);
 		} else if (element instanceof LocalFileStorage) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
 		return super.getImage(element);
+	}
+
+	/**
+	 * Constructs a new label provider
+	 */
+	public SourceElementQualifierProvider() {
+		super();
+		fJavaLabels = new JavaElementLabelProvider();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		fJavaLabels.dispose();
+		fJavaLabels = null;
 	}
 
 }
