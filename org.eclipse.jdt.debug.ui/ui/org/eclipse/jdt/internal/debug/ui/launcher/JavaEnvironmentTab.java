@@ -206,7 +206,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		
 		createVerticalSpacer(pathButtonComp, 1);
 		
-		fPathAddArchiveButton = createPushButton(pathButtonComp,"Add Arc&hive...", null);
+		fPathAddArchiveButton = createPushButton(pathButtonComp,"Add Ja&r...", null);
 		fPathAddArchiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathAddArchiveButtonSelected();
@@ -221,7 +221,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 		});
 		
-		fPathRemoveButton = createPushButton(pathButtonComp,"&Remove", null);
+		fPathRemoveButton = createPushButton(pathButtonComp,"R&emove", null);
 		fPathRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathRemoveButtonSelected();
