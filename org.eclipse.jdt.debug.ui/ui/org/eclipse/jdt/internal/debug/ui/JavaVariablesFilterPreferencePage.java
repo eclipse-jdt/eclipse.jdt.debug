@@ -153,7 +153,21 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 		GridData gd;
 		Label label;
 		
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite top = new Composite(parent, SWT.NONE);
+		GridLayout topLayout = new GridLayout();
+		topLayout.numColumns = 1;
+		topLayout.marginWidth = 0;
+		topLayout.marginHeight = 0;
+		top.setLayout(topLayout);
+		gd = new GridData();
+		gd.verticalAlignment = GridData.FILL;
+		gd.horizontalAlignment = GridData.FILL;
+		top.setLayoutData(gd);
+		top.setFont(parent.getFont());		
+
+		createSpacer(top, 1);
+				
+		Group composite = new Group(top, SWT.NONE);
 		GridLayout compositeLayout = new GridLayout();
 		int numColumns = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
 		compositeLayout.numColumns = numColumns;
@@ -164,9 +178,8 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 		gd.verticalAlignment = GridData.FILL;
 		gd.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(gd);
-		composite.setFont(parent.getFont());
-		
-		createSpacer(composite, numColumns);
+		composite.setFont(top.getFont());
+		composite.setText(DebugUIMessages.getString("JavaVariablesFilterPreferencePage.&Variable_Filters_1")); //$NON-NLS-1$
 		
 		// Create header images
 		createSpacer(composite, 1);
@@ -232,18 +245,20 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 				button.setData(prefName);
 				fCheckboxes[i][j] = button;
 			}
-		}	
+		}
 		
 		createSpacer(composite, numColumns);
 		
+		createSpacer(top, 1);
+		
 		// Create a group for the 3 primitive display options
-		Group primitiveGroup = new Group(composite, SWT.NONE);
+		Group primitiveGroup = new Group(top, SWT.NONE);
 		GridLayout primitiveLayout = new GridLayout();
 		primitiveGroup.setLayout(primitiveLayout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = numColumns;
+		gd.horizontalSpan = 1;
 		primitiveGroup.setLayoutData(gd);
-		primitiveGroup.setFont(composite.getFont());
+		primitiveGroup.setFont(top.getFont());
 		primitiveGroup.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2")); //$NON-NLS-1$
 
 		// Create the 3 primitive display checkboxes
@@ -254,7 +269,7 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 		fUnsignedButton = new Button(primitiveGroup, SWT.CHECK);
 		fUnsignedButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5")); //$NON-NLS-1$
 		
-		createSpacer(composite, numColumns);
+		createSpacer(top, 1);
 		
 		setValues();
 		

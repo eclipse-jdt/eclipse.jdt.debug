@@ -340,7 +340,7 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 
 		// Set the message and error message
 		if (pageMessage == null) {
-			setMessage(fPrefPage.getTitle());
+			setMessage(DebugUIMessages.getString("JavaVariablesFilterPreferenceDialog.Filter_and_Display_Options_1")); //$NON-NLS-1$
 		} else {
 			setMessage(pageMessage);
 		}
