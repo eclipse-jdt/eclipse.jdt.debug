@@ -116,7 +116,7 @@ public class MirrorTest extends AbstractJDITest {
 	public void testJDIToString() {
 		for (int i = 0; i < fMirrors.size(); i++) {
 			Mirror mirror = (Mirror) fMirrors.get(i);
-			assertTrue(Integer.toString(i), mirror.toString() instanceof String);
+			assertNotNull(Integer.toString(i), mirror.toString());
 		}
 	}
 	/**
