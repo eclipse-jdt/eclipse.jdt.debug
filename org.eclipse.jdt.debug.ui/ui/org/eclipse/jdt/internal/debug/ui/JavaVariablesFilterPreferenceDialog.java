@@ -110,8 +110,8 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 	 * Must declare our own images as the JFaceResource images will not be created unless
 	 * a property/preference dialog has been shown
 	 */
-	protected static final String PREF_DLG_TITLE_IMG = "breakpoint_preference_dialog_title_image";//$NON-NLS-1$
-	protected static final String PREF_DLG_IMG_TITLE_ERROR = "breakpoint_preference_dialog_title_error_image";//$NON-NLS-1$
+	protected static final String PREF_DLG_TITLE_IMG = "variable_filter_dialog_title_image";//$NON-NLS-1$
+	protected static final String PREF_DLG_IMG_TITLE_ERROR = "variable_filter_dialog_title_error_image";//$NON-NLS-1$
 	
 	static {
 		ImageRegistry reg = JDIDebugUIPlugin.getDefault().getImageRegistry();
