@@ -36,7 +36,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
@@ -47,7 +46,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate
 													implements IDebugEventSetListener {
@@ -147,14 +145,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		
 		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
 		// Set default source locator if none specified
-		if (launch.getSourceLocator() == null) {
-			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-			if (id == null) {
-				javaProject = JavaRuntime.getJavaProject(configuration);
-				ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
-				launch.setSourceLocator(sourceLocator);
-			}
-		}
+		setDefaultSourceLocator(launch, configuration);
 		monitor.worked(1);
 		monitor.done();
 	}

@@ -16,6 +16,7 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.AppletMainTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletParametersTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaSourceLookupTab;
 
 public class JavaAppletTabGroup extends AbstractLaunchConfigurationTabGroup {
 	
@@ -34,7 +35,8 @@ public class JavaAppletTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AppletParametersTab(),
 			new AppletArgumentsTab(),
 			new JavaJRETab(),
-			new JavaClasspathTab(),			
+			new JavaClasspathTab(),
+			new JavaSourceLookupTab(),	
 			new CommonTab()
 		};
 		setTabs(tabs);
