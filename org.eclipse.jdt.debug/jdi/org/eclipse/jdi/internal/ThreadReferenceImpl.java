@@ -234,6 +234,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
+			//remove the thread status reply
+			readInt("thread status", threadStatusMap(), replyData);
 			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData);
 			boolean result = suspendStatus == SUSPEND_STATUS_SUSPENDED;
 			return result;
@@ -331,6 +333,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int threadStatus = readInt("thread status", threadStatusMap(), replyData);
+			readInt("suspend status", suspendStatusVector(), replyData);
 			switch (threadStatus) {
 				case JDWP_THREAD_STATUS_ZOMBIE:
 					return THREAD_STATUS_ZOMBIE;
