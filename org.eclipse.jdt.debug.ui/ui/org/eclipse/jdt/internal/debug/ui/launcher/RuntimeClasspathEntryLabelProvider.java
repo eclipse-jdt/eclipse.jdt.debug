@@ -25,6 +25,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -172,6 +173,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 		 */
 		public void setLaunchConfiguration(ILaunchConfiguration configuration) {
 			fLaunchConfuration = configuration;
+			fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 		}
 
 }
