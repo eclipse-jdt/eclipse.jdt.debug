@@ -216,6 +216,9 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 */
 	protected boolean compareToEditorInput(IStackFrame stackFrame) {
 		ILaunch launch = stackFrame.getLaunch();
+		if (launch == null) {
+			return false;
+		}
 		ISourceLocator sourceLocator = launch.getSourceLocator();
 		Object sourceElement = sourceLocator.getSourceElement(stackFrame);
 		JDIModelPresentation presentation = new JDIModelPresentation();
