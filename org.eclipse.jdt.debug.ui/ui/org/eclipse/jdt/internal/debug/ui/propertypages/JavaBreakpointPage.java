@@ -183,12 +183,12 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void createSuspendPolicyEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		createLabel(parent, "Suspend Policy");
+		createLabel(parent, PropertyPageMessages.getString("JavaBreakpointPage.6")); //$NON-NLS-1$
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 		Composite radioComposite= createComposite(parent, 2);
-		fSuspendThreadButton= createRadioButton(radioComposite, "Suspend &Thread");
+		fSuspendThreadButton= createRadioButton(radioComposite, PropertyPageMessages.getString("JavaBreakpointPage.7")); //$NON-NLS-1$
 		fSuspendThreadButton.setSelection(suspendThread);
-		fSuspendVMButton= createRadioButton(radioComposite, "Suspend &VM");
+		fSuspendVMButton= createRadioButton(radioComposite, PropertyPageMessages.getString("JavaBreakpointPage.8")); //$NON-NLS-1$
 		fSuspendVMButton.setSelection(!suspendThread);
 	}
 
@@ -199,7 +199,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	private void createHitCountEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
 		Composite hitCountComposite= createComposite(parent, 2);
-		fHitCountButton= createCheckButton(hitCountComposite, PropertyPageMessages.getString("JavaBreakpointPage.6")); //$NON-NLS-1$
+		fHitCountButton= createCheckButton(hitCountComposite, PropertyPageMessages.getString("JavaBreakpointPage.4")); //$NON-NLS-1$
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				fHitCountText.setEnabled(fHitCountButton.getSelection());
@@ -257,7 +257,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 * @throws CoreException
 	 */
 	protected void createEnabledButton(Composite parent) throws CoreException {
-		fEnabledButton= createCheckButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.7")); //$NON-NLS-1$
+		fEnabledButton= createCheckButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.5")); //$NON-NLS-1$
 		fEnabledButton.setSelection(getBreakpoint().isEnabled());
 	}
 	
