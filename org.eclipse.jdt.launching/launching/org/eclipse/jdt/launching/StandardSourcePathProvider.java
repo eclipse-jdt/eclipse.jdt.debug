@@ -57,7 +57,9 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 		if (!includeJRE) {
 			IVMInstall buildVM = JavaRuntime.getVMInstall(pro);
 			IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
-			includeJRE = !buildVM.equals(runVM);
+			if (buildVM != null) {
+				includeJRE = !buildVM.equals(runVM);
+			}
 		}
 		if (!includeJRE) {
 			// remove the JRE entry
