@@ -235,17 +235,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Block)
 	 */
 	public boolean visit(Block node) {
-		if (visit(node, false)) {
-			ASTNode parent= node.getParent();
-			if (node.statements().isEmpty() && (parent instanceof MethodDeclaration)) {
-				fLocation= fCompilationUnit.lineNumber(node.getStartPosition());
-				fLocationFound= true;
-				fTypeName= computeTypeName(node);
-				return false;
-			}
-			return true;
-		}
-		return false;
+		return visit(node, false);
 	}
 
 	/**
