@@ -67,7 +67,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			if (getActiveEditor() != null) {
 				IEditorStatusLine statusLine= (IEditorStatusLine) getActiveEditor().getAdapter(IEditorStatusLine.class);
 				if (statusLine != null) {
-					statusLine.setMessage(true, "Current text selection does not resolve to a Java method", null);
+					statusLine.setMessage(true, ActionMessages.getString("StepIntoSelectionActionDelegate.No_Method"), null); //$NON-NLS-1$
 				}
 			}		
 			JDIDebugUIPlugin.getStandardDisplay().beep();

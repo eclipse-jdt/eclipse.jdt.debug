@@ -64,7 +64,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 			try {
 				IMember element= getMember();
 				if (element == null || !enableForMember(element)) {
-					report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd"));
+					report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
 					return;
 				}
 				IType type = element.getDeclaringType();

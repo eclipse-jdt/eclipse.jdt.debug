@@ -62,7 +62,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	protected void manageBreakpoint(IEditorInput editorInput) {
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
 		if (sp == null || getType() == null) {
-			report("Breakpoint can neither be added nor removed at current text selection");
+			report(ActionMessages.getString("ManageBreakpointActionDelegate.No_Breakpoint")); //$NON-NLS-1$
 			return;
 		}
 		report(null);
