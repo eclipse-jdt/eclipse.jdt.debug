@@ -149,6 +149,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Detail_formatter_code_snippet_defined_for_selected_type__3")); //$NON-NLS-1$
+		label.setFont(font);
 		createSourceViewer(container);
 		
 		fFormatViewerContentProvider.refreshViewer();

@@ -200,6 +200,7 @@ public class VMPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		data = new GridData();
 		data.horizontalSpan = 2;
 		tableLabel.setLayoutData(data);
+		tableLabel.setFont(font);
 		
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		
