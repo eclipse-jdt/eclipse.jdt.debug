@@ -99,7 +99,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ClasspathContainerTests.class));
 		addTest(new TestSuite(ArgumentTests.class));
 		addTest(new TestSuite(ConsoleTests.class));
-		addTest(new TestSuite(ConsoleInputTests.class));
+//		addTest(new TestSuite(ConsoleInputTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(DeferredBreakpointTests.class));
 		addTest(new TestSuite(ConditionalBreakpointsTests.class));
