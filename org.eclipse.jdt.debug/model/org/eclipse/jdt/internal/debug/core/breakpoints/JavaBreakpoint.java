@@ -22,13 +22,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
@@ -757,17 +753,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return ensureMarker().getAttribute(TYPE_NAME, null);
 		}
 		return fInstalledTypeName;
-	}
-	
-	/**
-	 * Execute the given workspace runnable
-	 */
-	protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) throws DebugException {
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}			
 	}
 	
 	/**
