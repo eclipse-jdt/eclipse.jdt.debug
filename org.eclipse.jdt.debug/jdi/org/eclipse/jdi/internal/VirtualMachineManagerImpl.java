@@ -133,8 +133,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 				// JDI plug-in is not loaded
 				return JDIDebugModel.DEF_REQUEST_TIMEOUT;
 			}
-		} catch (Throwable e) {
-			// ClassNotFoundException, NoClassDefFoundError
+		} catch (NoClassDefFoundError e) {
 		}
 		// return the hard coded preference if the jdi debug plug-in does not exist
 		return 3000;
