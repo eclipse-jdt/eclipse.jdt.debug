@@ -414,11 +414,11 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	public boolean wereLocalsAvailable();
 	
 	/**
-	 * Returns whether the method associated with this stack frame is
-	 * a varargs method.
+	 * Returns whether the method associated with this stack frame accepts
+     * a variable number of arguments.
 	 * 
-	 * @return <code>true</code> if the method associated with this
-	 * stack frame is a varargs method, <code>false</code> otherwise.
+	 * @return <code>true</code> if the method associated with this stack
+	 * frame accepts a variable number of arguments, <code>false</code> otherwise.
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
@@ -427,7 +427,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
-	 * @since 3.0
+	 * @since 3.1
 	 */
 	public boolean isVarargs() throws DebugException;
 }

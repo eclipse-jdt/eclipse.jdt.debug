@@ -127,7 +127,7 @@ public interface IJavaClassType  extends IJavaReferenceType {
 	public IJavaInterfaceType[] getAllInterfaces() throws DebugException;
 	
 	/**
-	 * Indicates in this type was declared as a typesafe enum or not.
+	 * Returns whether this type is declared as a typesafe enum.
 	 * 
 	 * @return <code>true</code> if this type is a typesafe enum, <code>false</code> otherwise.
 	 * @exception DebugException if this method fails.  Reasons include:
