@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<plugin
+    name = "JDIDebugPlugin"
+    id = "org.eclipse.jdt.debug"
+    class="org.eclipse.jdt.internal.debug.core.JDIDebugPlugin"
+    version = "0.105.0"
+    vendor-name = "OTI">
+
+<requires>
+  <import plugin="org.apache.xerces"/>
+  <import plugin="org.eclipse.core.resources"/>
+  <import plugin="org.eclipse.debug.core"/>
+  <import plugin="org.eclipse.jdt.core"/>
+</requires>
+ 
+<runtime>
+  <library name="jdi.jar" > 
+     <export name= "*" />
+  </library>
+  <library name="jdimodel.jar" > 
+     <export name= "*" />
+  </library>
+</runtime>
+
+<extension id="javaLineBreakpoint" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.debug.core.lineBreakpoint"/>
+	<persistent value="true"/>
+	<attribute name="typeHandle"/>
+	<attribute name="installCount"/>
+	<attribute name="hitCount"/>
+	<attribute name="expired"/>
+</extension>
+
+<extension id="javaRunToLineBreakpoint" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.javaLineBreakpoint"/>
+	<persistent value="false"/>
+</extension>
+
+<extension id="javaExceptionBreakpoint" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.debug.core.breakpoint"/>
+	<persistent value="true"/>
+	<attribute name="typeHandle"/>
+	<attribute name="caught"/>
+	<attribute name="uncaught"/>
+	<attribute name="checked"/>
+</extension>
+
+<extension id="javaMethodEntryBreakpoint" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.javaLineBreakpoint"/>
+	<persistent value="true"/>
+	<attribute name="methodHandle"/>
+</extension>
+   
+</plugin>

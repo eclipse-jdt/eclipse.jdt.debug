@@ -1,0 +1,203 @@
+package org.eclipse.jdi.internal;/*
+ * JDI class Implementation
+ *
+ * (BB)
+ * (C) Copyright IBM Corp. 2000
+ */
+
+
+
+import com.sun.jdi.*;
+import com.sun.jdi.connect.*;
+import com.sun.jdi.event.*;
+import com.sun.jdi.request.*;
+import org.eclipse.jdi.internal.connect.*;
+import org.eclipse.jdi.internal.request.*;
+import org.eclipse.jdi.internal.event.*;
+import org.eclipse.jdi.internal.jdwp.*;
+import org.eclipse.jdi.internal.spy.*;
+import java.util.*;
+import java.io.*;
+import java.net.URL;
+
+/**
+ * this class implements the corresponding interfaces
+ * declared by the JDI specification. See the com.sun.jdi package
+ * for more information.
+ *
+ */
+public class VirtualMachineManagerImpl implements VirtualMachineManager {
+	/** Major interface version. */
+	public static int MAJOR_INTERFACE_VERSION = 1;
+	/** Minor interface version. */
+	public static int MINOR_INTERFACE_VERSION = 0;
+	/** Default for timeout on requests to Virtual Machine. */
+	public static int DEFAULT_REQUEST_TIMEOUT = 10000;
+
+	/** Timeout value for requests to VM if not overriden for a particular VM. */
+	private int fGlobalRequestTimeout = DEFAULT_REQUEST_TIMEOUT;
+	/** PrintWriter where verbose info is written to, null if no verbose must be given. */
+	private PrintWriter fVerbosePrintWriter = null;
+	/** List of all VMs that are currently connected. */
+	Vector fConnectedVMs = new Vector();
+	/** True if in verbose mode. */
+	private boolean fVerbose = false;
+	/** Name of verbose file. */
+	private String fVerboseFile = null;
+
+	/**
+	 * Creates new VirtualMachineManagerImpl.
+	 */
+	public VirtualMachineManagerImpl() {
+		
+		getPreferences();
+		
+		// See if verbose info must be given.
+		if (fVerbose) {
+			OutputStream out;
+			if (fVerboseFile != null && fVerboseFile.length() > 0) {
+				try {
+					out = new FileOutputStream(fVerboseFile);
+				} catch (IOException e) {
+					out = System.out;
+					System.out.println("Could not open verbose file \"" + fVerboseFile + "\": " + e);
+				}
+			} else {
+				out = System.out;
+			}
+			fVerbosePrintWriter = new PrintWriter(out);
+		}
+	}
+
+	/**
+	 * Returns the major version number of the JDI interface.
+	 */
+	public int majorInterfaceVersion() {
+		return MAJOR_INTERFACE_VERSION;
+	}
+	
+	/**
+	 * Returns the minor version number of the JDI interface.
+	 */
+	public int minorInterfaceVersion() {
+		return MINOR_INTERFACE_VERSION;
+	}
+	
+	/**
+	 * Loads the user preferences from the jdi.ini file.
+	 */
+	private void getPreferences() {
+		// Get jdi.ini info.
+		URL url = getClass().getResource("/jdi.ini");
+		if (url == null)
+			return;
+			
+		try {
+			InputStream stream = url.openStream();
+			PropertyResourceBundle prefs = new PropertyResourceBundle(stream);
+
+				
+			try {
+				fGlobalRequestTimeout = Integer.parseInt(prefs.getString("User.timeout"));
+			} catch (NumberFormatException e) {
+			} catch (MissingResourceException e) {
+			}
+			
+			try {		
+				fVerbose = Boolean.valueOf(prefs.getString("User.verbose")).booleanValue();
+			} catch (MissingResourceException e) {
+			}
+			
+			try {
+				fVerboseFile = prefs.getString("Verbose.out");
+			} catch (MissingResourceException e) {
+			}
+
+		} catch (IOException e) {
+		}
+		
+	}
+
+	
+	/**
+	 * @return Returns Timeout value for requests to VM, if not overridden for the VM.
+	 * This value is used to throw the exception TimeoutException in JDI calls.
+	 * NOTE: This is not in compliance with the Sun's JDI.
+	 */
+	public int getGlobalRequestTimeout() {
+		return fGlobalRequestTimeout;
+	}
+	
+	/**
+	 * Adds a VM to the connected VM list. 
+	 */
+	public void addConnectedVM(VirtualMachineImpl vm) {
+		fConnectedVMs.add(vm);
+	}
+
+	/**
+	 * Removes a VM from the connected VM list. 
+	 */
+	public void removeConnectedVM(VirtualMachineImpl vm) {
+		fConnectedVMs.remove(vm);
+	}
+
+	/**
+	 * @return Returns all target VMs which are connected to the debugger. 
+	 */
+	public List connectedVirtualMachines() {
+		return fConnectedVMs;
+	}
+
+	/**
+	 * @return Returns all connectors.
+	 */
+	public List allConnectors() {
+		Vector result = new Vector(attachingConnectors());
+		result.addAll(launchingConnectors());
+		result.addAll(listeningConnectors());
+		return result;
+	}
+
+	/**
+	 * @return Returns attaching connectors.
+	 */
+	public List attachingConnectors() {
+		ArrayList list = new ArrayList(1);
+		list.add(new SocketAttachingConnectorImpl(this));
+		return list;
+	}
+		
+	/**
+	 * @return Returns launching connectors.
+	 */
+	public List launchingConnectors() {
+		ArrayList list = new ArrayList(2);
+		list.add(new SocketLaunchingConnectorImpl(this));
+		list.add(new SocketRawLaunchingConnectorImpl(this));
+		return list;
+	}
+		
+	/**
+	 * @return Returns listening connectors.
+	 */
+	public List listeningConnectors() {
+		ArrayList list = new ArrayList(2);
+		list.add(new SocketListeningConnectorImpl(this));
+		return list;
+	}
+	
+	/**
+	 * @return Returns default connector.
+	 */
+	public LaunchingConnector defaultConnector() {
+		return new SocketLaunchingConnectorImpl(this);
+	}
+	
+	/**
+	 * @return Returns PrintWriter to which verbose info must be written, or null if no verbose must be given.
+	 */
+	public PrintWriter verbosePrintWriter() {
+		return fVerbosePrintWriter;
+	}
+}
