@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.launching;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -89,8 +90,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case IClasspathEntry.CPE_CONTAINER:
 				setType(CONTAINER);
 			default:
-				throw new IllegalArgumentException(LaunchingMessages.getString("RuntimeClasspathEntry.Illegal_classpath_entry_kind_1")); //$NON-NLS-1$
-		}		
+				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.getString("RuntimeClasspathEntry.Illegal_classpath_entry_{0}_1"), new String[] {entry.toString()})); //$NON-NLS-1$
+		}
 		setClasspathEntry(entry);
 		initializeClasspathProperty();
 	}
@@ -511,7 +512,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			default :
 				break;
 		}
-		return path.toOSString();
+		if (path != null) {
+			return path.toOSString();
+		}
+		return null;
 	}
 
 	/**

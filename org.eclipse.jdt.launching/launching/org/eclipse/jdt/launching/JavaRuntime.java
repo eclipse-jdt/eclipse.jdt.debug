@@ -647,9 +647,11 @@ public final class JavaRuntime {
 		List unexpandedPath = new ArrayList(buildPath.length);
 		boolean projectAdded = false;
 		for (int i = 0; i < buildPath.length; i++) {
-			if (buildPath[i].getEntryKind() == IClasspathEntry.CPE_SOURCE && !projectAdded) {
-				projectAdded = true;
-				unexpandedPath.add(projectEntry);
+			if (buildPath[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				if (!projectAdded) {
+					projectAdded = true;
+					unexpandedPath.add(projectEntry);
+				}
 			} else {
 				unexpandedPath.add(buildPath[i]);
 			}
