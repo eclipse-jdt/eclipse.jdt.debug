@@ -13,10 +13,18 @@ package org.eclipse.jdt.internal.launching;
 
 import java.awt.Container;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -24,8 +32,10 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -116,4 +126,55 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}		
 		return vm;
 	}
+	
+	/**
+	 * Update conatiners that point to the default JRE, which has changed
+	 */
+	public void updateDefatultJREContainers(IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}		
+		monitor.beginTask(LaunchingMessages.getString("JREContainerInitializer.Updating_JRE_system_library_containers..._1"), 3); //$NON-NLS-1$
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		IJavaModel model = JavaCore.create(ws.getRoot());
+		boolean wasAutobuild= setAutobuild(ws, false);
+		try {
+			IJavaProject[] projects = model.getJavaProjects();
+			List affectedProjects = new ArrayList(projects.length);
+			for (int i = 0; i < projects.length; i++) {
+				IClasspathEntry[] classpath = projects[i].getRawClasspath();
+				for (int j = 0; j < classpath.length; j++) {
+					IClasspathEntry entry = classpath[j];
+					if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+						IPath path = entry.getPath();
+						if (path.segmentCount() == 1 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+							// references default JRE
+							affectedProjects.add(projects[i]);
+						}
+					}
+				}
+			}
+			if (!affectedProjects.isEmpty()) {
+				IJavaProject[] projArray = (IJavaProject[])affectedProjects.toArray(new IJavaProject[affectedProjects.size()]);
+				IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+				IVMInstall vm = JREContainerInitializer.resolveVM(containerPath);
+				JREContainer container = new JREContainer(vm, containerPath);
+				IClasspathContainer[] containers = new IClasspathContainer[projArray.length];
+				Arrays.fill(containers, container);
+				JavaCore.setClasspathContainer(containerPath, projArray, containers, monitor);
+			}
+		} finally {
+			setAutobuild(ws, wasAutobuild);
+		}	
+	}
+	
+	private boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
+		IWorkspaceDescription wsDescription= ws.getDescription();
+		boolean oldState= wsDescription.isAutoBuilding();
+		if (oldState != newState) {
+			wsDescription.setAutoBuilding(newState);
+			ws.setDescription(wsDescription);
+		}
+		return oldState;
+	}	
 }

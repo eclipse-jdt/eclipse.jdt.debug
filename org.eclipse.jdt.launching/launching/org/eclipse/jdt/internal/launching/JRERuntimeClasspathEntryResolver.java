@@ -24,16 +24,31 @@ import org.eclipse.jdt.launching.LibraryLocation;
 public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver {
 
 	/**
-	 * @see IRuntimeClasspathEntryResolver#resolveForClasspath(IRuntimeClasspathEntry, ILaunchConfiguration)
+	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+		IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
+		return resolveLibraryLocations(configJRE);
+	}
+	
+	/**
+	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, IJavaProject)
+	 */
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
+		IVMInstall projectJRE = JavaRuntime.computeVMInstall(project);
+		return resolveLibraryLocations(projectJRE);
+	}
+
+	/**
+	 * Resolves libray locations for the given VM install
+	 */
+	protected IRuntimeClasspathEntry[] resolveLibraryLocations(IVMInstall vm) {
 		IRuntimeClasspathEntry[] resolved = null;
 		int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
-		IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
-		LibraryLocation[] libs = configJRE.getLibraryLocations();
+		LibraryLocation[] libs = vm.getLibraryLocations();
 		if (libs == null) {
 			// default system libs
-			libs = configJRE.getVMInstallType().getDefaultLibraryLocations(configJRE.getInstallLocation());
+			libs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 		} else {
 			// custom system libs - place on bootpath explicitly
 			kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
@@ -47,7 +62,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		}
 		return resolved;
 	}
-	
+		
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveVMInstall(IClasspathEntry)
 	 */

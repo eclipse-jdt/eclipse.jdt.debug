@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -65,6 +66,13 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	 */
 	public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException {
 		return getResolver().resolveVMInstall(entry);
+	}
+
+	/**
+	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, IJavaProject)
+	 */
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
+		return getResolver().resolveRuntimeClasspathEntry(entry, project);
 	}
 
 }

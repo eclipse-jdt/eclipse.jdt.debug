@@ -242,9 +242,6 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * Returns a default collection of source locations for
 	 * the given Java project. Default source locations consist
 	 * of the given project and all of its required projects .
-	 * If the project uses an alternate runtime JRE than it has
-	 * been built with, the alternate JRE source zip is added
-	 * as the first source location (if this source zip exists).
 	 * 
 	 * @param project Java project
 	 * @return a collection of source locations for all required
@@ -253,7 +250,13 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 *  the classpath of the given or any required project
 	 */
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
-		return getSourceLocations(JavaRuntime.computeUnresolvedRuntimeClasspath(project));
+		ArrayList list = new ArrayList();
+		collectRequiredProjects(project, list);
+		IJavaSourceLocation[] locations = new IJavaSourceLocation[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			locations[i] = new JavaProjectSourceLocation((IJavaProject)list.get(i));
+		}	
+		return locations;
 	}
 	
 	/**

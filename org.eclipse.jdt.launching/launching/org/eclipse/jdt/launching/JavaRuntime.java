@@ -53,6 +53,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
+import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -373,6 +374,8 @@ public final class JavaRuntime {
 	private static void updateJREVariables(IProgressMonitor monitor) throws CoreException {
 		JavaClasspathVariablesInitializer updater= new JavaClasspathVariablesInitializer();
 		updater.updateJREVariables(monitor);
+		JREContainerInitializer conatinerUpdater = new JREContainerInitializer();
+		conatinerUpdater.updateDefatultJREContainers(monitor);
 	}
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
@@ -681,6 +684,49 @@ public final class JavaRuntime {
 		}
 		return new IRuntimeClasspathEntry[] {entry};
 	}
+	
+	/**
+	 * Returns resolved entries for the given entry in the context of the given
+	 * Java project for a runtime classpath. If the entry is of kind
+	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
+	 * resolvers are consulted, otherwise, the resolved entry is the given
+	 * entry.
+	 * <p>
+	 * If the given entry is a variable entry, and a resolver is not registered,
+	 * the entry itself is returned. If the given entry is a container, and a
+	 * resolver is not registered, resolved runtime classpath entries are calculated
+	 * from the associated container classpath entries, in the context of the 
+	 * given project.
+	 * </p>
+	 * @param entry runtime classpath entry
+	 * @param project Java project context
+	 * @return resolved runtime classpath entry
+	 * @exception CoreException if unable to resolve
+	 * @see IRuntimeClasspathEntryResolver
+	 * @since 2.0
+	 */
+	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
+		switch (entry.getType()) {
+			case IRuntimeClasspathEntry.VARIABLE:
+				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
+				if (resolver == null) {
+					// no resolution by default
+					break;
+				} else {
+					return resolver.resolveRuntimeClasspathEntry(entry, project);
+				}				
+			case IRuntimeClasspathEntry.CONTAINER:
+				resolver = getContainerResolver(entry.getVariableName());
+				if (resolver == null) {
+					return computeDefaultContainerEntries(entry, project);
+				} else {
+					return resolver.resolveRuntimeClasspathEntry(entry, project);
+				}
+			default:
+				break;
+		}
+		return new IRuntimeClasspathEntry[] {entry};
+	}	
 		
 	/**
 	 * Performs default resolution for a container entry.

@@ -8,10 +8,11 @@ package org.eclipse.jdt.launching;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * Resolves variable and/or container runtime classpath entries in
- * the context of a launch configuration. A resolver can be declared
+ * the context of a launch configuration or Java project. A resolver can be declared
  * as an extension (<code>org.eclipse.jdt.launching.runtimeClasspathEntryResolver</code>),
  * or be registered with the <code>JavaRuntime</code> programatically.
  * <p>
@@ -64,6 +65,19 @@ public interface IRuntimeClasspathEntryResolver {
 	 * @exception CoreException if unable to resolve the entry  
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;
+	
+	/**
+	 * Returns resolved runtime classpath entries for the given classpath entry,
+	 * in the context of the given Java project.
+	 * 
+	 * @param entry runtime classpath entry to resolve, of type
+	 * 	<code>VARIABLE</code> or <code>CONTAINTER</code>
+	 * @param project context in which the runtime classpath entry
+	 * 	needs to be resolved
+	 * @return resolved entries (zero or more)
+	 * @exception CoreException if unable to resolve the entry  
+	 */
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException;	
 	
 	/**
 	 * Returns a VM install associated with the given classpath entry,
