@@ -14,6 +14,7 @@ package org.eclipse.jdi.internal.connect;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -128,13 +129,12 @@ public class PacketReceiveManager extends PacketManager {
 	 */
 	public JdwpReplyPacket getReply(int id, long timeToWait) {
 	    JdwpReplyPacket packet = null;
-	    
+
+        long remainingTime = timeToWait;
 	    synchronized(fReplyPackets) {
-	        long remainingTime = timeToWait;
-	        long timeBeforeWait = System.currentTimeMillis();
-	        long waitedTime;
-	        
-	        // Wait until reply is available.
+            long timeBeforeWait = System.currentTimeMillis();
+            long waitedTime;
+            // Wait until reply is available.
 	        while (!VMIsDisconnected() && remainingTime > 0) {
 	            packet = removeReplyPacket(id);
 	            if (packet != null) {
@@ -148,7 +148,8 @@ public class PacketReceiveManager extends PacketManager {
 	            waitedTime = System.currentTimeMillis() - timeBeforeWait;
 	            remainingTime = timeToWait - waitedTime;
 	        }
-	        
+        }
+        synchronized(fReplyPackets) {
 	        if (packet == null && remainingTime <= 0) {
 	            packet = removeReplyPacket(id);
 	        }
@@ -159,8 +160,18 @@ public class PacketReceiveManager extends PacketManager {
 			throw new VMDisconnectedException(ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_2")); //$NON-NLS-1$
 			
 		// Check for a timeout.
-		if (packet == null)
-			throw new TimeoutException(MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.0"), new String[] {id+""})); //$NON-NLS-1$ //$NON-NLS-2$
+		if (packet == null) {
+            StringBuffer buffer = new StringBuffer();
+            int numberOfPackets = 0;
+            synchronized(fReplyPackets) {
+                numberOfPackets = fReplyPackets.size();
+                for (Iterator iter = fReplyPackets.iterator(); iter.hasNext();) {
+                    JdwpReplyPacket replyPacket = (JdwpReplyPacket) iter.next();
+                    buffer.append(replyPacket.getId() + " "); //$NON-NLS-1$
+                }
+            }    
+			throw new TimeoutException(MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.0"), new String[] {id+"", numberOfPackets+"", buffer.toString()})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
 
 		return packet;
 	}
