@@ -26,7 +26,17 @@ import org.eclipse.debug.core.model.IStackFrame;
  */
 
 public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredStep {
-			
+
+	/**
+	 * Status code indicating a stack frame is invalid. A stack frame becomes invalid
+	 * when the thread containing the stack frame resumes. A stack frame may or may
+	 * not be valid if the thread subsequently suspends, depending on the location
+	 * where the thread suspends. 
+	 * 
+	 * @since 3.1
+	 */
+	public static final int ERR_INVALID_STACK_FRAME = 130;	
+
 	/**
 	 * Drops to this stack frame by popping frames in this 
 	 * frame's owning thread until this stack frame is the top stack frame.

@@ -92,7 +92,8 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 					return sourceName;	
 				}
 			} catch (DebugException e) {
-				if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED ||
+				int code = e.getStatus().getCode();
+                if (code == IJavaThread.ERR_THREAD_NOT_SUSPENDED || code == IJavaStackFrame.ERR_INVALID_STACK_FRAME ||
 						e.getStatus().getException() instanceof VMDisconnectedException) {
 					return null;
 				}

@@ -967,7 +967,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						depth = getDepth();
 						if (depth == -1) {
 							// If depth still -1, then this is an invalid frame
-							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
 						}
 					} else {
 						throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaThread.ERR_THREAD_NOT_SUSPENDED, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
