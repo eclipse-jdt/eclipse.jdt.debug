@@ -38,7 +38,9 @@ public class InstanceFilterTests extends AbstractDebugTest {
 
 	/**
 	 * Instance filter on a line breakpoint
-	 * 	 * @throws Exception	 */
+	 * 
+	 * @throws Exception
+	 */
 	public void testLineBreakpoint() throws Exception {
 		String typeName = "InstanceFilterObject";
 		// main

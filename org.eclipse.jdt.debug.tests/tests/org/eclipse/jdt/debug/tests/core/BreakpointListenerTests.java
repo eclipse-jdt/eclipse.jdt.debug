@@ -55,7 +55,9 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	}
 	/**
 	 * Creates sample breakpoints
-	 * 	 * @return List	 */
+	 * 
+	 * @return List
+	 */
 	protected List createBreakpoints(String typeName) throws Exception {
 		List bps = new ArrayList();
 		// anonymous class
