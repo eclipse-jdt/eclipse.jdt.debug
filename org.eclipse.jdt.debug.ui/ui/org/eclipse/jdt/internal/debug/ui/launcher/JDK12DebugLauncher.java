@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -22,6 +24,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
@@ -36,21 +39,24 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 
 
 	public interface IRetryQuery {
+		/**
+		 * Query the user to retry connecting to the VM.
+		 */
 		boolean queryRetry();
 	}
 
 	private IRetryQuery fRetryQuery;
 
 	/**
-	 * Creates a new lauchner
+	 * Creates a new launcher
 	 */
 	public JDK12DebugLauncher(IVMInstall vmInstance, IRetryQuery query) {
 		super(vmInstance);
-		fRetryQuery= query;
+		setRetryQuery(query);
 	}
 
 	/**
-	 * @see IVMRunner#run
+	 * @see IVMRunner#run(VMRunnerConfiguration)
 	 */
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
 		verifyVMInstall();
@@ -64,10 +70,11 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		File javawexe= new File(program+"w.exe"); //$NON-NLS-1$
 		File javaw= new File(program+"w"); //$NON-NLS-1$
 		
-		if (javaw.isFile()) 
+		if (javaw.isFile()) {
 			program= javaw.getAbsolutePath();
-		else if (javawexe.isFile())
+		} else if (javawexe.isFile()) {
 			program= javawexe.getAbsolutePath();
+		}
 
 		Vector arguments= new Vector();
 
@@ -110,7 +117,6 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 
 				try {
 					p= Runtime.getRuntime().exec(cmdLine, null, workingDir);
-		
 				} catch (IOException e) {
 					if (p != null) {
 						p.destroy();
@@ -129,7 +135,12 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 						IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
 						return new VMRunnerResult(debugTarget, new IProcess[] { process });
 					} catch (InterruptedIOException e) {
-						retry= fRetryQuery.queryRetry();
+						String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
+						if (errorMessage.length() != 0) {
+							reportError(errorMessage);
+						} else {
+							retry= getRetryQuery().queryRetry();
+						}
 					}
 				} while (retry);
 			} finally {
@@ -143,6 +154,15 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		if (p != null)
 			p.destroy();
 		return null;
+	}
+	
+	private void reportError(final String errorMessage) {
+		StandardVM.getStandardDisplay().syncExec(new Runnable() {
+			public void run() {
+				IStatus s= new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, errorMessage, null);
+				ErrorDialog.openError(StandardVM.getStandardDisplay().getActiveShell(),LauncherMessages.getString("JDK12DebugLauncher.Launching_a_Java_VM_1"), LauncherMessages.getString("JDK12DebugLauncher.Problems_encountered_launching_the_Java_VM_in_debug_mode_2"), s); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			});
 	}
 	
 	private void setTimeout(VirtualMachine vm) {		
@@ -161,8 +181,6 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		Connector.IntegerArgument timeoutArg= (Connector.IntegerArgument) map.get("timeout"); //$NON-NLS-1$
 		// bug #5163
 		timeoutArg.setValue(20000);
-		
-		
 	}
 
 	protected ListeningConnector getConnector() {
@@ -175,4 +193,11 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		return null;
 	}
 
+	protected IRetryQuery getRetryQuery() {
+		return fRetryQuery;
+	}
+
+	protected void setRetryQuery(IRetryQuery retryQuery) {
+		fRetryQuery = retryQuery;
+	}
 }
