@@ -38,8 +38,6 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 			toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 			return;
 		}
-		super.contributeToToolBar(toolBarManager);
-		
 		toolBarManager.add(fStopAction);
 		toolBarManager.add(fSelectImportsAction);
 		toolBarManager.update(false);
