@@ -29,6 +29,9 @@ public class TestGenerator {
 			return false;
 		}
 		switch (type1) {
+			case T_short:
+			case T_byte:
+				return type1 < type2 || type2 == T_char;
 			case T_char:
 				return true;
 			case T_int:
@@ -40,7 +43,7 @@ public class TestGenerator {
 			case T_double:
 				return false;
 			default:
-				return type1 < type2;
+				return true;
 		}
 	}
 
