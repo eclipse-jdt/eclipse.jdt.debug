@@ -214,13 +214,33 @@ public interface IRuntimeClasspathEntry {
 	public void setClasspathProperty(int location);	
 	
 	/**
-	 * Returns absolute resolved entries for this entry, that should appear
-	 * on the runtime classpath.
+	 * Returns an absolute resolved path in the local file system for this entry,
+	 * or <code>null</code> if none. To resolve a runtime entry of type
+	 * <code>CONTAINER</code> a project context is required - see
+	 * <code>resolveContainer(IJavaProject)</code>.
 	 * 
-	 * @return absolute resolved entries for this entry, that should appear
-	 *  on the runtime classpath
+	 * @return an absolute resolved path in the local file system for this entry,
+	 *  or <code>null</code> if none
 	 */
-	public String[] getResolvedPaths();
+	public String getResolvedPath();
+	
+	/**
+	 * Returns an absolute resolved path in the local file system for the source
+	 * attachment associated with this entry entry, or <code>null</code> if none.
+	 * 
+	 * @return an absolute resolved path in the local file system for the source
+	 *  attachment associated with this entry entry, or <code>null</code> if none
+	 */
+	public String getResolvedSourceAttachmentPath();	
+	
+	/**
+	 * Returns an resolved path relative to this entry's source attachment path for the
+	 * root location containing source, or <code>null</code> if none.
+	 * 
+	 * @return an resolved path relative to this entry's source attachment path for the
+	 *  root location containing source, or <code>null</code> if none
+	 */
+	public String getResolvedSourceAttachmentRootPath();		
 	
 	/**
 	 * Returns the name of the variable associated with this entry, or <code>null</code>

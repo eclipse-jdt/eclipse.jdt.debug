@@ -216,9 +216,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
 				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
-				String[] resolvedPaths = entries[i].getResolvedPaths();
-				for (int j = 0; j < resolvedPaths.length; j++) {
-					bootEntries.add(resolvedPaths[j]);
+				if (entries[i].getType() == IRuntimeClasspathEntry.CONTAINER) {
+					// XXX: fix for containers
+				} else {
+					bootEntries.add(entries[i].getResolvedPath());
 				}
 			}
 		}
@@ -245,9 +246,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		List userEntries = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String[] resolvedPaths = entries[i].getResolvedPaths();
-				for (int j = 0; j < resolvedPaths.length; j++) {
-					userEntries.add(resolvedPaths[j]);
+				if (entries[i].getType() == IRuntimeClasspathEntry.CONTAINER) {
+					// XXX: fix for containers
+				} else {
+					userEntries.add(entries[i].getResolvedPath());
 				}
 			}
 		}

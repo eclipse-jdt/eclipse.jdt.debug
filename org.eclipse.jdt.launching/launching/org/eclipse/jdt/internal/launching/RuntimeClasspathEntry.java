@@ -60,19 +60,14 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	private int fClasspathProperty = -1;
 	
 	/**
-	 * Source attachment path
-	 */
-	private IPath fSourceAttachmentPath = null;
-	
-	/**
-	 * Root source path
-	 */
-	private IPath fRootSourcePath = null;
-
-	/**
 	 * This entry's associated build path entry.
 	 */
 	private IClasspathEntry fClasspathEntry = null;
+	
+	/**
+	 * The entry's resolved entry (lazily initialized)
+	 */
+	private IClasspathEntry fResolvedEntry = null;
 
 	/**
 	 * Constructs a new runtime classpath entry based on the
@@ -98,8 +93,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}		
 		setClasspathEntry(entry);
 		initializeClasspathProperty();
-		setSourceAttachmentPath(entry.getSourceAttachmentPath());
-		setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 	}
 	
 	
@@ -131,6 +124,18 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_location_3"), e); //$NON-NLS-1$
 			}			
 
+			// source attachment
+			IPath sourcePath = null;
+			IPath rootPath = null;
+			String path = root.getAttribute("sourceAttachmentPath"); //$NON-NLS-1$
+			if (path != null && path.length() > 0) {
+				sourcePath = new Path(path);
+			}
+			path = root.getAttribute("sourceRootPath"); //$NON-NLS-1$
+			if (path != null && path.length() > 0) {
+				rootPath = new Path(path);
+			}			
+
 			switch (getType()) {
 				case PROJECT :
 					String name = root.getAttribute("projectName"); //$NON-NLS-1$
@@ -142,7 +147,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					}
 					break;
 				case ARCHIVE :
-					String path = root.getAttribute("externalArchive"); //$NON-NLS-1$
+					path = root.getAttribute("externalArchive"); //$NON-NLS-1$
 					if (path == null) {
 						// internal
 						path = root.getAttribute("internalArchive"); //$NON-NLS-1$
@@ -150,11 +155,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 							abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_archive_path_5"), null); //$NON-NLS-1$
 						} else {
 							IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
-							setClasspathEntry(JavaCore.newLibraryEntry(res.getLocation(), null, null));
+							setClasspathEntry(JavaCore.newLibraryEntry(res.getLocation(), sourcePath, rootPath));
 						}
 					} else {
 						// external
-						setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), null, null));
+						setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
 					}
 					break;
 				case VARIABLE :
@@ -162,7 +167,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					if (var == null) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
 					} else {
-						setClasspathEntry(JavaCore.newVariableEntry(new Path(var), null, null));
+						setClasspathEntry(JavaCore.newVariableEntry(new Path(var), sourcePath, rootPath));
 					}
 					break;
 				case CONTAINER :
@@ -174,15 +179,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					}
 					break;
 			}	
-			// source attachment
-			String path = root.getAttribute("sourceAttachmentPath"); //$NON-NLS-1$
-			if (path != null && path.length() > 0) {
-				setSourceAttachmentPath(new Path(path));
-			}
-			path = root.getAttribute("sourceRootPath"); //$NON-NLS-1$
-			if (path != null && path.length() > 0) {
-				setSourceAttachmentRootPath(new Path(path));
-			}			
 			return;
 		} catch (ParserConfigurationException e) {
 			ex = e;			
@@ -220,11 +216,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 
 	/**
 	 * Sets the classpath entry associated with this runtime classpath entry.
+	 * Clears the cache of the resolved entry.
 	 *
 	 * @param entry the classpath entry associated with this runtime classpath entry
 	 */
 	private void setClasspathEntry(IClasspathEntry entry) {
 		fClasspathEntry = entry;
+		fResolvedEntry = null;
 	}
 
 	/**
@@ -322,34 +320,34 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
 	public IPath getSourceAttachmentPath() {
-		return fSourceAttachmentPath;
+		return getClasspathEntry().getSourceAttachmentPath();
 	}
 
 	/**
 	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
 	 */
 	public void setSourceAttachmentPath(IPath path) {
-		fSourceAttachmentPath = path;
+		updateClasspathEntry(getPath(), path, getSourceAttachmentRootPath());
 	}
 	
 	/**
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
 	public IPath getSourceAttachmentRootPath() {
-		return fRootSourcePath;
+		return getClasspathEntry().getSourceAttachmentRootPath();
 	}
 
 	/**
 	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
 	 */
 	public void setSourceAttachmentRootPath(IPath path) {
-		fRootSourcePath = path;
+		updateClasspathEntry(getPath(), getSourceAttachmentPath(), path);		
 	}
 	
 	/**
 	 * Initlaizes the classpath property based on this entry's type.
 	 * 
-	 * XXX: fix for libraries
+	 * XXX: fix for containers
 	 */
 	private void initializeClasspathProperty() {
 		switch (getType()) {
@@ -361,7 +359,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				}
 				break;
 			case CONTAINER:
-				// XXX: fix for libraries
+				// XXX: fix for containers
 				break;
 			default:
 				setClasspathProperty(USER_CLASSES);
@@ -387,7 +385,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getResolvedPaths()
 	 */
-	public String[] getResolvedPaths() {
+	public String getResolvedPath() {
 
 		IPath path = null;
 		switch (getType()) {
@@ -403,7 +401,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				path = getPath();
 				break;
 			case VARIABLE :
-				IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(getClasspathEntry());
+				IClasspathEntry resolved = getResolvedClasspathEntry();
 				if (resolved != null) {
 					path = resolved.getPath();
 				}
@@ -411,16 +409,23 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case CONTAINER :
 				break;
 		}
+		return resolveToOSPath(path);
+	}
+	
+	/**
+	 * Returns the OS path for the given aboslute or workspace relative path
+	 */
+	protected String resolveToOSPath(IPath path) {
 		if (path != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IResource res = root.findMember(path);
 			if (res == null) {
-				return new String[] { path.toOSString() };
+				return path.toOSString();
 			} else {
-				return new String[] { res.getLocation().toOSString()};
+				return res.getLocation().toOSString();
 			}
 		}
-		return null;
+		return null;		
 	}
 
 	/**
@@ -471,4 +476,71 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		return getPath().hashCode() + getType();
 	}
 
+	/**
+	 * @see IRuntimeClasspathEntry#getResolvedSourceAttachmentPath()
+	 */
+	public String getResolvedSourceAttachmentPath() {
+		IPath path = null;
+		switch (getType()) {
+			case VARIABLE :
+			case ARCHIVE :
+				IClasspathEntry resolved = getResolvedClasspathEntry();
+				if (resolved != null) {
+					path = resolved.getSourceAttachmentPath();
+				}
+				break;
+			default :
+				break;
+		}
+		return resolveToOSPath(path);
+	}
+
+	/**
+	 * @see IRuntimeClasspathEntry#getResolvedSourceAttachmentRootPath()
+	 */
+	public String getResolvedSourceAttachmentRootPath() {
+		IPath path = null;
+		switch (getType()) {
+			case VARIABLE :
+			case ARCHIVE :
+				IClasspathEntry resolved = getResolvedClasspathEntry();
+				if (resolved != null) {
+					path = resolved.getSourceAttachmentRootPath();
+				}
+				break;
+			default :
+				break;
+		}
+		return resolveToOSPath(path);
+	}
+
+	/**
+	 * Creates a new underlying classpath entry for this runtime classpath entry
+	 * with the given paths, due to a change in source attachment.
+	 */
+	protected void updateClasspathEntry(IPath path, IPath sourcePath, IPath rootPath) {
+		IClasspathEntry entry = null;
+		switch (getType()) {
+			case ARCHIVE:
+				entry = JavaCore.newLibraryEntry(path, sourcePath, rootPath);
+				break;
+			case VARIABLE:
+				entry = JavaCore.newVariableEntry(path, sourcePath, rootPath);
+				break;
+			default:
+				return;
+		}		
+		setClasspathEntry(entry);		
+	}
+	
+	/**
+	 * Returns the resolved classpath entry associated with this runtime
+	 * entry, resolving if required.
+	 */
+	protected IClasspathEntry getResolvedClasspathEntry() {
+		if (fResolvedEntry == null) {
+			fResolvedEntry = JavaCore.getResolvedClasspathEntry(getClasspathEntry());
+		}
+		return fResolvedEntry;
+	}
 }

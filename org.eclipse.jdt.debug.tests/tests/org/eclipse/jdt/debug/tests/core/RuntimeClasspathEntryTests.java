@@ -14,7 +14,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
 
 public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 	
@@ -56,6 +58,18 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 		String memento = entry.getMemento();
 		IRuntimeClasspathEntry restored = JavaRuntime.newRuntimeClasspathEntry(memento);
 		assertEquals("Entries should be equal", entry, restored);
+		
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation lib = vm.getLibraryLocation();
+		if (lib == null) {
+			lib = vm.getVMInstallType().getDefaultLibraryLocation(vm.getInstallLocation());
+		}
+		IPath sourcePath = lib.getSystemLibrarySourcePath();
+		IPath rootPath = lib.getPackageRootPath();
+		
+		assertEquals("Source attachment path did not resolve properly", sourcePath.toOSString(), entry.getResolvedSourceAttachmentPath());
+		assertEquals("Source root path did not resolve properly", rootPath.toOSString(), entry.getResolvedSourceAttachmentRootPath());
+		
 	}	
 	
 }
