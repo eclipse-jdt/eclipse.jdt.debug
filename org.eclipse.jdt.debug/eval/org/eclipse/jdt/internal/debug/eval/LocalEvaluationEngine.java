@@ -174,7 +174,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		setOutputDirectory(directory);
 	}
 
-	/*
+	/**
 	 * @see ICodeSnippetRequestor#acceptClassFiles(byte[][], String[][], String)
 	 */
 	public boolean acceptClassFiles(
@@ -314,7 +314,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		}
 	}
 
-	/*
+	/**
 	 * @see ICodeSnippetRequestor#acceptProblem(IMarker, String, int)
 	 */
 	public void acceptProblem(
@@ -376,7 +376,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		fOutputDirectory = outputDirectory;
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
 	 */
 	public void evaluate(
@@ -423,7 +423,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
 	 */
 	public void evaluate(
@@ -501,7 +501,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			}				
 	}
 	
-	/*
+	/**
 	 * @see IEvaluationEngine#evaluate(String, String, IJavaThread, IEvaluationListener)
 	 */
 	public void evaluate(
@@ -609,7 +609,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		Iterator iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
 			File file = (File)iter.next();
-			if (!file.delete()) {
+			if (file.exists() && !file.delete()) {
 				JDIDebugPlugin.logError(
 					new DebugException(
 						 new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
@@ -622,7 +622,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		int i = directories.size() - 1;
 		while (i >= 0) {
 			File dir = (File)directories.get(i);
-			if (!dir.delete()) {
+			if (dir.exists() && !dir.delete()) {
 				JDIDebugPlugin.logError(
 					new DebugException(
 						 new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
@@ -1286,18 +1286,17 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		return (String[])list.toArray(new String[list.size()]);	
 	}
 	
-	/*
+	/**
 	 * @see IClassFileEvaluationEngine#getPackageName()
 	 */
 	public String getPackageName() {
 		return getEvaluationContext().getPackageName();
 	}
 
-	/*
+	/**
 	 * @see IClassFileEvaluationEngine#setPackageName(String)
 	 */
 	public void setPackageName(String packageName) {
 		getEvaluationContext().setPackageName(packageName);
 	}
-
 }
