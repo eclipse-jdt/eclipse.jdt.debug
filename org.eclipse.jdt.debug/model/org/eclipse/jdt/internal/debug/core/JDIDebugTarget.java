@@ -121,7 +121,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	
 	/**
 	 * A cache of evaluation contexts keyed by java projects. When 
-	 * an evaluation is performed, a reuseable evaulation context
+	 * an evaluation is performed, a reuseable evaluation context
 	 * is cached for the associated java project. Contexts are discarded
 	 * when this VM terminates.
 	 */
