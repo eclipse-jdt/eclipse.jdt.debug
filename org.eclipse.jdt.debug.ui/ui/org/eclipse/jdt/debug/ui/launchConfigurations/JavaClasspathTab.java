@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 
 	protected RuntimeClasspathViewer fClasspathViewer;
-	protected static Image fgClasspathImage = null;
 	private ClasspathModel model;
 
 	protected static final String DIALOG_SETTINGS_PREFIX = "JavaClasspathTab"; //$NON-NLS-1$
@@ -388,7 +387,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	public static Image getClasspathImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_CLASSPATH);
-	}		
+	}
 	
 	/**
 	 * Sets the launch configuration for this classpath tab
@@ -410,10 +409,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	public void dispose() {
 		if (fClasspathViewer != null) {
 			fClasspathViewer.removeEntriesChangedListener(this);
-		}
-		if (fgClasspathImage != null) {
-			fgClasspathImage.dispose();
-			fgClasspathImage= null;
 		}
 		super.dispose();
 	}
