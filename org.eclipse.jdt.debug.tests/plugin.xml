@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin
+   name="Java Debug Test Plugin"
+   id="org.eclipse.jdt.debug.tests"
+   version="2.0.0"
+   vendor-name="IBM"
+   class="org.eclipse.jdt.debug.testplugin.JavaTestPlugin">
+   
+   <requires>
+	  <import plugin="org.junit"/>   
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+	  <import plugin="org.eclipse.jdt.launching"/>
+	  <import plugin="org.eclipse.jdt.debug"/>
+	  <import plugin="org.eclipse.jdt.debug.ui"/>
+	  <import plugin="org.eclipse.debug.core"/>
+	  <import plugin="org.eclipse.debug.ui"/>
+   </requires>
+
+<runtime>
+  <library name="javadebugtests.jar" >
+     <export name = "*"/>
+  </library> 
+</runtime>
+
+<extension id="app" point="org.eclipse.core.runtime.applications">
+  <application> 
+     <run class="org.eclipse.jdt.debug.testplugin.TestWorkbench">
+		<parameter name="productInfo" value="product.ini"/>
+     </run>
+  </application>
+</extension>
+
+
+</plugin>
