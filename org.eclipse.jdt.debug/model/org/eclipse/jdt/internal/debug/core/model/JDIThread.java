@@ -2389,8 +2389,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						fThread= null;
 						return;
 					} else {
-						nextRunnable= (Runnable)fRunnables.get(0);
-						fRunnables.remove(0);
+						nextRunnable= (Runnable)fRunnables.remove(0);
 					}
 				}
 				try {
