@@ -21,6 +21,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.dom.DocumentImpl;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -313,14 +315,42 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getResource()
 	 */
 	public IResource getResource() {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		switch (getType()) {
 			case CONTAINER:
 			case VARIABLE:
 				return null;
 			default:
-				return root.findMember(getPath());
+				return getResource(getPath());
 		}
+	}
+	
+	/**
+	 * Returns the resource in the workspace assciated with the given
+	 * absolute path, or <code>null</code> if none. The path may have
+	 * a device.
+	 * 
+	 * @param path absolute path, or <code>null</code>
+	 * @return resource or <code>null</code>
+	 */
+	protected IResource getResource(IPath path) {
+		if (path != null) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			if (path.getDevice() == null) {
+				// search relative to the workspace if no device present
+				return root.findMember(path);
+			} else {
+				// look for files or folders with the given path
+				IFile[] files = root.findFilesForLocation(path);
+				if (files.length > 0) {
+					return files[0];
+				}
+				IContainer[] containers = root.findContainersForLocation(path);
+				if (containers.length > 0) {
+					return containers[0];
+				}
+			}
+		}		
+		return null;
 	}
 
 	/**
@@ -435,8 +465,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 */
 	protected String resolveToOSPath(IPath path) {
 		if (path != null) {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IResource res = root.findMember(path);
+			IResource res = null;
+			if (path.getDevice() == null) {
+				// if there is no device specified, find the resource
+				res = getResource(path);
+			}
 			if (res == null) {
 				return path.toOSString();
 			} else {
