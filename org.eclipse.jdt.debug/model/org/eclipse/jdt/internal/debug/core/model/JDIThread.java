@@ -118,7 +118,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	private boolean fIsSystemThread;
 
 	/**
-	 * The collectoin of breakpoints that caused the last suspend, or 
+	 * The collection of breakpoints that caused the last suspend, or 
 	 * an empty collection if the thread is not suspended or was not
 	 * suspended by any breakpoint(s).
 	 */
