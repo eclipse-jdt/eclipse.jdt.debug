@@ -7,14 +7,18 @@ package org.eclipse.jdt.debug.ui;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
@@ -40,8 +44,14 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  */
 
-public class JavaUISourceLocator implements ISourceLocator {
+public class JavaUISourceLocator implements IPersistableSourceLocator {
 
+	/**
+	 * Identifier for the 'Prompting Java Source Locator' extension
+	 * (value <code>"org.eclipse.jdt.debug.ui.javaSourceLocator"</code>).
+	 */
+	public static final String ID_PROMPTING_JAVA_SOURCE_LOCATOR = JavaDebugUI.PLUGIN_ID + ".javaSourceLocator";
+	
 	/**
 	 * The project being debugged.
 	 */
@@ -59,6 +69,14 @@ public class JavaUISourceLocator implements ISourceLocator {
 	 */
 	private boolean fAllowedToAsk;
 	
+	/**
+	 * Constructs an empty source locator.
+	 */
+	public JavaUISourceLocator() {
+		fSourceLocator = new JavaSourceLocator();
+		fAllowedToAsk= true;
+	}
+		
 	/**
 	 * Constructs a source locator that searches for source
 	 * in the given Java project, and all of its required projects,
@@ -105,9 +123,11 @@ public class JavaUISourceLocator implements ISourceLocator {
 	 *  could not be located
 	 */
 	private void showDebugSourcePage(String typeName) {
-		SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), fJavaProject, typeName);
-		dialog.open();
-		fAllowedToAsk= !dialog.isNotAskAgain();
+		if (fJavaProject != null) {
+			SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), fJavaProject, typeName);
+			dialog.open();
+			fAllowedToAsk= !dialog.isNotAskAgain();
+		}
 	}
 	
 	/**
@@ -178,6 +198,50 @@ public class JavaUISourceLocator implements ISourceLocator {
 			}
 			super.okPressed();
 		}
+	}
+	
+	/**
+	 * @see IPersistableSourceLocator#getMemento()
+	 */
+	public String getMemento() throws CoreException {
+		String memento = fSourceLocator.getMemento();
+		String handle = fJavaProject.getHandleIdentifier();
+		memento = handle + '\n' + memento;
+		return memento;
+	}
+
+	/**
+	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
+	 */
+	public void initializeDefaults(ILaunchConfiguration configuration)
+		throws CoreException {
+			fSourceLocator.initializeDefaults(configuration);
+			fJavaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
+	}
+
+	/**
+	 * @see IPersistableSourceLocator#initiatlizeFromMemento(String)
+	 */
+	public void initiatlizeFromMemento(String memento) throws CoreException {
+		int index = memento.indexOf('\n');
+		String handle = memento.substring(0, index);
+		String rest = memento.substring(index + 1);
+		fJavaProject = (IJavaProject)JavaCore.create(handle);
+		fSourceLocator.initiatlizeFromMemento(rest);
+	}
+	
+	/**
+	 * @see JavaSourceLocator#getSourceLocations()
+	 */
+	public IJavaSourceLocation[] getSourceLocations() {
+		return fSourceLocator.getSourceLocations();
+	}
+	
+	/**
+	 * @see JavaSourceLocator#setSourceLocations(IJavaSourceLocation[])
+	 */
+	public void setSourceLocations(IJavaSourceLocation[] locations) {
+		fSourceLocator.setSourceLocations(locations);
 	}
 }
 

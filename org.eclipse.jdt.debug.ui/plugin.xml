@@ -752,5 +752,11 @@
 	</statusHandler>	
 </extension>
 
+<extension point = "org.eclipse.debug.core.sourceLocators">
+	<sourceLocator
+		id = "org.eclipse.jdt.debug.ui.javaSourceLocator"
+	   	class="org.eclipse.jdt.debug.ui.JavaUISourceLocator"
+	   	name="Prompting Java Source Locator"/>
+</extension>
 
 </plugin>
