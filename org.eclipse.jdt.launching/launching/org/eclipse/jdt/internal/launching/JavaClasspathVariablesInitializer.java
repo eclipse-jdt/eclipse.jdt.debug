@@ -90,17 +90,9 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 			}
 		}
 	}
-
-	
-	private boolean changedJREVariable(IPath newPath, String var) {
-		IPath oldPath= JavaCore.getClasspathVariable(var);
-		return !newPath.equals(oldPath);
-	}
 	
 	private void setJREVariable(IPath newPath, String var) throws CoreException {
-		if (changedJREVariable(newPath, var)) {
-			JavaCore.setClasspathVariable(var, newPath, getMonitor());
-		}
+		JavaCore.setClasspathVariable(var, newPath, getMonitor());
 	}
 	
 	private boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
