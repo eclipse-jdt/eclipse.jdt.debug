@@ -1384,6 +1384,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else if (exit) {
 			label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
 		}
+		appendConditional(methodBreakpoint, label);
 		
 		if (member != null) {
 			label.append(" - "); //$NON-NLS-1$

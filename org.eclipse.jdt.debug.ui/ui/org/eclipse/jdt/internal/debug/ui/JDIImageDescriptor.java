@@ -212,39 +212,37 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			drawImage(data, x, y);
 		}
 		if ((flags & CONDITIONAL) != 0) {
-			x= getSize().x;
-			y= 0;
 			if ((flags & ENABLED) !=0) {
 				data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT.getImageData();
 			} else {
 				data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED.getImageData();
 			}
+			x= 0;
+			y= 0;
+			drawImage(data, x, y);
+		}
+		if ((flags & ENTRY) != 0) {
+			x= getSize().x;
+			y= 0;
+			if ((flags & ENABLED) !=0) {
+				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
+			}
 			x -= data.width;
 			drawImage(data, x, y);
-		} else {
-			if ((flags & ENTRY) != 0) {
-				x= getSize().x;
-				y= 0;
-				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
-				}
-				x -= data.width;
-				drawImage(data, x, y);
+		}
+		if ((flags & EXIT)  != 0){
+			x= getSize().x;
+			y= getSize().y;
+			if ((flags & ENABLED) != 0) {
+				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
 			}
-			if ((flags & EXIT)  != 0){
-				x= getSize().x;
-				y= getSize().y;
-				if ((flags & ENABLED) != 0) {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
-				}
-				x -= data.width;
-				y -= data.height;
-				drawImage(data, x, y);
-			}
+			x -= data.width;
+			y -= data.height;
+			drawImage(data, x, y);
 		}
 	}
 	protected ImageDescriptor getBaseImage() {
