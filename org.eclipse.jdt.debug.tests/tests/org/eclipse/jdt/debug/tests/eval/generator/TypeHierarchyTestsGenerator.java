@@ -3,9 +3,9 @@ package org.eclipse.jdt.debug.tests.eval.generator;
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
+http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
     IBM Corporation - Initial implementation
@@ -306,9 +306,9 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		code.append("/**********************************************************************\n");
 		code.append("Copyright (c) 2000, 2002 IBM Corp. and others.\n");
 		code.append("All rights reserved. This program and the accompanying materials\n");
-		code.append("are made available under the terms of the Common Public License v0.5\n");
+		code.append("are made available under the terms of the Common Public License v1.0\n");
 		code.append("which accompanies this distribution, and is available at\n");
-		code.append("http://www.eclipse.org/legal/cpl-v05.html\n\n");
+		code.append("http://www.eclipse.org/legal/cpl-v10.html\n\n");
 		code.append("Contributors:\n");
 		code.append("    IBM Corporation - Initial implementation\n");
 		code.append("*********************************************************************/\n\n");
