@@ -143,23 +143,28 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				return null;
 			}
 			
-			// guess at source name if an inner type
+			boolean possibleInnerType = false;
 			String pathStr= name.replace('.', '/');
-			int dotIndex= pathStr.lastIndexOf('/');
-			int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
-			if (dollarIndex >= 0) {
-				pathStr = pathStr.substring(0, dollarIndex);
-			}		
-			pathStr += ".java"; //$NON-NLS-1$
-			IPath path = new Path(pathStr); 
-			autoDetectRoot(path);
-			if (getRootPath() != null) {
-				path = getRootPath().append(path);
-			}
-			ZipEntry entry = getArchive().getEntry(path.toString());
-			if (entry != null) {
-				return new ZipEntryStorage(getArchive(), entry);
-			}
+			int lastSlash = pathStr.lastIndexOf('/');
+			String typeName = pathStr;
+			do {
+				IPath entryPath = new Path(typeName + ".java");
+				autoDetectRoot(entryPath);
+				if (getRootPath() != null) {
+					entryPath = getRootPath().append(entryPath);
+				}				
+				ZipEntry entry = getArchive().getEntry(entryPath.toString());
+				if (entry != null) {
+					return new ZipEntryStorage(getArchive(), entry);
+				}
+				int index = typeName.lastIndexOf('$');
+				if (index > lastSlash) {
+					typeName = typeName.substring(0, index);
+					possibleInnerType = true;
+				} else {
+					possibleInnerType = false;
+				}						
+			} while (possibleInnerType);						
 			return null;
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 

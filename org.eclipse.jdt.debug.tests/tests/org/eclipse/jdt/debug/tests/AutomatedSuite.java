@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import org.eclipse.jdt.debug.tests.core.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
 import org.eclipse.jdt.debug.tests.core.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathContainerTests;
@@ -24,6 +25,7 @@ import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
 import org.eclipse.jdt.debug.tests.core.CommandArgumentTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.DirectorySourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.HcrTests;
@@ -128,6 +130,8 @@ public class AutomatedSuite extends TestSuite {
 //		addTest(new TestSuite(TestsTypeHierarchy2.class));
 		
 		addTest(new TestSuite(SourceLookupTests.class));
+		addTest(new TestSuite(DirectorySourceLookupTests.class));
+		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
 		addTest(new TestSuite(RemoteAttachTests.class));

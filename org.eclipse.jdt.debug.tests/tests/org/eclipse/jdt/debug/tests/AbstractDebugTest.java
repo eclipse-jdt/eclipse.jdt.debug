@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -125,6 +126,18 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject getJavaProject() {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("DebugTests");
 		return JavaCore.create(project);
+	}
+	
+	/**
+	 * Returns the source folder with the given name in the given project.
+	 * 
+	 * @param project
+	 * @param name source folder name
+	 * @return package fragment root
+	 */
+	protected IPackageFragmentRoot getPackageFragmentRoot(IJavaProject project, String name) {
+		IProject p = project.getProject();
+		return project.getPackageFragmentRoot(p.getFolder(name));
 	}
 	
 	/**

@@ -1,0 +1,9 @@
+<project name="Build test source attachment jars" default="export" basedir="..">
+	<target name="export">
+		<jar 
+			jarfile="./testresources/testJarWithOutRoot.jar"
+			basedir="testprograms"
+			includes="**"
+		/>
+	</target>
+</project>

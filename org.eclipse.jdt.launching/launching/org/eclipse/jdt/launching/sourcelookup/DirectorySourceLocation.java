@@ -77,21 +77,26 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			return null;
 		}
 		
-		// guess at source name if an inner type
 		String pathStr= name.replace('.', '/');
-		int dotIndex= pathStr.lastIndexOf('/');
-		int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
-		if (dollarIndex >= 0) {
-			pathStr = pathStr.substring(0, dollarIndex);
-		}		
-		pathStr += ".java"; //$NON-NLS-1$
+		int lastSlash = pathStr.lastIndexOf('/');
 		try {
 			IPath root = new Path(getDirectory().getCanonicalPath());
-			root = root.append(new Path(pathStr));
-			File file = root.toFile();
-			if (file.exists()) {
-				return new LocalFileStorage(file);
-			}
+			boolean possibleInnerType = false;
+			String typeName = pathStr;
+			do {
+				IPath filePath = root.append(new Path(typeName + ".java"));
+				File file = filePath.toFile();
+				if (file.exists()) {
+					return new LocalFileStorage(file);
+				}
+				int index = typeName.lastIndexOf('$');
+				if (index > lastSlash) {
+					typeName = typeName.substring(0, index);
+					possibleInnerType = true;
+				} else {
+					possibleInnerType = false;
+				}						
+			} while (possibleInnerType);			
 		} catch (IOException e) {
 			throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
 		}

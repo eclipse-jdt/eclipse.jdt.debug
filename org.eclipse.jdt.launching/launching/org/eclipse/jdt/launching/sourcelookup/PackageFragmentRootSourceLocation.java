@@ -86,21 +86,25 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 				pkg = getPackageFragmentRoot().getPackageFragment(""); //$NON-NLS-1$
 			}
 			if (pkg.exists()) {
-				String typeName = null;
-				index = name.indexOf('$');
-				if (index >= 0) {
-					typeName = name.substring(0, index);
-				} else {
-					typeName = name;
-				}
-				ICompilationUnit cu = pkg.getCompilationUnit(typeName + ".java"); //$NON-NLS-1$
-				if (cu.exists()) {
-					return cu;
-				} 
-				IClassFile cf = pkg.getClassFile(name + ".class"); //$NON-NLS-1$
-				if (cf.exists()) {
-					return cf;
-				}
+				boolean possibleInnerType = false;
+				String typeName = name;
+				do {
+					ICompilationUnit cu = pkg.getCompilationUnit(typeName + ".java"); //$NON-NLS-1$
+					if (cu.exists()) {
+						return cu;
+					} 
+					IClassFile cf = pkg.getClassFile(typeName + ".class"); //$NON-NLS-1$
+					if (cf.exists()) {
+						return cf;
+					}				
+					index = typeName.lastIndexOf('$');
+					if (index >= 0) {
+						typeName = typeName.substring(0, index);
+						possibleInnerType = true;
+					} else {
+						possibleInnerType = false;
+					}						
+				} while (possibleInnerType);
 			}
 		}
 		return null;
