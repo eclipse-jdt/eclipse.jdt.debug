@@ -51,6 +51,7 @@ import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.ITypeNameRequestor;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -660,11 +661,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		ArrayList typeRefsFound= new ArrayList(3);
 		ITypeNameRequestor requestor= new TypeInfoRequestor(typeRefsFound);
 		try {
-			engine.searchAllTypeNames(workspace, 
+			engine.searchAllTypeNames( 
 				getPackage(declaringType), 
 				getTypeName(declaringType), 
-				IJavaSearchConstants.EXACT_MATCH, 
-				true, 
+				SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE, 
 				IJavaSearchConstants.CLASS, 
 				scope, 
 				requestor, 
