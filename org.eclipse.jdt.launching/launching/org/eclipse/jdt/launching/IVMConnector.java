@@ -10,8 +10,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import com.sun.jdi.VirtualMachine;
+import org.eclipse.debug.core.ILaunch;
 
 /**
  * A VM connector establishes a JDI connection with a debuggable
@@ -42,25 +41,15 @@ public interface IVMConnector {
 	
 	/**
 	 * Establishes a JDI connection with a debuggable VM using the arguments
-	 * specified in the given map, and returns the resulting virtual machine. 
-	 * The keys of the map are names of arguments used by this
-	 * connector (as returned by <code>#getDefaultArguments()</code>, and the
-	 * values are Strings representing the vales to use.
-	 * <p>
-	 * In addition, if this connector is being called from the standard
-	 * remote Java application launch configuration delegate, the map
-	 * contains an attribute which is the memento for the launch configuration
-	 * associated with this connection. This provides a connector with extra
-	 * information it may require. The launch configuration memento is keyed
-	 * by <code>IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION</code>.
-	 * </p>
+	 * specified in the given map, contributing results (debug targets and processes),
+	 * to the given launch.
 	 * 
 	 * @param map argument map to use in establishing a connection
 	 * @param monitor progress monitor
-	 * @return virtual machine
+	 * @param launch launch to contribute debug target(s) and/or process(es) to
 	 * @exception CoreException if unable to establish a connection with the target VM
 	 */
-	public VirtualMachine connect(Map arguments, IProgressMonitor monitor) throws CoreException;
+	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException;
 		
 	/**
 	 * Returns the name of this connector.

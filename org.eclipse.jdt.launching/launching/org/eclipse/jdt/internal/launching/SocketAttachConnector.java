@@ -18,10 +18,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdi.Bootstrap;
+import org.eclipse.jdi.TimeoutException;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
 
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
@@ -83,7 +89,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/**
 	 * @see IVMConnector#connect(Map, IProgressMonitor)
 	 */
-	public VirtualMachine connect(Map arguments, IProgressMonitor monitor) throws CoreException {
+	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
 		AttachingConnector connector= getAttachingConnector();
 		String portNumberString = (String)arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
@@ -98,8 +104,16 @@ public class SocketAttachConnector implements IVMConnector {
 		param.setValue(host);
 		param= (Connector.Argument) map.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
+		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+		boolean allowTerminate = false;
+		if (configuration != null) {
+			allowTerminate = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
+		}
 		try {
-			return connector.attach(map);
+			VirtualMachine vm = connector.attach(map);
+			String vmLabel = constructVMLabel(vm, host, portNumberString, configuration);
+			IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(launch, vm, vmLabel, null, allowTerminate, true);
+			launch.addDebugTarget(debugTarget);
 		} catch (UnknownHostException e) {
 			abort(MessageFormat.format(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_because_of_unknown_host___{0}__1"), new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 		} catch (ConnectException e) {
@@ -109,9 +123,36 @@ public class SocketAttachConnector implements IVMConnector {
 		} catch (IllegalConnectorArgumentsException e) {
 			abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_1"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 		}
-		// execution path will not reach here
-		return null;		
 	}
+
+	/**
+	 * Helper method that constructs a human-readable label for a remote VM.
+	 */
+	protected String constructVMLabel(VirtualMachine vm, String host, String port, ILaunchConfiguration configuration) {
+		String name = null;
+		try {
+			name = vm.name();
+		} catch (TimeoutException e) {
+			// do nothing
+		} catch (VMDisconnectedException e) {
+			// do nothing
+		}
+		if (name == null) {
+			if (configuration == null) {
+				name = "";
+			} else {
+				name = configuration.getName();
+			}
+		}
+		StringBuffer buffer = new StringBuffer(name);
+		buffer.append('['); //$NON-NLS-1$
+		buffer.append(host);
+		buffer.append(':'); //$NON-NLS-1$
+		buffer.append(port);
+		buffer.append(']'); //$NON-NLS-1$
+		return buffer.toString();
+	}
+		
 
 	/**
 	 * @see IVMConnector#getDefaultArguments()
