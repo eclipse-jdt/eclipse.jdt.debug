@@ -148,6 +148,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	
 	private boolean fEvaluating;
 	private IJavaThread fThread;
+	private boolean fStepFiltersSetting;
 	
 	private int fSnippetStart;
 	private int fSnippetEnd;
@@ -1061,12 +1062,15 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 							}
 							IJavaStackFrame f= (IJavaStackFrame)jt.getTopStackFrame();
 							if (f != null) {
+							    IJavaDebugTarget target = (IJavaDebugTarget) f.getDebugTarget();
 								IBreakpoint[] bps = jt.getBreakpoints();
 								//last line of the eval method in ScrapbookMain1?
 								int lineNumber = f.getLineNumber();
 								if (e.getDetail() == DebugEvent.STEP_END && (lineNumber == 20 || lineNumber == 21)
 									&& f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") //$NON-NLS-1$
 									&& jt.getDebugTarget() == fVM) { 
+								    // restore step filters
+								    target.setStepFiltersEnabled(fStepFiltersSetting);
 									setThread(jt);
 									return null;
 								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bps.length > 0 && bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
@@ -1075,6 +1079,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 									for (int j = 0; j < frames.length; j++) {
 										IJavaStackFrame frame = (IJavaStackFrame)frames[j];
 										if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
+										    // ignore step filters for this step
+										    fStepFiltersSetting = target.isStepFiltersEnabled();
+										    target.setStepFiltersEnabled(false);
 											frame.stepOver();
 											return null;
 										}
