@@ -5,6 +5,7 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -166,7 +167,7 @@ public class JavaSourceLocator implements ISourceLocator {
 	 * of the given project and all of its required projects .
 	 * If the project uses an alternate runtime JRE than it has
 	 * been built with, the alternate JRE source zip is added
-	 * as the first source location.
+	 * as the first source location (if this source zip exists).
 	 * 
 	 * @param project Java project
 	 * @return a collection of source locations for all required
@@ -191,12 +192,16 @@ public class JavaSourceLocator implements ISourceLocator {
 				IPath path = library.getSystemLibrarySourcePath();
 				if (!path.isEmpty()) {
 					try {
-						jreSource = new ArchiveSourceLocation(path.toOSString(), library.getPackageRootPath().toString());
+						String OSPath= path.toOSString();
+						File zip= new File(OSPath);
+						if (zip.exists()) {
+							jreSource = new ArchiveSourceLocation(OSPath, library.getPackageRootPath().toString());
+							size++;
+							offset++;
+						}
 					} catch (IOException e) {
 						throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
-					}
-					size++;
-					offset++;
+					}			
 				}
 			}
 		}
