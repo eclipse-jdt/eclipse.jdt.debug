@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -35,9 +34,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A source locator for a Java project that prompts the user
- * for source when source cannot be found on the project's
- * build path.
+ * A source locator that prompts the user to find source when source cannot
+ * be found on the current source lookup path.
  * <p>
  * This class is intended to be instantiated. This class is not
  * intended to be subclassed.
@@ -113,7 +111,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	}
 
 	/**
-	 * @see ISourceLocator#getSourceElement(IStackFrame)
+	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
 		Object res= fSourceLocator.getSourceElement(stackFrame);
