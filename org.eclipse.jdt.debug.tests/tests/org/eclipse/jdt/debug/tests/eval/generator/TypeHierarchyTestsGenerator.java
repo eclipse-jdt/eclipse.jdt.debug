@@ -312,9 +312,8 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		code.append("Contributors:\n");
 		code.append("    IBM Corporation - Initial implementation\n");
 		code.append("*********************************************************************/\n\n");
-		code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n\n");
 		code.append("import org.eclipse.debug.core.model.IValue;\n");
-		code.append("import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n\n");
+		code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n\n");
 		code.append("public class TypeHierarchy_" + lineNumber + "_" + hitCount + " extends Tests {\n");
 		code.append("\t/**\n");
 		code.append("\t * Constructor for TypeHierarchy.\n");

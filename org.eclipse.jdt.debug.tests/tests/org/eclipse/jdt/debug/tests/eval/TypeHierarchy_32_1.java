@@ -11,10 +11,8 @@ Contributors:
     IBM Corporation - Initial implementation
 *********************************************************************/
 
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 public class TypeHierarchy_32_1 extends Tests {
 	/**
