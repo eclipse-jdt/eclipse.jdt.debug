@@ -164,6 +164,12 @@
                class="org.eclipse.jdt.debug.tests.console.IOConsoleOutputActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.outputTest"/>
+         <action
+               label="IOConsole Hyperlink Test"
+               class="org.eclipse.jdt.debug.tests.console.IOConsoleHyperlinkTest"
+               menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
+               id="org.eclipse.jdt.debug.tests.hyperlinkTest"/>
+
       </actionSet>
    </extension>
    <extension

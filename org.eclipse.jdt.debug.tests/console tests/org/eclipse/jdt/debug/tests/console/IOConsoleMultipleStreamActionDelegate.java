@@ -52,11 +52,7 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-//        new Thread(new Runnable() {
-//            public void run() {
-                runTest();
-//            }
-//        }, "IOConsole Test Thread").start(); //$NON-NLS-1$
+        runTest();
     }
     
     public void runTest() {
