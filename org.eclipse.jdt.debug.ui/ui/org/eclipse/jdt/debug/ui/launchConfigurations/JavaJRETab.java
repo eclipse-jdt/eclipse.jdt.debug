@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -383,27 +384,26 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		// Show the name of the 'default' VM, if it exists
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
 		int numVMs = fVMStandins.size();
-		int offset = 0;
 		if (defaultVM != null) {
 			numVMs++;
-			offset++;
 		}
-		String[] vmNames = new String[numVMs];
+		List vmNames = new ArrayList(numVMs);
+		
 		if (defaultVM != null) {
 			String defaultVMName = defaultVM.getName();
-			vmNames[0] = DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$
-			fDefaultVMName = vmNames[0];
+			fDefaultVMName= DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$
+			vmNames.add(fDefaultVMName);
 		}
 
 		// Add all installed VMs
-		int index = offset;
 		Iterator iterator = fVMStandins.iterator();
 		while (iterator.hasNext()) {
 			VMStandin standin = (VMStandin)iterator.next();
 			String vmName = standin.getName();
-			vmNames[index++] = vmName;
+			vmNames.add(vmName);
 		}
-		fJRECombo.setItems(vmNames);
+		Collections.sort(vmNames);
+		fJRECombo.setItems((String[])vmNames.toArray(new String[vmNames.size()]));
 	}	
 	
 	/**
