@@ -174,17 +174,21 @@ public abstract class AbstractRuntimeClasspathEntry implements IRuntimeClasspath
 	}
 	
 	/* (non-Javadoc)
+	 * 
+	 * Default implementation returns <code>null</code>.
+	 * Subclasses should override if required.
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentLocation()
 	 */
 	public String getSourceAttachmentLocation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	/* (non-Javadoc)
+	 * 
+	 * Default implementation returns <code>null</code>.
+	 * Subclasses should override if required.
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentRootLocation()
 	 */
 	public String getSourceAttachmentRootLocation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	/* (non-Javadoc)
