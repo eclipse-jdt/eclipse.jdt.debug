@@ -15,15 +15,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
  
 /**
- * A source location defines the location of a repository
- * of source code. A source location is capable of retrieving
+ * A repository of source code. A source location is capable of retrieving
  * source elements.
  * <p>
  * For example, a source location could be a project, zip/archive
  * file, or a directory in the file system.
  * </p>
  * <p>
- * This interface is may be implemented.
+ * This interface is may be implemented by clients.
  * </p>
  * @since 2.0
  */
