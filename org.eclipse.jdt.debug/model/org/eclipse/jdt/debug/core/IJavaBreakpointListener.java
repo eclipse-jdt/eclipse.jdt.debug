@@ -1,20 +1,18 @@
 package org.eclipse.jdt.debug.core;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.core.dom.Message;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
 /**
- * Provides event notification for Java breakpoints.
+ * Provides event and error notification for Java breakpoints.
  * Listeners register with the <code>JDIDebugModel</code>.
  * <p>
  * Clients are intended to implement this interface.
- * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @since 2.0
  */
@@ -22,7 +20,7 @@ public interface IJavaBreakpointListener {
 	
 	/**
 	 * Notification that the given breakpoint is about to be added to
-	 * the specified target.
+	 * the specified target (i.e. pre notification).
 	 * 
 	 * @param target Java debug target
 	 * @param breakpoint Java breakpoint
@@ -61,7 +59,7 @@ public interface IJavaBreakpointListener {
 	 * should suspend. This allows the listener to override
 	 * default thread suspension when a breakpoint is hit.
 	 * If at least one listener returns <code>true</code>,
-	 * the breakpoint will causes the thread to suspend.
+	 * the breakpoint will cause the thread to suspend.
 	 * 
 	 * @param thread Java thread
 	 * @param breakpoint Java breakpoint
@@ -78,5 +76,22 @@ public interface IJavaBreakpointListener {
 	 */
 	public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint);	
 	
-
+	/**
+	 * Notification that the given breakpoint had runtime errors in its conditional
+	 * expression.
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @param errors the runtime errors that occurred evaluating the breakpoint's
+	 *  condition
+	 */
+	public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception);
+	
+	/**
+	 * Notification that the given breakpoint has compilation errors in its conditional
+	 * expression.
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @param errors the compilation errors in the breakpoint's condition
+	 */
+	public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors);
 }

@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.core.JavaModelManager;
-import org.eclipse.jdt.internal.debug.core.IJavaConditionalBreakpointListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
@@ -44,8 +43,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	private static JDIDebugUIPlugin fgPlugin;
 	
-	private static ILabelProvider fLabelProvider= new DelegatingModelPresentation();
-	
 	private FileDocumentProvider fSnippetDocumentProvider;
 	
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
@@ -55,7 +52,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	private IJavaHotCodeReplaceListener fHCRListener;
 	private IElementChangedListener fJavaModelListener;
-	private IJavaConditionalBreakpointListener fConditionalBreakpointListener;
 	
 	/**
 	 * @see Plugin(IPluginDescriptor)
@@ -213,7 +209,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		initializeOptionsManager();
 		initializeAdapterManager();
 		initializeJavaModelListener();
-		initializeJavaConditionalBreakpointListener();
 		initializeImageRegistry();	
 	}
 	
@@ -223,7 +218,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public void shutdown() throws CoreException {
 		JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
 		JavaModelManager.getJavaModelManager().removeElementChangedListener(fJavaModelListener);
-		JDIDebugPlugin.getDefault().removeConditionalBreakpointListener(fConditionalBreakpointListener);
 		JavaDebugOptionsManager.getDefault().shutdown();
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
@@ -248,11 +242,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private void initializeJavaModelListener() {
 		fJavaModelListener= new JavaModelListener();
 		JavaModelManager.getJavaModelManager().addElementChangedListener(fJavaModelListener);
-	}
-	
-	private void initializeJavaConditionalBreakpointListener() {
-		fConditionalBreakpointListener= new JavaConditionalBreakpointListener();
-		JDIDebugPlugin.getDefault().addConditionalBreakpointListener(fConditionalBreakpointListener);
 	}
 	
 	private void initializeImageRegistry() {

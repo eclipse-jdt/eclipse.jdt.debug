@@ -46,7 +46,6 @@ public class JDIDebugPlugin extends Plugin {
 	 * Breakpoint listener list.
 	 */
 	private ListenerList fBreakpointListeners = null;
-	private ListenerList fConditionalBreakpointListeners= null;
 	
 	/**
 	 * Breakpoint notification types
@@ -103,7 +102,6 @@ public class JDIDebugPlugin extends Plugin {
 	public void startup() throws CoreException {
 		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
 		fBreakpointListeners = new ListenerList(5);
-		fConditionalBreakpointListeners= new ListenerList(1);
 	}
 	
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
@@ -175,42 +173,24 @@ public class JDIDebugPlugin extends Plugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+		
 	/**
-	 * Adds the given conditional breakpoint listener to the JDI debug model.
-	 * 
-	 * @param listener conditional breakpoint listener
-	 */
-	public void addConditionalBreakpointListener(IJavaConditionalBreakpointListener listener) {
-		fConditionalBreakpointListeners.add(listener);
-	}
-	
-	/**
-	 * Removes the given conditional breakpoint listener to the JDI debug model.
-	 * 
-	 * @param listener conditional breakpoint listener
-	 */
-	public void removeConditionalBreakpointListener(IJavaConditionalBreakpointListener listener) {
-		fConditionalBreakpointListeners.remove(listener);
-	}	
-	
-	/**
-	 * @see IJavaConditionalBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, Throwable)
+	 * @see IJavaBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, DebugException)
 	 */
 	public void fireBreakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
-		Object listeners[]= fConditionalBreakpointListeners.getListeners();
+		Object listeners[]= fBreakpointListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasCompilationErrors(breakpoint, errors);
+			((IJavaBreakpointListener)listeners[i]).breakpointHasCompilationErrors(breakpoint, errors);
 		}
 	}
 	
 	/**
-	 * @see IJavaConditionalBreakpointListener#breakpointHasCompilationErrors(IJavaLineBreakpoint, Message[])
+	 * @see IJavaBreakpointListener#breakpointHasCompilationErrors(IJavaLineBreakpoint, Message[])
 	 */
 	public void fireBreakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
-		Object listeners[]= fConditionalBreakpointListeners.getListeners();
+		Object listeners[]= fBreakpointListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasRuntimeException(breakpoint, exception);
+			((IJavaBreakpointListener)listeners[i]).breakpointHasRuntimeException(breakpoint, exception);
 		}
 	}
 	
