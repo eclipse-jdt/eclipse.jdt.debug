@@ -29,6 +29,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -38,11 +39,17 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -161,14 +168,40 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * The thread start event handler
 	 */
 	private ThreadStartHandler fThreadStartHandler= null;
+	
+	private IJavaExceptionBreakpoint fSuspendOnUncaughtExceptionBreakpoint= null;
 	 
+	class TypeCollector implements IJavaSearchResultCollector {
+			private List fResult;
+			private IProgressMonitor fProgressMonitor;
+
+			public TypeCollector(List result, IProgressMonitor progressMonitor) {
+				fResult= result;
+				fProgressMonitor= progressMonitor;
+			}
+			
+			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) {
+				fResult.add(enclosingElement);
+			}
+							
+			public IProgressMonitor getProgressMonitor() {
+				return fProgressMonitor;
+			}
+			
+			public void aboutToStart() {
+			}
+			
+			public void done() {
+			}
+	}
+
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
 	 * 
 	 * @param jvm the underlying VM
 	 * @param name the name to use for this VM, or <code>null</code>
 	 * 	if the name should be retrieved from the underlying VM
-	 * @param supportsTermiante whether the terminate action
+	 * @param supportsTerminate whether the terminate action
 	 *  is supported by this debug target
 	 * @param supportsDisconnect whether the disconnect action is
 	 * 	supported by this debug target
@@ -290,6 +323,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		initializeState();
 		fireCreationEvent();
 		initializeBreakpoints();
+		initializeSuspendOnUncaughtExceptionBreakpoint();
 		new Thread(getEventDispatcher(), JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
 	}
 	
@@ -341,6 +375,43 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 	}
 	
+	protected void initializeSuspendOnUncaughtExceptionBreakpoint() {
+		if (JDIDebugModel.suspendOnUncaughtExceptions()) {
+			List typesFound= new ArrayList(1);
+			try {
+				IJavaSearchResultCollector collector= new TypeCollector(typesFound, new NullProgressMonitor());				
+				new SearchEngine().search(ResourcesPlugin.getWorkspace(), "java.lang.Throwable", IJavaSearchConstants.TYPE, //$NON-NLS-1$
+					IJavaSearchConstants.DECLARATIONS, SearchEngine.createWorkspaceScope(), collector); 
+			} catch (JavaModelException jme) {
+				JDIDebugPlugin.logError(jme);
+			}
+			if (!typesFound.isEmpty()) {
+				try {
+					setSuspendOnUncaughtExceptionBreakpoint(new JavaExceptionBreakpoint((IType)typesFound.get(0), false, true, false, false));
+					breakpointAdded(getSuspendOnUncaughtExceptionBreakpoint());
+				} catch (DebugException de) {
+					JDIDebugPlugin.logError(de);
+				}
+			}
+		}
+	}
+	
+	public void setEnabledSuspendOnUncaughtException(boolean enable) {
+		
+		try {
+			IJavaExceptionBreakpoint breakpoint= getSuspendOnUncaughtExceptionBreakpoint();
+			if (enable && breakpoint == null) {
+				initializeSuspendOnUncaughtExceptionBreakpoint();
+				return;
+			}
+			if (breakpoint.isEnabled() != enable) {
+				breakpoint.setEnabled(enable);
+				breakpointChanged(breakpoint, null);
+			}
+		} catch (CoreException ce) {
+			JDIDebugPlugin.logError(ce);
+		}
+	}
 	/**
 	 * Creates, adds and returns a thread for the given
 	 * underlying thread reference. A creation event
@@ -1114,6 +1185,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		getBreakpoints().clear();
+		if (getSuspendOnUncaughtExceptionBreakpoint() != null) {
+			try {
+				getSuspendOnUncaughtExceptionBreakpoint().delete();
+			} catch (CoreException ce) {
+				logError(ce);
+			}
+		}
 	}
 
 	/**
@@ -1770,5 +1848,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return null;
 	}
 
+	protected IJavaExceptionBreakpoint getSuspendOnUncaughtExceptionBreakpoint() {
+		return fSuspendOnUncaughtExceptionBreakpoint;
+	}
+
+	protected void setSuspendOnUncaughtExceptionBreakpoint(IJavaExceptionBreakpoint suspendOnUncaughtExceptionBreakpoint) {
+		fSuspendOnUncaughtExceptionBreakpoint = suspendOnUncaughtExceptionBreakpoint;
+	}
 }
 
