@@ -262,10 +262,10 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @see IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partActivated(IWorkbenchPartReference ref) {
-		if ("org.eclipse.jdt.debug.ui.SnippetEditor".equals(ref.getId())) {
-			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "true");
+		if ("org.eclipse.jdt.debug.ui.SnippetEditor".equals(ref.getId())) { //$NON-NLS-1$
+			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "false");
+			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
