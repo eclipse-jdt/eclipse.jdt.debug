@@ -48,13 +48,6 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 	}
 	
 	/**
-	 * Checks whether the element the breakpoint refers to is shown in this editor
-	 */
-	protected boolean breakpointElementInEditor(IBreakpointManager manager, IMarker marker) {
-		return true;
-	}
-	
-	/**
 	 * @see MarkerRulerAction#getMarkers()
 	 */
 	protected List getMarkers() {
@@ -73,7 +66,6 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 					markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 				else {
 					IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-					//fix for: 1GEUMGZ
 					markers= root.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 				}
 				
@@ -82,7 +74,6 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 					for (int i= 0; i < markers.length; i++) {
 						IBreakpoint breakpoint= breakpointManager.getBreakpoint(markers[i]);
 						if (breakpoint != null && breakpointManager.isRegistered(breakpoint) && 
-								breakpointElementInEditor(breakpointManager, markers[i]) && 
 								includesRulerLine(model.getMarkerPosition(markers[i]), document))
 							breakpoints.add(markers[i]);
 					}
@@ -126,7 +117,7 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 					}
 				}
 				if (type != null) {
-					if (!JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), lineNumber)) {
+					if (JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(),lineNumber) == null) {
 						Map attributes = new HashMap(10);
 						JavaCore.addJavaElementMarkerAttributes(attributes, type);
 						attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier()); //$NON-NLS-1$

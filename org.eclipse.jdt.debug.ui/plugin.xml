@@ -83,15 +83,21 @@
            name="jdtGroup">
          </separator>
       </menu>
-  	  <action
-  		 label="%runToLineAction.label"
-  		 icon="icons/full/elcl16/runtoline_co.gif"
-  		 disabledIcon="icons/full/dlcl16/runtoline_co.gif"
-  		 hoverIcon="icons/full/clcl16/runtoline_co.gif"
-  		 helpContextId="run_to_line_action_context"
-  		 class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"
-  		 menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
-  		 id="org.eclipse.jdt.debug.ui.RunToLineAction"> 
+      	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+  			label="%ManageBreakpointAction.label"
+  			icon="icons/full/obj16/brkpi_obj.gif"
+  			helpContextId="manage_breakpoint_action_context"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
+  			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup">
+  	    </action>
+  	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
+  			label="%runToLineAction.label"
+  			icon="icons/full/elcl16/runtoline_co.gif"
+  			disabledIcon="icons/full/dlcl16/runtoline_co.gif"
+  			hoverIcon="icons/full/clcl16/runtoline_co.gif"
+  			helpContextId="run_to_line_action_context"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
+  			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup">
   	    </action>
   	    <action id="org.eclipse.jdt.debug.ui.RunSnippet" 
 			label="%RunSnippet.label" 
@@ -100,7 +106,7 @@
 			disabledIcon="icons/full/dtool16/run_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="run_snippet_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.snippeteditor.RunAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.snippeteditor.RunSnippetAction"> 
 		</action>
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
@@ -623,12 +629,6 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
-    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
-    		label="%runToLineAction.label"
-    		icon="icons/full/clcl16/runtoline_co.gif"
-    		menubarPath="additions"
-    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"> 
-		</action>
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
@@ -641,21 +641,10 @@
 			icon="icons/full/ctool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
-		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
-			label="%addBreakpointAction.label" 
-			menubarPath="group.add/add" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddBreakpointAction"> 
-		</action> 
      </viewerContribution>
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
     	targetID="#ClassFileEditorContext">
-    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
- 		   	icon="icons/full/clcl16/runtoline_co.gif"
-    		label="%runToLineAction.label"
-    		menubarPath="additions"
-    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"> 
-		</action> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions"
@@ -667,11 +656,6 @@
 			menubarPath="additions"
 			icon="icons/full/ctool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
-		</action> 
-		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
-			label="%addBreakpointAction.label" 
-			menubarPath="group.add/add" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddBreakpointAction"> 
 		</action> 
      </viewerContribution>
      <objectContribution 

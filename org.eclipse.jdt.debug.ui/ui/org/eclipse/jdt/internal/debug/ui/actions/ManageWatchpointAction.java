@@ -50,7 +50,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class ManageWatchpointAction extends ManageBreakpointAction {
+public class ManageWatchpointAction extends AbstractManageBreakpointAction {
 	
 	/**
 	 * Cache of fields that have already been searched for and found

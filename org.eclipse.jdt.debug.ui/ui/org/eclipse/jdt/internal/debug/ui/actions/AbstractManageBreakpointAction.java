@@ -13,7 +13,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 
-public abstract class ManageBreakpointAction implements IObjectActionDelegate {
+public abstract class AbstractManageBreakpointAction implements IObjectActionDelegate {
 
 	protected String fRemoveText, fRemoveDescription;
 	protected String fAddText, fAddDescription;

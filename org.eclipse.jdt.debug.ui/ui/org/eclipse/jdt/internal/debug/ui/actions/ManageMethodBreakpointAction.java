@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 /**
  * Adds a method breakpoint on a single selected element of type IMethod 
  */
-public class ManageMethodBreakpointAction extends ManageBreakpointAction {
+public class ManageMethodBreakpointAction extends AbstractManageBreakpointAction {
 	
 	public ManageMethodBreakpointAction() {
 		super();
