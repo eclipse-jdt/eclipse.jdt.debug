@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 
 import com.sun.jdi.AbsentInformationException;
@@ -157,4 +158,18 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 		}
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getClassLoaderObject()
+     */
+    public IJavaObject getClassLoaderObject() throws DebugException {
+        try {
+            ReferenceType type= (ReferenceType)getUnderlyingType();
+            return (IJavaObject)JDIValue.createValue(getDebugTarget(), type.classLoader());
+        } catch (RuntimeException e) {
+            getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIReferenceType.0"), new String[] {e.toString()}), e); //$NON-NLS-1$
+        }
+        // execution will not fall through to here,
+        // as #requestFailed will throw an exception
+        return null;
+    }
 }

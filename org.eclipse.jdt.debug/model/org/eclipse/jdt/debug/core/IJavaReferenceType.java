@@ -80,5 +80,16 @@ public interface IJavaReferenceType extends IJavaType {
 	 * @throws DebugException if unable to retrieve field names
 	 */
 	public String[] getAllFieldNames() throws DebugException;
+    
+    /**
+     * Returns the class loader object that loaded the class corresponding to this
+     * type.
+     *  
+     * @return the class loader object that loaded the class corresponding to this
+     *   type
+     * @throws DebugException
+     * @since 3.1
+     */
+    public IJavaObject getClassLoaderObject() throws DebugException;
 	
 }

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -77,5 +78,48 @@ public class TypeTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+    
+    public void testClassLoader() throws Exception {
+        String typeName = "Breakpoints";
+        List bps = new ArrayList();
+        // instance method
+        bps.add(createLineBreakpoint(81, typeName));
+        bps.add(createLineBreakpoint(88, typeName));
+        IJavaObject[] loaders = new IJavaObject[2];
+        int index = 0;
+        
+        IJavaThread thread= null;
+        try {
+            thread= launchToBreakpoint(typeName);
+            assertNotNull("Breakpoint not hit within timeout period", thread);
+            while (!bps.isEmpty()) {
+                IBreakpoint hit = getBreakpoint(thread);
+                assertNotNull("suspended, but not by breakpoint", hit);
+                assertTrue("hit un-registered breakpoint", bps.contains(hit));
+                assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+                ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
+                int lineNumber = breakpoint.getLineNumber();
+                IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+                loaders[index] = frame.getDeclaringType().getClassLoaderObject();
+                assertNotNull("class loader cannot be null", loaders[index]);
+                
+                if (index == 1) {
+                    assertEquals("First two class loaders should be the same", loaders[0], loaders[1]);
+                }
+                                
+                index++;
+                int stackLine = frame.getLineNumber();
+                assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+                bps.remove(breakpoint);
+                breakpoint.delete();
+                if (!bps.isEmpty()) {
+                    thread = resume(thread);
+                }
+            }
+        } finally {
+            terminateAndRemove(thread);
+            removeAllBreakpoints();
+        }               
+    }
 
 }
