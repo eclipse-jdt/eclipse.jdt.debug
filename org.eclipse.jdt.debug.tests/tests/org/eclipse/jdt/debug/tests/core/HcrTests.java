@@ -69,6 +69,7 @@ public class HcrTests extends AbstractDebugTest {
 	
 				// should have dropped to frame 'one'
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull("No top stack frame", frame);
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
 				
 				// resume to breakpoint
