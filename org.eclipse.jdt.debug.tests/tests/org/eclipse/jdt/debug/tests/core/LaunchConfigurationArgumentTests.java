@@ -85,7 +85,9 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 				}
 				attempts++;
 			}
-			if (closed) {
+			// even if not closed yet - see what's in the buffer. Sometimes
+			// we miss the close notification (due to a different bug).
+			if (buffer != null) {
 				return buffer.toString(); 
 			}
 			return null;
