@@ -171,5 +171,12 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	protected VirtualMachine getVirtualMachine() {
 		return fField.virtualMachine();
 	}
+	
+	public boolean supportsValueModification() {
+		if (fField.declaringType()instanceof InterfaceType) {
+			return false;
+		}
+		return super.supportsValueModification();
+	}
 }
 
