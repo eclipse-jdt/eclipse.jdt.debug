@@ -31,6 +31,7 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.ui.console"/>
    </requires>
 
 
@@ -83,7 +84,7 @@
                mode="TEST_MODE">
          </launchMode>
       </launchConfigurationTabGroup>
-   </extension>   
+   </extension>
    <extension
          point="org.eclipse.core.variables.valueVariables">
       <variable
@@ -92,18 +93,34 @@
             description="sample variable with initializer">
       </variable>
       <variable
+            initialValue="initial-value"
             name="VALUE_VAR_WITH_VALUE"
-            description="sample variable with value"
-            initialValue="initial-value">
-      </variable>      
-   </extension>   
+            description="sample variable with value">
+      </variable>
+   </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="SAMPLE_DYNAMIC_VAR"
-            resolver="org.eclipse.jdt.debug.testplugin.SampleDynamicVariableResolver"
-            description="sample dynamic variable">
+            description="sample dynamic variable"
+            resolver="org.eclipse.jdt.debug.testplugin.SampleDynamicVariableResolver">
       </variable>
-   </extension>   
+   </extension>
+   <extension
+         id="messageConsoleActionSet"
+         name="Message Console Test"
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Message Console Test"
+            description="Tests the message (generic) console"
+            id="org.eclipse.jdt.debug.tests.messageConsoleActionSet">
+         <action
+               label="Test Message Console"
+               class="org.eclipse.jdt.debug.tests.console.TestMessageConsoleActionDelegate"
+               menubarPath="org.eclipse.ui.run/additions"
+               id="org.eclipse.jdt.debug.tests.testMessageConsoleAction">
+         </action>
+      </actionSet>
+   </extension>
 
 </plugin>
