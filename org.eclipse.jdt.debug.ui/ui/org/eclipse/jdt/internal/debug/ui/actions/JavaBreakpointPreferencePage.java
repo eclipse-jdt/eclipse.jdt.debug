@@ -340,7 +340,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			// we can only do code assist if there is an associated type
 			IType type = null;
 			try {
-				BreakpointUtils.getType(fBreakpoint);
+				type= BreakpointUtils.getType(fBreakpoint);
 			} catch (CoreException e) {
 			}
 			if (type != null) {
