@@ -1016,10 +1016,8 @@ public class VerbosePacketStream extends PrintStream {
 		printDescription(TcpIpSpyMessages.getString("VerbosePacketStream.Suspend_status__27")); //$NON-NLS-1$
 		printHex(suspendStatus);
 		print(" ("); //$NON-NLS-1$
-		boolean spaceNeeded= false;
 		if ((suspendStatus & SUSPEND_STATUS_SUSPENDED) != 0) {
 			print("SUSPENDED"); //$NON-NLS-1$
-			spaceNeeded= true;
 		}
 		println(')');
 	}
@@ -1898,7 +1896,7 @@ public class VerbosePacketStream extends PrintStream {
 					boolean uncaught= in.readBoolean();
 					printlnReferenceTypeId(TcpIpSpyMessages.getString("VerbosePacketStream.Exception_type_id__238"), typeId); //$NON-NLS-1$
 					println(TcpIpSpyMessages.getString("VerbosePacketStream.Caught__239"), caught); //$NON-NLS-1$
-					println(TcpIpSpyMessages.getString("VerbosePacketStream.Uncaught__240"), caught); //$NON-NLS-1$
+					println(TcpIpSpyMessages.getString("VerbosePacketStream.Uncaught__240"), uncaught); //$NON-NLS-1$
 					break;
 				case 9: // field only
 					println(TcpIpSpyMessages.getString("VerbosePacketStream._(FieldOnly)_241")); //$NON-NLS-1$
