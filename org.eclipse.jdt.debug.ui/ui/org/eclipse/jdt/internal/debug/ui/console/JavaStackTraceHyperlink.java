@@ -72,7 +72,9 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 			String typeName = getTypeName();
 			int lineNumber = getLineNumber();
 			// documents start at 0
-			lineNumber--;
+			if (lineNumber > 0) {
+				lineNumber--;
+			}
 			IJavaSourceLocation[] sourceLocations = getSourceLocations();
 		
 			for (int i = 0; i < sourceLocations.length; i++) {
@@ -96,8 +98,8 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 								} catch (BadLocationException e) {
 								}
 								provider.disconnect(editorInput);
-								return;
 							}
+							return;
 						}
 					}
 				}
