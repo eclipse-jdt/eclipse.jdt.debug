@@ -761,13 +761,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * @throws CoreException if an exception occurrs while building
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-
-		monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
-		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
-		project = javaProject.getProject();
-		HashSet projectSet = new HashSet();
-		getReferencedProjectSet(project, projectSet);
-		orderedProjects = getBuildOrder(new ArrayList(projectSet));
 		
 		if (orderedProjects != null) {
 			monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.22"), orderedProjects.size() + 1); //$NON-NLS-1$
@@ -855,7 +848,24 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		return false;
 	}
 	
-	
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		// build project list
+		if (monitor != null) {
+			monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
+		}
+		orderedProjects = null;
+		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+		if (javaProject != null) {
+			project = javaProject.getProject();
+			HashSet projectSet = new HashSet();
+			getReferencedProjectSet(project, projectSet);
+			orderedProjects = getBuildOrder(new ArrayList(projectSet));
+		}
+		// do generic launch checks
+		return super.preLaunchCheck(configuration, mode, monitor);
+	}
 }
 
