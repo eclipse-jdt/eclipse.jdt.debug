@@ -22,7 +22,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 
-public class BinaryEvaluationSourceGenerator {
+public class BinaryBasedSourceGenerator {
 	
 	private static final String RUN_METHOD_NAME= "___run";
 	
@@ -40,7 +40,7 @@ public class BinaryEvaluationSourceGenerator {
 	
 	private String fCompilationUnitName;
 	
-	public BinaryEvaluationSourceGenerator(int[] localModifiers, String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
+	public BinaryBasedSourceGenerator(int[] localModifiers, String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
 		fLocalModifiers= localModifiers;
 		fLocalTypesNames= localTypesNames;
 		fLocalVariables= localVariables;

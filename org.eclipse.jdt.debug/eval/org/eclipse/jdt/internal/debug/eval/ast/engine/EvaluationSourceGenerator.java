@@ -71,7 +71,7 @@ public class EvaluationSourceGenerator {
 
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
-		SourceEvaluationSourceGenerator visitor= new SourceEvaluationSourceGenerator(unit, position, isLineNumber, fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
 		unit.accept(visitor);
 		
 		setSource(visitor.getSource());
@@ -79,7 +79,7 @@ public class EvaluationSourceGenerator {
 		setStartPosition(visitor.getStartPosition());
 	}
 	
-	private void createEvaluationSourceFromJDIObject(BinaryEvaluationSourceGenerator objectToEvaluationSourceMapper) throws DebugException {
+	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) throws DebugException {
 		String codeSnippet = fCodeSnippet;		
 		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1;
 
@@ -92,14 +92,14 @@ public class EvaluationSourceGenerator {
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), codeSnippet).toString());
 	}
 	
-	private BinaryEvaluationSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
-		BinaryEvaluationSourceGenerator objectToEvaluationSourceMapper = new BinaryEvaluationSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(objectValue);
 		return objectToEvaluationSourceMapper;
 	}
 	
-	private BinaryEvaluationSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) throws DebugException {
-		BinaryEvaluationSourceGenerator objectToEvaluationSourceMapper = new BinaryEvaluationSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) throws DebugException {
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(classType);
 		return objectToEvaluationSourceMapper;
 	}
@@ -112,7 +112,7 @@ public class EvaluationSourceGenerator {
 					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true);
 				} else {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
-					BinaryEvaluationSourceGenerator mapper;
+					BinaryBasedSourceGenerator mapper;
 					if (object != null) {
 						// Class instance context
 						mapper= getInstanceSourceMapper(object, ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
@@ -138,7 +138,7 @@ public class EvaluationSourceGenerator {
 					baseSource= type.getSource();
 				}
 				if (baseSource == null) {
-					BinaryEvaluationSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
+					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
 					createEvaluationSourceFromJDIObject(mapper);
 				} else {
 					createEvaluationSourceFromSource(baseSource, type.getSourceRange().getOffset(), false);

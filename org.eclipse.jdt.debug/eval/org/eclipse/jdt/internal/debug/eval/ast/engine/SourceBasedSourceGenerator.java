@@ -81,9 +81,10 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  * @version 	1.0
  * @author
  */
-public class SourceEvaluationSourceGenerator extends ASTVisitor  {
+public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
-	private static final String RUN_METHOD_NAME= "___run";
+	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
+	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
 	
 	private int[] fLocalModifiers;
 	private String[] fLocalTypesNames;
@@ -110,7 +111,7 @@ public class SourceEvaluationSourceGenerator extends ASTVisitor  {
 	
 	private int fStartPosOffset;
 	
-	public SourceEvaluationSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
 		fPosition= position;
@@ -163,30 +164,14 @@ public class SourceEvaluationSourceGenerator extends ASTVisitor  {
 	}
 	
 	private StringBuffer buildRunMethod(List bodyDeclarations) {
-		// Build a unique method name
-		String methodName= RUN_METHOD_NAME;
-		Iterator iter= bodyDeclarations.iterator();
-		BodyDeclaration bodyDeclaration;
-		MethodDeclaration method;
-		String foundName;
-		while (iter.hasNext()) {
-			bodyDeclaration= (BodyDeclaration) iter.next();
-			if (bodyDeclaration instanceof MethodDeclaration) {
-				method= (MethodDeclaration)bodyDeclaration;
-				foundName= method.getName().getIdentifier();
-				if (foundName.startsWith(methodName)) {
-					methodName= foundName + '_';
-				}
-			}
-		}
 		StringBuffer buffer = new StringBuffer();
 
 		if (isInAStaticMethod()) {
-			buffer.append("static ");
+			buffer.append("static "); //$NON-NLS-1$
 		}
 
-		buffer.append("void ");
-		buffer.append(methodName);
+		buffer.append("void "); //$NON-NLS-1$
+		buffer.append(getUniqueMethodName(RUN_METHOD_NAME, bodyDeclarations));
 		buffer.append('(');
 		for(int i= 0, length= fLocalModifiers.length; i < length; i++) {
 			if (fLocalModifiers[i] != 0) {
@@ -197,9 +182,9 @@ public class SourceEvaluationSourceGenerator extends ASTVisitor  {
 			buffer.append(' ');
 			buffer.append(fLocalVariables[i]);
 			if (i + 1 < length)
-				buffer.append(", ");
+				buffer.append(", "); //$NON-NLS-1$
 		}
-		buffer.append(") throws Throwable {");
+		buffer.append(") throws Throwable {"); //$NON-NLS-1$
 		buffer.append('\n');
 		fStartPosOffset= buffer.length() - 2;
 		String codeSnippet= new String(fCodeSnippet).trim();
@@ -421,6 +406,29 @@ public class SourceEvaluationSourceGenerator extends ASTVisitor  {
 		return source;
 	}
 	
+	/**
+	 * Returns a method name that will be unique in the generated source.
+	 * The generated name is baseName plus as many '_' characters as necessary
+	 * to not duplicate an existing method name.
+	 */
+	private String getUniqueMethodName(String methodName, List bodyDeclarations) {
+		Iterator iter= bodyDeclarations.iterator();
+		BodyDeclaration bodyDeclaration;
+		MethodDeclaration method;
+		String foundName;
+		while (iter.hasNext()) {
+			bodyDeclaration= (BodyDeclaration) iter.next();
+			if (bodyDeclaration instanceof MethodDeclaration) {
+				method= (MethodDeclaration)bodyDeclaration;
+				foundName= method.getName().getIdentifier();
+				if (foundName.startsWith(methodName)) {
+					methodName= foundName + '_';
+				}
+			}
+		}
+		return methodName;
+	}
+	
 	private String getQualifiedIdentifier(Name name) {
 		String typeName= "";
 		while (name.isQualifiedName()) {
@@ -492,7 +500,9 @@ public class SourceEvaluationSourceGenerator extends ASTVisitor  {
 		
 		if (rightTypeFound()) {
 			
-			StringBuffer source = buildTypeBody(fSource, anonymousClassDeclaration.bodyDeclarations());
+			List bodyDeclarations= anonymousClassDeclaration.bodyDeclarations();
+			
+			StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
 			
 			ASTNode parent = node.getParent();
 			while (!(parent instanceof MethodDeclaration)) {
@@ -503,19 +513,21 @@ public class SourceEvaluationSourceGenerator extends ASTVisitor  {
 			fSource= new StringBuffer();
 			
 			if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
-				fSource.append("static ");
+				fSource.append("static "); //$NON-NLS-1$
 			}
 				
-			fSource.append("void ___eval() {\n");
-			fSource.append("new ");
+			fSource.append("void "); //$NON-NLS-1$
+			fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
+			fSource.append(" {\n"); //$NON-NLS-1$
+			fSource.append("new "); //$NON-NLS-1$
 			fSource.append(getQualifiedIdentifier(node.getName()));
-			fSource.append("()");
+			fSource.append("()"); //$NON-NLS-1$
 			
 			fStartPosOffset+= fSource.length();
 			fSource.append(source);
-			fSource.append(";}\n");
+			fSource.append(";}\n"); //$NON-NLS-1$
 			
-			fLastTypeName= "";
+			fLastTypeName= ""; //$NON-NLS-1$
 			
 		}		
 	}
