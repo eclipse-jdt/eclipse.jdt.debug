@@ -122,6 +122,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanUseInstanceFilters;
 	private boolean fCanGetSourceDebugExtension;
 	private boolean fCanRequestVMDeathEvent;
+	private boolean fCanSetDefaultStratum;
 	private boolean[] fHcrCapabilities = null;
 	
 	/*
@@ -430,6 +431,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanUseInstanceFilters = readBoolean("use instance filters", replyData); //$NON-NLS-1$
 				fCanGetSourceDebugExtension = readBoolean("get source debug extension", replyData); //$NON-NLS-1$
 				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData); //$NON-NLS-1$
+				fCanSetDefaultStratum= readBoolean("set default stratum", replyData); //$NON-NLS-1$
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;
@@ -438,6 +440,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanUseInstanceFilters = false;
 				fCanGetSourceDebugExtension = false;
 				fCanRequestVMDeathEvent = false;
+				fCanSetDefaultStratum= false;
 			}
 			fGotCapabilities = true;
 		} catch (IOException e) {
@@ -1150,36 +1153,40 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanRequestVMDeathEvent;
 	}
+	
+	public boolean canSetDefaultStratum() {
+		getCapabilities();
+		return fCanSetDefaultStratum;
+	}
 
 	/*
 	 * @see VirtualMachine#setDefaultStratum(String)
 	 */
 	public void setDefaultStratum(String stratum) {
 		// see next todo
-//		if (!canSetDefaultStratum()) {
-//			throw new UnsupportedOperationException();
-//		}
 		fDefaultStratum= stratum;
 		
-		// TODO: check the usefulness of the command VIRTUAL_MACHINE SET_DEFAULT_STRATUM
-		// need to test on Sun 1.4.1 to see what it does.
-//		if (stratum == null) {
-//			stratum= "";
-//		}
-//		initJdwpRequest();
-//		try {
-//			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
-//			DataOutputStream outData = new DataOutputStream(outBytes);
-//			writeString(stratum, "stratum ID", outData); //$NON-NLS-1$
-//	
-//			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_SET_DEFAULT_STRATUM, outBytes);
-//			defaultReplyErrorHandler(replyPacket.errorCode());
-//			
-//		} catch (IOException e) {
-//			defaultIOExceptionHandler(e);
-//		} finally {
-//			handledJdwpRequest();
-//		}
+		if (!canSetDefaultStratum()) {
+			// TODO: how to inform the user that the VM doesn't manage setDefaultStartum ?
+			return;
+		}
+		if (stratum == null) {
+			stratum= "";
+		}
+		initJdwpRequest();
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			writeString(stratum, "stratum ID", outData); //$NON-NLS-1$
+	
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_SET_DEFAULT_STRATUM, outBytes);
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+		} catch (IOException e) {
+			defaultIOExceptionHandler(e);
+		} finally {
+			handledJdwpRequest();
+		}
 	}
 
 	/*
