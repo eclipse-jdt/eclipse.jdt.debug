@@ -482,7 +482,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			if (res == null) {
 				return path.toOSString();
 			} else {
-				return res.getLocation().toOSString();
+				IPath location = res.getLocation();
+				if (location != null) {
+					return location.toOSString();
+				}
 			}
 		}
 		return null;		
