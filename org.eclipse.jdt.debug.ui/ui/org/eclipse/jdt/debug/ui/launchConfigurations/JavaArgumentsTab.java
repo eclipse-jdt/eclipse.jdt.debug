@@ -58,10 +58,6 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		GridData gd;
 		
 		createVerticalSpacer(comp, 1);
-						
-		fWorkingDirectoryBlock.createControl(comp);
-		
-		createVerticalSpacer(comp, 1);
 				
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
 		fPrgmArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
@@ -88,6 +84,10 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});	
+		
+		createVerticalSpacer(comp, 1);
+						
+		fWorkingDirectoryBlock.createControl(comp);
 		
 	}
 			
