@@ -176,9 +176,6 @@ public class EventDispatcher implements Runnable {
 			eventSet.resume();
 		}
 	}
-	
-	protected void dispatchEvent(Event event, IJDIEventListener listener) {
-	}
 
 	/**
 	 * Continuously reads events that are coming from the event queue,
@@ -272,9 +269,12 @@ public class EventDispatcher implements Runnable {
 	 * Fires debug events in the event queue, and clears the queue
 	 */
 	protected void fireEvents() {
-		DebugEvent[] events = (DebugEvent[])fDebugEvents.toArray(new DebugEvent[fDebugEvents.size()]);
-		fDebugEvents.clear();
-		DebugPlugin.getDefault().fireDebugEventSet(events);
+		DebugPlugin plugin= DebugPlugin.getDefault();
+		if (plugin != null) { //check that not in the process of shutting down
+			DebugEvent[] events = (DebugEvent[])fDebugEvents.toArray(new DebugEvent[fDebugEvents.size()]);
+			fDebugEvents.clear();
+			plugin.fireDebugEventSet(events);
+		}
 	}
 
 	/**
