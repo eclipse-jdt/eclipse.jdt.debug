@@ -106,13 +106,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			name.append(')');
 			return name.toString();
 		} else {
-			if (fValue instanceof ByteValue) {
-				byte b = ((ByteValue)fValue).value();
-				int i= 0xFF & b;
-				return Integer.toString(i);
-			} else {
-				return fValue.toString();
-			}
+			return fValue.toString();
 		}
 	}
 	
