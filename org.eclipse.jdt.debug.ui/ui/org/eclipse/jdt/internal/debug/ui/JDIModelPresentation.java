@@ -849,7 +849,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (DebugException e) {
-			JDIDebugUIPlugin.log(e);
+			if (!(e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED)) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		return 0;
 	}

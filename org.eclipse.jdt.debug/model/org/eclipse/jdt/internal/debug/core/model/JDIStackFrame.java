@@ -956,9 +956,17 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (fStackFrame == null) {
 				int depth= getDepth();
 				if (depth == -1) {
-					// Depth is set to -1 when the thread clears its handles
-					// to this object. See Bug 47198.
-					throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+					if (fThread.isSuspended()) {
+						// re-index stack frames - See Bug 47198
+						fThread.computeStackFrames();
+						depth = getDepth();
+						if (depth == -1) {
+							// If depth still -1, then this is an invalid frame
+							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+						}
+					} else {
+						throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaThread.ERR_THREAD_NOT_SUSPENDED, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+					}
 				}
 				setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(depth));
 			}
