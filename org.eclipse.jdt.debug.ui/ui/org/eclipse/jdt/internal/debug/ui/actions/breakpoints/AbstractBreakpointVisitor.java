@@ -13,6 +13,9 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
  * Visits an AST, assembling a collection of nodes on which a breakpoint could
@@ -44,13 +47,12 @@ public class AbstractBreakpointVisitor extends ASTVisitor {
 	private List fTargetNodes = new ArrayList();
 
 	/**
-	 * Constructs a breakpoint visitor
+	 * Sets the offset at which the breakpoint has been requested.
 	 * 
-	 * @param offset the character offset in a compiliation unit at which
-	 * a breakpoint has been requested
+	 * @param offset the character offset in a compiliation unit at which a
+	 * breakpoint has been requested
 	 */
-	public AbstractBreakpointVisitor(int offset) {
-		super();
+	public void setOffset(int offset) {
 		fOffset = offset;
 	}
 
@@ -105,8 +107,45 @@ public class AbstractBreakpointVisitor extends ASTVisitor {
 	 */
 	public boolean visit(CompilationUnit node) {
 		fLineNumber = node.lineNumber(getOffset());
+		fTargetNodes.clear();
 		fCompilationUnit = node;
-		return super.visit(node);
+		return true;
+	}
+	
+	/**
+	 * Returns whether the line number at which the breakpoint has been
+	 * requested is included in the line number range of the given node.
+	 * 
+	 * @param node
+	 * @return whether the line number at which the breakpoint has been
+	 * requested is included in the line number range of the given node
+	 */
+	public boolean includesLineNumber(ASTNode node) {
+		int start = node.getStartPosition();
+		int nodeLineStart = getCompilationUnit().lineNumber(start);
+		int nodeLineEnd = getCompilationUnit().lineNumber(start + node.getLength() - 1);
+		return getLineNumber() >= nodeLineStart && getLineNumber() <= nodeLineEnd;
+	}
+	
+	/**
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
+	 */
+	public boolean visit(TypeDeclaration node) {
+		return includesLineNumber(node);
+	}	
+
+	/**
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.PackageDeclaration)
+	 */
+	public boolean visit(PackageDeclaration node) {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ImportDeclaration)
+	 */
+	public boolean visit(ImportDeclaration node) {
+		return false;
 	}
 
 }

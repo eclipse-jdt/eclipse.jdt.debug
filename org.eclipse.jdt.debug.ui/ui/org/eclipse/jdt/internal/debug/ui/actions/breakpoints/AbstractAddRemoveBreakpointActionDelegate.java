@@ -7,15 +7,27 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -81,13 +93,71 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 	 */
 	public void run(IAction action) {
 		fAction = action;
-		doAction();
+		ITextEditor editor = (ITextEditor)getActivePart();
+		ISelectionProvider provider = editor.getSelectionProvider();
+		ITextSelection selection = (ITextSelection)provider.getSelection();
+		CompilationUnit compilationUnit = null;
+		try {
+			compilationUnit = createCompilationUnit(editor);
+		} catch (CoreException e) {
+			errorDialog(e);
+			return;
+		}
+		int offset = selection.getOffset();
+
+		ASTNode node = locateTargetNode(compilationUnit, offset);
+		if (node != null) {
+			IJavaElement javaElement = (IJavaElement)editor.getEditorInput().getAdapter(IJavaElement.class);
+			try {
+				IJavaBreakpoint breakpoint = createBreakpoint(node, javaElement);
+			} catch (CoreException e) {
+				errorDialog(e);
+			}
+		} else {
+			JDIDebugUIPlugin.getStandardDisplay().beep();
+		}		
+		
 	}
 	
 	/**
-	 * Runs the action. Subclasses should override.	 */
-	protected abstract void doAction();
+	 * Creates and returns a breakpoint for the given node in the given class
+	 * file or compilation unit.
+	 * 
+	 * @param node
+	 * @param element
+	 * @return IJavaBreakpoint
+	 * @exception CoreException if an exception occurrs creating the breakpoint
+	 */
+	protected abstract IJavaBreakpoint createBreakpoint(ASTNode node, IJavaElement element) throws CoreException;
+	
+	/**
+	 * Returns a node in the given AST associated with the given offset at which
+	 * a breakpoint can be created, or <code>null</code> if none.
+	 * 
+	 * @param compilationUnit
+	 * @param offset
+	 * @return a node in the given AST associated with the given offset at which
+	 * a breakpoint can be created, or <code>null</code> if none
+	 */
+	protected ASTNode locateTargetNode(CompilationUnit compilationUnit,int offset) {
+		AbstractBreakpointVisitor visitor = getVisitor();
+		visitor.setOffset(offset);
+		compilationUnit.accept(visitor);
+		List nodes = visitor.getNodes();
+		if (nodes.isEmpty()) {
+			return null;
+		}
+		int end = nodes.size() - 1;
+		return (ASTNode)nodes.get(end);	
+	}
 
+	/**
+	 * Returns the AST visitor for this type of breakpoint.
+	 * 
+	 * @return AbstractBreakpointVisitor
+	 */
+	protected abstract AbstractBreakpointVisitor getVisitor();
+	
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -168,4 +238,66 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 		ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Error", null, e.getStatus());
 	}
 	
+	/**
+	 * Returns first type declaration which is a parent of the given node,
+	 * or <code>null</code> if none
+	 * 
+	 * @param node node at which to start searching for a type declaration
+	 * @return first type declaration which is a parent of the given node,
+	 * or <code>null</code> if none
+	 */
+	protected TypeDeclaration getTypeDeclaration(ASTNode node) {
+		node = node.getParent();
+		while (node != null && !(node instanceof TypeDeclaration)) {
+			node = node.getParent();
+		}
+		return (TypeDeclaration)node;
+	}	
+	
+	/**
+	 * Returns the compilation unit the given node is contained in.
+	 * 
+	 * @param node
+	 * @return CompilationUnit
+	 */
+	protected CompilationUnit getCopmilationUnit(ASTNode node) {
+		return (CompilationUnit)node.getRoot();
+	}
+	
+	/**
+	 * Returns the fully qualified name of the given type declaration
+	 * 
+	 * @param typeDeclaration
+	 * @return String
+	 */
+	protected String getQualifiedName(TypeDeclaration typeDeclaration) {
+		StringBuffer typeName = new StringBuffer();
+		CompilationUnit compilationUnit = getCopmilationUnit(typeDeclaration);
+		// get the package
+		PackageDeclaration packageDeclaration = compilationUnit.getPackage();
+		if (packageDeclaration != null) {
+			Name name = packageDeclaration.getName();
+			while (name.isQualifiedName()) {
+				QualifiedName qName = (QualifiedName)name;
+				typeName.insert(0, qName.getName().getIdentifier());
+				typeName.insert(0, '.');
+				name = qName.getQualifier();
+			}
+			typeName.insert(0, ((SimpleName)name).getIdentifier());
+			typeName.append('.');
+		}
+		// get any enclosing types
+		TypeDeclaration enclosingType = getTypeDeclaration(typeDeclaration);
+		int insertOffset = typeName.length();
+		int dollarOffset = insertOffset;
+		while (enclosingType != null) {
+			String identifier = enclosingType.getName().getIdentifier();
+			typeName.insert(insertOffset, identifier);
+			dollarOffset = insertOffset + identifier.length();
+			typeName.insert(dollarOffset, '$');
+			enclosingType = getTypeDeclaration(enclosingType);
+		}
+		typeName.append(typeDeclaration.getName().getIdentifier());
+		return typeName.toString();
+	}	
 }
