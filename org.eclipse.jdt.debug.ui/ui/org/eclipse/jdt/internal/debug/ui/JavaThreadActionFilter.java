@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -33,8 +34,10 @@ public class JavaThreadActionFilter implements IActionFilter {
 				IJavaThread thread = (IJavaThread) target;
 				IBreakpoint[] breakpoints= thread.getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
-					if(breakpoints[i] instanceof IJavaExceptionBreakpoint) {
-						return true;
+					IBreakpoint breakpoint= breakpoints[i];
+					try {
+						return breakpoint.isRegistered() && breakpoint instanceof IJavaExceptionBreakpoint;
+					} catch (CoreException e) {
 					}	
 				}
 			}
