@@ -13,9 +13,9 @@ package org.eclipse.jdt.internal.launching;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant;
+import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType;
 
