@@ -33,6 +33,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -76,7 +77,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -694,7 +694,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		};
 		
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(r);
+            ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell());
+            progress.run(true, true, r);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {
