@@ -58,6 +58,7 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 			Composite comp = (Composite)super.createDialogArea(parent);
 			
 			fJRETab = new JavaJRETab();
+			fJRETab.setVMSpecificArgumentsVisible(false);
 			fJRETab.createControl(comp);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
@@ -72,8 +73,8 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 		 * @see Dialog#okPressed()
 		 */
 		protected void okPressed() {
-			super.okPressed();
 			fJRETab.performApply(fConfig);
+			super.okPressed();
 		}
 
 	}

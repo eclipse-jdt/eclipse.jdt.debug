@@ -155,12 +155,16 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	
 	/**
-	 * Returns the active workbench shell
+	 * Returns the active workbench shell or <code>null</code> if none
 	 * 
-	 * @return the active workbench shell
+	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
-		return getActiveWorkbenchWindow().getShell();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		return null;
 	}	
 	
 	/* (non - Javadoc)
