@@ -253,7 +253,10 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	}
 	
 	public void removeTypes() {
-		fFormatViewerContentProvider.removeDetailFormat((DetailFormatter)((IStructuredSelection)fFormatterListViewer.getSelection()).getFirstElement());
+		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
+		for (Iterator iter= selection.iterator(); iter.hasNext();) {
+			fFormatViewerContentProvider.removeDetailFormat((DetailFormatter) iter.next());
+		}
 	}
 	
 	public void editType() {
