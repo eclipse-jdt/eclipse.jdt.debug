@@ -48,6 +48,6 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return !selection.isEmpty() && !isIndexSelected(selection, getEntiresAsList().size() - 1);	
+		return getViewer().isEnabled() && !selection.isEmpty() && !isIndexSelected(selection, getEntiresAsList().size() - 1);	
 	}
 }

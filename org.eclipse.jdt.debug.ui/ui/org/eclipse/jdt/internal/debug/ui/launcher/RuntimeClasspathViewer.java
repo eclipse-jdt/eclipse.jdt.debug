@@ -22,6 +22,11 @@ import org.eclipse.swt.widgets.Composite;
 public class RuntimeClasspathViewer extends TableViewer {
 	
 	/**
+	 * Whether enabled/editable.
+	 */
+	private boolean fEnabled = true;
+	
+	/**
 	 * The runtime classpath entries displayed in this viewer
 	 */
 	protected List fEntries = new ArrayList();
@@ -110,10 +115,12 @@ public class RuntimeClasspathViewer extends TableViewer {
 	}	
 	
 	/**
-	 * Enables/disables this viewer
+	 * Enables/disables this viewer. Note the control is not disabled, since
+	 * we still want the user to be able to scroll if required to see the
+	 * existing entries. Just actions should be disabled.
 	 */
 	public void setEnabled(boolean enabled) {
-		getControl().setEnabled(enabled);
+		fEnabled = enabled;
 		// fire selection change to upate actions
 		setSelection(getSelection());
 	}
@@ -122,6 +129,6 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 * Returns whether this viewer is enabled
 	 */
 	public boolean isEnabled() {
-		return getControl().isEnabled();
+		return fEnabled;
 	}
 }

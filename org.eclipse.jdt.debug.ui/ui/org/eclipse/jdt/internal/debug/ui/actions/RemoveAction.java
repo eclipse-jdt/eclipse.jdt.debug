@@ -34,7 +34,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return !selection.isEmpty();
+		return getViewer().isEnabled() && !selection.isEmpty();
 	}
 
 }
