@@ -757,19 +757,6 @@
 		objectClass="org.eclipse.debug.core.model.IDebugTarget"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.ProcessPropertyPage"> 
     </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.propertyPages.VMPropertyPage" 
-		name="%vmPageName"
-		objectClass="org.eclipse.jdt.core.IJavaProject"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPropertyPage">
-    </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.propertyPages.VMPropertyPage" 
-		name="%vmPageName"
-		objectClass="org.eclipse.core.resources.IProject"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPropertyPage">
-		<filter name="nature" value="org.eclipse.jdt.core.javanature"/>
-    </page>
 </extension>
 
 <extension point = "org.eclipse.ui.preferencePages">
