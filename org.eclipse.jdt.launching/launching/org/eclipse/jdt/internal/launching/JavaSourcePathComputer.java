@@ -82,9 +82,12 @@ public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 			switch (entry.getType()) {
 				case IRuntimeClasspathEntry.ARCHIVE:
 					IPackageFragmentRoot root = getPackageFragmentRoot(entry, considerSourceAttachments);
+					String path = entry.getSourceAttachmentLocation();
+					if (root == null && path == null && considerSourceAttachments) {
+						// use the pkg frag root it there is no source attachment
+						root = getPackageFragmentRoot(entry, false);
+					}
 					if (root == null) {
-						// TODO: check if in the workspace
-						String path = entry.getSourceAttachmentLocation();
 						ISourceContainer container = null;
 						if (path == null) {
 							// use the archive itself

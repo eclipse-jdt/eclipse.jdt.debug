@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
+import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 
 /**
  * Default implementation of source lookup path computation and resolution.
@@ -58,10 +59,17 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					break;
 				case IRuntimeClasspathEntry.OTHER:
 					IRuntimeClasspathEntry2 entry = (IRuntimeClasspathEntry2)entries[i];
-					if (entry.getTypeId().equals(DefaultProjectClasspathEntry.TYPE_ID)) {
+					String typeId = entry.getTypeId();
+					IRuntimeClasspathEntry[] res = null;
+					if (typeId.equals(DefaultProjectClasspathEntry.TYPE_ID)) {
 						// add the resolved children of the project
 						IRuntimeClasspathEntry[] children = entry.getRuntimeClasspathEntries(configuration);
-						IRuntimeClasspathEntry[] res = JavaRuntime.resolveSourceLookupPath(children, configuration);
+						res = JavaRuntime.resolveSourceLookupPath(children, configuration);
+					} else if (typeId.equals(VariableClasspathEntry.TYPE_ID)) {
+						// add the archive itself - we currently do not allow a source attachment
+						res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
+					}
+					if (res != null) {
 						for (int j = 0; j < res.length; j++) {
 							all.add(res[j]);
 						}
