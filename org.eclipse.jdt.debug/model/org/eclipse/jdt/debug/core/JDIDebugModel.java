@@ -384,7 +384,5 @@ public class JDIDebugModel {
 			}
 		}
 		return false;
-	}
-	
-			
+	}	
 }

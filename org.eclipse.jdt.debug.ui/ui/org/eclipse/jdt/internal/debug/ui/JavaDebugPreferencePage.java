@@ -445,7 +445,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.SHOW_HEX_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_CHAR_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, false);		
-		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
+		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
+		store.setDefault(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*");
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "");
 	}
@@ -713,7 +714,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTableEditor.setEditor(fEditorText, fNewTableItem, 0);
 		
 		// get the editor ready to use
-		
 		fEditorText.setText(fNewStepFilter.getName());
 		fEditorText.selectAll();
 		setEditorListeners(fEditorText);
@@ -814,7 +814,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * as corresponding to an existing type or package (and this is probably not
 	 * even desirable).  
 	 */
-	
 	private boolean validateEditorInput(String trimmedValue) {
 		char firstChar= trimmedValue.charAt(0);
 		if (!Character.isJavaIdentifierStart(firstChar)) {
@@ -951,7 +950,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/**
-	 * Sets the default preferences
+	 * Sets the default preferences.
+	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		setDefaultValues();
@@ -966,7 +966,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fUnsignedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));
 		
 		fStepFilterContentProvider.setDefaults();
-		fSuspendButton.setSelection(false);
+		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
@@ -1071,6 +1071,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		return fPropertyChangeListener;
 	}
 	
+	/**
+	 * @see Dialog#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		getPreferenceStore().removePropertyChangeListener(getPropertyChangeListener());
