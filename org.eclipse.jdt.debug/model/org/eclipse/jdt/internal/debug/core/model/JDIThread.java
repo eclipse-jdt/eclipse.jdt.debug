@@ -287,7 +287,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && !isSuspendedQuiet() && (!isPerformingEvaluation() || isInvokingMethod()) && !getDebugTarget().isSuspended();
+		return isSuspended() && !isSuspendedQuiet() && (!isPerformingEvaluation() || isInvokingMethod());
 	}
 
 	/**
@@ -1182,7 +1182,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		resumeThread(true);
+		if (getDebugTarget().isSuspended()) {
+			getDebugTarget().resume();
+		} else {
+			resumeThread(true);
+		}
 	}
 	
 	/**
