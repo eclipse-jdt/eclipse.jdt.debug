@@ -22,6 +22,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -94,6 +96,10 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 			return target;
 		}
 		if (target == null) {
+			return null;
+		}
+		if (target.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
+			//can't set run to line in scrapbook context
 			return null;
 		}
 		IThread[] threads= target.getThreads();
@@ -204,16 +210,18 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		if (page != null) {
 			IEditorPart part= page.getActiveEditor();
 			if (part instanceof ITextEditor) {
-				setTextEditor((ITextEditor)part);
+				if (!(part instanceof JavaSnippetEditor)) {
+					setTextEditor((ITextEditor)part);
+				}
 			}
 		}
 		window.getPartService().addPartListener(this);
 	}
 	
-	
 	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
 	}
+	
 	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
 		fWorkbenchWindow = workbenchWindow;
 	}
@@ -223,7 +231,11 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof ITextEditor) {
-			setTextEditor((ITextEditor)targetEditor);
+			if (targetEditor instanceof JavaSnippetEditor) {
+				setTextEditor(null);
+			} else {
+				setTextEditor((ITextEditor)targetEditor);
+			}
 		}
 		setPluginAction(action);
 		update();
@@ -244,7 +256,11 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		if (part instanceof ITextEditor) {
-			setTextEditor((ITextEditor)part);
+			if (part instanceof JavaSnippetEditor) {
+				setTextEditor(null);
+			} else {
+				setTextEditor((ITextEditor)part);
+			}
 			update();
 		}
 	}
@@ -255,8 +271,10 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	public void partOpened(IWorkbenchPart part) {
 		if (part instanceof ITextEditor) {
 			if (getTextEditor() == null) {
-				setTextEditor((ITextEditor)part);
-				update();
+				if (!(part instanceof JavaSnippetEditor)) {
+					setTextEditor((ITextEditor)part);
+					update();
+				}
 			}
 		}
 	}
@@ -266,4 +284,4 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	public void init(IViewPart view) {
 		init(view.getViewSite().getWorkbenchWindow());
 	}
-}
+};
