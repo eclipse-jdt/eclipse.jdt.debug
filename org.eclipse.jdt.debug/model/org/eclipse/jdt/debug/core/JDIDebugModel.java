@@ -68,29 +68,6 @@ public class JDIDebugModel {
 	}
 
 	/**
-	 * Creates and returns a debug target for the given VM, and
-	 * associates it with the given process for console I/O. The
-	 * allow terminate flag specifies whether the debug target
-	 * will support termination (<code>ITerminate</code>).
-	 * If termination is not supported, the debug target will support
-	 * disconnecting (<code>IDisconnect</code>). Launching the actual
-	 * VM is a client responsibility.
-	 *
-	 * @param vm the VM do create a debug target for
-	 * @param process the process to associate with the debug target,
-	 *   which will be returned from <code>IDebugTarget.getProcess</code>
-	 * @param allowTermiante specifies if the target will support termiantion
-	 *   or disconnecting
-	 * @return a debug target
-	 * @see org.eclipse.debug.core.model.ITerminate
-	 * @see org.eclipse.debug.core.model.IDisconnect
-	 * @deprecated - user newDebugTarget(VirtalMachine, String, IProcess, boolean, boolean)
-	 */
-	public static IDebugTarget newDebugTarget(VirtualMachine vm, IProcess process, boolean allowTerminate) {
-		return newDebugTarget(vm, null, process, allowTerminate, !allowTerminate);
-	}
-
-	/**
 	 * Creates and returns a debug target for the given VM, with
 	 * the specified name, and associates the debug target with the
 	 * given process for console I/O. The allow terminate flag specifies whether
