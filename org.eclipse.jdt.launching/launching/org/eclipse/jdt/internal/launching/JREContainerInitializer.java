@@ -76,8 +76,8 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		} else {
 			String vmTypeId = vm.getVMInstallType().getId();
 			String vmName = vm.getName();
-			String prevId = containerPath.segment(1);
-			String prevName = containerPath.segment(2);
+			String prevId = getVMTypeId(containerPath);
+			String prevName = getVMName(containerPath);
 			if (!(prevId.equals(vmTypeId) && prevName.equals(vmName))) {
 				// update classpath
 				IPath newPath = new Path(JavaRuntime.JRE_CONTAINER);
@@ -111,8 +111,8 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		IVMInstall vm = null;
 		if (containerPath.segmentCount() > 1) {
 			// specific JRE
-			String vmTypeId = containerPath.segment(1);
-			String vmName = containerPath.segment(2);
+			String vmTypeId = getVMTypeId(containerPath);
+			String vmName = getVMName(containerPath);
 			IVMInstallType vmType = JavaRuntime.getVMInstallType(vmTypeId);
 			if (vmType != null) {
 				vm = vmType.findVMInstallByName(vmName);
@@ -182,9 +182,9 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					IClasspathEntry entry = classpath[j];
 					if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 						IPath path = entry.getPath();
-						if (path.segmentCount() == 3 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)
-						&& path.segment(1).equals(vm.getVMInstallType().getId())
-						&& path.segment(2).equals(vm.getName())) {
+						if (path.segmentCount() >= 3 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)
+						&& getVMTypeId(path).equals(vm.getVMInstallType().getId())
+						&& getVMName(path).equals(vm.getName())) {
 							// references removed JRE
 							affectedProjects.add(projects[i]);
 						}
@@ -213,5 +213,23 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			ws.setDescription(wsDescription);
 		}
 		return oldState;
+	}	
+	
+	/**
+	 * Returns the VM type identifier from the given container ID path.
+	 * 
+	 * @return the VM type identifier from the given container ID path
+	 */
+	public static String getVMTypeId(IPath path) {
+		return path.segment(1);
+	}
+	
+	/**
+	 * Returns the VM name from the given container ID path.
+	 * 
+	 * @return the VM name from the given container ID path
+	 */
+	public static String getVMName(IPath path) {
+		return path.removeFirstSegments(2).toString();
 	}	
 }
