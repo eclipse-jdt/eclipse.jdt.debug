@@ -834,9 +834,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// cannot be obsolete.
 			return false;
 		}
-		if (isTerminated()) {
-			return false;
-		}
 		try {
 			return getUnderlyingMethod().isObsolete();
 		} catch (RuntimeException re) {
