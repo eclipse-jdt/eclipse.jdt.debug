@@ -237,7 +237,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	protected List getBuiltProjects(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
-		if (event.getType() != IResourceChangeEvent.POST_BUILD || delta == null) {
+		if (event.getType() != IResourceChangeEvent.POST_BUILD || delta == null || event.getBuildKind() == 0) {
 			return Collections.EMPTY_LIST;
 		}
 		if (event.getBuildKind() == IncrementalProjectBuilder.AUTO_BUILD && !ResourcesPlugin.getWorkspace().isAutoBuilding()) {
