@@ -31,7 +31,7 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.IConsole)
      */
     public void connect(TextConsole console) {
-	    fConsole = (TextConsole) console;
+	    fConsole = console;
     }
 
     /* (non-Javadoc)
