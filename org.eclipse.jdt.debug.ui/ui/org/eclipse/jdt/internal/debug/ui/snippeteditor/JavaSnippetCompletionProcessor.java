@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaCompletionProposalComparator;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
@@ -28,7 +29,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.ContextType;
-import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -47,7 +47,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fCollector= new ResultCollector();
 		fEditor= editor;
-		ContextType contextType= ContextTypeRegistry.getInstance().getContextType("java"); //$NON-NLS-1$
+		ContextType contextType= JavaPlugin.getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
