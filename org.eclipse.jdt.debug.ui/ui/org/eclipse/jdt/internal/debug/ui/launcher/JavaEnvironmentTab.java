@@ -234,14 +234,14 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 		});
 				
-		fPathMoveUpButton = createPushButton(pathButtonComp, "Move &Up", null);
+		fPathMoveUpButton = createPushButton(pathButtonComp, "&Up", null);
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(true);
 			}
 		});
 		
-		fPathMoveDownButton = createPushButton(pathButtonComp, "Move D&own", null);
+		fPathMoveDownButton = createPushButton(pathButtonComp, "D&own", null);
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(false);
