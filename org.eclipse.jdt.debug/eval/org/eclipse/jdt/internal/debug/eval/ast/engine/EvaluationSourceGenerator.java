@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -252,10 +253,13 @@ public class EvaluationSourceGenerator {
 	private int getLineNumber(JDIReferenceType type) {
 		ReferenceType referenceType= (ReferenceType) type.getUnderlyingType();
 		try {
-			return ((Location)referenceType.allLineLocations().get(0)).lineNumber();
+			List allLineLocations = referenceType.allLineLocations();
+			if (!allLineLocations.isEmpty()) {
+				return ((Location)allLineLocations.get(0)).lineNumber();
+			}
 		} catch (AbsentInformationException e) {
-			return -1;
 		}
+		return -1;
 	}
 
 	protected String getSourceFromFrame(IJavaStackFrame frame) throws JavaModelException {
