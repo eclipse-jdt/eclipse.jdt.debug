@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
@@ -41,22 +42,17 @@ public class JavaSourceLookupUtil {
 	 * containers.
 	 * 
 	 * @param entries entries to translate
-	 * @param considerSourceAttachments whether to consider source attachments
-	 *  when comparing against existing packagr fragment roots
+	 * @return source containers corresponding to the given runtime classpath entries
 	 */
-	public static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries, boolean considerSourceAttachments) {
+	public static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries) {
 		List containers = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			switch (entry.getType()) {
 				case IRuntimeClasspathEntry.ARCHIVE:
-					IPackageFragmentRoot root = getPackageFragmentRoot(entry, considerSourceAttachments);
-					String path = entry.getSourceAttachmentLocation();
-					if (root == null && path == null && considerSourceAttachments) {
-						// use the pkg frag root it there is no source attachment
-						root = getPackageFragmentRoot(entry, false);
-					}
+					IPackageFragmentRoot root = getPackageFragmentRoot(entry);
 					if (root == null) {
+						String path = entry.getSourceAttachmentLocation();
 						ISourceContainer container = null;
 						if (path == null) {
 							// use the archive itself
@@ -93,27 +89,13 @@ public class JavaSourceLookupUtil {
 	}
 	
 	/**
-	 * Returns whether the given objects are equal, allowing
-	 * for <code>null</code>.
-	 * 
-	 * @param a
-	 * @param b
-	 * @return whether the given objects are equal, allowing
-	 *   for <code>null</code>
-	 */
-	private static boolean equalOrNull(Object a, Object b) {
-		if (a == null) {
-			return b == null;
-		}
-		if (b == null) {
-			return false;
-		}
-		return a.equals(b);
-	}
-	
-	/**
 	 * Returns whether the source attachments of the given package fragment
 	 * root and runtime classpath entry are equal.
+	 * <p>
+	 * NOTE: If the runtime classpath entry's source attachment is not specified,
+	 * then it is considered equal. This way, the corresponding package fragment
+	 * root is used for source lookup if it has a source attachment or not.
+	 * </p>
 	 * 
 	 * @param root package fragment root
 	 * @param entry runtime classpath entry
@@ -122,21 +104,28 @@ public class JavaSourceLookupUtil {
 	 * @throws JavaModelException 
 	 */
 	private static boolean isSourceAttachmentEqual(IPackageFragmentRoot root, IRuntimeClasspathEntry entry) throws JavaModelException {
-		return equalOrNull(root.getSourceAttachmentPath(), entry.getSourceAttachmentPath());
+		IPath entryPath = entry.getSourceAttachmentPath();
+		if (entryPath == null) {
+			return true;
+		}
+		IPath rootPath = root.getSourceAttachmentPath();
+		if (rootPath == null) {
+			// entry has a source attachment that the pkg root does not
+			return false;
+		}
+		return rootPath.equals(entryPath);
+		
 	}
 	
 	/**
 	 * Determines if the given archive runtime classpath entry exists
 	 * in the workspace as a package fragment root. Returns the associated
-	 * package fragment root possible, otherwise
-	 * <code>null</code>.
+	 * package fragment root or <code>null</code> if none.
 	 *  
 	 * @param entry archive runtime classpath entry
-	 * @param considerSourceAttachment whether the source attachments should be
-	 *  considered comparing against package fragment roots
 	 * @return package fragment root or <code>null</code>
 	 */
-	private static IPackageFragmentRoot getPackageFragmentRoot(IRuntimeClasspathEntry entry, boolean considerSourceAttachment) {
+	private static IPackageFragmentRoot getPackageFragmentRoot(IRuntimeClasspathEntry entry) {
 		IResource resource = entry.getResource();
 		if (resource == null) { 
 			// Check all package fragment roots for case of external archive.
@@ -153,7 +142,7 @@ public class JavaSourceLookupUtil {
 						for (int j = 0; j < allRoots.length; j++) {
 							IPackageFragmentRoot root = allRoots[j];
 							if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
-								if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
+								if (isSourceAttachmentEqual(root, entry)) {
 									// use package fragment root
 									return root;
 								}							
@@ -175,7 +164,7 @@ public class JavaSourceLookupUtil {
 					for (int j = 0; j < allRoots.length; j++) {
 						if (allRoots[j].equals(root)) {
 							// ensure source attachment paths match
-							if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
+							if (isSourceAttachmentEqual(root, entry)) {
 								// use package fragment root
 								return root;
 							}
@@ -195,7 +184,7 @@ public class JavaSourceLookupUtil {
 						for (int j = 0; j < allRoots.length; j++) {
 							IPackageFragmentRoot root = allRoots[j];
 							if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
-								if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
+								if (isSourceAttachmentEqual(root, entry)) {
 									// use package fragment root
 									return root;
 								}							

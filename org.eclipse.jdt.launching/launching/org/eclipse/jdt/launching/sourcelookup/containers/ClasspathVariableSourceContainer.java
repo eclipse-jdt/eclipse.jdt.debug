@@ -16,7 +16,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -62,7 +61,7 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 			path = path.append(fVariable.removeFirstSegments(1));			
 		}
 		IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
-		return JavaSourceLookupUtil.translate(new IRuntimeClasspathEntry[]{entry}, false);
+		return JavaRuntime.getSourceContainers(new IRuntimeClasspathEntry[]{entry});
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()

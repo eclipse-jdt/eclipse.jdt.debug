@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -53,6 +54,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
+import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
@@ -1820,4 +1822,18 @@ public final class JavaRuntime {
 		return null;
 	}
 	
+	/**
+	 * Returns a collection of source containers corresponding to the given
+	 * resolved runtime classpath entries.
+	 * <p>
+	 * Note that the entries must be resolved to ARCHIVE and PROJECT entries,
+	 * as source containers cannot be determined for unresolved entries.
+	 * </p>
+	 * @param entries entries to translate
+	 * @return source containers corresponding to the given runtime classpath entries
+	 * @since 3.1
+	 */
+	public static ISourceContainer[] getSourceContainers(IRuntimeClasspathEntry[] entries) {
+		return JavaSourceLookupUtil.translate(entries);
+	}
 }
