@@ -224,5 +224,23 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		return null;
 	}	
 	
+	/**
+	 * @see java.lang.Object#equals(Object)
+	 */
+	public boolean equals(Object o) {
+		if (o instanceof JDIFieldVariable) {
+			JDIFieldVariable f = (JDIFieldVariable)o;
+			return f.fObject.equals(fObject) && f.fField.equals(fField);
+		}
+		return false;
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fField.hashCode() + fObject.hashCode();
+	}
+
 }
 

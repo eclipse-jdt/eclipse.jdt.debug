@@ -111,4 +111,21 @@ public class JDIThisVariable extends JDIVariable {
 		return ((ReferenceType)getUnderlyingType()).isPublic();
 	}
 
+	/**
+	 * @see java.lang.Object#equals(Object)
+	 */
+	public boolean equals(Object o) {
+		if (o instanceof JDIThisVariable) {
+			return ((JDIThisVariable)o).fObject.equals(fObject);
+		}
+		return false;
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fObject.hashCode();
+	}
+
 }

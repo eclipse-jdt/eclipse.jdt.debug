@@ -912,7 +912,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} else {
 					setRunning(true);
 					// dispose cached stack frames so we re-retrieve on the next breakpoint
-					disposeStackFrames();
+					preserveStackFrames();
 				}				
 			}
 			return suspend;
@@ -1042,7 +1042,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		try {
 			setRunning(true);
-			disposeStackFrames();
+			preserveStackFrames();
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
@@ -1281,7 +1281,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected void resumedByVM() {
 		setRunning(true);
-		disposeStackFrames();
+		preserveStackFrames();
 	}
 
 	/**
