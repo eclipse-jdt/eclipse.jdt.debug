@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 
-	private ILabelProvider fLabelProvider= new DelegatingModelPresentation();
+	private ILabelProvider fLabelProvider= DebugUITools.newDebugModelPresentation();
 
 	/**
 	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded(IJavaDebugTarget)

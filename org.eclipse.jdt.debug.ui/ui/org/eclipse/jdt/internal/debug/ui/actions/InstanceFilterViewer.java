@@ -8,7 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -59,7 +59,7 @@ public class InstanceFilterViewer extends FieldEditor {
 		fInstanceViewer.addCheckStateListener(fCheckHandler);
 		fInstanceViewer.getTable().setLayoutData(data);
 		fInstanceViewer.setContentProvider(fContentProvider);
-		IDebugModelPresentation pres = new DelegatingModelPresentation();
+		IDebugModelPresentation pres = DebugUITools.newDebugModelPresentation();
 		pres.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, new Boolean(true));
 		fInstanceViewer.setLabelProvider(pres);
 		fInstanceViewer.setInput(fBreakpoint);

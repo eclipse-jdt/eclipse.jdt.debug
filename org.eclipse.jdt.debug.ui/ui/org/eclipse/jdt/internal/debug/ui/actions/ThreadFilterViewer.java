@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -70,7 +70,7 @@ public class ThreadFilterViewer extends FieldEditor {
 		fThreadViewer.addCheckStateListener(fCheckHandler);
 		fThreadViewer.getTree().setLayoutData(data);
 		fThreadViewer.setContentProvider(fContentProvider);
-		fThreadViewer.setLabelProvider(new DelegatingModelPresentation());
+		fThreadViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		fThreadViewer.setInput(DebugPlugin.getDefault().getLaunchManager());
 		setInitialCheckedState();
 	}
