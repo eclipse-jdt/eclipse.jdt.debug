@@ -7,11 +7,13 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -22,6 +24,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 public class JDIContentAssistPreference {
@@ -98,12 +101,9 @@ public class JDIContentAssistPreference {
 	/**
 	 * Configure the given content assistant from the preference store.
 	 */
-	protected static void configure(ContentAssistant assistant) {
+	public static void configure(ContentAssistant assistant, IColorManager manager) {
 		
 		IPreferenceStore store= getPreferenceStore();
-		
-		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
-		IColorManager manager= textTools.getColorManager();		
 		
 		boolean enabled= store.getBoolean(ContentAssistPreference.AUTOACTIVATION);
 		assistant.enableAutoActivation(enabled);
@@ -166,9 +166,9 @@ public class JDIContentAssistPreference {
 	}
 	
 	
-		/**
+	/**
 	 * Changes the configuration of the given content assistant according to the given property
-	 * change event and the given preference store.
+	 * change event.
 	 */
 	public static void changeConfiguration(ContentAssistant assistant, PropertyChangeEvent event) {
 		
@@ -233,6 +233,6 @@ public class JDIContentAssistPreference {
 	}
 	
 	private static IPreferenceStore getPreferenceStore() {
-		return JavaPlugin.getDefault().getPreferenceStore();
+		return ((AbstractUIPlugin)Platform.getPlugin(JavaUI.ID_PLUGIN)).getPreferenceStore();
 	}
 }
