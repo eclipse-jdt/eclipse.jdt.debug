@@ -22,11 +22,13 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineAction extends AddBreakpointAction {	
+public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate {	
 	
 	public RunToLineAction() {
 		setText(ActionMessages.getString("RunToLine.label")); //$NON-NLS-1$
@@ -182,5 +184,17 @@ public class RunToLineAction extends AddBreakpointAction {
 	public void selectionChanged(IAction action, ISelection selection) {
 		update();
 		action.setEnabled(isEnabled());
+	}
+	
+	/**
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/**
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
 	}
 }
