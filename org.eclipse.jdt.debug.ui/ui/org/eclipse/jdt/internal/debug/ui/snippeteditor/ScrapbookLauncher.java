@@ -122,6 +122,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			String name = page.getName() + "-Scrapbook-" + System.currentTimeMillis(); //$NON-NLS-1$
 			ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 			wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
+			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);		
+			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);		
 						
 			IPath outputLocation =	p.getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
 			File f = outputLocation.toFile();
