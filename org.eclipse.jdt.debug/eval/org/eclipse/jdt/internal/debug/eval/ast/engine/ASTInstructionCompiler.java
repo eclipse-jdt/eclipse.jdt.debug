@@ -1308,14 +1308,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(SwitchCase)
 	 */
 	public void endVisit(SwitchCase node) {
-
+		// never called
 	}
 
 	/**
 	 * @see ASTVisitor#endVisit(SwitchStatement)
 	 */
 	public void endVisit(SwitchStatement node) {
-
+		// nothing to do
 	}
 
 	/**
@@ -3423,12 +3423,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(SwitchCase)
 	 */
 	public boolean visit(SwitchCase node) {
-		if (!isActive()) {
-			return false;
-		}
-		setHasError(true);
-		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_case_cannot_be_used_in_an_evaluation_expression_20")); //$NON-NLS-1$
-		return true;
+		// never called
+		return false;
 	}
 
 	/**
@@ -3438,9 +3434,105 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		setHasError(true);
-		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_statement_cannot_be_used_in_an_evaluation_expression_21")); //$NON-NLS-1$
-		return true;
+		push(new NoOp(fCounter));
+		int switchStart= fCounter;
+		node.getExpression().accept(this);
+		
+		ArrayList statementsDefault= null;
+		Jump jumpDefault= null;
+		ArrayList jumpsStatements= new ArrayList();
+		ArrayList[] currentJumpsStatements= new ArrayList[] {new ArrayList(), null};
+		jumpsStatements.add(currentJumpsStatements);
+		
+		for (Iterator iter= node.statements().iterator(); iter.hasNext();) {
+			Statement statement= (Statement) iter.next();
+			if (statement instanceof SwitchCase) {
+				SwitchCase switchCase= (SwitchCase) statement;
+				if (switchCase.isDefault()) {
+					jumpDefault= new Jump();
+					push(jumpDefault);
+					storeInstruction(); // jump
+					statementsDefault= new ArrayList();
+				} else {
+					push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+					push(new Dup());
+					storeInstruction(); // dup
+					switchCase.getExpression().accept(this);
+					storeInstruction(); // equalequal
+					ConditionalJump condJump= new ConditionalJump(true);
+					push(condJump);
+					storeInstruction(); // cond jump
+					if (currentJumpsStatements[1] != null) {
+						currentJumpsStatements= new ArrayList[] {new ArrayList(), null};
+						jumpsStatements.add(currentJumpsStatements);
+					}
+					currentJumpsStatements[0].add(condJump);
+				}
+			} else {
+				if (statementsDefault != null) {
+					statementsDefault.add(statement);
+				} else {
+					if (currentJumpsStatements[1] == null) {
+						currentJumpsStatements[1]= new ArrayList();
+					}
+					currentJumpsStatements[1].add(statement);
+				}
+			}
+		}
+		
+		Jump jumpEnd= null;
+		if (jumpDefault == null) {
+			push(new Pop(0));
+			storeInstruction(); // pop
+			jumpEnd= new Jump();
+			push(jumpEnd);
+			storeInstruction(); // jump
+		}
+		
+		for (Iterator iter= jumpsStatements.iterator(); iter.hasNext();) {
+			currentJumpsStatements= (ArrayList[]) iter.next();
+			for (Iterator iterator= currentJumpsStatements[0].iterator(); iterator.hasNext();) {
+				ConditionalJump condJump= (ConditionalJump) iterator.next();
+				condJump.setOffset((fCounter - fInstructions.indexOf(condJump)) - 1);
+			}
+			if (currentJumpsStatements[1] != null) {
+				push(new Pop(0));
+				storeInstruction(); // pop
+				for (Iterator iterator= currentJumpsStatements[1].iterator(); iterator.hasNext();) {
+					((Statement) iterator.next()).accept(this);
+				}
+			}
+		}
+		
+		// default case
+		if (jumpDefault != null) {
+			jumpDefault.setOffset((fCounter - fInstructions.indexOf(jumpDefault)) - 1);
+			push(new Pop(0));
+			storeInstruction(); // pop
+			for (Iterator iterator= statementsDefault.iterator(); iterator.hasNext();) {
+				((Statement) iterator.next()).accept(this);
+			}
+		} else {
+			jumpEnd.setOffset((fCounter - fInstructions.indexOf(jumpEnd)) - 1);
+		}
+		
+		// for each pending break or continue instruction which are related to
+		// this loop, set the offset of the corresponding jump.
+		String label= getLabel(node);
+		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
+			CompleteInstruction instruction= (CompleteInstruction) iter.next();
+			Jump jumpInstruction= instruction.fInstruction;
+			int instructionAddress= fInstructions.indexOf(jumpInstruction);
+			if (instructionAddress > switchStart && (instruction.fLabel == null || instruction.fLabel.equals(label))) {
+				iter.remove();
+				if (instruction.fIsBreak) {
+					// jump to the instruction after the last instruction of the switch
+					jumpInstruction.setOffset((fCounter - instructionAddress) - 1);
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**

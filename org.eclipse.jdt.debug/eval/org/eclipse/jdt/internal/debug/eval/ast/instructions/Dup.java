@@ -35,5 +35,9 @@ public class Dup extends SimpleInstruction {
 		push(element);
 		push(element);
 	}
+	
+	public String toString() {
+		return "Dup"; //$NON-NLS-1$
+	}
 
 }
