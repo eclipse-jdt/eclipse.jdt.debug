@@ -92,8 +92,8 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
                 ps.println("Enter 'XXX' to stop"); //$NON-NLS-1$
                 while(!ended){
                     try {
-                        ps.println("TESTING("+i+")\n"); //$NON-NLS-1$//$NON-NLS-2$
-                        Thread.sleep(500);
+                        ps.println("TESTING("+i+")"); //$NON-NLS-1$//$NON-NLS-2$
+                        Thread.sleep(1000);
                         i++;
                     } catch (Exception e) {
                         e.printStackTrace();

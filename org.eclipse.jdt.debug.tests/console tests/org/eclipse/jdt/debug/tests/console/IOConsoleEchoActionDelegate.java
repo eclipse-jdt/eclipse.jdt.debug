@@ -59,12 +59,13 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 out.setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));     
-                out.setFontStyle(SWT.BOLD | SWT.ITALIC);
+                out.setFontStyle(SWT.ITALIC);
             }
         });
         
+        PrintStream ps = new PrintStream(out);
+        ps.println("Any text entered should be echoed back"); //$NON-NLS-1$
         for(;;) {
-            PrintStream ps = new PrintStream(out);
             byte[] b = new byte[1024];
             int bRead = 0;
             try {

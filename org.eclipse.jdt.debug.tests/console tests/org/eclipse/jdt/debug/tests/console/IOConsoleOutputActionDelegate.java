@@ -52,12 +52,14 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
 		final PrintStream stream = new PrintStream(out);
 		Runnable r = new Runnable() {
 			public void run() {
-				for (int i = 0; i < 100000;i++) {
+			    long start = System.currentTimeMillis();
+				for (int i = 0; i < 1000; i++) {
 					stream.print(Integer.toString(i));
-					stream.print(": Testing...");
-					stream.print("one...");
-					stream.println("two.... three....");
+					stream.print(": Testing..."); //$NON-NLS-1$
+					stream.print("one..."); //$NON-NLS-1$
+					stream.println("two.... three...."); //$NON-NLS-1$
 				}
+				stream.println("Total time: " + (System.currentTimeMillis()-start)); //$NON-NLS-1$
 			}
 		};
 		new Thread(r).start();

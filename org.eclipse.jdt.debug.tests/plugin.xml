@@ -159,13 +159,11 @@
                class="org.eclipse.jdt.debug.tests.console.IOConsoleMultipleStreamActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.outputTest"/>
-<!--
          <action
                label="IOConsole Output Test"
                class="org.eclipse.jdt.debug.tests.console.IOConsoleOutputActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.outputTest"/>
--->
       </actionSet>
    </extension>
    <extension
