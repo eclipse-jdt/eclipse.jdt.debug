@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -274,7 +275,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_INTERFACES, this);
-			defaultReplyErrorHandler(replyPacket.errorCode());
+			switch (replyPacket.errorCode()) {
+				case JdwpReplyPacket.NOT_FOUND:
+					// Workaround for problem in J2ME WTK (wireless toolkit)
+					// @see Bug 12966
+					return Collections.EMPTY_LIST;
+				default:
+					defaultReplyErrorHandler(replyPacket.errorCode());
+			}
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
@@ -575,14 +583,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns MethodImpl of a method in the reference specified by a given methodID, or null if not found.
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
-		if (methodID.value() == 0) {
-			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", -1); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		Iterator iter = allMethods().iterator();
 		while(iter.hasNext()) {
 			MethodImpl method = (MethodImpl)iter.next();
 			if (method.getMethodID().equals(methodID))
 				return method;
+		}
+		if (methodID.value() == 0) {
+			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", -1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}

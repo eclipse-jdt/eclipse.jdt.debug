@@ -388,7 +388,17 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.OR_IS_COLLECTED, this);
-			defaultReplyErrorHandler(replyPacket.errorCode());
+			switch (replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_OBJECT:
+					return true;
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					// Workaround for problem in J2ME WTK (wireless toolkit)
+					// @see Bug 12966
+					return false;
+				default:
+					defaultReplyErrorHandler(replyPacket.errorCode());
+					break;
+			};
 			DataInputStream replyData = replyPacket.dataInStream();
 			boolean result = readBoolean("is collected", replyData); //$NON-NLS-1$
 			return result;
