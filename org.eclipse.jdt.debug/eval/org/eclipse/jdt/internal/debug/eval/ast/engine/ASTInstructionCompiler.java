@@ -2439,6 +2439,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					if (Modifier.isStatic(variableBinding.getModifiers())) {
 						push(new PushStaticFieldVariable(variableId, getTypeName(declaringTypeBinding), fCounter));
 					} else {
+						if (isALocalType(declaringTypeBinding)) {
+							setHasError(true);
+							addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.36")); //$NON-NLS-1$
+							return false;
+						}
 						push(new PushFieldVariable(variableId, getTypeSignature(declaringTypeBinding), fCounter));
 						push(new PushThis(getEnclosingLevel(node, declaringTypeBinding)));
 						storeInstruction();
