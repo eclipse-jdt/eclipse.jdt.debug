@@ -51,6 +51,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -223,6 +224,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		Composite container= new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        container.setFont(parent.getFont());
 
 		// name and description container
 		Composite typeNameDescriptionContainer= new Composite(container, SWT.NONE);
@@ -309,6 +311,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * Create the widgets it the code snippet editor group
 	 */
 	private void createCodeGroupWidgets(boolean isValue) {
+        Font font= fCodeGroup.getFont();
 		if (isValue) {
 			fCodeGroup.setText(DebugUIMessages.getString("EditLogicalStructureDialog.6")); //$NON-NLS-1$
 		} else {
@@ -323,15 +326,18 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			Label attributeNameLabel= new Label(attributeNameContainer, SWT.NONE);
 			attributeNameLabel.setText(DebugUIMessages.getString("EditLogicalStructureDialog.8")); //$NON-NLS-1$
 			attributeNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+            attributeNameLabel.setFont(font);
 			
 			fAttributeNameText= new Text(attributeNameContainer, SWT.SINGLE | SWT.BORDER);
 			fAttributeNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			fAttributeNameText.addListener(SWT.Modify, this);
+            fAttributeNameText.setFont(font);
 		}
 
 		Label attributeValueLabel= new Label(fCodeGroup, SWT.NONE);
 		attributeValueLabel.setText(DebugUIMessages.getString("EditLogicalStructureDialog.9")); //$NON-NLS-1$
 		attributeValueLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, true, false));
+        attributeValueLabel.setFont(font);
 		
 		// snippet viewer
 		fSnippetViewer= new JDISourceViewer(fCodeGroup,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
@@ -368,6 +374,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * Create the widgets for the attribute list
 	 */
 	private void createAttributeListWidgets() {
+        Font font= fAttributesContainer.getFont();
 		// attribute list
 		fAttributeListViewer= new TableViewer(fAttributesContainer, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = (Table)fAttributeListViewer.getControl();
@@ -375,6 +382,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		gd.widthHint= convertWidthInCharsToPixels(10);
 		table.setLayoutData(gd);
+        table.setFont(font);
 		if (fAttributesContentProvider == null) {
 			fAttributesContentProvider= new AttributesContentProvider(fLogicalStructure.getVariables());
 		}
@@ -393,6 +401,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeAddButton= new Button(attributesListButtonsContainer, SWT.PUSH);
 		fAttributeAddButton.setText(DebugUIMessages.getString("EditLogicalStructureDialog.10")); //$NON-NLS-1$
 		fAttributeAddButton.setToolTipText(DebugUIMessages.getString("EditLogicalStructureDialog.27")); //$NON-NLS-1$
+        fAttributeAddButton.setFont(font);
 		setButtonLayoutData(fAttributeAddButton);
 		fAttributeAddButton.addListener(SWT.Selection, this);
 		
@@ -400,6 +409,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeRemoveButton= new Button(attributesListButtonsContainer, SWT.PUSH);
 		fAttributeRemoveButton.setText(DebugUIMessages.getString("EditLogicalStructureDialog.11")); //$NON-NLS-1$
 		fAttributeRemoveButton.setToolTipText(DebugUIMessages.getString("EditLogicalStructureDialog.28")); //$NON-NLS-1$
+        fAttributeRemoveButton.setFont(font);
 		setButtonLayoutData(fAttributeRemoveButton);
 		fAttributeRemoveButton.addListener(SWT.Selection, this);
 		
@@ -407,6 +417,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeUpButton= new Button(attributesListButtonsContainer, SWT.PUSH);
 		fAttributeUpButton.setText(DebugUIMessages.getString("EditLogicalStructureDialog.12")); //$NON-NLS-1$
 		fAttributeUpButton.setToolTipText(DebugUIMessages.getString("EditLogicalStructureDialog.29")); //$NON-NLS-1$
+        fAttributeUpButton.setFont(font);
 		setButtonLayoutData(fAttributeUpButton);
 		fAttributeUpButton.addListener(SWT.Selection, this);
 		
@@ -414,6 +425,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeDownButton= new Button(attributesListButtonsContainer, SWT.PUSH);
 		fAttributeDownButton.setText(DebugUIMessages.getString("EditLogicalStructureDialog.13")); //$NON-NLS-1$
 		fAttributeDownButton.setToolTipText(DebugUIMessages.getString("EditLogicalStructureDialog.30")); //$NON-NLS-1$
+        fAttributeDownButton.setFont(font);
 		setButtonLayoutData(fAttributeDownButton);
 		fAttributeDownButton.addListener(SWT.Selection, this);
 		

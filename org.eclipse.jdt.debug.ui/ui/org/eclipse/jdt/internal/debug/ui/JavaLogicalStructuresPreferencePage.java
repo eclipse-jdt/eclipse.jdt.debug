@@ -263,6 +263,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     public void createSourceViewer(Composite parent) {
         Label label= new Label(parent, SWT.NONE);
         label.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.12")); //$NON-NLS-1$
+        label.setFont(parent.getFont());
         
         fCodeViewer= new SourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
