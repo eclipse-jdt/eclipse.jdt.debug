@@ -5,9 +5,13 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.*;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationArrayVariable;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
  
 /**
  * Resolves an array access - the top of the stack is
@@ -21,13 +25,16 @@ public class ArrayAccess extends ArrayInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		int index = ((IPrimitiveValue)popValue()).getIntValue();
-		IArray array = (IArray)popValue();
-		push(new EvaluationArrayVariable(array, index));
+		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
+		IJavaArray array = (IJavaArray)popValue();
+		if (index >= array.getLength() || index < 0) {
+			throw new CoreException(new Status(Status.ERROR, JDIDebugModel.getPluginIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("ArrayAccess.illegal_index"), new Object[] {new Integer(index)}), null)); //$NON-NLS-1$
+		}
+		push(array.getVariables()[index]);
 	}
 
 	public String toString() {
-		return "array access";
+		return InstructionsEvaluationMessages.getString("ArrayAccess.array_access_1"); //$NON-NLS-1$
 	}
 }
 

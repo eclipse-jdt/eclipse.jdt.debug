@@ -5,6 +5,15 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
  * All Rights Reserved.
  */
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Location;
+import com.sun.jdi.Method;
+import com.sun.jdi.ReferenceType;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -40,60 +49,97 @@ public class EvaluationSourceGenerator {
 
 	private String fCodeSnippet;
 	
-	private String[] fImports;
-	private int[] fLocalModifiers;
-	private String[] fLocalTypesNames;
-	private String[] fLocalVariables;
+	private String[] fLocalVariableTypeNames;
+	private String[] fLocalVariableNames;
 		
 	
 	private String fSource;
 	private String fCompilationUnitName;
-	private int fStartPosition;
+	private int fSnippetStartPosition;
+	private int fRunMethodStartPosition;
+	private int fRunMethodLength;
 	
 	/**
 	 * Rebuild source in presence of external local variables
 	 */
-	public EvaluationSourceGenerator(String[] imports, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
-		fImports = imports;
-		fLocalModifiers = localModifiers;
-		fLocalTypesNames = localTypesNames;
-		fLocalVariables = localVariables;
-	 	fCodeSnippet= codeSnippet;
+	public EvaluationSourceGenerator(String[] localVariableTypesNames, String[] localVariableNames, String codeSnippet) {
+		fLocalVariableTypeNames = localVariableTypesNames;
+		fLocalVariableNames = localVariableNames;
+	 	fCodeSnippet= getCompleteSnippet(codeSnippet);
+	}
+	
+	public EvaluationSourceGenerator(String codeSnippet) {
+		this(new String[0], new String[0], codeSnippet);
+	}
+
+	protected String getCompleteSnippet(String codeSnippet) {
+
+		if (isExpression(codeSnippet)) {
+			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
+		}
+		return codeSnippet;
+	}
+	
+	protected boolean isExpression(String codeSnippet) {
+		return codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
 	}
 	
 	public String getCompilationUnitName() {
 		return fCompilationUnitName;
 	}
 	
-	public int getStartPosition() {
-		return fStartPosition;
+	public int getSnippetStart() {
+		return fSnippetStartPosition;
+	}
+	public int getRunMethodStart() {
+		return fRunMethodStartPosition;
+	}
+	public int getRunMethodLength() {
+		return fRunMethodLength;
+	}
+	protected void setSnippetStart(int position) {
+		fSnippetStartPosition= position;
+	}
+	protected void setRunMethodStart(int position) {
+		fRunMethodStartPosition= position;
+	}
+	protected void setRunMethodLength(int length) {
+		fRunMethodLength= length;
+	}
+	
+	public String getSnippet() {
+		return fCodeSnippet;
 	}
 
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		
 		setSource(visitor.getSource());
 		setCompilationUnitName(visitor.getCompilationUnitName());
-		setStartPosition(visitor.getStartPosition());
+		setSnippetStart(visitor.getSnippetStart());
+		setRunMethodStart(visitor.getRunMethodStart());
+		setRunMethodLength(visitor.getRunMethodLength());
 	}
 	
 	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) throws DebugException {
 		
 		setCompilationUnitName(objectToEvaluationSourceMapper.getCompilationUnitName());
-		setStartPosition(objectToEvaluationSourceMapper.getBlockStar());
+		setSnippetStart(objectToEvaluationSourceMapper.getSnippetStart());
+		setRunMethodStart(objectToEvaluationSourceMapper.getRunMethodStart());
+		setRunMethodLength(fCodeSnippet.length() + objectToEvaluationSourceMapper.getRunMethodLength());
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
 	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(objectValue);
 		return objectToEvaluationSourceMapper;
 	}
 	
 	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) throws DebugException {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(classType);
 		return objectToEvaluationSourceMapper;
 	}
@@ -102,7 +148,8 @@ public class EvaluationSourceGenerator {
 		if (fSource == null) {
 			try {
 				String baseSource= getSourceFromFrame(frame);
-				if (baseSource != null) {
+				int lineNumber= frame.getLineNumber();
+				if (baseSource != null && lineNumber != -1) {
 					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true);
 				} else {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
@@ -125,33 +172,42 @@ public class EvaluationSourceGenerator {
 	
 	public String getSource(IJavaObject thisObject, IJavaProject javaProject) throws DebugException  {
 		if (fSource == null) {
-			try {
-				IType type= getTypeFromProject(thisObject.getJavaType().getName() ,javaProject);
-				String baseSource= null;
-				if (type != null) {
-					ICompilationUnit compilationUnit= type.getCompilationUnit();
-					if (compilationUnit != null) {
-						baseSource= compilationUnit.getSource();
-					} else {
-						IClassFile  classFile= type.getClassFile();
-						if (classFile != null) {
-							baseSource= classFile.getSource();
-						}
-					}
-				}
-				if (baseSource == null) {
+				String baseSource= getTypeSourceFromProject(thisObject.getJavaType().getName(), javaProject);
+				int lineNumber= getLineNumber((JDIObjectValue) thisObject);
+				if (baseSource == null || lineNumber == -1) {
 					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
 					createEvaluationSourceFromJDIObject(mapper);
 				} else {
-					createEvaluationSourceFromSource(baseSource, type.getSourceRange().getOffset(), false);
+					createEvaluationSourceFromSource(baseSource, lineNumber, true);
 				}
-			} catch(JavaModelException e) {
-				throw new DebugException(e.getStatus());
-			}
 		}
 		return fSource;
 	}
-	
+
+	private int getLineNumber(JDIObjectValue objectValue) {
+		ReferenceType referenceType= objectValue.getUnderlyingObject().referenceType();
+		String referenceTypeName= referenceType.name();
+		Location location;
+		Hashtable lineNumbers= new Hashtable();
+		try {
+			for (Iterator iterator = referenceType.allLineLocations().iterator(); iterator.hasNext();) {
+				lineNumbers.put(new Integer(((Location)iterator.next()).lineNumber()), this);
+			}
+			for (Iterator iterator = referenceType.allLineLocations().iterator(); iterator.hasNext();) {
+				location= (Location)iterator.next();
+				if (!location.declaringType().name().equals(referenceTypeName)) {
+					lineNumbers.remove(new Integer(((Location)iterator.next()).lineNumber()));
+				}
+			}
+			if (lineNumbers.size() > 0) {
+				return ((Integer)lineNumbers.keys().nextElement()).intValue();
+			}
+			return -1;
+		} catch(AbsentInformationException e) {
+			return -1;
+		}
+	}
+
 	protected String getSourceFromFrame(IJavaStackFrame frame) throws JavaModelException {
 		ILaunch launch= frame.getLaunch();
 		if (launch == null) {
@@ -171,6 +227,9 @@ public class EvaluationSourceGenerator {
 		if (sourceElement instanceof ICompilationUnit) {
 			return ((ICompilationUnit)sourceElement).getSource();
 		}
+		if (sourceElement instanceof IClassFile) {
+			return ((IClassFile)sourceElement).getSource();
+		}
 		return null;
 	}
 	
@@ -178,79 +237,36 @@ public class EvaluationSourceGenerator {
 		fCompilationUnitName= name;
 	}
 	
-	protected void setStartPosition(int position) {
-		fStartPosition= position;
-	}
-	
 	protected void setSource(String source) {
 		fSource= source;
 	}
-	
-	/**
-	 * Returns the type associated with the specified
-	 * name in this evaluation engine's associated Java project.
-	 * 
-	 * @param typeName fully qualified name of type, for
-	 *  example, <code>java.lang.String</code>
-	 * @return main type associated with source file
-	 * @exception DebugException if:<ul>
-	 * <li>the resolved type is an inner type</li>
-	 * <li>unable to resolve a type</li>
-	 * <li>a lower level Java exception occurs</li>
-	 * </ul>
-	 */
-	private IType getTypeFromProject(String typeName, IJavaProject javaProject) throws DebugException {
-		String path = typeName.replace('.', IPath.SEPARATOR);
+
+	private String getTypeSourceFromProject(String typeName, IJavaProject javaProject) throws DebugException {
+		String path = typeName;
+		int pos = path.indexOf('$');
+		if (pos != -1) {
+			path= path.substring(0, pos);
+		}
+		pos++;
+		path = path.replace('.', IPath.SEPARATOR);
 		path+= ".java";			 //$NON-NLS-1$
 		IPath sourcePath =  new Path(path);
 		
-		IType type = null;
+		String source= null;
 		try {
 			IJavaElement result = javaProject.findElement(sourcePath);
-			String[] typeNames = getNestedTypeNames(typeName);
 			if (result != null) {
 				if (result instanceof IClassFile) {
-					type = ((IClassFile)result).getType();
+					source = ((IClassFile)result).getSource();
 				} else if (result instanceof ICompilationUnit) {
-					type = ((ICompilationUnit)result).getType(typeNames[0]);
-				} else if (result instanceof IType) {
-					type = ((IType)result);
-				}
-			}
-			if (type != null) {
-				for (int i = 1; i < typeNames.length; i++) {
-					type = type.getType(typeNames[i]);
+					source = ((ICompilationUnit)result).getSource();
 				}
 			}
 		} catch (JavaModelException e) {
 			throw new DebugException(e.getStatus());
 		}
 		
-		return type;	
+		return source;	
 	}
-	
-	/**
-	 * Returns an array of simple type names that are
-	 * part of the given type's qualified name. For
-	 * example, if the given name is <code>x.y.A$B</code>,
-	 * an array with <code>["A", "B"]</code> is returned.
-	 * 
-	 * @param typeName fully qualified type name
-	 * @return array of nested type names
-	 */
-	protected String[] getNestedTypeNames(String typeName) {
-		int index = typeName.lastIndexOf('.');
-		if (index >= 0) {
-			typeName= typeName.substring(index + 1);
-		}
-		index = typeName.indexOf('$');
-		ArrayList list = new ArrayList(1);
-		while (index >= 0) {
-			list.add(typeName.substring(0, index));
-			typeName = typeName.substring(index + 1);
-			index = typeName.indexOf('$');
-		}
-		list.add(typeName);
-		return (String[])list.toArray(new String[list.size()]);	
-	}	
+
 }

@@ -1,11 +1,11 @@
-/*
+	/*
  * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.jdt.internal.debug.eval.model.*;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class EqualEqualOperator extends BinaryOperator {
 	
@@ -17,72 +17,70 @@ public class EqualEqualOperator extends BinaryOperator {
 	}
 
 	/*
-	 * @see BinaryOperator#getBooleanResult(IValue, IValue)
+	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IValue leftOperand, IValue rightOperand) {
+	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		boolean equals= false;
 		switch (getInternResultType()) {
 			case T_double :
-				equals= ((IPrimitiveValue) leftOperand).getDoubleValue() == ((IPrimitiveValue) rightOperand).getDoubleValue();
+				equals= ((IJavaPrimitiveValue) leftOperand).getDoubleValue() == ((IJavaPrimitiveValue) rightOperand).getDoubleValue();
 				break;
 			case T_float :
-				equals= ((IPrimitiveValue) leftOperand).getFloatValue() == ((IPrimitiveValue) rightOperand).getFloatValue();
+				equals= ((IJavaPrimitiveValue) leftOperand).getFloatValue() == ((IJavaPrimitiveValue) rightOperand).getFloatValue();
 				break;
 			case T_long :
-				equals= ((IPrimitiveValue) leftOperand).getLongValue() == ((IPrimitiveValue) rightOperand).getLongValue();
+				equals= ((IJavaPrimitiveValue) leftOperand).getLongValue() == ((IJavaPrimitiveValue) rightOperand).getLongValue();
 				break;
 			case T_int :
-				equals= ((IPrimitiveValue) leftOperand).getIntValue() == ((IPrimitiveValue) rightOperand).getIntValue();
+				equals= ((IJavaPrimitiveValue) leftOperand).getIntValue() == ((IJavaPrimitiveValue) rightOperand).getIntValue();
 				break;
 			case T_boolean :
-				equals= ((IPrimitiveValue) leftOperand).getBooleanValue() == ((IPrimitiveValue) rightOperand).getBooleanValue();
+				equals= ((IJavaPrimitiveValue) leftOperand).getBooleanValue() == ((IJavaPrimitiveValue) rightOperand).getBooleanValue();
 				break;
 			default :
-				if (leftOperand instanceof EvaluationValue && rightOperand instanceof EvaluationValue) {
-					equals= ((EvaluationValue) leftOperand).getJavaValue().equals(((EvaluationValue) rightOperand).getJavaValue());
-				}
+				equals= leftOperand.equals(rightOperand);
 				break;
 		}
 		return ((fIsEquals) ? equals : !equals);
 	}
 
 	/*
-	 * @see BinaryOperator#getDoubleResult(IValue, IValue)
+	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IValue leftOperand, IValue rightOperand) {
+	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getFloatResult(IValue, IValue)
+	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IValue leftOperand, IValue rightOperand) {
+	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getIntResult(IValue, IValue)
+	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
-	protected int getIntResult(IValue leftOperand, IValue rightOperand) {
+	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getLongResult(IValue, IValue)
+	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
-	protected long getLongResult(IValue leftOperand, IValue rightOperand) {
+	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getStringResult(IValue, IValue)
+	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IValue leftOperand, IValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return null;
 	}
 
 	public String toString() {
-		return "'==' operator";
+		return InstructionsEvaluationMessages.getString("EqualEqualOperator._==___operator_1"); //$NON-NLS-1$
 	}
 
 }

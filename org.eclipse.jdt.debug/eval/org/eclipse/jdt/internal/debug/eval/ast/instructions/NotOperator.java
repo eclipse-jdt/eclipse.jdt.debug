@@ -5,8 +5,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 public class NotOperator extends UnaryOperator {
 
@@ -18,12 +17,12 @@ public class NotOperator extends UnaryOperator {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IPrimitiveValue value= (IPrimitiveValue)popValue();
+		IJavaPrimitiveValue value= (IJavaPrimitiveValue)popValue();
 		pushNewValue(!value.getBooleanValue());
 	}
 
 	public String toString() {
-		return "'!' operator";
+		return InstructionsEvaluationMessages.getString("NotOperator._!___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.dom.Message;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
-import org.eclipse.jdt.internal.debug.eval.ast.engine.*;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
 
 public class InstructionSequence implements ICompiledExpression {
 
@@ -29,22 +32,6 @@ public class InstructionSequence implements ICompiledExpression {
 		fInstructions= new ArrayList(10);
 		fErrors= new ArrayList();
 		fSnippet= snippet;
-	}
-	
-	/**
-	 * Runs this compiled expression in the given context, and retuns
-	 * the result.
-	 * 
-	 * @param context evaluation context
-	 */
-	public IValue evaluate(IRuntimeContext context) {
-		Interpreter interpreter= new Interpreter(getInstructions(), context);
-		try {
-			interpreter.execute();
-		} catch (CoreException exception) {
-			fException= exception;
-		}
-		return interpreter.getResult();
 	}
 	
 	/**
@@ -87,7 +74,7 @@ public class InstructionSequence implements ICompiledExpression {
 	/**
 	 * Answers the array of instructions, or an empty array.
 	 */
-	private Instruction[] getInstructions() {
+	public Instruction[] getInstructions() {
 		int size= fInstructions.size();
 		Instruction[] instructions= new Instruction[size];
 		if (size > 0) {

@@ -14,16 +14,11 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
  * An evaluation engine performs an evalutaion of a
- * code snippet in a specified thread of a debug target.
+ * code snippet or expression in a specified thread of a debug target.
  * An evaluation engine is associated with a specific
- * debug target and Java project at creation.
+ * debug target and Java project on creation.
  * <p>
  * Clients are not intended to implement this interface.
- * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see IEvaluationResult
  * @see IEvaluationListener
@@ -39,14 +34,22 @@ public interface IEvaluationEngine {
 	 * snippet is determined to be a valid expression, the expression
 	 * is evaluated in the thread associated with the given
 	 * stack frame. The thread is resumed from the location at which it
-	 * is currently suspended. When the evaluation completes, the thread
-	 * will be suspened at this original location.
+	 * is currently suspended to perform the evaluation. When the evaluation
+	 * completes, the thread will be suspened at this original location.
+	 * The thread runs the evaluation with the given evaluation detail
+	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
+	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param snippet code snippet to evaluate
 	 * @param frame the stack frame context in which to run the
 	 *   evaluation.
 	 * @param listener the listener that will receive notification
 	 *   when/if the evalaution completes
+	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
+	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -59,7 +62,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 	/**
 	 * Asynchronously evaluates the given snippet in the context of
 	 * the specified type, reporting the result back to the given listener.
@@ -68,8 +71,11 @@ public interface IEvaluationEngine {
 	 * snippet is determined to be a valid expression, the expression
 	 * is evaluated in the thread associated with the given
 	 * stack frame. The thread is resumed from the location at which it
-	 * is currently suspended. When the evaluation completes, the thread
-	 * will be suspened at this original location.
+	 * is currently suspended to perform the evaluation. When the evaluation
+	 * completes, the thread will be suspened at this original location.
+	 * The thread runs the evaluation with the given evaluation detail
+	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
+	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param snippet code snippet to evaluate
 	 * @param thisContext the 'this' context for the evaluation
@@ -77,19 +83,24 @@ public interface IEvaluationEngine {
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
 	 *   when/if the evalaution completes
+	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
+	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>The associated thread is not currently suspended</li>
-	 * <li>The stack frame is not contained in the debug target
+	 * <li>The specified thread is not contained in the debug target
 	 *   associated with this evaluation engine</li>
 	 * <li>The associated thread is suspended in the middle of
 	 *  an evaluation that has not completed. It is not possible
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 
 	/**
 	 * Returns the Java project in which snippets are
@@ -97,7 +108,7 @@ public interface IEvaluationEngine {
 	 * 
 	 * @return Java project context
 	 */
-	IJavaProject getJavaProject();
+	public IJavaProject getJavaProject();
 	
 	/**
 	 * Returns the debug target for which evaluations
@@ -105,13 +116,17 @@ public interface IEvaluationEngine {
 	 * 
 	 * @return Java debug target
 	 */
-	IJavaDebugTarget getDebugTarget();
+	public IJavaDebugTarget getDebugTarget();
 	
 	/**
-	 * Disposes this evaluation engine. An engine cannot
-	 * be used after it has been disposed.
+	 * Disposes this evaluation engine. This causes the evaluation engine
+	 * to cleanup any resources (such as threads) that it maintains. Clients
+	 * should call this method when they are finished performing evaluations
+	 * with this engine.
+	 * 
+	 * This engine must not be used to perform evaluations after it has been disposed.
 	 */
-	void dispose();
+	public void dispose();
 	
 }
 

@@ -5,14 +5,13 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IInterfaceType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IType;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class InstanceOfOperator extends CompoundInstruction {
-	public static final String IS_INSTANCE= "isInstance";
-	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z";
+	public static final String IS_INSTANCE= "isInstance"; //$NON-NLS-1$
+	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z"; //$NON-NLS-1$
 	
 	public InstanceOfOperator(int start) {
 		super(start);
@@ -22,23 +21,19 @@ public class InstanceOfOperator extends CompoundInstruction {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IType type= (IType)pop();
-		IObject object= (IObject)pop();
+		IJavaType type= (IJavaType)pop();
+		IJavaObject object= (IJavaObject)popValue();
 
-		IObject classObject= getClassObject(type);
+		IJavaObject classObject= getClassObject(type);
 		if (classObject == null) {
 			throw new CoreException(null);
 		} else {
-			push(classObject);
-			push(object);
-			SendMessage send= new SendMessage(IS_INSTANCE,IS_INSTANCE_SIGNATURE,1,false, -1);
-			execute(send);
-			// Do not pop because the result is left on the stack.
+			push(classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {object}, getContext().getThread(), false));
 		}
 	}
 	
 	public String toString() {
-		return "'instanceof' operator";
+		return InstructionsEvaluationMessages.getString("InstanceOfOperator._instanceof___operator_3"); //$NON-NLS-1$
 	}
 
 }

@@ -13,7 +13,9 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 /**
  * An evaluation engine that performs evaluations by
  * deploying and executing class files locally.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 2.0
  */ 
 public interface IClassFileEvaluationEngine extends IEvaluationEngine {
@@ -24,7 +26,7 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 * ImportDeclaration (JLS2 7.5). For example, <code>"java.util.Hashtable"</code>
 	 * or <code>"java.util.*"</code>.
 	 *
-	 * @param imports the list of import names
+	 * @return the list of import names
 	 */
 	public String[] getImports();
 	
@@ -49,12 +51,16 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 * execution from the location at which it is currently suspended.
 	 * When the evaluation completes, the thread will be suspened
 	 * at this original location.
+	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param snippet code snippet to evaluate
 	 * @param thread the thread in which to run the evaluation,
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
 	 *   when/if the evalaution completes
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -67,7 +73,7 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, boolean hitBreakpoints) throws DebugException;
 	
 	
 }

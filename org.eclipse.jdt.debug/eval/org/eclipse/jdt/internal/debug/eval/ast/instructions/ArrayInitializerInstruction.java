@@ -5,8 +5,8 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IArray;
-import org.eclipse.jdt.internal.debug.eval.model.IArrayType;
+import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
 
 public class ArrayInitializerInstruction extends ArrayInstruction {
 
@@ -32,8 +32,8 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 	 */
 	public void execute() throws CoreException {
 		
-		IArrayType arrayType = getType(fTypeSignature.replace('/','.'), fDimensions);
-		IArray array = arrayType.newArray(fLength);
+		IJavaArrayType arrayType = getType(fTypeSignature.replace('/','.'), fDimensions);
+		IJavaArray array = arrayType.newInstance(fLength);
 		
 		for (int i = fLength - 1; i >= 0; i--) {
 			array.setValue(i, popValue());
@@ -44,7 +44,7 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 	}
 
 	public String toString() {
-		return "array initializer";
+		return InstructionsEvaluationMessages.getString("ArrayInitializerInstruction.array_initializer_1"); //$NON-NLS-1$
 	}
 
 }

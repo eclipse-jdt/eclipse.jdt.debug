@@ -5,8 +5,8 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public class PostfixMinusMinusOperator extends XfixOperator {
 	
@@ -18,36 +18,36 @@ public class PostfixMinusMinusOperator extends XfixOperator {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IVariable variable = (IVariable) pop();
+		IJavaVariable variable = (IJavaVariable) pop();
 		push(variable.getValue());
 		
 		switch (fVariableTypeId) {
 			case T_byte :
-				variable.setValue(newValue((byte)((IPrimitiveValue)variable.getValue()).getByteValue() - 1));
+				variable.setValue(newValue((byte)((IJavaPrimitiveValue)variable.getValue()).getByteValue() - 1));
 				break;
 			case T_short :
-				variable.setValue(newValue((short)((IPrimitiveValue)variable.getValue()).getShortValue() - 1));
+				variable.setValue(newValue((short)((IJavaPrimitiveValue)variable.getValue()).getShortValue() - 1));
 				break;
 			case T_char :
-				variable.setValue(newValue((char)((IPrimitiveValue)variable.getValue()).getCharValue() - 1));
+				variable.setValue(newValue((char)((IJavaPrimitiveValue)variable.getValue()).getCharValue() - 1));
 				break;
 			case T_int :
-				variable.setValue(newValue(((IPrimitiveValue)variable.getValue()).getIntValue() - 1));
+				variable.setValue(newValue(((IJavaPrimitiveValue)variable.getValue()).getIntValue() - 1));
 				break;
 			case T_long :
-				variable.setValue(newValue(((IPrimitiveValue)variable.getValue()).getLongValue() - 1));
+				variable.setValue(newValue(((IJavaPrimitiveValue)variable.getValue()).getLongValue() - 1));
 				break;
 			case T_float :
-				variable.setValue(newValue(((IPrimitiveValue)variable.getValue()).getFloatValue() - 1));
+				variable.setValue(newValue(((IJavaPrimitiveValue)variable.getValue()).getFloatValue() - 1));
 				break;
 			case T_double :
-				variable.setValue(newValue(((IPrimitiveValue)variable.getValue()).getDoubleValue() - 1));
+				variable.setValue(newValue(((IJavaPrimitiveValue)variable.getValue()).getDoubleValue() - 1));
 				break;
 		}
 	}
 
 	public String toString() {
-		return "postfix '--' operator";
+		return InstructionsEvaluationMessages.getString("PostfixMinusMinusOperator.postfix___--___operator_1"); //$NON-NLS-1$
 	}
 
 }

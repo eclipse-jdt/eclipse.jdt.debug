@@ -63,6 +63,16 @@ import com.sun.jdi.ObjectReference;
 
 public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor , IEvaluationRunnable {	 
 	
+	private static final String CODE_SNIPPET_NAME= "CodeSnippet.class"; //$NON-NLS-1$
+
+	/**
+	 * A count of the number of engines created.
+	 * Count is incremented on instantiation and decremented on 
+	 * dispose.  When the count == 0, the special CodeSnippet.class
+	 * is deleted as this class file is shared by all.
+	 */
+	private static int ENGINE_COUNT= 0;
+
 	/**
 	 * The Java project context in which to compile snippets.
 	 */
@@ -156,6 +166,11 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * The name of the code snippet class to instantiate
 	 */
 	private String fCodeSnippetClassName = null;
+	
+	/** 
+	 * Wether to hit breakpoints in the evaluation thread
+	 */
+	private boolean fHitBreakpoints = false;
 		
 	/**
 	 * Constant for empty array of <code>java.lang.String</code>
@@ -182,6 +197,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		setJavaProject(project);
 		setDebugTarget(vm);
 		setOutputDirectory(directory);
+		ENGINE_COUNT++;
 	}
 
 	/**
@@ -337,7 +353,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (problemMarker.getAttribute(IMarker.SEVERITY, -1) != IMarker.SEVERITY_ERROR) {
 			return;
 		}
-		Message message= new Message(problemMarker.getAttribute(IMarker.MESSAGE, ""), problemMarker.getAttribute(IMarker.CHAR_START, 0));
+		Message message= new Message(problemMarker.getAttribute(IMarker.MESSAGE, ""), problemMarker.getAttribute(IMarker.CHAR_START, 0)); //$NON-NLS-1$
 		getResult().addError(message);
 	}
 	
@@ -393,14 +409,15 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
+	 * @see IClassFileEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, boolean hitBreakpoints) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
+				setHitBreakpoints(hitBreakpoints);
 				setResult(new EvaluationResult(this, snippet, thread));
 				checkThread();
 				// no receiver/stack frame context
@@ -433,15 +450,16 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener, int)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
 				setStackFrame(frame);
+				setHitBreakpoints(hitBreakpoints);
 				setResult(new EvaluationResult(this, snippet, (IJavaThread)frame.getThread()));
 				checkThread();
 				
@@ -503,14 +521,15 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 	
 	/**
-	 * @see IEvaluationEngine#evaluate(String, String, IJavaThread, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener, int)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
+				setHitBreakpoints(hitBreakpoints);
 				setResult(new EvaluationResult(this, snippet, thread));
 				checkThread();
 							
@@ -609,8 +628,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	public void dispose() {
 		fDisposed = true;
+		ENGINE_COUNT--;
 		if (isEvaluating()) {
-			// cannot dispose if in an evalutaion, must
+			// cannot dispose if in an evaluation, must
 			// wait for evaluation to complete
 			return;
 		}
@@ -618,11 +638,16 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		Iterator iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
 			File file = (File)iter.next();
-			if (file.exists() && !file.delete()) {
-				JDIDebugPlugin.log(
-					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_class_file_{0}_1"), new String[] {file.getAbsolutePath()}), null) //$NON-NLS-1$
-				);				
+			if (file.exists()) {
+				if (CODE_SNIPPET_NAME.equals(file.getName()) && ENGINE_COUNT > 0) {
+					continue; //do not delete the common file for other engines
+				}
+				if (!file.delete()) {
+					JDIDebugPlugin.log(
+						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+							MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_class_file_{0}_1"), new String[] {file.getAbsolutePath()}), null) //$NON-NLS-1$
+					);				
+				}
 			}
 		}
 		List directories = getDirectories();
@@ -630,7 +655,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		int i = directories.size() - 1;
 		while (i >= 0) {
 			File dir = (File)directories.get(i);
-			if (dir.exists() && !dir.delete()) {
+			String[] listing= dir.list();
+			if (dir.exists() && listing != null && listing.length == 0 && !dir.delete()) {
 				JDIDebugPlugin.log(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
 						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_directory_{0}_2"), new String[] {dir.getAbsolutePath()}), null) //$NON-NLS-1$
@@ -1368,6 +1394,23 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	public boolean isRequestingClassFiles() {
 		return true;
+	}
+
+	/**
+	 * Returns whether to hit breakpoints in the evaluation thread.
+	 * 
+	 * @return whether to hit breakpoints in the evaluation thread
+	 */
+	protected boolean getHitBreakpoints() {
+		return fHitBreakpoints;
+	}
+
+	/**
+	 * Sets whether to hit breakpoints in the evaluation thread.
+	 * @param hit whether to hit breakpoints in the evaluation thread
+	 */
+	private void setHitBreakpoints(boolean hit) {
+		fHitBreakpoints = hit;
 	}
 
 }

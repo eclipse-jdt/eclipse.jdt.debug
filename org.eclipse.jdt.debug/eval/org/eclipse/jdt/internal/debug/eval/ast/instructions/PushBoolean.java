@@ -20,7 +20,7 @@ public class PushBoolean extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return "push " + fValue;
+		return InstructionsEvaluationMessages.getString("PushBoolean.push__1") + fValue; //$NON-NLS-1$
 	}
 }
 

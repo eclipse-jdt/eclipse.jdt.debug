@@ -14,6 +14,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
+import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
@@ -24,27 +25,28 @@ import com.sun.jdi.Type;
 
 public class BinaryBasedSourceGenerator {
 	
-	private static final String RUN_METHOD_NAME= "___run";
+	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
 	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
+	private static final String ANONYMOUS_CLASS_NAME= "___EvalClass"; //$NON-NLS-1$
 	
-	private int[] fLocalModifiers;
 	
-	private String[] fLocalTypesNames;
+	private String[] fLocalVariableTypeNames;
 	
-	private String[] fLocalVariables;
+	private String[] fLocalVariableNames;
 	
 	private boolean fIsInStaticMethod;
 	
 	private StringBuffer fSource;
 	
+	private int fRunMethodStartOffset;
+	private int fRunMethodLength;
 	private int fCodeSnippetPosition;
 	
 	private String fCompilationUnitName;
 	
-	public BinaryBasedSourceGenerator(int[] localModifiers, String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
-		fLocalModifiers= localModifiers;
-		fLocalTypesNames= localTypesNames;
-		fLocalVariables= localVariables;
+	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
+		fLocalVariableTypeNames= localTypesNames;
+		fLocalVariableNames= localVariables;
 		fIsInStaticMethod= isInStaticMethod;
 	}
 	
@@ -65,10 +67,10 @@ public class BinaryBasedSourceGenerator {
 			return;
 		}
 		ReferenceType refType= (ReferenceType)underlyingType;
-		fSource= buildTypeDeclaration(refType, buildRunMethod(refType), null);
+		fSource= buildTypeDeclaration(refType, buildRunMethod(refType), null, false);
 		String packageName = getPackageName(refType.name());
 		if (packageName != null) {
-			fSource.insert(0, "package " + packageName + ";\n");
+			fSource.insert(0, "package " + packageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			fCodeSnippetPosition += 10 + packageName.length();
 		}
 		fCompilationUnitName= getSimpleName(refType.name());
@@ -87,29 +89,27 @@ public class BinaryBasedSourceGenerator {
 		StringBuffer source = new StringBuffer();
 		
 		if (isInStaticMethod()) {
-			source.append("static ");
+			source.append("static "); //$NON-NLS-1$
 		}
 
-		source.append("void ");
+		source.append("void "); //$NON-NLS-1$
 		source.append(getUniqueMethodName(RUN_METHOD_NAME, type));
 		source.append('(');
-		for(int i= 0, length= fLocalModifiers.length; i < length; i++) {
-			if (fLocalModifiers[i] != 0) {
-				source.append(Flags.toString(fLocalModifiers[i]));
-				source.append(' ');
-			}
-			source.append(getDotName(fLocalTypesNames[i]));
+		for(int i= 0, length= fLocalVariableNames.length; i < length; i++) {
+			source.append(getDotName(fLocalVariableTypeNames[i]));
 			source.append(' ');
-			source.append(fLocalVariables[i]);
+			source.append(fLocalVariableNames[i]);
 			if (i + 1 < length)
-				source.append(", ");
+				source.append(", "); //$NON-NLS-1$
 		}
-		source.append(") throws Throwable {");
+		source.append(") throws Throwable {"); //$NON-NLS-1$
 		source.append('\n');
 		fCodeSnippetPosition= source.length();
+		fRunMethodStartOffset= fCodeSnippetPosition;
 
 		source.append('\n');
 		source.append('}').append('\n');
+		fRunMethodLength= source.length();
 		return source;
 	}
 	
@@ -117,26 +117,30 @@ public class BinaryBasedSourceGenerator {
 		
 		ReferenceType referenceType = object.referenceType();
 		
-		StringBuffer source = buildTypeDeclaration(referenceType, buffer, nestedTypeName);
-		
 		Field thisField= null;
 		
 		List fields= referenceType.visibleFields();
 		for (Iterator iterator= fields.iterator(); iterator.hasNext();) {
 			Field field= (Field) iterator.next();
-			if (field.name().startsWith("this$")) {
+			if (field.name().startsWith("this$")) { //$NON-NLS-1$
 				thisField = field;
 				break;
 			}
 		}
 		
+		StringBuffer source = buildTypeDeclaration(referenceType, buffer, nestedTypeName, thisField != null);
+		
 		if (thisField == null) {
 			String packageName = getPackageName(referenceType.name());
 			if (packageName != null) {
-				source.insert(0, "package " + packageName + ";\n");
+				source.insert(0, "package " + packageName + ";\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				fCodeSnippetPosition += 10 + packageName.length();
 			}
-			fCompilationUnitName= getSimpleName(referenceType.name());
+			if (isAnonymousTypeName(referenceType.name())) {
+				fCompilationUnitName= ANONYMOUS_CLASS_NAME;
+			} else {
+				fCompilationUnitName= getSimpleName(referenceType.name());
+			}
 		} else {
 			ObjectReference thisObject= (ObjectReference)object.getValue(thisField);
 			return buildTypeDeclaration(thisObject, source, referenceType.name());
@@ -145,7 +149,7 @@ public class BinaryBasedSourceGenerator {
 		return source;
 	}
 
-	private StringBuffer buildTypeDeclaration(ReferenceType referenceType, StringBuffer buffer, String nestedTypeName) {
+	private StringBuffer buildTypeDeclaration(ReferenceType referenceType, StringBuffer buffer, String nestedTypeName, boolean hasEnclosingInstance) {
 		StringBuffer source= new StringBuffer();
 		
 		String typeName= referenceType.name();
@@ -155,68 +159,94 @@ public class BinaryBasedSourceGenerator {
 		if (isAnonymousType) {
 			ClassType classType= (ClassType) referenceType;
 			
-			source.append("void ");
-			source.append(getUniqueMethodName(EVAL_METHOD_NAME, referenceType));
-			source.append("() {\n");
-			source.append("new ").append(getDotName(classType.superclass().name())).append("()");
+			List interfaceList= classType.interfaces();
+			String superClassName= classType.superclass().name();
+			if (hasEnclosingInstance) {
+				source.append("void "); //$NON-NLS-1$
+				source.append(getUniqueMethodName(EVAL_METHOD_NAME, referenceType));
+				source.append("() {\nnew "); //$NON-NLS-1$
+				if (interfaceList.size() != 0) {
+					source.append(getDotName(((InterfaceType)interfaceList.get(0)).name()));
+				} else {
+					source.append(getDotName(superClassName));
+				}
+				source.append("()"); //$NON-NLS-1$
+			} else {
+				source.append("public class ").append(ANONYMOUS_CLASS_NAME).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+				if (interfaceList.size() != 0) {
+					source.append(" implements ").append(getDotName(((InterfaceType)interfaceList.get(0)).name())); //$NON-NLS-1$
+				} else {
+					source.append(" implements ").append(getDotName(superClassName)); //$NON-NLS-1$
+				}
+			}
 			
 		} else {
 			if (referenceType.isFinal()) {
-				source.append("final ");
+				source.append("final "); //$NON-NLS-1$
 			}
 			
 			if (referenceType.isStatic()) {
-				source.append("static ");
+				source.append("static "); //$NON-NLS-1$
 			}
 			
 			if (referenceType instanceof ClassType) {
 				ClassType classType= (ClassType) referenceType;
 				
 				if (classType.isAbstract()) {
-					source.append("abstract ");
+					source.append("abstract "); //$NON-NLS-1$
 				}
 			
-				source.append("class ");
+				source.append("class "); //$NON-NLS-1$
 				
 				source.append(getSimpleName(typeName)).append(' ');
 				
 				ClassType superClass= classType.superclass();
 				if (superClass != null) {
-					source.append("extends ").append(getDotName(superClass.name())).append(' ');
+					source.append("extends ").append(getDotName(superClass.name())).append(' '); //$NON-NLS-1$
 				}
-				
-				List interfaces= classType.interfaces();
+
+				List interfaces;
+				try {
+					interfaces= classType.interfaces();
+				} catch (ClassNotPreparedException e) {
+					return new StringBuffer();
+				}
 				if (interfaces.size() != 0) {
-					source.append("implements ");
+					source.append("implements "); //$NON-NLS-1$
 					Iterator iterator= interfaces.iterator();
 					InterfaceType interface_= (InterfaceType)iterator.next();
-					source.append(interface_.name());
+					source.append(getDotName(interface_.name()));
 					while (iterator.hasNext()) {
-						source.append(',').append(((InterfaceType)iterator.next()).name());
+						source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
 					}
 				}
 			} else if (referenceType instanceof InterfaceType) {
 				InterfaceType interfaceType= (InterfaceType) referenceType;
 				
-				source.append("interface ");
+				source.append("interface "); //$NON-NLS-1$
 				
-				source.append(getSimpleName(typeName));
+				source.append(getSimpleName(typeName)).append(' ');
 				
-				List interfaces= interfaceType.superinterfaces();
+				List interfaces;
+				try {
+					interfaces= interfaceType.superinterfaces();
+				} catch (ClassNotPreparedException e) {
+					return new StringBuffer();
+				}
 				if (interfaces.size() != 0) {
-					source.append("extends ");
+					source.append("extends "); //$NON-NLS-1$
 					Iterator iterator= interfaces.iterator();
 					InterfaceType interface_= (InterfaceType)iterator.next();
-					source.append(interface_.name());
+					source.append(getDotName(interface_.name()));
 					while (iterator.hasNext()) {
-						source.append(',').append(interface_.name());
+						source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
 					}
 				}
 				
 			}
 		}
 		
-		source.append(" {\n");
+		source.append(" {\n"); //$NON-NLS-1$
 		
 		if (buffer != null) {
 			fCodeSnippetPosition += source.length();
@@ -226,7 +256,7 @@ public class BinaryBasedSourceGenerator {
 		List fields= referenceType.fields();
 		for (Iterator iterator= fields.iterator(); iterator.hasNext();) {
 			Field field= (Field) iterator.next();
-			if (!field.name().startsWith("this$")) {
+			if (!field.name().startsWith("this$")) { //$NON-NLS-1$
 				source.append(buildFieldDeclaration(field));
 			}
 		}
@@ -244,23 +274,23 @@ public class BinaryBasedSourceGenerator {
 			for (Iterator iterator = nestedTypes.iterator(); iterator.hasNext();) {
 				ReferenceType nestedType= (ReferenceType) iterator.next();
 				if (isADirectInnerType(typeName, nestedType.name())) {
-					source.append(buildTypeDeclaration(nestedType, null, null));
+					source.append(buildTypeDeclaration(nestedType, null, null, true));
 				}
 			}
 		} else {
 			for (Iterator iterator = nestedTypes.iterator(); iterator.hasNext();) {
 				ReferenceType nestedType= (ReferenceType) iterator.next();
 				if (!nestedTypeName.equals(nestedType.name()) && isADirectInnerType(typeName, nestedType.name())) {
-					source.append(buildTypeDeclaration(nestedType, null, null));
+					source.append(buildTypeDeclaration(nestedType, null, null, true));
 				}
 			}
 		}
 		
-		if (isAnonymousType) {
-			source.append("};\n");
+		if (isAnonymousType & hasEnclosingInstance) {
+			source.append("};\n"); //$NON-NLS-1$
 		}
 		
-		source.append("}\n");
+		source.append("}\n"); //$NON-NLS-1$
 		
 		return source;
 	}
@@ -269,22 +299,22 @@ public class BinaryBasedSourceGenerator {
 		StringBuffer source = new StringBuffer();
 		
 		if (field.isFinal()) {
-			source.append("final ");
+			source.append("final "); //$NON-NLS-1$
 		}
 		
 		if (field.isStatic()) {
-			source.append("static ");
+			source.append("static "); //$NON-NLS-1$
 		}
 		
 		if (field.isPublic()) {
-			source.append("public ");
+			source.append("public "); //$NON-NLS-1$
 		} else if (field.isPrivate()) {
-			source.append("private ");
+			source.append("private "); //$NON-NLS-1$
 		} else if (field.isProtected()) {
-			source.append("protected ");
+			source.append("protected "); //$NON-NLS-1$
 		}
 		
-		source.append(field.typeName()).append(' ').append(field.name()).append(';').append('\n');
+		source.append(getDotName(field.typeName())).append(' ').append(field.name()).append(';').append('\n');
 		
 		return source;
 	}
@@ -293,43 +323,43 @@ public class BinaryBasedSourceGenerator {
 		StringBuffer source= new StringBuffer();
 		
 		if (method.isFinal()) {
-			source.append("final ");
+			source.append("final "); //$NON-NLS-1$
 		}
 		
 		if (method.isStatic()) {
-			source.append("static ");
+			source.append("static "); //$NON-NLS-1$
 		}
 		
 		if (method.isNative()) {
-			source.append("native ");
+			source.append("native "); //$NON-NLS-1$
 		} else if (method.isAbstract()) {
-			source.append("abstract ");
+			source.append("abstract "); //$NON-NLS-1$
 		}
 		
 		if (method.isPublic()) {
-			source.append("public ");
+			source.append("public "); //$NON-NLS-1$
 		} else if (method.isPrivate()) {
-			source.append("private ");
+			source.append("private "); //$NON-NLS-1$
 		} else if (method.isProtected()) {
-			source.append("protected ");
+			source.append("protected "); //$NON-NLS-1$
 		}
 		
-		source.append(method.returnTypeName()).append(' ').append(method.name()).append('(');
+		source.append(getDotName(method.returnTypeName())).append(' ').append(method.name()).append('(');
 		
 		List arguments= method.argumentTypeNames();
 		int i= 0;
 		if (arguments.size() != 0) {
 			Iterator iterator= arguments.iterator();
-			source.append((String) iterator.next()).append(" arg").append(i++);
+			source.append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
 			while (iterator.hasNext()) {
-				source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++);
+				source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
 			}
 		}
 		source.append(')');
 		
 		if (method.isAbstract() || method.isNative()) {
 			// No body for abstract and native methods
-			source.append(";\n");
+			source.append(";\n"); //$NON-NLS-1$
 		} else {
 			source.append('{').append('\n');
 			source.append(getReturnStatement(method.returnTypeName()));
@@ -342,14 +372,14 @@ public class BinaryBasedSourceGenerator {
 	private String getReturnStatement(String returnTypeName) {
 		String typeName= getSimpleName(returnTypeName);
 		if (typeName.charAt(typeName.length() - 1) == ']') {
-			return "return null;\n";
+			return "return null;\n"; //$NON-NLS-1$
 		}
 		switch (typeName.charAt(0)) {
 			case 'v':
-				return "";
+				return ""; //$NON-NLS-1$
 			case 'b':
 				if (typeName.charAt(1) == 'o') {
-					return "return false;\n";
+					return "return false;\n"; //$NON-NLS-1$
 				}
 			case 's':
 			case 'c':
@@ -357,9 +387,9 @@ public class BinaryBasedSourceGenerator {
 			case 'l':
 			case 'd':
 			case 'f':
-				return "return 0;\n";
+				return "return 0;\n"; //$NON-NLS-1$
 			default:
-				return "return null;\n";
+				return "return null;\n"; //$NON-NLS-1$
 		}
 	}
 	
@@ -406,8 +436,16 @@ public class BinaryBasedSourceGenerator {
 		return fCompilationUnitName;
 	}
 	
-	public int getBlockStar() {
+	public int getSnippetStart() {
 		return fCodeSnippetPosition - 2;
+	}
+	
+	public int getRunMethodStart() {
+		return fCodeSnippetPosition - fRunMethodStartOffset;
+	}
+	
+	public int getRunMethodLength() {
+		return fRunMethodLength;
 	}
 
 }

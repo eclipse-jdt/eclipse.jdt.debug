@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -57,7 +56,6 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
@@ -81,10 +79,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
 	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
-	
-	private int[] fLocalModifiers;
-	private String[] fLocalTypesNames;
-	private String[] fLocalVariables;
+	private static final String EVAL_FIELD_NAME= "___field"; //$NON-NLS-1$
+
+	private String[] fLocalVariableTypeNames;
+	private String[] fLocalVariableNames;
 	private String fCodeSnippet;
 		
 	private boolean fRightTypeFound;
@@ -105,15 +103,16 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private String fCompilationUnitName;
 	
-	private int fStartPosOffset;
+	private int fSnippetStartPosition;
+	private int fRunMethodStartOffset;
+	private int fRunMethodLength;
 	
-	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
 		fPosition= position;
-		fLocalModifiers= localModifiers;
-		fLocalTypesNames= localTypesNames;
-		fLocalVariables= localVariables;
+		fLocalVariableTypeNames= localTypesNames;
+		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
 		fIsInAStaticMethod= false;
 		fIsLineNumber= isLineNumber;
@@ -131,8 +130,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return fCompilationUnitName;
 	}
 	
-	public int getStartPosition() {
-		return fStartPosOffset;
+	public int getSnippetStart() {
+		return fSnippetStartPosition;
+	}
+	public int getRunMethodStart() {
+		return fSnippetStartPosition - fRunMethodStartOffset;
+	}
+	public int getRunMethodLength() {
+		return fRunMethodLength;
 	}
 	
 	private int getPosition() {
@@ -169,26 +174,24 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		buffer.append("void "); //$NON-NLS-1$
 		buffer.append(getUniqueMethodName(RUN_METHOD_NAME, bodyDeclarations));
 		buffer.append('(');
-		for(int i= 0, length= fLocalModifiers.length; i < length; i++) {
-			if (fLocalModifiers[i] != 0) {
-				buffer.append(Flags.toString(fLocalModifiers[i]));
-				buffer.append(' ');
-			}
-			buffer.append(getDotName(fLocalTypesNames[i]));
+		for(int i= 0, length= fLocalVariableNames.length; i < length; i++) {
+			buffer.append(getDotName(fLocalVariableTypeNames[i]));
 			buffer.append(' ');
-			buffer.append(fLocalVariables[i]);
+			buffer.append(fLocalVariableNames[i]);
 			if (i + 1 < length)
 				buffer.append(", "); //$NON-NLS-1$
 		}
 		buffer.append(") throws Throwable {"); //$NON-NLS-1$
 		buffer.append('\n');
-		fStartPosOffset= buffer.length() - 2;
+		fSnippetStartPosition= buffer.length() - 2;
+		fRunMethodStartOffset= fSnippetStartPosition;
 		String codeSnippet= new String(fCodeSnippet).trim();
 		
 		buffer.append(codeSnippet);
 
 		buffer.append('\n');
 		buffer.append('}').append('\n');
+		fRunMethodLength= buffer.length();
 		return buffer;
 	}
 	
@@ -213,7 +216,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 		source.append('{').append('\n');
 		if (buffer != null) {
-			fStartPosOffset += source.length();
+			fSnippetStartPosition += source.length();
 			source.append(buffer);
 		}
 		for (Iterator iterator= list.iterator(); iterator.hasNext();) {
@@ -297,7 +300,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			Name name = (Name) iterator.next();
 			if (first) {
 				first = false;
-				source.append(" throws ");
+				source.append(" throws "); //$NON-NLS-1$
 			} else {
 				source.append(',');
 			}
@@ -306,7 +309,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 		if (Flags.isAbstract(modifiers) || Flags.isNative(modifiers)) {
 			// No body for abstract and native methods
-			source.append(";\n");
+			source.append(";\n"); //$NON-NLS-1$
 		} else {
 			source.append('{').append('\n');
 			source.append(getReturnExpression(methodDeclaration.getReturnType())); 
@@ -321,15 +324,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		StringBuffer source = new StringBuffer();
 		source.append(Flags.toString(typeDeclaration.getModifiers()));
 		if (typeDeclaration.isInterface()) {
-			source.append(" interface ");
+			source.append(" interface "); //$NON-NLS-1$
 		} else {
-			source.append(" class ");
+			source.append(" class "); //$NON-NLS-1$
 		}
 		source.append(typeDeclaration.getName().getIdentifier());
 		
 		Name superClass = typeDeclaration.getSuperclass();
 		if (superClass != null) {
-			source.append(" extends ");
+			source.append(" extends "); //$NON-NLS-1$
 			source.append(getQualifiedIdentifier(superClass));
 		}
 		
@@ -338,7 +341,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			Name name = (Name) iterator.next();
 			if (first) {
 				first = false;
-				source.append(" implements ");
+				source.append(" implements "); //$NON-NLS-1$
 			} else {
 				source.append(',');
 			}
@@ -346,7 +349,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		
 		if (buffer != null) {
-			fStartPosOffset+= source.length();
+			fSnippetStartPosition+= source.length();
 		}
 		source.append(buildTypeBody(buffer, typeDeclaration.bodyDeclarations()));
 		
@@ -358,22 +361,22 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 		PackageDeclaration packageDeclaration = compilationUnit.getPackage();
 		if (packageDeclaration != null) {
-			source.append("package ");
+			source.append("package "); //$NON-NLS-1$
 			source.append(getQualifiedIdentifier(packageDeclaration.getName()));
-			source.append(";\n");
+			source.append(";\n"); //$NON-NLS-1$
 		}
 		
 		for (Iterator iterator = compilationUnit.imports().iterator(); iterator.hasNext();) {
 			ImportDeclaration importDeclaration = (ImportDeclaration) iterator.next();
-			source.append("import ");
+			source.append("import "); //$NON-NLS-1$
 			source.append(getQualifiedIdentifier(importDeclaration.getName()));
 			if (importDeclaration.isOnDemand()) {
-				source.append(".*");
+				source.append(".*"); //$NON-NLS-1$
 			}
-			source.append(";\n");
+			source.append(";\n"); //$NON-NLS-1$
 		}
 		
-		fStartPosOffset += source.length();
+		fSnippetStartPosition += source.length();
 		source.append(buffer);
 		
 		for (Iterator iterator = compilationUnit.types().iterator(); iterator.hasNext();) {
@@ -384,6 +387,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			if (!fLastTypeName.equals(typeDeclaration.getName().getIdentifier())) {
 				source.append(buildTypeDeclaration(null,typeDeclaration));
 			}
+		}
+		if (fCompilationUnitName == null) {		
+			// If no public class was found, the compilation unit
+			// name doesn't matter.
+			fCompilationUnitName= "Eval"; //$NON-NLS-1$
 		}
 		return source;
 	}
@@ -411,11 +419,36 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return methodName;
 	}
 	
+	/**
+	 * Returns a field name that will be unique in the generated source.
+	 * The generated name is baseName plus as many '_' characters as necessary
+	 * to not duplicate an existing method name.
+	 */
+	private String getUniqueFieldName(String fieldName, List bodyDeclarations) {
+		Iterator iter= bodyDeclarations.iterator();
+		BodyDeclaration bodyDeclaration;
+		FieldDeclaration fieldDeclaration;
+		String foundName;
+		while (iter.hasNext()) {
+			bodyDeclaration= (BodyDeclaration) iter.next();
+			if (bodyDeclaration instanceof FieldDeclaration) {
+				fieldDeclaration= (FieldDeclaration)bodyDeclaration;
+				for (Iterator iterator= fieldDeclaration.fragments().iterator(); iterator.hasNext();) {
+					foundName= ((VariableDeclarationFragment) iterator.next()).getName().getIdentifier();
+					if (foundName.startsWith(fieldName)) {
+						fieldName= foundName + '_';
+					}
+				}
+			}
+		}
+		return fieldName;
+	}
+	
 	private String getQualifiedIdentifier(Name name) {
-		String typeName= "";
+		String typeName= ""; //$NON-NLS-1$
 		while (name.isQualifiedName()) {
 			QualifiedName qualifiedName = (QualifiedName) name;
-			typeName= "." + qualifiedName.getName().getIdentifier() + typeName;
+			typeName= "." + qualifiedName.getName().getIdentifier() + typeName; //$NON-NLS-1$
 			name= qualifiedName.getQualifier();
 		}
 		if (name.isSimpleName()) {
@@ -434,7 +467,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			ArrayType arrayType= (ArrayType) type;
 			String res = getTypeName(arrayType.getElementType());
 			for (int i = 0, dim= arrayType.getDimensions(); i < dim; i++) {
-				res += "[]";
+				res += "[]"; //$NON-NLS-1$
 			}
 			return res;
 		} else if (type.isPrimitiveType()) {
@@ -447,18 +480,18 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	public String getReturnExpression(Type type) {
 		if (type.isSimpleType() || type.isArrayType()) {
-			return "return null;";
+			return "return null;"; //$NON-NLS-1$
 		} else if (type.isPrimitiveType()) {
 			String typeName= ((PrimitiveType) type).getPrimitiveTypeCode().toString();
 			char char0 = typeName.charAt(0);
 			if (char0 == 'v') {
-				return "";
+				return ""; //$NON-NLS-1$
 			} else {
 				char char1 = typeName.charAt(1);
 				if (char0 == 'b' && char1 == 'o') {
-					return "return false;";
+					return "return false;"; //$NON-NLS-1$
 				} else {
-					return "return 0;";
+					return "return 0;"; //$NON-NLS-1$
 				}
 			}
 		}
@@ -487,28 +520,54 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
 			
 			ASTNode parent = node.getParent();
-			while (!(parent instanceof MethodDeclaration)) {
+			while (!(parent instanceof MethodDeclaration || parent instanceof FieldDeclaration)) {
 				parent= parent.getParent();
 			}
-			MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
 			
 			fSource= new StringBuffer();
-			
-			if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
-				fSource.append("static "); //$NON-NLS-1$
-			}
 				
-			fSource.append("void "); //$NON-NLS-1$
-			fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
-			fSource.append("() {\n"); //$NON-NLS-1$
-			fSource.append("new "); //$NON-NLS-1$
-			fSource.append(getQualifiedIdentifier(node.getName()));
-			fSource.append("()"); //$NON-NLS-1$
-			
-			fStartPosOffset+= fSource.length();
-			fSource.append(source);
-			fSource.append(";}\n"); //$NON-NLS-1$
-			
+			if (parent instanceof MethodDeclaration) {
+				MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
+				
+				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
+					fSource.append("static "); //$NON-NLS-1$
+				}
+					
+				fSource.append("void "); //$NON-NLS-1$
+				fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
+				fSource.append("() {\n"); //$NON-NLS-1$
+				fSource.append("new "); //$NON-NLS-1$
+				fSource.append(getQualifiedIdentifier(node.getName()));
+				fSource.append("()"); //$NON-NLS-1$
+				
+				fSnippetStartPosition+= fSource.length();
+				fSource.append(source);
+				fSource.append(";}\n"); //$NON-NLS-1$
+				
+			} else if (parent instanceof FieldDeclaration) {
+				FieldDeclaration enclosingFieldDeclaration = (FieldDeclaration) parent;
+				
+				if (Flags.isStatic(enclosingFieldDeclaration.getModifiers())) {
+					fSource.append("static "); //$NON-NLS-1$
+				}
+				
+				Type type= enclosingFieldDeclaration.getType();
+				while (type instanceof ArrayType) {
+					type= ((ArrayType)type).getComponentType();
+				}
+				
+				fSource.append(getQualifiedIdentifier(((SimpleType)type).getName()));
+				fSource.append(' ');
+				fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
+				fSource.append(" = new "); //$NON-NLS-1$
+				fSource.append(getQualifiedIdentifier(node.getName()));
+				fSource.append("()"); //$NON-NLS-1$
+				
+				fSnippetStartPosition+= fSource.length();
+				fSource.append(source);
+				fSource.append(";\n"); //$NON-NLS-1$
+				
+			}
 			fLastTypeName= ""; //$NON-NLS-1$
 			
 		}		
@@ -572,15 +631,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				fSource = new StringBuffer();
 				
 				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
-					fSource.append("static ");
+					fSource.append("static "); //$NON-NLS-1$
 				}
 				
-				fSource.append("void ___eval() {\n");
-				fStartPosOffset+= fSource.length();
+				fSource.append("void ___eval() {\n"); //$NON-NLS-1$
+				fSnippetStartPosition+= fSource.length();
 				fSource.append(source);
-				fSource.append("}\n");
+				fSource.append("}\n"); //$NON-NLS-1$
 				
-				fLastTypeName = "";
+				fLastTypeName = ""; //$NON-NLS-1$
 			} else {
 				fSource = source;
 				fLastTypeName = node.getName().getIdentifier();

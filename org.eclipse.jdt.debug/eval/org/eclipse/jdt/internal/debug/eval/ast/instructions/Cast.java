@@ -4,34 +4,38 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveType;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IType;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 public class Cast extends CompoundInstruction {
 
-	public static final String IS_INSTANCE= "isInstance";
-	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z";
+	public static final String IS_INSTANCE= "isInstance"; //$NON-NLS-1$
+	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z"; //$NON-NLS-1$
 
 	private int fTypeTypeId;
 	
-	public Cast(int typeTypeId, int start) {
+	private String fTypeName;
+	
+	public Cast(int typeTypeId, String typeName, int start) {
 		super(start);
-		fTypeTypeId = typeTypeId;
+		fTypeTypeId= typeTypeId;
+		fTypeName= typeName;
 	}
 
 	/*
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IValue value= popValue();
-		IType type= (IType)pop();
+		IJavaValue value= popValue();
 		
-		if (type instanceof IPrimitiveType) {
-			IPrimitiveValue primitiveValue = (IPrimitiveValue) value;
+		if (value instanceof IJavaPrimitiveValue) {
+			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
 			switch (fTypeTypeId) {
 					case T_double:
 						push(newValue(primitiveValue.getDoubleValue()));
@@ -57,19 +61,14 @@ public class Cast extends CompoundInstruction {
 			}
 			
 		} else {
-			IObject object = (IObject) value;
-			IObject classObject= getClassObject(type);
+			IJavaObject classObject= getClassObject(getType(fTypeName));
+			IJavaObject objectValue= (IJavaObject)value;
 			if (classObject == null) {
 				throw new CoreException(null);
-			} else {
-				push(classObject);
-				push(object);
-				SendMessage send= new SendMessage(IS_INSTANCE,IS_INSTANCE_SIGNATURE,1,false, -1);
-				execute(send);
-				
-				IPrimitiveValue resultValue = (IPrimitiveValue)pop();
+			} else {				
+				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {objectValue}, getContext().getThread(), false);
 				if (!resultValue.getBooleanValue()) {
-					throw new CoreException(null);
+					throw new CoreException(new Status(Status.ERROR, JDIDebugModel.getPluginIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.ClassCastException__Cannot_cast_{0}_as_{1}__1"), new String[]{objectValue.toString(), fTypeName}), null)); //$NON-NLS-1$
 				}
 			}
 			
@@ -81,7 +80,7 @@ public class Cast extends CompoundInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return "cast";
+		return InstructionsEvaluationMessages.getString("Cast.cast_3"); //$NON-NLS-1$
 	}
 
 }

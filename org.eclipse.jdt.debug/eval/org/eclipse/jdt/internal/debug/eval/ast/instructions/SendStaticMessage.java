@@ -5,12 +5,15 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
  
 /**
  * Sends a message. The arguments are on the
@@ -33,25 +36,28 @@ public class SendStaticMessage extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		IValue[] args = new IValue[fArgCount];
+		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
 		for (int i= fArgCount - 1; i >= 0; i--) {
-			args[i] = (IValue)popValue();
+			args[i] = (IJavaValue)popValue();
 		}
 		
-		IClassType receiver= (IClassType)getType(Signature.toString(fTypeSignature));
-		
-		IValue result= receiver.sendMessage(fSelector, fSignature, args, getContext().getThread());
-		
-		if (!fSignature.endsWith(")V")) {
+		IJavaType receiver= getType(Signature.toString(fTypeSignature).replace('/', '.'));
+		IJavaValue result;
+		if (receiver instanceof IJavaClassType) {
+			result= ((IJavaClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
+		} else {
+			throw new CoreException(new Status(Status.ERROR, JDIDebugModel.getPluginIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendStaticMessage.Cannot_send_a_static_message_to_a_non_class_type_object_1"), null)); //$NON-NLS-1$
+		}
+		setLastValue(result);
+		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
 			push(result);
 		}
 	}
 	
 	public String toString() {
-		return "send static message " + fSelector + " " + fSignature;
+		return MessageFormat.format(InstructionsEvaluationMessages.getString("SendStaticMessage.send_static_message_{0}_{1}_2"), new String[]{fSelector, fSignature}); //$NON-NLS-1$
 	}
-
 }
 

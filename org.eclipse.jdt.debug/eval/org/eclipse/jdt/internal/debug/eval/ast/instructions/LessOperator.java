@@ -4,8 +4,8 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class LessOperator extends BinaryOperator {
 	public LessOperator(int leftTypeId, int rightTypeId, int start) {
@@ -13,60 +13,60 @@ public class LessOperator extends BinaryOperator {
 	}
 
 	/*
-	 * @see BinaryOperator#getBooleanResult(IValue, IValue)
+	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IValue leftOperand, IValue rightOperand) {
+	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		switch (getInternResultType()) {
 			case T_double :
-				return ((IPrimitiveValue) leftOperand).getDoubleValue() < ((IPrimitiveValue) rightOperand).getDoubleValue();
+				return ((IJavaPrimitiveValue) leftOperand).getDoubleValue() < ((IJavaPrimitiveValue) rightOperand).getDoubleValue();
 			case T_float :
-				return ((IPrimitiveValue) leftOperand).getFloatValue() < ((IPrimitiveValue) rightOperand).getFloatValue();
+				return ((IJavaPrimitiveValue) leftOperand).getFloatValue() < ((IJavaPrimitiveValue) rightOperand).getFloatValue();
 			case T_long :
-				return ((IPrimitiveValue) leftOperand).getLongValue() < ((IPrimitiveValue) rightOperand).getLongValue();
+				return ((IJavaPrimitiveValue) leftOperand).getLongValue() < ((IJavaPrimitiveValue) rightOperand).getLongValue();
 			case T_int :
-				return ((IPrimitiveValue) leftOperand).getIntValue() < ((IPrimitiveValue) rightOperand).getIntValue();
+				return ((IJavaPrimitiveValue) leftOperand).getIntValue() < ((IJavaPrimitiveValue) rightOperand).getIntValue();
 			default :
 				return false;
 		}
 	}
 
 	/*
-	 * @see BinaryOperator#getDoubleResult(IValue, IValue)
+	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IValue leftOperand, IValue rightOperand) {
+	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getFloatResult(IValue, IValue)
+	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IValue leftOperand, IValue rightOperand) {
+	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getIntResult(IValue, IValue)
+	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
-	protected int getIntResult(IValue leftOperand, IValue rightOperand) {
+	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getLongResult(IValue, IValue)
+	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
-	protected long getLongResult(IValue leftOperand, IValue rightOperand) {
+	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getStringResult(IValue, IValue)
+	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IValue leftOperand, IValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return null;
 	}
 
 	public String toString() {
-		return "'<' operator";
+		return InstructionsEvaluationMessages.getString("LessOperator._<___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -4,8 +4,9 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
+
 
 public class AndOperator extends BinaryOperator {
 	public AndOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
@@ -17,49 +18,49 @@ public class AndOperator extends BinaryOperator {
 	}
 
 	/*
-	 * @see BinaryOperator#getBooleanResult(IValue, IValue)
+	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue) leftOperand).getBooleanValue() & ((IPrimitiveValue) rightOperand).getBooleanValue();
+	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getBooleanValue() & ((IJavaPrimitiveValue) rightOperand).getBooleanValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getDoubleResult(IValue, IValue)
+	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IValue leftOperand, IValue rightOperand) {
+	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getFloatResult(IValue, IValue)
+	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IValue leftOperand, IValue rightOperand) {
+	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getIntResult(IValue, IValue)
+	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
-	protected int getIntResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue) leftOperand).getIntValue() & ((IPrimitiveValue) rightOperand).getIntValue();
+	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getIntValue() & ((IJavaPrimitiveValue) rightOperand).getIntValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getLongResult(IValue, IValue)
+	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
-	protected long getLongResult(IValue leftOperand, IValue rightOperand) {
-		return ((IPrimitiveValue) leftOperand).getLongValue() & ((IPrimitiveValue) rightOperand).getLongValue();
+	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getLongValue() & ((IJavaPrimitiveValue) rightOperand).getLongValue();
 	}
 
 	/*
-	 * @see BinaryOperator#getStringResult(IValue, IValue)
+	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IValue leftOperand, IValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return null;
 	}
 
 	public String toString() {
-		return "'&' operator";
+		return InstructionsEvaluationMessages.getString("AndOperator_&___operator_1"); //$NON-NLS-1$
 	}
 
 }

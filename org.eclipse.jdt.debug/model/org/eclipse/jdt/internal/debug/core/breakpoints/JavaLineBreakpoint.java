@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IValue;
@@ -401,7 +402,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return !suspendForEvent(event, thread);
 		}
 		fSuspendEvents.put(thread, event);
-		engine.evaluateExpression(fCompiledExpression, frame, listener);
+		engine.evaluateExpression(fCompiledExpression, frame, listener, DebugEvent.EVALUATION, false);
 
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.

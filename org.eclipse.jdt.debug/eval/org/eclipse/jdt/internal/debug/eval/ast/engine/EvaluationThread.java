@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
@@ -139,13 +140,13 @@ class EvaluationThread {
 					fException = exception;
 				} catch (Throwable exception) {
 					JDIDebugPlugin.log(exception);
-					fException = new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
+					fException = new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
 				}
 			}
 		};
 		CoreException exception = null;
 		try {
-			fThread.runEvaluation(er, null, fEvaluationDetail, fHitBreakpoints);
+			fThread.runEvaluation(er, null, fEvaluationDetail);
 		} catch (DebugException e) {
 			exception = e;
 		}

@@ -7,31 +7,37 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
-import org.eclipse.jdt.internal.debug.eval.model.IVirtualMachine;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
 public class Interpreter {
 	private Instruction[] fInstructions;
 	private int fInstructionCounter;
 	private IRuntimeContext fContext;
 	private Stack fStack;
+	private IJavaValue fLastValue;
 	
-	public Interpreter(Instruction[] instructions, IRuntimeContext context) {
-		fInstructions= instructions;
+	private boolean fStopped= false;
+	
+	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
+		fInstructions= instructions.getInstructions();
 		fContext= context;
 	}
 	
 	public void execute() throws CoreException {
 		reset();
-		while(fInstructionCounter < fInstructions.length) {
+		while(fInstructionCounter < fInstructions.length && !fStopped) {
 			Instruction instruction= fInstructions[fInstructionCounter++];
 			instruction.setInterpreter(this);
 			instruction.execute();
 			instruction.setInterpreter(null);
 		}
+	}
+	
+	public void stop() {
+		fStopped= true;
 	}
 
 	private void reset() {
@@ -74,21 +80,29 @@ public class Interpreter {
 		return fContext;
 	}
 	
-	public IValue getResult() {
-		if (fStack.isEmpty())
-			return getContext().getVM().voidValue();
+	public IJavaValue getResult() {
+		if (fStack == null || fStack.isEmpty()) {
+			if (fLastValue == null) {
+				return getContext().getVM().voidValue();
+			}
+			return fLastValue;
+		}
 		Object top= fStack.peek();
-		if (top instanceof IVariable) {
+		if (top instanceof IJavaVariable) {
 			try {
-				return ((IVariable)top).getValue();
+				return (IJavaValue)((IJavaVariable)top).getValue();
 			} catch (CoreException exception) {
 				return getContext().getVM().newValue(exception.getStatus().getMessage());
 			}
 		}
-		if (top instanceof IValue) {
-			return (IValue)top;
+		if (top instanceof IJavaValue) {
+			return (IJavaValue)top;
 		}
 		// XXX: exception
 		return null;		
-	}	
+	}
+	
+	public void setLastValue(IJavaValue value) {
+		fLastValue= value;
+	}
 }

@@ -5,14 +5,17 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IClassType;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
  
 /**
- * Sends a message. The arguments are on the
+ * Sends an message to an instance. The arguments are on the
  * stack in reverse order, followed by the receiver.
  * Pushes the result, if any, onto the stack
  */
@@ -32,34 +35,32 @@ public class SendMessage extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		IValue[] args = new IValue[fArgCount];
+		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
 		for (int i= fArgCount - 1; i >= 0; i--) {
-			args[i] = (IValue)popValue();
+			args[i] = (IJavaValue)popValue();
 		}
 		Object receiver = pop();
-		IValue result = null;
+		IJavaValue result = null;
 		
-		if (receiver instanceof IVariable) {
-			receiver = ((IVariable) receiver).getValue();	
+		if (receiver instanceof IJavaVariable) {
+			receiver = ((IJavaVariable) receiver).getValue();	
 		}
 		
-		if (receiver instanceof IObject) {
-			result = ((IObject)receiver).sendMessage(fSelector, fSignature, args, fSuperSend, getContext().getThread());
-		} else if (receiver instanceof IClassType) {
-			result = ((IClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
+		if (receiver instanceof IJavaObject) {
+			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fSuperSend);
 		} else {
-			throw new CoreException(null);
+			throw new CoreException(new Status(Status.ERROR, JDIDebugModel.getPluginIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendMessage.Attempt_to_send_a_message_to_a_non_object_value_1"), null)); //$NON-NLS-1$
 		}
-		if (!fSignature.endsWith(")V")) {
+		setLastValue(result);
+		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
 			push(result);
 		}
 	}
 	
 	public String toString() {
-		return "send message " + fSelector + " " + fSignature;
+		return MessageFormat.format(InstructionsEvaluationMessages.getString("SendMessage.send_message_{0}_{1}_2"), new String[]{fSelector,fSignature}); //$NON-NLS-1$
 	}
-
 }
 

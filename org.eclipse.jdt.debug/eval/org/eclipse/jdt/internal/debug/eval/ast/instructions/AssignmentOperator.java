@@ -5,9 +5,9 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public class AssignmentOperator extends CompoundInstruction {
 
@@ -25,11 +25,11 @@ public class AssignmentOperator extends CompoundInstruction {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IValue value = (IValue) popValue();
-		IVariable variable = (IVariable) pop();
+		IJavaValue value = (IJavaValue) popValue();
+		IJavaVariable variable = (IJavaVariable) pop();
 		
-		if (value instanceof IPrimitiveValue) {
-			IPrimitiveValue primitiveValue = (IPrimitiveValue) value;
+		if (value instanceof IJavaPrimitiveValue) {
+			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
 			switch (fVariableTypeId) {
 				case T_boolean:
 					variable.setValue(newValue(primitiveValue.getBooleanValue()));
@@ -63,8 +63,6 @@ public class AssignmentOperator extends CompoundInstruction {
 	}
 
 	public String toString() {
-		return "'=' operator";
+		return InstructionsEvaluationMessages.getString("AssignmentOperator._=___operator_1"); //$NON-NLS-1$
 	}
-
-
 }

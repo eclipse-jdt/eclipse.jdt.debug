@@ -9,33 +9,25 @@ import com.sun.jdi.ReferenceType;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.internal.debug.eval.model.*;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationPrimitiveType;
  
 /**
- * Pushes a type onto the stack.
+ * Pushes a reference type onto the stack.
  */
 public class PushType extends SimpleInstruction {
 	
 	private String fTypeName;
-	private boolean fIsBaseType;
 	
 	
-	public PushType(String signature, boolean isBaseType) {
+	public PushType(String signature) {
 		fTypeName= signature;
-		fIsBaseType= isBaseType;
 	}
 	
 	public void execute() throws CoreException {
-		if (fIsBaseType) {
-			push(EvaluationPrimitiveType.getType(fTypeName));
-		} else {
-			push(getType(fTypeName));
-		}
+		push(getType(fTypeName));
 	}
 	
 	public String toString() {
-		return "push type " + fTypeName;
+		return InstructionsEvaluationMessages.getString("PushType.push_type__1") + fTypeName; //$NON-NLS-1$
 	}
 
 	

@@ -5,7 +5,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
 
 public class Jump extends SimpleInstruction {
 	protected int fOffset;
@@ -25,7 +24,7 @@ public class Jump extends SimpleInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return "jump";
+		return InstructionsEvaluationMessages.getString("Jump.jump_1"); //$NON-NLS-1$
 	}
 
 }

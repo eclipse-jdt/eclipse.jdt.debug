@@ -7,35 +7,48 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
+import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationThread;
-import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
-import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
-import org.eclipse.jdt.internal.debug.eval.model.IVariable;
-import org.eclipse.jdt.internal.debug.eval.model.JavaObjectRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.model.RuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionsEvaluationMessages;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
+	
+	/**
+	 * Code snippets that return a value generate an exception from
+	 * the compiler because void methods cannot return a value. Since the
+	 * messages returned by the compilation unit only contain a string and
+	 * a position, we have to check if the message's string matches the
+	 * message for the "void methods cannot return a value" error.
+	 */
+	private static String fVoidMessageError= new DefaultProblemFactory(Locale.getDefault()).getLocalizedMessage(105, new String[0]);
 
 	private IJavaProject fProject;
 	
@@ -57,44 +70,50 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener, int, boolean)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
-		evaluateExpression(expression, frame, listener);
+		evaluateExpression(expression, frame, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener, int, boolean)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
-		ICompiledExpression expression= getCompiledExpression(snippet, thisContext, thread);
-		evaluateExpression(expression, thisContext, thread, listener);
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
+		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
+	 * @see IAstEvaluationEngine#evaluateExpression(ICompiledExpression, IJavaStackFrame, IEvaluationListener, int, boolean)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
-		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener);
+		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, evaluationDetail, hitBreakpoints);
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
+	 * @see IAstEvaluationEngine#evaluateExpression(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener, int, boolean)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
-		doEvaluation(expression, context, thread, listener);
+		doEvaluation(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	/**
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) throws DebugException {		
-		getEvaluationThread().evaluate(expression, context, thread, listener);
+	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {		
+		getEvaluationThread().evaluate(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
+	/**
+	 * Returns an evaluation thread which can be used to perform an evaluation.
+	 * This method will return an existing thread if a one exists that is 
+	 * currently not performing an evaluation. Otherwise, a new thread will 
+	 * be created.
+	 */
 	private EvaluationThread getEvaluationThread() {
 		Iterator iter= fEvaluationThreads.iterator();
 		EvaluationThread thread= null;
@@ -104,7 +123,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				return thread;
 			}
 		}
-		thread= new EvaluationThread();
+		thread= new EvaluationThread(this);
 		fEvaluationThreads.add(thread);
 		return thread;
 	}
@@ -116,7 +135,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * the thread is allowed to keep running - it will be reused for the
 	 * next evaluation.
 	 */
-	private void evaluationThreadFinished(EvaluationThread thread) {
+	protected void evaluationThreadFinished(EvaluationThread thread) {
 		if (fEvaluationThreads.size() == 1) {
 			// Always leave at least one thread running
 			return;
@@ -138,126 +157,37 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			fEvaluationThreads.remove(thread);
 		}
 	}
-	
-	class EvaluationThread {
-		private ICompiledExpression fExpression;
-		private IRuntimeContext fContext;
-		private IJavaThread fThread;
-		private IEvaluationListener fListener;
-
-		private boolean fEvaluating= false;
-		private Thread fEvaluationThread;
-		private boolean fStopped= false;
-		private Object fLock= new Object();
-		
-		public boolean isEvaluating() {
-			return fEvaluating;
-		}
-		
-		public void stop() {
-			fStopped= true;
-			synchronized (fLock) {
-				fLock.notify();
-			}
-		}
-		
-		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener) {
-			fExpression= expression;
-			fContext= context;
-			fThread= thread;
-			fListener= listener;
-			if (fEvaluationThread == null) {
-				// Create a new thread
-				fEvaluationThread= new Thread(new Runnable() {
-					public void run() {
-						while (!fStopped) {
-							synchronized (fLock) {
-								doEvaluation();
-								try {
-									// Sleep until the next evaluation
-									fLock.wait();
-								} catch (InterruptedException exception) {
-								}
-							}
-						}
-					}
-				}, "Evaluation thread");
-				fEvaluationThread.start();
-			} else {
-				// Use the existing thread
-				synchronized (fLock) {
-					fLock.notify();
-				}
-			}
-		}
-		
-		public synchronized void doEvaluation() {
-			fEvaluating= true;
-			EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, fExpression.getSnippet(), fThread);
-			if (fExpression.hasErrors()) {
-				Message[] errors= fExpression.getErrors();
-				for (int i= 0, numErrors= errors.length; i < numErrors; i++) {
-					result.addError(errors[i]);
-				}
-				fListener.evaluationComplete(result);
-				return;
-			}
-	
-			final IValue[] valuez = new IValue[1];
-			final InstructionSequence instructionSet = (InstructionSequence)fExpression;
-			IEvaluationRunnable er = new IEvaluationRunnable() {
-				public void run(IJavaThread jt, IProgressMonitor pm) {
-					valuez[0] = instructionSet.evaluate(fContext);
-				}
-			};
-			CoreException exception = null;
-			try {
-				fThread.runEvaluation(er, null, DebugEvent.EVALUATION);
-			} catch (DebugException e) {
-				exception = e;
-			}
-			IValue value = valuez[0];
-			
-
-			if (exception == null) {
-				exception= instructionSet.getException();
-			}
-			
-			if (value != null) {
-				IJavaValue jv = ((EvaluationValue)value).getJavaValue();
-				result.setValue(jv);
-			}
-			if (exception != null) {
-				result.setException(new DebugException(exception.getStatus()));
-			}
-			fEvaluating= false;
-			evaluationThreadFinished(this);
-			fListener.evaluationComplete(result);
-		}
-	}
 
 	/**
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaStackFrame)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) {
-		snippet= getCompleteSnippet(snippet);
 		IJavaProject javaProject = getJavaProject();
 		RuntimeContext context = new RuntimeContext(javaProject, frame);
 
 		EvaluationSourceGenerator mapper = null;
 		CompilationUnit unit = null;
 		try {
-			IVariable[] locals = context.getLocals();
-			int numLocals= locals.length;
-			int[] localModifiers = new int[locals.length];
+			IJavaVariable[] localsVar = context.getLocals();
+			int numLocalsVar= localsVar.length;
+			// ******
+			// to hide problems with local variable declare as instance of Local Types
+			IJavaVariable[] locals= new IJavaVariable[numLocalsVar];
+			int numLocals= 0;
+			for (int i = 0; i < numLocalsVar; i++) {
+				if (!isLocalType(localsVar[i].getReferenceTypeName())) {
+					locals[numLocals++]= localsVar[i];
+				}
+			}
+			// to solve and remove
+			// ******
 			String[] localTypesNames= new String[numLocals];
 			String[] localVariables= new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
 				localVariables[i] = locals[i].getName();
-				localTypesNames[i] = locals[i].getType().getName();
-				localModifiers[i]= 0;
+				localTypesNames[i] = locals[i].getReferenceTypeName();
 			}
-			mapper = new EvaluationSourceGenerator(new String[0], localModifiers, localTypesNames, localVariables, snippet);
+			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
 			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
@@ -268,17 +198,36 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		return createExpressionFromAST(snippet, mapper, unit);
 	}
 
+	// ******
+	// to hide problems with local variable declare as instance of Local Types
+	private boolean isLocalType(String typeName) {
+		StringTokenizer strTok= new StringTokenizer(typeName,"$"); //$NON-NLS-1$
+		strTok.nextToken();
+		while (strTok.hasMoreTokens()) {
+			char char0= strTok.nextToken().charAt(0);
+			if ('0' <= char0 && char0 <= '9') {
+				return true;
+			}
+		}
+		return false;
+	}
+	// ******
+	
+
 	/**
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
 	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext, IJavaThread thread) {
-		snippet= getCompleteSnippet(snippet);
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
+		if (thisContext instanceof IJavaArray) {
+			InstructionSequence errorExpression= new InstructionSequence(snippet);
+			errorExpression.addError(new Message(EvaluationEngineMessages.getString("Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1"), 0)); //$NON-NLS-1$
+		}
 		IJavaProject javaProject = getJavaProject();
 
 		EvaluationSourceGenerator mapper = null;
 		CompilationUnit unit = null;
 
-		mapper = new EvaluationSourceGenerator(new String[0], new int[0], new String[0], new String[0], snippet);
+		mapper = new EvaluationSourceGenerator(new String[0], new String[0], snippet);
 
 		try {
 			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
@@ -300,37 +249,36 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	private ICompiledExpression createExpressionFromAST(String snippet, EvaluationSourceGenerator mapper, CompilationUnit unit) {
 		Message[] messages= unit.getMessages();
 		if (messages.length != 0) {
-			boolean error= false;
+			boolean snippetError= false;
+			boolean runMethodError= false;
 			InstructionSequence errorSequence= new InstructionSequence(snippet);
-			int codeSnippetStartOffset= mapper.getStartPosition();
-			int codeSnippetEndOffset= codeSnippetStartOffset + snippet.length();
+			int codeSnippetStart= mapper.getSnippetStart();
+			int codeSnippetEnd= codeSnippetStart + mapper.getSnippet().length();
+			int runMethodStart= mapper.getRunMethodStart();
+			int runMethodEnd= runMethodStart + mapper.getRunMethodLength();
 			for (int i = 0; i < messages.length; i++) {
 				Message message= messages[i];
 				int errorOffset= message.getSourcePosition();
 				// TO DO: Internationalize "void method..." error message check
-				if (codeSnippetStartOffset <= errorOffset && errorOffset <= codeSnippetEndOffset && !"Void methods cannot return a value".equals(message.getMessage())) {
+				if (codeSnippetStart <= errorOffset && errorOffset <= codeSnippetEnd && !fVoidMessageError.equals(message.getMessage())) {
 					errorSequence.addError(message);
-					error = true;
+					snippetError = true;
+				} else if (runMethodStart <= errorOffset && errorOffset <= runMethodEnd && !fVoidMessageError.equals(message.getMessage())) {
+					runMethodError = true;
 				}
 			}
-			if (error) {
+			if (snippetError || runMethodError) {
+				if (runMethodError) {
+					errorSequence.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngineEvaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1"), 0)); //$NON-NLS-1$
+				}
 				return errorSequence;
 			}
 		}
 		
-		ASTInstructionCompiler visitor = new ASTInstructionCompiler(mapper.getStartPosition(), snippet);
+		ASTInstructionCompiler visitor = new ASTInstructionCompiler(mapper.getSnippetStart(), snippet);
 		unit.accept(visitor);
 
 		return visitor.getInstructions();
-	}
-	
-	protected String getCompleteSnippet(String codeSnippet) {
-		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1;
-
-		if (isAnExpression) {
-			codeSnippet = "return " + codeSnippet + ';';
-		}
-		return codeSnippet;
 	}
 
 	/*

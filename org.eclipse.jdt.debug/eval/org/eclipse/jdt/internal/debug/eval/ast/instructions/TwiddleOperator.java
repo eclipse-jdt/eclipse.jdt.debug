@@ -5,8 +5,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IObject;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 public class TwiddleOperator extends UnaryOperator {
 
@@ -18,7 +17,7 @@ public class TwiddleOperator extends UnaryOperator {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IPrimitiveValue value= (IPrimitiveValue)popValue();
+		IJavaPrimitiveValue value= (IJavaPrimitiveValue)popValue();
 		switch (fExpressionTypeId) {
 			case T_long:
 				pushNewValue(~value.getLongValue());
@@ -33,7 +32,7 @@ public class TwiddleOperator extends UnaryOperator {
 	}
 
 	public String toString() {
-		return "'~' operator";
+		return InstructionsEvaluationMessages.getString("TwiddleOperator._~___operator_1"); //$NON-NLS-1$
 	}
 
 }

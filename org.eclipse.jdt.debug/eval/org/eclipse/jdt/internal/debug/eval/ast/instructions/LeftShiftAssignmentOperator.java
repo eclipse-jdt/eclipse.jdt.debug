@@ -11,7 +11,7 @@ public class LeftShiftAssignmentOperator extends LeftShiftOperator {
 	}
 
 	public String toString() {
-		return "'<<=' operator";
+		return InstructionsEvaluationMessages.getString("LeftShiftAssignmentOperator._<<=___operator_1"); //$NON-NLS-1$
 	}
 
 }

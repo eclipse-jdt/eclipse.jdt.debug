@@ -5,7 +5,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
 
 public class NoOp extends CompoundInstruction {
 
@@ -23,7 +22,7 @@ public class NoOp extends CompoundInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return "no op";
+		return InstructionsEvaluationMessages.getString("NoOp.no_op_1"); //$NON-NLS-1$
 	}
 
 }

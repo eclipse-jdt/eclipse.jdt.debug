@@ -11,6 +11,7 @@ import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
@@ -46,6 +47,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Initializer;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.Message;
@@ -120,6 +122,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PostfixMinusMinusOpe
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PostfixPlusPlusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PrefixMinusMinusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PrefixPlusPlusOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushArrayLength;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushArrayType;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushBoolean;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushChar;
@@ -128,14 +131,16 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushDouble;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushFieldVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushFloat;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushInt;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLocalVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLong;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushNull;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushStaticFieldVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushString;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushThis;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushType;
-import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.ReturnInstruction;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.SendMessage;
@@ -237,7 +242,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			((CompoundInstruction)instruction).setEnd(fCounter);
 		}
 		fInstructions.add(instruction);
-		verbose("Add " + instruction.toString());
+		verbose("Add " + instruction.toString()); //$NON-NLS-1$
 	}
 	
 	
@@ -255,10 +260,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	
 
 	private String getQualifiedIdentifier(Name name) {
-		String typeName = "";
+		String typeName = ""; //$NON-NLS-1$
 		while (name.isQualifiedName()) {
 			QualifiedName qualifiedName = (QualifiedName) name;
-			typeName = "." + qualifiedName.getName().getIdentifier() + typeName;
+			typeName = "." + qualifiedName.getName().getIdentifier() + typeName; //$NON-NLS-1$
 			name = qualifiedName.getQualifier();
 		}
 		if (name.isSimpleName()) {
@@ -270,23 +275,92 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 	
 	private String getTypeName(ITypeBinding typeBinding) {
-		String name= typeBinding.getName();
+		StringBuffer name;
+		if (typeBinding.isArray()) {
+			name= new StringBuffer(getTypeName(typeBinding.getElementType()));
+			int dimensions= typeBinding.getDimensions();
+			for (int i= 0; i < dimensions; i++) {
+				name.append("[]"); //$NON-NLS-1$
+			}
+			return name.toString();
+		} 
+		name= new StringBuffer(typeBinding.getName());
 		IPackageBinding packageBinding= typeBinding.getPackage();
 		typeBinding= typeBinding.getDeclaringClass();
 		while(typeBinding != null) {
-			name= typeBinding.getName() + '$' + name;
+			name.insert(0, '$').insert(0, typeBinding.getName());
 			typeBinding= typeBinding.getDeclaringClass();
 		}
 		if (packageBinding != null && !packageBinding.isUnnamed()) {
-			name= packageBinding.getName() + '.' + name;
+			name.insert(0, '.').insert(0, packageBinding.getName());
 		}
-		return name;
+		return name.toString();
 	}
 	
 	private String getTypeSignature(ITypeBinding typeBinding) {
 		return Signature.createTypeSignature(getTypeName(typeBinding), true).replace('.', '/');
 	}
+
+	private boolean isALocalType(ITypeBinding typeBinding) {
+		while(typeBinding != null) {
+			if (typeBinding.isLocal()) {
+				return true;
+			}
+			typeBinding= typeBinding.getDeclaringClass();
+		}
+		return false;
+	}
 	
+	private boolean containsALocalType(IMethodBinding methodBinding) {
+		ITypeBinding[] typeBindings= methodBinding.getParameterTypes();
+		for (int i= 0, length= typeBindings.length; i < length; i++) {
+			if (isALocalType(typeBindings[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private int getEnclosingLevel(ASTNode node, ITypeBinding referenceTypeBinding) {
+		ASTNode parent= node;
+		do {
+			parent= parent.getParent();
+		} while (!(parent instanceof TypeDeclaration || parent instanceof AnonymousClassDeclaration));
+		if (parent == null) {
+			// throw an exception
+			return 9999;
+		}
+		ITypeBinding parentBinding;
+		if (parent instanceof TypeDeclaration) {
+			parentBinding= (ITypeBinding) ((TypeDeclaration)parent).resolveBinding();
+		} else {
+			parentBinding= (ITypeBinding) ((AnonymousClassDeclaration)parent).resolveBinding();
+		}
+		if (isInstanceOf(parentBinding, referenceTypeBinding)) {
+			return 0;
+		}
+		return getEnclosingLevel(parent, referenceTypeBinding) + 1;
+	}
+
+	private int getSuperLevel(ITypeBinding current, ITypeBinding reference) {
+		if (current.equals(reference)) {
+			return 0;
+		}
+		return getSuperLevel(current.getSuperclass(), reference);
+	}
+
+	private boolean isInstanceOf(ITypeBinding current, ITypeBinding reference) {
+		if (current.equals(reference)) {
+			return true;
+		}
+		ITypeBinding superClass= current.getSuperclass();
+		if (superClass == null) {
+			return false;
+		} else {
+			return isInstanceOf(current.getSuperclass(), reference);
+		}
+	}
+
 	/**
 	 * End visit methods
 	 * 
@@ -497,12 +571,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression expression= node.getExpression();
 		if (expression instanceof MethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		} else if (expression instanceof SuperMethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		}
@@ -603,6 +677,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(Initializer node) {
 
 	}
+	
+	/**
+	 * @see ASTVisitor#endVisit(InstanceofExpression)
+	 */
+	public void endVisit(InstanceofExpression node) {
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
+	}
 
 	/**
 	 * @see ASTVisitor#endVisit(Javadoc)
@@ -688,9 +771,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(PrimitiveType)
 	 */
 	public void endVisit(PrimitiveType node) {
-		if (!isActive() || hasErrors())
-			return;
-		storeInstruction();			
 	}
 
 	/**
@@ -703,7 +783,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(ReturnStatement)
 	 */
 	public void endVisit(ReturnStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();	
 	}
 
 	/**
@@ -881,7 +963,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Anonymous type declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -908,6 +990,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		ArrayType arrayType= node.getType();
 		
+		if (isALocalType(arrayType.resolveBinding().getElementType())) {
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Local_type_array_instance_creation_cannot_be_used_in_an_evaluation_expression_29"), node.getStartPosition())); //$NON-NLS-1$
+			setHasError(true);
+			return true;
+		}
+		
 		push(new ArrayAllocation(arrayType.getDimensions(), node.dimensions().size(), node.getInitializer() != null, fCounter));
 		
 		return true;
@@ -922,9 +1010,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		
 		ITypeBinding typeBinding= node.resolveTypeBinding();
-		
 		int dimension= typeBinding.getDimensions();
-		String signature= Signature.createTypeSignature(getQualifiedName(typeBinding.getElementType()), true);
+		String signature= getTypeSignature(typeBinding.getElementType());
 		
 		push(new ArrayInitializerInstruction(signature, node.expressions().size(), dimension, fCounter));
 		
@@ -938,10 +1025,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding typeBinding= node.getElementType().resolveBinding();
-		
-		int dimension= node.getDimensions();
-		String signature= Signature.createTypeSignature(getQualifiedName(typeBinding), true);
+		ITypeBinding arrayTypeBinding= node.resolveBinding();
+		int dimension= arrayTypeBinding.getDimensions();
+		String signature= getTypeSignature(arrayTypeBinding.getElementType());
 
 		push(new PushArrayType(signature, dimension, fCounter));
 		
@@ -956,7 +1042,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Assert statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Assert_statement_cannot_be_used_in_an_evaluation_expression_3"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1031,7 +1117,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message("Unrecognized assignment operator : " + opToken, node.getStartPosition()));
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		return true;
@@ -1072,7 +1158,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(BreakStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Break Statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Break_Statement_cannot_be_used_in_an_evaluation_expression_5"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1086,9 +1172,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		int typeId = getTypeId(node.getType());
 		
-		push(new Cast(typeId, fCounter));
+		push(new Cast(typeId, getTypeName(node.getType().resolveBinding()), fCounter));
 		
-		return true;
+		node.getExpression().accept(this);
+		
+		return false;
 	}
 
 	/**
@@ -1099,7 +1187,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Catch clause is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Catch_clause_cannot_be_used_in_an_evaluation_expression_6"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1117,7 +1205,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * return false, visit name & arguments, don't visit expression & body declaration
+	 * return false, visit expression, type name & arguments, don't visit body declaration
 	 * @see ASTVisitor#visit(ClassInstanceCreation)
 	 */
 	public boolean visit(ClassInstanceCreation node) {
@@ -1127,39 +1215,60 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (node.getAnonymousClassDeclaration() != null) {
 			setHasError(true);
-			addErrorMessage(new Message("Anonymous type declaration cannot be used in an evaluation expression", node.getStartPosition()));
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_7"), node.getStartPosition())); //$NON-NLS-1$
 		}
-		if (node.getExpression() != null) {
+
+		IMethodBinding methodBinding= node.resolveConstructorBinding();
+		ITypeBinding typeBinding= methodBinding.getDeclaringClass();
+		ITypeBinding enclosingTypeBinding= typeBinding.getDeclaringClass();
+		
+		if (isALocalType(typeBinding)) {
 			setHasError(true);
-			addErrorMessage(new Message("Class Instance Creation Expression  is not managed", node.getStartPosition()));
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8"), node.getStartPosition())); //$NON-NLS-1$
+		}
+		
+		if (containsALocalType(methodBinding)) {
+			setHasError(true);
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_30"), node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		if (hasErrors()) {
 			return true;
 		}
 		
-		IMethodBinding methodBinding = node.resolveConstructorBinding();
+		boolean isInstanceMemberType= typeBinding.isMember() &&! Modifier.isStatic(typeBinding.getModifiers());
 
 		int argCount= methodBinding.getParameterTypes().length;
+		
+		String enclosingTypeSignature= null;
+		if (isInstanceMemberType) {
+			enclosingTypeSignature= getTypeSignature(enclosingTypeBinding);
+			argCount++;
+		}
 
-		String signature= getMethodSignature(methodBinding).replace('.','/');
+		String signature= getMethodSignature(methodBinding, enclosingTypeSignature).replace('.','/');
 
 		push(new Constructor(signature, argCount, fCounter));
  		
-//		node.getName().accept(this);
-		// TO DO: Use the method call above instead of the following code
-		push(new PushType(getTypeName(methodBinding.getDeclaringClass()), false));
+		push(new PushType(getTypeName(typeBinding)));
 		storeInstruction();
+
+		if (isInstanceMemberType) {
+			Expression optionalExpression= node.getExpression();
+			if (optionalExpression != null) {
+				optionalExpression.accept(this);
+			} else {
+				push(new PushThis(getEnclosingLevel(node, enclosingTypeBinding)));
+				storeInstruction();
+			}
+		}
 
 		Iterator iterator= node.arguments().iterator();
 		while (iterator.hasNext()) {
 			((Expression) iterator.next()).accept(this);
 		}
-
 		
-
 		return false;
-
 	}
 
 	/**
@@ -1190,7 +1299,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("this constructor invocation cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.this_constructor_invocation_cannot_be_used_in_an_evaluation_expression_9"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1199,7 +1308,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(ContinueStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Continue statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Continue_statement_cannot_be_used_in_an_evaluation_expression_10"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1208,7 +1317,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(DoStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Do statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Do_statement_cannot_be_used_in_an_evaluation_expression_11"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1235,12 +1344,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression expression= node.getExpression();
 		if (expression instanceof MethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		} else if (expression instanceof SuperMethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		}
@@ -1262,11 +1371,30 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		String signature = getTypeSignature(node.getExpression().resolveTypeBinding());
+		SimpleName fieldName= node.getName();
+		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+		Expression expression = node.getExpression();
+		String fieldId = fieldName.getIdentifier();
 		
-		push(new PushFieldVariable(node.getName().getIdentifier(), signature, fCounter));
-		
-		node.getExpression().accept(this);
+		if (Modifier.isStatic(fieldBinding.getModifiers())) {
+			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+			expression.accept(this);
+			push(new Pop());
+			storeInstruction();
+		} else {
+			if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
+				push(new PushArrayLength(fCounter));
+			} else {
+				if (isALocalType(declaringTypeBinding)) {
+					setHasError(true);
+					addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31"), node.getStartPosition())); //$NON-NLS-1$
+					return false;
+				}
+				push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
+			}
+			expression.accept(this);
+		}
 		
 		return false;
 	}
@@ -1275,7 +1403,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(FieldDeclaration)
 	 */
 	public boolean visit(FieldDeclaration node) {
-		return false;
+		return true;
 	}
 
 	/**
@@ -1283,7 +1411,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(ForStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("For statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.For_statement_cannot_be_used_in_an_evaluation_expression_12"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1436,11 +1564,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 						break;
 				}
 				break;
-			case 'i': // instanceof
-				for (int i = operatorNumber - 1; i >= 0; i--) {
-					push(new InstanceOfOperator(fCounter));
-				}
-				break;
 			case '=': // equal equal
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new EqualEqualOperator(types[i][1], types[i][2], true, fCounter));
@@ -1497,7 +1620,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message("Unrecognized infix operator : " + opToken, node.getStartPosition()));
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_infix_operator____13") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		if (hasErrors()) {
@@ -1572,6 +1695,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
+	 * @see ASTVisitor#visit(InstanceofExpression)
+	 */
+	public boolean visit(InstanceofExpression node) {
+		if (!isActive()) {
+			return false;
+		}
+		push(new InstanceOfOperator(fCounter));
+		return true;
+	}
+
+	/**
 	 * @see ASTVisitor#visit(Javadoc)
 	 */
 	public boolean visit(Javadoc node) {
@@ -1583,7 +1717,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(LabeledStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("Labaled Statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Labeled_Statement_cannot_be_used_in_an_evaluation_expression_14"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1609,25 +1743,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
+		IMethodBinding methodBinding= (IMethodBinding) node.getName().resolveBinding();
+		
+		if (containsALocalType(methodBinding)) {
+			setHasError(true);
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
+		}
+		
 		if (hasErrors()) {
 			return true;
 		}
 		
-		IMethodBinding methodBinding= (IMethodBinding) node.getName().resolveBinding();
-		
-		ITypeBinding[] parameterTypes= methodBinding.getParameterTypes();
-		int argCount= parameterTypes.length;
+		int argCount= methodBinding.getParameterTypes().length;
 		String selector= methodBinding.getName();
 
-		String signature= getMethodSignature(methodBinding).replace('.','/');
+		String signature= getMethodSignature(methodBinding, null).replace('.','/');
 		
 		boolean isStatic= Flags.isStatic(methodBinding.getModifiers());
 		Expression expression= node.getExpression();
 		
+		String typeSignature= getTypeSignature(methodBinding.getDeclaringClass());
+		
 		if (isStatic) {
-			String typeSignature= Signature.createTypeSignature(getQualifiedName(methodBinding.getDeclaringClass()), true);
 			push(new SendStaticMessage(typeSignature, selector, signature, argCount, fCounter));
-
 			if (expression != null) {
 				node.getExpression().accept(this);
 				push(new Pop());
@@ -1635,9 +1773,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 		} else {
 			push(new SendMessage(selector, signature, argCount, false, fCounter));
-
 			if (expression == null) {
-				push(new PushThis());
+				push(new PushThis(getEnclosingLevel(node, methodBinding.getDeclaringClass())));
 				storeInstruction();	
 			} else {
 				node.getExpression().accept(this);
@@ -1738,7 +1875,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				break;
 			default:
 				setHasError(true);
-				addErrorMessage(new Message("unrecognized postfix operator : " + opToken, node.getStartPosition()));
+				addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_postfix_operator____15") + opToken, node.getStartPosition())); //$NON-NLS-1$
 				break;
 		}
 
@@ -1806,7 +1943,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message("unrecognized prefix operator : " + opToken, node.getStartPosition()));
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		return true;
@@ -1819,8 +1956,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
-		push(new PushType(getPrimitiveTypeSignature(node.getPrimitiveTypeCode().toString()), true));
 		
 		return true;
 	}
@@ -1843,11 +1978,22 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				node.getName().accept(this);
 				break;
 			case IBinding.VARIABLE:
-				String signature = getTypeSignature(node.getQualifier().resolveTypeBinding());
-		
-				push(new PushFieldVariable(node.getName().getIdentifier(), signature, fCounter));
-				node.getQualifier().accept(this);
-				storeInstruction();
+				SimpleName fieldName= node.getName();
+				IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+				ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+				String fieldId = fieldName.getIdentifier();
+				
+				if (Modifier.isStatic(fieldBinding.getModifiers())) {
+					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+					storeInstruction();
+				} else {
+					if (declaringTypeBinding == null) {
+						push(new PushArrayLength(fCounter));
+					} else {
+						push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
+					}
+					node.getQualifier().accept(this);
+				}
 				break;
 		}
 		
@@ -1861,6 +2007,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
+		push(new ReturnInstruction(fCounter));
 		return true;
 	}
 
@@ -1872,28 +2019,37 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
+		if (hasErrors()) {
+			return true;
+		}
+		
 		IBinding binding = node.resolveBinding();
 		
+		String variableId = node.getIdentifier();
 		if (binding == null) {
 			setHasError(true);
-			addErrorMessage(new Message("binding == null for " + node.getIdentifier(), node.getStartPosition()));
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.binding_==_null_for__17") + variableId, node.getStartPosition())); //$NON-NLS-1$
 			return true;
 		}
 		
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
 				ITypeBinding typeBinding= (ITypeBinding) binding;
-				push(new PushType(getTypeName(typeBinding), false));
+				push(new PushType(getTypeName(typeBinding)));
 				break;
 			case IBinding.VARIABLE:
 				IVariableBinding variableBinding= (IVariableBinding) binding;
-				if (variableBinding.isField() && Modifier.isStatic(variableBinding.getModifiers())) {
-					push(new PushFieldVariable(node.getIdentifier(), false, fCounter));
-					typeBinding= variableBinding.getDeclaringClass();
-					push(new PushType(getTypeName(typeBinding), false));
-					storeInstruction();
+				ITypeBinding declaringTypeBinding= variableBinding.getDeclaringClass();
+				if (variableBinding.isField()) {
+					if (Modifier.isStatic(variableBinding.getModifiers())) {
+						push(new PushStaticFieldVariable(variableId, getTypeName(declaringTypeBinding), fCounter));
+					} else {
+						push(new PushFieldVariable(variableId, getTypeSignature(declaringTypeBinding), fCounter));
+						push(new PushThis(getEnclosingLevel(node, declaringTypeBinding)));
+						storeInstruction();
+					}
 				} else {
-					push(new PushVariable(node.getIdentifier()));
+					push(new PushLocalVariable(variableId));
 				}
 				break;
 		}
@@ -1911,7 +2067,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		
 		ITypeBinding typeBinding  = node.resolveBinding();
-		push(new PushType(getTypeName(typeBinding), false));
+		push(new PushType(getTypeName(typeBinding)));
 		
 		return false;
 	}
@@ -1924,7 +2080,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Single variable declaration is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Single_variable_declaration_cannot_be_used_in_an_evaluation_expression_18"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1949,7 +2105,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("super constructor invocation cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.super_constructor_invocation_cannot_be_used_in_an_evaluation_expression_19"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1961,11 +2117,26 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		push(new PushThis());
-		storeInstruction();
+		SimpleName fieldName= node.getName();
+		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+		String fieldId = fieldName.getIdentifier();
 		
-		push(new PushFieldVariable(node.getName().getIdentifier(), true, fCounter));
-		
+		if (Modifier.isStatic(fieldBinding.getModifiers())) {
+			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+		} else {
+			Name qualifier = node.getQualifier();
+			int superLevel= 1;
+			int enclosingLevel= 0;
+			if (qualifier != null) {
+				superLevel= getSuperLevel(qualifier.resolveTypeBinding(), declaringTypeBinding);
+				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+			}
+			push(new PushFieldVariable(fieldId, superLevel, fCounter));
+			push(new PushThis(enclosingLevel));
+			storeInstruction();
+		}
+
 		return false;
 	}
 
@@ -1979,27 +2150,35 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		if (node.getQualifier() != null) {
+		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
+		
+		if (containsALocalType(methodBinding)) {
 			setHasError(true);
-			addErrorMessage(new Message("Qualifier for super method invocation is not implemented", node.getStartPosition()));
-			return true;
+			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
 		}
 		
 		if (hasErrors()) {
 			return true;
 		}
 		
-		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
-		
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int argCount = parameterTypes.length;
 		String selector = methodBinding.getName();
-		String signature = getMethodSignature(methodBinding);
-		
-		push(new SendMessage(selector, signature, argCount, true, fCounter));
-		
-		push(new PushThis());
-		storeInstruction();
+		String signature = getMethodSignature(methodBinding, null);
+
+		Name qualifier= node.getQualifier();
+		if (Modifier.isStatic(methodBinding.getModifiers())) {
+			String typeSignature= getTypeSignature(methodBinding.getDeclaringClass());
+			push(new SendStaticMessage(typeSignature, selector, signature, argCount, fCounter));
+		} else {
+			push(new SendMessage(selector, signature, argCount, true, fCounter));
+			int enclosingLevel= 0;
+			if (qualifier != null) {
+				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+			}
+			push(new PushThis(enclosingLevel));
+			storeInstruction();
+		}
 		
 		Iterator iterator = node.arguments().iterator();
 		while (iterator.hasNext()) {
@@ -2017,7 +2196,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Switch case is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_case_cannot_be_used_in_an_evaluation_expression_20"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2029,7 +2208,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Switch statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_statement_cannot_be_used_in_an_evaluation_expression_21"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2050,8 +2229,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-				
-		push(new PushThis());
+		
+		Name qualifier= node.getQualifier();
+		int enclosingLevel= 0;
+		if (qualifier != null) {
+			enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+		}
+		push(new PushThis(enclosingLevel));
 		
 		return false;
 	}
@@ -2064,7 +2248,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Throw statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Throw_statement_cannot_be_used_in_an_evaluation_expression_22"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2076,7 +2260,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Try statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Try_statement_cannot_be_used_in_an_evaluation_expression_23"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2088,7 +2272,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Type declaration cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_cannot_be_used_in_an_evaluation_expression_24"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2100,7 +2284,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Type declaration statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_statement_cannot_be_used_in_an_evaluation_expression_25"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -2125,7 +2309,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Variable declaration expression is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Variable_declaration_cannot_be_used_in_an_evaluation_expression_26"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2133,11 +2317,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(VariableDeclarationFragment)
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
-		if (!isActive()) {
-			return false;
-		}
-		setHasError(true);
-		addErrorMessage(new Message("Variable declaration fragment is not implemented", node.getStartPosition()));
+		// Don't add error here. A variable declaration fragment is contained in a 
+		// variable declaraction expression or statement, or in a field declaration.
+		// The appropriate error is already added inthe first case, no error should
+		// be added in the second case.
 		return true;
 	}
 
@@ -2149,7 +2332,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message("Variable declaration statement is not implemented", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Variable_declaration_cannot_be_used_in_an_evaluation_expression_27"), node.getStartPosition())); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2158,23 +2341,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(WhileStatement node) {
 		setHasError(true);
-		addErrorMessage(new Message("While statement cannot be used in an evaluation expression", node.getStartPosition()));
+		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.While_statement_cannot_be_used_in_an_evaluation_expression_28"), node.getStartPosition())); //$NON-NLS-1$
 		return false;
 	}
 	
 	//--------------------------
-	
-	private String getQualifiedName(ITypeBinding typeBinding) {
-		IPackageBinding packageBinding = typeBinding.getPackage();
-		return ((packageBinding == null || packageBinding.isUnnamed())? "" : packageBinding.getName() + ".") + typeBinding.getName();
-	}
 	
 	private int getTypeId(Expression expression) {
 		ITypeBinding typeBinding = expression.resolveTypeBinding();
 		String typeName = typeBinding.getName();
 		if (typeBinding.isPrimitive()) {
 			return getPrimitiveTypeId(typeName);
-		} else if ("String".equals(typeName) && "java.lang".equals(typeBinding.getPackage().getName())){
+		} else if ("String".equals(typeName) && "java.lang".equals(typeBinding.getPackage().getName())){ //$NON-NLS-1$ //$NON-NLS-2$
 			return Instruction.T_String;
 		} else {
 			return Instruction.T_Object;
@@ -2186,7 +2364,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return getPrimitiveTypeId(((PrimitiveType)type).getPrimitiveTypeCode().toString());
 		} else if (type.isSimpleType()) {
 			SimpleType simpleType = (SimpleType) type;
-			if ("java.lang.String".equals(simpleType.getName())){
+			if ("java.lang.String".equals(simpleType.getName())){ //$NON-NLS-1$
 				return Instruction.T_String;
 			} else {
 				return Instruction.T_Object;
@@ -2199,14 +2377,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 	}
 
-	private String getMethodSignature(IMethodBinding methodBinding) {
+	private String getMethodSignature(IMethodBinding methodBinding, String enclosingTypeSignature) {
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
-		int argCount = parameterTypes.length;
-		String[] parameterSignatures = new String[argCount];
-		for (int i = 0; i < argCount; i++) {
-			parameterSignatures[i] = Signature.createTypeSignature(getQualifiedName(parameterTypes[i]), true);
+		int i;
+		int argCount;
+		String[] parameterSignatures;
+		if (enclosingTypeSignature == null) {
+			i= 0;
+			argCount= parameterTypes.length;
+			parameterSignatures= new String[argCount];
+		} else {
+			i= 1;
+			argCount= parameterTypes.length + 1;
+			parameterSignatures= new String[argCount];
+			parameterSignatures[0]= enclosingTypeSignature;
 		}
-		String signature = Signature.createMethodSignature(parameterSignatures, Signature.createTypeSignature(getQualifiedName(methodBinding.getReturnType()), true));
+		for (; i < argCount; i++) {
+			parameterSignatures[i]= getTypeSignature(parameterTypes[i]);
+		}
+		String signature= Signature.createMethodSignature(parameterSignatures, getTypeSignature(methodBinding.getReturnType()));
 		return signature;
 	}
 
@@ -2243,23 +2432,23 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private String getPrimitiveTypeSignature(String typeName) {
 		switch (getPrimitiveTypeId(typeName)) {
 			case Instruction.T_byte:
-				return "B";
+				return "B"; //$NON-NLS-1$
 			case Instruction.T_char:
-				return "C";
+				return "C"; //$NON-NLS-1$
 			case Instruction.T_double:
-				return "D";
+				return "D"; //$NON-NLS-1$
 			case Instruction.T_float:
-				return "F";
+				return "F"; //$NON-NLS-1$
 			case Instruction.T_int:
-				return "I";
+				return "I"; //$NON-NLS-1$
 			case Instruction.T_long:
-				return "J";
+				return "J"; //$NON-NLS-1$
 			case Instruction.T_short:
-				return "S";
+				return "S"; //$NON-NLS-1$
 			case Instruction.T_boolean:
-				return "Z";
+				return "Z"; //$NON-NLS-1$
 			case Instruction.T_void:
-				return "V";
+				return "V"; //$NON-NLS-1$
 		}
 		// throw exception
 		return null;

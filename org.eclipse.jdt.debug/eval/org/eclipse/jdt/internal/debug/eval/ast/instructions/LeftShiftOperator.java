@@ -4,8 +4,8 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class LeftShiftOperator extends BinaryOperator {
 	public LeftShiftOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
@@ -17,66 +17,66 @@ public class LeftShiftOperator extends BinaryOperator {
 	}
 
 	/*
-	 * @see BinaryOperator#getBooleanResult(IValue, IValue)
+	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IValue leftOperand, IValue rightOperand) {
+	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return false;
 	}
 
 	/*
-	 * @see BinaryOperator#getDoubleResult(IValue, IValue)
+	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IValue leftOperand, IValue rightOperand) {
+	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getFloatResult(IValue, IValue)
+	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IValue leftOperand, IValue rightOperand) {
+	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
-	 * @see BinaryOperator#getIntResult(IValue, IValue)
+	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
-	protected int getIntResult(IValue leftOperand, IValue rightOperand) {
+	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		// unary type promotion on both operands see 5.6.1 and 15.18
 		switch (fRightTypeId) {
 			case T_long :
-				return ((IPrimitiveValue) leftOperand).getIntValue() << ((IPrimitiveValue) rightOperand).getLongValue();
+				return ((IJavaPrimitiveValue) leftOperand).getIntValue() << ((IJavaPrimitiveValue) rightOperand).getLongValue();
 			case T_int :
 			case T_short :
 			case T_byte :
 			case T_char :
-				return ((IPrimitiveValue) leftOperand).getIntValue() << ((IPrimitiveValue) rightOperand).getIntValue();
+				return ((IJavaPrimitiveValue) leftOperand).getIntValue() << ((IJavaPrimitiveValue) rightOperand).getIntValue();
 			default :
 				return 0;
 		}
 	}
 
 	/*
-	 * @see BinaryOperator#getLongResult(IValue, IValue)
+	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
-	protected long getLongResult(IValue leftOperand, IValue rightOperand) {
+	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		// unary type promotion on both operands see 5.6.1 and 15.18
 		switch (fRightTypeId) {
 			case T_long :
-				return ((IPrimitiveValue) leftOperand).getLongValue() << ((IPrimitiveValue) rightOperand).getLongValue();
+				return ((IJavaPrimitiveValue) leftOperand).getLongValue() << ((IJavaPrimitiveValue) rightOperand).getLongValue();
 			case T_int :
 			case T_short :
 			case T_byte :
 			case T_char :
-				return ((IPrimitiveValue) leftOperand).getLongValue() << ((IPrimitiveValue) rightOperand).getIntValue();
+				return ((IJavaPrimitiveValue) leftOperand).getLongValue() << ((IJavaPrimitiveValue) rightOperand).getIntValue();
 			default :
 				return 0;
 		}
 	}
 
 	/*
-	 * @see BinaryOperator#getStringResult(IValue, IValue)
+	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IValue leftOperand, IValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return null;
 	}
 
@@ -86,7 +86,7 @@ public class LeftShiftOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'<<' operator";
+		return InstructionsEvaluationMessages.getString("LeftShiftOperator._<<___operator_1"); //$NON-NLS-1$
 	}
 
 }
