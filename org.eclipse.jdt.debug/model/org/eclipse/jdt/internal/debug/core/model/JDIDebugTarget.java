@@ -166,6 +166,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private ILaunch fLaunch;	
 	
 	/**
+	 * Count of the number of suspend events in this target
+	 */
+	private int fSuspendCount = 0;
+	
+	/**
 	 * List of step filters - each string is a patter/fully qualified
 	 * name of a type to filter.
 	 */
@@ -2009,6 +2014,24 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	private void setLaunch(ILaunch launch) {
 		fLaunch = launch;
+	}
+	
+	/**
+	 * Returns the number of suspend events that have occurred in this
+	 * target.
+	 * 
+	 * @return the number of suspend events that have occurred in this
+	 * target
+	 */
+	protected int getSuspendCount() {
+		return fSuspendCount;
+	} 
+	
+	/**
+	 * Increments the suspend counter for this target
+	 */
+	protected void incrementSuspendCount() {
+		fSuspendCount++;
 	}
 }
 

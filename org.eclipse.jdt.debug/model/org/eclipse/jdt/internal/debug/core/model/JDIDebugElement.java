@@ -154,6 +154,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	public void fireSuspendEvent(int detail) {
+		getJavaDebugTarget().incrementSuspendCount();
 		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}
 	
@@ -165,6 +166,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	public void queueSuspendEvent(int detail) {
+		getJavaDebugTarget().incrementSuspendCount();
 		queueEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}
 			

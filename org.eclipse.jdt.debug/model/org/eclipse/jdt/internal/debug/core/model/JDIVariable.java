@@ -23,6 +23,15 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 */
 	private JDIValue fValue;
 	
+	/**
+	 * Counter corresponding to this variable's debug target
+	 * suspend count indicating the last time this value 
+	 * changed. This variable's value has changed on the
+	 * last suspend event if this counter is equal to the
+	 * debug target's suspend count.
+	 */
+	private int fLastChangeIndex = -1;
+	
 	protected final static String jdiStringSignature= "Ljava/lang/String;"; //$NON-NLS-1$
 	
 	public JDIVariable(JDIDebugTarget target) {
@@ -81,8 +90,10 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 			}
 			if (previousValue == null || currentValue == null) {
 				fValue = JDIValue.createValue((JDIDebugTarget)getDebugTarget(), currentValue);
+				setChangeCount(getJavaDebugTarget().getSuspendCount());
 			} else if (!previousValue.equals(currentValue)) {
 				fValue = JDIValue.createValue((JDIDebugTarget)getDebugTarget(), currentValue);
+				setChangeCount(getJavaDebugTarget().getSuspendCount());
 			}
 		}
 		return fValue;
@@ -216,5 +227,32 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 			return fValue.getUnderlyingValue();
 		}
 	}
+	
+	/**
+	 * Sets this variable's change counter to the specified value
+	 * 
+	 * @param count new value
+	 */
+	protected void setChangeCount(int count) {
+		fLastChangeIndex = count;
+	}
+	
+	/**
+	 * Returns this variable's change counter. This corresponds to the
+	 * last time this variable changed.
+	 * 
+	 * @return this variable's change counter
+	 */
+	protected int getChangeCount() {
+		return fLastChangeIndex;
+	}
+	
+	/**
+	 * @see IVariable#hasValueChanged()
+	 */
+	public boolean hasValueChanged() throws DebugException {
+		return getChangeCount() == getJavaDebugTarget().getSuspendCount();
+	}
+
 }
 
