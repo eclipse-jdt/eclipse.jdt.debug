@@ -50,7 +50,7 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		ClassPrepareEventImpl event = new ClassPrepareEventImpl(vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
-		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, dataInStream);
+		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, false, dataInStream);
 		target.readInt("class status", ReferenceTypeImpl.classStatusStrings(), dataInStream); //$NON-NLS-1$
 		return event;
    	}

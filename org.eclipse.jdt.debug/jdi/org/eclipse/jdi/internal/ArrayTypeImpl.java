@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,8 +54,8 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	/**
 	 * Creates new ArrayTypeImpl.
 	 */
-	public ArrayTypeImpl(VirtualMachineImpl vmImpl, JdwpArrayID arrayID, String signature) {
-		super("ArrayType", vmImpl, arrayID, signature); //$NON-NLS-1$
+	public ArrayTypeImpl(VirtualMachineImpl vmImpl, JdwpArrayID arrayID, String signature, String genericSignature) {
+		super("ArrayType", vmImpl, arrayID, signature, genericSignature); //$NON-NLS-1$
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns a text representation of the component type.
 	 */
 	public String componentTypeName() {
-		return TypeImpl.signatureToName(componentSignature());
+		return GenericSignature.signatureToName(componentSignature());
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	public static ArrayTypeImpl readWithSignature(MirrorImpl target, DataInputStream in) throws IOException {
+	public static ArrayTypeImpl readWithSignature(MirrorImpl target, boolean withGenericSignature, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpArrayID ID = new JdwpArrayID(vmImpl);
 		ID.read(in);
@@ -205,6 +205,10 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 			target.fVerboseWriter.println("arrayType", ID.value()); //$NON-NLS-1$
 
 		String signature = target.readString("signature", in); //$NON-NLS-1$
+		String genericSignature= null;
+		if (withGenericSignature) {
+			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+		}
 		if (ID.isNull())
 			return null;
 			
@@ -214,6 +218,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 			vmImpl.addCachedMirror(mirror);
 		}
 		mirror.setSignature(signature);
+		mirror.setGenericSignature(genericSignature);
 		return mirror;
 	 }
 	 

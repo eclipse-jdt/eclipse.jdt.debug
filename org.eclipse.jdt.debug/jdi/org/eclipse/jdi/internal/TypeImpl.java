@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,11 +52,11 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	 */
 	public static TypeImpl create(VirtualMachineImpl vmImpl, String signature, ClassLoaderReference classLoader) throws ClassNotLoadedException {
 		// For void values, a VoidType is always returned.
-		if (TypeImpl.isVoidSignature(signature))
+		if (GenericSignature.isVoidSignature(signature))
 			return new VoidTypeImpl(vmImpl);
 		
 		// For primitive variables, an appropriate PrimitiveType is always returned. 
-		if (TypeImpl.isPrimitiveSignature(signature))
+		if (GenericSignature.isPrimitiveSignature(signature))
 			return PrimitiveTypeImpl.create(vmImpl, signature);
 		
 		// For object variables, the appropriate ReferenceType is returned if it has
@@ -114,45 +114,6 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	 * @return Returns modifier bits.
 	 */
 	public abstract int modifiers();
-	
-	/**
-	 * @returns Returns true if signature is a class signature.
-	 */
-	public static boolean isClassSignature(String signature) {
-		return signature.charAt(0) == 'L';
-	}
-
-	/**
-	 * @returns Returns true if signature is an array signature.
-	 */
-	public static boolean isArraySignature(String signature) {
-		return signature.charAt(0) == '[';
-	}
-
-	/**
-	 * @returns Returns true if signature is an primitive signature.
-	 */
-	public static boolean isPrimitiveSignature(String signature) {
-		switch (signature.charAt(0)) {
-			case 'Z':
-			case 'B':
-			case 'C':
-			case 'S':
-			case 'I':
-			case 'J':
-			case 'F':
-			case 'D':
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @returns Returns true if signature is void signature.
-	 */
-	public static boolean isVoidSignature(String signature) {
-		return (signature.charAt(0) == 'V');
-	}
 	
 	/**
 	 * Converts a class name to a JNI signature.
@@ -235,117 +196,6 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		signature.append(name.replace('.','/'));
 		signature.append(';');
 		return signature.toString();
-	}
-
-	/**
-	 * Converts a JNI class signature to a name.
-	 */
-	public static String classSignatureToName(String signature) {
-		// L<classname>;  : fully-qualified-class  
-		return signature.substring(1, signature.length() - 1).replace('/','.');
-	}
-
-	/**
-	 * Converts a JNI array signature to a name.
-	 */
-	public static String arraySignatureToName(String signature) {
-		// [<type> : array of type <type>
-		if (signature.indexOf('[') < 0) {
-			return signature;
-		}
-		StringBuffer name= new StringBuffer();
-		String type= signature.substring(signature.lastIndexOf('[') + 1);
-		if (type.length() == 1 && isPrimitiveSignature(type)) {
-			name.append(getPrimitiveSignatureToName(type.charAt(0)));
-		} else {
-			name.append(classSignatureToName(type));
-		}
-		int index= 0;
-		while ((index= (signature.indexOf('[', index) + 1)) > 0) {
-			name.append('[').append(']');
-		}
-		return signatureToName(signature.substring(1)) + "[]"; //$NON-NLS-1$
-	}
-
-	/**
-	 * @returns Returns Type Name, converted from a JNI signature.
-	 */
-	public static String signatureToName(String signature) {
-		// See JNI 1.1 Specification, Table 3-2 Java VM Type Signatures.
-		String primitive= getPrimitiveSignatureToName(signature.charAt(0));
-		if (primitive != null) {
-			return primitive;
-		}
-		switch (signature.charAt(0)) {
-			case 'V':
-				return "void"; //$NON-NLS-1$
-			case 'L':
-				return classSignatureToName(signature);
-			case '[':
-				return arraySignatureToName(signature);
-			case '(':
-				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_convert_method_signature_to_name_2")); //$NON-NLS-1$
-		}
-		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____3") + signature + JDIMessages.getString("TypeImpl.__4")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	private static String getPrimitiveSignatureToName(char signature) {
-		switch (signature) {
-			case 'Z':
-				return "boolean"; //$NON-NLS-1$
-			case 'B':
-				return "byte"; //$NON-NLS-1$
-			case 'C':
-				return "char"; //$NON-NLS-1$
-			case 'S':
-				return "short"; //$NON-NLS-1$
-			case 'I':
-				return "int"; //$NON-NLS-1$
-			case 'J':
-				return "long"; //$NON-NLS-1$
-			case 'F':
-				return "float"; //$NON-NLS-1$
-			case 'D':
-				return "double"; //$NON-NLS-1$
-			default:
-				return null;
-		}
-	}
-	
-	/**
-	 * @returns Returns length of the Class type-string in the signature at the given index.
-	 */
-	private static int signatureClassTypeStringLength(String signature, int index) {
-		int endPos = signature.indexOf(';', index + 1);
-		if (endPos < 0)
-			throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_Class_Type_signature_5")); //$NON-NLS-1$
-			
-		return endPos - index + 1;
-	}
-	
-	/**
-	 * @returns Returns length of the first type-string in the signature at the given index.
-	 */
-	public static int signatureTypeStringLength(String signature, int index) {
-		switch (signature.charAt(index)) {
-			case 'Z':
-			case 'B':
-			case 'C':
-			case 'S':
-			case 'I':
-			case 'J':
-			case 'F':
-			case 'D':
-			case 'V':
-				return 1;
-			case 'L':
-				return signatureClassTypeStringLength(signature, index);
-			case '[':
-				return 1 + signatureTypeStringLength(signature, index + 1);
-			case '(':
-				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_covert_method_signature_to_name_6")); //$NON-NLS-1$
-		}
-		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____7") + signature + JDIMessages.getString("TypeImpl.__8")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**

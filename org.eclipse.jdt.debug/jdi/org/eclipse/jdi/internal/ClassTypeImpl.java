@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,8 +61,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/**
 	 * Creates new ClassTypeImpl.
 	 */
-	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID, String signature) {
-		super("ClassType", vmImpl, classID, signature); //$NON-NLS-1$
+	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID, String signature, String genericSignature) {
+		super("ClassType", vmImpl, classID, signature, genericSignature); //$NON-NLS-1$
 	}
 
 	/**
@@ -386,7 +386,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/*
 	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if ID is unknown a newly created ReferenceTypeImpl.
 	 */
-	public static ClassTypeImpl readWithSignature(MirrorImpl target, DataInputStream in) throws IOException {
+	public static ClassTypeImpl readWithSignature(MirrorImpl target, boolean withGenericSignature, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpClassID ID = new JdwpClassID(vmImpl);
 		ID.read(in);
@@ -394,6 +394,10 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			target.fVerboseWriter.println("classType", ID.value()); //$NON-NLS-1$
 
 		String signature = target.readString("signature", in); //$NON-NLS-1$
+		String genericSignature= null;
+		if (withGenericSignature) {
+			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+		}
 		if (ID.isNull())
 			return null;
 			
@@ -403,6 +407,18 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			vmImpl.addCachedMirror(mirror);
 		}
 		mirror.setSignature(signature);
+		mirror.setGenericSignature(genericSignature);
 		return mirror;
 	 }
+	
+	public boolean isEnum() {
+		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5)) {
+			// there is no modifier for this ... :(
+			ClassType superClass = superclass();
+			return superClass != null && "<E:Ljava/lang/Enum<TE;>;>Ljava/lang/Object;Ljava/lang/Comparable<TE;>;Ljava/io/Serializable;".equals(superClass.genericSignature()); //$NON-NLS-1$
+		} 
+		// jdwp 1.5 only option
+		return false;
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -320,6 +320,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private int fModifierBits = -1;
 	private ClassLoaderReferenceImpl fClassLoader = null;
 	private ClassObjectReferenceImpl fClassObject = null;
+	
+	private String fGenericSignature; // 1.5 addition
+	private boolean fGenericSignatureKnown; // 1.5 addition
 
 	private boolean fGotClassFileVersion = false;	// HCR addition.
 	private int fClassFileVersion;	// HCR addition.
@@ -356,10 +359,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/**
 	 * Creates new instance.
 	 */
-	protected ReferenceTypeImpl(String description, VirtualMachineImpl vmImpl, JdwpReferenceTypeID referenceTypeID, String signature) {
+	protected ReferenceTypeImpl(String description, VirtualMachineImpl vmImpl, JdwpReferenceTypeID referenceTypeID, String signature, String genericSignature) {
 		super(description, vmImpl);
 		fReferenceTypeID = referenceTypeID;
 		setSignature(signature);
+		setGenericSignature(genericSignature);
 	}
 	
 	/**
@@ -406,6 +410,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		fClassLoader = null;
 		fClassObject = null;
 		fGotClassFileVersion = false;
+		// java 1.5
+		fGenericSignature= null;
+		fGenericSignatureKnown= false;
 		
 		// JSR-045
 		fSourceDebugExtensionAvailable= true;
@@ -824,20 +831,22 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// order in this list can be used for comparisons.
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_FIELDS, this);
+			boolean withGenericSignature= virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5);
+			int jdwpCommand= withGenericSignature ? JdwpCommandPacket.RT_FIELDS_WITH_GENERIC : JdwpCommandPacket.RT_FIELDS;
+			JdwpReplyPacket replyPacket = requestVM(jdwpCommand, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			List elements = new ArrayList();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
-				FieldImpl elt = FieldImpl.readWithNameSignatureModifiers(this, this, replyData);
+				FieldImpl elt = FieldImpl.readWithNameSignatureModifiers(this, this, withGenericSignature, replyData);
 				if (elt == null) {
 					continue;
 				}
 				elements.add(elt);
 			}
 			fFields = elements;
-			return elements;
+			return fFields;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
@@ -864,7 +873,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
 		if (methodID.value() == 0) {
-			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", -1); //$NON-NLS-1$ //$NON-NLS-2$
+			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", null, -1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fMethodTable == null) {
 			fMethodTable= new Hashtable();
@@ -996,20 +1005,22 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// order in this list can be used for comparisons.
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_METHODS, this);
+			boolean withGenericSignature= virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5);
+			int jdwpCommand= withGenericSignature ? JdwpCommandPacket.RT_METHODS_WITH_GENERIC : JdwpCommandPacket.RT_METHODS;
+			JdwpReplyPacket replyPacket = requestVM(jdwpCommand, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			List elements = new ArrayList();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
-				MethodImpl elt = MethodImpl.readWithNameSignatureModifiers(this, this, replyData);
+				MethodImpl elt = MethodImpl.readWithNameSignatureModifiers(this, this, withGenericSignature, replyData);
 				if (elt == null) {
 					continue;
 				}
 				elements.add(elt);
 			}
 			fMethods = elements;
-			return elements;
+			return fMethods;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
@@ -1054,7 +1065,20 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public String name() {
 		// Make sure that we know the signature, from which the name is derived.
 		if (fName == null) {
-			setName(signatureToName(signature()));
+			String genericSignature= genericSignature();
+			StringBuffer name= new StringBuffer(GenericSignature.signatureToName(signature()));
+			if (genericSignature != null) {
+				List parameters= GenericSignature.getTypeParameters(genericSignature);
+				Iterator iterator= parameters.iterator();
+				if (iterator.hasNext()) {
+					name.append('<').append(iterator.next());
+					while (iterator.hasNext()) {
+						name.append(',').append(iterator.next());
+					}
+					name.append('>');
+				}
+			}
+			setName(name.toString());
 		}
 		return fName;
 	}
@@ -1210,17 +1234,17 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/**
 	 * @return Reads JDWP representation and returns new or cached instance.
 	 */
-	public static ReferenceTypeImpl readWithTypeTagAndSignature(MirrorImpl target, DataInputStream in) throws IOException {
+	public static ReferenceTypeImpl readWithTypeTagAndSignature(MirrorImpl target, boolean withGenericSignature, DataInputStream in) throws IOException {
 		byte typeTag = target.readByte("type tag", JdwpID.typeTagMap(), in); //$NON-NLS-1$
 		switch (typeTag) {
 	   		case 0:
 				return null;
 			case ArrayTypeImpl.typeTag:
-				return ArrayTypeImpl.readWithSignature(target, in);
+				return ArrayTypeImpl.readWithSignature(target, withGenericSignature, in);
 			case ClassTypeImpl.typeTag:
-				return ClassTypeImpl.readWithSignature(target, in);
+				return ClassTypeImpl.readWithSignature(target, withGenericSignature, in);
 			case InterfaceTypeImpl.typeTag:
-				return InterfaceTypeImpl.readWithSignature(target, in);
+				return InterfaceTypeImpl.readWithSignature(target, withGenericSignature, in);
 		}
 		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___8") + typeTag); //$NON-NLS-1$
 	}
@@ -1269,7 +1293,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 		}
 
-		throw new ClassNotLoadedException(TypeImpl.classSignatureToName(signature), JDIMessages.getString("ReferenceTypeImpl.Type_has_not_been_loaded_10")); //$NON-NLS-1$
+		throw new ClassNotLoadedException(GenericSignature.signatureToName(signature), JDIMessages.getString("ReferenceTypeImpl.Type_has_not_been_loaded_10")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1863,6 +1887,61 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			result.add(new LocationImpl(virtualMachineImpl(), method, codeIndexTable[i]));
 		}
 		return result;
+	}
+	
+	/*
+	 * @since 3.0
+	 * @since java 1.5
+	 */
+	public String genericSignature() {
+		if (fGenericSignatureKnown) {
+			return fGenericSignature;
+		}
+		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5)) {
+			initJdwpRequest();
+			try {
+		   		JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SIGNATURE_WITH_GENERIC, this);
+				defaultReplyErrorHandler(replyPacket.errorCode());
+				DataInputStream replyData = replyPacket.dataInStream();
+				setSignature(readString("signature", replyData)); //$NON-NLS-1$
+				fGenericSignature= readString("generic signature", replyData); //$NON-NLS-1$
+				if (fGenericSignature.length() == 0) {
+					fGenericSignature= null;
+				}
+				fGenericSignatureKnown= true;
+			} catch (IOException e) {
+				defaultIOExceptionHandler(e);
+		   		return null;
+			} finally {
+				handledJdwpRequest();
+			}
+		} else {
+			fGenericSignatureKnown= true;
+		}
+		return fGenericSignature;
+	}
+	
+	/**
+	 * if genericSignature is <code>null</code>, the generic signature is set to not-known
+	 * (genericSignature() will ask the VM for the generic signature)
+	 * if genericSignature is an empty String, the generic signature is set to no-generic-signature
+	 * (genericSignature() will return null)
+	 * if genericSignature is an non-empty String, the generic signature is set to the specified value
+	 * (genericSignature() will return the specified value)
+	 * @since 3.0
+	 */
+	public void setGenericSignature(String genericSignature) {
+		if (genericSignature == null) {
+			fGenericSignature= null;
+			fGenericSignatureKnown= false;
+		} else {
+			if (genericSignature.length() == 0) {
+				fGenericSignature= null;
+			} else {
+				fGenericSignature= genericSignature;
+			}
+			fGenericSignatureKnown= true;
+		}
 	}
 
 }

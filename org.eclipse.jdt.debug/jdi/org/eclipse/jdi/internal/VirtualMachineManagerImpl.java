@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,10 @@ import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketRawLaunchingConnectorImpl;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
+import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.LaunchingConnector;
+import com.sun.jdi.connect.spi.Connection;
 
 /**
  * this class implements the corresponding interfaces
@@ -41,7 +43,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/** Major interface version. */
 	public static int MAJOR_INTERFACE_VERSION = 1;
 	/** Minor interface version. */
-	public static int MINOR_INTERFACE_VERSION = 4;
+	public static int MINOR_INTERFACE_VERSION = 5;
 	/** PrintWriter where verbose info is written to, null if no verbose must be given. */
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
@@ -131,8 +133,8 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 				// JDI plug-in is not loaded
 				return JDIDebugModel.DEF_REQUEST_TIMEOUT;
 			}
-		} catch (Exception e) {
-			// ClassNotFoundException
+		} catch (Throwable e) {
+			// ClassNotFoundException, NoClassDefFoundError
 		}
 		// return the hard coded preference if the jdi debug plug-in does not exist
 		return 3000;
@@ -209,5 +211,15 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	public PrintWriter verbosePrintWriter() {
 		return fVerbosePrintWriter;
+	}
+	
+	public VirtualMachine createVirtualMachine(Connection arg1) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public VirtualMachine createVirtualMachine(Connection arg1, Process arg2) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

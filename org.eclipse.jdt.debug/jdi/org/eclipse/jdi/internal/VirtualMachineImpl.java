@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -331,13 +331,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
-		 	JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_ALL_CLASSES);
+			boolean withGenericSignature= virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5);
+			int jdwpCommand= withGenericSignature ? JdwpCommandPacket.VM_ALL_CLASSES_WITH_GENERIC : JdwpCommandPacket.VM_ALL_CLASSES;
+		 	JdwpReplyPacket replyPacket = requestVM(jdwpCommand);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			List elements = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTagAndSignature(this, replyData);
+				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTagAndSignature(this, withGenericSignature, replyData);
 				if (elt == null) {
 					continue;
 				}
@@ -1291,6 +1293,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			fShortType= new ShortTypeImpl(this);
 		}
 		return fShortType;
+	}
+	
+	public boolean canBeModified() {
+		return true;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,13 @@ public interface Method extends TypeComponent , Locatable , Comparable {
 	public boolean equals(Object arg1);
 	public int hashCode();
 	public boolean isAbstract();
+	public boolean isBridge();
 	public boolean isConstructor();
 	public boolean isNative();
 	public boolean isStaticInitializer();
 	public boolean isSynchronized();
 	public boolean isObsolete();
+	public boolean isVarargs();
 	public Location locationOfCodeIndex(long arg1);
 	public List locationsOfLine(int arg1) throws AbsentInformationException;
 	public Type returnType() throws ClassNotLoadedException;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ public interface ClassType extends ReferenceType {
 	public Method concreteMethodByName(String arg1, String arg2);
 	public List interfaces();
 	public Value invokeMethod(ThreadReference arg1, Method arg2, List arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException;
+	public boolean isEnum();
 	public ObjectReference newInstance(ThreadReference arg1, Method arg2, List arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException;
 	public void setValue(Field arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
 	public List subclasses();

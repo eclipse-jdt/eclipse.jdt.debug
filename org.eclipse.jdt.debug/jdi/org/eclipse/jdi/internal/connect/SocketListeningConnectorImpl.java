@@ -119,6 +119,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns a connected Virtual Machine.
 	 */
 	public VirtualMachine accept(Map connectionArgs) throws IOException {
+		// TODO TransportTimeoutException ?
 		((SocketTransportImpl)fTransport).setAcceptTimeout(fTimeout);
 		((SocketTransportImpl)fTransport).accept();
 		if (fTransport.isOpen()) {

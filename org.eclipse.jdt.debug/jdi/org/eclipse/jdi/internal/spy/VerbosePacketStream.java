@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,11 @@ public class VerbosePacketStream extends PrintStream {
 	public static final int ACC_INTERFACE=   0x0200;
 	public static final int ACC_ABSTRACT=    0x0400;
 	public static final int ACC_STRICT=      0x0800;
+	public static final int ACC_ENUM=		 0x0100;
+	public static final int ACC_VARARGS=	 0x0080;
+	public static final int ACC_BRIDGE=		 0x0040;
+	public static final int ACC_SYNTHETIC=	 0x1000;
+	public static final int ACC_SYNCHRONIZED=0x0020;
 	
 	public static final int ACC_EXT_SYNTHETIC= 0xf0000000;
 	
@@ -292,6 +297,12 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.VM_REDEFINE_CLASSES:
 				printVmRedefineClassCommand(in);
 				break;
+			case JdwpCommandPacket.VM_SET_DEFAULT_STRATUM:
+				printVmSetDefaultStratumCommand(in);
+				break;
+			case JdwpCommandPacket.VM_ALL_CLASSES_WITH_GENERIC:
+				// no data
+				break;
 		
 			/** Commands ReferenceType. */
 			case JdwpCommandPacket.RT_SIGNATURE:
@@ -330,6 +341,15 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.RT_SOURCE_DEBUG_EXTENSION:
 				printRtDefaultCommand(in);
 				break;
+			case JdwpCommandPacket.RT_SIGNATURE_WITH_GENERIC:
+				printRtDefaultCommand(in);
+				break;
+			case JdwpCommandPacket.RT_FIELDS_WITH_GENERIC:
+				printRtDefaultCommand(in);
+				break;
+			case JdwpCommandPacket.RT_METHODS_WITH_GENERIC:
+				printRtDefaultCommand(in);
+				break;
 		
 			/** Commands ClassType. */
 			case JdwpCommandPacket.CT_SUPERCLASS:
@@ -361,6 +381,9 @@ public class VerbosePacketStream extends PrintStream {
 				printMDefaultCommand(in);
 				break;
 			case JdwpCommandPacket.M_IS_OBSOLETE:
+				printMDefaultCommand(in);
+				break;
+			case JdwpCommandPacket.M_VARIABLE_TABLE_WITH_GENERIC:
 				printMDefaultCommand(in);
 				break;
 		
@@ -580,7 +603,10 @@ public class VerbosePacketStream extends PrintStream {
 				// no data
 				break;
 			case JdwpCommandPacket.VM_SET_DEFAULT_STRATUM:
-				printVmSetDefaultStratumCommand(in);
+				// no data
+				break;
+			case JdwpCommandPacket.VM_ALL_CLASSES_WITH_GENERIC:
+				printVmAllClassesWithGenericReply(in);
 				break;
 		
 			/** Commands ReferenceType. */
@@ -620,6 +646,15 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.RT_SOURCE_DEBUG_EXTENSION:
 				printRtSourceDebugExtensionReply(in);
 				break;
+			case JdwpCommandPacket.RT_SIGNATURE_WITH_GENERIC:
+				printRtSignatureWithGenericReply(in);
+				break;
+			case JdwpCommandPacket.RT_FIELDS_WITH_GENERIC:
+				printRtFieldsWithGenericReply(in);
+				break;
+			case JdwpCommandPacket.RT_METHODS_WITH_GENERIC:
+				printRtMethodsWithGenericReply(in);
+				break;
 		
 			/** Commands ClassType. */
 			case JdwpCommandPacket.CT_SUPERCLASS:
@@ -652,6 +687,9 @@ public class VerbosePacketStream extends PrintStream {
 				break;
 			case JdwpCommandPacket.M_IS_OBSOLETE:
 				printMIsObsoleteReply(in);
+				break;
+			case JdwpCommandPacket.M_VARIABLE_TABLE_WITH_GENERIC:
+				printMVariableTableWithGenericReply(in);
 				break;
 		
 			/** Commands ObjectReference. */
@@ -863,7 +901,7 @@ public class VerbosePacketStream extends PrintStream {
 		println(')');
 	}
 	
-	private void printModifiers(int modifiers) {
+	private void printClassModifiers(int modifiers) {
 		printDescription(TcpIpSpyMessages.getString("VerbosePacketStream.Modifiers__23")); //$NON-NLS-1$
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
@@ -912,21 +950,97 @@ public class VerbosePacketStream extends PrintStream {
 			}
 			print("SUPER"); //$NON-NLS-1$
 		}
-		if ((modifiers & ACC_VOLATILE) != 0) {
+		if ((modifiers & ACC_INTERFACE) != 0) {
 			if (spaceNeeded) {
 				print(' ');
 			} else {
 				spaceNeeded= true;
 			}
-			print("VOLATILE"); //$NON-NLS-1$
+			print("INTERFACE"); //$NON-NLS-1$
 		}
-		if ((modifiers & ACC_TRANSIENT) != 0) {
+		if ((modifiers & ACC_ABSTRACT) != 0) {
 			if (spaceNeeded) {
 				print(' ');
 			} else {
 				spaceNeeded= true;
 			}
-			print("TRANSIENT"); //$NON-NLS-1$
+			print("ABSTRACT"); //$NON-NLS-1$
+		}
+		if ((modifiers & (ACC_EXT_SYNTHETIC | ACC_SYNTHETIC)) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("SYNTHETIC"); //$NON-NLS-1$
+		}
+		println(')');
+	}
+
+	private void printMethodModifiers(int modifiers) {
+		printDescription(TcpIpSpyMessages.getString("VerbosePacketStream.Modifiers__23")); //$NON-NLS-1$
+		printHex(modifiers);
+		print(" ("); //$NON-NLS-1$
+		boolean spaceNeeded= false;
+		if ((modifiers & ACC_PUBLIC) != 0) {
+			print("PUBLIC"); //$NON-NLS-1$
+			spaceNeeded= true;
+		}
+		if ((modifiers & ACC_PRIVATE) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("PRIVATE"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_PROTECTED) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("PROTECTED"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_STATIC) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("STATIC"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_FINAL) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("FINAL"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_SYNCHRONIZED) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("SYNCHRONIZED"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_BRIDGE) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("BRIDGE"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_VARARGS) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("VARARGS"); //$NON-NLS-1$
 		}
 		if ((modifiers & ACC_NATIVE) != 0) {
 			if (spaceNeeded) {
@@ -935,14 +1049,6 @@ public class VerbosePacketStream extends PrintStream {
 				spaceNeeded= true;
 			}
 			print("NATIVE"); //$NON-NLS-1$
-		}
-		if ((modifiers & ACC_INTERFACE) != 0) {
-			if (spaceNeeded) {
-				print(' ');
-			} else {
-				spaceNeeded= true;
-			}
-			print("INTERFACE"); //$NON-NLS-1$
 		}
 		if ((modifiers & ACC_ABSTRACT) != 0) {
 			if (spaceNeeded) {
@@ -960,7 +1066,83 @@ public class VerbosePacketStream extends PrintStream {
 			}
 			print("STRICT"); //$NON-NLS-1$
 		}
-		if ((modifiers & ACC_EXT_SYNTHETIC) != 0) {
+		if ((modifiers & (ACC_EXT_SYNTHETIC | ACC_SYNTHETIC )) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("SYNTHETIC"); //$NON-NLS-1$
+		}
+		println(')');
+	}
+	
+	private void printFieldModifiers(int modifiers) {
+		printDescription(TcpIpSpyMessages.getString("VerbosePacketStream.Modifiers__23")); //$NON-NLS-1$
+		printHex(modifiers);
+		print(" ("); //$NON-NLS-1$
+		boolean spaceNeeded= false;
+		if ((modifiers & ACC_PUBLIC) != 0) {
+			print("PUBLIC"); //$NON-NLS-1$
+			spaceNeeded= true;
+		}
+		if ((modifiers & ACC_PRIVATE) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("PRIVATE"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_PROTECTED) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("PROTECTED"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_STATIC) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("STATIC"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_FINAL) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("FINAL"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_VOLATILE) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("VOLATILE"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_TRANSIENT) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("TRANSIENT"); //$NON-NLS-1$
+		}
+		if ((modifiers & ACC_ENUM) != 0) {
+			if (spaceNeeded) {
+				print(' ');
+			} else {
+				spaceNeeded= true;
+			}
+			print("ENUM"); //$NON-NLS-1$
+		}
+		if ((modifiers & (ACC_EXT_SYNTHETIC | ACC_SYNTHETIC)) != 0) {
 			if (spaceNeeded) {
 				print(' ');
 			} else {
@@ -1370,6 +1552,23 @@ public class VerbosePacketStream extends PrintStream {
 		println(TcpIpSpyMessages.getString("VerbosePacketStream.Stratum_id__104"), stratumId); //$NON-NLS-1$
 	}
 	
+	private void printVmAllClassesWithGenericReply(DataInputStream in) throws IOException, UnableToParseDataException {
+		int classesCount= in.readInt();
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Classes_count__42"), classesCount); //$NON-NLS-1$
+		for(int i= 0; i < classesCount; i++) {
+			byte refTypeTag= in.readByte();
+			long typeId= readReferenceTypeID(in);
+			String signature= readString(in);
+			String genericSignature= readString(in);
+			int status= in.readInt();
+			printRefTypeTag(refTypeTag);
+			printlnReferenceTypeId(TcpIpSpyMessages.getString("VerbosePacketStream.Type_id__43"), typeId); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Class_signature__41"), signature); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Generic_class_signature__405"), genericSignature); //$NON-NLS-1$
+			printClassStatus(status);
+		}
+	}
+	
 	private void printRtDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long typeId= readReferenceTypeID(in);
 		printlnReferenceTypeId(TcpIpSpyMessages.getString("VerbosePacketStream.Type_id__43"), typeId); //$NON-NLS-1$
@@ -1387,7 +1586,7 @@ public class VerbosePacketStream extends PrintStream {
 
 	private void printRtModifiersReply(DataInputStream in) throws IOException {
 		int modifiers= in.readInt();
-		printModifiers(modifiers);
+		printClassModifiers(modifiers);
 	}
 
 	private void printRtFieldsReply(DataInputStream in) throws IOException, UnableToParseDataException {
@@ -1401,7 +1600,7 @@ public class VerbosePacketStream extends PrintStream {
 			printlnFieldId(TcpIpSpyMessages.getString("VerbosePacketStream.Field_id__109"), fieldId); //$NON-NLS-1$
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.Name__110"), name); //$NON-NLS-1$
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.Signature__106"), signature); //$NON-NLS-1$
-			printModifiers(modifiers);
+			printFieldModifiers(modifiers);
 		}
 	}
 	
@@ -1416,7 +1615,7 @@ public class VerbosePacketStream extends PrintStream {
 			printlnMethodId(TcpIpSpyMessages.getString("VerbosePacketStream.Method_id__113"), methodId); //$NON-NLS-1$
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.Name__110"), name); //$NON-NLS-1$
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.Signature__106"), signature); //$NON-NLS-1$
-			printModifiers(modifiers);
+			printMethodModifiers(modifiers);
 		}
 	}
 	
@@ -1477,6 +1676,47 @@ public class VerbosePacketStream extends PrintStream {
 	private void printRtSourceDebugExtensionReply(DataInputStream in) throws IOException {
 		String extension= readString(in);
 		println(TcpIpSpyMessages.getString("VerbosePacketStream.Extension__127"), extension); //$NON-NLS-1$
+	}
+	
+	private void printRtSignatureWithGenericReply(DataInputStream in) throws IOException {
+		String signature= readString(in);
+		String genericSignature= readString(in);
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Signature__106"), signature); //$NON-NLS-1$
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Generic_signature__422"), genericSignature); //$NON-NLS-1$
+	}
+	
+	private void printRtFieldsWithGenericReply(DataInputStream in) throws IOException, UnableToParseDataException {
+		int fieldsCount= in.readInt();
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Fields_count__108"), fieldsCount); //$NON-NLS-1$
+		for (int i= 0; i < fieldsCount; i++) {
+			long fieldId= readFieldID(in);
+			String name= readString(in);
+			String signature= readString(in);
+			String genericSignature= readString(in);
+			int modifiers= in.readInt();
+			printlnFieldId(TcpIpSpyMessages.getString("VerbosePacketStream.Field_id__109"), fieldId); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Name__110"), name); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Signature__106"), signature); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Generic_signature__422"), genericSignature); //$NON-NLS-1$
+			printFieldModifiers(modifiers);
+		}
+	}
+	
+	private void printRtMethodsWithGenericReply(DataInputStream in) throws IOException, UnableToParseDataException {
+		int methodsCount= in.readInt();
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Methods_count__112"), methodsCount); //$NON-NLS-1$
+		for (int i= 0; i < methodsCount; i++) {
+			long methodId= readMethodID(in);
+			String name= readString(in);
+			String signature= readString(in);
+			String genericSignature= readString(in);
+			int modifiers= in.readInt();
+			printlnMethodId(TcpIpSpyMessages.getString("VerbosePacketStream.Method_id__113"), methodId); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Name__110"), name); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Signature__106"), signature); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Generic_signature__422"), genericSignature); //$NON-NLS-1$
+			printMethodModifiers(modifiers);
+		}
 	}
 	
 	private void printCtSuperclassCommand(DataInputStream in) throws IOException, UnableToParseDataException {
@@ -1599,6 +1839,27 @@ public class VerbosePacketStream extends PrintStream {
 	private void printMIsObsoleteReply(DataInputStream in) throws IOException {
 		boolean isObsolete= in.readBoolean();
 		println(TcpIpSpyMessages.getString("VerbosePacketStream.Is_obsolete__162"), isObsolete); //$NON-NLS-1$
+	}
+	
+	private void printMVariableTableWithGenericReply(DataInputStream in) throws IOException {
+		int slotsUsedByArgs= in.readInt();
+		int variablesCount= in.readInt();
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Nb_of_slots_used_by_all_args__152"), slotsUsedByArgs); //$NON-NLS-1$
+		println(TcpIpSpyMessages.getString("VerbosePacketStream.Nb_of_variables__153"), variablesCount); //$NON-NLS-1$
+		for (int i= 0; i < variablesCount; i++) {
+			long codeIndex= in.readLong();
+			String name= readString(in);
+			String signature= readString(in);
+			String genericSignature= readString(in);
+			int length= in.readInt();
+			int slotId= in.readInt();
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.First_code_index__154"), codeIndex); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Variable_name__155"), name); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Variable_type_signature__156"), signature); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Variable_type_generic_signature__425"), genericSignature); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Code_index_length__157"), length); //$NON-NLS-1$
+			println(TcpIpSpyMessages.getString("VerbosePacketStream.Slot_id__158"), slotId); //$NON-NLS-1$
+		}
 	}
 	
 	private void printOrDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {

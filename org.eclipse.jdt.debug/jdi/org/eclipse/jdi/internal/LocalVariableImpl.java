@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	private String fName;
 	/** The variable type's JNI signature. */
 	private String fSignature;
+	/** The variable type generic signature. */
+	private String fGenericSignature;
 	/**
 	 * Unsigned value used in conjunction with codeIndex.
 	 * The variable can be get or set only when the current
@@ -49,12 +51,13 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	/** Is the local variable an argument of its method? */
 	private boolean fIsArgument;
 	
-	public LocalVariableImpl(VirtualMachineImpl vmImpl, MethodImpl method, long codeIndex, String name, String signature, int length, int slot, boolean isArgument) {
+	public LocalVariableImpl(VirtualMachineImpl vmImpl, MethodImpl method, long codeIndex, String name, String signature, String genericSignature, int length, int slot, boolean isArgument) {
 		super("LocalVariable", vmImpl); //$NON-NLS-1$
 		fMethod = method;
 		fCodeIndex = codeIndex;
 		fName = name;
 		fSignature = signature;
+		fGenericSignature= genericSignature;
 		fLength = length;
 		fSlot = slot;
 		fIsArgument = isArgument;
@@ -161,8 +164,12 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	/** 
 	 * @return Returns a text representation of the declared type of this variable.
 	 */
-	public String typeName() { 
-		return TypeImpl.signatureToName(fSignature);
+	public String typeName() {
+		String signature= genericSignature();
+		if (signature == null) {
+			signature= signature();
+		}
+		return GenericSignature.signatureToName(fSignature);
 	}
 	
 	/** 
@@ -191,6 +198,10 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	 */
 	public String toString() {
 		return fName;
+	}
+	
+	public String genericSignature() {
+		return fGenericSignature;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,11 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -1503,12 +1505,85 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	protected String getQualifiedName(String qualifiedName) {
 		if (!isShowQualifiedNames()) {
-			int index= qualifiedName.lastIndexOf('.');
-			if (index >= 0) {
-				return qualifiedName.substring(index + 1);
-			}
+			return removeQualifierFromGenericName(qualifiedName);
 		}
 		return qualifiedName;
+	}
+	
+	/**
+	 * Return the simple generic name from a qualified generic name
+	 */
+	private String removeQualifierFromGenericName(String qualifiedName) {
+		if (qualifiedName.endsWith("...")) { //$NON-NLS-1$
+			// handle variable argument name
+			return removeQualifierFromGenericName(qualifiedName.substring(0, qualifiedName.length() - 3)) + "..."; //$NON-NLS-1$
+		}
+		// check if the type has parameters
+		int parameterStart= qualifiedName.indexOf('<');
+		if (parameterStart == -1) {
+			return getSimpleName(qualifiedName);
+		} else {
+			// get the list of the parameters and generates their simple name
+			List parameters= getNameList(qualifiedName.substring(parameterStart + 1, qualifiedName.length() - 1));
+			StringBuffer name= new StringBuffer(getSimpleName(qualifiedName.substring(0, parameterStart)));
+			name.append('<');
+			Iterator iterator= parameters.iterator();
+			if (iterator.hasNext()) {
+				name.append(removeQualifierFromGenericName((String)iterator.next()));
+				while (iterator.hasNext()) {
+					name.append(',').append(removeQualifierFromGenericName((String)iterator.next()));
+				}
+			}
+			name.append('>');
+			return name.toString();
+		}
+	}
+	
+	/**
+	 * Return the simple name from a qualified name (non-generic)
+	 */
+	private String getSimpleName(String qualifiedName) {
+		int index = qualifiedName.lastIndexOf('.');
+		if (index >= 0) {
+			return qualifiedName.substring(index + 1);
+		} else {
+			return qualifiedName;
+		}
+	}
+
+	/**
+	 * Decompose a commat separated list of generic names (String) to a list of generic names (List)
+	 */
+	private List getNameList(String listName) {
+		List names= new ArrayList();
+		StringTokenizer tokenizer= new StringTokenizer(listName, ",<>", true); //$NON-NLS-1$
+		int enclosingLevel= 0;
+		int startPos= 0;
+		int currentPos= 0;
+		while (tokenizer.hasMoreTokens()) {
+			String token= tokenizer.nextToken();
+			switch (token.charAt(0)) {
+				case ',':
+					if (enclosingLevel == 0) {
+						names.add(listName.substring(startPos, currentPos));
+						startPos= currentPos + 1;
+					}
+					break;
+				case '<':
+					enclosingLevel++;
+					break;
+				case '>':
+					enclosingLevel--;
+					break;
+				default:
+					if (!tokenizer.hasMoreTokens()) {
+						names.add(listName.substring(startPos));
+					}
+					break;
+			}
+			currentPos += token.length();
+		}
+		return names;
 	}
 
 	/**

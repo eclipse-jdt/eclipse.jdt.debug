@@ -14,6 +14,7 @@ package org.eclipse.jdi.internal.event;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import org.eclipse.jdi.internal.GenericSignature;
 import org.eclipse.jdi.internal.MirrorImpl;
 import org.eclipse.jdi.internal.TypeImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
@@ -57,7 +58,7 @@ public class ClassUnloadEventImpl extends EventImpl implements ClassUnloadEvent 
 	 * @return Returns the name of the class that has been unloaded.
   	 */
 	public String className() {
-		return TypeImpl.signatureToName(fSignature);
+		return GenericSignature.signatureToName(fSignature);
 	}
 	
 	/**

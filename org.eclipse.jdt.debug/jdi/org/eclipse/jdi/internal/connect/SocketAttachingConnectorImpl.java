@@ -83,6 +83,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		 	fHostname = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		 	attribute = "port"; //$NON-NLS-1$
 		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
+		 	// TODO: new timeout attribute ?
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Connection_argument_is_not_of_the_right_type_6"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {

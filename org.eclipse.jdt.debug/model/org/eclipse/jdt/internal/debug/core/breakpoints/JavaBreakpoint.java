@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,10 +319,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (installableType == null || queriedType == null) {
 			return false;
 		}
+		// TODO: need to decide if we should create breakpoint with 1.5 type name and remove this substring()
+		// remove the generic arguments from queriedType
+		int index= queriedType.indexOf('<');
+		if (index != -1) {
+			queriedType= queriedType.substring(0, index);
+		}
 		if (installableType.equals(queriedType)) {
 			return queryInstallListeners(target, type);
 		}
-		int index= queriedType.indexOf('$', 0);
+		index= queriedType.indexOf('$', 0);
 		if (index == -1) {
 			return false;
 		}

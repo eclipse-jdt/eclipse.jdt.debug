@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,10 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int VM_DISPOSE_OBJECTS = 14				 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_HOLD_EVENTS = 15					 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_RELEASE_EVENTS = 16				 + (CSET_VIRTUAL_MACHINE << 8);
-	public static final int VM_CAPABILITIES_NEW = 17				 + (CSET_VIRTUAL_MACHINE << 8);
+	public static final int VM_CAPABILITIES_NEW = 17			 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_REDEFINE_CLASSES = 18			 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_SET_DEFAULT_STRATUM = 19			 + (CSET_VIRTUAL_MACHINE << 8);
+	public static final int VM_ALL_CLASSES_WITH_GENERIC= 20		 + (CSET_VIRTUAL_MACHINE << 8);
 
 	/** Commands ReferenceType. */
 	public static final int RT_SIGNATURE = 1					 + (CSET_REFERENCE_TYPE << 8);
@@ -79,6 +80,9 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int RT_INTERFACES = 10					 + (CSET_REFERENCE_TYPE << 8);
 	public static final int RT_CLASS_OBJECT = 11				 + (CSET_REFERENCE_TYPE << 8);
 	public static final int RT_SOURCE_DEBUG_EXTENSION = 12		 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_SIGNATURE_WITH_GENERIC = 13		 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_FIELDS_WITH_GENERIC = 14			 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_METHODS_WITH_GENERIC = 15		 + (CSET_REFERENCE_TYPE << 8);
 
 	/** Commands ClassType. */
 	public static final int CT_SUPERCLASS = 1					 + (CSET_CLASS_TYPE << 8);
@@ -93,7 +97,8 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int M_LINE_TABLE = 1					 + (CSET_METHOD << 8);
 	public static final int M_VARIABLE_TABLE = 2				 + (CSET_METHOD << 8);
 	public static final int M_BYTECODES = 3						 + (CSET_METHOD << 8);
-	public static final int M_IS_OBSOLETE = 4						 + (CSET_METHOD << 8);
+	public static final int M_IS_OBSOLETE = 4					 + (CSET_METHOD << 8);
+	public static final int M_VARIABLE_TABLE_WITH_GENERIC = 5	 + (CSET_METHOD << 8);
 
 	/** Commands ObjectReference. */
 	public static final int OR_REFERENCE_TYPE = 1				 + (CSET_OBJECT_REFERENCE << 8);

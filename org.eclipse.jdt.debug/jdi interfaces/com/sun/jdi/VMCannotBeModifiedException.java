@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,10 @@
  *******************************************************************************/
 package com.sun.jdi;
 
- 
-public interface LocalVariable extends Mirror , Comparable {
-	public boolean equals(Object arg1);
-	public String genericSignature();
-	public int hashCode();
-	public boolean isArgument();
-	public boolean isVisible(StackFrame arg1);
-	public String name();
-	public String signature();
-	public com.sun.jdi.Type type() throws ClassNotLoadedException;
-	public String typeName();
+public class VMCannotBeModifiedException extends UnsupportedOperationException {
+	public VMCannotBeModifiedException() {
+	}
+	public VMCannotBeModifiedException(String arg1) {
+		super(arg1);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,8 +45,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	/**
 	 * Creates new InterfaceTypeImpl.
 	 */
-	public InterfaceTypeImpl(VirtualMachineImpl vmImpl, JdwpInterfaceID interfaceID, String signature) {
-		super("InterfaceType", vmImpl, interfaceID, signature); //$NON-NLS-1$
+	public InterfaceTypeImpl(VirtualMachineImpl vmImpl, JdwpInterfaceID interfaceID, String signature, String genericSignature) {
+		super("InterfaceType", vmImpl, interfaceID, signature, genericSignature); //$NON-NLS-1$
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	/**
 	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if ID is unknown a newly created ReferenceTypeImpl.
 	 */
-	public static InterfaceTypeImpl readWithSignature(MirrorImpl target, DataInputStream in) throws IOException {
+	public static InterfaceTypeImpl readWithSignature(MirrorImpl target, boolean withGenericSignature, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
@@ -177,6 +177,10 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		}
 
 		String signature = target.readString("signature", in); //$NON-NLS-1$
+		String genericSignature= null;
+		if (withGenericSignature) {
+			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+		}
 		if (ID.isNull()) {
 			return null;
 		}
@@ -187,6 +191,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 			vmImpl.addCachedMirror(mirror);
 		}
 		mirror.setSignature(signature);
+		mirror.setGenericSignature(genericSignature);
 		return mirror;
 	 }
 }

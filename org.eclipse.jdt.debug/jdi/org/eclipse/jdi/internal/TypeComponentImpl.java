@@ -25,6 +25,8 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements TypeCo
 	private String fName = null;
 	/** JNI-style signature for this type. */
 	private String fSignature = null;
+	/** the generic signature for this type, java 1.5 */
+	private String fGenericSignature;
 	/** ReferenceType that holds field or method. */
 	private ReferenceTypeImpl fDeclaringType;
 	/** Modifier bits. */
@@ -33,10 +35,11 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements TypeCo
 	/**
 	 * Creates new instance.
 	 */
-	public TypeComponentImpl(String description, VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, String name, String signature, int modifierBits) {
+	public TypeComponentImpl(String description, VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, String name, String signature, String genericSignature, int modifierBits) {
 		super(description, vmImpl);
 		fName = name;
 		fSignature = signature;
+		fGenericSignature= genericSignature;
 		fDeclaringType= declaringType;
 		fModifierBits = modifierBits;
 	}
@@ -80,7 +83,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements TypeCo
 	 * @return Returns true if type component is synthetic.
 	 */
 	public boolean isSynthetic() {
-		return (fModifierBits & MODIFIER_SYNTHETIC) != 0;
+		return (fModifierBits & (MODIFIER_SYNTHETIC | MODIFIER_ACC_SYNTHETIC)) != 0;
 	}
 	
 	/**
@@ -103,4 +106,9 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements TypeCo
 	public String toString() {
 		return fName;
 	}
+	
+	public String genericSignature() {
+		return fGenericSignature;
+	}
+	
 }

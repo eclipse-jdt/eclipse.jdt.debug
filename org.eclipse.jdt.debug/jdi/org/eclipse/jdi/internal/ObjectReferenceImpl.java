@@ -531,8 +531,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Reads JDWP representation and returns new instance.
 	 */
 	public static ObjectReferenceImpl readObjectRefWithTag(MirrorImpl target, DataInputStream in) throws IOException {
-		byte tag = target.readByte("object tag", JdwpID.tagMap(), in); //$NON-NLS-1$
-		switch (tag) {
+		byte objectTag = target.readByte("object tag", JdwpID.tagMap(), in); //$NON-NLS-1$
+		switch (objectTag) {
 	   		case 0:
 				return null;
 			case ObjectReferenceImpl.tag:
@@ -550,7 +550,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			case ThreadReferenceImpl.tag:
 				return ThreadReferenceImpl.read(target, in);
    	   	}
-		throw new InternalException(JDIMessages.getString("ObjectReferenceImpl.Invalid_ObjectID_tag_encountered___9") + tag); //$NON-NLS-1$
+		throw new InternalException(JDIMessages.getString("ObjectReferenceImpl.Invalid_ObjectID_tag_encountered___9") + objectTag); //$NON-NLS-1$
 	}
 
 	/**

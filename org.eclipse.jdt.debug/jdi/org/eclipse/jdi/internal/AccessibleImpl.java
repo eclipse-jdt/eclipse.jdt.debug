@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import com.sun.jdi.Accessible;
  *
  */
 public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
-	/** Modifier bit flag: Is synthetic. */
+	/** Modifier bit flag: Is synthetic. see MODIFIER_ACC_SYNTHETIC. */
 	public static final int MODIFIER_SYNTHETIC = 0xf0000000;
 	/** Modifier bit flag: Is public; may be accessed from outside its package. */
 	public static final int MODIFIER_ACC_PUBLIC = 0x0001;
@@ -39,14 +39,24 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	public static final int MODIFIER_ACC_SYNCHRONIZED = 0x0020;
 	/** Modifier bit flag: Treat superclass methods specially in invokespecial. */
 	public static final int MODIFIER_ACC_SUPER = 0x0020;
+	/** Modifier bit flag: Is bridge; the method is a synthetic method created to support generic types. */
+	public static final int MODIFIER_ACC_BRIDGE = 0x0040;
 	/** Modifier bit flag: Is volitile; cannot be reached. */
 	public static final int MODIFIER_ACC_VOLITILE = 0x0040;
 	/** Modifier bit flag: Is transient; not written or read by a persistent object manager. */
 	public static final int MODIFIER_ACC_TRANSIENT = 0x0080;
+	/** Modifier bit flag: Is varargs; the method has been declared with variable number of arguments. */
+	public static final int MODIFIER_ACC_VARARGS = 0x0080;
+	/** Modifier bit flag: Is enum; the field hold an element of an enumerated type. */
+	public static final int MODIFIER_ACC_ENUM = 0x0100;
 	/** Modifier bit flag: Is native; implemented in a language other than Java. */
 	public static final int MODIFIER_ACC_NATIVE = 0x0100;
 	/** Modifier bit flag: Is abstract; no implementation is provided. */
 	public static final int MODIFIER_ACC_ABSTRACT = 0x0400;
+	/** Modifier bit flag: Is strict;  the method floating-point mode is FP-strict*/
+	public static final int MODIFIER_ACC_STRICT = 0x0800;
+	/** Modifier bit flag: Is synthetic. see MODIFIER_SYNTHETIC. */
+	public static final int MODIFIER_ACC_SYNTHETIC = 0x1000;
 	
 	/** Mapping of command codes to strings. */
 	private static String[] fgModifiers = null;

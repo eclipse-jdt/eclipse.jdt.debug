@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import java.util.TreeSet;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
-import org.eclipse.jdt.core.Signature;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
@@ -80,8 +79,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * Creates new MethodImpl.
 	 */
-	public MethodImpl(VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, JdwpMethodID methodID, String name, String signature, int modifierBits) {
-		super("Method", vmImpl, declaringType, name, signature, modifierBits); //$NON-NLS-1$
+	public MethodImpl(VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, JdwpMethodID methodID, String name, String signature, String genericSignature, int modifierBits) {
+		super("Method", vmImpl, declaringType, name, signature, genericSignature, modifierBits); //$NON-NLS-1$
 		fMethodID = methodID;
 	}
 
@@ -276,16 +275,13 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fArgumentTypeNames != null) {
 			return fArgumentTypeNames;
 		}
-		
-		// Get typenames from method signatures.
-		List result = new ArrayList();
-		Iterator iter = argumentTypeSignatures().iterator();
-		while (iter.hasNext()) {
-			String name = TypeImpl.signatureToName((String)iter.next());
-			result.add(name);
+		List result= GenericSignature.listSignaturetoListName(argumentTypeSignatures());
+		if (isVarargs()) { // add '...' to the last argument, if the method has variable arguments
+			String lastArgument= (String)result.remove(result.size() - 1);
+			result.add(lastArgument.substring(0, lastArgument.length() - 2) + "..."); //$NON-NLS-1$
 		}
 		
-		fArgumentTypeNames = result;
+		fArgumentTypeNames= result;
 		return fArgumentTypeNames;
 	}
 
@@ -298,17 +294,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return fArgumentTypeSignatures;
 		}
 		
-		List result = new ArrayList();
-		
-		int index = 1;	// Start position is just after the starting brace.
-		int endIndex = signature().lastIndexOf(')') - 1;	// End position is just before ending brace.
-		
-		while (index <= endIndex) {
-			int typeLen = TypeImpl.signatureTypeStringLength(signature(), index);
-			result.add(signature().substring(index, index + typeLen));
-			index += typeLen;
+		String signature= genericSignature();
+		if (signature == null) {
+			signature= signature();
 		}
-		fArgumentTypeSignatures = result;
+		
+		fArgumentTypeSignatures= GenericSignature.getArgumentsSignature(signature);
 		return fArgumentTypeSignatures;
 	}
 
@@ -481,8 +472,11 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fReturnTypeName != null) {
 			return fReturnTypeName;
 		}
-		int startIndex = signature().lastIndexOf(')') + 1;	// Signature position is just after ending brace.
-		fReturnTypeName= TypeImpl.signatureToName(signature().substring(startIndex));
+		String signature= genericSignature();
+		if (signature == null) {
+			signature= signature();
+		}
+		fReturnTypeName= GenericSignature.signatureToName(GenericSignature.getReturnType(signature));
 		return fReturnTypeName;
 	}	
 	
@@ -504,50 +498,43 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeWithReferenceType(this, outData);
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.M_VARIABLE_TABLE, outBytes);
+			
+			boolean withGenericSignature= virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5);
+			int jdwpCommand= withGenericSignature ? JdwpCommandPacket.M_VARIABLE_TABLE_WITH_GENERIC : JdwpCommandPacket.M_VARIABLE_TABLE;
+			JdwpReplyPacket replyPacket = requestVM(jdwpCommand, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.ABSENT_INFORMATION:
-					// infer arguments, if possible
-					String[] signatures = Signature.getParameterTypes(signature());
-					int slot = 0;
-					if (!isStatic()) {
-						slot++;
-					}
-					if (signatures.length >0) {
-						fArgumentSlotsCount = signatures.length;
-						fVariables = new ArrayList(fArgumentSlotsCount);
-						for (int i = 0; i < signatures.length; i++) {
-							String signature = signatures[i];
-							String name = "arg" + i; //$NON-NLS-1$
-							LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signature, -1, slot, true);
-							fVariables.add(localVar);
-							slot++;
-						}
-						return fVariables;
-					}
-					throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_local_variable_information_available_9")); //$NON-NLS-1$
+					inferArguments();
+					break;
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			fArgumentSlotsCount = readInt("arg count", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			fVariables = new ArrayList(nrOfElements);
+			List variables = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				long codeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				String name = readString("name", replyData); //$NON-NLS-1$
 				String signature = readString("signature", replyData); //$NON-NLS-1$
+				String genericSignature= null;
+				if (withGenericSignature) {
+					genericSignature= readString("generic signature", replyData); //$NON-NLS-1$
+					if ("".equals(genericSignature)) { //$NON-NLS-1$
+						genericSignature= null;
+					}
+				}
 				int length = readInt("length", replyData); //$NON-NLS-1$
 				int slot = readInt("slot", replyData); //$NON-NLS-1$
 				boolean isArgument = slot < fArgumentSlotsCount;
 
 				// Note that for instance methods, the first slot contains the this reference.
 				if (isStatic() || slot > 0) {
-					LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, codeIndex, name, signature, length, slot, isArgument);
-					fVariables.add(localVar);
+					LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, codeIndex, name, signature, genericSignature, length, slot, isArgument);
+					variables.add(localVar);
 				}
 			}
+			fVariables= variables;
 			return fVariables;
 		} catch (IOException e) {
 			fArgumentSlotsCount = -1;
@@ -560,6 +547,48 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	}
 	
 	
+	/**
+	 * @throws AbsentInformationException
+	 */
+	private List inferArguments() throws AbsentInformationException {
+		// infer arguments, if possible
+		
+		// try to generate the right generic signature for each argument
+		String genericSignature= genericSignature();
+		List parameterSignatures= GenericSignature.getArgumentsSignature(signature());
+		String[] signatures= (String[]) parameterSignatures.toArray(new String[parameterSignatures.size()]);
+		String[] genericSignatures;
+		if (genericSignature == null) {
+			genericSignatures= new String[signatures.length];
+		} else {
+			List parameterGenericSignatures= GenericSignature.getArgumentsSignature(genericSignature);
+			genericSignatures= (String[]) parameterGenericSignatures.toArray(new String[parameterGenericSignatures.size()]);
+			for (int i= 0; i < genericSignatures.length; i++) {
+				if (genericSignatures[i].equals(signatures[i])) {
+					genericSignatures[i]= null;
+				}
+			}
+		}
+		
+		int slot = 0;
+		if (!isStatic()) {
+			slot++;
+		}
+		if (signatures.length >0) {
+			fArgumentSlotsCount = signatures.length;
+			fVariables = new ArrayList(fArgumentSlotsCount);
+			for (int i = 0; i < signatures.length; i++) {
+				String name = "arg" + i; //$NON-NLS-1$
+				LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signatures[i], genericSignatures[i], -1, slot, true);
+				fVariables.add(localVar);
+				slot++;
+			}
+			return fVariables;
+		}
+		throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_local_variable_information_available_9")); //$NON-NLS-1$
+
+	}
+
 	/**
 	 * @see com.sun.jdi.Method#variablesByName(String)
 	 */
@@ -653,7 +682,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	protected static MethodImpl readWithNameSignatureModifiers(ReferenceTypeImpl target, ReferenceTypeImpl referenceType, DataInputStream in)  throws IOException {
+	protected static MethodImpl readWithNameSignatureModifiers(ReferenceTypeImpl target, ReferenceTypeImpl referenceType, boolean withGenericSignature, DataInputStream in)  throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpMethodID ID = new JdwpMethodID(vmImpl);
 		ID.read(in);
@@ -666,9 +695,16 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		String name = target.readString("name", in); //$NON-NLS-1$
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		int modifierBits = target.readInt("modifiers", AccessibleImpl.getModifierStrings(), in); //$NON-NLS-1$
+		String genericSignature= null;
+		if (withGenericSignature) {
+			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+			if ("".equals(genericSignature)) { //$NON-NLS-1$
+				genericSignature= null;
+			}
+		}
+		int modifierBits= target.readInt("modifiers", AccessibleImpl.getModifierStrings(), in); //$NON-NLS-1$
 
-		MethodImpl mirror = new MethodImpl(vmImpl, referenceType, ID, name, signature, modifierBits);
+		MethodImpl mirror = new MethodImpl(vmImpl, referenceType, ID, name, signature, genericSignature, modifierBits);
 		return mirror;
 	}
 
@@ -800,5 +836,13 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			}
 		}
 		return locations;
+	}
+	
+	public boolean isBridge() {
+		return (fModifierBits & MODIFIER_ACC_BRIDGE) != 0;
+	}
+
+	public boolean isVarargs() {
+		return (fModifierBits & MODIFIER_ACC_VARARGS) != 0;
 	}
 }
