@@ -314,18 +314,19 @@ public class JDIDebugModel {
 	 * @param resource the resource on which to create the associated breakpoint
 	 *  marker
 	 * @param stratum the stratum in which the source name, source path and line number
-	 *  are relative, or <code>null</code> if the source names and line numbers are
-	 *  relative to a type's default stratum
+	 *  are relative, or <code>null</code>. If <code>null</code> or if the specified stratum
+	 *  is not defined for a type, the source name, source path and line number are
+	 * 	relative to the type's default stratum.
 	 * @param sourceName the simple name of the source file in which the breakpoint is
 	 *  set, or <code>null</code>. The breakpoint will install itself in classes that have a source
 	 *  file name debug attribute that matches this value in the specified stratum,
 	 *  and satisfies the class name pattern and source path attribute. When <code>null</code>,
 	 *  the source file name debug attribute is not considered. 
 	 * @param sourcePath the qualified source file name in which the breakpoint is
-	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
-	 *  install itself in classes that have a source file path in the specified stratum
-	 *  that matches this value, and satisfies the class name pattern and source name
-	 *  attribute. When <code>null</code>, the source path attribute is not considered.
+	 *  set, or <code>null</code>. The breakpoint will install itself in classes that
+	 *  have a source file path in the specified stratum that matches this value, and
+	 *  satisfies the class name pattern and source name attribute. When <code>null</code>,
+	 *  the source path attribute is not considered.
 	 * @param classNamePattern the class name pattern to which the breakpoint should
 	 *   be restricted, or <code>null</code>. The breakpoint will install itself in each type that
 	 *   matches this class name pattern, with a satisfying source name and source path.
