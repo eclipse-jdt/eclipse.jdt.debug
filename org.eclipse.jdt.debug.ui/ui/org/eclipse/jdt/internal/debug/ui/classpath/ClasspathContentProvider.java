@@ -36,14 +36,14 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		fTab = tab;
 	}
 		
-	public void add(IClasspathEntry parent, IRuntimeClasspathEntry child) {
+	public void add(IClasspathEntry parent, IRuntimeClasspathEntry child, Object beforeElement) {
 		Object newEntry= null;
 		if (parent == null || parent == model) {
 			newEntry= model.addEntry(child);
 			parent= model;
 		} else if (parent instanceof ClasspathGroup) {
 			newEntry= model.createEntry(child, parent);
-			((ClasspathGroup)parent).addEntry((ClasspathEntry)newEntry);
+			((ClasspathGroup)parent).addEntry((ClasspathEntry)newEntry, beforeElement);
 		} 
 		if (newEntry != null) {
 			treeViewer.add(parent, newEntry);

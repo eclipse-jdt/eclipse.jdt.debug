@@ -24,9 +24,17 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 		this.canBeRemoved= canBeRemoved;
 	}
 		
-	public void addEntry(IClasspathEntry entry) {
+	public void addEntry(IClasspathEntry entry, Object beforeEntry) {
 		if (!childEntries.contains(entry)) {
-			childEntries.add(entry);
+			int index = -1;
+			if (beforeEntry != null) {
+				index = childEntries.indexOf(beforeEntry);
+			}
+			if (index >= 0) {
+				childEntries.add(index, entry);
+			} else {
+				childEntries.add(entry);
+			}
 		}
 	}
 	

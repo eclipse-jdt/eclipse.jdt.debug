@@ -93,11 +93,13 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	 */
 	public void addEntries(IRuntimeClasspathEntry[] entries) {
 		getClasspathContentProvider().setRefreshEnabled(false);
+		IStructuredSelection sel = (IStructuredSelection) getSelection();
+		Object beforeElement = sel.getFirstElement();
 		resolveCurrentParent(getSelection());
 		List existingEntries= Arrays.asList(fCurrentParent.getEntries());
 		for (int i = 0; i < entries.length; i++) {
 			if (!existingEntries.contains(entries[i])) {
-				getClasspathContentProvider().add(fCurrentParent, entries[i]);
+				getClasspathContentProvider().add(fCurrentParent, entries[i], beforeElement);
 			}
 		} 
 		getClasspathContentProvider().setRefreshEnabled(true);

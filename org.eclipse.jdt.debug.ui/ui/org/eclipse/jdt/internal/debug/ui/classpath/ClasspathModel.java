@@ -73,7 +73,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			}
 		}
 		if (entryParent != null) {
-			((ClasspathGroup)entryParent).addEntry(newEntry);
+			((ClasspathGroup)entryParent).addEntry(newEntry, null);
 		} else {
 			childEntries.add(newEntry);
 		}
@@ -163,7 +163,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		} 
 		bootstrapEntries.removeAll();
 		for (int i = 0; i < entries.length; i++) {
-			bootstrapEntries.addEntry(new ClasspathEntry(entries[i], bootstrapEntries));
+			bootstrapEntries.addEntry(new ClasspathEntry(entries[i], bootstrapEntries), null);
 		}
 	}
 
@@ -172,7 +172,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		ClasspathGroup group= new ClasspathGroup(name, entryParent, canBeRemoved);
 		
 		for (int i = 0; i < entries.length; i++) {
-			group.addEntry(new ClasspathEntry(entries[i], group));
+			group.addEntry(new ClasspathEntry(entries[i], group), null);
 		}
 		
 		if (addEntry) {
@@ -187,7 +187,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		} 
 		userEntries.removeAll();
 		for (int i = 0; i < entries.length; i++) {
-			userEntries.addEntry(new ClasspathEntry(entries[i], userEntries));
+			userEntries.addEntry(new ClasspathEntry(entries[i], userEntries), null);
 		}
 	}
 
