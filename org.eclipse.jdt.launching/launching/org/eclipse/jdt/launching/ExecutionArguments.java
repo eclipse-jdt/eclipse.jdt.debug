@@ -117,7 +117,9 @@ public class ExecutionArguments {
 			while (ch > 0 && ch != '"') {
 				if (ch == '\\') {
 					ch= getNext();
-					if (ch != '"') buf.append('\\'); // Only escape double quotes
+					if (ch != '"') {           // Only escape double quotes
+						buf.append('\\'); 
+					}
 				}
 				if (ch > 0) {
 					buf.append((char)ch);
@@ -137,9 +139,13 @@ public class ExecutionArguments {
 				if (ch == '\\') {
 					ch= getNext();
 					if (ch > 0) {
-						if (ch != '"') buf.append('\\'); // Only escape double quotes
+						if (ch != '"') {        // Only escape double quotes
+							buf.append('\\'); 
+						}
 						buf.append((char)ch);
 						ch= getNext();
+					} else if (ch == -1) {     // Don't lose a trailing backslash
+						buf.append('\\');
 					}
 				} else if (ch == '"') {
 					buf.append(parseString());
