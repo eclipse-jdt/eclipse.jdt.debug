@@ -315,13 +315,9 @@ public class VMDefinitionsContainer {
 			element.setAttribute("javadocURL", url.toExternalForm()); //$NON-NLS-1$
 		}
 		
-		String[] vmArgs = vm.getVMArguments();
-		if (vmArgs != null && vmArgs.length > 0) {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < vmArgs.length; i++) {
-				buffer.append(vmArgs[i] + " "); //$NON-NLS-1$
-			}
-			element.setAttribute("vmargs", buffer.toString()); //$NON-NLS-1$
+		String vmArgs = vm.getVMArgs();
+		if (vmArgs != null && vmArgs.length() > 0) {
+			element.setAttribute("vmargs", vmArgs); //$NON-NLS-1$
 		}
 		
 		return element;
@@ -497,8 +493,7 @@ public class VMDefinitionsContainer {
 			// vm Arguments
 			String vmArgs = vmElement.getAttribute("vmargs"); //$NON-NLS-1$
 			if (vmArgs != null && vmArgs.length() >0) {
-				ExecutionArguments exArgs = new ExecutionArguments(vmArgs, ""); //$NON-NLS-1$
-				vmStandin.setVMArguments(exArgs.getVMArgumentsArray());
+				vmStandin.setVMArgs(vmArgs);
 			}
 		} else {
 			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_element_specified_with_no_id_attribute_2")); //$NON-NLS-1$

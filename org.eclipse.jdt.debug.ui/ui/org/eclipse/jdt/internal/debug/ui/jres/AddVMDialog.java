@@ -15,6 +15,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -32,7 +33,6 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
-import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
@@ -265,17 +265,9 @@ public class AddVMDialog extends StatusDialog {
 				fJavadocURL.setText(url.toExternalForm());
 			}
 			
-			String[] vmArgs = fEditedVM.getVMArguments();
+			String vmArgs = fEditedVM.getVMArgs();
 			if (vmArgs != null) {
-				StringBuffer buffer = new StringBuffer();
-				int length= vmArgs.length;
-				if (length > 0) {
-					buffer.append(vmArgs[0]);
-					for (int i = 1; i < length; i++) {
-						buffer.append(' ').append(vmArgs[i]);
-					}
-				}
-				fVMArgs.setText(buffer.toString());
+				fVMArgs.setText(vmArgs);
 			}
 		}
 		setVMNameStatus(validateVMName());
@@ -452,12 +444,11 @@ public class AddVMDialog extends StatusDialog {
 		vm.setName(fVMName.getText());
 		vm.setJavadocLocation(getURL());
 		
-		String argString = fVMArgs.getText();
+		String argString = fVMArgs.getText().trim();
 		if (argString != null && argString.length() >0) {
-			ExecutionArguments exArgs = new ExecutionArguments(argString, ""); //$NON-NLS-1$
-			vm.setVMArguments(exArgs.getVMArgumentsArray());			
+			vm.setVMArgs(argString);			
 		} else {
-			vm.setVMArguments(null);
+			vm.setVMArgs(null);
 		}
 
 		fLibraryBlock.performApply(vm);

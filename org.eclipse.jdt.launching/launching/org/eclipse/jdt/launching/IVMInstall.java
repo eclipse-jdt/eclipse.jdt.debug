@@ -124,21 +124,46 @@ public interface IVMInstall {
 	
 	/**
 	 * Returns VM arguments to be used with this vm install whenever this
-	 * VM is launched, or <code>null</code> if none.
+	 * VM is launched as they should be passed to the command line, or
+	 * <code>null</code> if none.
 	 * 
 	 * @return VM arguments to be used with this vm install whenever this
-	 * VM is launched, or <code>null</code> if none
+	 * VM is launched as they should be passed to the command line, or
+	 * <code>null</code> if none
 	 * @since 3.0
 	 */
 	public String[] getVMArguments();
 	
 	/**
+	 * Returns VM arguments to be used with this vm install whenever this
+	 * VM is launched as a raw string, or <code>null</code> if none.
+	 * 
+	 * @return VM arguments to be used with this vm install whenever this
+	 * VM is launched as a raw string, or <code>null</code> if none
+	 * @since 3.1
+	 */	
+	public String getVMArgs();
+	
+	/**
 	 * Sets VM arguments to be used with this vm install whenever this
-	 * VM is launched, possibly <code>null</code>.
+	 * VM is launched, possibly <code>null</code>. This is equivalent
+	 * to <code>setVMArgs(String)</code> with whitespace character delimited
+	 * arguments.  
 	 * 
 	 * @param vmArgs VM arguments to be used with this vm install whenever this
 	 * VM is launched, possibly <code>null</code>
 	 * @since 3.0
+	 * @deprecated use setVMArgs(String)
 	 */
 	public void setVMArguments(String[] vmArgs);
+	
+	/**
+	 * Sets VM arguments to be used with this vm install whenever this
+	 * VM is launched as a raw string, possibly <code>null</code>.
+	 * 
+	 * @param vmArgs VM arguments to be used with this vm install whenever this
+	 * VM is launched as a raw string, possibly <code>null</code>
+	 * @since 3.1
+	 */
+	public void setVMArgs(String vmArgs);
 }

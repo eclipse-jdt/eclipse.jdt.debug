@@ -56,7 +56,7 @@ public class VMStandin extends AbstractVMInstall {
 		setInstallLocation(realVM.getInstallLocation());
 		setLibraryLocations(realVM.getLibraryLocations());
 		setJavadocLocation(realVM.getJavadocLocation());
-		setVMArguments(realVM.getVMArguments());
+		setVMArgs(realVM.getVMArgs());
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class VMStandin extends AbstractVMInstall {
 		realVM.setInstallLocation(getInstallLocation());
 		realVM.setLibraryLocations(getLibraryLocations());
 		realVM.setJavadocLocation(getJavadocLocation());
-		realVM.setVMArguments(getVMArguments());
+		realVM.setVMArgs(getVMArgs());
 		
 		if (realVM instanceof AbstractVMInstall) {
 			 ((AbstractVMInstall)realVM).setNotify(true);

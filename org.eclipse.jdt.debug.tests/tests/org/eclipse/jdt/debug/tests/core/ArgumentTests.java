@@ -25,14 +25,16 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Tests for command arguments
+ * Tests for program and VM arguments
  */
-public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
+public class ArgumentTests extends AbstractDebugTest {
 
 	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {
 
@@ -95,7 +97,7 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 
 }
 
-	public LaunchConfigurationArgumentTests(String name) {
+	public ArgumentTests(String name) {
 		super(name);
 	}
 
@@ -312,5 +314,16 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 			config.delete();
 			ConsoleLineTracker.setDelegate(null);
 		}
+	}
+	
+	public void testDefaultVMArgs() throws CoreException {
+	    IVMInstall install = JavaRuntime.getDefaultVMInstall();
+	    String prev = install.getVMArgs();
+	    install.setVMArgs("-Dfoo=\"one two three\"");
+	    try {
+	        testWithVMArg(null, "one two three");
+	    } finally {
+	        install.setVMArgs(prev);
+	    }
 	}
 }

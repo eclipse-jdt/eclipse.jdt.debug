@@ -22,13 +22,14 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * </p>
  */
 public abstract class AbstractVMInstall implements IVMInstall {
+
 	private IVMInstallType fType;
 	private String fId;
 	private String fName;
 	private File fInstallLocation;
 	private LibraryLocation[] fSystemLibraryDescriptions;
 	private URL fJavadocLocation;
-	private String[] fVMArgs;
+	private String fVMArgs;
 	// whether change events should be fired
 	private boolean fNotify = true;
 	
@@ -225,7 +226,12 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	 * @since 3.0
 	 */
 	public String[] getVMArguments() {
-		return fVMArgs;
+		String args = getVMArgs();
+		if (args == null) {
+		    return null;
+		}
+		ExecutionArguments ex = new ExecutionArguments(args, ""); //$NON-NLS-1$
+		return ex.getVMArgumentsArray();
 	}
 	
 	/* (non-Javadoc)
@@ -233,6 +239,28 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	 * @since 3.0
 	 */
 	public void setVMArguments(String[] vmArgs) {
-		fVMArgs = vmArgs;
-	}	
+	    StringBuffer buf = new StringBuffer();
+	    for (int i = 0; i < vmArgs.length; i++) {
+            String string = vmArgs[i];
+            buf.append(string);
+            buf.append(" "); //$NON-NLS-1$
+        }
+		setVMArgs(buf.toString().trim());
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#getVMArgs()
+	 */
+    public String getVMArgs() {
+        return fVMArgs;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jdt.launching.IVMInstall#setVMArgs(java.lang.String)
+     */
+    public void setVMArgs(String vmArgs) {
+        fVMArgs = vmArgs; 
+    }	
 }
