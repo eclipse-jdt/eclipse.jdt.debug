@@ -39,6 +39,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
+        setErrorMessage(DisplayMessages.getString("DetailsCompletionProcessor.0")); //$NON-NLS-1$
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context == null) {
 			return new ICompletionProposal[0];
@@ -48,6 +49,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 			return new ICompletionProposal[0];
 		}
 		
+        setErrorMessage(DisplayMessages.getString("DetailsCompletionProcessor.1")); //$NON-NLS-1$
 		IWorkbenchWindow window= JDIDebugUIPlugin.getActiveWorkbenchWindow();
 		if (window == null) {
 			return new ICompletionProposal[0];
@@ -73,10 +75,12 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		IJavaProject project= getJavaProject(stackFrame);
 		if (project != null) {
 			try {
+                setErrorMessage(null);
 				ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
 				IType receivingType= getReceivingType(project, element);
 					
 				if (receivingType == null) {
+                    setErrorMessage(DisplayMessages.getString("DetailsCompletionProcessor.2")); //$NON-NLS-1$
 					return new ICompletionProposal[0];
 				}
 		
@@ -94,7 +98,9 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 			} catch (DebugException de) {
 				handle(viewer, de);
 			}
-		}
+		} else {
+            setErrorMessage(DisplayMessages.getString("DetailsCompletionProcessor.3")); //$NON-NLS-1$
+        }
 		return null;
 	}
 	

@@ -35,8 +35,9 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-
+        setErrorMessage(null);
 		if (fType == null) {
+            setErrorMessage(DebugUIMessages.getString("BreakpointConditionCompletionProcessor.0")); //$NON-NLS-1$
 			return new ICompletionProposal[0];
 		}
 		

@@ -40,9 +40,10 @@ public class CodeSnippetCompletionProcessor extends DisplayCompletionProcessor {
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-
+        setErrorMessage(null);
 		IType receivingType= fTypeProvider.getType();
 		if (receivingType == null) {
+            setErrorMessage(DebugUIMessages.getString("CodeSnippetCompletionProcessor.0")); //$NON-NLS-1$
 			return new ICompletionProposal[0];
 		}
 		

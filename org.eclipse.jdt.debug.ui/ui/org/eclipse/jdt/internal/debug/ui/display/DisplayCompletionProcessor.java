@@ -65,6 +65,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	private CompletionProposalCollector fCollector;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
+    private String fErrorMessage = null;
 	
 	private char[] fProposalAutoActivationSet;
 	private CompletionProposalComparator fComparator;
@@ -81,8 +82,24 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return fCollector.getErrorMessage();
+        if (fErrorMessage != null) {
+            return fErrorMessage;
+        }
+        if (fCollector != null) {
+            return fCollector.getErrorMessage();
+        }
+        return null;
 	}
+    
+    /**
+     * Sets the error message for why completions could not be resolved.
+     * Clients should clear this before computing completions.
+     * 
+     * @param string message
+     */
+    protected void setErrorMessage(String string) {
+        fErrorMessage = string;
+    }
 
 	/**
 	 * @see IContentAssistProcessor#getContextInformationValidator()
@@ -112,6 +129,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
+        setErrorMessage(DisplayMessages.getString("DisplayCompletionProcessor.0")); //$NON-NLS-1$
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context == null) {
 			return new ICompletionProposal[0];
@@ -121,17 +139,19 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		if (stackFrame == null) {
 			return new ICompletionProposal[0];
 		}
-			
+        setErrorMessage(null);	
 		return computeCompletionProposals(stackFrame, viewer, documentOffset);
 	}
 
 	protected ICompletionProposal[] computeCompletionProposals(IJavaStackFrame stackFrame, ITextViewer viewer, int documentOffset) {
+        setErrorMessage(null);
 		try {
 			IJavaProject project= getJavaProject(stackFrame);
 			if (project != null) {
 				IType receivingType= getReceivingType(project, stackFrame);
 				
 				if (receivingType == null) {
+                    setErrorMessage(DisplayMessages.getString("DisplayCompletionProcessor.1")); //$NON-NLS-1$
 					return new ICompletionProposal[0];
 				}
 				IVariable[] variables= stackFrame.getLocalVariables();
@@ -168,6 +188,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				 //applies to all proposals and not just those of the compilation unit. 
 				return order(results);	
 			}
+            setErrorMessage(DisplayMessages.getString("DisplayCompletionProcessor.2")); //$NON-NLS-1$
 		} catch (JavaModelException x) {
 			handle(viewer, x);
 		} catch (DebugException de) {
