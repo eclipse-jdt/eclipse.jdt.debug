@@ -6,12 +6,10 @@ package org.eclipse.jdt.internal.debug.ui;
  */
 
 import java.util.Map;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -20,22 +18,19 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.ui.text.JavaCodeReader;
  
 /**
- * Utility class for java breakpoints 
+ * Utility class for Java breakpoints 
  */
 public class BreakpointUtils {
 	
 	/**
 	 * Marker attribute storing the handle id of the 
-	 * java element associated with a java breakpoint
+	 * Java element associated with a Java breakpoint
 	 */
 	private static final String HANDLE_ID = JDIDebugUIPlugin.getPluginId() + ".JAVA_ELEMENT_HANDLE_ID";
 
@@ -116,7 +111,7 @@ public class BreakpointUtils {
 			try {
 				member= binSearch(type, start, end);
 			} catch (CoreException ce) {
-				JDIDebugPlugin.logError(ce);
+				JDIDebugUIPlugin.logError(ce);
 			}
 		}
 		if (member == null) {
@@ -185,7 +180,7 @@ public class BreakpointUtils {
 	 * </ul>
 	 * 
 	 * @param attributes the attribute map to use
-	 * @param element the java element associated with the breakpoint
+	 * @param element the Java element associated with the breakpoint
 	 * @exception CoreException if an exception occurrs configuring
 	 *  the marker
 	 */
@@ -203,7 +198,7 @@ public class BreakpointUtils {
 	 * </ul>
 	 * 
 	 * @param attributes the attribute map to use
-	 * @param element the java element associated with the breakpoint
+	 * @param element the Java element associated with the breakpoint
 	 * @exception CoreException if an exception occurrs configuring
 	 *  the marker
 	 */
