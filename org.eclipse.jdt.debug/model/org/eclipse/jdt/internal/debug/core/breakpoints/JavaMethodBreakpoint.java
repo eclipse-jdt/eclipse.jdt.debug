@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
@@ -72,12 +73,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * This attribute is a <code>boolean</code>.
 	 */
 	private static final String NATIVE = "org.eclipse.jdt.debug.core.native"; //$NON-NLS-1$
-	
-	/**
-	 * Method request property storing the type in which the
-	 * request is installed
-	 */
-	private static final String TYPE = "org.eclipse.jdt.debug.core.type"; //$NON-NLS-1$
 			
 	/**
 	 * Cache of method name attribute
@@ -112,12 +107,16 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	private HashMap fLastEventTypes= new HashMap(10); // $NON-NLS-1$
 	
 	/**
+	 * Used to match type names 
+	 */
+	private StringMatcher fMatcher;
+	/**
 	 * Constructs a new unconfigured method breakpoint
 	 */
 	public JavaMethodBreakpoint() {
 	}
 	
-	public JavaMethodBreakpoint(final IResource resource, final String typeName, final String methodName, final String methodSignature, final boolean entry, final boolean exit, final boolean nativeOnly, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) throws CoreException {
+	public JavaMethodBreakpoint(final IResource resource, final String typePattern, final String methodName, final String methodSignature, final boolean entry, final boolean exit, final boolean nativeOnly, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) throws CoreException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
@@ -126,7 +125,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addMethodNameAndSignature(attributes, methodName, methodSignature);
-				addTypeNameAndHitCount(attributes, typeName, hitCount);
+				addTypeNameAndHitCount(attributes, typePattern, hitCount);
 				attributes.put(ENTRY, new Boolean(entry));
 				attributes.put(EXIT, new Boolean(exit));
 				attributes.put(NATIVE, new Boolean(nativeOnly));
@@ -139,37 +138,35 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 
 		};
 		run(wr);
+		fMatcher= new StringMatcher(typePattern, false, false);
 	}
 	
 	/**
-	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
-	 * 
 	 * Creates and installs an entry and exit watchpoint request
 	 * in the given reference type, configuring the requests as appropriate
 	 * for this breakpoint. The requests are then enabled based on whether
 	 * this breakpoint is an entry breakpoint, exit breakpoint, or
 	 * both. Finally, the requests are registered with the given target.
 	 */	
-	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		MethodEntryRequest entryRequest= createMethodEntryRequest(target, type);
-		MethodExitRequest exitRequest= createMethodExitRequest(target, type);
+	protected void createRequest(JDIDebugTarget target, String typePattern) throws CoreException {
+		MethodEntryRequest entryRequest= createMethodEntryRequest(target, typePattern);
+		MethodExitRequest exitRequest= createMethodExitRequest(target, typePattern);
 		
 		registerRequest(entryRequest, target);
 		registerRequest(exitRequest, target);
-		return true;
 	}	
 	
 	/**
 	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
 	 */
 	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target)	throws CoreException {
-		ReferenceType type= (ReferenceType) request.getProperty(TYPE);
+		String typePattern= getTypeName();
 		EventRequest newRequest= null;
 		try {
 			if (request instanceof MethodEntryRequest) {
-				newRequest= createMethodEntryRequest(target, type);
+				newRequest= createMethodEntryRequest(target, typePattern);
 			} else {
-				newRequest= createMethodExitRequest(target, type);
+				newRequest= createMethodExitRequest(target, typePattern);
 			}
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {
@@ -193,8 +190,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @exception CoreException if an exception occurs accessing
 	 *  this breakpoint's underlying marker
 	 */
-	protected MethodEntryRequest createMethodEntryRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {	
-		return (MethodEntryRequest)createMethodRequest(target, type, true);
+	protected MethodEntryRequest createMethodEntryRequest(JDIDebugTarget target, String typePattern) throws CoreException {	
+		return (MethodEntryRequest)createMethodRequest(target, typePattern, true);
 	}
 	
 	/**
@@ -207,8 +204,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @exception CoreException if an exception occurs accessing
 	 *  this breakpoint's underlying marker
 	 */
-	protected MethodExitRequest createMethodExitRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {	
-		return (MethodExitRequest)createMethodRequest(target, type, false);
+	protected MethodExitRequest createMethodExitRequest(JDIDebugTarget target, String typePattern) throws CoreException {	
+		return (MethodExitRequest)createMethodRequest(target, typePattern, false);
 	}
 	
 	/**
@@ -218,17 +215,17 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * Returns a MethodEntryRequest if entry is <code>true</code>,
 	 *  a MethodExitRequest if entry is <code>false</code>
 	 */
-	private EventRequest createMethodRequest(JDIDebugTarget target, ReferenceType type, boolean entry) throws CoreException {
+	private EventRequest createMethodRequest(JDIDebugTarget target, String typePattern, boolean entry) throws CoreException {
 		EventRequest request = null;
 		try {
 			if (entry) {
 				request= target.getEventRequestManager().createMethodEntryRequest();
-				((MethodEntryRequest)request).addClassFilter(type);
+				((MethodEntryRequest)request).addClassFilter(typePattern);
 			} else {
 				request= target.getEventRequestManager().createMethodExitRequest();
-				((MethodExitRequest)request).addClassFilter(type);
+				((MethodExitRequest)request).addClassFilter(typePattern);
 			}
-			configureRequest(request, target, type);
+			configureRequest(request, target);
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {
 				return null;
@@ -251,15 +248,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 	}
 
-	/**
-	 * Adds the type in which this method is installed to the request as a property.
-	 * This type corresponds to the class filter that is placed on the request.
-	 */
-	protected void configureRequest(EventRequest request, JDIDebugTarget target, ReferenceType type) throws CoreException {
-		request.putProperty(TYPE, type);
-		configureRequest(request, target);
-	}
-	
+		
 	/**
 	 * Configure the given request's hit count. Since method
 	 * entry/exit requests do not support hit counts, we simulate
@@ -368,8 +357,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			MethodEntryEvent entryEvent= (MethodEntryEvent) event;
 			fLastEventTypes.put(target, ENTRY_EVENT);
 			return handleMethodEvent(entryEvent, entryEvent.method(), target);
-		}
-		if (event instanceof MethodExitEvent) {
+		} else if (event instanceof MethodExitEvent) {
 			MethodExitEvent exitEvent= (MethodExitEvent) event;
 			fLastEventTypes.put(target, EXIT_EVENT);
 			return handleMethodEvent(exitEvent, exitEvent.method(), target);
@@ -400,6 +388,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			
 			if (isNativeOnly()) {
 				if (!method.isNative()) {
+					return true;
+				}
+			}
+			
+			if (fMatcher != null) {
+				if (!fMatcher.match(method.declaringType().name())) {
 					return true;
 				}
 			}
@@ -547,6 +541,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		super.setMarker(marker);
 		fMethodName = marker.getAttribute(METHOD_NAME, null);
 		fMethodSignature = marker.getAttribute(METHOD_SIGNATURE, null);
+		String typePattern= marker.getAttribute(TYPE_NAME, "");
+		if (typePattern != null) {
+			fMatcher= new StringMatcher(typePattern, false, false);
+		}
+		
 	}	
 	
 	/**
@@ -570,4 +569,18 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		return false;
 	}
 
+	/**
+	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
+	 */
+	public void addToTarget(JDIDebugTarget target) throws CoreException {
+		// pre-notification
+		fireAdding(target);
+		
+		String referenceTypeNamePattern= getTypeName();
+		if (referenceTypeNamePattern == null) {
+			return;
+		}
+		
+		createRequest(target, referenceTypeNamePattern);
+	}
 }
