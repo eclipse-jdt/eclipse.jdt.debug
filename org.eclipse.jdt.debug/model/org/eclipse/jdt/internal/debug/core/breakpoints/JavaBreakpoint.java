@@ -100,6 +100,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected Map fFilteredThreadsByTarget;
 	
 	/**
+	 * Stores the name of the type that this breakpoint was actually installed
+	 * in. When a breakpoint is created, the TYPE_NAME attribute assigned to it
+	 * is that of its top level enclosing type. When installed, the type name
+	 * may actually be an inner type. We need to keep track of the name of the
+	 * type the breakpoint was installed in, in case we need to re-install
+	 * the breakpoint for HCR (i.e. in case an inner type is HCR'd).
+	 */
+	protected ReferenceType fInstalledType = null;
+	
+	/**
 	 * Propery identifier for a breakpoint object on an event request
 	 */
 	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
@@ -335,6 +345,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (request == null) {
 			return false;
 		}
+		fInstalledType = type;
 		registerRequest(request, target);
 		return true;
 	}
@@ -616,6 +627,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		
 		fRequestsByTarget.remove(target);
 		fFilteredThreadsByTarget.remove(target);
+		fInstalledType = null;
 		
 		// notification
 		fireRemoved(target);
@@ -712,7 +724,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @see IJavaBreakpoint#getTypeName()
 	 */
 	public String getTypeName() throws CoreException {
-		return ensureMarker().getAttribute(TYPE_NAME, null);
+		if (fInstalledType == null) {
+			return ensureMarker().getAttribute(TYPE_NAME, null);
+		} else {
+			return fInstalledType.name();
+		}
 	}
 	
 	/**
