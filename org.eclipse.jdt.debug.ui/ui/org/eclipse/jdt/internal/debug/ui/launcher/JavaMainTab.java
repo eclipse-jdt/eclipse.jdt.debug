@@ -21,9 +21,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -564,22 +567,34 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	 */
 	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = "";
-		try {
-			IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {javaElement});
-			if (types != null && (types.length > 0)) {
-				// Simply grab the first main type found in the searched element
-				name = types[0].getFullyQualifiedName();
+		if (javaElement instanceof IMember) {
+			IMember member = (IMember)javaElement;
+			if (member.isBinary()) {
+				javaElement = member.getClassFile();
+			} else {
+				javaElement = member.getCompilationUnit();
 			}
-		} catch (InterruptedException ie) {
-		} catch (InvocationTargetException ite) {
+		}
+		if (javaElement instanceof ICompilationUnit || javaElement instanceof IClassFile) {
+			try {
+				IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {javaElement});
+				if (types != null && (types.length > 0)) {
+					// Simply grab the first main type found in the searched element
+					name = types[0].getFullyQualifiedName();
+				}
+			} catch (InterruptedException ie) {
+			} catch (InvocationTargetException ite) {
+			}
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
-		int index = name.lastIndexOf('.');
-		if (index > 0) {
-			name = name.substring(index + 1);
+		if (name.length() > 0) {
+			int index = name.lastIndexOf('.');
+			if (index > 0) {
+				name = name.substring(index + 1);
+			}		
+			name = getLaunchDialog().generateName(name);
+			config.rename(name);
 		}
-		name = getLaunchDialog().generateName(name);
-		config.rename(name);
 	}
 
 	/**
