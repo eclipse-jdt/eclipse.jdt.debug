@@ -7,16 +7,14 @@ package org.eclipse.jdt.launching;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.Path;
-
-import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
-
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -24,6 +22,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * Standard source code locator for Java elements.
@@ -85,6 +84,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 				}
 			}
 		} catch (JavaModelException e) {
+			LaunchingPlugin.log(e.getStatus());
 		}
 		return list;
 	}
@@ -120,6 +120,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 			if (cf.exists())
 				return cf.getType();
 		} catch (JavaModelException e) {
+			LaunchingPlugin.log(e.getStatus());
 		}
 		ICompilationUnit cu= pkg.getCompilationUnit(name + ".java"); //$NON-NLS-1$
 		if (cu.exists())
@@ -134,6 +135,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 				}
 			}
 		} catch (JavaModelException e) {
+			LaunchingPlugin.log(e.getStatus());
 		}
 		return null;
 	}
@@ -156,6 +158,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 				}
 			}
 		} catch(DebugException e) {
+			LaunchingPlugin.log(e.getStatus());
 		} 
 		return null;
 	}

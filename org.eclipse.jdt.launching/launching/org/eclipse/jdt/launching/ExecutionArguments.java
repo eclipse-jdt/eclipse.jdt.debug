@@ -104,6 +104,7 @@ public class ExecutionArguments {
 		try {
 			table= getAllForType(relativeRoot, type);
 		} catch (CoreException e) {
+			LaunchingPlugin.log(e);
 			table= new HashMap(1);
 		}
 		table.put(path, args);
