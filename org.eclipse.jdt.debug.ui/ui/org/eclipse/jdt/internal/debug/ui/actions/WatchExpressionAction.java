@@ -11,11 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 
 /**
  * Generic abstract class for the actions associated to the java watch
@@ -24,22 +20,9 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 public abstract class WatchExpressionAction extends ObjectActionDelegate {
 
 	/**
-	 * Finds the currently selected stack frame in the UI.
-	 * Stack frames from a scrapbook launch are ignored.
+	 * Finds the currently selected context in the UI.
 	 */
-	protected IJavaThread getThreadContext() {
-		IAdaptable context = DebugUITools.getDebugContext();
-		if (context instanceof IJavaThread) {
-			return (IJavaThread)context;
-		}
-		if (context != null) {
-			IJavaStackFrame frame = (IJavaStackFrame) context.getAdapter(IJavaStackFrame.class);
-			if (frame != null) {
-				if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-					return (IJavaThread)frame.getThread();
-				}
-			}
-		}
-		return null;
+	protected Object getContext() {
+		return DebugUITools.getDebugContext();
 	}
 }

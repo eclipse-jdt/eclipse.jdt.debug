@@ -15,9 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWatchExpression;
@@ -50,14 +48,9 @@ public class WatchAction extends InspectAction {
 
 	private void createWatchExpression(String snippet) {
 		JavaWatchExpression expression = new JavaWatchExpression(snippet);
-		IJavaStackFrame stackFrame= getStackFrameContext();
-		if (stackFrame != null) {
-			IThread thread = stackFrame.getThread();
-			if (thread instanceof IJavaThread) {
-				expression.evaluateExpression((IJavaThread)thread);
-			}
-		}
-		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);				
+		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
+		Object context = DebugUITools.getDebugContext();
+		expression.setExpressionContext(context);
 	}
 
 }

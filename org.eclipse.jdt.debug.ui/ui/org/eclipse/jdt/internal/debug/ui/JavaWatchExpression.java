@@ -16,13 +16,13 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -47,30 +47,22 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
  * 
  * @see org.eclipse.debug.core.model.IExpression
  */
-public class JavaWatchExpression extends PlatformObject implements IExpression, IDebugEventSetListener {
+public class JavaWatchExpression extends PlatformObject implements IWatchExpression {
 	
 	/**
 	 * Runnable used to evaluate the snippet.
 	 */
 	private final class EvaluationRunnable implements Runnable {
 		
-		private final IJavaThread fJavaThread;
+		private final IJavaStackFrame fStackFrame;
 		
-		private EvaluationRunnable(IJavaThread javaThread) {
-			fJavaThread= javaThread;
+		private EvaluationRunnable(IJavaStackFrame frame) {
+			fStackFrame= frame;
 		}
 		
 		public void run() {
-			IJavaStackFrame topStackFrame= null;
-			try {
-				topStackFrame= (IJavaStackFrame) fJavaThread.getTopStackFrame();
-			} catch (DebugException e) {
-				JDIDebugPlugin.log(e);
-				refreshForError();
-				return;
-			}
-			IJavaProject project;
-			if (topStackFrame == null || (project= getProject(topStackFrame)) == null) {
+			IJavaProject project = getProject(fStackFrame);
+			if (project == null) {
 				refreshForError();
 				return;
 			}
@@ -88,7 +80,7 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 				}
 			};
 			try {
-				evaluationEngine.evaluate(fExpressionText, topStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+				evaluationEngine.evaluate(fExpressionText, fStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 			} catch (DebugException e) {
 				JDIDebugPlugin.log(e);
 				refreshForError();
@@ -147,7 +139,6 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	public JavaWatchExpression(String expressionText) {
 		fExpressionText= expressionText;
 		fStatus= STATUS_ENABLE;
-		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
 	/**
@@ -175,59 +166,47 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	 * @see org.eclipse.debug.core.model.IExpression#dispose()
 	 */
 	public void dispose() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
-
+	
 	/**
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent)
+	 * @see IWatchExpression#setExpressionContext(Object)
 	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		// if more than one suspended thread ?
-		for (int i= 0, length= events.length; i < length; i ++) {
-			DebugEvent event= events[i];
-			final Object source= event.getSource();
-			switch (event.getKind()) {
-				case DebugEvent.SUSPEND:
-					// if it is a suspend thread event (not the result of an previous implicite evaluation),
-					// perform an implicit evaluation.
-					if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-						if (source instanceof IThread) {
-							// consult the adapter in case of a wrappered debug model
-							final IJavaThread javaThread =(IJavaThread) ((IAdaptable)source).getAdapter(IJavaThread.class);
-							if (javaThread != null) {
-								if (preEvaluationCheck(javaThread, true)) {
-									Runnable runnable= new Runnable() {
-										public void run() {
-											DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-												public void run() {
-													evaluateExpression(javaThread, true);
-												}
-											});
-										}
-									};
-									DebugPlugin.getDefault().asyncExec(runnable);
-								}								
-							}
-						}						
-					}
-					break;
-				case DebugEvent.TERMINATE:
-					// if the last debug target on which the expression as been evaluated terminates,
-					// discard the result.
-					if (source instanceof IDebugTarget) {
-						// consult the adapter in case of a wrappered debug model
-						IJavaDebugTarget target = (IJavaDebugTarget)((IAdaptable)source).getAdapter(IJavaDebugTarget.class);
-						if (target != null && target.equals(fDebugTarget)) {
-							fResultValue= null;
-							setHasError(false);
-							setObsolete(false);
-							refresh();
-						}
-					}
-					break;
+	public void setExpressionContext(Object context) {
+		// find a stack frame context if possible.
+		IStackFrame frame = null;
+		if (context instanceof IStackFrame) {
+			frame = (IStackFrame)context;
+		} else if (context instanceof IThread) {
+			try {
+				frame = ((IThread)context).getTopStackFrame();
+			} catch (DebugException e) {
 			}
 		}
-	}
+		if (frame == null) {
+			// if the debug target has terminated, update
+			if (fDebugTarget != null && fDebugTarget.isTerminated()) {
+				fResultValue= null;
+				setHasError(false);
+				setObsolete(false);
+				refresh();				
+			}
+		} else {
+			// consult the adapter in case of a wrappered debug model
+			final IJavaStackFrame javaStackFrame =(IJavaStackFrame) ((IAdaptable)frame).getAdapter(IJavaStackFrame.class);
+			if (javaStackFrame != null) {
+				Runnable runnable= new Runnable() {
+					public void run() {
+						DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+							public void run() {
+								evaluateExpression(javaStackFrame, true);
+							}
+						});
+					}
+				};	
+				DebugPlugin.getDefault().asyncExec(runnable);							
+			}
+		}						
+	}	
 
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
@@ -245,19 +224,6 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 
 	/**
 	 * Ask to evaluate the expression in the context of the given stack frame.
-	 * Equivalent to <code>evaluateExpression(javaStackFrame, false)</code>.
-	 * 
-	 * @param javaStackFrame the stack frame in the context of which performed
-	 * the evaluation.
-	 * 
-	 * @see JavaWatchExpression#evaluateExpression(IJavaStackFrame, boolean)
-	 */
-	public void evaluateExpression(IJavaThread javaThread) {
-		evaluateExpression(javaThread, false);
-	}
-
-	/**
-	 * Ask to evaluate the expression in the context of the given stack frame.
 	 * 
 	 * The evaluation is performed asynchronously. A change debug event, with
 	 * this as the source, is fired when the evaluation is completed.
@@ -267,10 +233,11 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	 * @param implicit indicate if the evaluation is implicite or not. If the
 	 * expression is disabled, implicite evaluation wont be performed.
 	 */
-	public void evaluateExpression(IJavaThread javaThread, boolean implicit) {
-		if (preEvaluationCheck(javaThread, implicit)) {
-			fDebugTarget= (IJavaDebugTarget)javaThread.getDebugTarget();
-			javaThread.queueRunnable(new EvaluationRunnable(javaThread));
+	protected void evaluateExpression(IJavaStackFrame javaStackFrame, boolean implicit) {
+		IJavaThread thread = (IJavaThread)javaStackFrame.getThread();
+		if (preEvaluationCheck(thread, implicit)) {
+			fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
+			thread.queueRunnable(new EvaluationRunnable(javaStackFrame));
 		}
 	}
 

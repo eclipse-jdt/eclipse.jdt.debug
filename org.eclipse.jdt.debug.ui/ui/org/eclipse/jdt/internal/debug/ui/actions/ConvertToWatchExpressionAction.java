@@ -39,7 +39,7 @@ public class ConvertToWatchExpressionAction extends WatchExpressionAction {
 			expressionManager.removeExpression(expression);
 			expressionManager.addExpression(watchExpression);
 			// refresh and re-evaluate
-			watchExpression.evaluateExpression(getThreadContext());
+			watchExpression.setExpressionContext(getContext());
 		}
 	}
 
