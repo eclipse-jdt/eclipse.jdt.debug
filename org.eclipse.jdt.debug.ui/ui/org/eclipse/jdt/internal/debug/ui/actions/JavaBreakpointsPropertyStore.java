@@ -29,6 +29,7 @@ class JavaBreakpointPreferenceStore implements IPreferenceStore {
 	protected final static String ACCESS= "ACCESS"; //$NON-NLS-1$
 	protected final static String MODIFICATION= "MODIFICATION"; //$NON-NLS-1$
 	protected final static String THREAD_FILTER= "THREAD_FILTER"; //$NON-NLS-1$
+	protected final static String EXCEPTION_FILTER= "EXCEPTION_FILTER"; //$NON-NLS-1$
 	
 	protected HashMap fProperties;
 	private boolean fIsDirty= false; 

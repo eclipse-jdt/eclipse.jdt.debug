@@ -225,6 +225,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	protected FieldEditor createThreadFilterViewer(Composite parent) {
 		return new ThreadFilterViewer(parent, getBreakpoint());
 	}
+	
+	protected FieldEditor createFilterEditor(Composite parent) {
+		return new ExceptionBreakpointFilterEditor(parent, (IJavaExceptionBreakpoint)getBreakpoint());
+	}
 
 	protected void createTypeSpecificFieldEditors() throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
@@ -237,6 +241,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			store.setValue(JavaBreakpointPreferenceStore.CAUGHT, jeBreakpoint.isCaught());
 			addField(createUncaughtEditor(getFieldEditorParent()));
 			addField(createCaughtEditor(getFieldEditorParent()));
+			addField(createFilterEditor(getFieldEditorParent()));
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint jmBreakpoint = (IJavaMethodBreakpoint) breakpoint;

@@ -69,7 +69,7 @@ public class ThreadFilterViewer extends FieldEditor {
 		GridData data= new GridData();
 		data.horizontalAlignment= GridData.FILL;
 		data.grabExcessHorizontalSpace= true;
-		data.heightHint= 150;
+		data.heightHint= 100;
 
 		fThreadViewer= new CheckboxTreeViewer(fOuter, SWT.BORDER);
 		fThreadViewer.addCheckStateListener(fCheckHandler);
@@ -134,18 +134,17 @@ public class ThreadFilterViewer extends FieldEditor {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-		layout.numColumns = 1;
+		layout.numColumns = numColumns;
 		fOuter.setLayout(layout);
 		
 		GridData data= new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		fOuter.setLayoutData(data);
-	
 		
-		GridData gd = new GridData();
-		gd.horizontalSpan = numColumns;
-		getLabelControl(fOuter).setLayoutData(gd);
+		data = new GridData();
+		data.horizontalSpan = numColumns;
+		getLabelControl(fOuter).setLayoutData(data);
 		createThreadViewer();
 	}
 

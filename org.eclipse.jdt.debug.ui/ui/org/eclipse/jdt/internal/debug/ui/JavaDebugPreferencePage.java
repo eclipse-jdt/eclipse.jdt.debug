@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
@@ -40,15 +39,11 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ICellEditorValidator;
-import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
@@ -64,7 +59,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -96,9 +90,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
 	
-	private static final Image IMG_CUNIT = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CUNIT);
-	private static final Image IMG_PKG = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-	
 	// Preference widgets
 	private Button fSuspendButton;
 	private Button fSuspendOnCompilationErrors;
@@ -121,33 +112,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private String fInvalidEditorText= null;
 	private TableEditor fTableEditor;
 	private TableItem fNewTableItem;
-	private StepFilter fNewStepFilter;
+	private Filter fNewStepFilter;
 	private Label fTableLabel;
 	
-	// table columns
-	private static final String[] TABLE_COLUMN_PROPERTIES = {"filter_name"}; //$NON-NLS-1$
-	private static final int FILTERNAME_PROP= 0; 
-	
 	private StepFilterContentProvider fStepFilterContentProvider;
-	private ICellEditorValidator fCellValidator;
 	private PropertyChangeListener fPropertyChangeListener;
-	
-	protected class ButtonListener implements SelectionListener {
-		private boolean fHasStateChanged= false;
-		
-		public void widgetSelected(SelectionEvent e) {
-			fHasStateChanged= true;
-		}
-
-	 	public void widgetDefaultSelected(SelectionEvent e) {
-	 		fHasStateChanged= true;
- 		}
- 		
- 		public boolean hasStateChanged() {
- 			return fHasStateChanged;
- 		}
-
-	}
 	
 	protected class PropertyChangeListener implements IPropertyChangeListener {
 		private boolean fHasStateChanged= false;
@@ -198,50 +167,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/**
-	 * Model object that represents a single entry in the table
-	 */
-	protected class StepFilter {
-	
-		private String fName;
-		private boolean fChecked;
-		
-		public StepFilter(String name, boolean checked) {
-			setName(name);
-			setChecked(checked);
-		}
-		
-		public String getName() {
-			return fName;
-		}
-		
-		public void setName(String name) {
-			fName = name;
-		}
-		
-		public boolean isChecked() {
-			return fChecked;
-		}
-		
-		public void setChecked(boolean checked) {
-			fChecked = checked;
-		}
-		
-		public boolean equals(Object o) {
-			if (o instanceof StepFilter) {
-				StepFilter other= (StepFilter)o;
-				if (getName().equals(other.getName())) {
-					return true;
-				}	
-			}
-			return false;
-		}
-		
-		public int hashCode() {
-			return getName().hashCode();
-		}
-	}
-		
-	/**
 	 * Content provider for the table.  Content consists of instances of StepFilter.
 	 */	
 	protected class StepFilterContentProvider implements IStructuredContentProvider {
@@ -284,8 +209,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			}			
 		}
 		
-		public StepFilter addFilter(String name, boolean checked) {
-			StepFilter filter = new StepFilter(name, checked);
+		public Filter addFilter(String name, boolean checked) {
+			Filter filter = new Filter(name, checked);
 			if (!fFilters.contains(filter)) {
 				fFilters.add(filter);
 				fViewer.add(filter);
@@ -305,7 +230,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			List inactive = new ArrayList(fFilters.size());
 			Iterator iterator = fFilters.iterator();
 			while (iterator.hasNext()) {
-				StepFilter filter = (StepFilter)iterator.next();
+				Filter filter = (Filter)iterator.next();
 				String name = filter.getName();
 				if (filter.isChecked()) {
 					active.add(name);
@@ -321,13 +246,13 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		public void removeFilters(Object[] filters) {
 			for (int i = 0; i < filters.length; i++) {
-				StepFilter filter = (StepFilter)filters[i];
+				Filter filter = (Filter)filters[i];
 				fFilters.remove(filter);
 			}
 			fViewer.remove(filters);
 		}
 		
-		public void toggleFilter(StepFilter filter) {
+		public void toggleFilter(Filter filter) {
 			boolean newState = !filter.isChecked();
 			filter.setChecked(newState);
 			fViewer.setChecked(filter, newState);
@@ -353,86 +278,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		}		
 	}
 	
-	/**
-	 * Support for editing entries in filter table.
-	 */
-	protected class CellModifier implements ICellModifier {
 		
-		public CellModifier() {
-		}
-		
-		/**
-		 * @see ICellModifier#canModify(Object, String)
-		 */
-		public boolean canModify(Object element, String property) {
-			return isNameProperty(property);
-		}
-		
-		/**
-		 * @see ICellModifier#getValue(Object, String)
-		 */
-		public Object getValue(Object element, String property) {
-			if (isNameProperty(property)) {
-				StepFilter filter = (StepFilter)element;
-				return filter.getName();
-			}
-			return null;
-		}
-		
-		/**
-		 * @see ICellModifier#modify(Object, String, Object)
-		 */
-		public void modify(Object element, String property, Object value) {
-			if (value != null) {
-				if (isNameProperty(property) && element instanceof TableItem) {
-					String stringValue = (String) value;
-					TableItem tableItem = (TableItem)element;
-					StepFilter filter = (StepFilter)tableItem.getData();
-					filter.setName(stringValue);
-					tableItem.setText(stringValue);
-				}
-			}
-		}
-		
-		private boolean isNameProperty(String property) {
-			return property.equals(TABLE_COLUMN_PROPERTIES[FILTERNAME_PROP]);
-		}
-	};
-	
-	/**
-	 * Label provider for StepFilter model objects
-	 */
-	protected class StepFilterLabelProvider extends LabelProvider implements ITableLabelProvider {
-		/**
-		 * @see ITableLabelProvider#getColumnText(Object, int)
-		 */
-		public String getColumnText(Object object, int column) {
-			if (column == 0) {
-				return ((StepFilter)object).getName();
-			}
-			return ""; //$NON-NLS-1$
-		}
-		
-		/**
-		 * @see ILabelProvider#getText(Object)
-		 */
-		public String getText(Object element) {
-			return ((StepFilter)element).getName();
-		}
-		
-		/**
-		 * @see ITableLabelProvider#getColumnImage(Object, int)
-		 */
-		public Image getColumnImage(Object object, int column) {
-			String name = ((StepFilter)object).getName();
-			if (name.endsWith(".*")) { //$NON-NLS-1$
-				return IMG_PKG;
-			} else {
-				return IMG_CUNIT;
-			}
-		}
-	}
-
 	public JavaDebugPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
@@ -452,7 +298,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_USE_FILTERS, true);
 	}
-
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -485,7 +330,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		return composite;		
 	}
-
 	/**
 	 * Create the primitive display preferences composite widget
 	 */
@@ -541,10 +385,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		tableLayout.addColumnData(columnLayoutData[0]);
 		fFilterTable.setLayout(tableLayout);
 		new TableColumn(fFilterTable, SWT.NONE);
-
 		fFilterViewer = new CheckboxTableViewer(fFilterTable);
 		fTableEditor = new TableEditor(fFilterTable);
-		fFilterViewer.setLabelProvider(new StepFilterLabelProvider());
+		fFilterViewer.setLabelProvider(new FilterLabelProvider());
 		fFilterViewer.setSorter(new WorkbenchViewerSorter());
 		fStepFilterContentProvider = new StepFilterContentProvider(fFilterViewer);
 		fFilterViewer.setContentProvider(fStepFilterContentProvider);
@@ -556,7 +399,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fFilterViewer.getTable().setLayoutData(gd);
 		fFilterViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				StepFilter filter = (StepFilter)event.getElement();
+				Filter filter = (Filter)event.getElement();
 				fStepFilterContentProvider.toggleFilter(filter);
 			}
 		});
@@ -782,7 +625,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			
 			Object[] filters= fStepFilterContentProvider.getElements(null);
 			for (int i = 0; i < filters.length; i++) {
-				StepFilter filter = (StepFilter)filters[i];
+				Filter filter = (Filter)filters[i];
 				if (filter.getName().equals(trimmedValue)) {
 					removeNewFilter();
 					cleanupEditor();
@@ -827,7 +670,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			if (!(firstChar == '*')) {
 				return false;
 			}
-
 		}
 		int length= trimmedValue.length();
 		for (int i= 1; i < length; i++) {
@@ -901,7 +743,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fStepFilterContentProvider.addFilter(filter, true);
 		}		
 	}
-
 	private void removeFilters() {
 		IStructuredSelection selection = (IStructuredSelection)fFilterViewer.getSelection();		
 		fStepFilterContentProvider.removeFilters(selection.toArray());
@@ -941,7 +782,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public void init(IWorkbench workbench) {
 	}
-
 	/**
 	 * @see IPreferencePage#performOk()
 	 * Also, notifies interested listeners
@@ -967,7 +807,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
-
 		fHexButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES));
 		fCharButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));
@@ -986,7 +825,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button createCheckButton(Composite parent, String label) {
 		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
 		button.setText(label);		
-
 		// FieldEditor GridData
 		GridData data = new GridData();	
 		button.setLayoutData(data);
@@ -1009,7 +847,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
 		comp.setLayout(layout);
-
 		//GridData
 		GridData gd= new GridData();
 		gd.verticalAlignment = GridData.FILL;
@@ -1022,7 +859,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		gd = new GridData();
 		gd.horizontalSpan = numColumns;
 		label.setLayoutData(gd);
-
 		return comp;
 	}
 		
@@ -1056,7 +892,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
 	}
-
 	protected PropertyChangeListener getPropertyChangeListener() {
 		if (fPropertyChangeListener == null) {
 			fPropertyChangeListener= new PropertyChangeListener();

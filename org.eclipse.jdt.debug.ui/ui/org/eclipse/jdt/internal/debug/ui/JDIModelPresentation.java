@@ -1174,6 +1174,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}		
 		appendSuspendPolicy(breakpoint, buffer);
 		appendThreadFilter(breakpoint, buffer);
+		if (breakpoint.getFilters().length > 0) {
+			buffer.append(" [scoped]");
+		}
 		String state= null;
 		boolean c= breakpoint.isCaught();
 		boolean u= breakpoint.isUncaught();
