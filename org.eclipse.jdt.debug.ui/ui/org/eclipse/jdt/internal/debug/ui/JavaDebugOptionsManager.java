@@ -16,8 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -144,7 +146,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	/**
 	 * Not to be instantiated
 	 * 
-	 * @see
+	 * @see JavaDebugOptionsManager.getDefault();
 	 */
 	private JavaDebugOptionsManager() {
 	}
@@ -232,11 +234,16 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				Location l = new Location(cu.getParent().getElementName(), name, line);
 				fLocationMap.put(l, problem);
 				fProblemMap.put(problem, l);
-				try {
-					getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
-				} catch (CoreException e) {
-					JDIDebugPlugin.logError(e);
-				}
+				IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) {
+						try {
+							getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
+						} catch (CoreException e) {
+							JDIDebugPlugin.logError(e);
+						}
+					}
+				};
+				fork(wRunnable);
 			}
 		}
 	}
@@ -252,11 +259,16 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			fProblemMap.remove(problem);
 		}
 		if (fProblemMap.isEmpty()) {
-			try {
-				getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
-			} catch (CoreException e) {
-				JDIDebugPlugin.logError(e);
-			}
+			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					try {
+						getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
+					} catch (CoreException e) {
+						JDIDebugPlugin.logError(e);
+					}
+				}
+			};
+			fork(wRunnable);
 		}
 	}
 				
@@ -604,5 +616,18 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		}
 		return null;
 	}
+	
+	protected void fork(final IWorkspaceRunnable wRunnable) {
+		Runnable runnable= new Runnable() {
+			public void run() {
+				try {
+					ResourcesPlugin.getWorkspace().run(wRunnable, null);
+				} catch (CoreException ce) {
+					JDIDebugUIPlugin.log(ce);
+				}
+			}
+		};
+		new Thread(runnable).start();
+	}		
 
 }
