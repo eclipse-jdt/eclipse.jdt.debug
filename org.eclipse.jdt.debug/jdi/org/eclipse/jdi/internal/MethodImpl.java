@@ -519,7 +519,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 						fVariables = new ArrayList(fArgumentSlotsCount);
 						for (int i = 0; i < signatures.length; i++) {
 							String signature = signatures[i];
-							String name = "arg" + i;
+							String name = "arg" + i; //$NON-NLS-1$
 							LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signature, -1, slot, true);
 							fVariables.add(localVar);
 							slot++;
