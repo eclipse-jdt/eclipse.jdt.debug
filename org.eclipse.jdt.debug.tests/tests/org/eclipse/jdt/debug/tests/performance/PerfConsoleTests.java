@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.test.performance.Dimension;
 
 /**
  * Tests performance of the console.
@@ -41,6 +42,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 	}
 	
 	public void testDefault100k() throws Exception {
+		tagAsSummary("100,000 lines", Dimension.CPU_TIME);
 		runFixedWidthTest(100000);		
 	}
 	
@@ -49,6 +51,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 	}
 	
 	public void testStackTrace100k() throws Exception {
+		tagAsSummary("100,000 lines with hyperlinks", Dimension.CPU_TIME);
 	    runStackTrace(50000); // 2 lines * 50,000 repeats = 100,000 hyperlinks
 	}
 	
@@ -57,6 +60,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 	}
 	
 	public void testVarLength100k() throws Exception {
+		tagAsSummary("100,000 variable length lines", Dimension.CPU_TIME);
 	    runVariableLength(25000); // 4 lines * 25,000 repeats = 100,000 lines
 	}		
 		
