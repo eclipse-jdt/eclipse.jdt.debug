@@ -120,6 +120,9 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns monitor info.
 	 */
 	private MonitorInfo monitorInfo() throws IncompatibleThreadStateException {
+		if (!virtualMachine().canGetMonitorInfo()) {
+			throw new UnsupportedOperationException();
+		}
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {

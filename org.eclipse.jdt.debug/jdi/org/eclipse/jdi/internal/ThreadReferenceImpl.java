@@ -103,6 +103,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 * @returns Returns an ObjectReference for the monitor, if any, for which this thread is currently waiting.
 	 */
 	public ObjectReference currentContendedMonitor() throws IncompatibleThreadStateException {
+		if (!virtualMachine().canGetCurrentContendedMonitor()) {
+			throw new UnsupportedOperationException();
+		}
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -280,6 +283,9 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 * @return Returns a List containing an ObjectReference for each monitor owned by the thread. 
 	 */
 	public List ownedMonitors() throws IncompatibleThreadStateException {
+		if (!virtualMachine().canGetOwnedMonitorInfo()) {
+			throw new UnsupportedOperationException();
+		}
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
