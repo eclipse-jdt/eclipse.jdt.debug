@@ -22,7 +22,6 @@ import org.eclipse.debug.core.variables.ExpandVariableContext;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
-import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 
 /**
  * Tests launch configuration variables
@@ -174,7 +173,7 @@ public class LaunchVariableTests extends LaunchConfigurationTests {
 	 */
 	public void testSimpleVariable() {
 		String variableName= "SimpleVariable";
-		ISimpleLaunchVariable variable= new SimpleLaunchVariable(variableName);
+		ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(variableName, null, null);
 		String variableValue= "VariableValue";
 		variable.setValue(variableValue);
 		ILaunchVariableManager manager= DebugPlugin.getDefault().getLaunchVariableManager(); 
