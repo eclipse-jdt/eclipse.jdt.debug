@@ -227,7 +227,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	protected List getBuiltProjects(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
-		if (event.getType() != IResourceChangeEvent.POST_AUTO_BUILD || delta == null) {
+		if (event.getType() != IResourceChangeEvent.POST_WORKSPACE_BUILD || delta == null) {
 			return Collections.EMPTY_LIST;
 		}
 		fProjectVisitor.reset();
@@ -1147,7 +1147,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 		if (!fHotSwapTargets.isEmpty() || !fNoHotSwapTargets.isEmpty()) {
-			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.POST_AUTO_BUILD);
+			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.POST_WORKSPACE_BUILD);
 		}
 	}
 	

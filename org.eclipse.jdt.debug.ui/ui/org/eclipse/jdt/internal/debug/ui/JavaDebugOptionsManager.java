@@ -769,7 +769,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		initializeProblemHandling();
 		notifyTargetsOfFilters();
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_WORKSPACE_BUILD);
 		JDIDebugModel.addJavaBreakpointListener(this);
 	}	
 
