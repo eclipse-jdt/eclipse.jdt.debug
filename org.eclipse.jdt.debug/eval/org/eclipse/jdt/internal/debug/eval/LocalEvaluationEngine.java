@@ -63,7 +63,7 @@ import com.sun.jdi.ObjectReference;
 
 public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor , IEvaluationRunnable {	 
 	
-	private static final String CODE_SNIPPET_NAME= "CodeSnippet.class";
+	private static final String CODE_SNIPPET_NAME= "CodeSnippet.class"; //$NON-NLS-1$
 
 	/**
 	 * A count of the number of engines created.
