@@ -157,7 +157,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			String typeName = linkText.substring(0, index);
 			// remove the method name
 			index = typeName.lastIndexOf('.');
-			int innerClassIndex = typeName.lastIndexOf('$', index);
+			int innerClassIndex = typeName.indexOf('$');
 			if (innerClassIndex != -1)
 				index = innerClassIndex;
 			if (index >= 0) {
