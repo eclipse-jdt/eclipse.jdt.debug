@@ -1,0 +1,13 @@
+<project name="Generate Evaluation Tests" default="generateTests" basedir="..">
+	<target name="generateTests">
+		<java
+			classname="org.eclipse.jdt.debug.tests.eval.generator.TestGenerator"
+			fork="true"
+			failonerror="true"
+			dir="${basedir}/tests/org/eclipse/jdt/debug/tests/eval">
+			<classpath>
+				<pathelement path="${basedir}/bin"/>
+			</classpath>
+		</java>
+	</target>
+</project>
