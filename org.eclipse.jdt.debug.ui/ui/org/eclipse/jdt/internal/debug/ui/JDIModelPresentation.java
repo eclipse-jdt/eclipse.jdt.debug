@@ -68,6 +68,7 @@ import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
+import org.eclipse.jdt.internal.debug.ui.monitors.ThreadMonitorManager;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
@@ -76,7 +77,9 @@ import org.eclipse.jdt.ui.JavaElementImageDescriptor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorDescriptor;
@@ -90,7 +93,7 @@ import com.sun.jdi.ObjectCollectedException;
 /**
  * @see IDebugModelPresentation
  */
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation {
+public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IColorProvider {
 
 	/**
 	 * Qualified names presentation property (value <code>"DISPLAY_QUALIFIED_NAMES"</code>).
@@ -914,12 +917,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 			if (element instanceof IJavaThread) {
-				if (((IJavaThread)element).isOutOfSynch()) {
-					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
+				int flag= 0;
+				IJavaThread javaThread = ((IJavaThread)element);
+				if (ThreadMonitorManager.getDefault().isInDeadlock(javaThread)) {
+					flag= JDIImageDescriptor.IN_DEADLOCK;
 				}
-				if (((IJavaThread)element).mayBeOutOfSynch()) {
-					return JDIImageDescriptor.MAY_BE_OUT_OF_SYNCH;
+				if (javaThread.isOutOfSynch()) {
+					return flag | JDIImageDescriptor.IS_OUT_OF_SYNCH;
 				}
+				if (javaThread.mayBeOutOfSynch()) {
+					return flag | JDIImageDescriptor.MAY_BE_OUT_OF_SYNCH;
+				}
+				return flag;
 			}
 			if (element instanceof IJavaDebugTarget) {
 				if (((IJavaDebugTarget)element).isOutOfSynch()) {
@@ -1865,5 +1874,34 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} catch (DebugException e) {
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	public Color getForeground(Object element) {
+		if (element instanceof JavaContendedMonitor && ((JavaContendedMonitor)element).getMonitor().isInDeadlock()) {
+			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+		}
+		if (element instanceof JavaOwnedMonitor && ((JavaOwnedMonitor)element).getMonitor().isInDeadlock()) {
+			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+		}
+		if (element instanceof JavaWaitingThread && ((JavaWaitingThread)element).getThread().isInDeadlock()) {
+			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+		}
+		if (element instanceof JavaOwningThread && ((JavaOwningThread)element).getThread().isInDeadlock()) {
+			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+		}
+		if (element instanceof IJavaThread && ThreadMonitorManager.getDefault().isInDeadlock((IJavaThread)element)) {
+			return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(IJDIPreferencesConstants.PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	public Color getBackground(Object element) {
+		return null;
 	}
 }

@@ -45,6 +45,8 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 */
 	private HashMap fJavaMonitors;
 	
+	private boolean fIsEnabled;
+	
 	/**
 	 * Returns the default ThreadMonitorManager object.
 	 */
@@ -60,7 +62,8 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		fJavaMonitors= new HashMap();
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(this);
-		if (preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
+		fIsEnabled= preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO);
+		if (fIsEnabled) {
 			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
 	}
@@ -235,12 +238,28 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
-			if (((Boolean)event.getNewValue()).booleanValue()) {
+			fIsEnabled= ((Boolean)event.getNewValue()).booleanValue();
+			if (fIsEnabled) {
 				DebugPlugin.getDefault().addDebugEventListener(this);
 			} else {
 				DebugPlugin.getDefault().removeDebugEventListener(this);
 			}
 		}
+	}
+	
+	/**
+	 * Returns <code>true</code> if SHOW_MONITOR_THREAD_INFO is on and the given thread is
+	 * in a deadlock, <code>false</code> otherwise.
+	 */
+	public boolean isInDeadlock(IJavaThread thread) {
+		if (!fIsEnabled) {
+			return false;
+		}
+		JavaMonitorThread monitorThread = (JavaMonitorThread)fJavaMonitorThreads.get(thread);
+		if (monitorThread == null) {
+			return false;
+		}
+		return monitorThread.isInDeadlock();
 	}
 
 }

@@ -201,4 +201,7 @@ public interface IJDIPreferencesConstants {
 	 * (line info not available, ...)
 	 */	
 	public static final String PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT = IJavaDebugUIConstants.PLUGIN_ID + ".prompt_unable_to_install_breakpoint"; //$NON-NLS-1$
+	
+	public static final String PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR= "org.eclipse.jdt.debug.ui.InDeadlockColor"; //$NON-NLS-1$
+
 }
