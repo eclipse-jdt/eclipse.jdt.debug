@@ -209,7 +209,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!projects.isEmpty()) {
 			updateProjectBuildTime(projects);
 		}
-		List resources= getChangedClassFiles(event.getDelta());
+		List resources= getChangedClassFiles(event);
 		if (!resources.isEmpty()) {
 			System.out.println("Get time: " + new Date().getTime() + " for changed classfiles");
 			doHotCodeReplace(resources);
@@ -706,8 +706,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * Returns the changed class files in the delta or <code>null</code> if none.
 	 */
-	protected List getChangedClassFiles(IResourceDelta delta) {
-		if (delta == null) {
+	protected List getChangedClassFiles(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (event.getType() != IResourceChangeEvent.POST_CHANGE || delta == null) {
 			return new ArrayList(0);
 		}
 		fClassfileVisitor.reset();
