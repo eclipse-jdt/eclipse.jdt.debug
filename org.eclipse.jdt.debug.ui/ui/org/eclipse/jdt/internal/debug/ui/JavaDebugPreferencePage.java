@@ -78,7 +78,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -302,7 +301,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE));
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
 		
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);

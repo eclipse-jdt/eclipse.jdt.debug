@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -158,7 +157,7 @@ public class JavaApplicationWizardPage extends WizardPage {
 		setPageComplete(false);
 		setTitle(DebugUIMessages.getString("JavaApplicationWizardPage.Select_Target_5")); //$NON-NLS-1$
 		setControl(root);
-		WorkbenchHelp.setHelp(root, new DialogPageContextComputer(this, IHelpContextIds.JAVA_APPLICATION_WIZARD_PAGE));				
+		WorkbenchHelp.setHelp(root, IHelpContextIds.JAVA_APPLICATION_WIZARD_PAGE);				
 	}
 
 	public void createElementsGroup(Composite root) {

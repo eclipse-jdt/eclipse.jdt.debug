@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import com.sun.jdi.connect.AttachingConnector;
@@ -93,7 +92,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 
 		initializeSettings();
 		setControl(composite);
-		WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.JDI_ATTACH_LAUNCHER_WIZARD_PAGE));		
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.JDI_ATTACH_LAUNCHER_WIZARD_PAGE);		
 	}
 
 	/**
