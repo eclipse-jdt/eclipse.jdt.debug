@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
@@ -37,7 +38,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
-import org.eclipse.jdt.internal.debug.eval.ast.ASTAPIEvaluationEngine;
+import org.eclipse.jdt.internal.debug.eval.ast.ASTEvaluationEngine;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
@@ -352,6 +353,19 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
+	 * Suspends the given thread for the given breakpoint event after
+	 * a conditional expression evaluation. This method tells the thread
+	 * to fire a suspend event immediately instead of queueing the event.
+	 * This is required because of the asynchronous nature of expression
+	 * evaluation. The EventDispatcher has already fired queued events
+	 * by the time the evaluation completes.
+	 */
+	protected boolean suspendForCondition(Event event, JDIThread thread) {
+		expireHitCount(event);
+		return thread.handleSuspendForBreakpoint(this, false);
+	}
+	
+	/**
 	 * Returns whether this breakpoint should resume based on the
 	 * value of its condition.
 	 * 
@@ -424,7 +438,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 					}
 				} else {
 					fireConditionHasRuntimeErrors(exception);
-					suspendForEvent(event, thread);
+					suspendForCondition(event, thread);
 					return;
 				}
 			}
@@ -434,7 +448,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 					// Suspend when the condition evaluates true
 					IJavaPrimitiveValue javaValue= (IJavaPrimitiveValue)value;
 					if (javaValue.getJavaType().getName().equals("boolean") && javaValue.getBooleanValue()) {
-						suspendForEvent(event, thread);
+						suspendForCondition(event, thread);
 						return;
 					}
 				}
@@ -445,7 +459,11 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			}
 			// Suspend when the an error occurs
 			suspendForEvent(event, thread);
-			}
+		}
+		
+		public boolean evaluationTimedOut(IJavaThread thread) {
+			return true; // Keep waiting
+		}
 		
 		public IEvaluationResult getResult() {
 			return fResult;
@@ -464,11 +482,15 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(this, fCompiledExpression.getErrors());
 	}
 	
+	/**
+	 * Returns whether the cached conditional expression has errors or
+	 * <code>false</code> if there is no cached expression
+	 */
 	public boolean conditionHasErrors() {
 		if (fCompiledExpression == null) {
 			return false;
 		}
-		return fCompiledExpression.getErrors().length != 0;
+		return fCompiledExpression.hasErrors();
 	}
 	
 	private IJavaProject getJavaProject(IProject project) {
@@ -484,19 +506,15 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		return null;
 	}
 	
+	/**
+	 * Returns an evaluation engine for evaluating this breakpoint's condition
+	 */
 	public IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project)   {
 		IEvaluationEngine engine = EvaluationManager.getEvaluationEngine(vm);
 		if (engine == null) {
-			try {
-				engine= EvaluationManager.newEvaluationEngine(project, vm);
-			} catch (CoreException e) {
-				return null;
-			}
+			engine= EvaluationManager.newASTAPIEvaluationEngine(project, vm);
 		}
-		if (engine instanceof ASTAPIEvaluationEngine) {
-			return engine;
-		}
-		return null;
+		return engine;
 	}
 	
 	/**

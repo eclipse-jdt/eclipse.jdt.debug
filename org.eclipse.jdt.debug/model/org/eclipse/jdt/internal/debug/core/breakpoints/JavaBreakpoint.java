@@ -276,7 +276,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */
 	protected boolean suspend(JDIThread thread) {
-		return thread.handleSuspendForBreakpoint(this);
+		return thread.handleSuspendForBreakpoint(this, true);
 	}
 	
 	/**
