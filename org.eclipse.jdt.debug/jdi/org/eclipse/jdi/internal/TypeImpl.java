@@ -219,14 +219,12 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 					return signature.toString();
 				}
 				break;
-				/*
 			case 'f':
 				if (name.equals("float")) {
 					signature.append('F');
 					return signature.toString();
 				}
 				break;
-				*/
 		}
 		// Class type array
 		signature.append('L');
