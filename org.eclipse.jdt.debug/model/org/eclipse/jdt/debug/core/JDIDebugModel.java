@@ -75,6 +75,17 @@ public class JDIDebugModel {
 	public static final int DEF_REQUEST_TIMEOUT = 3000;
 	
 	/**
+	 * Boolean preference controlling whether breakpoints are
+	 * hit during an evaluation operation.
+	 * If true, breakpoints will be hit as usual during evaluations.
+	 * If false, the breakpoint manager will be automatically disabled
+	 * during evaluations.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION = getPluginIdentifier() + ".suspend_for_breakpoints_during_evaluation"; //$NON-NLS-1$
+	
+	/**
 	 * Not to be instantiated.
 	 */
 	private JDIDebugModel() {

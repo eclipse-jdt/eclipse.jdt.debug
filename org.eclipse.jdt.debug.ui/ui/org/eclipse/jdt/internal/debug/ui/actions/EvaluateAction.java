@@ -60,6 +60,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -233,10 +234,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					
 					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
 					setEvaluating(true);
+					boolean hitBreakpoints= JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION);
 					if (object == null) {
-						engine.evaluate(expression, stackFrame, this, DebugEvent.EVALUATION, true);
+						engine.evaluate(expression, stackFrame, this, DebugEvent.EVALUATION, hitBreakpoints);
 					} else {
-						engine.evaluate(expression, object, (IJavaThread)stackFrame.getThread(), this, DebugEvent.EVALUATION, true);
+						engine.evaluate(expression, object, (IJavaThread)stackFrame.getThread(), this, DebugEvent.EVALUATION, hitBreakpoints);
 					}
 					return;
 				} catch (CoreException e) {
