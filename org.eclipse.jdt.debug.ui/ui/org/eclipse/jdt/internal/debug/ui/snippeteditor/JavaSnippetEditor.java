@@ -26,11 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventFilter;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -103,7 +105,7 @@ import com.sun.jdi.ObjectReference;
 /**
  * An editor for Java snippets.
  */
-public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventSetListener, IEvaluationListener, IValueDetailListener {			
+public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener {			
 	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
 	
 	public final static int RESULT_DISPLAY= 1;
@@ -314,7 +316,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected void shutDownVM() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugPlugin.getDefault().removeDebugEventFilter(this);
 
 		// The real shut down
 		IDebugTarget target= fVM;
@@ -703,8 +705,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected synchronized void evaluationStarts() {
 		if (fThread != null) {
 			try {
-				fThread.resume();
+				IThread thread = fThread;
 				fThread = null;
+				thread.resume();
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e);
 				showException(e);
@@ -764,7 +767,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return getSite().getShell();
 	}
 	
-	public void handleDebugEvents(DebugEvent[] events) {
+	/**
+	 * @see IDebugEventFilter#filterDebugEvents(DebugEvent[])
+	 */	
+	public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent e = events[i];
 			Object source = e.getSource();
@@ -797,7 +803,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 										IJavaStackFrame frame = (IJavaStackFrame)frames[j];
 										if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
 											frame.stepOver();
-											break;
+											return null;
 										}
 									}
 								}
@@ -809,6 +815,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				}
 			}
 		}
+		return events;
 	}
 	
 	/**
@@ -839,7 +846,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected void launchVM() {
-		DebugPlugin.getDefault().addDebugEventListener(JavaSnippetEditor.this);
+		DebugPlugin.getDefault().addDebugEventFilter(this);
 		fLaunchedClassPath = getClassPath(getJavaProject());
 		Runnable r = new Runnable() {
 			public void run() {

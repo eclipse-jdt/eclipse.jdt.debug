@@ -183,7 +183,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Creates an "invisible" line breakpoint. 
 	 */
