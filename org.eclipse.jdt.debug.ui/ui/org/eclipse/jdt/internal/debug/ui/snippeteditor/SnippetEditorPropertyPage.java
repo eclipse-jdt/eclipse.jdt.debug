@@ -18,6 +18,7 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -166,7 +167,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fJRETab.createControl(comp);
 		fJRETab.initializeFrom(fConfig);
 		
-		
+		Dialog.applyDialogFont(comp);
 		return comp;
 	}
 	

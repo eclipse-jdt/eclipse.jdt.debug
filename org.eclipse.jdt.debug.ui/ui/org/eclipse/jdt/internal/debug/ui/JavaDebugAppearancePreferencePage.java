@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui;
  
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -99,7 +100,7 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		fPackagesButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Show_&qualified_names_2")); //$NON-NLS-1$
 		
 		setValues();
-		
+		Dialog.applyDialogFont(composite);
 		return composite;		
 	}
 	
