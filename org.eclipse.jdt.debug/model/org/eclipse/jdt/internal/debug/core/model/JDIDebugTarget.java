@@ -1443,6 +1443,45 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			// get java.lang.Class
 			List classes = getVM().classesByName(name);
 			if (classes.size() == 0) {
+				switch (name.charAt(0)) {
+					case 'b':
+						if (name.equals("boolean")) {
+							return new IJavaType[] {newValue(true).getJavaType()};
+						} else if (name.equals("byte")) {
+							return new IJavaType[] {newValue((byte)1).getJavaType()};
+						}
+						break;
+					case 'i':
+						if (name.equals("int")) {
+							return new IJavaType[] {newValue(1).getJavaType()};
+						}
+						break;
+					case 'l':
+						if (name.equals("long")) {
+							return new IJavaType[] {newValue(1l).getJavaType()};
+						}
+						break;
+					case 'c':
+						if (name.equals("char")) {
+							return new IJavaType[] {newValue(' ').getJavaType()};
+						}
+						break;
+					case 's':
+						if (name.equals("short")) {
+							return new IJavaType[] {newValue((short)1).getJavaType()};
+						}
+						break;
+					case 'f':
+						if (name.equals("float")) {
+							return new IJavaType[] {newValue(1f).getJavaType()};
+						}
+						break;
+					case 'd':
+						if (name.equals("double")) {
+							return new IJavaType[] {newValue(1d).getJavaType()};
+						}
+						break;
+				}
 				return null;
 			} else {
 				IJavaType[] types = new IJavaType[classes.size()];

@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
+import com.sun.jdi.InvocationException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaClassType;
@@ -192,9 +194,6 @@ public abstract class Instruction {
 		// Force the class to be loaded, and record the class reference
 		// for later use if there are multiple classes with the same name.
 		IJavaObject classReference= classForName(qualifiedName);
-		if (classReference == null) {
-			throw new CoreException(null); // could not resolve type
-		}
 		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
 		checkTypes(types);
 		if (types.length == 1) {
@@ -202,6 +201,9 @@ public abstract class Instruction {
 			return types[0];
 		} else {
 			// Found many classes, look for the right one for this scope.
+			if (classReference == null) {
+				throw new CoreException(null); // could not resolve type
+			}
 			for(int i= 0, length= types.length; i < length; i++) {
 				IJavaType type= types[i];
 				if (classReference.equals(getClassObject(type))) {
@@ -227,7 +229,17 @@ public abstract class Instruction {
 		}
 		IJavaType receiver= types[0];
 		IJavaValue[] args = new IJavaValue[] {newValue(qualifiedName)};
-		return (IJavaObject)((IJavaClassType)receiver).sendMessage(FOR_NAME, FOR_NAME_SIGNATURE, args, getContext().getThread());
+		try {
+			return (IJavaObject)((IJavaClassType)receiver).sendMessage(FOR_NAME, FOR_NAME_SIGNATURE, args, getContext().getThread());
+		} catch (CoreException e) {
+			if (e.getStatus().getException() instanceof InvocationException) {
+				// Don't throw ClassNotFoundException
+				if (((InvocationException)e.getStatus().getException()).exception().referenceType().name().equals("java.lang.ClassNotFoundException")) {
+					return null;
+				}
+			}
+			throw e;
+		}
 	}
 
 
