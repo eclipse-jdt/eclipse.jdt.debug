@@ -107,6 +107,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("OneToTen");
 		createLaunchConfiguration("ConditionalStepReturn");	
 		createLaunchConfiguration("VariableChanges");		
+		createLaunchConfiguration("DefPkgReturnType");
 	}
 	
 	/**

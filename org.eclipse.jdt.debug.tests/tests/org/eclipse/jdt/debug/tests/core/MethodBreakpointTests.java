@@ -279,4 +279,26 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}	
+	
+	/**
+	 * Test for bug 33551
+	 */
+	public void testEntryDefaultPackageReturnType() throws Exception {
+		String typeName = "DefPkgReturnType";
+		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "self", "()LDefPkgReturnType;", true, false);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("should hit entry breakpoint", bp,hit);
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
 }
