@@ -8,13 +8,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.ast.model.IValue;
 import org.eclipse.jdt.debug.eval.ast.model.IVariable;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
 
 /**
  * @version 	1.0
  * @author
  */
-public class AssignmentOperator extends CompoundInstruction implements TypeIds {
+public class AssignmentOperator extends CompoundInstruction {
 
 	protected int fVariableTypeId;
 	protected int fValueTypeId;

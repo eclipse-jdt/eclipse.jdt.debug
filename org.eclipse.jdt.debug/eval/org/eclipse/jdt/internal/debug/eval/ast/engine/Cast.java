@@ -10,13 +10,12 @@ import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveType;
 import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.ast.model.IType;
 import org.eclipse.jdt.debug.eval.ast.model.IValue;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
 
 /**
  * @version 	1.0
  * @author
  */
-public class Cast extends CompoundInstruction implements TypeIds {
+public class Cast extends CompoundInstruction {
 
 	public static final String IS_INSTANCE= "isInstance";
 	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z";

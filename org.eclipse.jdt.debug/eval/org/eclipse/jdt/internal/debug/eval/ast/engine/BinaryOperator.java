@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.ast.model.IValue;
 import org.eclipse.jdt.debug.eval.ast.model.IVariable;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
 
 /**
  * @version 	1.0
@@ -229,7 +228,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	protected abstract String getStringResult(IValue leftOperand, IValue rightOperand);
 
 	protected int getInternResultType() {
-		return getPromotionType(fLeftTypeId, fRightTypeId);
+		return getBinaryPromotionType(fLeftTypeId, fRightTypeId);
 	}
 
 }

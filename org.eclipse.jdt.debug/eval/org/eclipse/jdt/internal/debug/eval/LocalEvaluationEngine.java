@@ -1388,4 +1388,30 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		return null;
 	}
 
+	/**
+	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
+	 */
+	public void evaluate(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	}
+
+	/**
+	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaThread, IEvaluationListener)
+	 */
+	public void evaluate(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	}
+
+	/**
+	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
+	 */
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject object, IJavaThread thread) throws DebugException {
+		return null;
+	}
+
+	/**
+	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaThread)
+	 */
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaThread thread) throws DebugException {
+		return null;
+	}
+
 }

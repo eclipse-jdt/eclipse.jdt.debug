@@ -94,8 +94,12 @@ public interface IEvaluationEngine {
 	void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
 	
 	ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) throws DebugException;
+	ICompiledExpression getCompiledExpression(String snippet, IJavaThread thread) throws DebugException;
+	ICompiledExpression getCompiledExpression(String snippet, IJavaObject object, IJavaThread thread) throws DebugException;
 	
 	void evaluate(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
+	void evaluate(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	void evaluate(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException;
 	
 	/**
 	 * Asynchronously evaluates the given snippet in the context of

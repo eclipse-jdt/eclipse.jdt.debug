@@ -1,8 +1,9 @@
+package org.eclipse.jdt.internal.debug.eval.ast.engine;
+
 /*
  * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
@@ -83,13 +85,12 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.internal.compiler.ast.MessageSend;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
 
 /**
  * @version 	1.0
  * @author
  */
-public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
+public class ASTAPIVisitor extends ASTVisitor {
 
 	/**
 	 * Whether to print debug messages to the console
@@ -1238,7 +1239,7 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 
 		int leftTypeId = getTypeId(node.getLeftOperand());
 		int rightTypeId = getTypeId(node.getRightOperand());
-		int resultTypeId = Instruction.getPromotionType(leftTypeId, rightTypeId);
+		int resultTypeId = Instruction.getBinaryPromotionType(leftTypeId, rightTypeId);
 		
 		types[0][0] = resultTypeId;
 		types[0][1] = leftTypeId;
@@ -1248,7 +1249,7 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 			Expression operand = (Expression) iterator.next();
 			leftTypeId = resultTypeId;
 			rightTypeId = getTypeId(operand);
-			resultTypeId = Instruction.getPromotionType(leftTypeId, rightTypeId);
+			resultTypeId = Instruction.getBinaryPromotionType(leftTypeId, rightTypeId);
 			types[i][0] = resultTypeId;
 			types[i][1] = leftTypeId;
 			types[i][2] = rightTypeId;
@@ -1291,7 +1292,7 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 						break;
 					case '<': // left shift
 						for (int i = operatorNumber - 1; i >= 0; i--) {
-							push(new LeftShiftOperator(types[i][0], types[i][1], types[i][2], fCounter));
+							push(new LeftShiftOperator(Instruction.getUnaryPromotionType(types[i][1]), types[i][1], types[i][2], fCounter));
 						}
 						break;
 					case '=': // less equal
@@ -1315,12 +1316,12 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 						switch (char2) {
 							case '\0': // right shift
 								for (int i = operatorNumber - 1; i >= 0; i--) {
-									push(new RightShiftOperator(types[i][0], types[i][1], types[i][2], fCounter));
+									push(new RightShiftOperator(Instruction.getUnaryPromotionType(types[i][1]), types[i][1], types[i][2], fCounter));
 								}
 								break;
 							case '>': // unsigned right shift
 								for (int i = operatorNumber - 1; i >= 0; i--) {
-									push(new UnsignedRightShiftOperator(types[i][0], types[i][1], types[i][2], fCounter));
+									push(new UnsignedRightShiftOperator(Instruction.getUnaryPromotionType(types[i][1]), types[i][1], types[i][2], fCounter));
 								}
 								break;
 						}
@@ -1581,16 +1582,16 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 		}
 		
 		switch (literalType) {
-			case T_int:
-				push(new PushInt(Integer.parseInt(token)));
+			case Instruction.T_int:
+				push(new PushInt(Integer.decode(token).intValue()));
 				break;
-			case T_long:
-				push(new PushLong(Long.parseLong(token)));
+			case Instruction.T_long:
+				push(new PushLong(Long.decode(token).longValue()));
 				break;
-			case T_float:
+			case Instruction.T_float:
 				push(new PushFloat(Float.parseFloat(token)));
 				break;
-			case T_double:
+			case Instruction.T_double:
 				push(new PushDouble(Double.parseDouble(token)));
 				break;
 		}
@@ -1789,8 +1790,11 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 				break;
 			case IBinding.VARIABLE:
 				IVariableBinding variableBinding= (IVariableBinding) binding;
-				if (variableBinding.isField()) {
-					push(new PushVariable(node.getIdentifier()));
+				if (variableBinding.isField() && Modifier.isStatic(variableBinding.getModifiers())) {
+					push(new PushFieldVariable(node.getIdentifier(), false, fCounter));
+					typeBinding= variableBinding.getDeclaringClass();
+					push(new PushType(getTypeName(typeBinding), false));
+					storeInstruction();
 				} else {
 					push(new PushVariable(node.getIdentifier()));
 				}
@@ -1858,12 +1862,6 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 	public boolean visit(SuperFieldAccess node) {
 		if (!isActive()) {
 			return false;
-		}
-		
-		if (node.getQualifier() != null) {
-			setHasError(true);
-			addErrorMessage(new Message("Qualifier for super field access is not implemented", node.getStartPosition()));
-			return true;
 		}
 		
 		push(new PushThis());
@@ -1955,17 +1953,10 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 		if (!isActive()) {
 			return false;
 		}
-		
-		if (node.getQualifier() != null) {
-			setHasError(true);
-			addErrorMessage(new Message("Qualifier for this is not implemented", node.getStartPosition()));
-			return true;
-		}
-		
-		
+				
 		push(new PushThis());
 		
-		return true;
+		return false;
 	}
 
 	/*
@@ -2087,9 +2078,9 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 		if (typeBinding.isPrimitive()) {
 			return getPrimitiveTypeId(typeName);
 		} else if ("String".equals(typeName) && "java.lang".equals(typeBinding.getPackage().getName())){
-			return T_String;
+			return Instruction.T_String;
 		} else {
-			return T_Object;
+			return Instruction.T_Object;
 		}
 	}
 	
@@ -2099,14 +2090,14 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 		} else if (type.isSimpleType()) {
 			SimpleType simpleType = (SimpleType) type;
 			if ("java.lang.String".equals(simpleType.getName())){
-				return T_String;
+				return Instruction.T_String;
 			} else {
-				return T_Object;
+				return Instruction.T_Object;
 			}
 		} else if (type.isArrayType()) {
-			return T_Object;
+			return Instruction.T_Object;
 		} else {
-			return T_undefined;
+			return Instruction.T_undefined;
 		}
 		
 	}
@@ -2127,54 +2118,54 @@ public class ASTAPIVisitor extends ASTVisitor implements TypeIds {
 			case 'b': // byte or boolean
 				switch (typeName.charAt(1)) {
 					case 'o': // boolean;
-						return T_boolean;
+						return Instruction.T_boolean;
 					case 'y': // byte
-						return T_byte;
+						return Instruction.T_byte;
 				}
 				break;
 			case 'c': // char
-				return T_char;
+				return Instruction.T_char;
 			case 'd': // double
-				return T_double;
+				return Instruction.T_double;
 			case 'f': // float
-				return T_float;
+				return Instruction.T_float;
 			case 'i': // int
-				return T_int;
+				return Instruction.T_int;
 			case 'l': // long
-				return T_long;
+				return Instruction.T_long;
 			case 'n':
-				return T_null;
+				return Instruction.T_null;
 			case 's': // short
-				return T_short;
+				return Instruction.T_short;
 			case 'v': // void
-				return T_void;
+				return Instruction.T_void;
 		}
-		return T_undefined;
+		return Instruction.T_undefined;
 	}
 	
 	private String getPrimitiveTypeSignature(String typeName) {
 		switch (getPrimitiveTypeId(typeName)) {
-			case T_byte:
+			case Instruction.T_byte:
 				return "B";
-			case T_char:
+			case Instruction.T_char:
 				return "C";
-			case T_double:
+			case Instruction.T_double:
 				return "D";
-			case T_float:
+			case Instruction.T_float:
 				return "F";
-			case T_int:
+			case Instruction.T_int:
 				return "I";
-			case T_long:
+			case Instruction.T_long:
 				return "J";
-			case T_short:
+			case Instruction.T_short:
 				return "S";
-			case T_boolean:
+			case Instruction.T_boolean:
 				return "Z";
-			case T_void:
+			case Instruction.T_void:
 				return "V";
 		}
 		// throw exception
-		return "";
+		return null;
 	}
 
 }

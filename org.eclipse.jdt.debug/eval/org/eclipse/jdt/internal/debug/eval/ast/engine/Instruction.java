@@ -15,12 +15,11 @@ import org.eclipse.jdt.debug.eval.ast.model.IType;
 import org.eclipse.jdt.debug.eval.ast.model.IValue;
 import org.eclipse.jdt.debug.eval.ast.model.IVariable;
 import org.eclipse.jdt.debug.eval.ast.model.IVirtualMachine;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
  
 /**
  * Common behavoir for instructions.
  */
-public abstract class Instruction implements TypeIds {
+public abstract class Instruction {
 
 	private Interpreter fInterpreter;
 
@@ -29,7 +28,9 @@ public abstract class Instruction implements TypeIds {
 	public void setInterpreter(Interpreter interpreter) {
 		fInterpreter= interpreter;
 	}
-	
+	public static int getBinaryPromotionType(int left, int right) {
+		return fTypeTable[left][right];
+	}	
 	public abstract void execute() throws CoreException;
 
 	protected void execute(Instruction instruction) throws CoreException {
@@ -159,8 +160,8 @@ public abstract class Instruction implements TypeIds {
 		return getVM().nullValue();
 	}
 
-	public static int getPromotionType(int left, int right) {
-		return fTypeTable[left][right];
+	public static int getUnaryPromotionType(int typeId) {
+		return fTypeTable[typeId][T_int];
 	}
 
 	protected IType getType(String qualifiedName) throws CoreException {
@@ -215,11 +216,19 @@ public abstract class Instruction implements TypeIds {
 	}
 
 
-
-
-
-
-
+	static public final int T_undefined =0;
+	static public final int T_Object =1;
+	static public final int T_char =2;
+	static public final int T_byte =3;
+	static public final int T_short =4;
+	static public final int T_boolean =5;
+	static public final int T_void =6;
+	static public final int T_long =7;
+	static public final int T_double =8;
+	static public final int T_float =9;
+	static public final int T_int =10;
+	static public final int T_String =11;
+	static public final int T_null =12;
 	
 	private static final int[][] fTypeTable= {
 /* undefined */	{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined},

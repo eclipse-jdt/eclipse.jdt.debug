@@ -57,6 +57,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
@@ -97,25 +98,28 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 	
 	private CompilationUnit fUnit;
 	
-	private int fLineNumber;
+	private int fPosition;
+	
+	private boolean fIsLineNumber;
 	
 	private StringBuffer fSource;
 	
-	private String lastTypeName;
+	private String fLastTypeName;
 	
 	private String fCompilationUnitName;
 	
 	private int fStartPosOffset;
 	
-	public ASTCuToEvalSourceMapper(CompilationUnit unit, int lineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public ASTCuToEvalSourceMapper(CompilationUnit unit, int position, boolean isLineNumber, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
-		fLineNumber= lineNumber;
+		fPosition= position;
 		fLocalModifiers= localModifiers;
 		fLocalTypesNames= localTypesNames;
 		fLocalVariables= localVariables;
 		fCodeSnippet= codeSnippet;
-		fIsInAStaticMethod= true;
+		fIsInAStaticMethod= false;
+		fIsLineNumber= isLineNumber;
 	}
 	
 	public String getSource() {
@@ -134,8 +138,8 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 		return fStartPosOffset;
 	}
 	
-	private int getLineNumber() {
-		return fLineNumber;
+	private int getPosition() {
+		return fPosition;
 	}
 	
 	private int getCorrespondingLineNumber(int charOffset) {
@@ -218,9 +222,15 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 	}
 	
 	private boolean containsLine(ASTNode node) {
-		int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
-		int endLineNumber= getCorrespondingLineNumber(node.getStartPosition() + node.getLength());
-		return startLineNumber <= getLineNumber() && getLineNumber() <= endLineNumber;
+		int position= getPosition();
+		if (fIsLineNumber) {
+			int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
+			int endLineNumber= getCorrespondingLineNumber(node.getStartPosition() + node.getLength() - 1);
+			return startLineNumber <= position && position <= endLineNumber;
+		} else {
+			int startPosition= node.getStartPosition();
+			return startPosition <= position && position <= startPosition + node.getLength();
+		}
 	}
 	
 	private StringBuffer buildTypeBody(StringBuffer buffer, List list) {
@@ -239,7 +249,7 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 				source.append(buildMethodDeclaration((MethodDeclaration) bodyDeclaration));
 			} else if (bodyDeclaration instanceof TypeDeclaration) {
 				TypeDeclaration typeDeclaration = (TypeDeclaration) bodyDeclaration;
-				if (!typeDeclaration.getName().getIdentifier().equals(lastTypeName)) {
+				if (!typeDeclaration.getName().getIdentifier().equals(fLastTypeName)) {
 					source.append(buildTypeDeclaration(null, (TypeDeclaration) bodyDeclaration));
 				}
 			}
@@ -281,7 +291,9 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 		source.append(Flags.toString(methodDeclaration.getModifiers()));
 		source.append(' ');
 		
-		if (!methodDeclaration.isConstructor()) {
+		boolean isConstructor= methodDeclaration.isConstructor();
+		
+		if (!isConstructor) {
 			source.append(getDotName(getTypeName(methodDeclaration.getReturnType())));
 			source.append(' ');
 		}
@@ -315,6 +327,17 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 			}
 			source.append(getQualifiedIdentifier(name));
 		}
+		
+//		if (isConstructor) {
+//			Statement statement= methodDeclaration.getBody().statements().get(0);
+//			if (statement instanceof ConstructorInvocation) {
+//				statement.getAST().
+//				ConstructorInvocation constructorInvocation= (ConstructorInvocation) statement;
+//				source.append(constructorInvocation.)
+//			} else if (statement instanceof SuperConstructorInvocation) {
+//				SuperConstructorInvocation constructorInvocation= (SuperConstructorInvocation) statement;
+//			}
+//		}
 		
 
 		source.append('{').append('\n');
@@ -377,6 +400,9 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 			ImportDeclaration importDeclaration = (ImportDeclaration) iterator.next();
 			source.append("import ");
 			source.append(getQualifiedIdentifier(importDeclaration.getName()));
+			if (importDeclaration.isOnDemand()) {
+				source.append(".*");
+			}
 			source.append(";\n");
 		}
 		
@@ -388,7 +414,7 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 			if (Flags.isPublic(typeDeclaration.getModifiers())) {
 				fCompilationUnitName = typeDeclaration.getName().getIdentifier();
 			}
-			if (!lastTypeName.equals(typeDeclaration.getName().getIdentifier())) {
+			if (!fLastTypeName.equals(typeDeclaration.getName().getIdentifier())) {
 				source.append(buildTypeDeclaration(null,typeDeclaration));
 			}
 		}
@@ -470,27 +496,14 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 			fSource= new StringBuffer("void ___eval() {\n");
 			fSource.append("new ");
 			fSource.append(getQualifiedIdentifier(node.getName()));
-			fSource.append('(');
-			
-			boolean first= true;
-			for (Iterator iterator = node.arguments().iterator(); iterator.hasNext();) {
-				Expression expression = (Expression) iterator.next();
-				if (first) {
-					first = false;
-				} else {
-					source.append(',');
-				}
-			}
-			
-			fSource.append(')');
+			fSource.append("()");
 			
 			fStartPosOffset+= fSource.length();
 			fSource.append(source);
 			fSource.append(";}\n");
 			
-			lastTypeName= "";
+			fLastTypeName= "";
 			
-			// enclosed it in a method as a class instance creation
 		}		
 	}
 
@@ -560,10 +573,10 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 				fSource.append(source);
 				fSource.append("}\n");
 				
-				lastTypeName = "";
+				fLastTypeName = "";
 			} else {
 				fSource = source;
-				lastTypeName = node.getName().getIdentifier();
+				fLastTypeName = node.getName().getIdentifier();
 			}
 		}
 	}

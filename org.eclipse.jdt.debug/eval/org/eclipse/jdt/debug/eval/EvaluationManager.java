@@ -19,7 +19,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine;
-import org.eclipse.jdt.internal.debug.eval.ast.ASTAPIEvaluationEngine;
+import org.eclipse.jdt.internal.debug.eval.ast.ASTEvaluationEngine;
 
 /**
  * The evaluation manager provides factory methods for
@@ -224,8 +224,8 @@ public class EvaluationManager {
 	 * evaluations by creating an abstract syntax tree (AST) represention
 	 * of an expression.
 	 */
-	public static ASTAPIEvaluationEngine newASTAPIEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
-		ASTAPIEvaluationEngine engine= new ASTAPIEvaluationEngine(project, target);
+	public static ASTEvaluationEngine newASTAPIEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
+		ASTEvaluationEngine engine= new ASTEvaluationEngine(project, target);
 		getDefault().addEvaluationEngine(engine);
 		return engine;
 	}

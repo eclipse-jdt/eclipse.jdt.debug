@@ -6,13 +6,12 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.compiler.ast.OperatorIds;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
 
 /**
  * @version 	1.0
  * @author
  */
-public abstract class XfixOperator extends CompoundInstruction implements TypeIds {
+public abstract class XfixOperator extends CompoundInstruction {
 
 	protected int fVariableTypeId;
 	

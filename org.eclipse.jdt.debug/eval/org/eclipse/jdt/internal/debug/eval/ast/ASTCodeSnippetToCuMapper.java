@@ -4,34 +4,27 @@ package org.eclipse.jdt.internal.debug.eval.ast;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.List;
-import java.util.Stack;
+import java.util.ArrayList;
 
-import org.eclipse.core.internal.resources.LocalMetaArea;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.internal.compiler.util.CharOperation;
-import org.eclipse.jdt.internal.compiler.util.Util;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.eval.EvaluationConstants;
-import org.eclipse.jdt.internal.eval.EvaluationContext;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
  * Maps back and forth a code snippet to a compilation unit.
@@ -44,13 +37,12 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
  *   }
  * }
  */
-public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstants*/ {
+public class ASTCodeSnippetToCuMapper implements EvaluationConstants {
 
-	private IJavaStackFrame fFrame;
+//	private IJavaStackFrame fFrame;
 	private String fCodeSnippet;
 	
 	private String[] fImports;
-	private String fTypeName;
 	private int[] fLocalModifiers;
 	private String[] fLocalTypesNames;
 	private String[] fLocalVariables;
@@ -63,13 +55,11 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 	/**
 	 * Rebuild source in presence of external local variables
 	 */
-	public ASTCodeSnippetToCuMapper(String[] imports, String declaringTypeName, int[] localModifiers, String[] localTypesNames, String[] localVariables, IJavaStackFrame frame, String codeSnippet) {
+	public ASTCodeSnippetToCuMapper(String[] imports, int[] localModifiers, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fImports = imports;
-		fTypeName = declaringTypeName;
 		fLocalModifiers = localModifiers;
 		fLocalTypesNames = localTypesNames;
 		fLocalVariables = localVariables;
-		fFrame= frame;
 	 	fCodeSnippet= codeSnippet;
 	}
 	
@@ -81,9 +71,9 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 		return fStartPosition;
 	}
 
-	private void createMagicCodeFromSource(String source) throws DebugException {
+	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber) throws DebugException {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
-		ASTCuToEvalSourceMapper visitor= new ASTCuToEvalSourceMapper(unit, fFrame.getLineNumber(), fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
+		ASTCuToEvalSourceMapper visitor= new ASTCuToEvalSourceMapper(unit, position, isLineNumber, fLocalModifiers, fLocalTypesNames, fLocalVariables, fCodeSnippet);
 		unit.accept(visitor);
 		
 		setSource(visitor.getSource());
@@ -91,10 +81,7 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 		setStartPosition(visitor.getStartPosition());
 	}
 	
-	private void createMagicCodeFromJDIObject(JDIStackFrame frame) throws DebugException {
-		JDIStackFrameToEvalSourceMapper objectToMagicSourceMapper = new JDIStackFrameToEvalSourceMapper(frame, fLocalModifiers, fLocalTypesNames, fLocalVariables);
-		objectToMagicSourceMapper.buildSource();
-
+	private void createEvaluationSourceFromJDIObject(JDIStackFrameToEvalSourceMapper objectToEvaluationSourceMapper) throws DebugException {
 		String codeSnippet = fCodeSnippet;		
 		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1;
 
@@ -102,19 +89,40 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 			codeSnippet = "return " + codeSnippet + ';';
 		}
 		
-		setCompilationUnitName(objectToMagicSourceMapper.getCompilationUnitName());
-		setStartPosition(objectToMagicSourceMapper.getBlockStar());
-		setSource(objectToMagicSourceMapper.getSource().insert(objectToMagicSourceMapper.getCodeSnippetPosition(), codeSnippet).toString());
+		setCompilationUnitName(objectToEvaluationSourceMapper.getCompilationUnitName());
+		setStartPosition(objectToEvaluationSourceMapper.getBlockStar());
+		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), codeSnippet).toString());
+	}
+	
+	private JDIStackFrameToEvalSourceMapper getInstanceSourceMapper(JDIObjectValue objectValue, boolean isInStaticMethod) throws DebugException {
+		JDIStackFrameToEvalSourceMapper objectToEvaluationSourceMapper = new JDIStackFrameToEvalSourceMapper(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+		objectToEvaluationSourceMapper.buildSource(objectValue);
+		return objectToEvaluationSourceMapper;
+	}
+	
+	private JDIStackFrameToEvalSourceMapper getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) throws DebugException {
+		JDIStackFrameToEvalSourceMapper objectToEvaluationSourceMapper = new JDIStackFrameToEvalSourceMapper(fLocalModifiers, fLocalTypesNames, fLocalVariables, isInStaticMethod);
+		objectToEvaluationSourceMapper.buildSource(classType);
+		return objectToEvaluationSourceMapper;
 	}
 			
-	public String getSource() throws DebugException {
+	public String getSource(IJavaStackFrame frame) throws DebugException {
 		if (fSource == null) {
 			try {
-				String baseSource= getSourceFormFrame();
+				String baseSource= getSourceFromFrame(frame);
 				if (baseSource != null) {
-					createMagicCodeFromSource(baseSource);
+					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true);
 				} else {
-					createMagicCodeFromJDIObject((JDIStackFrame) fFrame);
+					JDIObjectValue object= (JDIObjectValue)frame.getThis();
+					JDIStackFrameToEvalSourceMapper mapper;
+					if (object != null) {
+						// Class instance context
+						mapper= getInstanceSourceMapper(object, ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
+					} else {
+						// Static context
+						mapper= getStaticSourceMapper((JDIClassType)frame.getDeclaringType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
+					}
+					createEvaluationSourceFromJDIObject(mapper);
 				}
 			} catch (JavaModelException e) {
 				throw new DebugException(e.getStatus());
@@ -123,8 +131,28 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 		return fSource;
 	}
 	
-	protected String getSourceFormFrame() throws JavaModelException {
-		IJavaStackFrame frame= getJavaStackFrame(); 
+	public String getSource(IJavaObject thisObject, IJavaProject javaProject) throws DebugException  {
+		if (fSource == null) {
+			try {
+				IType type= getTypeFromProject(thisObject.getJavaType().getName() ,javaProject);
+				String baseSource= null;
+				if (type != null) {
+					baseSource= type.getSource();
+				}
+				if (baseSource == null) {
+					JDIStackFrameToEvalSourceMapper mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
+					createEvaluationSourceFromJDIObject(mapper);
+				} else {
+					createEvaluationSourceFromSource(baseSource, type.getSourceRange().getOffset(), false);
+				}
+			} catch(JavaModelException e) {
+				throw new DebugException(e.getStatus());
+			}
+		}
+		return fSource;
+	}
+	
+	protected String getSourceFromFrame(IJavaStackFrame frame) throws JavaModelException {
 		ILaunch launch= frame.getLaunch();
 		if (launch == null) {
 			return null;
@@ -146,10 +174,6 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 		return null;
 	}
 	
-	protected IJavaStackFrame getJavaStackFrame() {
-		return fFrame;
-	}
-	
 	protected void setCompilationUnitName(String name) {
 		fCompilationUnitName= name;
 	}
@@ -162,196 +186,67 @@ public class ASTCodeSnippetToCuMapper implements EvaluationConstants/*, IConstan
 		fSource= source;
 	}
 	
-//	/**
-//	 * Returns the compilation unit associated with this
-//	 * Java stack frame. Returns <code>null</code> for a binary
-//	 * stack frame.
-//	 */
-//	protected ICompilationUnit getCompilationUnit(IJavaStackFrame frame) {
-//		ILaunch launch= frame.getLaunch();
-//		if (launch == null) {
-//			return null;
-//		}
-//		ISourceLocator locator= launch.getSourceLocator();
-//		if (locator == null) {
-//			return null;
-//		}
-//		Object sourceElement= locator.getSourceElement(frame);
-//		if (sourceElement instanceof IType) {
-//			return (ICompilationUnit)((IType)sourceElement).getCompilationUnit();
-//		}
-//		if (sourceElement instanceof ICompilationUnit) {
-//			return (ICompilationUnit)sourceElement;
-//		}
-//		return null;
-//	}
+	/**
+	 * Returns the type associated with the specified
+	 * name in this evaluation engine's associated Java project.
+	 * 
+	 * @param typeName fully qualified name of type, for
+	 *  example, <code>java.lang.String</code>
+	 * @return main type associated with source file
+	 * @exception DebugException if:<ul>
+	 * <li>the resolved type is an inner type</li>
+	 * <li>unable to resolve a type</li>
+	 * <li>a lower level java exception occurs</li>
+	 * </ul>
+	 */
+	private IType getTypeFromProject(String typeName, IJavaProject javaProject) throws DebugException {
+		String path = typeName.replace('.', IPath.SEPARATOR);
+		path+= ".java";			 //$NON-NLS-1$
+		IPath sourcePath =  new Path(path);
+		
+		IType type = null;
+		try {
+			IJavaElement result = javaProject.findElement(sourcePath);
+			String[] typeNames = getNestedTypeNames(typeName);
+			if (result != null) {
+				if (result instanceof IClassFile) {
+					type = ((IClassFile)result).getType();
+				} else if (result instanceof ICompilationUnit) {
+					type = ((ICompilationUnit)result).getType(typeNames[0]);
+				}
+			}
+			for (int i = 1; i < typeNames.length; i++) {
+				type = type.getType(typeNames[i]);
+			}
+		} catch (JavaModelException e) {
+			throw new DebugException(e.getStatus());
+		}
+		
+		return type;	
+	}
 	
 	/**
-	 * Returns a completion requestor that wraps the given requestor and shift the results
-	 * according to the start offset and line number offset of the code snippet in the generated compilation unit. 
+	 * Returns an array of simple type names that are
+	 * part of the given type's qualified name. For
+	 * example, if the given name is <code>x.y.A$B</code>,
+	 * an array with <code>["A", "B"]</code> is returned.
+	 * 
+	 * @param typeName fully qualified type name
+	 * @return array of nested type names
 	 */
-//	public ICompletionRequestor getCompletionRequestor(final ICompletionRequestor originalRequestor) {
-//		final int startPosOffset = this.startPosOffset;
-//		final int lineNumberOffset = this.lineNumberOffset;
-//		return new ICompletionRequestor() {
-//			public void acceptAnonymousType(char[] superTypePackageName,char[] superTypeName,char[][] parameterPackageNames,char[][] parameterTypeNames,char[][] parameterNames,char[] completionName,int modifiers,int completionStart,int completionEnd){
-//				originalRequestor.acceptAnonymousType(superTypePackageName, superTypeName, parameterPackageNames, parameterTypeNames, parameterNames, completionName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			
-//			public void acceptClass(char[] packageName, char[] className, char[] completionName, int modifiers, int completionStart, int completionEnd) {
-//				// Remove completion on generated class name or generated global variable class name
-//				if (CharOperation.equals(packageName, ASTCodeSnippetToCuMapper.this.packageName) 
-//						&& (CharOperation.equals(className, ASTCodeSnippetToCuMapper.this.className)
-//							|| CharOperation.equals(className, ASTCodeSnippetToCuMapper.this.varClassName))) return;
-//				originalRequestor.acceptClass(packageName, className, completionName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptError(IMarker problemMarker) {
-//	
-//				try {
-//					String attr = (String) problemMarker.getAttribute(IMarker.CHAR_START);
-//					int start = Integer.parseInt(attr);
-//					problemMarker.setAttribute(IMarker.CHAR_START, start - startPosOffset);	
-//				} catch(CoreException e){
-//				} catch(NumberFormatException e){
-//				}
-//				try {
-//					String attr = (String) problemMarker.getAttribute(IMarker.CHAR_END);
-//					int end = Integer.parseInt(attr);
-//					problemMarker.setAttribute(IMarker.CHAR_END, end - startPosOffset);	
-//				} catch(CoreException e){
-//				} catch(NumberFormatException e){
-//				}
-//				try {
-//					String attr = (String) problemMarker.getAttribute(IMarker.LINE_NUMBER);
-//					int line = Integer.parseInt(attr);
-//					problemMarker.setAttribute(IMarker.LINE_NUMBER, line - lineNumberOffset);	
-//				} catch(CoreException e){
-//				} catch(NumberFormatException e){
-//				}
-//				originalRequestor.acceptError(problemMarker);
-//			}
-//			public void acceptField(char[] declaringTypePackageName, char[] declaringTypeName, char[] name, char[] typePackageName, char[] typeName, char[] completionName, int modifiers, int completionStart, int completionEnd) {
-//				originalRequestor.acceptField(declaringTypePackageName, declaringTypeName, name, typePackageName, typeName, completionName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptInterface(char[] packageName, char[] interfaceName, char[] completionName, int modifiers, int completionStart, int completionEnd) {
-//				originalRequestor.acceptInterface(packageName, interfaceName, completionName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptKeyword(char[] keywordName, int completionStart, int completionEnd) {
-//				originalRequestor.acceptKeyword(keywordName, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptLabel(char[] labelName, int completionStart, int completionEnd) {
-//				originalRequestor.acceptLabel(labelName, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptLocalVariable(char[] name, char[] typePackageName, char[] typeName, int modifiers, int completionStart, int completionEnd) {
-//				originalRequestor.acceptLocalVariable(name, typePackageName, typeName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptMethod(char[] declaringTypePackageName, char[] declaringTypeName, char[] selector, char[][] parameterPackageNames, char[][] parameterTypeNames, char[][] parameterNames, char[] returnTypePackageName, char[] returnTypeName, char[] completionName, int modifiers, int completionStart, int completionEnd) {
-//				// Remove completion on generated method
-//				if (CharOperation.equals(declaringTypePackageName, ASTCodeSnippetToCuMapper.this.packageName) 
-//						&& CharOperation.equals(declaringTypeName, ASTCodeSnippetToCuMapper.this.className)
-//						&& CharOperation.equals(selector, "run".toCharArray())) return; //$NON-NLS-1$
-//				originalRequestor.acceptMethod(declaringTypePackageName, declaringTypeName, selector, parameterPackageNames, parameterTypeNames, parameterNames, returnTypePackageName, returnTypeName, completionName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptMethodDeclaration(char[] declaringTypePackageName, char[] declaringTypeName, char[] selector, char[][] parameterPackageNames, char[][] parameterTypeNames, char[][] parameterNames, char[] returnTypePackageName, char[] returnTypeName, char[] completionName, int modifiers, int completionStart, int completionEnd) {
-//				// Remove completion on generated method
-//				if (CharOperation.equals(declaringTypePackageName, ASTCodeSnippetToCuMapper.this.packageName) 
-//						&& CharOperation.equals(declaringTypeName, ASTCodeSnippetToCuMapper.this.className)
-//						&& CharOperation.equals(selector, "run".toCharArray())) return;//$NON-NLS-1$
-//				originalRequestor.acceptMethodDeclaration(declaringTypePackageName, declaringTypeName, selector, parameterPackageNames, parameterTypeNames, parameterNames, returnTypePackageName, returnTypeName, completionName, modifiers, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptModifier(char[] modifierName, int completionStart, int completionEnd) {
-//				originalRequestor.acceptModifier(modifierName, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptPackage(char[] packageName, char[] completionName, int completionStart, int completionEnd) {
-//				originalRequestor.acceptPackage(packageName, completionName, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptType(char[] packageName, char[] typeName, char[] completionName, int completionStart, int completionEnd) {
-//				// Remove completion on generated class name or generated global variable class name
-//				if (CharOperation.equals(packageName, ASTCodeSnippetToCuMapper.this.packageName) 
-//						&& (CharOperation.equals(className, ASTCodeSnippetToCuMapper.this.className)
-//							|| CharOperation.equals(className, ASTCodeSnippetToCuMapper.this.varClassName))) return;
-//				originalRequestor.acceptType(packageName, typeName, completionName, completionStart - startPosOffset, completionEnd - startPosOffset);
-//			}
-//			public void acceptVariableName(char[] typePackageName, char[] typeName, char[] name, char[] completionName, int completionStart, int completionEnd){
-//				originalRequestor.acceptVariableName(typePackageName, typeName, name, completionName, completionStart, completionEnd);
-//			}
-//		};
-//	}
-	
-	/**
-	 * Returns the type of evaluation that corresponds to the given line number in the generated compilation unit.
-	 */
-//	public int getEvaluationType(int lineNumber) {
-//		int currentLine = 1;
-//	
-//		// check package declaration	
-//		if (this.packageName != null && this.packageName.length != 0) {
-//			if (lineNumber == 1) {
-//				return EvaluationResult.T_PACKAGE;
-//			}
-//			currentLine++;
-//		}
-//	
-//		// check imports
-//		char[][] imports = this.imports;
-//		if ((currentLine <= lineNumber) && (lineNumber < (currentLine + imports.length))) {
-//			return EvaluationResult.T_IMPORT;
-//		}
-//		currentLine += imports.length + 1; // + 1 to skip the class declaration line
-//	
-//		// check generated fields
-//		currentLine +=
-//			(this.declaringTypeName == null ? 0 : 1) 
-//			+ (this.localVarNames == null ? 0 : this.localVarNames.length);
-//		if (currentLine > lineNumber) {
-//			return EvaluationResult.T_INTERNAL;
-//		}
-//		currentLine ++; // + 1 to skip the method declaration line
-//	
-//		// check code snippet
-//		if (currentLine >= this.lineNumberOffset) {
-//			return EvaluationResult.T_CODE_SNIPPET;
-//		}
-//	
-//		// default
-//		return EvaluationResult.T_INTERNAL;
-//	}
-	/**
-	 * Returns the import defined at the given line number. 
-	 */
-//	public char[] getImport(int lineNumber) {
-//		int importStartLine = this.lineNumberOffset - 2 - this.imports.length;
-//		return this.imports[lineNumber - importStartLine];
-//	}
-	/**
-	 * Returns a selection requestor that wraps the given requestor and shift the problems
-	 * according to the start offset and line number offset of the code snippet in the generated compilation unit. 
-	 */
-//	public ISelectionRequestor getSelectionRequestor(final ISelectionRequestor originalRequestor) {
-//		final int startPosOffset = this.startPosOffset;
-//		final int lineNumberOffset = this.lineNumberOffset;
-//		return new ISelectionRequestor() {
-//			public void acceptClass(char[] packageName, char[] className, boolean needQualification) {
-//				originalRequestor.acceptClass(packageName, className, needQualification);
-//			}
-//			public void acceptError(IProblem error) {
-//				error.setSourceLineNumber(error.getSourceLineNumber() - lineNumberOffset);
-//				error.setSourceStart(error.getSourceStart() - startPosOffset);
-//				error.setSourceEnd(error.getSourceEnd() - startPosOffset);
-//				originalRequestor.acceptError(error);
-//			}
-//			public void acceptField(char[] declaringTypePackageName, char[] declaringTypeName, char[] name) {
-//				originalRequestor.acceptField(declaringTypePackageName, declaringTypeName, name);
-//			}
-//			public void acceptInterface(char[] packageName, char[] interfaceName, boolean needQualification) {
-//				originalRequestor.acceptInterface(packageName, interfaceName, needQualification);
-//			}
-//			public void acceptMethod(char[] declaringTypePackageName, char[] declaringTypeName, char[] selector, char[][] parameterPackageNames, char[][] parameterTypeNames) {
-//				originalRequestor.acceptMethod(declaringTypePackageName, declaringTypeName, selector, parameterPackageNames, parameterTypeNames);
-//			}
-//			public void acceptPackage(char[] packageName) {
-//				originalRequestor.acceptPackage(packageName);
-//			}
-//		};
-//	}
+	protected String[] getNestedTypeNames(String typeName) throws DebugException {
+		int index = typeName.lastIndexOf('.');
+		if (index >= 0) {
+			typeName= typeName.substring(index + 1);
+		}
+		index = typeName.indexOf('$');
+		ArrayList list = new ArrayList(1);
+		while (index >= 0) {
+			list.add(typeName.substring(0, index));
+			typeName = typeName.substring(index + 1);
+			index = typeName.indexOf('$');
+		}
+		list.add(typeName);
+		return (String[])list.toArray(new String[list.size()]);	
+	}	
 }

@@ -7,13 +7,12 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.ast.model.IObject;
 import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveValue;
-import org.eclipse.jdt.internal.compiler.lookup.TypeIds;
 
 /**
  * @version 	1.0
  * @author
  */
-public class UnaryMinusOperator extends UnaryOperator implements TypeIds {
+public class UnaryMinusOperator extends UnaryOperator {
 
 	public UnaryMinusOperator(int expressionTypeId, int start) {
 		super(expressionTypeId, start);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
@@ -14,12 +15,11 @@ import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.Type;
 
 public class JDIStackFrameToEvalSourceMapper {
 	
 	private static final String RUN_METHOD_NAME= "___run";
-	
-	private JDIObjectValue fObjectValue;
 	
 	private int[] fLocalModifiers;
 	
@@ -35,21 +35,41 @@ public class JDIStackFrameToEvalSourceMapper {
 	
 	private String fCompilationUnitName;
 	
-	public JDIStackFrameToEvalSourceMapper(JDIStackFrame frame, int[] localModifiers, String[] localTypesNames, String[] localVariables) throws DebugException {
-		fObjectValue= (JDIObjectValue)frame.getThis();
+	public JDIStackFrameToEvalSourceMapper(int[] localModifiers, String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) throws DebugException {
 		fLocalModifiers= localModifiers;
 		fLocalTypesNames= localTypesNames;
 		fLocalVariables= localVariables;
-		fIsInStaticMethod= frame.getUnderlyingMethod().isStatic();
+		fIsInStaticMethod= isInStaticMethod;
 	}
 	
-	public void buildSource() {
-		fSource= buildTypeDeclaration(fObjectValue.getUnderlyingObject(), buildRunMethod(), null);
+	/**
+	 * Build source for an object value (instance context)
+	 */
+	public void buildSource(JDIObjectValue object) {
+		ObjectReference reference= object.getUnderlyingObject();
+		fSource= buildTypeDeclaration(reference, buildRunMethod(reference.referenceType()), null);
 	}
 	
-	private StringBuffer buildRunMethod() {
+	/**
+	 * Build source for a class type (static context)
+	 */
+	public void buildSource(JDIClassType type) {
+		Type underlyingType= type.getUnderlyingType();
+		if (!(underlyingType instanceof ReferenceType)) {
+			return;
+		}
+		ReferenceType refType= (ReferenceType)underlyingType;
+		fSource= buildTypeDeclaration(refType, buildRunMethod(refType), null);
+		String packageName = getPackageName(refType.name());
+		if (packageName != null) {
+			fSource.insert(0, "package " + packageName + ";\n");
+			fCodeSnippetPosition += 10 + packageName.length();
+		}
+		fCompilationUnitName= getSimpleName(refType.name());
+	}
+	
+	private StringBuffer buildRunMethod(ReferenceType type) {
 		String methodName= RUN_METHOD_NAME;
-		ReferenceType type= fObjectValue.getUnderlyingObject().referenceType();
 		List methods= type.methodsByName(methodName);
 		while (!methods.isEmpty()) {
 			methodName += '_';
