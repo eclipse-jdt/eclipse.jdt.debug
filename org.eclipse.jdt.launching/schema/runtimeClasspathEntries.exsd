@@ -9,6 +9,14 @@
          This in an internal extension point that allows the Java debugger to extend the set of runtime classpath entries used for launching Java applications. Clients are not intended to use this extension point.
       </documentation>
    </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
