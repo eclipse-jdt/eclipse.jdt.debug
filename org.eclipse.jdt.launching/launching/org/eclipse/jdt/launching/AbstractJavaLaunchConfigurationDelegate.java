@@ -673,6 +673,13 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				if (dir.isDirectory()) {
 					return dir;
 				}
+				// This may be a workspace relative path returned by a variable.
+				// However variable paths start with a slash and thus are thought to
+				// be absolute
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (res instanceof IContainer && res.exists()) {
+					return res.getLocation().toFile();
+				}
 				abort(
 					MessageFormat
 							.format(
