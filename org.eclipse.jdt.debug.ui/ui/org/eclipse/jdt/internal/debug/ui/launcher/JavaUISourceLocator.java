@@ -12,10 +12,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.util.PixelConverter;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -90,7 +91,7 @@ public class JavaUISourceLocator implements ISourceLocator {
 			Label message= new Label(composite, SWT.LEFT + SWT.WRAP);
 			message.setText(LauncherMessages.getFormattedString("JavaUISourceLocator.selectprojects.message", fTypeName)); //$NON-NLS-1$
 			GridData data= new GridData();
-			data.widthHint= new PixelConverter(message).convertWidthInCharsToPixels(70);
+			data.widthHint= convertWidthInCharsToPixels(message, 70);
 			message.setLayoutData(data);
 
 			Control inner= fSourceLookupBlock.createControl(composite);
@@ -100,12 +101,23 @@ public class JavaUISourceLocator implements ISourceLocator {
 			Label askmessage= new Label(composite, SWT.LEFT + SWT.WRAP);
 			askmessage.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.description")); //$NON-NLS-1$
 			data= new GridData();
-			data.widthHint= new PixelConverter(message).convertWidthInCharsToPixels(70);
+			data.widthHint= convertWidthInCharsToPixels(askmessage, 70);
 			askmessage.setLayoutData(data);
 
 			return composite;
 		}
 		
+		/**
+		 * @see Dialog#convertWidthInCharsToPixels(FontMetrics, int)
+		 */
+		protected int convertWidthInCharsToPixels(Control control, int chars) {
+			GC gc = new GC(control);
+			gc.setFont(control.getFont());
+			FontMetrics fontMetrics= gc.getFontMetrics();
+			gc.dispose();
+			return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
+		}	
+
 		protected void okPressed() {
 			try {
 				if (fAskAgainCheckBox != null) {
@@ -118,6 +130,5 @@ public class JavaUISourceLocator implements ISourceLocator {
 			super.okPressed();
 		}
 	}
-
 }
 
