@@ -1,10 +1,11 @@
+package org.eclipse.jdt.launching;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.launching;
-import org.eclipse.jdt.internal.launching.*;
-
+ 
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 /**
  * Holder for various arguments passed to a VM runner.
@@ -25,6 +26,7 @@ public class VMRunnerConfiguration {
 	private String[] fProgramArgs;
 	private String[] fClassPath;
 	private String[] fBootClassPath;
+	private String fWorkingDirectory;
 	
 	private static final String[] fgEmtpy= new String[0];
 	
@@ -140,4 +142,29 @@ public class VMRunnerConfiguration {
 			return fgEmtpy;
 		return fProgramArgs;
 	}
+	
+	/**
+	 * Sets the working directory for a launched VM.
+	 * 
+	 * @param path the absolute path to the working directory
+	 *  to be used by a launched VM, or <code>null</code> if
+	 *  the working directory is to be inherited from the
+	 *  current process
+	 */
+	public void setWorkingDirectory(String path) {
+		fWorkingDirectory = path;
+	}
+	
+	/**
+	 * Returns the working of a launched VM.
+	 * 
+	 * @return the absolute path to the working directory
+	 *  of a launched VM, or <code>null</code> if the working
+	 *  directory is inherited from the current process
+	 */
+	public String getWorkingDirectory() {
+		return fWorkingDirectory;
+	}	
+	
+	
 }
