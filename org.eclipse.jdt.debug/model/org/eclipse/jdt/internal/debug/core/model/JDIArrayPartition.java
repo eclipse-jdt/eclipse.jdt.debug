@@ -40,11 +40,11 @@ public class JDIArrayPartition extends JDIVariable {
 
 	public String getName() throws DebugException {
 		StringBuffer name = new StringBuffer();
-		name.append('[');  //$NON-NLS-1$
+		name.append('[');
 		name.append(getStart());
 		name.append(".."); //$NON-NLS-1$
 		name.append(getEnd());
-		name.append(']');  //$NON-NLS-1$
+		name.append(']');
 		return name.toString();
 	}
 	
@@ -111,7 +111,7 @@ public class JDIArrayPartition extends JDIVariable {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 	}
@@ -125,7 +125,7 @@ public class JDIArrayPartition extends JDIVariable {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception
+			// #targetRequestFailed will throw an exception
 			return null;			
 		}
 	}
@@ -139,8 +139,8 @@ public class JDIArrayPartition extends JDIVariable {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_while_retrieving_type_of_array"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
-		// this line will not be exceucted as an exception
-		// will be throw in type retrieval fails
+		// this line will not be executed as an exception
+		// will be throw if type retrieval fails
 		return null;
 	}		
 }
