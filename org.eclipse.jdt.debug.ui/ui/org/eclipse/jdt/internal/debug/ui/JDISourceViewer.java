@@ -41,9 +41,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 /**
  * A source viewer configured to display Java source. This
@@ -55,7 +53,6 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	private Font fFont;
 	private Color fBackgroundColor;
 	private Color fForegroundColor;
-    private ChainedPreferenceStore fCombinedPreferenceStore;
 
 	public JDISourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		super(parent, ruler, styles);
@@ -231,11 +228,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	 * @return the Java UI preferences
 	 */
 	protected IPreferenceStore getPreferenceStore() {
-        if (fCombinedPreferenceStore == null) {
-            IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
-            fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { PreferenceConstants.getPreferenceStore(), generalTextStore });
-        }
-        return fCombinedPreferenceStore;
+		return PreferenceConstants.getPreferenceStore();
 	}
 	
 	/**
