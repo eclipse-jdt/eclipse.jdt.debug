@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jdt.internal.debug.ui.launchConfigurations;
+package org.eclipse.jdt.internal.debug.ui.classpath;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -160,19 +160,5 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	 */
 	public org.eclipse.jdt.core.IClasspathEntry getClasspathEntry() {
 		return entry.getClasspathEntry();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#isDefaultEntry()
-	 */
-	public boolean isDefaultEntry() {
-	//	return entry.isDefaultEntry();
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setDefaultEntry(boolean)
-	 */
-	public void setDefaultEntry(boolean defaultEntry) {
-	//	entry.setDefaultEntry(defaultEntry);
 	}
 }

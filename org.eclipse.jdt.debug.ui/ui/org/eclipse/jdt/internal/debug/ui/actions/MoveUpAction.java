@@ -14,7 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class MoveUpAction extends RuntimeClasspathAction {
 
-	public MoveUpAction(RuntimeClasspathViewer viewer) {
+	public MoveUpAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("MoveUpAction.Move_U&p_1"), viewer); //$NON-NLS-1$
 	}
 	/**
@@ -57,7 +57,13 @@ public class MoveUpAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled() && !selection.isEmpty() && !isIndexSelected(selection, 0);
+		if (selection.isEmpty()) {
+			return false;
+		}
+		return getViewer().updateSelection(getActionType(), selection) && !isIndexSelected(selection, 0);
 	}
-
+	
+	protected int getActionType() {
+		return MOVE;
+	}
 }

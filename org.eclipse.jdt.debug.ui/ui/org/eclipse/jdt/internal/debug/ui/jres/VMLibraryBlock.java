@@ -12,9 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +25,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.IEntriesChangedListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
@@ -58,7 +56,6 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 	
 	protected RuntimeClasspathViewer fPathViewer;
 	protected Button fDefaultButton;
-	protected List fActions = new ArrayList(10);
 	
 	protected AddVMDialog fDialog = null;
 	protected boolean fInCallback = false;
@@ -118,32 +115,25 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 			}
 		});
 		
-		RuntimeClasspathAction action = new MoveUpAction(null);								
+		RuntimeClasspathAction action = new MoveUpAction(fPathViewer);								
 		Button button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
-		addAction(action);
 		
-		action = new MoveDownAction(null);								
+		action = new MoveDownAction(fPathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
-		addAction(action);		
 
-		action = new RemoveAction(null);								
+		action = new RemoveAction(fPathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText());
-		action.setButton(button);
-		addAction(action);		
+		action.setButton(button);	
 		
-		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
+		action = new AddExternalJarAction(fPathViewer, DIALOG_SETTINGS_PREFIX);								
 		button  = createPushButton(pathButtonComp, action.getText());
-		action.setButton(button);
-		addAction(action);		
+		action.setButton(button);	
 		
-		action = new AttachSourceAction(null, SWT.PUSH);								
+		action = new AttachSourceAction(fPathViewer, SWT.PUSH);								
 		button  = createPushButton(pathButtonComp, action.getText());
-		action.setButton(button);
-		addAction(action);				
-														
-		retargetActions(fPathViewer);
+		action.setButton(button);			
 				
 		return comp;
 	}
@@ -179,24 +169,6 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		gd.horizontalSpan = colSpan;
 		label.setLayoutData(gd);
 	}	
-
-	/**
-	 * Adds the given action to the action collection in this tab
-	 */
-	protected void addAction(RuntimeClasspathAction action) {
-		fActions.add(action);
-	}
-	
-	/**
-	 * Re-targets actions to the given viewer
-	 */
-	protected void retargetActions(RuntimeClasspathViewer viewer) {
-		Iterator actions = fActions.iterator();
-		while (actions.hasNext()) {
-			RuntimeClasspathAction action = (RuntimeClasspathAction)actions.next();
-			action.setViewer(viewer);
-		}
-	}
 	
 	/**
 	 * Initializes this control based on the settings in the given
@@ -357,14 +329,13 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		return fVmInstallType;
 	}	
 	/**
-	 * @see IEntriesChangedListener#entriesChanged(RuntimeClasspathViewer)
+	 * @see IEntriesChangedListener#entriesChanged(IClasspathViewer)
 	 */
-	public void entriesChanged(RuntimeClasspathViewer viewer) {
+	public void entriesChanged(IClasspathViewer viewer) {
 		if (!fInCallback) {
 			fInCallback = true;
 			update();
 			fInCallback = false;
 		}
 	}
-
 }

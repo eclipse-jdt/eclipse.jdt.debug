@@ -108,12 +108,15 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if (getViewer().isEnabled() && selection.size() == 1) {
-			fEntry = (IRuntimeClasspathEntry)selection.getFirstElement();
-			int type = fEntry.getType();
-			return type == IRuntimeClasspathEntry.VARIABLE || type == IRuntimeClasspathEntry.ARCHIVE;
-		} else {
-			return false;
-		} 
+		if (selection.size() == 1) {
+			Object selected= selection.getFirstElement();
+			if (selected instanceof IRuntimeClasspathEntry) {
+				fEntry = (IRuntimeClasspathEntry)selected;
+				int type = fEntry.getType();
+				return type == IRuntimeClasspathEntry.VARIABLE || type == IRuntimeClasspathEntry.ARCHIVE;
+			}
+		}
+		
+		return false;
 	}
 }

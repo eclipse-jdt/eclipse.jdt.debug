@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.util.List;
 
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class RemoveAction extends RuntimeClasspathAction {
 
-	public RemoveAction(RuntimeClasspathViewer viewer) {
+	public RemoveAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("RemoveAction.&Remove_1"), viewer); //$NON-NLS-1$
 	}
 	/**
@@ -40,7 +40,13 @@ public class RemoveAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled() && !selection.isEmpty();
+		if (selection.isEmpty()) {
+			return false;
+		}
+		return getViewer().updateSelection(getActionType(), selection);
 	}
-
+	
+	protected int getActionType() {
+		return REMOVE;
+	}
 }

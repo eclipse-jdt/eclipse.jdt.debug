@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jdt.internal.debug.ui.launchConfigurations;
+package org.eclipse.jdt.internal.debug.ui.classpath;
 
 import java.util.Iterator;
 
@@ -17,15 +17,11 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 
 public class ClasspathModel extends AbstractClasspathEntry {
 	
-	public static final int DEFAULT_BOOTSTRAP= 0;
-	public static final int BOOTSTRAP= 1;
-	public static final int DEFAULT_USER= 2;
-	public static final int USER= 3;
+	public static final int BOOTSTRAP= 0;
+	public static final int USER= 1;
 	
 	private ClasspathGroup bootstrapEntries;
 	private ClasspathGroup userEntries;
-	private ClasspathGroup defaultBootstrapEntries;
-	private ClasspathGroup defaultUserEntries;
 	
 	public Object addEntry(Object entry) {
 		if (entry instanceof ClasspathGroup) {
@@ -58,24 +54,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			case BOOTSTRAP :
 				entryParent= getBootstrapEntry();
 				break;
-			case DEFAULT_BOOTSTRAP :
-				if (defaultBootstrapEntries == null) {
-					String name= "Default Bootstrap Entries";
-					defaultBootstrapEntries= createGlobalEntry(new IRuntimeClasspathEntry[0], (ClasspathGroup)getBootstrapEntry(), name, true, false);
-				}
-				((ClasspathGroup)getBootstrapEntry()).addEntry(defaultBootstrapEntries);
-				entryParent= defaultBootstrapEntries;
-				break;
 			case USER :
 				entryParent= getUserEntry();
-				break;
-			case DEFAULT_USER :
-				if (defaultUserEntries == null) {
-					String name= "Default User Entries";
-					defaultUserEntries= createGlobalEntry(new IRuntimeClasspathEntry[0], (ClasspathGroup)getUserEntry(), name, true, false);
-				}
-				((ClasspathGroup)getUserEntry()).addEntry(defaultUserEntries);
-				entryParent= defaultUserEntries;
 				break;
 			default :
 				break;
@@ -167,18 +147,18 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 	}
 
-	private ClasspathGroup createGlobalEntry(IRuntimeClasspathEntry[] entries, ClasspathGroup entryParent, String name, boolean canBeRemoved, boolean addEntry) {
+	private ClasspathGroup createGroupEntry(IRuntimeClasspathEntry[] entries, ClasspathGroup entryParent, String name, boolean canBeRemoved, boolean addEntry) {
 		
-		ClasspathGroup global= new ClasspathGroup(name, entryParent, canBeRemoved);
+		ClasspathGroup group= new ClasspathGroup(name, entryParent, canBeRemoved);
 		
 		for (int i = 0; i < entries.length; i++) {
-			global.addEntry(new ClasspathEntry(entries[i], global));
+			group.addEntry(new ClasspathEntry(entries[i], group));
 		}
 		
 		if (addEntry) {
-			addEntry(global);
+			addEntry(group);
 		}
-		return global;
+		return group;
 	}
 
 	public void setUserEntries(IRuntimeClasspathEntry[] entries) {
@@ -190,56 +170,20 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			userEntries.addEntry(new ClasspathEntry(entries[i], userEntries));
 		}
 	}
-	
-//	public IClasspathEntry[] getAllUserEntries() {
-//		List allUserEntries= new ArrayList(childEntries.size());
-//		Iterator itr= childEntries.iterator();
-//		while (itr.hasNext()) {
-//			IClasspathEntry element = (IClasspathEntry) itr.next();
-//			if (element instanceof GlobalClasspathEntries) {
-//				continue;
-//			}
-//			allUserEntries.add(element);
-//		}
-//		return (IClasspathEntry[])allUserEntries.toArray(new IClasspathEntry[allUserEntries.size()]);
-//	}
-
-	/**
-	 * @return
-	 */
-//	public Object[] getRemovedGlobalEntries() {
-//		if (userEntries == null) {
-//			String name= "User";
-//			return new Object[] {createGlobalEntry(new IRuntimeClasspathEntry[0], name, true, false)};
-//		}
-//		return new Object[] {};
-//	}
 
 	public IClasspathEntry getBootstrapEntry() {
 		if (bootstrapEntries == null) {
-			String name= "Bootstrap Entries";
-			bootstrapEntries= createGlobalEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
+			String name= ClasspathMessages.getString("ClasspathModel.0"); //$NON-NLS-1$
+			bootstrapEntries= createGroupEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
 		}
 		return bootstrapEntries;
 	}
 	
 	public IClasspathEntry getUserEntry() {
 		if (userEntries == null) {
-			String name= "User Entries";
-			userEntries= createGlobalEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
+			String name= ClasspathMessages.getString("ClasspathModel.1"); //$NON-NLS-1$
+			userEntries= createGroupEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
 		}
 		return userEntries;
-	}
-
-	public void checkConsistancy() {
-		if (defaultBootstrapEntries != null && !defaultBootstrapEntries.hasEntries()) {
-			bootstrapEntries.removeEntry(defaultBootstrapEntries);
-			defaultBootstrapEntries= null;
-		}
-		if (defaultUserEntries!= null && !defaultUserEntries.hasEntries()) {
-			userEntries.removeEntry(defaultUserEntries);
-			defaultUserEntries= null;
-			
-		}		
 	}
 }

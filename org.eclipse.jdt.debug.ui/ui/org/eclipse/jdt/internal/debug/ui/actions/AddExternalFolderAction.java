@@ -13,10 +13,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 
@@ -25,7 +24,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  */
 public class AddExternalFolderAction extends OpenDialogAction {
 
-	public AddExternalFolderAction(RuntimeClasspathViewer viewer, String dialogSettingsPrefix) {
+	public AddExternalFolderAction(IClasspathViewer viewer, String dialogSettingsPrefix) {
 		super(ActionMessages.getString("AddExternalFolderAction.Add_External_Folder_1"), viewer, dialogSettingsPrefix); //$NON-NLS-1$
 	}	
 
@@ -56,13 +55,5 @@ public class AddExternalFolderAction extends OpenDialogAction {
 		setDialogSetting(LAST_PATH_SETTING, filterPath.toOSString());
 		
 		getViewer().addEntries(elems);
-	}
-
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
-	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled();
-	}
-	
+	}	
 }

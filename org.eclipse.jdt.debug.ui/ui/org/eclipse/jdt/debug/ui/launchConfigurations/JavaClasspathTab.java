@@ -12,7 +12,6 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,9 +31,13 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathContentProvider;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathLabelProvider;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathModel;
+import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
+import org.eclipse.jdt.internal.debug.ui.classpath.RuntimeClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -49,10 +52,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 
 /**
  * A launch configuration tab that displays and edits the user and
@@ -65,14 +65,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 
-	protected TabFolder fPathTabFolder;
-	protected TabItem fBootPathTabItem;
-	protected TabItem fClassPathTabItem;
 	protected RuntimeClasspathViewer fClasspathViewer;
-	protected RuntimeClasspathViewer fBootpathViewer;
-	protected Button fClassPathDefaultButton;
-	protected List fActions = new ArrayList(10);
-	protected Image fImage = null;
+	protected static Image fgClasspathImage = null;
+	private ClasspathModel model;
 
 	protected static final String DIALOG_SETTINGS_PREFIX = "JavaClasspathTab"; //$NON-NLS-1$
 	
@@ -95,40 +90,12 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		createVerticalSpacer(comp, 2);
-		
-		fPathTabFolder = new TabFolder(comp, SWT.NONE);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 200;
-		gd.widthHint = 250;	
-		fPathTabFolder.setLayoutData(gd);
-		fPathTabFolder.setFont(font);
-		fPathTabFolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TabItem[] tabs = fPathTabFolder.getSelection();
-				if (tabs.length == 1) {
-					RuntimeClasspathViewer data = (RuntimeClasspathViewer)tabs[0].getData();
-					retargetActions(data);
-				}
-			}
-		});
-		
-		fClasspathViewer = new RuntimeClasspathViewer(fPathTabFolder);
+		fClasspathViewer = new RuntimeClasspathViewer(comp);
 		fClasspathViewer.addEntriesChangedListener(this);
 		fClasspathViewer.getControl().setFont(font);
-		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
-		fClassPathTabItem.setText(LauncherMessages.getString("JavaClasspathTab.Us&er_classes_1")); //$NON-NLS-1$
-		fClassPathTabItem.setControl(fClasspathViewer.getControl());
-		fClassPathTabItem.setData(fClasspathViewer);
-
-		fBootpathViewer = new RuntimeClasspathViewer(fPathTabFolder);
-		fBootpathViewer.addEntriesChangedListener(this);
-		fBootpathViewer.getControl().setFont(font);
-		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
-		fBootPathTabItem.setText(LauncherMessages.getString("JavaClasspathTab.&Bootstrap_classes_2")); //$NON-NLS-1$
-		fBootPathTabItem.setControl(fBootpathViewer.getControl());
-		fBootPathTabItem.setData(fBootpathViewer);
-
+		fClasspathViewer.setLabelProvider(new ClasspathLabelProvider());
+		fClasspathViewer.setContentProvider(new ClasspathContentProvider());
+	
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
 		pathButtonLayout.marginHeight = 0;
@@ -137,54 +104,34 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		pathButtonComp.setLayoutData(gd);
 		pathButtonComp.setFont(font);
-
-		createVerticalSpacer(comp, 2);
-						
-		fClassPathDefaultButton = new Button(comp, SWT.CHECK);
-		fClassPathDefaultButton.setText(LauncherMessages.getString("JavaEnvironmentTab.Use_defau&lt_classpath_10")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fClassPathDefaultButton.setLayoutData(gd);
-		fClassPathDefaultButton.setFont(font);
-		fClassPathDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleClasspathDefaultButtonSelected();
-			}
-		});
 		
 		createVerticalSpacer(pathButtonComp, 1);
 		
 		List advancedActions = new ArrayList(5);
 		
-		RuntimeClasspathAction action = new MoveUpAction(null);								
+		RuntimeClasspathAction action = new MoveUpAction(fClasspathViewer);								
 		Button button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);
 		
-		action = new MoveDownAction(null);								
+		action = new MoveDownAction(fClasspathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);		
 
-		action = new RemoveAction(null);								
+		action = new RemoveAction(fClasspathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);		
 		
-		action = new AddProjectAction(null);								
+		action = new AddProjectAction(fClasspathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);		
 
-		action = new AddJarAction(null);								
+		action = new AddJarAction(fClasspathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		addAction(action);		
+		action.setButton(button);	
 
-		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
+		action = new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);		
 
 		action = new AddFolderAction(null);								
 		advancedActions.add(action);
@@ -199,27 +146,47 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		advancedActions.add(action);
 		
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
-		action = new AddAdvancedAction(null, adv);
+		action = new AddAdvancedAction(fClasspathViewer, adv);
 		button = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);
-														
-		retargetActions(fClasspathViewer);		
+		
+		button= createPushButton(pathButtonComp, LauncherMessages.getString("JavaClasspathTab.3"), null); //$NON-NLS-1$
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				restoreDefaultEntries();
+			}
+		});
 	}
-
-	/**
-	 * The default classpath button has been toggled
-	 */
-	protected void handleClasspathDefaultButtonSelected() {
-		setDirty(true);
-		boolean useDefault = fClassPathDefaultButton.getSelection();
-		fClassPathDefaultButton.setSelection(useDefault);
-		if (useDefault) {
-			displayDefaultClasspath();
+	
+	private void restoreDefaultEntries() {
+		IRuntimeClasspathEntry[] entries= null;
+		try {
+			ILaunchConfigurationWorkingCopy copy= getLaunchConfiguration().getWorkingCopy();
+			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+			entries= JavaRuntime.computeUnresolvedRuntimeClasspath(copy);
+		} catch (CoreException e) {
+			//TODO set error message
+			return;
 		}
-		fClasspathViewer.setEnabled(!useDefault);
-		fBootpathViewer.setEnabled(!useDefault);
-		updateLaunchConfigurationDialog();
+					
+		List bootEntries= new ArrayList(entries.length);
+		for (int j = 0; j < entries.length; j++) {
+			if (entries[j].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+				bootEntries.add(entries[j]);
+			}
+		}
+		model.setBootstrapEntries((IRuntimeClasspathEntry[])bootEntries.toArray(new IRuntimeClasspathEntry[bootEntries.size()]));
+		
+		List userEntries= new ArrayList(entries.length);
+		for (int j = 0; j < entries.length; j++) {
+			if (entries[j].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				userEntries.add(entries[j]);
+			}
+		}
+		model.setUserEntries((IRuntimeClasspathEntry[])userEntries.toArray(new IRuntimeClasspathEntry[userEntries.size()]));
+		
+		fClasspathViewer.refresh();	
+		entriesChanged(fClasspathViewer);
 	}
 
 	/**
@@ -243,64 +210,39 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		if (configuration == getLaunchConfiguration()) {
 			// no need to update if an explicit path is being used and this setting
 			// has not changed (and viewing the same config as last time)
-			if (!useDefault && !fClassPathDefaultButton.getSelection()) {
+			if (!useDefault) {
 				setDirty(false);
 				return;			
 			}
 		}
 		
 		setLaunchConfiguration(configuration);
-		fClassPathDefaultButton.setSelection(useDefault);
 		try {
-			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
+			createClasspathModel(configuration);
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
 		}
-		fClasspathViewer.setEnabled(!useDefault);
-		fBootpathViewer.setEnabled(!useDefault);
+		
 		fClasspathViewer.setLaunchConfiguration(configuration);
-		fBootpathViewer.setLaunchConfiguration(configuration);
+		fClasspathViewer.setInput(model);
 		setDirty(false);
 	}
-
-	/**
-	 * Displays the default classpath in the UI
-	 */
-	protected void displayDefaultClasspath() {
-		ILaunchConfiguration config = getLaunchConfiguration();
-		ILaunchConfigurationWorkingCopy wc = null;
-		try {
-			if (config.isWorkingCopy()) {
-				wc= (ILaunchConfigurationWorkingCopy)config;
-			} else {
-				wc = config.getWorkingCopy();
-			}
-			performApply(wc);
-			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(wc));
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-
-	}
 	
-	/**
-	 * Displays the given classpath entries, grouping into user and bootstrap entries
-	 */
-	protected void setClasspathEntries(IRuntimeClasspathEntry[] entries) {
-		List cp = new ArrayList(entries.length);
-		List bp = new ArrayList(entries.length);
+	private void createClasspathModel(ILaunchConfiguration configuration) throws CoreException {
+		IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		model= new ClasspathModel();
+		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < entries.length; i++) {
-			switch (entries[i].getClasspathProperty()) {
-				case IRuntimeClasspathEntry.USER_CLASSES:
-					cp.add(entries[i]);
+			entry= entries[i];
+			switch (entry.getClasspathProperty()) {
+				case IRuntimeClasspathEntry.USER_CLASSES:				
+					model.addEntry(ClasspathModel.USER, entry);
 					break;
 				default:
-					bp.add(entries[i]);
+					model.addEntry(ClasspathModel.BOOTSTRAP, entry);
 					break;
 			}
-		}
-		fClasspathViewer.setEntries((IRuntimeClasspathEntry[])cp.toArray(new IRuntimeClasspathEntry[cp.size()]));
-		fBootpathViewer.setEntries((IRuntimeClasspathEntry[])bp.toArray(new IRuntimeClasspathEntry[bp.size()]));		
+		}	
 	}
 	
 	/**
@@ -308,23 +250,34 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (isDirty()) {
-			boolean def = fClassPathDefaultButton.getSelection();		
+			boolean def = !hasClasspathChanged(configuration.getOriginal());
 			if (def) {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, (String)null);
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
 			} else {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 				try {
-					IRuntimeClasspathEntry[] boot = fBootpathViewer.getEntries();
-					IRuntimeClasspathEntry[] user = fClasspathViewer.getEntries();
+					IClasspathEntry[] boot = model.getEntries(ClasspathModel.BOOTSTRAP);
+					IClasspathEntry[] user = model.getEntries(ClasspathModel.USER);
 					List mementos = new ArrayList(boot.length + user.length);
+					IClasspathEntry bootEntry;
+					IRuntimeClasspathEntry entry;
 					for (int i = 0; i < boot.length; i++) {
-						boot[i].setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-						mementos.add(boot[i].getMemento());
+						bootEntry= boot[i];
+						if (bootEntry instanceof IRuntimeClasspathEntry) {
+							entry= (IRuntimeClasspathEntry) boot[i];
+							entry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+							mementos.add(entry.getMemento());
+						}
 					}
+					IClasspathEntry userEntry;
 					for (int i = 0; i < user.length; i++) {
-						user[i].setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-						mementos.add(user[i].getMemento());
+						userEntry= user[i];
+						if (userEntry instanceof IRuntimeClasspathEntry) {
+							entry= (IRuntimeClasspathEntry) user[i];
+							entry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+							mementos.add(entry.getMemento());
+						}
 					}
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 				} catch (CoreException e) {
@@ -332,6 +285,45 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 				}	
 			}
 		}
+	}
+
+	/**
+	 * @param configuration
+	 * @return
+	 */
+	private boolean hasClasspathChanged(ILaunchConfiguration configuration) {
+		try {
+			IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+			IClasspathEntry[] bootEntries= model.getEntries(ClasspathModel.BOOTSTRAP);
+			IClasspathEntry entry;
+			int i;
+			for (i = 0; i < bootEntries.length; i++) {
+				if (i == entries.length) {
+					return true;
+				}
+				entry = bootEntries[i];
+				if (i > entries.length || !entry.equals(entries[i])) {
+					return true;
+				}
+				
+			}
+			
+			IClasspathEntry[] userEntries= model.getEntries(ClasspathModel.USER);
+			for (;i < entries.length; i++) {
+				if (i >= userEntries.length) {
+					return true;
+				}
+				entry = userEntries[i];
+				if (i > entries.length || !entry.equals(entries[i])) {
+					return true;
+				}
+				
+			}
+		} catch (CoreException e) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -344,57 +336,45 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
-	public Image getImage() {
-		if (fImage == null) {
-			fImage = JavaPluginImages.DESC_TOOL_CLASSPATH_ORDER.createImage();
+	public static Image getClasspathImage() {
+		if (fgClasspathImage == null) {
+			fgClasspathImage = JavaPluginImages.DESC_TOOL_CLASSPATH_ORDER.createImage();
 		}
-		return fImage;
+		return fgClasspathImage;
 	}		
 	
 	/**
-	 * Sets the java project currently specified by the
-	 * given launch config, if any.
+	 * Sets the launch configuration for this classpath tab
 	 */
-	protected void setLaunchConfiguration(ILaunchConfiguration config) {
+	private void setLaunchConfiguration(ILaunchConfiguration config) {
 		fLaunchConfiguration = config;
 	}	
 	
 	/**
-	 * Returns the current java project context
+	 * Returns the current launch configuration
 	 */
-	protected ILaunchConfiguration getLaunchConfiguration() {
+	private ILaunchConfiguration getLaunchConfiguration() {
 		return fLaunchConfiguration;
 	}
 	
-	/**
-	 * Adds the given action to the action collection in this tab
-	 */
-	protected void addAction(RuntimeClasspathAction action) {
-		fActions.add(action);
-	}
-	
-	/**
-	 * Re-targets actions to the given viewer
-	 */
-	protected void retargetActions(RuntimeClasspathViewer viewer) {
-		Iterator actions = fActions.iterator();
-		while (actions.hasNext()) {
-			RuntimeClasspathAction action = (RuntimeClasspathAction)actions.next();
-			action.setViewer(viewer);
-		}
-	}
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 		if (fClasspathViewer != null) {
 			fClasspathViewer.removeEntriesChangedListener(this);
-			fBootpathViewer.removeEntriesChangedListener(this);
 		}
-		if (fImage != null) {
-			fImage.dispose();
+		if (fgClasspathImage != null) {
+			fgClasspathImage.dispose();
+			fgClasspathImage= null;
 		}
 		super.dispose();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return getClasspathImage();
+	}
 }

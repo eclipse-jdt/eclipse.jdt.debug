@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -76,7 +76,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 
 	}	
 
-	public AddProjectAction(RuntimeClasspathViewer viewer) {
+	public AddProjectAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("AddProjectAction.Add_Project_1"), viewer); //$NON-NLS-1$
 	}	
 
@@ -140,7 +140,11 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled() && !getPossibleAdditions().isEmpty();
+		return getViewer().updateSelection(getActionType(), selection) && !getPossibleAdditions().isEmpty();
+	}
+	
+	protected int getActionType() {
+		return ADD;
 	}
 	
 	/**
@@ -259,5 +263,4 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			}
 		}
 	}
-
 }

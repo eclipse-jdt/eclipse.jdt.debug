@@ -12,11 +12,10 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.NewVariableEntryDialog;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 
 /**
@@ -24,7 +23,7 @@ import org.eclipse.jface.window.Window;
  */
 public class AddVariableAction extends RuntimeClasspathAction {
 
-	public AddVariableAction(RuntimeClasspathViewer viewer) {
+	public AddVariableAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("AddVariableAction.Add_Variables_1"), viewer); //$NON-NLS-1$
 	}	
 
@@ -47,11 +46,8 @@ public class AddVariableAction extends RuntimeClasspathAction {
 			getViewer().addEntries(entries);
 		}				
 	}
-
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
-	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled();
-	}	
+	
+	protected int getActionType() {
+		return ADD;
+	}
 }

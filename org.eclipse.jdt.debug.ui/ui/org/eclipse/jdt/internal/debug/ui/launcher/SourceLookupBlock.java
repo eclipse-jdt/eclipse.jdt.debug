@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -61,7 +60,6 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	protected RuntimeClasspathViewer fPathViewer;
 	protected Button fDefaultButton;
 	protected Button fDuplicatesButton;
-	protected List fActions = new ArrayList(10);
 	
 	protected static final String DIALOG_SETTINGS_PREFIX = "SourceLookupBlock"; //$NON-NLS-1$
 	
@@ -136,55 +134,46 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		FontMetrics fontMetrics= gc.getFontMetrics();
 		gc.dispose();
 				
-		RuntimeClasspathAction action = new MoveUpAction(null);								
+		RuntimeClasspathAction action = new MoveUpAction(fPathViewer);								
 		Button button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
-		addAction(action);
 		
-		action = new MoveDownAction(null);								
+		action = new MoveDownAction(fPathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
-		action.setButton(button);
-		addAction(action);		
+		action.setButton(button);	
 
-		action = new RemoveAction(null);								
+		action = new RemoveAction(fPathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
-		addAction(action);		
 		
-		action = new AddProjectAction(null);								
+		action = new AddProjectAction(fPathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
-		addAction(action);		
 
-		action = new AddJarAction(null);								
+		action = new AddJarAction(fPathViewer);								
 		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
-		addAction(action);		
 
-		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
+		action = new AddExternalJarAction(fPathViewer, DIALOG_SETTINGS_PREFIX);								
 		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
-		addAction(action);		
 
-		action = new AddFolderAction(null);								
+		action = new AddFolderAction(fPathViewer);								
 		advancedActions.add(action);
 
-		action = new AddExternalFolderAction(null, DIALOG_SETTINGS_PREFIX);								
+		action = new AddExternalFolderAction(fPathViewer, DIALOG_SETTINGS_PREFIX);								
 		advancedActions.add(action);		
 
-		action = new AddVariableAction(null);								
+		action = new AddVariableAction(fPathViewer);								
 		advancedActions.add(action);		
 		
-		action = new AttachSourceAction(null, SWT.RADIO);								
+		action = new AttachSourceAction(fPathViewer, SWT.RADIO);								
 		advancedActions.add(action);				
 									
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
-		action = new AddAdvancedAction(null, adv);
+		action = new AddAdvancedAction(fPathViewer, adv);
 		button = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
-		addAction(action);
-																
-		retargetActions(fPathViewer);
 				
 		setControl(comp);
 	}
@@ -251,24 +240,6 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		label.setLayoutData(gd);
 	}	
 
-	/**
-	 * Adds the given action to the action collection in this tab
-	 */
-	protected void addAction(RuntimeClasspathAction action) {
-		fActions.add(action);
-	}
-	
-	/**
-	 * Re-targets actions to the given viewer
-	 */
-	protected void retargetActions(RuntimeClasspathViewer viewer) {
-		Iterator actions = fActions.iterator();
-		while (actions.hasNext()) {
-			RuntimeClasspathAction action = (RuntimeClasspathAction)actions.next();
-			action.setViewer(viewer);
-		}
-	}
-	
 	/**
 	 * Initializes this control based on the settings in the given
 	 * launch configuration.
@@ -398,5 +369,4 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		fPathViewer.removeEntriesChangedListener(this);
 		super.dispose();
 	}
-
 }

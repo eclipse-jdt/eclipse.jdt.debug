@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -26,11 +27,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A viewer that displays and manipulates runtime classpath entries.
  */
-public class RuntimeClasspathViewer extends TableViewer {
+public class RuntimeClasspathViewer extends TableViewer implements IClasspathViewer {
 	
 	/**
 	 * Whether enabled/editable.
@@ -41,11 +43,6 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 * Entry changed listeners
 	 */
 	private ListenerList fListeners = new ListenerList(3);
-	
-	/**
-	 * The launch configuration context for this viewer, or <code>null</code>
-	 */
-	private ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
 	 * The runtime classpath entries displayed in this viewer
@@ -84,7 +81,6 @@ public class RuntimeClasspathViewer extends TableViewer {
 		super(parent);
 		setContentProvider(new ContentProvider());
 		RuntimeClasspathEntryLabelProvider lp = new RuntimeClasspathEntryLabelProvider();
-		lp.setLaunchConfiguration(fLaunchConfiguration);
 		setLabelProvider(lp);
 		setInput(fEntries);
 		
@@ -176,7 +172,6 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 * Sets the launch configuration context for this viewer, if any
 	 */
 	public void setLaunchConfiguration(ILaunchConfiguration configuration) {
-		fLaunchConfiguration = configuration;
 		if (getLabelProvider() != null) {
 			((RuntimeClasspathEntryLabelProvider)getLabelProvider()).setLaunchConfiguration(configuration);
 		}
@@ -204,5 +199,19 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 */
 	public int indexOf(IRuntimeClasspathEntry entry) {
 		return fEntries.indexOf(entry);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getShell()
+	 */
+	public Shell getShell() {
+		return getControl().getShell();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#updateSelection(int, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public boolean updateSelection(int i, IStructuredSelection selection) {
+		return true;
 	}
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jdt.internal.debug.ui.launchConfigurations;
+package org.eclipse.jdt.internal.debug.ui.classpath;
 
 
 public interface IClasspathEntry {

@@ -47,7 +47,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	private Button fAddContainerButton;
 	private Combo fContainerCombo;
 	private ClasspathContainerDescriptor[] fDescriptors;
-	private RuntimeClasspathViewer fViewer;
+	private IClasspathViewer fViewer;
 
 	/**
 	 * Constructs a new dialog on the given shell, with the specified
@@ -56,7 +56,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	 * @param parentShell
 	 * @param actions advanced actions
 	 */
-	public RuntimeClasspathAdvancedDialog(Shell parentShell, IAction[] actions, RuntimeClasspathViewer viewer) {
+	public RuntimeClasspathAdvancedDialog(Shell parentShell, IAction[] actions, IClasspathViewer viewer) {
 		super(parentShell);
 		fActions = actions;
 		fViewer = viewer;

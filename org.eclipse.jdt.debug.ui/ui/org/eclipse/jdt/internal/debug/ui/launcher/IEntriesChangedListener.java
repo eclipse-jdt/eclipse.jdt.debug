@@ -20,5 +20,5 @@ public interface IEntriesChangedListener {
 	/**
 	 * Notification entries have changed in the viewer
 	 */
-	public void entriesChanged(RuntimeClasspathViewer viewer);
+	public void entriesChanged(IClasspathViewer viewer);
 }

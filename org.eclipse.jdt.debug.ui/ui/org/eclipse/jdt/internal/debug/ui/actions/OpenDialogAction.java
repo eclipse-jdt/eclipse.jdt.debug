@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 /**
@@ -35,7 +35,7 @@ public abstract class OpenDialogAction extends RuntimeClasspathAction {
 	/**
 	 * Constructs an action that opens a dialog.
 	 */
-	public OpenDialogAction(String label, RuntimeClasspathViewer viewer, String dialogSettingsPrefix) {
+	public OpenDialogAction(String label, IClasspathViewer viewer, String dialogSettingsPrefix) {
 		super(label, viewer);
 		fPrefix = dialogSettingsPrefix;
 	}
@@ -80,6 +80,9 @@ public abstract class OpenDialogAction extends RuntimeClasspathAction {
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
 		return settings;
-	}	
-
+	}
+	
+	protected int getActionType() {
+		return ADD;
+	}
 }

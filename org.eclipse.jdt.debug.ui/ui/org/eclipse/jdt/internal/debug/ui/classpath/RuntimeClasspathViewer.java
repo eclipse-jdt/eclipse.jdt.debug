@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launchConfigurations;
-
+package org.eclipse.jdt.internal.debug.ui.classpath;
  
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.IEntriesChangedListener;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -35,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A viewer that displays and manipulates runtime classpath entries.
  */
-public class RuntimeClasspathViewer extends TreeViewer{// implements IClasspathViewer {
+public class RuntimeClasspathViewer extends TreeViewer implements IClasspathViewer {
 	
 	/**
 	 * Whether enabled/editable.
@@ -190,7 +191,7 @@ public class RuntimeClasspathViewer extends TreeViewer{// implements IClasspathV
 	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-		//	((IEntriesChangedListener)listeners[i]).entriesChanged(this);
+			((IEntriesChangedListener)listeners[i]).entriesChanged(this);
 		}
 	}
 	
@@ -235,38 +236,38 @@ public class RuntimeClasspathViewer extends TreeViewer{// implements IClasspathV
 	 */
 	public boolean updateSelection(int actionType, IStructuredSelection selection) {
 		
-//		if (selection.isEmpty()) {
-//			return false;
-//		}
-//		switch (actionType) {
-//			case RuntimeClasspathAction.ADD :
-//				resolveCurrentParent(selection);
-//				if (fCurrentParent instanceof ClasspathGroup) {
-//					return !((ClasspathGroup)fCurrentParent).canBeRemoved();
-//				} else {
-//					return fCurrentParent != null;
-//				}
-//			case RuntimeClasspathAction.REMOVE :
-//				Iterator selected= selection.iterator();
-//				while (selected.hasNext()) {
-//					Object element = selected.next();
-//					if (element instanceof ClasspathGroup) {
-//						return ((ClasspathGroup)element).canBeRemoved();
-//					}
-//				}
-//				return true;
-//			case RuntimeClasspathAction.MOVE :
-//				selected= selection.iterator();
-//				while (selected.hasNext()) {
-//					Object element = selected.next();
-//					if (element instanceof ClasspathGroup) {
-//						return ((ClasspathGroup)element).canBeRemoved();
-//					}
-//				}
-//				return resolveCurrentParent(selection);
-//			default :
-//				break;
-//		}
+		if (selection.isEmpty()) {
+			return false;
+		}
+		switch (actionType) {
+			case RuntimeClasspathAction.ADD :
+				resolveCurrentParent(selection);
+				if (fCurrentParent instanceof ClasspathGroup) {
+					return !((ClasspathGroup)fCurrentParent).canBeRemoved();
+				} else {
+					return fCurrentParent != null;
+				}
+			case RuntimeClasspathAction.REMOVE :
+				Iterator selected= selection.iterator();
+				while (selected.hasNext()) {
+					Object element = selected.next();
+					if (element instanceof ClasspathGroup) {
+						return ((ClasspathGroup)element).canBeRemoved();
+					}
+				}
+				return true;
+			case RuntimeClasspathAction.MOVE :
+				selected= selection.iterator();
+				while (selected.hasNext()) {
+					Object element = selected.next();
+					if (element instanceof ClasspathGroup) {
+						return ((ClasspathGroup)element).canBeRemoved();
+					}
+				}
+				return resolveCurrentParent(selection);
+			default :
+				break;
+		}
 		
 		return true;
 	}

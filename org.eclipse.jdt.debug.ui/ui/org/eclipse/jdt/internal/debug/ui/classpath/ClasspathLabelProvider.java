@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launchConfigurations;
+package org.eclipse.jdt.internal.debug.ui.classpath;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
@@ -32,13 +32,12 @@ public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-//		if (element instanceof ClasspathEntry) {
-//			ClasspathEntry entry = (ClasspathEntry) element;
-//			return runtimeClasspathLabelProvider.getImage(entry);
-//		}
-//		
-//		return JavaClasspathTab.getClasspathImage();
-		return null;
+		if (element instanceof ClasspathEntry) {
+			ClasspathEntry entry = (ClasspathEntry) element;
+			return runtimeClasspathLabelProvider.getImage(entry);
+		}
+		
+		return JavaClasspathTab.getClasspathImage();
 	}
 
 	/* (non-Javadoc)

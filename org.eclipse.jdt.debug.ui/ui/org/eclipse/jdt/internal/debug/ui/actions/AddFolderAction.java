@@ -22,11 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -40,7 +39,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class AddFolderAction extends RuntimeClasspathAction {
 
-	public AddFolderAction(RuntimeClasspathViewer viewer) {
+	public AddFolderAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("AddFolderAction.Add_&Folders_1"), viewer); //$NON-NLS-1$
 	}	
 
@@ -87,13 +86,6 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		}
 					
 	}
-
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
-	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled();
-	}
 	
 	/**
 	 * Returns a list of resources of currently selected jars
@@ -112,5 +104,9 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			}
 		}
 		return jars;
+	}
+	
+	protected int getActionType() {
+		return ADD;
 	}
 }

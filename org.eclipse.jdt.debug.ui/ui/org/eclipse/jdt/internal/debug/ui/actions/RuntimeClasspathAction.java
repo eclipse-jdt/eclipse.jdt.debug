@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,11 +29,16 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	
-	private RuntimeClasspathViewer fViewer;
+	public static final int DEFAULT= 0;
+	public static final int ADD= 1;
+	public static final int REMOVE= 2;
+	public static final int MOVE= 3;
+	
+	private IClasspathViewer fViewer;
 	private Button fButton;
 	private Shell fShell;
 	
-	public RuntimeClasspathAction(String label, RuntimeClasspathViewer viewer) {
+	public RuntimeClasspathAction(String label, IClasspathViewer viewer) {
 		super(label);
 		setViewer(viewer);
 	}
@@ -43,7 +48,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 * 
 	 * @param viewer the viewer on which this action operates
 	 */
-	public void setViewer(RuntimeClasspathViewer viewer) {
+	public void setViewer(IClasspathViewer viewer) {
 		if (fViewer != null) {
 			fViewer.removeSelectionChangedListener(this);
 		}
@@ -59,7 +64,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 * 
 	 * @return the viewer on which this action operates
 	 */
-	protected RuntimeClasspathViewer getViewer() {
+	protected IClasspathViewer getViewer() {
 		return fViewer;
 	}
 
@@ -155,7 +160,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 */
 	protected Shell getShell() {
 		if (fShell == null) {
-			fShell= getViewer().getControl().getShell();
+			fShell= getViewer().getShell();
 		} 
 		return fShell;
 	}
@@ -165,5 +170,18 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 */
 	public void setShell(Shell shell) {
 		fShell= shell;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	protected boolean updateSelection(IStructuredSelection selection) {
+		return getViewer().updateSelection(getActionType(), selection);
+	}
+
+
+	protected int getActionType() {
+		return DEFAULT;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launchConfigurations;
+package org.eclipse.jdt.internal.debug.ui.classpath;
 
 
 import java.util.ArrayList;
@@ -199,27 +199,26 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	}
 
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
-//		IRuntimeClasspathEntry entry;
-//		for (int i = 0; i < entries.length; i++) {
-//			entry= entries[i];
-//			switch (entry.getClasspathProperty()) {
-//				case IRuntimeClasspathEntry.USER_CLASSES:
+		IRuntimeClasspathEntry entry;
+		for (int i = 0; i < entries.length; i++) {
+			entry= entries[i];
+			switch (entry.getClasspathProperty()) {
+				case IRuntimeClasspathEntry.USER_CLASSES:
 //					if (entry.isDefaultEntry()) {
 //						model.addEntry(ClasspathModel.DEFAULT_USER, entry);
 //					} else {
-//						model.addEntry(ClasspathModel.USER, entry);
-//					}
-//					break;
-//				default:
-//					if (entry.isDefaultEntry()) {
-//						model.addEntry(ClasspathModel.DEFAULT_BOOTSTRAP, entry);
-//					} else {
-//						model.addEntry(ClasspathModel.BOOTSTRAP, entry);
-//					}
-//					break;
-//			}
-//		}	
-//		model.checkConsistancy();
-//		refresh();
+						model.addEntry(ClasspathModel.USER, entry);
+					//}
+					break;
+				default:
+					//if (entry.isDefaultEntry()) {
+					//	model.addEntry(ClasspathModel.DEFAULT_BOOTSTRAP, entry);
+					//} else {
+						model.addEntry(ClasspathModel.BOOTSTRAP, entry);
+					//}
+					break;
+			}
+		}	
+		refresh();
 	}
 }

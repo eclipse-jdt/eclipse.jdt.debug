@@ -21,11 +21,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -54,7 +53,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 		}			
 	};
 
-	public AddJarAction(RuntimeClasspathViewer viewer) {
+	public AddJarAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("AddJarAction.Add_&JARs_1"), viewer); //$NON-NLS-1$
 	}	
 
@@ -86,15 +85,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 				res[i]= JavaRuntime.newArchiveRuntimeClasspathEntry(elem);
 			}
 			getViewer().addEntries(res);
-		}
-					
-	}
-
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
-	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled();
+		}	
 	}
 	
 	/**
@@ -114,5 +105,9 @@ public class AddJarAction extends RuntimeClasspathAction {
 			}
 		}
 		return jars;
+	}
+	
+	protected int getActionType() {
+		return ADD;
 	}
 }

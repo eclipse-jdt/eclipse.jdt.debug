@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.util.List;
 
-import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class MoveDownAction extends RuntimeClasspathAction {
 
-	public MoveDownAction(RuntimeClasspathViewer viewer) {
+	public MoveDownAction(IClasspathViewer viewer) {
 		super(ActionMessages.getString("MoveDownAction.M&ove_Down_1"), viewer); //$NON-NLS-1$
 	}
 	/**
@@ -53,6 +53,13 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled() && !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1);	
+		if (selection.isEmpty()) {
+			return false;
+		}
+		return getViewer().updateSelection(getActionType(), selection) && !isIndexSelected(selection, getEntriesAsList().size() - 1);	
+	}
+	
+	protected int getActionType() {
+		return MOVE;
 	}
 }
