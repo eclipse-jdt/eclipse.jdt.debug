@@ -127,7 +127,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepInto() {
 		try {
-			return exists() && isTopStackFrame() && getThread().canStepInto();
+			return exists() && isTopStackFrame() && !isObsolete() && getThread().canStepInto();
 		} catch (DebugException e) {
 			logError(e);
 			return false;
@@ -139,7 +139,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepOver() {
 		try {
-			return exists() && getThread().canStepOver();
+			return exists() && !isObsolete() && getThread().canStepOver();
 		} catch (DebugException e) {
 			logError(e);
 			return false;
@@ -151,10 +151,20 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepReturn() {
 		try {
+			if (isObsolete()) {
+				return false;
+			}
 			List frames = ((JDIThread)getThread()).computeStackFrames();
 			if (frames != null && !frames.isEmpty()) {
-				Object bottomFrame = frames.get(frames.size() - 1);
-				return exists() && !this.equals(bottomFrame) && getThread().canStepReturn();
+				boolean bottomFrame = this.equals(frames.get(frames.size() - 1));
+				boolean aboveObsoleteFrame= false;
+				if (!bottomFrame) {
+					int index= frames.indexOf(this);
+					if (index < frames.size() -1 && ((JDIStackFrame)frames.get(index + 1)).isObsolete()) {
+						aboveObsoleteFrame= true;
+					}
+				}
+				return exists() && !bottomFrame && !aboveObsoleteFrame && getThread().canStepReturn();
 			}
 		} catch (DebugException e) {
 			logError(e);
