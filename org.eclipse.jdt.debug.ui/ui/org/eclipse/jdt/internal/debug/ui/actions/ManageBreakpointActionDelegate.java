@@ -29,7 +29,9 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -74,16 +76,19 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			int lineNumber = bv.getValidBreakpointLocation(document, ((ITextSelection)selection).getStartLine());		
 			if (lineNumber > -1) {
 				try {
+					IRegion line= document.getLineInformation(lineNumber - 1);
 					IJavaLineBreakpoint breakpoint= JDIDebugModel.lineBreakpointExists(getType().getFullyQualifiedName(), lineNumber);
 					if (breakpoint != null) {
 						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
 					} else {
 						Map attributes = new HashMap(10);
 						BreakpointUtils.addJavaBreakpointAttributes(attributes, getType());
-						JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
+						JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), lineNumber, line.getOffset(), line.getOffset() + line.getLength(), 0, true, attributes);
 					}
 				} catch (CoreException ce) {
 					ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (BadLocationException be) {
+					JDIDebugUIPlugin.log(be);
 				}
 			}
 		}
