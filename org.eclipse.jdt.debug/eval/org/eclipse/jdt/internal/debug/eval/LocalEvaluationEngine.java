@@ -22,9 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,6 +50,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -775,49 +773,37 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * @exception DebugException if this fails due to a
 	 * lower level exception.
 	 */
-	protected void deploy(final byte[][] classFiles, final String[][] classFileNames) throws DebugException {
-
-		// create the files in a workspace runnable
-		IWorkspace workspace= getJavaProject().getProject().getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {					
-					for (int i = 0; i < classFiles.length; i++) {
-						String[] compoundName = classFileNames[i];
-						//create required folders
-						File dir = LocalEvaluationEngine.this.getOutputDirectory();
-						try {
-							String pkgDirName = dir.getCanonicalPath();
-							for (int j = 0; j < (compoundName.length - 1); j++) {
-								pkgDirName += File.separator +  compoundName[j];
-								File pkgDir = new File(pkgDirName);
-								if (!pkgDir.exists()) {
-									pkgDir.mkdir();
-									addDirectory(pkgDir);
-								}
-							}
-							String name = compoundName[compoundName.length - 1] + ".class"; //$NON-NLS-1$
-							File classFile = new File(pkgDirName + File.separator + name);
-							if (!classFile.exists()) {
-								classFile.createNewFile();
-							}
-							FileOutputStream stream = new FileOutputStream(classFile);
-							stream.write(classFiles[i]);
-							stream.close();
-							LocalEvaluationEngine.this.addSnippetFile(classFile);
-						} catch (IOException e) {
-							throw new DebugException(
-								new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-									MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.{0}_occurred_deploying_class_file_for_evaluation_9"), new String[] {e.toString()}), e) //$NON-NLS-1$
-							);
-						}
-					}	
+	protected void deploy(byte[][] classFiles, String[][] classFileNames) throws DebugException {
+		for (int i = 0; i < classFiles.length; i++) {
+			String[] compoundName = classFileNames[i];
+			//create required folders
+			File dir = LocalEvaluationEngine.this.getOutputDirectory();
+			try {
+				String pkgDirName = dir.getCanonicalPath();
+				for (int j = 0; j < (compoundName.length - 1); j++) {
+					pkgDirName += File.separator +  compoundName[j];
+					File pkgDir = new File(pkgDirName);
+					if (!pkgDir.exists()) {
+						pkgDir.mkdir();
+						addDirectory(pkgDir);
+					}
 				}
-			};
-		try {	
-			workspace.run(runnable, null);				
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}
+				String name = compoundName[compoundName.length - 1] + ".class"; //$NON-NLS-1$
+				File classFile = new File(pkgDirName + File.separator + name);
+				if (!classFile.exists()) {
+					classFile.createNewFile();
+				}
+				FileOutputStream stream = new FileOutputStream(classFile);
+				stream.write(classFiles[i]);
+				stream.close();
+				LocalEvaluationEngine.this.addSnippetFile(classFile);
+			} catch (IOException e) {
+				throw new DebugException(
+					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.{0}_occurred_deploying_class_file_for_evaluation_9"), new String[] {e.toString()}), e) //$NON-NLS-1$
+				);
+			}
+		}	
 	}	
 	
 	/**
