@@ -660,7 +660,7 @@
          </action>
       </viewerContribution>
        <viewerContribution
-             targetID="javaStackTraceConsole.#TextConsole"
+             targetID="javaStackTraceConsole.#ContextMenu"
              id="org.eclipse.jdt.debug.ui.javaStackTraceConsoleContextMenu">
           <action
                 label="%FormatStackTraceActionDelegate.name"
