@@ -18,6 +18,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.jdt.debug.testplugin.TestPluginLauncher;
+import org.eclipse.jdt.debug.tests.core.BootpathTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
@@ -88,6 +89,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ClasspathProviderTests.class));
 		addTest(new TestSuite(SourceLocationTests.class));
 		addTest(new TestSuite(ProcessTests.class));
+		addTest(new TestSuite(BootpathTests.class));
 		
 		// Evaluation tests
 		addTest(new TestSuite(ProjectCreationDecorator.class));		

@@ -77,9 +77,14 @@ public class StandardVMDebugger extends StandardVMRunner {
 		addArguments(config.getVMArguments(), arguments);
 
 		String[] bootCP= config.getBootClassPath();
-		if (bootCP.length > 0) {
-			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
-		} 
+		if (bootCP != null) {
+			if (bootCP.length > 0) {
+				arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
+			} else {
+				// empty
+				arguments.add("-Xbootclasspath:"); //$NON-NLS-1$
+			}
+		}
 		
 		String[] cp= config.getClassPath();
 		if (cp.length > 0) {

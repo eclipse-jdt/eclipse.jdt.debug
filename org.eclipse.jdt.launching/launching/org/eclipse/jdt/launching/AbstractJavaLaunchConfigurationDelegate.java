@@ -75,7 +75,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
+	public IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		return JavaRuntime.computeVMInstall(configuration);
 	}
 
@@ -88,7 +88,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getVMInstallName(ILaunchConfiguration configuration) throws CoreException {
+	public String getVMInstallName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 	}
 	
@@ -101,7 +101,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected IVMInstallType getVMInstallType(ILaunchConfiguration configuration) throws CoreException {
+	public IVMInstallType getVMInstallType(ILaunchConfiguration configuration) throws CoreException {
 		String id = getVMInstallTypeId(configuration);
 		if (id != null) {
 			IVMInstallType type = JavaRuntime.getVMInstallType(id);
@@ -121,7 +121,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getVMInstallTypeId(ILaunchConfiguration configuration) throws CoreException {
+	public String getVMInstallTypeId(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 	}
 
@@ -137,7 +137,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * 	the attribute is unspecified, or if the home location is
 	 *  unspecified or does not exist
 	 */	
-	protected IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
+	public IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
 			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.The_specified_JRE_installation_does_not_exist_4"), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
@@ -162,7 +162,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getVMConnectorId(ILaunchConfiguration configuration) throws CoreException {
+	public String getVMConnectorId(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, (String)null);
 	}
 		
@@ -170,27 +170,33 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * Returns entries that should appear on the bootstrap portion
 	 * of the classpath as specified by the given launch
 	 * configuration, as an array of resolved strings. The returned array
-	 * is empty if no bootpath is specified, or if all entries are standard
-	 * (i.e. appear by default).
+	 * is <code>null</code> if all entries are standard (i.e. appear by
+	 * default), or empty to represent an empty bootpath.
 	 * 
 	 * @param configuration launch configuration
 	 * @return the bootpath specified by the given 
-	 *  launch configuration, possibly an empty array
+	 *  launch configuration. An empty bootpath is specfied by
+	 *  an empty array, and <code>null</code> represents a default
+	 * 	boothpath.
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
-	protected String[] getBootpath(ILaunchConfiguration configuration) throws CoreException {
+	public String[] getBootpath(ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 		List bootEntries = new ArrayList(entries.length);
+		boolean empty = true;
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+				empty = false;
 				bootEntries.add(entries[i].getLocation());
 				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
 			}
 		}
-		if (allStandard) {
+		if (empty) {
 			return new String[0];
+		} else if (allStandard) {
+			return null;
 		} else {
 			return (String[])bootEntries.toArray(new String[bootEntries.size()]);		
 		}
@@ -207,7 +213,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, possibly an empty array
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
-	protected String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
+	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 		List userEntries = new ArrayList(entries.length);
@@ -228,7 +234,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
+	public IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = getJavaProjectName(configuration);
 		if (projectName != null) {
 			projectName = projectName.trim();
@@ -252,7 +258,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getJavaProjectName(ILaunchConfiguration configuration) throws CoreException {
+	public String getJavaProjectName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 	}
 
@@ -265,7 +271,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
+	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 	}
 
@@ -279,7 +285,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, possibly an empty string
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
+	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 	}	
 
@@ -293,7 +299,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, possibly an empty string
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
+	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 	}	
 
@@ -305,7 +311,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @return the <code>Map</code> of VM-specific attributes
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
+	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
 	}
 	
@@ -318,7 +324,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+	public File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		return verifyWorkingDirectory(configuration);
 	}
 
@@ -331,7 +337,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected IPath getWorkingDirectoryPath(ILaunchConfiguration configuration) throws CoreException {
+	public IPath getWorkingDirectoryPath(ILaunchConfiguration configuration) throws CoreException {
 		String path = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 		if (path != null) {
 			return new Path(path);
@@ -349,7 +355,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 * 	or the attribute is unspecified
 	 */
-	protected IJavaProject verifyJavaProject(ILaunchConfiguration configuration) throws CoreException {
+	public IJavaProject verifyJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String name = getJavaProjectName(configuration);
 		if (name == null) {
 			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Java_project_not_specified_9"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
@@ -371,7 +377,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 * 	or the attribute is unspecified
 	 */
-	protected String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
+	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		String name = getMainTypeName(configuration);
 		if (name == null) {
 			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Main_type_not_specified_11"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
@@ -389,7 +395,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
-	protected File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+	public File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		IPath path = getWorkingDirectoryPath(configuration);
 		if (path == null) {
 			// default working dir is the project if this config has a project
@@ -426,7 +432,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @return whether termination is allowed
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected boolean isAllowTerminate(ILaunchConfiguration configuration) throws CoreException {
+	public boolean isAllowTerminate(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 	}					
 	

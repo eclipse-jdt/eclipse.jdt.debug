@@ -94,12 +94,10 @@ public class VMRunnerConfiguration {
 	 * VM "as is". This means it has to be complete. Interpretation of the boot class path
 	 * is up to the VM runner this object is passed to.
 	 *
-	 * @param bootClassPath The boot classpath. May not be null.
+	 * @param bootClassPath The boot classpath. An emptry array indicates an empty
+	 *  bootpath and <code>null</code> indicates a default bootpah.
 	 */
 	public void setBootClassPath(String[] bootClassPath) {
-		if (bootClassPath == null) {
-			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.bootClassPathNotNull")); //$NON-NLS-1$
-		}
 		fBootClassPath= bootClassPath;
 	}
 	
@@ -133,15 +131,14 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
-	 * Returns the boot classpath.
+	 * Returns the boot classpath. An emptry array indicates an empty
+	 * bootpath and <code>null</code> indicates a default bootpah.
 	 *
-	 * @return The boot classpath. Default is an empty array. Will not be null.
+	 * @return The boot classpath. An emptry array indicates an empty
+	 *  bootpath and <code>null</code> indicates a default bootpah.
 	 * @see #setBootClassPath
 	 */
 	public String[] getBootClassPath() {
-		if (fBootClassPath == null) {
-			return fgEmpty;
-		}
 		return fBootClassPath;
 	}
 
