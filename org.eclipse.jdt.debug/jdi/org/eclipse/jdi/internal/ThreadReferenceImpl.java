@@ -5,25 +5,35 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.StackFrame;
-import com.sun.jdi.Value;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.io.*;
+import java.util.Map;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpID;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpThreadID;
+
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InternalException;
+import com.sun.jdi.InvalidStackFrameException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadGroupReference;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
 
 
 /**
- * this class implements the corresponding interfaces
+ * This class implements the corresponding interfaces
  * declared by the JDI specification. See the com.sun.jdi package
  * for more information.
  *
@@ -224,7 +234,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			int threadStatus = readInt("thread status", threadStatusMap(), replyData);
+			//readInt("thread status", threadStatusMap(), replyData);
 			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData);
 			boolean result = suspendStatus == SUSPEND_STATUS_SUSPENDED;
 			return result;
@@ -322,7 +332,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int threadStatus = readInt("thread status", threadStatusMap(), replyData);
-			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData);
 			switch (threadStatus) {
 				case JDWP_THREAD_STATUS_ZOMBIE:
 					return THREAD_STATUS_ZOMBIE;
@@ -574,7 +583,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 	return fSuspendStatusVector;
 	 }
 
-	/*
+	/**
 	 * @see ThreadReference#popFrames(StackFrame)
 	 */
 	public void popFrames(StackFrame frameToPop) throws IncompatibleThreadStateException {

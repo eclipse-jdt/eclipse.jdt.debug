@@ -5,21 +5,45 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.io.*;
+import java.util.Set;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.connect.ConnectorImpl;
+import org.eclipse.jdi.internal.connect.PacketReceiveManager;
+import org.eclipse.jdi.internal.connect.PacketSendManager;
+import org.eclipse.jdi.internal.event.EventQueueImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
+import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdi.internal.request.EventRequestManagerImpl;
+
+import com.sun.jdi.BooleanValue;
+import com.sun.jdi.ByteValue;
+import com.sun.jdi.CharValue;
+import com.sun.jdi.DoubleValue;
+import com.sun.jdi.FloatValue;
+import com.sun.jdi.IntegerValue;
+import com.sun.jdi.LongValue;
+import com.sun.jdi.ShortValue;
+import com.sun.jdi.StringReference;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.EventQueue;
+import com.sun.jdi.request.EventRequestManager;
 
 /**
- * this class implements the corresponding interfaces
+ * This class implements the corresponding interfaces
  * declared by the JDI specification. See the com.sun.jdi package
  * for more information.
  *
@@ -269,9 +293,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			int nrOfElements = readInt("elements", replyData);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTagAndSignature(this, replyData);
-				if (elt == null)
+				if (elt == null) {
 					continue;
-				int status = readInt("status", ReferenceTypeImpl.classStatusVector(), replyData);
+				}
+				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData);
 				elements.add(elt);
 			}
 			return elements;
@@ -453,9 +478,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			int nrOfElements = readInt("elements", replyData);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
-				int status = readInt("status", ReferenceTypeImpl.classStatusVector(), replyData);
-				if (elt == null)
+				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData);
+				if (elt == null) {
 					continue;
+				}
 				elements.add(elt);
 			}
 			return elements;
