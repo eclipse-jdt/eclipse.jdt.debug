@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.hcr.OperationRefusedException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -41,7 +42,7 @@ import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.InvalidRequestStateException;
 
-public abstract class JDIDebugElement extends PlatformObject implements IDebugElement {
+public abstract class JDIDebugElement extends PlatformObject implements IDebugElement, IDisconnect {
 			
 	/**
 	 * Collection of possible JDI exceptions (runtime)
@@ -412,4 +413,25 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 		return getJavaDebugTarget().isAvailable() && getVM() instanceof org.eclipse.jdi.VirtualMachine;
 	}
 	
+	/**
+	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
+	 */
+	public boolean canDisconnect() {
+		return getDebugTarget().canDisconnect();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
+	 */
+	public void disconnect() throws DebugException {
+		getDebugTarget().disconnect();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
+	 */
+	public boolean isDisconnected() {
+		return getDebugTarget().isDisconnected();
+	}
+
 }
