@@ -93,7 +93,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		IJavaProject project= JavaCore.create(fResource).getJavaProject();
 		int apiLevel;
-		if ("1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) { //$NON-NLS-1$
+		if (project != null && "1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) { //$NON-NLS-1$
 			apiLevel= AST.JLS3;
 		} else {
 			apiLevel= AST.JLS2;
