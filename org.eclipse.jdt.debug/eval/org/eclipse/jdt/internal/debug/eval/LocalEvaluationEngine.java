@@ -63,6 +63,16 @@ import com.sun.jdi.ObjectReference;
 
 public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor , IEvaluationRunnable {	 
 	
+	private static final String CODE_SNIPPET_NAME= "CodeSnippet.class";
+
+	/**
+	 * A count of the number of engines created.
+	 * Count is incremented on instantiation and decremented on 
+	 * dispose.  When the count == 0, the special CodeSnippet.class
+	 * is deleted as this class file is shared by all.
+	 */
+	private static int ENGINE_COUNT= 0;
+
 	/**
 	 * The Java project context in which to compile snippets.
 	 */
@@ -187,6 +197,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		setJavaProject(project);
 		setDebugTarget(vm);
 		setOutputDirectory(directory);
+		ENGINE_COUNT++;
 	}
 
 	/**
@@ -617,8 +628,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	public void dispose() {
 		fDisposed = true;
+		ENGINE_COUNT--;
 		if (isEvaluating()) {
-			// cannot dispose if in an evalutaion, must
+			// cannot dispose if in an evaluation, must
 			// wait for evaluation to complete
 			return;
 		}
@@ -626,11 +638,16 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		Iterator iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
 			File file = (File)iter.next();
-			if (file.exists() && !file.delete()) {
-				JDIDebugPlugin.log(
-					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_class_file_{0}_1"), new String[] {file.getAbsolutePath()}), null) //$NON-NLS-1$
-				);				
+			if (file.exists()) {
+				if (CODE_SNIPPET_NAME.equals(file.getName()) && ENGINE_COUNT > 0) {
+					continue; //do not delete the common file for other engines
+				}
+				if (!file.delete()) {
+					JDIDebugPlugin.log(
+						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+							MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_class_file_{0}_1"), new String[] {file.getAbsolutePath()}), null) //$NON-NLS-1$
+					);				
+				}
 			}
 		}
 		List directories = getDirectories();
@@ -638,7 +655,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		int i = directories.size() - 1;
 		while (i >= 0) {
 			File dir = (File)directories.get(i);
-			if (dir.exists() && !dir.delete()) {
+			String[] listing= dir.list();
+			if (dir.exists() && listing != null && listing.length == 0 && !dir.delete()) {
 				JDIDebugPlugin.log(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
 						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_directory_{0}_2"), new String[] {dir.getAbsolutePath()}), null) //$NON-NLS-1$
