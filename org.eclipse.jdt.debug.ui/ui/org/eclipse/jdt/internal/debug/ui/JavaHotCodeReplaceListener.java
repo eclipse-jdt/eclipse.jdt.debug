@@ -63,11 +63,11 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		if (exception == null) {
 			status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.The_target_VM_does_not_support_hot_code_replace_1"), null); //$NON-NLS-1$
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
-			alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_when_hot_code_replace_is_not_supported_1"); //$NON-NLS-1$
+			alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.3"); //$NON-NLS-1$
 		} else {
 			status= exception.getStatus();
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED;
-			alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_hot_code_replace_failure_1"); //$NON-NLS-1$
+			alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.1"); //$NON-NLS-1$
 		}
 		final String title= DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"); //$NON-NLS-1$
 		final String message= MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), //$NON-NLS-1$
@@ -100,7 +100,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		final String dialogTitle= DebugUIMessages.getString("JDIDebugUIPlugin.Obsolete_methods_remain_1"); //$NON-NLS-1$
 		final String message= MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_contains_obsolete_methods_1"), new Object[] {vmName}); //$NON-NLS-1$
 		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.Stepping_may_be_hazardous_1"), null); //$NON-NLS-1$
-		final String toggleMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_obsolete_methods_1"); //$NON-NLS-1$
+		final String toggleMessage= DebugUIMessages.getString("JDIDebugUIPlugin.2"); //$NON-NLS-1$
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (display.isDisposed()) {

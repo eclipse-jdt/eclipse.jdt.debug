@@ -58,7 +58,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		Composite dialogComposite= (Composite) super.createDialogArea(parent);
 		dialogComposite.setFont(parent.getFont());
 		setToggleButton(createCheckButton(dialogComposite, fToggleMessage));
-		getToggleButton().setSelection(fStore.getBoolean(fPreferenceKey));
+		getToggleButton().setSelection(!fStore.getBoolean(fPreferenceKey));
 		applyDialogFont(dialogComposite);
 		return dialogComposite;
 	}
@@ -88,7 +88,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 	}
 	
 	private void storePreference() {
-		fStore.setValue(fPreferenceKey, getToggleButton().getSelection());
+		fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 	}
 
 	protected Button getToggleButton() {
