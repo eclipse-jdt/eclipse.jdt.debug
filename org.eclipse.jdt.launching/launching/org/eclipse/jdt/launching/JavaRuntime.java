@@ -1281,7 +1281,7 @@ public final class JavaRuntime {
 						public void run(IProgressMonitor monitor) throws CoreException {
 							IMarker error = root.createMarker(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE);
 							error.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-							error.setAttribute(IMarker.MESSAGE, "Unable to detect default JRE. See 'Preferences -> Java -> Installed JREs'");
+							error.setAttribute(IMarker.MESSAGE, LaunchingMessages.getString("JavaRuntime.Unable_to_detect_default_JRE._See___Preferences_->_Java_->_Installed_JREs___1")); //$NON-NLS-1$
 						}
 					};
 					root.getWorkspace().run(runnable, null);
