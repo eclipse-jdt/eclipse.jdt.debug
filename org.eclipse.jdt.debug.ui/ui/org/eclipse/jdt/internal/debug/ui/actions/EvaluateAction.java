@@ -282,6 +282,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 *  if there is no selection
 	 */
 	protected Object getExpressionSelection() {
+		setSelection(null);
 		ISelection selection= getTargetSelection();
 		if (selection instanceof ITextSelection) {
 			String text= ((ITextSelection)selection).getText();
