@@ -380,28 +380,6 @@
         </enablement>        
       </objectContribution>         
       <objectContribution
-            objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint"
-            id="org.eclipse.jdt.debug.WatchpointToggleActions">
-         <action
-               label="%accessAction.label"
-               helpContextId="access_toggle_action_context"
-               state="false"
-               class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
-               menubarPath="emptyBreakpointGroup"
-               enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.actions.AccessToggle">
-         </action>
-         <action
-               label="%modificationAction.label"
-               helpContextId="modification_toggle_action_context"
-               state="true"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ModificationWatchpointToggleAction"
-               menubarPath="emptyBreakpointGroup"
-               enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.actions.ModificationToggle">
-         </action>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaMethodBreakpoint"
             id="org.eclipse.jdt.debug.MethodBreakpointToggleActions">
          <action

@@ -735,16 +735,16 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			} else {
 				if (enabled) {
-					descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ACCESS_WATCHPOINT_ENABLED, flags);
+					descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT), flags);
 				} else {
-					descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ACCESS_WATCHPOINT_DISABLED, flags);
+					descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED), flags);
 				}
 			}
 		} else if (watchpoint.isModification()) {
 			if (enabled) {
-				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_MODIFICATION_WATCHPOINT_ENABLED, flags);
+				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT), flags);
 			} else {
-				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_MODIFICATION_WATCHPOINT_DISABLED, flags);
+				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED), flags);
 			}
 		} else {
 			//neither access nor modification

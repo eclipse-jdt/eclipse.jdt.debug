@@ -22,8 +22,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -436,5 +439,20 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		if (request instanceof WatchpointRequest) {
 			((WatchpointRequest)request).addInstanceFilter(object);
 		}
-	}	
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
+     */
+    public boolean supportsAccess() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
+     */
+    public boolean supportsModification() {
+        return true;
+    }
+
 }
