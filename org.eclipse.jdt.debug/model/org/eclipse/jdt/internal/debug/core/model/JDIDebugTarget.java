@@ -1142,7 +1142,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			// normal termination processing
 			terminated();
 		} catch (TimeoutException exception) {
-			terminated();
+			// if there is a timeout see if the associated process is terminated
+			IProcess process = getProcess();
+			if (process != null && process.isTerminated()) {
+				terminated();
+			} else {
+				// all we can do is disconnect
+				disconnected();
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
