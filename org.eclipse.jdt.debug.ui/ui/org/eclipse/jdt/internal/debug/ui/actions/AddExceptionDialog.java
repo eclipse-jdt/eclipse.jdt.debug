@@ -218,7 +218,12 @@ public class AddExceptionDialog extends StatusDialog {
 	}
 	
 	private void resolveExceptionType(final IType type) {
-		fExceptionType= NO_EXCEPTION;
+		fExceptionType= getExceptionType(type);
+	}
+	
+	public static int getExceptionType(final IType type) {
+		final int[] exceptionType = new int[1];
+		exceptionType[0] = NO_EXCEPTION;
 	
 		BusyIndicatorRunnableContext context= new BusyIndicatorRunnableContext();
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
@@ -230,11 +235,11 @@ public class AddExceptionDialog extends StatusDialog {
 						String name= JavaModelUtil.getFullyQualifiedName(curr);
 						
 						if ("java.lang.Throwable".equals(name)) { //$NON-NLS-1$
-							fExceptionType= CHECKED_EXCEPTION;
+							exceptionType[0] = CHECKED_EXCEPTION;
 							return;
 						}
 						if ("java.lang.RuntimeException".equals(name) || "java.lang.Error".equals(name)) { //$NON-NLS-2$ //$NON-NLS-1$
-							fExceptionType= UNCHECKED_EXCEPTION;
+							exceptionType[0] = UNCHECKED_EXCEPTION;
 							return;
 						}
 						curr= hierarchy.getSuperclass(curr);
@@ -250,8 +255,9 @@ public class AddExceptionDialog extends StatusDialog {
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		}
+		return exceptionType[0];
 	}
-	
+		
 	public IType getType() {
 		return fResolvedType;
 	}

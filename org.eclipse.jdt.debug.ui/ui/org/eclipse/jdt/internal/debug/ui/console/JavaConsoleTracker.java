@@ -11,6 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -29,6 +32,11 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 	
 	private StringMatcher fJavaMatcher;
 	private StringMatcher fNativeMatcher;
+	
+	private Pattern fJavaQualifiedNamePattern;
+	private boolean fInTrace = false;
+	String fPrevText = null;
+	private IRegion fPrevLine = null;
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
@@ -37,6 +45,7 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 		fConsole = console;
 		fJavaMatcher = new StringMatcher("*(*.java:*)", false, false); //$NON-NLS-1$
 		fNativeMatcher = new StringMatcher("*(Native Method)", false, false); //$NON-NLS-1$
+		fJavaQualifiedNamePattern = Pattern.compile("([$_A-Za-z][$_A-Za-z0-9]*[.])*[$_A-Za-z][$_A-Za-z0-9]*Exception"); //$NON-NLS-1$
 	}
 
 	/**
@@ -58,6 +67,19 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 				index = text.lastIndexOf(' ', text.length() - 15);
 			}
 			if (index >= 0) {
+				if (!fInTrace) {
+					fInTrace = true;
+					// look for exception name
+					Matcher m = fJavaQualifiedNamePattern.matcher(fPrevText);
+					if (m.find()) {
+						int start = m.start();
+						int end = m.end();
+						int size = end - start;
+						IConsoleHyperlink link = new JavaExceptionHyperLink(fConsole, fPrevText.substring(start, end));
+						start += fPrevLine.getOffset();
+						fConsole.addLink(link, start, size);
+					}
+				}
 				int linkOffset = offset + index + 1;
 				int linkLength = length - index - 1;
 				IConsoleHyperlink link = null;
@@ -67,7 +89,13 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 					link = new JavaNativeStackTraceHyperlink(fConsole);
 				}	
 				fConsole.addLink(link, linkOffset, linkLength);			
+			} else {
+				if (fInTrace) {
+					fInTrace = false;
+				}
 			}
+			fPrevText = text;
+			fPrevLine = line;
 		} catch (BadLocationException e) {
 		}
 	}
