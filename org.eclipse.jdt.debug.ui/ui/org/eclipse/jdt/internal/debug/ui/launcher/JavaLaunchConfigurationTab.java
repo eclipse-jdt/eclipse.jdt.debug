@@ -80,16 +80,6 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 	}	
 	
 	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp, int colSpan) {
-		Label label = new Label(comp, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = colSpan;
-		label.setLayoutData(gd);
-	}	
-	
-	/**
 	 * @see IEntriesChangedListener#entriesChanged(RuntimeClasspathViewer)
 	 */
 	public void entriesChanged(RuntimeClasspathViewer viewer) {
