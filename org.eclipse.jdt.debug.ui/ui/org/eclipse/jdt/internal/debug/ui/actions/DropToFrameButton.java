@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,9 +50,7 @@ public class DropToFrameButton implements IViewActionDelegate, IActionDelegate2 
                 try {
                     fFrame.dropToFrame();
                 } catch (DebugException e) {
-                    String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
-                    String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
-                    ExceptionHandler.handle(e, title, message);
+                    return e.getStatus();
                 }
                 return Status.OK_STATUS;
             }
