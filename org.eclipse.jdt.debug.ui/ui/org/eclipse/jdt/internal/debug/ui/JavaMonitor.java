@@ -40,6 +40,10 @@ public class JavaMonitor {
 	 */
 	private JavaMonitorThread[] fWaitingThreads= new JavaMonitorThread[0];
 	/**
+	 * Indicate if this monitor is currently part of a deadlock.
+	 */
+	private boolean fIsInDeadlock;
+	/**
 	 * Indicate that the information for this monitor need to be update, it
 	 * may have changed.
 	 */
@@ -170,18 +174,24 @@ public class JavaMonitor {
 		if (toRemove) {
 			threadMonitorManager.removeJavaMonitor(this);
 		} else if (changed) {
-			// if something changed, send a change event for theJavaContendedMonitor
-			// and JavaOwnedMonitor associated with this monitor
-			Object[] elements= fElements.toArray();
-			DebugEvent[] changeEvents= new DebugEvent[elements.length];
-			for (int i= 0; i < elements.length; i++) {
-				changeEvents[i]= new DebugEvent(elements[i], DebugEvent.CHANGE);
-			}
-			DebugPlugin.getDefault().fireDebugEventSet(changeEvents);
+			fireChangeEvent(DebugEvent.CONTENT);
 		}
 		return changed;
 	}
 	
+	/**
+	 * Send a change event for theJavaContendedMonitor and JavaOwnedMonitor
+	 * associated with this monitor
+	 */
+	private void fireChangeEvent(int detail) {
+		Object[] elements= fElements.toArray();
+		DebugEvent[] changeEvents= new DebugEvent[elements.length];
+		for (int i= 0; i < elements.length; i++) {
+			changeEvents[i]= new DebugEvent(elements[i], DebugEvent.CHANGE, detail);
+		}
+		DebugPlugin.getDefault().fireDebugEventSet(changeEvents);
+	}
+
 	public synchronized void setToUpdate() {
 		if (!fToUpdate) {
 			fToUpdate= true;
@@ -215,4 +225,20 @@ public class JavaMonitor {
 		}
 	}
 	
+	/**
+	 * Indicate if this monitor is currently part of a deadlock
+	 */
+	public boolean isInDeadlock() {
+		return fIsInDeadlock;
+	}
+	/**
+	 * Set this monitor as being part of a deadlock.
+	 */
+	public void setInDeadlock(boolean isInDeadlock) {
+		boolean oldValue= fIsInDeadlock;
+		fIsInDeadlock = isInDeadlock;
+		if (oldValue != isInDeadlock) {
+			fireChangeEvent(DebugEvent.STATE);
+		}
+	}
 }

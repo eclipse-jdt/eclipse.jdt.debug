@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -124,6 +126,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		if (javaMonitorThread == null) {
 			javaMonitorThread= new JavaMonitorThread(thread);
 			fJavaMonitorThreads.put(thread, javaMonitorThread);
+			DebugPlugin.getDefault().asyncExec(new DetectDeadlock());			
 		}
 		return javaMonitorThread;
 	}
@@ -165,11 +168,60 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 *  Runnable to be run asynchronously, to refresh the model and 
 	 *  look for deadlocks.
 	 */
-	class RefreshAndDetectDeadlock implements Runnable {
+	class RefreshAndDetectDeadlock extends DetectDeadlock {
 		public void run() {
 			Object[] threads= fJavaMonitorThreads.values().toArray();
 			for (int i = 0; i < threads.length; i++) {
 				((JavaMonitorThread) threads[i]).refresh();
+			}
+			super.run();
+		}
+	}
+
+	class DetectDeadlock implements Runnable {
+		public void run() {
+			Object[] threads= fJavaMonitorThreads.values().toArray();
+			Object[] monitors= fJavaMonitors.values().toArray();
+			List inDeadlock= new ArrayList();
+			for (int i = 0; i < threads.length; i++) {
+				JavaMonitorThread thread= (JavaMonitorThread) threads[i];
+				List threadStack= new ArrayList();
+				List monitorStack= new ArrayList();
+				while (thread != null) {
+					boolean isInDeadlock= false;
+					if (inDeadlock.contains(thread) || threadStack.contains(thread)) {
+						isInDeadlock= true;
+					} else {
+						JavaMonitor monitor = thread.getContendedMonitor0();
+						if (monitor == null) {
+							thread= null;
+						} else if (inDeadlock.contains(monitor)) {
+							isInDeadlock= true;
+						} else {
+							threadStack.add(thread);
+							monitorStack.add(monitor);
+							thread= monitor.getOwningThread0();
+						}
+					}
+					if (isInDeadlock) {
+						// is in a deadlock, set the elements of the back trace as 'in a deadlock'
+						for (Iterator iter = threadStack.iterator(); iter.hasNext();) {
+							inDeadlock.add(iter.next());
+						}
+						for (Iterator iter = monitorStack.iterator(); iter.hasNext();) {
+							inDeadlock.add(iter.next());
+						}
+						thread= null;
+					}
+				}
+			}
+			for (int i = 0; i < threads.length; i++) {
+				JavaMonitorThread thread= (JavaMonitorThread) threads[i];
+				thread.setInDeadlock(inDeadlock.contains(thread));
+			}
+			for (int i = 0; i < monitors.length; i++) {
+				JavaMonitor monitor= (JavaMonitor) monitors[i];
+				monitor.setInDeadlock(inDeadlock.contains(monitor));
 			}
 		}
 	}

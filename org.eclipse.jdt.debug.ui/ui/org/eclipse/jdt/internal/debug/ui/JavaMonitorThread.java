@@ -40,6 +40,10 @@ public class JavaMonitorThread {
 	 */
 	private JavaMonitor[] fOwnedMonitors= new JavaMonitor[0];
 	/**
+	 * Indicate if this thread is currently part of a deadlock.
+	 */
+	private boolean fIsInDeadlock;
+	/**
 	 * Indicate that the information for this thread need to be update, it
 	 * may have changed.
 	 */
@@ -200,29 +204,35 @@ public class JavaMonitorThread {
 			}
 		}
 		if (changed) {
-			// if something changed, send a change event for theJavaWaitingThread
-			// and JavaOwningThread associated with this thread
-			Object[] elements= fElements.toArray();
-			DebugEvent[] changeEvents= new DebugEvent[elements.length];
-			for (int i= 0; i < elements.length; i++) {
-				Object element= elements[i];
-				if (element instanceof JavaOwningThread) {
-					if (((JavaOwningThread)element).getParent() == null) {
-						element= ((JavaOwningThread)element).getThread();
-					}
-				}
-				if (element instanceof JavaWaitingThread) {
-					if (((JavaWaitingThread)element).getParent() == null) {
-						element= ((JavaWaitingThread)element).getThread();
-					}
-				}
-				changeEvents[i]= new DebugEvent(element, DebugEvent.CHANGE);
-			}
-			DebugPlugin.getDefault().fireDebugEventSet(changeEvents);
+			fireChangeEvent(DebugEvent.CONTENT);
 		}
 		return changed;
 	}
 	
+	/**
+	 * send a change event for theJavaWaitingThread and JavaOwningThread
+	 * associated with this thread
+	 */
+	private void fireChangeEvent(int detail) {
+		Object[] elements= fElements.toArray();
+		DebugEvent[] changeEvents= new DebugEvent[elements.length];
+		for (int i= 0; i < elements.length; i++) {
+			Object element= elements[i];
+			if (element instanceof JavaOwningThread) {
+				if (((JavaOwningThread)element).getParent() == null) {
+					element= ((JavaOwningThread)element).getThread();
+				}
+			}
+			if (element instanceof JavaWaitingThread) {
+				if (((JavaWaitingThread)element).getParent() == null) {
+					element= ((JavaWaitingThread)element).getThread();
+				}
+			}
+			changeEvents[i]= new DebugEvent(element, DebugEvent.CHANGE, detail);
+		}
+		DebugPlugin.getDefault().fireDebugEventSet(changeEvents);
+	}
+
 	public synchronized void setToUpdate() {
 		if (!fToUpdate) {
 			fToUpdate= true;
@@ -256,4 +266,20 @@ public class JavaMonitorThread {
 		}
 	}
 	
+	/**
+	 * Indicate if this thread is currently part of a deadlock
+	 */
+	public boolean isInDeadlock() {
+		return fIsInDeadlock;
+	}
+	/**
+	 * Set this thread as being part of a deadlock.
+	 */
+	public void setInDeadlock(boolean isInDeadlock) {
+		boolean oldValue= fIsInDeadlock;
+		fIsInDeadlock = isInDeadlock;
+		if (oldValue != isInDeadlock) {
+			fireChangeEvent(DebugEvent.STATE);
+		}
+	}
 }

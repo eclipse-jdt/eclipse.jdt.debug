@@ -128,6 +128,7 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OVR_OWNS_MONITOR= create(T_OVR, "ownsmonitor_ovr.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_IN_CONTENTION= create(T_OVR, "contention_ovr.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_IN_CONTENTION_FOR_MONITOR= create(T_OVR, "contentionformonitor_ovr.gif");		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_IN_DEADLOCK= create(T_OVR, "padlock_ovr.gif");		//$NON-NLS-1$
 			
 	public static final ImageDescriptor DESC_WIZBAN_NEWSCRAPPAGE= create(T_WIZBAN, "newsbook_wiz.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$

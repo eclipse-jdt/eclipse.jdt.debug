@@ -51,6 +51,8 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int CONTENTED_MONITOR=			0x1000;
 	/** Flag to render the in contention for monitor thread adornment */
 	public final static int IN_CONTENTION_FOR_MONITOR=	0x2000;
+	/** Flag to render the in deadlock adornment */
+	public final static int IN_DEADLOCK= 				0x8000;
 	
 	/** Flag to render the synchronized stack frame adornment */
 	public final static int SYNCHRONIZED=				0x4000;
@@ -140,6 +142,12 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			x -= data.width;
 			drawImage(data, x, y);
 		} else {
+			if ((flags & IN_DEADLOCK) != 0) {
+				x= 0;
+				y= 0;
+				data= JavaDebugImages.DESC_OVR_IN_DEADLOCK.getImageData();
+				drawImage(data, x, y);
+			}
 			if ((flags & OWNED_MONITOR) != 0) {
 				x= getSize().x;
 				y= getSize().y;
