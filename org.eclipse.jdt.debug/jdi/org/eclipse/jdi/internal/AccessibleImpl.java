@@ -98,7 +98,8 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 		
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
+			int modifiers= field.getModifiers();
+			if ((modifiers & Modifier.PUBLIC) == 0 || (modifiers & Modifier.STATIC) == 0 || (modifiers & Modifier.FINAL) == 0)
 				continue;
 				
 			String name = field.getName();
