@@ -1435,12 +1435,6 @@
 		code="117">
 	</statusHandler>	
 	<statusHandler
-		id="org.eclipse.jdt.debug.ui.statusHandler.unresolvedJRE"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.UnresolvedJREStatusHandler"
-		plugin ="org.eclipse.jdt.launching"
-		code="160">
-	</statusHandler>
-	<statusHandler
 		id="org.eclipse.jdt.debug.ui.statusHandler.suspendTimeout"
 		class="org.eclipse.jdt.internal.debug.ui.SuspendTimeoutStatusHandler"
 		plugin = "org.eclipse.jdt.debug"
@@ -1598,6 +1592,13 @@
 		targetID="org.eclipse.debug.ui.DebugPerspective">
 		<showInPart id="org.eclipse.jdt.ui.PackageExplorer"/>
 	</perspectiveExtension>
+</extension>
+
+<extension point="org.eclipse.ui.markerResolution">
+	<markerResolutionGenerator
+		class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator"
+		markerType="org.eclipse.jdt.core.buildpath_problem">
+	</markerResolutionGenerator>
 </extension>
 
 <extension point="org.eclipse.debug.ui.consoleLineTrackers">

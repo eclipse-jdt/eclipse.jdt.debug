@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -37,83 +35,38 @@ import org.eclipse.jdt.launching.VMStandin;
  * Resolves a container for a JRE classpath container entry.
  */
 public class JREContainerInitializer extends ClasspathContainerInitializer {
+	
+	// avoid stack overflow
+	private static IPath fPath;
+	private static IJavaProject fProject;
 
 	/**
 	 * @see ClasspathContainerInitializer#initialize(IPath, IJavaProject)
 	 */
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
+		if (fPath != null) {
+			if (fPath.equals(containerPath) && fProject.equals(project)) {
+				return; 
+			}
+		}
+		fPath = containerPath;
+		fProject = project;
+		
 		int size = containerPath.segmentCount();
 		if (size > 0) {
 			if (containerPath.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
 				IVMInstall vm = resolveVM(containerPath);
-				if (vm == null) {
-					handleResolutionError(containerPath, project);
-					return;
-				}					
+				JREContainer container = null;
 				if (vm != null) {
-					JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, containerPath)}, null);
+					container = new JREContainer(vm, containerPath);
 				}
+				JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {container}, null);
 			}
 		}
+		fPath = null;
+		fProject = null;
 	}
 	
-	protected void handleResolutionError(IPath containerPath, IJavaProject project) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), JavaRuntime.ERR_UNABLE_TO_RESOLVE_JRE, 
-			MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Unable_to_locate_JRE_named_{0}_to_build_project_{1}._1"), new String[] {containerPath.segment(2), project.getElementName()}), null); //$NON-NLS-1$
-			
-		// if there are no JREs to choose from there is no point in consulting the status handler
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		if (types.length == 0) {
-			throw new CoreException(status);
-		}
-		int count = 0;
-		for (int i = 0; i < types.length; i++) {
-			IVMInstallType type = types[i];
-			IVMInstall[] installs = type.getVMInstalls();
-			count += installs.length;
-		}
-		if (count == 0) {
-			throw new CoreException(status);
-		}
-		
-		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
-		IVMInstall vm = null;
-		if (handler != null) {
-			vm = (IVMInstall)handler.handleStatus(status, project);
-		}
-		
-		if (vm == null) {
-			throw new CoreException(status);
-		} else {
-			String vmTypeId = vm.getVMInstallType().getId();
-			String vmName = vm.getName();
-			String prevId = getVMTypeId(containerPath);
-			String prevName = getVMName(containerPath);
-			if (!(prevId.equals(vmTypeId) && prevName.equals(vmName))) {
-				// update classpath
-				IPath newPath = new Path(JavaRuntime.JRE_CONTAINER);
-				if (vmTypeId != null) {
-					newPath = newPath.append(vmTypeId).append(vmName);
-				}
-				IClasspathEntry[] classpath = project.getRawClasspath();
-				for (int i = 0; i < classpath.length; i++) {
-					switch (classpath[i].getEntryKind()) {
-						case IClasspathEntry.CPE_CONTAINER:
-							if (classpath[i].getPath().equals(containerPath)) {
-								classpath[i] = JavaCore.newContainerEntry(newPath, classpath[i].isExported());
-							}
-							break;
-						default:
-							break;
-					}
-				}
-				project.setRawClasspath(classpath, null);
-				containerPath = newPath;
-			}
-			JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, containerPath)}, null);
-		}
-	}
-
 	/**
 	 * Returns the VM install associated with the container path, or <code>null</code>
 	 * if it does not exist.
