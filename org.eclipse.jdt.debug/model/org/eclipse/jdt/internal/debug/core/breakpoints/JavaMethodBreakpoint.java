@@ -96,7 +96,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	protected static final Integer EXIT_EVENT= new Integer(1);		
 	
 	/**
-	 * Maps each debug target that is suspended for this breakpiont to reason that 
+	 * Maps each debug target that is suspended for this breakpoint to reason that 
 	 * this breakpoint suspended it. Reasons include:
 	 * <ol>
 	 * <li>Method entry (value <code>ENTRY_EVENT</code>)</li>
@@ -590,5 +590,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 		
 		createRequest(target, referenceTypeNamePattern);
+	}
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#removeFromTarget(JDIDebugTarget)
+	 */
+	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		fLastEventTypes.remove(target);
+		super.removeFromTarget(target);
 	}
 }

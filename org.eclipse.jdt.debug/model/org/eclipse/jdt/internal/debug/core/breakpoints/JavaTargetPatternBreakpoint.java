@@ -200,6 +200,14 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 	 */
 	public String getSourceName() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_NAME);		
-	}		
+	}
+			
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#removeFromTarget(JDIDebugTarget)
+	 */
+	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		fPatterns.remove(target);
+		super.removeFromTarget(target);
+	}
 }
 

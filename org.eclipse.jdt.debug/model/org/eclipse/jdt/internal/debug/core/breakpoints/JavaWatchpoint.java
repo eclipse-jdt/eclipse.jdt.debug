@@ -438,4 +438,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		return false;
 	}
 
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#removeFromTarget(JDIDebugTarget)
+	 */
+	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		fLastEventTypes.remove(target);
+		super.removeFromTarget(target);
+	}
 }
