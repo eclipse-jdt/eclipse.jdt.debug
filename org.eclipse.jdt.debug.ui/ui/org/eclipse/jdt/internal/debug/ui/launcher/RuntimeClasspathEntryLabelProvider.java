@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -18,6 +20,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -110,10 +113,26 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						}
 						buf.append(']'); //$NON-NLS-1$
 					}
+					// append JRE name if we can compute it
+					if (path.equals(new Path(JavaRuntime.JRELIB_VARIABLE)) && fLaunchConfuration != null) {
+						try {
+							IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfuration);					
+							buf.append(" - "); //$NON-NLS-1$
+							buf.append(vm.getName());
+						} catch (CoreException e) {
+							JDIDebugUIPlugin.log(e);
+						}
+					}
 					return buf.toString();
 				case IRuntimeClasspathEntry.CONTAINER:
+					path = entry.getPath();
 					if (fLaunchConfuration != null) {
 						try {
+							if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))) {
+								// default JRE - resolve the name for the launch config, rather than using the "workspace" default description
+								IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfuration);
+								return MessageFormat.format(LauncherMessages.getString("RuntimeClasspathEntryLabelProvider.JRE_System_Library_[{0}]_2"), new String[]{vm.getName()}); //$NON-NLS-1$
+							}
 							IJavaProject project = JavaRuntime.getJavaProject(fLaunchConfuration);
 							if (project != null) {
 								IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
