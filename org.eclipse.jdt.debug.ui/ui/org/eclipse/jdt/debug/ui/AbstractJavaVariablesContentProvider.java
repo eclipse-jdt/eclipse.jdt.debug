@@ -23,8 +23,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
- * Base class for java variables content providers.  This class provices several useful classes
- * that reduce the work of creating java variables content ptoviders.
+ * Base class for Java variables content providers.  This class provices several useful classes
+ * that reduce the work of creating Java variables content providers.
  */
 public abstract class AbstractJavaVariablesContentProvider implements IJavaVariablesContentProvider {
 
