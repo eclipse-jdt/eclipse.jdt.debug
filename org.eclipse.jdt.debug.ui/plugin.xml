@@ -116,7 +116,7 @@
 
 <extension point="org.eclipse.ui.popupMenus">
 	<objectContribution
-		id="org.eclipse.jdt.debug.AccessWatchpointToggleActions"
+		id="org.eclipse.jdt.debug.WatchpointToggleActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint">
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.AccessToggle"
@@ -126,10 +126,6 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
 			enablesFor="+">
 		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ModificationWatchpointToggleActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint">
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.ModificationToggle"
 			label="%modificationAction.label"
@@ -175,10 +171,17 @@
 			menubarPath="emptyBreakpointGroup"
 			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointThreadToggleAction"
 			enablesFor="1">
-		</action>		
+		</action>
+		<action
+			id="org.eclipse.jdt.ui.actions.JavaBreakpointProperties"
+			label="%breakpointPropertiesAction.label"
+			menubarPath="additions"
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
+			enablesFor="1">
+		</action>
 	</objectContribution>	
 	<objectContribution
-		id="org.eclipse.jdt.debug.ExceptionCaughtToggleActions"
+		id="org.eclipse.jdt.debug.ExceptionToggleActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
 		<action
 			id="org.eclipse.jdt.ui.actions.CaughtToggle"
@@ -188,10 +191,6 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
 			enablesFor="+">
 		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ExceptionUncaughtToggleActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
 		<action
 			id="org.eclipse.jdt.ui.actions.UncaughtToggle"
 			label="%uncaughtAction.label"
