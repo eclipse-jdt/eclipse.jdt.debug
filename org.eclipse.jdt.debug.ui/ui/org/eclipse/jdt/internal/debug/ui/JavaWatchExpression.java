@@ -318,6 +318,9 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 		return (fStatus & STATUS_HAS_ERROR) != 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
+	 */
 	public String[] getErrorMessages() {
 		return new String[0];
 	}
@@ -329,8 +332,8 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 		return fStatus;
 	}
 
-	/**
-	 * Set the enable flag.
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IWatchExpression#setEnabled(boolean)
 	 * @see JavaWatchExpression#STATUS_ENABLE
 	 */
 	public void setEnabled(boolean isEnabled) {
@@ -414,5 +417,4 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 		}
 		return result.toString();
 	}
-
 }

@@ -137,13 +137,16 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#hasErrors()
 	 */
 	public boolean hasErrors() {
-		return fResult.hasErrors();
+		return fResult != null && fResult.hasErrors();
 	}
 
 	/**
-	 * @sSee org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
+	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
 	 */	
 	public String[] getErrorMessages() {	
+		if (fResult == null) {
+			return new String[0];
+		}
 		return fResult.getErrorMessages();
 	}
 }
