@@ -47,6 +47,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Initializer;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.Message;
@@ -674,6 +675,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public void endVisit(Initializer node) {
 
+	}
+	
+	/**
+	 * @see ASTVisitor#endVisit(InstanceofExpression)
+	 */
+	public void endVisit(InstanceofExpression node) {
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
 	}
 
 	/**
@@ -1551,11 +1561,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 						break;
 				}
 				break;
-			case 'i': // instanceof
-				for (int i = operatorNumber - 1; i >= 0; i--) {
-					push(new InstanceOfOperator(fCounter));
-				}
-				break;
 			case '=': // equal equal
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new EqualEqualOperator(types[i][1], types[i][2], true, fCounter));
@@ -1683,6 +1688,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(Initializer)
 	 */
 	public boolean visit(Initializer node) {
+		return true;
+	}
+
+	/**
+	 * @see ASTVisitor#visit(InstanceofExpression)
+	 */
+	public boolean visit(InstanceofExpression node) {
+		if (!isActive()) {
+			return false;
+		}
+		push(new InstanceOfOperator(fCounter));
 		return true;
 	}
 
