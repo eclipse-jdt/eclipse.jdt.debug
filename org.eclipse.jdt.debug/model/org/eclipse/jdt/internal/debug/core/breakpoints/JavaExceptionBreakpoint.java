@@ -27,6 +27,7 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
@@ -299,9 +300,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget, JDIThread)
 	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target) {
+	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
 		if (event instanceof ExceptionEvent) {
 			setExceptionName(((ExceptionEvent)event).exception().type().name());
 			if (getExclusionClassFilters().length > 1 
@@ -309,12 +310,25 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				|| (getExclusionClassFilters().length + getInclusionClassFilters().length) >= 2
 				|| filtersIncludeDefaultPackage(fInclusionClassFilters) 
 				|| filtersIncludeDefaultPackage(fExclusionClassFilters)) {
-				if (isExceptionEventExcluded((ExceptionEvent)event)) {
-					return true;
-				}
+					Location location = ((ExceptionEvent)event).location();
+					String typeName = location.declaringType().name();
+					boolean defaultPackage = typeName.indexOf('.') == -1;
+					boolean included = true;
+					String[] filters = getInclusionClassFilters();
+					if (filters.length > 0) {
+						included = matchesFilters(filters, typeName, defaultPackage);
+					}
+					boolean excluded = false;
+					filters = getExclusionClassFilters();
+					if (filters.length > 0) {
+						excluded = matchesFilters(filters, typeName, defaultPackage);
+					}
+					if (included && !excluded) {
+						return !suspend(thread);
+					}
 			}
 		}	
-		return super.handleEvent(event, target);
+		return true;
 	}
 	
 	protected boolean filtersIncludeDefaultPackage(String[] filters) {
@@ -324,69 +338,25 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			}
 		}
 		return false;
-	}
+	}	
 	
 	/**
-	 * Returns whether this is an event that has 
-	 * has been set to be filtered (ie not hit).
-	 */
-	protected boolean isExceptionEventExcluded(ExceptionEvent event) {
-		Location location= event.location();
-		String fullyQualifiedName= location.declaringType().name();
-		boolean defaultPackage= fullyQualifiedName.indexOf('.') == -1;
-		String[] iFilters= getInclusionClassFilters();
-		String[] eFilters= getExclusionClassFilters();
-		boolean excluded= false;
-		String iFilter= null;
-		String eFilter= null;
-		if (iFilters.length > 0) {
-			iFilter= isExceptionEventExcluded(defaultPackage, true, fullyQualifiedName, iFilters);
-			if (iFilter == null) { //no inclusion filter pertained
-				if (eFilters.length > 0) {
-					if (isExceptionEventExcluded(defaultPackage, false, fullyQualifiedName, eFilters) != null) {
-						excluded = true;
-					}
-				}
-			} else { //an inclusion filter pertained
-				if (eFilters.length > 0) {
-					eFilter= isExceptionEventExcluded(defaultPackage, false, fullyQualifiedName, eFilters);
-					if (eFilter != null) {
-						//excluded if more specific exclusion
-						StringMatcher m= new StringMatcher(iFilter, false, false);
-						StringMatcher.Position pos1= m.find(fullyQualifiedName, 0, fullyQualifiedName.length());
-						StringMatcher m2= new StringMatcher(eFilter, false, false);
-						StringMatcher.Position pos2= m2.find(fullyQualifiedName, 0, fullyQualifiedName.length());
-						return (pos2.getEnd() - pos2.getStart()) > (pos1.getEnd() - pos1.getStart());
-						//excluded= eFilter.length() > iFilter.length();
-					}
-				} 
+	 * Returns whether the given type is in the given filter set.
+	 * 
+	 * @param filters the filter set	 * @param typeName fully qualified type name
+	 * @param defaultPackage whether the type name is in the default package	 * @return boolean	 */
+	protected boolean matchesFilters(String[] filters, String typeName, boolean defaultPackage) {
+		for (int i = 0; i < filters.length; i++) {
+			String filter = filters[i];
+			if (defaultPackage && filter.length() == 0) {
+				return true;
+			}
+			StringMatcher matcher = new StringMatcher(filter, false, false);
+			if (matcher.match(typeName)) {
+				return true;
 			}
 		}
-		
-		return excluded;
-	}
-	
-	protected String isExceptionEventExcluded(boolean defaultPackage, boolean inclusion, String fullyQualifiedName, String[] filters) {
-		
-		if (defaultPackage) {
-			for (int i= 0; i < filters.length; i++) {
-				if (filters[i].length() == 0 || filters[i].equals(fullyQualifiedName)){
-					return filters[i];
-				}	
-			}
-		} else {
-			for (int i= 0; i < filters.length; i++) {
-				if (filters[i].length() == 0) {
-					continue;
-				}
-				StringMatcher matcher= new StringMatcher(filters[i], false, false);
-				if (matcher.match(fullyQualifiedName)) {
-					return filters[i];
-				}
-			}
-		} 
-
-		return null;
+		return false;
 	}
 	
 	/**
