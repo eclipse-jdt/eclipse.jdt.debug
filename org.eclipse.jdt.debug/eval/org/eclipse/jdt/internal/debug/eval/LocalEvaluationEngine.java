@@ -447,7 +447,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			
 			final boolean isStatic = frame.isStatic();
 			final boolean isConstructor = frame.isConstructor();
-			final IType declaringType = getDeclaringType(frame);
+			final IType declaringType = getReceivingType(frame);
 			
 			// do the evaluation in a different thread
 			Runnable r = new Runnable() {
@@ -956,16 +956,16 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 
 
 	/**
-	 * Returns the declaring type of the the given stack frame.
+	 * Returns the receiving type of the the given stack frame.
 	 * 
-	 * @return declaring type
+	 * @return receiving type
 	 * @exception DebugException if:<ul>
 	 * <li>A failure occurrs while accessing attributes of 
 	 *  the stack frame</li>
 	 * </ul>
 	 */
-	private IType getDeclaringType(IJavaStackFrame frame) throws DebugException {
-		String typeName = frame.getDeclaringTypeName();
+	private IType getReceivingType(IJavaStackFrame frame) throws DebugException {
+		String typeName = frame.getReceivingTypeName();
 		String sourceName =frame.getSourceName();
 		if (sourceName == null) {
 			int dollarIndex= typeName.indexOf('$');
@@ -1007,7 +1007,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (type == null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, "Evaluation failed - unable to determine declaring type context.", null)
+				DebugException.REQUEST_FAILED, "Evaluation failed - unable to determine receiving type context.", null)
 			);
 		}
 		
