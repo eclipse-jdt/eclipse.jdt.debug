@@ -57,9 +57,9 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
 	 */
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
-													throws CoreException {
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 			
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Starting_Applet_{0}..._1"), new String[]{configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		String mainTypeName = verifyMainTypeName(configuration);
 
 		IJavaProject javaProject = getJavaProject(configuration);

@@ -38,7 +38,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 			monitor = new NullProgressMonitor();
 		}
 		
-		monitor.beginTask(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Launching..._1"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Launching_{0}..._1"), new String[]{configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;

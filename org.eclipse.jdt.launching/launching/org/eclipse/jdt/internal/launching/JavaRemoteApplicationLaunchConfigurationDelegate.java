@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +32,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Connecting..._1"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Attaching_to_{0}..._1"), new String[]{configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
