@@ -811,7 +811,7 @@ public final class JavaRuntime {
 		}			
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);		
 		if ((javaProject == null) || !javaProject.exists()) {
-			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.Invalid_project_specified_2"), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Launch_configuration_{0}_references_non-existing_project_{1}._1"), new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); //$NON-NLS-1$
 		}
 		return javaProject;
 	}
