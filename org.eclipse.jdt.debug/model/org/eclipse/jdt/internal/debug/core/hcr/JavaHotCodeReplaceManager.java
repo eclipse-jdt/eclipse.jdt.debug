@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.hcr;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -154,8 +156,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 	}
 	
-	protected BuiltProjectVisitor fProjectVisitor= new BuiltProjectVisitor();
-	
 	/**
 	 * Visitor for resource deltas.
 	 */
@@ -218,6 +218,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!projects.isEmpty()) {
 			updateProjectBuildTime(projects);
 		}
+		if (fHotSwapTargets.isEmpty() && fNoHotSwapTargets.isEmpty()) {
+			// If there are no targets to notify, only update the build times.
+			return;
+		}
 		ChangedClassFilesVisitor visitor = getChangedClassFiles(event);
 		if (visitor != null) {
 			List resources = visitor.getChangedClassFiles();
@@ -236,14 +240,21 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (event.getType() != IResourceChangeEvent.POST_BUILD || delta == null) {
 			return Collections.EMPTY_LIST;
 		}
-		fProjectVisitor.reset();
-		try {
-			delta.accept(fProjectVisitor);
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
+		if (event.getBuildKind() == IncrementalProjectBuilder.AUTO_BUILD && !ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			// If this is an auto build and the workspace is not autobuilding,
+			// no projects will actually be compiled.
 			return Collections.EMPTY_LIST;
 		}
-		return fProjectVisitor.getBuiltProjects();
+		Object source = event.getSource();
+		if (source instanceof IProject) {
+			List list= new ArrayList();
+			list.add(source);
+			return list;
+		} else if (source instanceof IWorkspace){
+			IProject[] allProjects = ((IWorkspace) source).getRoot().getProjects();
+			return Arrays.asList(allProjects);
+		}
+		return Collections.EMPTY_LIST;
 	}
 	
 	/**
@@ -1136,43 +1147,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			return null;
 		}
 	}
-	
-	class BuiltProjectVisitor implements IResourceDeltaVisitor {
-		/**
-		 * The collection of built projects
-		 */
-		protected List fProjects= new ArrayList();
-		/**
-		 * Answers whether children should be visited.
-		 * <p>
-		 * If the associated resource is a project which 
-		 * has been built, record it.
-		 */
-		public boolean visit(IResourceDelta delta) {
-			if (delta == null || 0 == (delta.getKind() & IResourceDelta.CHANGED)) {
-				return false;
-			}
-			IResource resource= delta.getResource();
-			if (resource != null && resource.getType() == IResource.PROJECT) {
-				fProjects.add(resource);
-				return false;
-			}
-			return true;
-		}
-		/**
-		 * Resets the project collection to empty
-		 */
-		public void reset() {
-			fProjects = new ArrayList();
-		}
-		
-		/**
-		 * Returns the collection of built projects
-		 */
-		public List getBuiltProjects() {
-			return fProjects;
-		}
-	}
+
 	
 	/**
 	 * Adds the given listener to the collection of hot code replace listeners.
@@ -1276,8 +1251,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				}
 			}
 		}
-		// To get here, there must be no running JDIDebugTargets
-		getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/**
