@@ -23,7 +23,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
- * Tests deferred breakpoints.
+ * Tests working directories.
  */
 public class WorkingDirectoryTests extends AbstractDebugTest {
 	

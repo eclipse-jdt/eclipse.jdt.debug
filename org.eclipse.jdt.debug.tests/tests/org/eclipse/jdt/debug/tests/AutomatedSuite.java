@@ -34,6 +34,7 @@ import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
+import org.eclipse.jdt.debug.tests.core.RemoteAttachTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
@@ -122,6 +123,7 @@ public class AutomatedSuite extends TestSuite {
 		
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
+		addTest(new TestSuite(RemoteAttachTests.class));
 	}
 	
 	public static void main(String[] args) {
