@@ -64,7 +64,7 @@ public class CompilationUnitDelta {
 		private String fName;
 		private HashMap fChildren;
 		
-		SimpleJavaElement(SimpleJavaElement parent, int changeType, String name) {
+		SimpleJavaElement(SimpleJavaElement parent, String name) {
 			fName= name;
 			if (parent != null) {
 				if (parent.fChildren == null) {
@@ -197,7 +197,7 @@ public class CompilationUnitDelta {
 					break;
 				}
 				if (name != null) {
-					return new SimpleJavaElement((SimpleJavaElement) data, result, name);
+					return new SimpleJavaElement((SimpleJavaElement) data, name);
 				}
 				return null;
 			}
