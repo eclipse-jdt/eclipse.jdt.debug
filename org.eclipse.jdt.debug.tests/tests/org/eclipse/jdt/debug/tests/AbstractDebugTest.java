@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -158,6 +159,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return (IJavaThread)suspendee;
 	}	
 	
+	/**
+	 * Resumes the given thread, and waits for the debug target
+	 * to terminate (i.e. finish/exit the program).
+	 * 
+	 * @param thread thread to resume
+	 */
+	protected void exit(IJavaThread thread) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IProcess.class);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		thread.resume();
+
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not terminate.", suspendee);
+	}	
+		
 	/**
 	 * Resumes the given thread, and waits the associated debug
 	 * target to terminate.
