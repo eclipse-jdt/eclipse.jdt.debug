@@ -296,7 +296,7 @@
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.VariableViewActions"
 		targetID="org.eclipse.debug.ui.VariableView">
-		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowFinalFields"
 			label="%showFinalAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/final_co.gif"
@@ -304,7 +304,7 @@
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
-		<action id="org.eclipse.jdt.ui.actions.ShowStaticFields"
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"
 			label="%showStaticAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/static_co.gif"
@@ -312,7 +312,7 @@
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
-		<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
@@ -324,7 +324,7 @@
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
 		targetID="org.eclipse.debug.ui.ExpressionView">
-		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowFinalFields"
 			label="%showFinalAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/final_co.gif"
@@ -332,7 +332,7 @@
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>
-		<action id="org.eclipse.jdt.ui.actions.ShowStaticFields"
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"
 			label="%showStaticAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/static_co.gif"
@@ -340,7 +340,7 @@
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
 		</action>
-			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
@@ -359,7 +359,7 @@
 			tooltip="%exceptionAction.tooltip"
 			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
 		</action>
-			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
@@ -371,7 +371,7 @@
 	<viewContribution
 		id="org.eclipse.jdt.debug.ui.LaunchViewActions"
 		targetID="org.eclipse.debug.ui.DebugView">
-			<action id="org.eclipse.jdt.ui.actions.ShowQualified"
+			<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
@@ -757,6 +757,24 @@
 		id = "org.eclipse.jdt.debug.ui.javaSourceLocator"
 	   	class="org.eclipse.jdt.debug.ui.JavaUISourceLocator"
 	   	name="Prompting Java Source Locator"/>
+</extension>
+
+<extension point = "org.eclipse.debug.ui.debugActionGroups">
+	<debugActionGroup
+		id = "org.eclipse.jdt.debug.ui.javaDebugActionGroup"
+	   	visible="true"
+	   	name="Java Debug">
+	   	<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/>
+	   	<action id="org.eclipse.jdt.debug.ui.actions.AddException"/>
+	   	<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowFinalFields"/>
+		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.ui.actions.ToggleStepFilter"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowFinalFields"/>
+	</debugActionGroup>
 </extension>
 
 </plugin>
