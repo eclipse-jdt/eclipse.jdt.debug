@@ -93,12 +93,16 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	/**
 	 * @return Returns text representation of this type.
 	 */
-	public abstract String name();
+	public String name() {
+		return fName;
+	}
 	
 	/**
 	 * @return JNI-style signature for this type.
 	 */
-	public abstract String signature();
+	public String signature() {
+		return fSignature;
+	}
 	
 	/**
 	 * @return Returns modifier bits.

@@ -45,20 +45,6 @@ public abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveTyp
 	 * @returns primitive type tag.
 	 */
 	public abstract byte tag();
-	
-	/**
-	 * @return Returns text representation of this type.
-	 */
-	public String name() {
-		return fName;
-	}
-
-	/**
-	 * @return JNI-style signature for this type.
-	 */
-	public String signature() {
-		return fSignature;
-	}
 
 	/**
 	 * @return Returns modifier bits.
