@@ -111,7 +111,7 @@ public class JDIDebugModel {
 	private static final String INACTIVE_FILTERS_KEY = "inactive_filters"; //$NON-NLS-1$
 	
 	
-	private static boolean fgSuspendOnUncaughtExceptions= true;
+	private static boolean fgSuspendOnUncaughtExceptions= false;
 	private static final String SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY= "suspend_on_uncaught_exceptions";
 	
 	/**
@@ -536,12 +536,12 @@ public class JDIDebugModel {
 	
 	/**
 	 * Returns whether to suspend execution on uncaught exceptions.
-	 * Always returns <code>true</code>
+	 * Always returns <code>false</code>
 	 * 
 	 * @return whether to suspend execution on uncaught exceptions.
 	 */
 	public static boolean getDefaultSuspendOnUncaughtExceptions() {
-		return true;	
+		return false;	
 	}
 	
 	/**
