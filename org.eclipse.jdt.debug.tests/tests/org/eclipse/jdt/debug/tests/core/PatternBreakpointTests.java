@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -95,4 +97,64 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+	
+	/**
+	 * Bug 74108 - enable/disable a stratum breakpoint that is not yet installed
+	 */
+	public void testToggleStratumBreakpoint() throws Exception {
+		IJavaStratumLineBreakpoint stratumLineBreakpoint = createStratumBreakpoint(3, "date.jsp", "JSP");
+		String typeName = "Breakpoints";
+		createLineBreakpoint(52, typeName);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+			ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
+			int lineNumber = breakpoint.getLineNumber();
+			int stackLine = thread.getTopStackFrame().getLineNumber();
+			assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
+			breakpoint.delete();
+			assertFalse("stratum breakpoint should not be installed", stratumLineBreakpoint.isInstalled());
+			// toggle
+			stratumLineBreakpoint.setEnabled(false);
+			stratumLineBreakpoint.setEnabled(true);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}				
+	}
+	
+	/**
+	 * Bug 74108 - enable/disable a pattern breakpoint that is not yet installed
+	 */
+	public void testTogglePatternBreakpoint() throws Exception {
+		IJavaPatternBreakpoint patternBreakpoint = createPatternBreakpoint(3, "date.jsp", "date");
+		String typeName = "Breakpoints";
+		createLineBreakpoint(52, typeName);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+			ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
+			int lineNumber = breakpoint.getLineNumber();
+			int stackLine = thread.getTopStackFrame().getLineNumber();
+			assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
+			breakpoint.delete();
+			assertFalse("pattern breakpoint should not be installed", patternBreakpoint.isInstalled());
+			// toggle
+			patternBreakpoint.setEnabled(false);
+			patternBreakpoint.setEnabled(true);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}				
+	}	
 }

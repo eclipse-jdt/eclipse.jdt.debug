@@ -44,6 +44,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
@@ -495,7 +496,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaTargetPatternBreakpoint createTargetPatternBreakpoint(int lineNumber, String sourceName) throws Exception {
 		return JDIDebugModel.createTargetPatternBreakpoint(getJavaProject().getProject(), sourceName, lineNumber, -1, -1, 0, true, null);
 	}	
-		
+	
+	/**
+	 * Creates and returns a stratum breakpoint at the given line number in the
+	 * source file with the given name.
+	 * 
+	 * @param lineNumber line number
+	 * @param sourceName name of source file
+	 * @param stratum the stratum of the source file
+	 */
+	protected IJavaStratumLineBreakpoint createStratumBreakpoint(int lineNumber, String sourceName, String stratum) throws Exception {
+		return JDIDebugModel.createStratumBreakpoint(getJavaProject().getProject(), stratum, sourceName, null, null, lineNumber, -1, -1, 0, true, null);
+	}
+	
 	/**
 	 * Creates and returns a method breakpoint
 	 * 
