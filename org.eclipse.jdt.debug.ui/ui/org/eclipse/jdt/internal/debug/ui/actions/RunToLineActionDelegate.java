@@ -190,4 +190,14 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		}
 		setEnabledState(getTextEditor());
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate#initialize(org.eclipse.jface.action.IAction)
+	 */
+	protected void initialize(IAction action) {
+		boolean enabled= action.isEnabled();
+		super.initialize(action);
+		//when rely on the xml specified enabler on intialize.
+		action.setEnabled(enabled);
+	}
 }
