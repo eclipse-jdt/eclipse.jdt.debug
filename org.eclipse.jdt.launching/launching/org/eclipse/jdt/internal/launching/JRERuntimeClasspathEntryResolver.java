@@ -78,6 +78,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 			if (vmInstallLocation != null) {
 				LibraryInfo libraryInfo= LaunchingPlugin.getLibraryInfo(vmInstallLocation.getAbsolutePath());
 				if (libraryInfo != null) {
+					// only return bootstrap classpath entries if we have the info
 					String[] bootpath= libraryInfo.getBootpath();
 					int length= bootpath.length;
 					resolved= new IRuntimeClasspathEntry[length];
