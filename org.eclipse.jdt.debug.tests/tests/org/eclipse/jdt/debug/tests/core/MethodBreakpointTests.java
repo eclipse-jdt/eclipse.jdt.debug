@@ -16,11 +16,9 @@ import java.util.List;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -229,7 +227,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	public void testThreadFilterInclusive() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
-		IJavaLineBreakpoint lineBp = createLineBreakpoint(18, typeName);
+		createLineBreakpoint(18, typeName);
 		
 		IJavaThread thread= null;
 		try {
@@ -256,14 +254,14 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	public void testThreadFilterExclusive() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
-		IJavaLineBreakpoint lineBp = createLineBreakpoint(18, typeName);
+		createLineBreakpoint(18, typeName);
 		
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("breakpoint not hit within timeout period", thread);
 			
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			thread.getTopStackFrame();
 			
 			// set a thread filter (*not* the main thread)
 			IThread[] threads = thread.getDebugTarget().getThreads();
@@ -276,7 +274,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			}
 			assertNotNull("Did not set thread filter",methodBp.getThreadFilter((IJavaDebugTarget)thread.getDebugTarget()));
 			
-			IDebugTarget target = resumeAndExit(thread);
+			resumeAndExit(thread);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
