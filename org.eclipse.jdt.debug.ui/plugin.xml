@@ -10,7 +10,6 @@
    <runtime>
       <library name="jdiui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.jdt.debug.ui,org.eclipse.jdt.internal.debug.ui"/>
       </library>
    </runtime>
    <requires>
