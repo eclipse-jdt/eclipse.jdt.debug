@@ -51,6 +51,7 @@ import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
 
 
@@ -75,6 +76,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public AbstractDebugTest(String name) {
 		super(name);
 		// set error dialog to non-blocking to avoid hanging the UI during test
+		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
 	}
 	
