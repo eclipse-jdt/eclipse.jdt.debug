@@ -104,47 +104,6 @@
             </separator>
          </menu>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint"
-               label="%manageWatchpointAction.label"
-               icon="icons/full/obj16/readwrite_obj.gif"
-               helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.actions.ToggleWatchpoint">
-            <enablement>
-               <or>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-                  <objectClass
-                        name="org.eclipse.jdt.core.IField">
-                  </objectClass>
-                  <objectClass
-                        name="org.eclipse.jdt.debug.core.IJavaFieldVariable">
-                  </objectClass>
-               </or>
-            </enablement>
-         </action>
-         <action
-               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleMethodBreakpoint"
-               label="%manageMethodBreakpointAction.label"
-               icon="icons/full/obj16/brkpi_obj.gif"
-               helpContextId="manage_method_breakpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.actions.ToggleMethodBreakpoint">
-            <enablement>
-               <or>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-                  <objectClass
-                        name="org.eclipse.jdt.core.IMethod">
-                  </objectClass>
-               </or>
-            </enablement>
-         </action>
-         <action
                definitionId="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
                label="%exceptionAction.accel.label"
                icon="icons/full/clcl16/exc_catch.gif"
@@ -1616,7 +1575,7 @@
          <action
                label="%manageMethodBreakpointAction.label"
                helpContextId="manage_method_breakpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.ToggleMethodBreakpointObjectActionDelegate"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.MethodBreakpoint">
@@ -1628,7 +1587,7 @@
          <action
                label="%manageWatchpointAction.label"
                helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.ToggleWatchpointObjectActionDelegate"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.Watchpoint">
@@ -2004,32 +1963,7 @@
       </shortcut>
    </extension>
 <!-- commands and their bindings -->
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            name="%ActionDefinition.manageWatchpoint.name"
-            description="%ActionDefinition.manageWatchpoint.description"
-            category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint">
-      </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <command
-            name="%ActionDefinition.manageMethodBreakpoint.name"
-            description="%ActionDefinition.manageMethodBreakpoint.description"
-            category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.commands.ToggleMethodBreakpoint">
-      </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.commands.ToggleMethodBreakpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+   <extension point="org.eclipse.ui.commands">
       <command
             name="%ActionDefinition.addException.name"
             description="%ActionDefinition.addException.description"
@@ -2360,6 +2294,16 @@
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor">
             <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
+            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+         </factory>         
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+            adaptableType="org.eclipse.jdt.core.IMethod">
+            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+         </factory>         
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+            adaptableType="org.eclipse.jdt.core.IField">
             <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
          </factory>         
       </extension>     	

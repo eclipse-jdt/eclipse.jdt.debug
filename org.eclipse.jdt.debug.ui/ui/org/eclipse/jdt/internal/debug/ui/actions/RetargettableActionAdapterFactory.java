@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -33,7 +34,7 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 			}
 		}
 		if (adapterType == IToggleBreakpointsTarget.class) {
-			if (adaptableObject instanceof IEditorPart) {
+			if (adaptableObject instanceof IEditorPart || adaptableObject instanceof IJavaElement) {
 				return new ToggleBreakpointAdapter();
 			}
 		} 
