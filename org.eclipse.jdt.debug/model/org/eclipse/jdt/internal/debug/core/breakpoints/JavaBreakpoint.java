@@ -853,7 +853,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// are transient properties, they are not set on
 		// the marker. Thus we must update the request
 		// here.
-		List requests= getRequests(target);
+		ArrayList requests = (ArrayList) getRequests(target).clone();
 		Iterator iter= requests.iterator();
 		EventRequest request= null;
 		while (iter.hasNext()) {
@@ -865,6 +865,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			if (newRequest != request) {
 				replaceRequest(target, request, newRequest);
 				DebugPlugin.getDefault().addDebugEventListener(this);
+				// Since thread filters don't affect the underlying marker, fire
+				// a changed notification manually
+				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
 			}
 		}
 	}
@@ -933,7 +936,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
 		fFilteredThreadsByTarget.remove(target);
-		List requests= getRequests(target);
+		ArrayList requests = (ArrayList) getRequests(target).clone();
 		Iterator iter= requests.iterator();
 		EventRequest request= null;
 		while (iter.hasNext()) {
@@ -948,6 +951,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			if (newRequest != request) {
 				replaceRequest(target, request, newRequest);
 				DebugPlugin.getDefault().removeDebugEventListener(this);
+				// Since thread filters don't affect the underlying marker, fire
+				// a changed notification manually
+				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
 			}
 		}
 	}
