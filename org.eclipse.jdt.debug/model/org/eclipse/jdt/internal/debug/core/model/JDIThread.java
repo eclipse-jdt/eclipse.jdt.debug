@@ -640,6 +640,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				// not update properly. It cannot know when it is safe to display frames
 				// since it does not know about queued evaluations. Thus, when the queue 
 				// is empty, we fire a change event to force the view to update.
+				fEvaluationInterrupted = false;
 				fireChangeEvent(DebugEvent.CONTENT);
 			}			
 		}
