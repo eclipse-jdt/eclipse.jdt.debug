@@ -15,23 +15,24 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 
 public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindowActionDelegate {
 
 	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-		final AddExceptionDialog dialog= new AddExceptionDialog(shell, new ProgressMonitorDialog(shell));
+		final AddExceptionDialog dialog= new AddExceptionDialog(shell, PlatformUI.getWorkbench().getProgressService());
 		dialog.setTitle(BreakpointMessages.getString("AddExceptionAction.0")); //$NON-NLS-1$
 		dialog.setMessage(BreakpointMessages.getString("AddExceptionAction.1"));		 //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {

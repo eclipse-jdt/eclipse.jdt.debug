@@ -34,7 +34,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -42,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
@@ -58,12 +58,11 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		IType[] types = null;
 		if (search != null) {
 			try {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				IJavaElement[] elements = getJavaElements(search);
 				MainMethodSearchEngine engine = new MainMethodSearchEngine();
 				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements, false);
-				types = engine.searchMainMethods(dialog, scope,
-						IJavaElementSearchConstants.CONSIDER_BINARIES | IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS,
+				types = engine.searchMainMethods(PlatformUI.getWorkbench().getProgressService(),
+						scope, IJavaElementSearchConstants.CONSIDER_BINARIES | IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS,
 						true);
 			} catch (InterruptedException e) {
 				return;

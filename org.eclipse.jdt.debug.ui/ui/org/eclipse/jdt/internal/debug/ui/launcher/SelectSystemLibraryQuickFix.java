@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -31,8 +30,8 @@ import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Quick fix to select an alternate JRE for a project. 
@@ -68,7 +67,6 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 			return;
 		}
 
-		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					String vmTypeId = vm.getVMInstallType().getId();
@@ -106,7 +104,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		};
 		
 		try {
-			progressMonitor.run(true, true, runnable);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof CoreException) {
 				throw (CoreException)e.getTargetException();

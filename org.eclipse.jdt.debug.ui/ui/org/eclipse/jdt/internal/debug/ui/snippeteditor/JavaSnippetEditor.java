@@ -83,7 +83,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -117,6 +116,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -419,7 +419,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			}
 		};
 		try {
-			new ProgressMonitorDialog(getShell()).run(true, false, r);		
+			PlatformUI.getWorkbench().getProgressService().run(true, false, r);		
 		} catch (InterruptedException e) {
 			JDIDebugUIPlugin.log(e);
 			evaluationEnds();
@@ -1279,7 +1279,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		boolean success= false;
 		try {
 			getDocumentProvider().aboutToChange(newInput);
-			new ProgressMonitorDialog(shell).run(false, true, op);
+			PlatformUI.getWorkbench().getProgressService().run(false, true, op);
 			success= true;
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {

@@ -63,6 +63,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
@@ -462,7 +463,7 @@ public class ExceptionFilterEditor {
 		Shell shell = fAddTypeButton.getDisplay().getActiveShell();
 		SelectionDialog dialog = null;
 		try {
-			dialog = JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell), SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+			dialog = JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
 			String title = PropertyPageMessages.getString("ExceptionFilterEditor.19"); //$NON-NLS-1$
 			String message = PropertyPageMessages.getString("ExceptionFilterEditor.20"); //$NON-NLS-1$

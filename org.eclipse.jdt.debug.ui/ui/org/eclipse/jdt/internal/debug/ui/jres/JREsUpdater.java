@@ -13,10 +13,8 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -33,9 +31,9 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -246,9 +244,8 @@ public class JREsUpdater {
 	} 
 	
 	private void buildWorkspace() {
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 		try {
-			dialog.run(true, true, new WorkspaceModifyOperation() {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new WorkspaceModifyOperation() {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException{
 					try {
 						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);

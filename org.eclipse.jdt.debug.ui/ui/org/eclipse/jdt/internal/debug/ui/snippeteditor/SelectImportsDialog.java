@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -31,10 +30,10 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -57,6 +56,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -260,7 +260,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		Shell shell= fAddTypeButton.getDisplay().getActiveShell();
 		SelectionDialog dialog= null;
 		try {
-			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
+			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
 				SearchEngine.createJavaSearchScope(new IJavaElement[]{fEditor.getJavaProject()}, true), IJavaElementSearchConstants.CONSIDER_TYPES, false);
 		} catch (JavaModelException jme) {
 			String title= SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_12"); //$NON-NLS-1$

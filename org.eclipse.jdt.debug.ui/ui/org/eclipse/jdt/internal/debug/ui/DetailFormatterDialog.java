@@ -34,7 +34,6 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -304,7 +303,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		Shell shell= getShell();
 		SelectionDialog dialog= null;
 		try {
-			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
+			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.getString("DetailFormatterDialog.Select_type_6"); //$NON-NLS-1$

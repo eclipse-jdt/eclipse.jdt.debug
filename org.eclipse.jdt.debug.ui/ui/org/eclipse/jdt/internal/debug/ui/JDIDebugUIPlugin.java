@@ -52,7 +52,6 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvid
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -61,6 +60,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -431,7 +431,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		final IJavaProject[] projects= originals;
 		final JavaModelException[] exception= new JavaModelException[1];
-		ProgressMonitorDialog progressMonitor= new ProgressMonitorDialog(shell);
 		IRunnableWithProgress r= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
@@ -461,7 +460,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			}
 		};
 		try {
-			progressMonitor.run(false, false, r);	
+			PlatformUI.getWorkbench().getProgressService().run(false, false, r);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {

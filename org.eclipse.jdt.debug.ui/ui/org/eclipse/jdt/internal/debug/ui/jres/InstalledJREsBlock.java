@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -76,6 +74,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -683,7 +682,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		final File rootDir = new File(path);
 		final List locations = new ArrayList();
 		final List types = new ArrayList();
-		ProgressMonitorDialog pm = new ProgressMonitorDialog(getShell());
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -694,7 +692,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		};
 		
 		try {
-			pm.run(true, true, r);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(r);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {
