@@ -768,4 +768,21 @@
 	</debugActionGroup>
 </extension>
 
+<extension point = "org.eclipse.debug.ui.launchConfigurationShortcuts">
+	<shortcut
+		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
+		configTypeID="org.eclipse.jdt.launching.localJavaApplication">
+		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
+		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
+	</shortcut>
+	<shortcut
+		id="org.eclipse.jdt.debug.ui.remoteJavaShortcut"
+		configTypeID="org.eclipse.jdt.launching.remoteJavaApplication">
+		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
+		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
+	</shortcut>
+</extension>
+
 </plugin>
