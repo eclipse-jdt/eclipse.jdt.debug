@@ -11,11 +11,7 @@
 package org.eclipse.jdt.launching;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * The execution arguments for running a Java VM. The execution arguments are
@@ -67,7 +63,7 @@ public class ExecutionArguments {
 	 * @return the VM arguments as an array of individual arguments
 	 */
 	public String[] getVMArgumentsArray() {
-		return parseArguments(fVMArgs);
+		return DebugPlugin.parseArguments(fVMArgs);
 	}
 	
 	/**
@@ -76,116 +72,7 @@ public class ExecutionArguments {
 	 * @return the program arguments as an array of individual arguments
 	 */
 	public String[] getProgramArgumentsArray() {
-		return parseArguments(fProgramArgs);
+		return DebugPlugin.parseArguments(fProgramArgs);
 	}	
 			
-	private static class ArgumentParser {
-		private String fArgs;
-		private int fIndex= 0;
-		private int ch= -1;
-		
-		public ArgumentParser(String args) {
-			fArgs= args;
-		}
-		
-		public String[] parseArguments() {
-			List v= new ArrayList();
-			
-			ch= getNext();
-			while (ch > 0) {
-				if (Character.isWhitespace((char)ch)) {
-					ch= getNext();	
-				} else {
-					if (ch == '"') {
-						v.add(parseString());
-					} else {
-						v.add(parseToken());
-					}
-				}
-			}
-	
-			String[] result= new String[v.size()];
-			v.toArray(result);
-			return result;
-		}
-		
-		private int getNext() {
-			if (fIndex < fArgs.length())
-				return fArgs.charAt(fIndex++);
-			return -1;
-		}
-		
-		private String parseString() {
-			ch= getNext();
-			if (ch == '"') {
-				ch= getNext();
-				return "\"\""; // empty string argument //$NON-NLS-1$
-			}
-			StringBuffer buf= new StringBuffer();
-			while (ch > 0 && ch != '"') {
-				if (ch == '\\') {
-					ch= getNext();
-					if (ch != '"') {           // Only escape double quotes
-						buf.append('\\');
-					} else {
-						if (Platform.getOS().equals(Constants.OS_WIN32)) {
-							// @see Bug 26870. Windows requires an extra escape for embedded strings
-							buf.append('\\');
-						}
-					}
-				}
-				if (ch > 0) {
-					buf.append((char)ch);
-					ch= getNext();
-				}
-			}
-	
-			ch= getNext();
-			return buf.toString();
-		}
-		
-		private String parseToken() {
-			StringBuffer buf= new StringBuffer();
-			
-			while (ch > 0 && !Character.isWhitespace((char)ch)) {
-				if (ch == '\\') {
-					ch= getNext();
-					if (Character.isWhitespace((char)ch)) {
-						// end of token, don't lose trailing backslash
-						buf.append('\\');
-						return buf.toString();
-					}
-					if (ch > 0) {
-						if (ch != '"') {           // Only escape double quotes
-							buf.append('\\');
-						} else {
-							if (Platform.getOS().equals(Constants.OS_WIN32)) {
-								// @see Bug 26870. Windows requires an extra escape for embedded strings
-								buf.append('\\');
-							}
-						}
-						buf.append((char)ch);
-						ch= getNext();
-					} else if (ch == -1) {     // Don't lose a trailing backslash
-						buf.append('\\');
-					}
-				} else if (ch == '"') {
-					buf.append(parseString());
-				} else {
-					buf.append((char)ch);
-					ch= getNext();
-				}
-			}
-			return buf.toString();
-		}
-	}
-	
-	private static String[] parseArguments(String args) {
-		if (args == null)
-			return new String[0];
-		ArgumentParser parser= new ArgumentParser(args);
-		String[] res= parser.parseArguments();
-		
-		return res;
-	}
 }
