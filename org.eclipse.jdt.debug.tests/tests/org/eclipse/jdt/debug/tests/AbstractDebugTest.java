@@ -66,7 +66,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
+import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
 
  
@@ -159,7 +159,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		if (offset >= 0 && doc != null) {
 			Position[] positions = null;
 			try {
-				positions = doc.getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+				positions = doc.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
 			} catch (BadPositionCategoryException ex) {
 				// no links have been added
 				return null;
@@ -167,7 +167,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			for (int i = 0; i < positions.length; i++) {
 				Position position = positions[i];
 				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
-					return ((IOConsoleHyperlinkPosition)position).getHyperLink();
+					return ((ConsoleHyperlinkPosition)position).getHyperLink();
 				}
 			}
 		}
