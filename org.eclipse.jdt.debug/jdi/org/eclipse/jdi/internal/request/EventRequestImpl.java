@@ -184,6 +184,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			fRequestID.write(this, outData);
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.ER_CLEAR, outBytes);
+			switch (replyPacket.errorCode()) {
+				case JdwpReplyPacket.NOT_FOUND:
+					throw new InvalidRequestStateException();
+			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			fRequestID = null;
 		} catch (IOException e) {

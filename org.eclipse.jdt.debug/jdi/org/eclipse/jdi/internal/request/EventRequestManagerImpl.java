@@ -46,6 +46,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.ExceptionRequest;
+import com.sun.jdi.request.InvalidRequestStateException;
 import com.sun.jdi.request.MethodEntryRequest;
 import com.sun.jdi.request.MethodExitRequest;
 import com.sun.jdi.request.ModificationWatchpointRequest;
@@ -295,7 +296,11 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	 */ 
 	public void deleteEventRequest(EventRequest req) {
 		// Disable request, note that this also causes the event request to be removed from fEnabledRequests.
-		req.disable();
+		try {
+			req.disable();
+		} catch (InvalidRequestStateException exception) {
+			// The event has already been removed from the VM.
+		}
 		
 		// Remove request from list.
 		if (req instanceof AccessWatchpointRequestImpl)
