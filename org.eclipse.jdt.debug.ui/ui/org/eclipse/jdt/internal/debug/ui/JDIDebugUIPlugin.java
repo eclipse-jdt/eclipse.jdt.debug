@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -45,6 +46,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
@@ -294,6 +296,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fSourceLocationAdapterFactory, IJavaSourceLocation.class);
 		fBreakpointAdapterFactory= new JavaBreakpointWorkbenchAdapterFactory();
 		manager.registerAdapters(fBreakpointAdapterFactory, IJavaBreakpoint.class);
+        IAdapterFactory typeFactory = new JavaBreakpointTypeAdapterFactory();
+        manager.registerAdapters(typeFactory, IJavaBreakpoint.class);
 		
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
