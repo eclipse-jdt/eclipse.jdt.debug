@@ -43,6 +43,7 @@ import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
+import sun.security.util.Debug;
 
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
@@ -1068,8 +1069,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param breakpoint the breakpoint that caused the
 	 *  suspension
 	 */
-	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint) {
-		queueSuspendEvent(DebugEvent.BREAKPOINT);
+	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
+		if (queueEvent) {
+			queueSuspendEvent(DebugEvent.BREAKPOINT);
+		} else {
+			fireSuspendEvent(DebugEvent.BREAKPOINT);
+		}
 	}	
 	
 	/**

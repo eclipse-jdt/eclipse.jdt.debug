@@ -898,7 +898,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// suspend or resume
 			if (suspend) {
 				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
-					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
+					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, queueEvent);
 				}
 				abortStep();
 				if (queueEvent) {
