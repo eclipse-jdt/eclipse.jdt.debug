@@ -5,14 +5,23 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
+import java.text.MessageFormat;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -23,12 +32,14 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 /**
  * Plug-in class for the org.eclipse.jdt.debug.ui plug-in.
  */
-public class JDIDebugUIPlugin extends AbstractUIPlugin {
+public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeReplaceListener {
 
 	/**
 	 * Java Debug UI plug-in instance
 	 */
 	private static JDIDebugUIPlugin fgPlugin;
+	
+	private static ILabelProvider fLabelProvider= new DelegatingModelPresentation();
 	
 	private FileDocumentProvider fSnippetDocumentProvider;
 	
@@ -148,8 +159,50 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		
 		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_PORT, "8000"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_HOST, "localhost"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.ALERT_HCR_FAILED, true);
 		
 		JavaDebugPreferencePage.initDefaults(store);
 	}
+	
+	public void startup() throws CoreException {
+		JDIDebugPlugin.getDefault().addHotCodeReplaceListener(this);
+		super.startup();
+	}
+	
+	public void shutdown() throws CoreException {
+		JDIDebugPlugin.getDefault().removeHotCodeReplaceListener(this);
+		super.shutdown();
+	}
+	/**
+	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceFailed(DebugException)
+	 */
+	public void hotCodeReplaceFailed(final IJavaDebugTarget target, final DebugException exception) {
+		if (!getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED)) {
+			return;
+		}
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				Shell shell= getActiveWorkbenchShell();
+				String vmName= fLabelProvider.getText(target);
+				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("Hot_code_replace_failed_1"), MessageFormat.format(DebugUIMessages.getString("{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), new Object[] {vmName}), exception.getStatus(), IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
+				dialog.open();
+			}
+		});
+	}
+	/**
+	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded()
+	 */
+	public void hotCodeReplaceSucceeded() {
+	}
+
+		/**
+	 * Debug ui thread safe access to a display
+	 */
+	protected Display getDisplay() {
+		//we can rely on not creating a display as we 
+		//prereq the base eclipse ui plugin.
+		return Display.getDefault();
+	}
+
 }
 

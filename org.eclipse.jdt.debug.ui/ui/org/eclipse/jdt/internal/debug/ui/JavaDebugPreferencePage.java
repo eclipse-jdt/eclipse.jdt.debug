@@ -89,6 +89,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	// Preference widgets
 	private Button fSuspendButton;
+	private Button fAlertHCRButton;
 	private Button fHexButton;
 	private Button fCharButton;
 	private Button fUnsignedButton;
@@ -401,6 +402,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(data);		
 		
 		fSuspendButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
+		fAlertHCRButton= createCheckButton(composite, DebugUIMessages.getString("Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 	
 		createSpace(composite);
 		
@@ -820,7 +822,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, new Boolean(true), new Boolean(false));
 		}
 		fStepFilterContentProvider.saveFilters();
-		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
 		return true;
 	}
 	
@@ -841,6 +842,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		fStepFilterContentProvider.setDefaults();
 		fSuspendButton.setSelection(JDIDebugModel.getDefaultSuspendOnUncaughtExceptions());
+		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 	}
 	
 	/**
@@ -921,6 +923,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));		
 		fSuspendButton.setSelection(JDIDebugModel.suspendOnUncaughtExceptions());
+		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 	}
 	
 	/**
@@ -932,6 +935,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.SHOW_HEX_VALUES, fHexButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_CHAR_VALUES, fCharButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
+		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 	}
 
 	protected PropertyChangeListener getPropertyChangeListener() {
