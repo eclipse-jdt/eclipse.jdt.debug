@@ -36,6 +36,7 @@ public abstract class MonitorAction implements IViewActionDelegate {
 		}
 		return null;
 	}
+	
 	protected IJavaDebugTarget getDebugTarget() {
 		IStructuredSelection ss= getDebugViewSelection();
 		if (ss.isEmpty() || ss.size() > 1) {
@@ -48,6 +49,7 @@ public abstract class MonitorAction implements IViewActionDelegate {
 		
 		return null;
 	}
+	
 	/**
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
 	 */
