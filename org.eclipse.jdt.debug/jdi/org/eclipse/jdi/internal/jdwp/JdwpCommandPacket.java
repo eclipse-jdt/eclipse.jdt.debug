@@ -115,7 +115,6 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int TR_STOP = 10						 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_INTERRUPT = 11					 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_SUSPEND_COUNT = 12				 + (CSET_THREAD_REFERENCE << 8);
-	public static final int TR_POP_TOP_FRAME = 13				 + (CSET_THREAD_REFERENCE << 8);
 
 	/** Commands ThreadGroupReference. */
 	public static final int TGR_NAME = 1						 + (CSET_THREAD_GROUP_REFERENCE << 8);
