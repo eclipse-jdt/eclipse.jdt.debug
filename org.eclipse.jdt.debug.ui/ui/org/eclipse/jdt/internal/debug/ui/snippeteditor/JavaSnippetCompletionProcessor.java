@@ -93,7 +93,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 		} catch (JavaModelException x) {
 			Shell shell= viewer.getTextWidget().getShell();
 			ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
-			JDIDebugUIPlugin.log(x.getStatus());
+			JDIDebugUIPlugin.log(x);
 		}
 		
 		ICompletionProposal[] results= fCollector.getResults();
@@ -103,7 +103,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 				fTemplateEngine.reset();
 				fTemplateEngine.complete(viewer, position, null);
 			} catch (JavaModelException x) {
-				JDIDebugUIPlugin.log(x.getStatus());
+				JDIDebugUIPlugin.log(x);
 				Shell shell= viewer.getTextWidget().getShell();
 				ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 			}			

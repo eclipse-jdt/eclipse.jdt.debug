@@ -58,7 +58,7 @@ public abstract class JavaProjectPropertyPage extends PropertyPage {
 					return JavaCore.create(p);
 				}
 			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e.getStatus());
+				JDIDebugUIPlugin.log(e);
 			}
 		} else if (obj instanceof IJavaProject) {
 			return (IJavaProject)obj;

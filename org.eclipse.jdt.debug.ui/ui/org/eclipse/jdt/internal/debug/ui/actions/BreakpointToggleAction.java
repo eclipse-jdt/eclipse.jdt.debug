@@ -68,7 +68,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 					try {
 						action.setChecked(getToggleState((IJavaBreakpoint) breakpoint));
 					} catch (CoreException e) {
-						JDIDebugUIPlugin.log(e.getStatus());
+						JDIDebugUIPlugin.log(e);
 					}
 				}
 			}

@@ -279,7 +279,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), IMPORTS_CONTEXT), serialized);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.imports"), null, e.getStatus()); //$NON-NLS-1$
 		}
 	}
@@ -306,7 +306,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			try {
 				fJavaProject = findJavaProject();
 			} catch (JavaModelException e) {
-				JDIDebugUIPlugin.log(e.getStatus());
+				JDIDebugUIPlugin.log(e);
 				showError(e.getStatus());
 			}
 		}
@@ -329,7 +329,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				}
 				fVM.terminate();
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.log(e.getStatus());
+				JDIDebugUIPlugin.log(e);
 				ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.shutdown"), null, e.getStatus()); //$NON-NLS-1$
 				return;
 			}
@@ -402,7 +402,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			}
 			getEvaluationEngine().evaluate(snippet,getThread(), this);
 		} catch (DebugException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, e.getStatus()); //$NON-NLS-1$
 			evaluationEnds();
 		}
@@ -477,7 +477,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				try {
 					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 				} catch (PartInitException e) {
-					JDIDebugUIPlugin.log(e.getStatus());
+					JDIDebugUIPlugin.log(e);
 					showError(e.getStatus());
 				}
 			} else {
@@ -540,7 +540,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				resultString.append(result.getValueString());
 			}
 		} catch(DebugException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.toString"), null, e.getStatus()); //$NON-NLS-1$
 		}
 			
@@ -696,7 +696,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				fThread.resume();
 				fThread = null;
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.log(e.getStatus());
+				JDIDebugUIPlugin.log(e);
 				showException(e);
 				return;
 			}
@@ -745,7 +745,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			return JavaRuntime.computeDefaultRuntimeClassPath(project);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			return new String[0];
 		}
 	}
@@ -870,7 +870,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			return findJavaProject() != null;
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme.getStatus());
+			JDIDebugUIPlugin.log(jme);
 		}
 		return false;
 	}

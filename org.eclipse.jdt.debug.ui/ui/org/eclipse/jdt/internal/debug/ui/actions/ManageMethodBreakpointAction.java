@@ -64,7 +64,7 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 				try {
 					container= BreakpointUtils.getMember((IJavaMethodBreakpoint) breakpoint);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e.getStatus());
+					JDIDebugUIPlugin.log(e);
 					return null;
 				}
 				if (method.equals(container)) {
@@ -111,7 +111,7 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 				setBreakpoint(JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method), 
 					method.getDeclaringType().getFullyQualifiedName(), methodName, method.getSignature(), true, false, false, -1, start, end, 0, true, attributes));
 			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x.getStatus());
+				JDIDebugUIPlugin.log(x);
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
@@ -120,7 +120,7 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				breakpointManager.removeBreakpoint(getBreakpoint(), true);
 			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x.getStatus());
+				JDIDebugUIPlugin.log(x);
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
@@ -151,9 +151,8 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 			
 			return Signature.createMethodSignature(resolvedTypes, returnType);	
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme.getStatus());
+			JDIDebugUIPlugin.log(jme);
 			return null;
 		} 
-		
 	}
 }

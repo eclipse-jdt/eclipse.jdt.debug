@@ -84,7 +84,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 				}
 			}
 		} catch (JavaModelException e) {
-			LaunchingPlugin.log(e.getStatus());
+			LaunchingPlugin.log(e);
 		}
 		return list;
 	}
@@ -120,7 +120,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 			if (cf.exists())
 				return cf.getType();
 		} catch (JavaModelException e) {
-			LaunchingPlugin.log(e.getStatus());
+			LaunchingPlugin.log(e);
 		}
 		ICompilationUnit cu= pkg.getCompilationUnit(name + ".java"); //$NON-NLS-1$
 		if (cu.exists())
@@ -135,7 +135,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 				}
 			}
 		} catch (JavaModelException e) {
-			LaunchingPlugin.log(e.getStatus());
+			LaunchingPlugin.log(e);
 		}
 		return null;
 	}
@@ -158,7 +158,7 @@ public class WorkspaceSourceLocator implements ISourceLocator {
 				}
 			}
 		} catch(DebugException e) {
-			LaunchingPlugin.log(e.getStatus());
+			LaunchingPlugin.log(e);
 		} 
 		return null;
 	}

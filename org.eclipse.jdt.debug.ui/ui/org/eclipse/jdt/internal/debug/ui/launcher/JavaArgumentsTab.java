@@ -149,7 +149,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 			fPrgmArgumentsText.setText(pgmArgs);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());			
+			JDIDebugUIPlugin.log(ce);			
 		}
 	}
 	
@@ -161,7 +161,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 			fVMArgumentsText.setText(vmArgs);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());		
+			JDIDebugUIPlugin.log(ce);		
 		}
 	}
 	
@@ -173,7 +173,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 			fWorkingDirText.setText(workingDir);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());					
+			JDIDebugUIPlugin.log(ce);					
 		}		
 	}
 	
@@ -284,7 +284,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
 			setErrorMessage("Exception occurred reading configuration: " + e.getStatus().getMessage());
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 

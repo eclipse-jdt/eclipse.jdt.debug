@@ -415,7 +415,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 				updatePathList(classpath, fClassPathList);
 			}
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());		
+			JDIDebugUIPlugin.log(ce);		
 		}
 	}
 	
@@ -427,7 +427,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 			updatePathList(extpath, fExtensionPathList);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());
+			JDIDebugUIPlugin.log(ce);
 		}
 	}
 	
@@ -439,7 +439,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 			updateTable(envVars, fEnvTable);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());
+			JDIDebugUIPlugin.log(ce);
 		}
 	}
 	
@@ -614,7 +614,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 				}
 				fClassPathList.setItems(defaultClassPath);
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.log(ce.getStatus());			
+				JDIDebugUIPlugin.log(ce);			
 			}
 		}
 		setPathButtonsEnableState();
@@ -865,7 +865,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		try {
 			fJavaProject = JavaLaunchConfigurationUtils.getJavaProject(config);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 
@@ -942,7 +942,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		try {
 			JavaRuntime.saveVMConfiguration();
 		} catch(CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 		fVMStandins.add(vm);
 		populateJREComboBox();
@@ -1011,7 +1011,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		try {
 			vmID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, EMPTY_STRING);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());			
+			JDIDebugUIPlugin.log(ce);			
 		}
 		if (vmID == null) {
 			clearJREComboBoxEntry();

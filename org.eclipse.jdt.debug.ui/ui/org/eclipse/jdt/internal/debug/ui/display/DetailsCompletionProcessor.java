@@ -102,7 +102,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 				return value.getReferenceTypeName();
 			}
 		} catch (DebugException de) {
-			JDIDebugUIPlugin.log(de.getStatus());
+			JDIDebugUIPlugin.log(de);
 		}
 				
 		return null;

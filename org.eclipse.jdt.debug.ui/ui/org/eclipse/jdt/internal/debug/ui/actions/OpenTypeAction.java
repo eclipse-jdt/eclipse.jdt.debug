@@ -43,7 +43,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 				doAction(element);
 			}
 		} catch(DebugException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 	

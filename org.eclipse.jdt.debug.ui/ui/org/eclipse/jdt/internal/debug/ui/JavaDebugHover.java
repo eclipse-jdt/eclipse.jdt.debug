@@ -78,7 +78,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 								appendVariable(buffer, variable);
 							}
 						} catch (DebugException x) {
-							JDIDebugUIPlugin.log(x.getStatus());
+							JDIDebugUIPlugin.log(x);
 						}
 					}
 				}

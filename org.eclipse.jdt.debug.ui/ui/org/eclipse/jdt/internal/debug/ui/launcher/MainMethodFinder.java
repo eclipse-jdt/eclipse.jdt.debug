@@ -48,7 +48,7 @@ public class MainMethodFinder {
 							try {
 								collectTypes(elements[i], new SubProgressMonitor(pm, 1), result);
 							} catch (JavaModelException e) {
-								JDIDebugUIPlugin.log(e.getStatus());
+								JDIDebugUIPlugin.log(e);
 							}
 							if (pm.isCanceled()) {
 								throw new InterruptedException();

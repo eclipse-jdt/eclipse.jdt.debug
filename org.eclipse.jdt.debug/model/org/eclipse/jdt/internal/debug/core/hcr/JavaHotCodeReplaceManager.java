@@ -226,7 +226,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		try {
 			delta.accept(fProjectVisitor);
 		} catch (CoreException e) {
-			JDIDebugPlugin.log(e.getStatus());
+			JDIDebugPlugin.log(e);
 			return Collections.EMPTY_LIST;
 		}
 		return fProjectVisitor.getBuiltProjects();
@@ -307,7 +307,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				removeCommand(project, buildWatcherCommand);
 			}
 		} catch (CoreException e) {
-			JDIDebugPlugin.log(e.getStatus());
+			JDIDebugPlugin.log(e);
 		}
 	}
 	
@@ -771,7 +771,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		try {
 			delta.accept(fClassfileVisitor);
 		} catch (CoreException e) {
-			JDIDebugPlugin.log(e.getStatus());
+			JDIDebugPlugin.log(e);
 			return Collections.EMPTY_LIST; // quiet failure
 		}
 		return fClassfileVisitor.getChangedClassFiles();
@@ -816,7 +816,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 									}
 								}
 							} catch (CoreException e) {
-								JDIDebugPlugin.log(e.getStatus());
+								JDIDebugPlugin.log(e);
 							}
 							if (!hasCompileErrors) {
 								// Only return class files that have no compilation errors.
@@ -915,7 +915,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				try {
 					getWorkspace().run(wRunnable, null);
 				} catch (CoreException ce) {
-					JDIDebugPlugin.log(ce.getStatus());
+					JDIDebugPlugin.log(ce);
 				}
 			}
 		};
@@ -1042,7 +1042,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				try {
 					outputPath= javaProject.getOutputLocation();
 				} catch (JavaModelException e) {
-					JDIDebugPlugin.log(e.getStatus());
+					JDIDebugPlugin.log(e);
 					project = null;
 					continue;
 				}

@@ -414,7 +414,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 			
 		} catch (CoreException e) {
-			JDIDebugPlugin.log(e.getStatus());
+			JDIDebugPlugin.log(e);
 		}
 		return true;
 	}
@@ -453,7 +453,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 					setExpired(true);
 					setEnabled(false);
 				} catch (CoreException e) {
-					JDIDebugPlugin.log(e.getStatus());
+					JDIDebugPlugin.log(e);
 				}
 				return resume;
 			}  else {

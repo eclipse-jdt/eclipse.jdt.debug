@@ -65,9 +65,9 @@ public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction 
 				}
 			}
 		} catch (JavaModelException x) {
-			JDIDebugUIPlugin.log(x.getStatus());
+			JDIDebugUIPlugin.log(x);
 		} catch (PartInitException x) {
-			JDIDebugUIPlugin.log(x.getStatus());
+			JDIDebugUIPlugin.log(x);
 		}
 		
 		getShell().getDisplay().beep();		

@@ -420,7 +420,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 					try {
 						thread.resumeForEvaluation();
 					} catch(DebugException e) {
-						JDIDebugPlugin.log(e.getStatus());
+						JDIDebugPlugin.log(e);
 					}
 				} else {
 					fireConditionHasRuntimeErrors(exception);
@@ -441,7 +441,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				thread.resumeForEvaluation();
 				return;
 			} catch (DebugException e) {
-				JDIDebugPlugin.log(e.getStatus());
+				JDIDebugPlugin.log(e);
 			}
 			// Suspend when the an error occurs
 			suspendForEvent(event, thread);

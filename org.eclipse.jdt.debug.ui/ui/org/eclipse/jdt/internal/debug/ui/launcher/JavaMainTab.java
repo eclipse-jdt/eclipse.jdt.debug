@@ -162,7 +162,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());
+			JDIDebugUIPlugin.log(ce);
 		}
 		fProjText.setText(projectName);
 	}
@@ -172,7 +172,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());	
+			JDIDebugUIPlugin.log(ce);	
 		}	
 		fMainText.setText(mainTypeName);	
 	}
@@ -265,7 +265,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		try {
 			projects= JavaCore.create(getWorkspaceRoot()).getJavaProjects();
 		} catch (JavaModelException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
 		

@@ -146,9 +146,7 @@ public class JDIDebugPlugin extends Plugin {
 			if (status.getException() != null) {
 				top = status.getException();
 			}
-		} else if (t instanceof CoreException) {
-			log(((CoreException)t).getStatus());
-		}
+		} 
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
 		log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from JDI Debug: ", top));  //$NON-NLS-1$		

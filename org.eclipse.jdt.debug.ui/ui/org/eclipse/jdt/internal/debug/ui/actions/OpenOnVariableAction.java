@@ -53,7 +53,7 @@ public class OpenOnVariableAction extends OpenTypeAction {
 				return getTypeNameToOpen(element) != null;
 			}
 		} catch(DebugException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			// fall through
 		}	
 		return false;

@@ -34,7 +34,7 @@ class JavaModelListener implements IElementChangedListener {
 					check(breakpoint, parent, e.getDelta());
 				}
 			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x.getStatus());
+				JDIDebugUIPlugin.log(x);
 			}
 		}
 	}

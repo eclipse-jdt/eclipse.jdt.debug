@@ -42,7 +42,6 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -267,7 +266,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 							try {
 								getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
 							} catch (CoreException e) {
-								JDIDebugPlugin.log(e.getStatus());
+								JDIDebugUIPlugin.log(e);
 							}
 						}
 					};
@@ -293,7 +292,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 					try {
 						getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
 					} catch (CoreException e) {
-						JDIDebugPlugin.log(e.getStatus());
+						JDIDebugUIPlugin.log(e);
 					}
 				}
 			};

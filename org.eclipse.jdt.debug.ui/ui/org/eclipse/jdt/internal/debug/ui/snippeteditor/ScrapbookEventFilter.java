@@ -43,7 +43,7 @@ public class ScrapbookEventFilter implements IDebugUIEventFilter {
 			}
 			return true;
 		} catch(DebugException de) {
-			JDIDebugUIPlugin.log(de.getStatus());
+			JDIDebugUIPlugin.log(de);
 			return true;
 		}
 	}

@@ -73,7 +73,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 					try {
 						thread.resume();
 					} catch (DebugException de) {
-						JDIDebugUIPlugin.log(de.getStatus());
+						JDIDebugUIPlugin.log(de);
 					}
 					break;
 				}
@@ -157,7 +157,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 					&& getTextEditor() != null);
 			} catch (DebugException de) {
 				action.setEnabled(false);
-				JDIDebugUIPlugin.log(de.getStatus());
+				JDIDebugUIPlugin.log(de);
 			}
 		}
 	}

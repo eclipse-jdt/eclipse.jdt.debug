@@ -241,7 +241,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 							IJavaObject v = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), theException);
 							v.sendMessage("printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 						} catch (DebugException de) {
-							JDIDebugPlugin.log(de.getStatus());
+							JDIDebugPlugin.log(de);
 						}
 					} catch (RuntimeException re) {
 						JDIDebugPlugin.log(re);

@@ -80,7 +80,7 @@ public class ExceptionHandler {
 	
 	protected void perform(CoreException e, Shell shell, String title, String message) {
 		IStatus status= e.getStatus();
-		JDIDebugUIPlugin.log(status);
+		JDIDebugUIPlugin.log(e);
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {

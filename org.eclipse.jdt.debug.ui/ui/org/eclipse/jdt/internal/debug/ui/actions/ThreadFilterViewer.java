@@ -99,7 +99,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				}
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 
@@ -185,7 +185,7 @@ public class ThreadFilterViewer extends FieldEditor {
 						fBreakpoint.removeThreadFilter(target);
 					}
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e.getStatus());
+					JDIDebugUIPlugin.log(e);
 				}
 			}
 		}
@@ -224,7 +224,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.log(exception.getStatus());
+					JDIDebugUIPlugin.log(exception);
 					return;
 				}
 				IThread thread;
@@ -236,7 +236,7 @@ public class ThreadFilterViewer extends FieldEditor {
 					try {
 						name= thread.getName();
 					} catch (DebugException exception) {
-						JDIDebugUIPlugin.log(exception.getStatus());
+						JDIDebugUIPlugin.log(exception);
 					}
 					if (MAIN.equals(name)) {
 						checkedThread= fThreadViewer.setChecked(thread, true);
@@ -256,7 +256,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.log(exception.getStatus());
+					JDIDebugUIPlugin.log(exception);
 					return;
 				}
 				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
@@ -286,7 +286,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.log(exception.getStatus());
+					JDIDebugUIPlugin.log(exception);
 					return;
 				}
 				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
@@ -319,7 +319,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.log(exception.getStatus());
+					JDIDebugUIPlugin.log(exception);
 					continue;
 				}
 				checkedThread= false;
@@ -349,7 +349,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					return ((IJavaDebugTarget)parent).getThreads();
 				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e.getStatus());
+					JDIDebugUIPlugin.log(e);
 				}
 			}		
 			if (parent instanceof ILaunchManager) {

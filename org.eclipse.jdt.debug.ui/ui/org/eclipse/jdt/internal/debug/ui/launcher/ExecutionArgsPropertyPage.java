@@ -82,7 +82,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 		
 			args= ExecutionArguments.getArguments(type);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 		if (args == null) {
 			args= new ExecutionArguments("", ""); //$NON-NLS-2$ //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 						}
 					} catch (JavaModelException e) {
 						// ignore, can't set args.
-						JDIDebugUIPlugin.log(e.getStatus());
+						JDIDebugUIPlugin.log(e);
 					}
 				}
 			}
@@ -138,7 +138,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 			try {
 				element= ((IClassFile) element).getType();
 			} catch (JavaModelException e) {
-				JDIDebugUIPlugin.log(e.getStatus());
+				JDIDebugUIPlugin.log(e);
 			}
 		}
 		if (element instanceof IType) {

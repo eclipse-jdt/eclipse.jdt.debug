@@ -70,7 +70,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 			classPath= JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
 			args= ExecutionArguments.getArguments(mainType);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 			return false;
 		}
 		return doLaunch(javaProject, mode, mainType, args, classPath, launcher);
@@ -190,7 +190,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 			}
 			return true;
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 		return false;
 	}

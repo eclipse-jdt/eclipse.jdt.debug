@@ -246,7 +246,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, null);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce.getStatus());
+			JDIDebugUIPlugin.log(ce);
 		}	
 	}
 	/**

@@ -94,7 +94,7 @@ public class VMPropertyPage extends JavaProjectPropertyPage {
 		try {
 			vm= JavaRuntime.getVMInstall(project);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e);
 		}
 		fVMSelectorWidget.setEnabled(vm != null);
 		fUseCustom.setSelection(vm != null);
@@ -114,7 +114,7 @@ public class VMPropertyPage extends JavaProjectPropertyPage {
 					 vm= fVMSelector.getSelectedVM();
 				JavaRuntime.setVM(project, vm);
 			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e.getStatus());
+				JDIDebugUIPlugin.log(e);
 			}
 		}
 		return true;
