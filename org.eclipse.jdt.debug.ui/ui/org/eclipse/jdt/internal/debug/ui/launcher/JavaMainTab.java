@@ -525,9 +525,9 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		}
 		IJavaProject jp = getJavaProject();
 		if (jp != null) {
-			// only verify type exists if java project is specified
+			// only verify type exists if Java project is specified
 			try {
-				IType type = JavaLaunchConfigurationHelper.getMainType(name, jp);
+				JavaLaunchConfigurationHelper.getMainType(name, jp);
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 				return false;
