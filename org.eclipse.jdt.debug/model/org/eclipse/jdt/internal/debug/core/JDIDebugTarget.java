@@ -36,6 +36,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
@@ -44,8 +45,8 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-
 import org.eclipse.jdt.internal.core.Util;
+
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -536,9 +537,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Notifies this target that the specified types have been changed and
 	 * should be replaced.
 	 * 
-	 * Breakpoints are reinstalled automatically when the new
-	 * types are loaded.
-	 * 
 	 * This method is to be used for JDK hot code replace.
 	 */
 	public void typesHaveChanged(List resources) throws DebugException {
@@ -559,6 +557,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			} catch (ClassCircularityError cce) {
 				targetRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"),cce); //$NON-NLS-1$
 			}
+			reinstallBreakpointsIn(resources);
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
 		}
@@ -569,11 +568,38 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 	
 	/**
+	 * Reinstall all breakpoints installed in the given resources
+	 */
+	protected void reinstallBreakpointsIn(List resources) {
+		List breakpoints= getBreakpoints();
+		Iterator iter= breakpoints.iterator();
+		IJavaBreakpoint breakpoint= null;
+		String installedType= null;
+		
+		List classNames= JDTDebugUtils.getQualifiedNames(resources);
+		
+		while (iter.hasNext()) {
+			breakpoint= (IJavaBreakpoint) iter.next();
+			if (breakpoint instanceof JavaLineBreakpoint) {
+				try {
+					installedType= breakpoint.getType().getFullyQualifiedName();
+					if (classNames.contains(installedType)) {
+						breakpointAdded(breakpoint);
+					}
+				} catch (CoreException ce) {
+					logError(ce);
+					continue;
+				}
+			}
+		}		
+	}
+	
+	/**
 	 * Returns a mapping of class files to the bytes that make up those
 	 * class files.
 	 * 
 	 * @param resources the classfiles
-	 * @returns a mapping of class files to bytes
+	 * @return a mapping of class files to bytes
 	 *  key: class file
 	 *  value: the bytes which make up that classfile
 	 */
@@ -600,7 +626,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			int count= resourcePath.matchingFirstSegments(outputPath);
 			resourcePath= resourcePath.removeFirstSegments(count);
 			String qualifiedName= resourcePath.toString();
-			qualifiedName= translateResourceName(qualifiedName);
+			qualifiedName= JDTDebugUtils.translateResourceName(qualifiedName);
 			List classes= jdiClassesByName(qualifiedName);
 			byte[] bytes= null;
 			try {
@@ -615,13 +641,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		return typesToBytes;
-	}
-	
-	protected String translateResourceName(String resourceName) {
-		// get rid of ".class"
-		resourceName= resourceName.substring(0, resourceName.length() - 6);
-		// switch to dot seperated
-		return resourceName.replace(IPath.SEPARATOR, '.');
 	}
 
 	/**
