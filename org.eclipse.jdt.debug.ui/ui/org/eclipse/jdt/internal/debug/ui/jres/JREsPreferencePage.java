@@ -27,6 +27,8 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
@@ -107,6 +109,18 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 						
 		WorkbenchHelp.setHelp(parent, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
 		initDefaultVM();
+		fJREBlock.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IVMInstall install = getCurrentDefaultVM();
+				if (install == null) {
+					setValid(false);
+					setErrorMessage(JREMessages.getString("JREsPreferencePage.13")); //$NON-NLS-1$
+				} else {
+					setValid(true);
+					setErrorMessage(null);
+				}
+			}
+		});
 		return parent;
 	}
 			
