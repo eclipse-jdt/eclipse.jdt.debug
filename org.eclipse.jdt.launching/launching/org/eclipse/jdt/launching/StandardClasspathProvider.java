@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -37,7 +39,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 		if (useDefault) {
 			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 			if (proj == null) {
-				//no project - use JRE's libraries by default
+				//no project - use JRE's default libraries
 				return computeJRELibraries(configuration);				
 			} else {
 				return JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
@@ -50,20 +52,10 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 
 	private IRuntimeClasspathEntry[] computeJRELibraries(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
-		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
-		if (libs == null) {
-			return new IRuntimeClasspathEntry[0];
-		} else {
-			IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[libs.length];
-			for (int i = 0; i < libs.length; i++) {
-				IRuntimeClasspathEntry r = JavaRuntime.newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-				r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-				r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-				r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-				rtes[i] = r;
-			}
-			return rtes;
-		}
+		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+		path = path.append(vm.getVMInstallType().getId()).append(vm.getName());
+		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(path, IRuntimeClasspathEntry.STANDARD_CLASSES);
+		return new IRuntimeClasspathEntry[]{entry};
 	}
 
 	/* (non-Javadoc)

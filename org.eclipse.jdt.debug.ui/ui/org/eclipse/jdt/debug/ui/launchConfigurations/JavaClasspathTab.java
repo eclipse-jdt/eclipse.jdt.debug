@@ -396,24 +396,23 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		} catch (CoreException e) {
 			return false;
 		}
-		if (projectName.length() == 0) {
-			return false;
-		}
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IStatus status = workspace.validateName(projectName, IResource.PROJECT);
-		if (status.isOK()) {
-			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-			if (!project.exists()) {
-				setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.20"), new String[] {projectName})); //$NON-NLS-1$
+		if (projectName.length() > 0) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IStatus status = workspace.validateName(projectName, IResource.PROJECT);
+			if (status.isOK()) {
+				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				if (!project.exists()) {
+					setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.20"), new String[] {projectName})); //$NON-NLS-1$
+					return false;
+				}
+				if (!project.isOpen()) {
+					setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.21"), new String[] {projectName})); //$NON-NLS-1$
+					return false;
+				}
+			} else {
+				setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.19"), new String[]{status.getMessage()})); //$NON-NLS-1$
 				return false;
 			}
-			if (!project.isOpen()) {
-				setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.21"), new String[] {projectName})); //$NON-NLS-1$
-				return false;
-			}
-		} else {
-			setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.19"), new String[]{status.getMessage()})); //$NON-NLS-1$
-			return false;
 		}
 		return true;
 	}
