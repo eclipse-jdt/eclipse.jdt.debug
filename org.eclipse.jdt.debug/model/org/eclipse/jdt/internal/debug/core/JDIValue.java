@@ -25,8 +25,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	protected static final String ERROR_TO_STRING = ERROR + "to_string";
 	protected static final String ERROR_TO_STRING_NOT_SUSPENDED = ERROR + "to_string.not_suspended";
 	protected static final String ERROR_TO_STRING_NOT_IMPLEMENTED = ERROR + "to_string.not_implemented";
-	
-	
+	private final static String DEALLOCATED= PREFIX + "deallocated";	
+	private final static String ID= PREFIX + "id";	
 	private static final String fgToStringSignature = "()Ljava/lang/String;";
 	private static final String fgToString = "toString";
 	
@@ -40,8 +40,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 * A flag indicating if this value is still allocated (valid)
 	 */
 	protected boolean fAllocated = true;
-
-	private final static String DEALLOCATED= PREFIX + "deallocated";
 	
 	public JDIValue(JDIVariable variable, Value value) {
 		super(null);
@@ -96,7 +94,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				name.append(((ClassObjectReference)fValue).reflectedType());
 				name.append(')');
 			}
-			name.append(" (id=");
+			name.append(" (");
+			name.append(DebugJavaUtils.getResourceString(ID));
+			name.append('=');
 			try {
 				name.append(((ObjectReference)fValue).uniqueID());
 			} catch (VMDisconnectedException e) {

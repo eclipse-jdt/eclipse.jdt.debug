@@ -66,6 +66,8 @@ public class DebugJavaUtils {
 	public static void logError(Exception e) {
 		Throwable t = e;
 		if (JDIDebugPlugin.getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
 			System.out.println("Internal error logged from JDI debug model: ");
 			if (e instanceof DebugException) {
 				DebugException de = (DebugException)e;
