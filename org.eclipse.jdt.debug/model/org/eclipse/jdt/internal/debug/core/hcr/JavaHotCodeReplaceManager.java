@@ -99,8 +99,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * The lists of hot swap targets which support HCR and those which don't
 	 */
-	private List fHotSwapTargets= new ArrayList(1);
-	private List fNoHotSwapTargets= new ArrayList(1);
+	private ArrayList fHotSwapTargets= new ArrayList(1);
+	private ArrayList fNoHotSwapTargets= new ArrayList(1);
 	
 	/**
 	 * A mapping of the last time projects were built.
@@ -325,7 +325,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * hot code replace.
 	 */
 	protected List getHotSwapTargets() {
-		return fHotSwapTargets;
+		return (List) fHotSwapTargets.clone();
 	}
 	
 	/**
@@ -333,7 +333,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * not support hot code replace.
 	 */
 	protected List getNoHotSwapTargets() {
-		return fNoHotSwapTargets;
+		return (List) fNoHotSwapTargets.clone();
 	}
 	
 	/**
