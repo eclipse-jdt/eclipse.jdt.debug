@@ -64,17 +64,20 @@ import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 public final class JavaRuntime {
 	
 	/**
-	 * Classpath variable name used for the default JRE's library.
+	 * Classpath variable name used for the default JRE's library
+	 * (value <code>"JRE_LIB"</code>).
 	 */
 	public static final String JRELIB_VARIABLE= "JRE_LIB"; //$NON-NLS-1$
 
 	/**
-	 * Classpath variable name used for the default JRE's library source.
+	 * Classpath variable name used for the default JRE's library source
+	 * (value <code>"JRE_SRC"</code>).
 	 */
 	public static final String JRESRC_VARIABLE= "JRE_SRC"; //$NON-NLS-1$
 	
 	/**
-	 * Classpath variable name used for the default JRE's library source root.
+	 * Classpath variable name used for the default JRE's library source root
+	 * (value <code>"JRE_SRCROOT"</code>).
 	 */	
 	public static final String JRESRCROOT_VARIABLE= "JRE_SRCROOT"; //$NON-NLS-1$
 	
@@ -95,13 +98,14 @@ public final class JavaRuntime {
 	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS= "classpathProviders";	 //$NON-NLS-1$		
 		
 	/**
-	 * Classpath container used for a project's JRE. A container
-	 * is resolved in the context of a specific Java project, to
-	 * one or more system libraries contained in a JRE. The container
-	 * can have zero or two path segments following the container name. When
-	 * no segments follow the container name, the workspace default JRE is used
-	 * to build a project. Otherwise the segments identify a specific JRE used
-	 * to build a project:
+	 * Classpath container used for a project's JRE
+	 * (value <code>"org. eclipse.jdt.launching.JRE_CONTAINER"</code>). A
+	 * container  is resolved in the context of a specific Java project, to one
+	 * or more system libraries contained in a JRE. The container can have zero
+	 * or two path segments following the container name. When no segments
+	 * follow the container name, the workspace default JRE is used to build a
+	 * project. Otherwise the segments identify a specific JRE used to build a
+	 * project:
 	 * <ol>
 	 * <li>VM Install Type Identifier - identifies the type of JRE used to build the
 	 * 	project. For example, the standard VM.</li>
