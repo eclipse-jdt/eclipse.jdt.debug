@@ -42,7 +42,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
  * are new in 3.0, and are only intended to be contributed by the Java debugger.
  * </p>
  * @since 2.0
- * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2
+ * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2
  */
 public interface IRuntimeClasspathEntry {
 	

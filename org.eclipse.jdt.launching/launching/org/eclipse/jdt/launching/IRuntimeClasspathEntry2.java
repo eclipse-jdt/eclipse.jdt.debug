@@ -8,22 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.w3c.dom.Element;
 
 /**
  * Enhancements to <code>IRuntimeClasspathEntry</code> to support
  * extensible runtime classpath entries. Contributed runtime classpath
- * entries have a type of <code>OTHER</code>.
+ * entries have a type of <code>OTHER</code>, and are contributed to
+ * the <code>runtimeClasspathEntries</code> extension point.
  * <p>
  * TODO: XML example
- * </p>
- * <p>
- * This interface is yet experimental.
  * </p>
  * <p>
  * Clients are not intended to implement this interface, as new types

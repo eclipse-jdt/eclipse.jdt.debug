@@ -52,7 +52,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
-import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
@@ -494,6 +493,18 @@ public final class JavaRuntime {
 	}
 	
 	/**
+	 * Returns a new runtime classpath entry containing the default classpath
+	 * for the specified Java project. 
+	 * 
+	 * @param project Java project
+	 * @return runtime classpath entry
+	 * @since 3.0
+	 */
+	public static IRuntimeClasspathEntry newDefaultProjectClasspathEntry(IJavaProject project) {
+		return new DefaultProjectClasspathEntry(project);
+	}	
+	
+	/**
 	 * Returns a new runtime classpath entry for the given project.
 	 * 
 	 * @param project Java project
@@ -659,7 +670,7 @@ public final class JavaRuntime {
 					break;
 			}
 		}
-		classpathEntries.add(new DefaultProjectClasspathEntry(project));
+		classpathEntries.add(newDefaultProjectClasspathEntry(project));
 		return (IRuntimeClasspathEntry[]) classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
 		
 
@@ -1018,7 +1029,7 @@ public final class JavaRuntime {
 					if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 						IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
 						IJavaProject jp = JavaCore.create(p);
-						IRuntimeClasspathEntry classpath = new DefaultProjectClasspathEntry(jp);
+						IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
 						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
 						for (int j = 0; j < entries.length; j++) {
 							IRuntimeClasspathEntry e = entries[j];
