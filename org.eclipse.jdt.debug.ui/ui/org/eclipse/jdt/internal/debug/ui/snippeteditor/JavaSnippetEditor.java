@@ -89,6 +89,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.information.IInformationProvider;
@@ -808,7 +809,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 
 				try {
 					
-					infoPresenter.setInformationProvider(provider, getSourceViewer().getDocument().getContentType(fSnippetStart));
+					String contentType = TextUtilities.getContentType(getSourceViewer().getDocument(), infoPresenter.getDocumentPartitioning(), fSnippetStart, true);
+					infoPresenter.setInformationProvider(provider, contentType);
 					infoPresenter.install(getSourceViewer());
 					infoPresenter.showInformation();
 				} catch (BadLocationException e) {
