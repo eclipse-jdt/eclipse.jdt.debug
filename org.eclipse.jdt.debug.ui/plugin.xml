@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.jdt.debug.ui"
+   name="%pluginName"
+   version="0.9"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin">
+<!-- Required plugins -->
+<requires>
+  <import plugin="org.eclipse.ui"/>
+  <import plugin="org.eclipse.core.resources"/>
+  <import plugin="org.eclipse.jdt.core"/>
+  <import plugin="org.apache.xerces"/>
+  <import plugin="org.eclipse.search"/>
+  <import plugin="org.eclipse.debug.core"/>
+  <import plugin="org.eclipse.debug.ui"/> 
+  <import plugin="org.eclipse.jdt.debug"/>
+  <import plugin="org.eclipse.jdt.launching"/>
+  <import plugin="org.eclipse.compare"/>
+  <import plugin="org.eclipse.jdt.ui"/>
+</requires>
+
+<!-- Runtime -->
+<runtime>
+   <library name="jdiui.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<!-- Extensions Points -->
+
+<!-- Extensions -->
+
+<extension
+    point= "org.eclipse.ui.editors"
+    id= "org.eclipse.jdt.debug.ui.editors">
+   <editor
+      id="org.eclipse.jdt.debug.ui.SnippetEditor"
+      icon="icons/full/obj16/jsbook_obj.gif"
+      name="%JavaSnippetEditor.label"
+      extensions="jpage"
+      class="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor"
+      contributorClass="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorActionContributor">
+   </editor>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.views">
+	<view
+		id="org.eclipse.jdt.debug.ui.DisplayView"
+		name="%displayViewName"
+		category="org.eclipse.debug.ui"
+	   	icon="icons/full/ctool16/disp_sbook.gif"
+	   	class="org.eclipse.jdt.internal.debug.ui.display.DisplayView">
+	</view>
+</extension>
+
+<extension point = "org.eclipse.debug.core.launchConfigurationTypes">
+   <launchConfigurationType id="org.eclipse.jdt.debug.ui.localJavaApplication"
+	   name="%javaApplication"
+	   delegate="org.eclipse.jdt.internal.debug.ui.JavaApplicationLaunchConfigurationDelegate"
+	   modes= "run, debug">
+   </launchConfigurationType>
+</extension>
+
+<extension point="org.eclipse.ui.popupMenus">
+	<viewerContribution
+		id="org.eclipse.jdt.debug.AccessWatchpointToggleActions"
+		targetID="org.eclipse.debug.ui.BreakpointView">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.AccessToggle"
+			label="%accessAction.label"
+			tooltip="%accessAction.tooltip"
+			menubarPath="emptyBreakpointGroup"
+			state="false"
+			class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
+			enablesFor="+">
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.ModificationWatchpointToggleActions"
+		targetID="org.eclipse.debug.ui.BreakpointView">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.ModificationToggle"
+			label="%modificationAction.label"
+			tooltip="%modificationAction.tooltip"
+			menubarPath="emptyBreakpointGroup"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ModificationWatchpointToggleAction"
+			enablesFor="+">
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.BreakpointHitCountActions"
+		targetID="org.eclipse.debug.ui.BreakpointView">
+		<action
+			id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
+			label="%hitCount.label"
+			tooltip="%hitCount.tooltip"
+			menubarPath="emptyBreakpointGroup"
+			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
+			enablesFor="1">
+		</action>
+	</viewerContribution>	
+	<viewerContribution
+		id="org.eclipse.jdt.debug.ExceptionCaughtToggleActions"
+		targetID="org.eclipse.debug.ui.BreakpointView">
+		<action
+			id="org.eclipse.jdt.ui.actions.CaughtToggle"
+			label="%caughtAction.label"
+			tooltip="%caughtAction.tooltip"
+			menubarPath="emptyBreakpointGroup"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
+			enablesFor="+">
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.ExceptionUncaughtToggleActions"
+		targetID="org.eclipse.debug.ui.BreakpointView">
+		<action
+			id="org.eclipse.jdt.ui.actions.UncaughtToggle"
+			label="%uncaughtAction.label"
+			tooltip="%uncaughtAction.tooltip"
+			menubarPath="emptyBreakpointGroup"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionUncaughtToggleAction"
+			enablesFor="+">
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.DropToFrameActions"
+		targetID="org.eclipse.debug.ui.DebugView">
+		<action
+			id="org.eclipse.jdt.ui.actions.DropToFrame"
+			label="%dropFrameAction.label"
+			tooltip="%dropFrameAction.tooltip"
+			menubarPath="emptyThreadGroup"
+			class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
+			enablesFor="1">
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.ToggleStepFilterActions"
+		targetID="org.eclipse.debug.ui.DebugView">
+		<action
+			id="org.eclipse.jdt.ui.actions.ToggleStepFilter"
+			label="%toggleStepFilterAction.label"
+			tooltip="%toggleStepFilter.tooltip"
+			menubarPath="additions"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ToggleStepFilterAction">
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.OpenOnConsoleTypeActions"
+		targetID="org.eclipse.debug.ui.ConsoleView">
+		<action
+			id="org.eclipse.jdt.ui.actions.OpenOnConsoleType"
+			label="%openOnConsoleTypeAction.label"
+			tooltip="%openOnConsoleTypeAction.tooltip"
+			menubarPath="additions"
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnConsoleTypeAction">
+		</action>
+	</viewerContribution>	
+</extension>
+
+<extension point="org.eclipse.ui.viewActions">
+	<viewContribution
+		id="org.eclipse.jdt.ui.debug.VariableViewActions"
+		targetID="org.eclipse.debug.ui.VariableView">
+		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
+			label="%showFinalAction.label"
+			toolbarPath="javaVariableFilters"
+			icon="icons/full/elcl16/final_co.gif"
+			tooltip="%showFinalAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
+		</action>
+		<action id="org.eclipse.jdt.ui.actions.ShowStaticFields"
+			label="%showStaticAction.label"
+			toolbarPath="javaVariableFilters"
+			icon="icons/full/elcl16/static_co.gif"
+			tooltip="%showStaticAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
+		</action>
+	</viewContribution>
+	<viewContribution
+		id="org.eclipse.jdt.ui.debug.InspectorViewActions"
+		targetID="org.eclipse.debug.ui.InspectorView">
+		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
+			label="%showFinalAction.label"
+			toolbarPath="javaVariableFilters"
+			icon="icons/full/elcl16/final_co.gif"
+			tooltip="%showFinalAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
+		</action>
+		<action id="org.eclipse.jdt.ui.actions.ShowStaticFields"
+			label="%showStaticAction.label"
+			toolbarPath="javaVariableFilters"
+			icon="icons/full/elcl16/static_co.gif"
+			tooltip="%showStaticAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
+		</action>
+	</viewContribution>
+	<viewContribution
+		id="org.eclipse.jdt.debug.ui.BreakpointViewActions"
+		targetID="org.eclipse.debug.ui.BreakpointView">
+		<action id="org.eclipse.jdt.debug.ui.actions.AddException"
+			label="%exceptionAction.label"
+			toolbarPath="javaExceptions"
+			icon="icons/full/clcl16/exc_catch.gif"
+			tooltip="%exceptionAction.tooltip"
+			class="org.eclipse.jdt.internal.debug.ui.launcher.AddExceptionAction">
+		</action>
+	</viewContribution>
+</extension>
+
+
+<extension point="org.eclipse.ui.editorActions"> 
+	<editorContribution 
+		id="org.eclipse.jdt.debug.ui.CUEditMenu" 
+		targetID="org.eclipse.jdt.ui.CompilationUnitEditor"> 
+		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			menubarPath="edit/additions" 
+			icon="icons/full/etool16/insp_sbook.gif" 
+			tooltip="%Inspect.description" 
+			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+		</action> 
+		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="edit/additions" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			tooltip="%Display.description" 
+			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+		</action> 		
+	</editorContribution>		
+	<editorContribution 
+		id="org.eclipse.jdt.debug.ui.CFEditMenu" 
+		targetID="org.eclipse.jdt.ui.ClassFileEditor"> 
+		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			menubarPath="edit/additions" 
+			icon="icons/full/etool16/insp_sbook.gif" 
+			tooltip="%Inspect.description" 
+			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+		</action> 
+		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="edit/additions" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			tooltip="%Display.description" 
+			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+		</action> 		
+	</editorContribution>
+</extension> 
+
+<!-- Property adapters for java breakpoints -->
+<extension point="org.eclipse.debug.ui.breakpointPropertyAdapters">
+		<breakpointPropertyAdapter
+			id="org.eclipse.jdt.debug.javaBreakpointPropertyAdapter"
+			markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
+			class="org.eclipse.jdt.internal.debug.ui.JavaBreakpointPropertySource">
+		</breakpointPropertyAdapter>
+		<breakpointPropertyAdapter
+			id="org.eclipse.jdt.debug.javaMethodEntryBreakpointPropertyAdapter"
+			markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
+			class="org.eclipse.jdt.internal.debug.ui.JavaBreakpointPropertySource">
+		</breakpointPropertyAdapter>
+		<breakpointPropertyAdapter
+			id="org.eclipse.jdt.debug.javaExceptionBreakpointPropertyAdapter"
+			markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
+			class="org.eclipse.jdt.internal.debug.ui.JavaExceptionBreakpointPropertySource">
+		</breakpointPropertyAdapter>
+		<breakpointPropertyAdapter
+			id="org.eclipse.jdt.debug.javaWatchpointPropertyAdapter"
+			markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
+			class="org.eclipse.jdt.internal.debug.ui.JavaWatchpointPropertySource">
+		</breakpointPropertyAdapter>
+</extension>
+
+<!--Java debug model presentation -->
+<extension point = "org.eclipse.debug.ui.debugModelPresentations"> 
+         <debugModelPresentation
+             class = "org.eclipse.jdt.internal.debug.ui.JDIModelPresentation"
+             id = "org.eclipse.jdt.debug">
+          </debugModelPresentation> 
+</extension>
+
+<extension point="org.eclipse.ui.popupMenus">
+	<objectContribution
+		id="org.eclipse.jdt.debug.ui.OpenOnDeclaringTypeActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
+		<menu
+			id="org.eclipse.jdt.debug.ui.actions.OpenOnMenu"
+			path="emptyEditGroup"
+			label="%openOnAction.label">
+			<separator name="group.openOn"/>
+		</menu>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.OpenOnDeclaringType"
+			label="%openDeclType.label"
+			tooltip="%openDeclType.tooltip"
+			menubarPath="org.eclipse.jdt.ui.actions.OpenOnMenu/group.openOn"
+			class="org.eclipse.jdt.internal.debuge.ui.launcher.OpenOnDeclaringTypeAction">
+		</action>
+	</objectContribution>
+	<objectContribution
+		id="org.eclipse.jdt.debug.ui.OpenOnVariableActions"
+		objectClass="org.eclipse.jdt.debug.IJavaVariable">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.OpenOnVariableType"
+			label="%openDeclVarType.label"
+			tooltip="%openDeclVarType.tooltip"
+			menubarPath="openOnGroup"
+			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnVariableAction">
+		</action>
+	</objectContribution>
+	<objectContribution
+		id="org.eclipse.jdt.debug.ui.OpenOnReceivingTypeActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.OpenOnReceivingType"
+			label="%openRecType.label"
+			tooltip="%openRecType.tooltip"
+			menubarPath="org.eclipse.jdt.ui.actions.OpenOnMenu/group.openOn"
+			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnReceivingTypeAction">
+		</action>
+	</objectContribution>
+</extension>
+
+<extension
+	point="org.eclipse.ui.propertyPages">
+	<page
+		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
+		name="%execArgPageName"
+		objectClass="org.eclipse.jdt.core.api.IType"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage">
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
+		name="%execArgPageName"
+		objectClass="org.eclipse.jdt.core.ICompilationUnit"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage">
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
+		name="%execArgPageName"
+		objectClass="org.eclipse.jdt.core.IClassFile"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage">
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
+		name="%execArgPageName"
+		objectClass="org.eclipse.core.resources.IFile"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage"
+        nameFilter="*.java"> 
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.launching.SourceLookupPage" 
+		name="%debugSourcePageName"
+		objectClass="org.eclipse.core.resources.IProject"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupPropertyPage"> 
+		<filter name="nature" value="org.eclipse.jdt.core.javanature"/>
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.launching.SourceLookupPage" 
+		name="%debugSourcePageName"
+		objectClass="org.eclipse.jdt.core.IJavaProject"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupPropertyPage"> 
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.launching.ProcessPage" 
+		name="%processInfoPageName"
+		objectClass="org.eclipse.debug.core.model.IProcess"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ProcessPropertyPage"> 
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.launching.ProcessPage" 
+		name="%processInfoPageName"
+		objectClass="org.eclipse.debug.core.model.IDebugTarget"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ProcessPropertyPage"> 
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.propertyPages.VMPropertyPage" 
+		name="%vmPageName"
+		objectClass="org.eclipse.jdt.core.IJavaProject"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPropertyPage">
+    </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.propertyPages.VMPropertyPage" 
+		name="%vmPageName"
+		objectClass="org.eclipse.core.resources.IProject"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPropertyPage">
+		<filter name="nature" value="org.eclipse.jdt.core.javanature"/>
+    </page>    
+</extension>
+
+<extension point = "org.eclipse.ui.preferencePages">
+	<page
+		id = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPreferencePage"
+		name= "%installJREPageName"
+		category= "org.eclipse.jdt.ui.preferences.JavaBasePreferencePage">
+	</page>
+</extension>
+
+<extension point = "org.eclipse.jdt.launching.vmInstallTypes">
+	<vmInstallType
+	   	class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
+	    id="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"/>
+</extension>
+
+<extension point = "org.eclipse.debug.core.launchers">
+	<launcher
+	    id="org.eclipse.jdt.debug.ui.launcher.JavaApplicationLauncherDelegate"
+	   	class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLauncherDelegate"
+	  	labelProvider="org.eclipse.jdt.internal.debug.ui.launcher.LauncherLabelProvider"
+		description="%launcher.description"
+	  	wizard="org.eclipse.jdt.internal.debug.ui.JavaApplicationWizard"
+	  	icon = "icons/full/ctool16/java_app.gif"
+	  	modes="run, debug"
+ 	  	label= "%launcher.label"/>
+   <launcher
+		id="org.eclipse.jdt.debug.ui.launcher.JDIAttachLauncher"
+		class="org.eclipse.jdt.internal.debug.ui.JDIAttachLauncher"
+		label="%remoteLauncher.label"
+		description="%remoteLauncher.description"
+		wizard="org.eclipse.jdt.internal.debug.ui.JDIAttachLauncherWizard"
+		icon = "icons/full/ctool16/java_attach.gif"
+   		modes="debug" />
+   	<launcher
+		id="org.eclipse.jdt.debug.ui.launcher.ScrapbookLauncherDelegate"
+		class="org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate"
+		label="%scrapbookLauncher.label"
+		public="false"
+   		modes="debug" />
+</extension>	
+
+</plugin>
