@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *    Sebastian Davids <sdavids@gmx.de> - initial API and implementation
+ *    IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
@@ -17,7 +18,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -37,7 +37,7 @@ public class ShowInPackageViewAction extends Action {
 	 * 
 	 * @param site the site providing context information for this action
 	 */
-	public ShowInPackageViewAction(IWorkbenchSite site) {
+	public ShowInPackageViewAction() {
 		super(SnippetMessages.getString("ShowInPackageViewAction.label")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("ShowInPackageViewAction.description")); //$NON-NLS-1$
 		setToolTipText(SnippetMessages.getString("ShowInPackageViewAction.tooltip")); //$NON-NLS-1$
@@ -48,7 +48,7 @@ public class ShowInPackageViewAction extends Action {
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
 	public ShowInPackageViewAction(JavaSnippetEditor editor) {
-		this(editor.getEditorSite());
+		this();
 		fEditor= editor;
 	}
 	
@@ -58,18 +58,21 @@ public class ShowInPackageViewAction extends Action {
 	public void run() {
 		PackageExplorerPart view= PackageExplorerPart.openInActivePerspective();
 
-		if (!reveal(view, fEditor.getPage()))
+		if (!reveal(view, fEditor.getPage())) {
 			MessageDialog.openInformation(fEditor.getShell(), getDialogTitle(), SnippetMessages.getString("ShowInPackageViewAction.not_found")); //$NON-NLS-1$
+		}
 	}
 
 	private boolean reveal(PackageExplorerPart view, Object element) {
-		if (view == null)
+		if (view == null) {
 			return false;
+		}
 		view.selectReveal(new StructuredSelection(element));
 		IElementComparer comparer= view.getTreeViewer().getComparer();
 		Object selected= getSelectedElement(view);
-		if (comparer != null ? comparer.equals(element, selected) : element.equals(selected))
+		if (comparer != null ? comparer.equals(element, selected) : element.equals(selected)) {
 			return true;
+		}
 		return false;
 	}
 
