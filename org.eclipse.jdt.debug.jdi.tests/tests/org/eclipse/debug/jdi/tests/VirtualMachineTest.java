@@ -26,8 +26,6 @@ import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
-import com.sun.jdi.event.EventQueue;
-import com.sun.jdi.request.EventRequestManager;
 
 /**
  * Tests for JDI com.sun.jdi.VirtualMachine
@@ -159,13 +157,13 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * Test JDI eventQueue().
 	 */
 	public void testJDIEventQueue() {
-		assertTrue("1", fVM.eventQueue() instanceof EventQueue);
+		assertNotNull("1", fVM.eventQueue());
 	}
 	/**
 	 * Test JDI eventRequestManager().
 	 */
 	public void testJDIEventRequestManager() {
-		assertTrue("1", fVM.eventRequestManager() instanceof EventRequestManager);
+		assertNotNull("1", fVM.eventRequestManager());
 	}
 	/**
 	 * Test JDI mirrorOf(boolean).
