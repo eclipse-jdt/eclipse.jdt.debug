@@ -439,7 +439,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return supportsTerminate() && !isTerminated();
+		return supportsTerminate() && !isTerminated() && !isDisconnected();
 	}
 
 	/**
