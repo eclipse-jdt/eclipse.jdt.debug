@@ -33,9 +33,11 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			for (int i = 0; i < 100; i++) {
+			for (int n= 0; n < 10; n++) {
 				startMeasuring();
-				stepOver(frame);
+				for (int i = 0; i < 100; i++) {
+					stepOver(frame);
+				}
 				stopMeasuring();
 			}
 			commitMeasurements();
