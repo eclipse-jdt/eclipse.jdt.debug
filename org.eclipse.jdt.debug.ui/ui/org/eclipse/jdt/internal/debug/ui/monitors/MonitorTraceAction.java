@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,5 +30,19 @@ public class MonitorTraceAction extends MonitorAction {
 		}
 		MonitorManager.getDefault().update(target);
 		fView.refreshCurrentViewer(target.supportsMonitorInformation(), false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	public void update() {
+		boolean enable= false;
+		if (fAction != null) {
+			IJavaDebugTarget target= getDebugTarget();
+			if (target != null) {
+				enable= target.supportsMonitorInformation();
+			}
+			fAction.setEnabled(enable);
+		}
 	}
 }
