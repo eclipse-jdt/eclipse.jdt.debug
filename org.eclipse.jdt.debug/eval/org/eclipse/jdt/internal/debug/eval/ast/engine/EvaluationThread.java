@@ -186,7 +186,6 @@ class EvaluationThread {
 	 * this thread has finished an evaluation.
 	 */
 	private void evaluationFinished(IEvaluationResult result) {
-		fEvaluating = false;
 		fEngine.evaluationThreadFinished(this);
 		fListener.evaluationComplete(result);
 		fExpression= null;
@@ -194,5 +193,6 @@ class EvaluationThread {
 		fThread= null;
 		fListener= null;
 		fException= null;
+		fEvaluating = false;
 	}
 }
