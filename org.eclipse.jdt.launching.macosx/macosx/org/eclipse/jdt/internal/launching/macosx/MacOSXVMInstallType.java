@@ -19,6 +19,7 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.VMStandin;
 
 /**
  * This plugins into the org.eclipse.jdt.launching.vmInstallTypes extension point
@@ -49,23 +50,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	private String fDefaultJDKID;
 	
 	public IVMInstall doCreateVMInstall(String id) {
-		MacOSXVMInstall vm= new MacOSXVMInstall(this, id);
-		String path= JVM_VERSION_LOC + id + File.separator + JVM_ROOT;
-		File home = new File(path);
-		vm.setInstallLocation(home);
-		
-		String format= MacOSXLauncherMessages.getString(id.equals(fDefaultJDKID)
-									? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
-									: "MacOSXVMType.jvmName");				//$NON-NLS-1$
-		vm.setName(MessageFormat.format(format, new Object[] { id } ));
-		
-		vm.setLibraryLocations(getDefaultLibraryLocations(home));
-		
-		URL doc= getDefaultJavaDocLocation(id);
-		if (doc != null)
-			vm.setJavadocLocation(doc);
-		
-		return vm;
+		return new MacOSXVMInstall(this, id);
 	}
 	
 	public String getName() {
@@ -85,40 +70,45 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	 */
 	public File detectInstallLocation() {
 		
-		String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
-		if (javaVMName == null || !JAVA_VM_NAME.equals(javaVMName)) 
-			return null;
+			String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
+			if (javaVMName == null || !JAVA_VM_NAME.equals(javaVMName)) 
+				return null;
 	
-		// find all installed VMs
-		File versionDir= new File(JVM_VERSION_LOC);
-		if (versionDir.exists() && versionDir.isDirectory()) {
-			File currentJDK= new File(versionDir, CURRENT_JVM);
-			try {
-				currentJDK= currentJDK.getCanonicalFile();
-			}catch (IOException ex) {
-			}
-			File[] versions= versionDir.listFiles();
-			for (int i= 0; i < versions.length; i++) {
-				String version= versions[i].getName();
-				File home=  new File(versions[i], JVM_ROOT);
-				if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
-					if (currentJDK.equals(versions[i])) {
-						if (fDefaultJDKID == null)
-							fDefaultJDKID= version;
-						createVMInstall(version);							
-						IVMInstall vm= findVMInstall(version);
-						if (vm != null) {
+			// find all installed VMs
+			File versionDir= new File(JVM_VERSION_LOC);
+			if (versionDir.exists() && versionDir.isDirectory()) {
+				File currentJDK= new File(versionDir, CURRENT_JVM);
+				try {
+					currentJDK= currentJDK.getCanonicalFile();
+				} catch (IOException ex) {
+				}
+				File[] versions= versionDir.listFiles();
+				for (int i= 0; i < versions.length; i++) {
+					String version= versions[i].getName();
+					File home=  new File(versions[i], JVM_ROOT);
+					if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
+						VMStandin vm= new VMStandin(this, version);
+						vm.setInstallLocation(home);
+						String format= MacOSXLauncherMessages.getString(version.equals(fDefaultJDKID)
+													? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
+													: "MacOSXVMType.jvmName");				//$NON-NLS-1$
+						vm.setName(MessageFormat.format(format, new Object[] { version } ));
+						vm.setLibraryLocations(getDefaultLibraryLocations(home));
+						URL doc= getDefaultJavaDocLocation(version);
+						if (doc != null)
+							vm.setJavadocLocation(doc);
+						
+						IVMInstall vm2= vm.convertToRealVM();
+						if (currentJDK.equals(versions[i])) {
 							try {
-								JavaRuntime.setDefaultVMInstall(vm, null);
+								JavaRuntime.setDefaultVMInstall(vm2, null);
 							} catch (CoreException e) {
 								// exception intentionally ignored
 							}
 						}
-					} else
-						createVMInstall(version);
+					}
 				}
 			}
-		}
 		return null;
 	}
 
