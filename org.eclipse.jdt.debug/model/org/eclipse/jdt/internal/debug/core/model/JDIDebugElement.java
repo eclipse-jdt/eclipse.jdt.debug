@@ -157,7 +157,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	/**
 	 * Fires a debug event marking the CHANGE of this element.
 	 */
-	protected void fireChangeEvent() {
+	public void fireChangeEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CHANGE));
 	}
 	
