@@ -704,7 +704,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				}
 				try {
 					project= compilationUnit.getCorrespondingResource().getProject();
-					method= getMethod(frame, resources);
+					method= getMethod(frame, compilationUnit);
 					if (method != null) {
 						delta= new CompilationUnitDelta(compilationUnit, getLastProjectBuildTime(project));
 						if (!delta.hasChanged(method)) {
@@ -799,7 +799,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Returns the method in which this stack frame is
 	 * suspended or <code>null</code> if none can be found
 	 */
-	public IMethod getMethod(JDIStackFrame frame, IResource[] resources) throws CoreException {
+	public IMethod getMethod(JDIStackFrame frame, ICompilationUnit unit) throws CoreException {
 		String declaringTypeName= frame.getDeclaringTypeName();
 		String methodName= frame.getMethodName();
 		String[] arguments= null;
@@ -810,8 +810,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			// create the method
 			return null;
 		}
-		ICompilationUnit compilationUnit= getCompilationUnit(frame);
-		IType type= compilationUnit.getType(getUnqualifiedName(declaringTypeName));;
+		IType type= unit.getType(getUnqualifiedName(declaringTypeName));;
 		if (type != null) {
 			return type.getMethod(methodName, arguments);
 		}
