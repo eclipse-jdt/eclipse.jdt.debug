@@ -199,7 +199,7 @@ public interface IRuntimeClasspathEntry {
 	 * <li><code>BOOTSTRAP_CLASSES</code> - a bootstrap entry should appear on the
 	 * 		boot path</li>
 	 * <li><code>USER_CLASSES</code> - a user entry should appear on the path
-	 * 		conatining user or application classes</li>
+	 * 		containing user or application classes</li>
 	 * </ul>
 	 * 
 	 * @return where this entry should appear on the runtime classpath
