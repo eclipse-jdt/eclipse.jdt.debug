@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -183,7 +184,15 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */
-	public String getReferenceTypeName() {
+	public String getReferenceTypeName() throws DebugException {
+		String genericSignature= getField().genericSignature();
+		if (genericSignature != null) {
+			return Signature.toString(genericSignature).replace('/', '.');
+		}
+		Type underlyingType= getUnderlyingType();
+		if (underlyingType instanceof ReferenceType) {
+			return JDIReferenceType.getGenericName((ReferenceType)underlyingType);
+		}
 		return getField().typeName();
 	}
 	

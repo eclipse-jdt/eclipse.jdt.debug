@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -321,7 +322,30 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public List getArgumentTypeNames() throws DebugException {
 		try {
-			return getUnderlyingMethod().argumentTypeNames();
+			Method underlyingMethod= getUnderlyingMethod();
+			String genericSignature= underlyingMethod.genericSignature();
+			if (genericSignature == null) {
+				// no generic signature
+				List argumentTypeNames= underlyingMethod.argumentTypeNames();
+				if (underlyingMethod.isVarargs()) {
+					String argumentTypeName= (String)argumentTypeNames.remove(argumentTypeNames.size() - 1);
+					argumentTypeNames.add(argumentTypeName.substring(0, argumentTypeName.length() - 2) + "..."); //$NON-NLS-1$
+				}
+				return argumentTypeNames;
+			}
+			// generic signature
+			String[] parameterTypes= Signature.getParameterTypes(genericSignature);
+			List argumentTypeNames= new ArrayList();
+			for (int i= 0; i < parameterTypes.length - 1; i++) {
+				argumentTypeNames.add(Signature.toString(parameterTypes[i]).replace('/', '.'));
+			}
+			if (underlyingMethod.isVarargs()) {
+				String parameterTypeName= Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.');
+				argumentTypeNames.add(parameterTypeName.substring(0, parameterTypeName.length() - 2) + "..."); //$NON-NLS-1$
+			} else {
+				argumentTypeNames.add(Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.'));
+			}
+			return argumentTypeNames;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_argument_type_names"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will never reach this line, as
@@ -710,7 +734,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				if (isObsolete()) {
 					fDeclaringTypeName=  JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 				} else {
-					fDeclaringTypeName= getUnderlyingMethod().declaringType().name();
+					fDeclaringTypeName= JDIReferenceType.getGenericName(getUnderlyingMethod().declaringType());
 				}
 			} catch (RuntimeException e) {
 				if (getThread().isSuspended()) {
@@ -735,7 +759,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					if (thisObject == null) {
 						fReceivingTypeName = getDeclaringTypeName();
 					} else {
-						fReceivingTypeName = thisObject.referenceType().name();
+						fReceivingTypeName = JDIReferenceType.getGenericName(thisObject.referenceType());
 					}
 				}
 			} catch (RuntimeException e) {

@@ -105,7 +105,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			if (fReferenceTypeName == null) {
-				fReferenceTypeName= stripBrackets(getArrayReference().referenceType().name());
+				fReferenceTypeName= stripBrackets(JDIReferenceType.getGenericName(getArrayReference().referenceType()));
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$

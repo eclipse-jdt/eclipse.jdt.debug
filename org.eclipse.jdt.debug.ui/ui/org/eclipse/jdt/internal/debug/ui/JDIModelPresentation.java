@@ -1726,6 +1726,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			// handle variable argument name
 			return removeQualifierFromGenericName(qualifiedName.substring(0, qualifiedName.length() - 3)) + "..."; //$NON-NLS-1$
 		}
+		if (qualifiedName.endsWith("[]")) { //$NON-NLS-1$
+			// handle array type
+			return removeQualifierFromGenericName(qualifiedName.substring(0, qualifiedName.length() - 2)) + "[]"; //$NON-NLS-1$
+		}
 		// check if the type has parameters
 		int parameterStart= qualifiedName.indexOf('<');
 		if (parameterStart == -1) {

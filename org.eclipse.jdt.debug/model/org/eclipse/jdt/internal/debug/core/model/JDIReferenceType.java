@@ -14,13 +14,19 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ArrayType;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
@@ -172,4 +178,34 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
         // as #requestFailed will throw an exception
         return null;
     }
+    
+
+	static public String getGenericName(ReferenceType type) throws DebugException {
+		if (type instanceof ArrayType) {
+			try {
+				Type componentType;
+					componentType= ((ArrayType)type).componentType();
+				if (componentType instanceof ReferenceType) {
+					return getGenericName((ReferenceType)componentType) + "[]"; //$NON-NLS-1$
+				}
+				return type.name();
+			} catch (ClassNotLoadedException e) {
+				throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, null, e));
+			}
+		}
+		StringBuffer res= new StringBuffer(Signature.toString(type.signature()).replace('/', '.'));
+		String genericSignature= type.genericSignature();
+		if (genericSignature != null) {
+			String[] typeParameters= Signature.getTypeParameters(genericSignature);
+			if (typeParameters.length > 0) {
+				res.append('<').append(Signature.getTypeVariable(typeParameters[0]));
+				for (int i= 1; i < typeParameters.length; i++) {
+					res.append(',').append(Signature.getTypeVariable(typeParameters[i]));
+				}
+				res.append('>');
+			}
+		}
+		return res.toString();
+	}
+
 }

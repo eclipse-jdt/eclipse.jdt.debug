@@ -16,10 +16,12 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.Signature;
 
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -95,6 +97,14 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
+			String genericSignature= getLocal().genericSignature();
+			if (genericSignature != null) {
+				return Signature.toString(genericSignature).replace('/','.');
+			}
+			Type underlyingType= getUnderlyingType();
+			if (underlyingType instanceof ReferenceType) {
+				return JDIReferenceType.getGenericName((ReferenceType) underlyingType);
+			}
 			return getLocal().typeName();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$

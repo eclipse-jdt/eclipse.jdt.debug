@@ -315,5 +315,20 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		}
 		return owningThread;
 	}
+	
+	/**
+	 * @see IValue#getReferenceTypeName()
+	 */
+	public String getReferenceTypeName() throws DebugException {
+		try {
+			return JDIReferenceType.getGenericName(getUnderlyingReferenceType());
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;			
+		}
+	}
+
 }
 
