@@ -31,6 +31,7 @@ import org.eclipse.jdi.internal.event.ModificationWatchpointEventImpl;
 import org.eclipse.jdi.internal.event.StepEventImpl;
 import org.eclipse.jdi.internal.event.ThreadDeathEventImpl;
 import org.eclipse.jdi.internal.event.ThreadStartEventImpl;
+import org.eclipse.jdi.internal.event.VMDeathEventImpl;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.Location;
@@ -491,6 +492,8 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 			return (EventRequestImpl)fEnabledRequests[THREAD_DEATH_INDEX].get(event.requestID());
 		else if (event instanceof ThreadStartEventImpl)
 			return (EventRequestImpl)fEnabledRequests[THREAD_START_INDEX].get(event.requestID());
+		else if (event instanceof VMDeathEventImpl)
+			return (EventRequestImpl)fEnabledRequests[VM_DEATH_INDEX].get(event.requestID());
 		else
 			throw new InternalError(RequestMessages.getString("EventRequestManagerImpl.Got_event_of_unknown_type_2")); //$NON-NLS-1$
 	}
