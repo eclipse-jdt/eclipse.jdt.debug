@@ -1,5 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
@@ -8,7 +15,7 @@
 <b><i>Description: </i></b>This extension point represents different kinds of connections to remote VMs.  Each extension must implement
 <samp>org.eclipse.jdt.launching.IVMConnector</samp>.  An IVMConnector is responsible for establishing a connection
 with a remote VM.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (vmConnector*)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.vmConnector">vmConnector</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -19,7 +26,7 @@ with a remote VM.<p><b><i>Configuration Markup:</i></b><p>
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT vmConnector EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.vmConnector">vmConnector</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST vmConnector</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
@@ -42,7 +49,12 @@ with a remote VM.<p><b><i>Configuration Markup:</i></b><p>
 </p><p>
 <b><i>Supplied Implementation: </i></b>An implementation of a standard socket attach connector is provided.<p>
 <font size="-1" color="#336699">
-<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
+<p>
+<a href="hglegal.htm">
+ <img SRC="ngibmcpy.gif"
+   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+   BORDER=0 height=14 width=324></a>
+</p><p>
 </font>
 </BODY>
 </HTML>

@@ -1,5 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
@@ -10,7 +17,7 @@ Each extension must implement <samp>org.eclipse.jdt.launching.IVMInstallType</sa
 An IVMInstallType is responsible for creating and managing a set of instances of its corresponding IVMInstall class.
 Through creating different IVMInstall objects, an IVMInstallType allows for specific behaviour for various Java VMs.
 A UI for managing IVMInstalls is provided by the Java Debug UI plug-in.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (vmInstallType*)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.vmInstallType">vmInstallType</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -21,7 +28,7 @@ A UI for managing IVMInstalls is provided by the Java Debug UI plug-in.<p><b><i>
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT vmInstallType EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.vmInstallType">vmInstallType</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST vmInstallType</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
@@ -45,7 +52,12 @@ A UI for managing IVMInstalls is provided by the Java Debug UI plug-in.<p><b><i>
 <b><i>Supplied Implementation: </i></b>Abstract implementations of IVMInstall and IVMInstallType are provided.  The Java Development Tools Launching Support plug-in defines a VM
 install type for the standard 1.1.* and 1.2/1.3/1.4 level <b>JRE</b>.<p>
 <font size="-1" color="#336699">
-<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
+<p>
+<a href="hglegal.htm">
+ <img SRC="ngibmcpy.gif"
+   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+   BORDER=0 height=14 width=324></a>
+</p><p>
 </font>
 </BODY>
 </HTML>
