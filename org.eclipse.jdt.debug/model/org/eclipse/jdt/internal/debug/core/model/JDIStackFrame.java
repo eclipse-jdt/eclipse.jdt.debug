@@ -657,7 +657,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public String getDeclaringTypeName() throws DebugException {
 		if (fStackFrame == null || fDeclaringTypeName == null) {
 			try {
-				Method underlyingMethod= getUnderlyingMethod();
 				if (isObsolete()) {
 					fDeclaringTypeName=  JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 				} else {
