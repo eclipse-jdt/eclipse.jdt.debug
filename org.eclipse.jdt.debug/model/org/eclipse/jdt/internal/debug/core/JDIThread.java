@@ -1269,7 +1269,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				// deepest frame were popped. Fire a changed notification
 				// in case this has occured.
 				fireChangeEvent();
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
+				targetRequestFailed(exception.toString(),exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			}

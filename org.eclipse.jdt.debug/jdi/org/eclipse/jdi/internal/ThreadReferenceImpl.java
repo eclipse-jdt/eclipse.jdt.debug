@@ -596,11 +596,11 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SF_POP_FRAME, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.INVALID_THREAD:
-					throw new IncompatibleThreadStateException();
-				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException();
-				case JdwpReplyPacket.NO_MORE_FRAMES:
 					throw new InvalidStackFrameException();
+				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+					throw new IncompatibleThreadStateException("Unable to pop the requested stack frame. The requested stack frame is not suspended.");
+				case JdwpReplyPacket.NO_MORE_FRAMES:
+					throw new InvalidStackFrameException("Unable to pop the requested stack frame from the call stack (Reasons include: The requested frame was the last frame on the call stack; The requested frame was the last frame above a native frame)");
 				default:
 					defaultReplyErrorHandler(replyPacket.errorCode());
 			}
