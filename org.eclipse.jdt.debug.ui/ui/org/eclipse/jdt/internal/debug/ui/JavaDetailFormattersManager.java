@@ -15,12 +15,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -43,6 +45,7 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -182,6 +185,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		if (sourceElement instanceof IJavaElement) {
 			return ((IJavaElement) sourceElement).getJavaProject();
+		}
+		// if no source element, try the project associated with the launch - bug 27837
+		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+		if (configuration != null) {
+			try {
+				return JavaRuntime.getJavaProject(configuration);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		return null;
 	}
