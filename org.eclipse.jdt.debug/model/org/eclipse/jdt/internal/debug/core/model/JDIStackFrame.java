@@ -266,7 +266,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					while (fields.hasNext()) {
 						Field field= (Field) fields.next();
 						if (field.isStatic()) {
-							fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, declaringType));
+							fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, field.declaringType().classObject()));
 						}
 					}
 					Collections.sort(fVariables, new Comparator() {

@@ -17,7 +17,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
-import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -26,7 +25,6 @@ import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -43,10 +41,6 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 * or <code>null</code> for a static field.
 	 */
 	private ObjectReference fObject;
-	/**
-	 * The type containing the field.
-	 */
-	private ReferenceType fType;
 	
 	/**
 	 * Constructs a field wrappering the given field.
@@ -55,16 +49,6 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		super(target);
 		fField= field;
 		fObject= objectRef;
-		fType= (ReferenceType)objectRef.type();
-	}
-
-	/**
-	 * Constructs a field wrappering the given field.
-	 */
-	public JDIFieldVariable(JDIDebugTarget target, Field field, ReferenceType refType) {
-		super(target);
-		fField= field;
-		fType= refType;
 	}
 
 	/**
@@ -208,10 +192,6 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		return fObject;
 	}
 	
-	public ReferenceType getReferenceType() {
-		return fType;
-	}
-	
 	public boolean supportsValueModification() {
 		if (getField().declaringType()instanceof InterfaceType) {
 			return false;
@@ -279,15 +259,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 * @see org.eclipse.jdt.debug.core.IJavaFieldVariable#getObject()
 	 */
 	public IJavaObject getReceiver() {
-		ObjectReference objectReference= getObjectReference();
-		if (objectReference == null) {
-			return null;
-		}
-		return (IJavaObject)JDIValue.createValue(getJavaDebugTarget(), objectReference);
-	}
-	
-	public IJavaReferenceType getReceivingType() {
-		return (IJavaReferenceType)JDIType.createType(getJavaDebugTarget(), getReferenceType());
+		return (IJavaObject)JDIValue.createValue(getJavaDebugTarget(), getObjectReference());
 	}
 
 }

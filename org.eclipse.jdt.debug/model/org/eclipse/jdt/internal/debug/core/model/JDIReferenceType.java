@@ -20,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 
 import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 
@@ -74,10 +75,9 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	 */
 	public IJavaFieldVariable getField(String name) throws DebugException {
 		try {
-			ReferenceType type = (ReferenceType)getUnderlyingType();
-			Field field = type.fieldByName(name);
+			Field field = ((ReferenceType)getUnderlyingType()).fieldByName(name);
 			if (field != null) {
-				return new JDIFieldVariable(getDebugTarget(), field, type);
+				return new JDIFieldVariable(getDebugTarget(), field, (ObjectReference)getClassObject());
 			}			
 		} catch (RuntimeException e) {
 			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_field"), new String[] {e.toString(), name}), e); //$NON-NLS-1$
