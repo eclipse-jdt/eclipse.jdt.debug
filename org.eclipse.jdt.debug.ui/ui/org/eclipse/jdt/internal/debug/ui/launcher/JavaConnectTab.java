@@ -94,7 +94,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fProjButton = new Button(projComp, SWT.PUSH);
-		fProjButton.setText("&Browse");
+		fProjButton.setText("&Browse...");
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
