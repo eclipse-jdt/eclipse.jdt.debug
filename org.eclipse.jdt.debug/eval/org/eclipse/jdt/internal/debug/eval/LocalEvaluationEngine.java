@@ -337,7 +337,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (problemMarker.getAttribute(IMarker.SEVERITY, -1) != IMarker.SEVERITY_ERROR) {
 			return;
 		}
-		Message message= new Message(problemMarker.getAttribute(IMarker.MESSAGE, ""), problemMarker.getAttribute(IMarker.CHAR_START, 0));
+		Message message= new Message(problemMarker.getAttribute(IMarker.MESSAGE, ""), problemMarker.getAttribute(IMarker.CHAR_START, 0)); //$NON-NLS-1$
 		getResult().addError(message);
 	}
 	

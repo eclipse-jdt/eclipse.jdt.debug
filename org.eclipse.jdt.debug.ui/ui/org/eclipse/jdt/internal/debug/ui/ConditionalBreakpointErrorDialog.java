@@ -33,13 +33,13 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 	
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea= (Composite) super.createDialogArea(parent);
-		String condition= "";
+		String condition= ""; //$NON-NLS-1$
 		try {
 			condition= fBreakpoint.getCondition();
 		} catch(CoreException e) {
 		}
 		if (condition == null) {
-			condition = "";
+			condition = ""; //$NON-NLS-1$
 		}
 		fTextArea= createEditArea(parent, condition, "Edit the condition");
 		

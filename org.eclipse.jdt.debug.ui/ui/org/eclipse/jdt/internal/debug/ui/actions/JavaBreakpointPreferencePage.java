@@ -307,7 +307,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				createConditionEditor(getFieldEditorParent());
 				String condition= lineBreakpoint.getCondition();
 				if (condition == null) {
-					condition = "";
+					condition = ""; //$NON-NLS-1$
 				}
 				store.setValue(JavaBreakpointPreferenceStore.CONDITION, condition);
 				if (lineBreakpoint.isConditionEnabled()) {

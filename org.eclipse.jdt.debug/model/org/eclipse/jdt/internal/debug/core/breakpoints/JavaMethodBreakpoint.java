@@ -540,7 +540,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		super.setMarker(marker);
 		fMethodName = marker.getAttribute(METHOD_NAME, null);
 		fMethodSignature = marker.getAttribute(METHOD_SIGNATURE, null);
-		String typePattern= marker.getAttribute(TYPE_NAME, "");
+		String typePattern= marker.getAttribute(TYPE_NAME, ""); //$NON-NLS-1$
 		if (typePattern != null) {
 			fMatcher= new StringMatcher(typePattern, false, false);
 		}

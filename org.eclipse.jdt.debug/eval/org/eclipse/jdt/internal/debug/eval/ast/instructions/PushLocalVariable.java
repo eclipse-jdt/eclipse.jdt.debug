@@ -28,7 +28,6 @@ public class PushLocalVariable extends SimpleInstruction {
 	
 	public void execute() throws CoreException {
 		IRuntimeContext context= getContext();
-		IJavaVariable var = null;
 		IJavaVariable[] locals = context.getLocals();
 		for (int i = 0; i < locals.length; i++) {
 			if (locals[i].getName().equals(getName())) {

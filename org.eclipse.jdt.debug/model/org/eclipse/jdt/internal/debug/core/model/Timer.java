@@ -64,7 +64,7 @@ public class Timer {
 				}
 			}
 		};
-		setThread(new Thread(r, "Evaluation Timer"));
+		setThread(new Thread(r, "Evaluation Timer")); //$NON-NLS-1$
 		getThread().setDaemon(true);
 		getThread().start();
 	}
@@ -82,7 +82,7 @@ public class Timer {
 	 */
 	public void start(ITimeoutListener listener, int ms) {
 		if (isStarted()) {
-			throw new IllegalStateException("Timer cannot be started more than once.");
+			throw new IllegalStateException(JDIDebugModelMessages.getString("Timer.Timer_cannot_be_started_more_than_once_1")); //$NON-NLS-1$
 		}
 		setListener(listener);
 		setTimeout(ms);

@@ -57,20 +57,20 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * (value <code>"org.eclipse.jdt.debug.core.condition"</code>). This attribute is stored as a
 	 * <code>String</code>.
 	 */
-	protected static final String CONDITION= "org.eclipse.jdt.debug.core.condition";
+	protected static final String CONDITION= "org.eclipse.jdt.debug.core.condition"; //$NON-NLS-1$
 	/**
 	 * Breakpoint attribute storing a breakpoint's condition enablement
 	 * (value <code>"org.eclipse.jdt.debug.core.conditionEnabled"</code>). This attribute is stored as an
 	 * <code>boolean</code>.
 	 */
-	protected static final String CONDITION_ENABLED= "org.eclipse.jdt.debug.core.conditionEnabled";
+	protected static final String CONDITION_ENABLED= "org.eclipse.jdt.debug.core.conditionEnabled"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint attribute storing a breakpoint's source file name (debug attribute)
 	 * (value <code>"org.eclipse.jdt.debug.core.sourceName"</code>). This attribute is stored as
 	 * a <code>String</code>.
 	 */
-	protected static final String SOURCE_NAME= "org.eclipse.jdt.debug.core.sourceName";	
+	protected static final String SOURCE_NAME= "org.eclipse.jdt.debug.core.sourceName";	 //$NON-NLS-1$
 
 	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	// Marker label String keys
@@ -444,7 +444,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				if (value instanceof IJavaPrimitiveValue) {
 					// Suspend when the condition evaluates true
 					IJavaPrimitiveValue javaValue= (IJavaPrimitiveValue)value;
-					if (javaValue.getJavaType().getName().equals("boolean") && javaValue.getBooleanValue()) {
+					if (javaValue.getJavaType().getName().equals("boolean") && javaValue.getBooleanValue()) { //$NON-NLS-1$
 						suspendForCondition(event, thread);
 						return;
 					}

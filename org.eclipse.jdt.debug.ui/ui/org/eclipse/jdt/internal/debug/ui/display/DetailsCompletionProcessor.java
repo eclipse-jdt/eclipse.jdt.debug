@@ -88,7 +88,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		if (index >= 0) {
 			typeName = typeName.replace('.', IPath.SEPARATOR);
 		} 
-		typeName+=".java";
+		typeName+=".java"; //$NON-NLS-1$
 		
 		return getType(project, originalTypeName, typeName);
 	}

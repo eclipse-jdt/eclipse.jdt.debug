@@ -394,7 +394,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				try {
 					view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 				} catch (PartInitException e) {
-					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e);
+					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e); //$NON-NLS-1$
 				} finally {
 					page.activate(activePart);
 				}

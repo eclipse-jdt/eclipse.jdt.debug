@@ -176,7 +176,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 							}
 						}
 					}
-				}, "Evaluation thread");
+				}, "Evaluation thread"); //$NON-NLS-1$
 				fEvaluationThread.start();
 			} else {
 				// Use the existing thread
@@ -276,7 +276,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	// ******
 	// for hide problems with local variable declare as instance of Local Types
 	private boolean isLocalType(String typeName) {
-		StringTokenizer strTok= new StringTokenizer(typeName,"$");
+		StringTokenizer strTok= new StringTokenizer(typeName,"$"); //$NON-NLS-1$
 		strTok.nextToken();
 		while (strTok.hasMoreTokens()) {
 			char char0= strTok.nextToken().charAt(0);
@@ -346,10 +346,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	
 	protected String getCompleteSnippet(String codeSnippet) {
-		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1;
+		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
 
 		if (isAnExpression) {
-			codeSnippet = "return " + codeSnippet + ';';
+			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
 		}
 		return codeSnippet;
 	}

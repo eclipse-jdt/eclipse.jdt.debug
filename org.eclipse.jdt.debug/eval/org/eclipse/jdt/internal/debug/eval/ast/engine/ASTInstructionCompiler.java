@@ -263,10 +263,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	
 
 	private String getQualifiedIdentifier(Name name) {
-		String typeName = "";
+		String typeName = ""; //$NON-NLS-1$
 		while (name.isQualifiedName()) {
 			QualifiedName qualifiedName = (QualifiedName) name;
-			typeName = "." + qualifiedName.getName().getIdentifier() + typeName;
+			typeName = "." + qualifiedName.getName().getIdentifier() + typeName; //$NON-NLS-1$
 			name = qualifiedName.getQualifier();
 		}
 		if (name.isSimpleName()) {
@@ -283,7 +283,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			name= new StringBuffer(getTypeName(typeBinding.getElementType()));
 			int dimensions= typeBinding.getDimensions();
 			for (int i= 0; i < dimensions; i++) {
-				name.append("[]");
+				name.append("[]"); //$NON-NLS-1$
 			}
 			return name.toString();
 		} 
@@ -554,12 +554,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression expression= node.getExpression();
 		if (expression instanceof MethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		} else if (expression instanceof SuperMethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		}
@@ -1307,12 +1307,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression expression= node.getExpression();
 		if (expression instanceof MethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		} else if (expression instanceof SuperMethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) {
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		}
@@ -2288,7 +2288,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String typeName = typeBinding.getName();
 		if (typeBinding.isPrimitive()) {
 			return getPrimitiveTypeId(typeName);
-		} else if ("String".equals(typeName) && "java.lang".equals(typeBinding.getPackage().getName())){
+		} else if ("String".equals(typeName) && "java.lang".equals(typeBinding.getPackage().getName())){ //$NON-NLS-1$ //$NON-NLS-2$
 			return Instruction.T_String;
 		} else {
 			return Instruction.T_Object;
@@ -2300,7 +2300,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return getPrimitiveTypeId(((PrimitiveType)type).getPrimitiveTypeCode().toString());
 		} else if (type.isSimpleType()) {
 			SimpleType simpleType = (SimpleType) type;
-			if ("java.lang.String".equals(simpleType.getName())){
+			if ("java.lang.String".equals(simpleType.getName())){ //$NON-NLS-1$
 				return Instruction.T_String;
 			} else {
 				return Instruction.T_Object;
@@ -2368,23 +2368,23 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private String getPrimitiveTypeSignature(String typeName) {
 		switch (getPrimitiveTypeId(typeName)) {
 			case Instruction.T_byte:
-				return "B";
+				return "B"; //$NON-NLS-1$
 			case Instruction.T_char:
-				return "C";
+				return "C"; //$NON-NLS-1$
 			case Instruction.T_double:
-				return "D";
+				return "D"; //$NON-NLS-1$
 			case Instruction.T_float:
-				return "F";
+				return "F"; //$NON-NLS-1$
 			case Instruction.T_int:
-				return "I";
+				return "I"; //$NON-NLS-1$
 			case Instruction.T_long:
-				return "J";
+				return "J"; //$NON-NLS-1$
 			case Instruction.T_short:
-				return "S";
+				return "S"; //$NON-NLS-1$
 			case Instruction.T_boolean:
-				return "Z";
+				return "Z"; //$NON-NLS-1$
 			case Instruction.T_void:
-				return "V";
+				return "V"; //$NON-NLS-1$
 		}
 		// throw exception
 		return null;

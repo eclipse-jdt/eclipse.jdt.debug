@@ -51,7 +51,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * Identifier for the 'Prompting Java Source Locator' extension
 	 * (value <code>"org.eclipse.jdt.debug.ui.javaSourceLocator"</code>).
 	 */
-	public static final String ID_PROMPTING_JAVA_SOURCE_LOCATOR = IJavaDebugUIConstants.PLUGIN_ID + ".javaSourceLocator";
+	public static final String ID_PROMPTING_JAVA_SOURCE_LOCATOR = IJavaDebugUIConstants.PLUGIN_ID + ".javaSourceLocator"; //$NON-NLS-1$
 	
 	/**
 	 * The project being debugged.

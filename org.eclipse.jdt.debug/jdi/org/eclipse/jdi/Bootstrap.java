@@ -18,7 +18,7 @@ public class Bootstrap
 			return fVirtualMachineManager;
 		
 		try {
-			String className= JDIDebugPlugin.getDefault().getDescriptor().getExtensionPoint("jdiclient").getLabel();
+			String className= JDIDebugPlugin.getDefault().getDescriptor().getExtensionPoint("jdiclient").getLabel(); //$NON-NLS-1$
 			Class clazz= null;
 			if (className != null) {
 				clazz= Class.forName(className);

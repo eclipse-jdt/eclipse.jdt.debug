@@ -102,7 +102,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				Iterator fields= ref.fields().iterator();
 				while (fields.hasNext()) {
 					Field fieldTmp = (Field)fields.next();
-					if (fieldTmp.name().startsWith("this$")) {
+					if (fieldTmp.name().startsWith("this$")) { //$NON-NLS-1$
 						enclosingThis= fieldTmp;
 						break;
 					}
@@ -122,7 +122,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	public IJavaFieldVariable getField(String name, String declaringTypeSignature) throws DebugException {
 		ReferenceType ref= getUnderlyingReferenceType();
 		try {
-			Field field= null, enclosingThis= null, fieldTmp= null;
+			Field field= null;
+			Field fieldTmp= null;
 			Iterator fields= ref.allFields().iterator();
 			while (fields.hasNext()) {
 				fieldTmp = (Field)fields.next();
@@ -206,7 +207,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				Iterator fields= ref.fields().iterator();
 				while (fields.hasNext()) {
 					fieldTmp = (Field)fields.next();
-					if (fieldTmp.name().startsWith("this$")) {
+					if (fieldTmp.name().startsWith("this$")) { //$NON-NLS-1$
 						enclosingThis= fieldTmp;
 					}
 				}
