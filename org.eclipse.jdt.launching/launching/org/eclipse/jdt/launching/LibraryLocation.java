@@ -31,7 +31,7 @@ public final class LibraryLocation {
 	 * @param libraryPath	The location of the JAR containing java.lang.Object
 	 * 					Must not be <code>null</code>.
 	 * @param sourcePath	The location of the zip file containing the sources for <code>library</code>
-	 * 					Must not be <code>null</code> (Use Path.EMPTY instead)
+	 * 					Must not be <code>null</code> (Use Path.ROOT instead)
 	 * @param packageRoot The path inside the <code>source</code> zip file where packages names
 	 * 					  begin. If the source for java.lang.Object source is found at 
 	 * 					  "src/java/lang/Object.java" in the zip file, the 
@@ -58,7 +58,7 @@ public final class LibraryLocation {
 	}
 	
 	/**
-	 * Reutrns the JRE library source zip location.
+	 * Returns the JRE library source zip location.
 	 * 
 	 * @return The JRE library source zip location.
 	 */

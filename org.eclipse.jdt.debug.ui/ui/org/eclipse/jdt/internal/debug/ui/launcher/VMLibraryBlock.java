@@ -288,7 +288,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 				IPath lib = entries[i].getPath();
 				IPath src = entries[i].getSourceAttachmentPath();
 				if (src == null) {
-					src = Path.EMPTY;
+					src = Path.ROOT;
 				}
 				IPath root = entries[i].getSourceAttachmentRootPath();
 				if (root == null) {
