@@ -13,12 +13,15 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.WatchExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JavaWatchExpression;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -47,9 +50,15 @@ public class WatchAction extends InspectAction {
 	}
 
 	private void createWatchExpression(String snippet) {
-		JavaWatchExpression expression = new JavaWatchExpression(snippet);
+		WatchExpression expression= new WatchExpression(snippet);
 		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
-		Object context = DebugUITools.getDebugContext();
+		IAdaptable object = DebugUITools.getDebugContext();
+		IDebugElement context= null;
+		if (object instanceof IDebugElement) {
+			context= (IDebugElement) object;
+		} else if (object instanceof ILaunch) {
+			context= ((ILaunch) object).getDebugTarget();
+		}
 		expression.setExpressionContext(context);
 	}
 

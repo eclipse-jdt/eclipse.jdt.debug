@@ -33,6 +33,12 @@
 
 <!-- Extensions -->
    <extension
+         point="org.eclipse.debug.core.watchExpressionDelegates">
+         <watchExpressionDelegate
+         	debugModel="org.eclipse.jdt.debug"
+         	delegateClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpressionDelegate"/>
+   </extension>
+   <extension
          point="org.eclipse.jdt.ui.javaEditorTextHovers">
       <hover
             label="%javaVariableHoverLabel"
@@ -570,62 +576,6 @@
                id="org.eclipse.jdt.ui.actions.AddTypeStepFilterAction">
          </action>
       </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
-            id="org.eclipse.jdt.debug.ui.JavaInspectExpressionActions">
-         <action
-               label="%convertToWatchExpressionAction.label"
-               helpContextId="convert_to_watch_expression_context"
-               tooltip="%convertToWatchExpressionAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ConvertToWatchExpressionAction"
-               menubarPath="additions"
-               enablesFor="*"
-               id="org.eclipse.jdt.debug.ui.actions.ConvertToWatchExpression">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
-            id="org.eclipse.jdt.debug.WatchExpressionActions">
-         <action
-               label="%editWatchExpressionAction.label"
-               helpContextId="edit_watch_expression_context"
-               tooltip="%editWatchExpressionAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.EditWatchExpressionAction"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.jdt.ui.watchExpressionActions.EditWatchExpression">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
-            id="org.eclipse.jdt.debug.WatchExpressionActions">
-         <filter
-               name="ReevaluateWatchExpressionActionFilter"
-               value="availableJavaDebugTarget">
-         </filter>
-         <action
-               label="%reevaluateWatchExpressionAction.label"
-               helpContextId="reevaluate_watch_expression_context"
-               tooltip="%reevaluateWatchExpressionAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ReevaluateWatchExpressionAction"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.jdt.ui.watchExpressionActions.ReevaluateWatchExpression">
-         </action>
-      </objectContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.jdt.debug.ExpressionViewPopupActions">
-         <action
-               label="%addWatchExpressionAction.label"
-               icon="icons/full/ctool16/watch_exp.gif"
-               helpContextId="add_watch_expression_context"
-               tooltip="%addWatchExpressionAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.AddWatchExpressionAction"
-               menubarPath="additions"
-               id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression">
-         </action>
-      </viewerContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView.detail"
             id="org.eclipse.jdt.debug.DetailsEvaluationActions">
@@ -1292,15 +1242,6 @@
                menubarPath="openOnGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction">
-         </action>
-         <action
-               label="%Watch.label"
-               icon="icons/full/ctool16/watch_exp.gif"
-               helpContextId="variable_watch_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-               menubarPath="openOnGroup"
-               enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.actions.WatchAction">
          </action>
       </objectContribution>
       <viewerContribution

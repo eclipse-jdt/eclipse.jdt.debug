@@ -1445,7 +1445,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		result.append('"').append(watchExpression.getExpressionText()).append('"');
 		if (watchExpression.isPending()) {
 			result.append(DebugUIMessages.getString("JDIModelPresentation._(pending)_1")); //$NON-NLS-1$
-		} else if (watchExpression.hasError()) {
+		} else if (watchExpression.hasErrors()) {
 			result.append(DebugUIMessages.getString("JDIModelPresentation._<error(s)_during_the_evaluation>_2")); //$NON-NLS-1$
 		} else {
 			IJavaValue javaValue= (IJavaValue) watchExpression.getValue();

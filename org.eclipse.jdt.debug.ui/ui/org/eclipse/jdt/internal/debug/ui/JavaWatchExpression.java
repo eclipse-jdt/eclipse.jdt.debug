@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -169,9 +170,9 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 	}
 	
 	/**
-	 * @see IWatchExpression#setExpressionContext(Object)
+	 * @see IWatchExpression#setExpressionContext(IDebugElement)
 	 */
-	public void setExpressionContext(Object context) {
+	public void setExpressionContext(IDebugElement context) {
 		// find a stack frame context if possible.
 		IStackFrame frame = null;
 		if (context instanceof IStackFrame) {
@@ -251,7 +252,7 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 			return false;
 		}
 		if (implicit && !isEnabled()) {
-			if (fResultValue != null || hasError()) {
+			if (fResultValue != null || hasErrors()) {
 				setObsolete(true);
 				refresh();
 			}
@@ -313,8 +314,12 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 	 * Indicate if the last evaluation of the expression generated errors.
 	 * @see JavaWatchExpression#STATUS_HAS_ERROR
 	 */
-	public boolean hasError() {
+	public boolean hasErrors() {
 		return (fStatus & STATUS_HAS_ERROR) != 0;
+	}
+	
+	public String[] getErrorMessages() {
+		return new String[0];
 	}
 	
 	/**
@@ -398,7 +403,7 @@ public class JavaWatchExpression extends PlatformObject implements IWatchExpress
 		if (isEnabled()) {
 			result.append(" enabled"); //$NON-NLS-1$
 		}
-		if (hasError()) {
+		if (hasErrors()) {
 			result.append(" has_error"); //$NON-NLS-1$
 		}
 		if (isObsolete()) {
