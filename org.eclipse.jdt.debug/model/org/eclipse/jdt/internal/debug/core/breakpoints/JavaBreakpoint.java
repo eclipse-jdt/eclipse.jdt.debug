@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */ 
  
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -766,13 +767,20 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setHitCount(int count) throws CoreException {	
 		if (!isEnabled() && count > -1) {
-			setAttributes(new String []{HIT_COUNT, EXPIRED},
-				new Object[]{new Integer(count), Boolean.FALSE});
+			setAttributes(new String []{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
+				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count)});
 			setEnabled(true);
 		} else {
-			setAttributes(new String[]{HIT_COUNT, EXPIRED},
-				new Object[]{new Integer(count), Boolean.FALSE});
+			setAttributes(new String[]{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
+				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count)});
 		}
+	}
+	
+	protected String getMarkerMessage(int hitCount) throws CoreException {
+		if (hitCount > 0){
+			return MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaBreakpoint._[Hit_Count__{0}]_1"), new Object[]{Integer.toString(hitCount)}); //$NON-NLS-1$
+		} 
+		return null;
 	}	
 	
 	/**
