@@ -24,25 +24,25 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Identifier for the Local Java Application launch configuration type
-	 * (value <code>org.eclipse.jdt.launching.localJavaApplication"</code>).
+	 * (value <code>"org.eclipse.jdt.launching.localJavaApplication"</code>).
 	 */
 	public static final String ID_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".localJavaApplication"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for the Remote Java Application launch configuration type
-	 * (value <code>org.eclipse.jdt.launching.remoteJavaApplication"</code>).
+	 * (value <code>"org.eclipse.jdt.launching.remoteJavaApplication"</code>).
 	 */
 	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".remoteJavaApplication"; //$NON-NLS-1$	
 
 	/**
 	 * Identifier for the Java Applet launch configuration type
-	 * (value <code>org.eclipse.jdt.launching.javaApplet"</code>).
+	 * (value <code>"org.eclipse.jdt.launching.javaApplet"</code>).
 	 */
 	public static final String ID_JAVA_APPLET = LaunchingPlugin.getUniqueIdentifier() + ".javaApplet"; //$NON-NLS-1$	
 
 	/**
 	 * Identifier for the standard Socket Attaching VM connector
-	 * (value <code>org.eclipse.jdt.launching.socketAttachConnector"</code>).
+	 * (value <code>"org.eclipse.jdt.launching.socketAttachConnector"</code>).
 	 */
 	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$	
 	
