@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class InstanceOfOperator extends CompoundInstruction {
 	public static final String IS_INSTANCE= "isInstance"; //$NON-NLS-1$
@@ -27,11 +28,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 		if (classObject == null) {
 			throw new CoreException(null);
 		} else {
-			push(classObject);
-			push(object);
-			SendMessage send= new SendMessage(IS_INSTANCE,IS_INSTANCE_SIGNATURE,1,false, -1);
-			execute(send);
-			// Do not pop because the result is left on the stack.
+			push(classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {object}, getContext().getThread(), false));
 		}
 	}
 	

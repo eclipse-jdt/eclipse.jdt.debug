@@ -33,12 +33,6 @@ public abstract class Instruction {
 		return fTypeTable[left][right];
 	}	
 	public abstract void execute() throws CoreException;
-
-	protected void execute(Instruction instruction) throws CoreException {
-		instruction.setInterpreter(fInterpreter);
-		instruction.execute();
-		instruction.setInterpreter(null);
-	}
 	
 	protected IRuntimeContext getContext() {
 		return fInterpreter.getContext();
