@@ -39,9 +39,8 @@ public class ClasspathContainerSourceContainerTypeDelegate extends AbstractSourc
 					abort(LaunchingMessages.getString("ClasspathContainerSourceContainerTypeDelegate.5"), null); //$NON-NLS-1$
 				}
 				return new ClasspathContainerSourceContainer(new Path(string));
-			} else {
-				abort(LaunchingMessages.getString("ClasspathContainerSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
-			}
+			} 
+			abort(LaunchingMessages.getString("ClasspathContainerSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
 		}
 		abort(LaunchingMessages.getString("ClasspathContainerSourceContainerTypeDelegate.7"), null); //$NON-NLS-1$
 		return null;

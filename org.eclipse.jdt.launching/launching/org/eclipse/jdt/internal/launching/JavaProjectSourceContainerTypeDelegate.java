@@ -44,9 +44,8 @@ public class JavaProjectSourceContainerTypeDelegate extends AbstractSourceContai
 				IProject project = workspace.getRoot().getProject(string);
 				IJavaProject javaProject = JavaCore.create(project);
 				return new JavaProjectSourceContainer(javaProject);
-			} else {
-				abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
 			}
+			abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
 		}
 		abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.7"), null); //$NON-NLS-1$
 		return null;

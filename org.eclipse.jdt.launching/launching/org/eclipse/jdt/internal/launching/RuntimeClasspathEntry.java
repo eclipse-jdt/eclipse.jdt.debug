@@ -311,16 +311,15 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			if (path.getDevice() == null) {
 				// search relative to the workspace if no device present
 				return root.findMember(path);
-			} else {
-				// look for files or folders with the given path
-				IFile[] files = root.findFilesForLocation(path);
-				if (files.length > 0) {
-					return files[0];
-				}
-				IContainer[] containers = root.findContainersForLocation(path);
-				if (containers.length > 0) {
-					return containers[0];
-				}
+			} 
+			// look for files or folders with the given path
+			IFile[] files = root.findFilesForLocation(path);
+			if (files.length > 0) {
+				return files[0];
+			}
+			IContainer[] containers = root.findContainersForLocation(path);
+			if (containers.length > 0) {
+				return containers[0];
 			}
 		}		
 		return null;
@@ -350,9 +349,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		IPath path = getClasspathEntry().getSourceAttachmentRootPath();
 		if (path == null && getSourceAttachmentPath() != null) {
 			return Path.EMPTY;
-		} else {
-			return path;
 		}
+		return path;
 	}
 
 	/**
@@ -445,11 +443,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			}
 			if (res == null) {
 				return path.toOSString();
-			} else {
-				IPath location = res.getLocation();
-				if (location != null) {
-					return location.toOSString();
-				}
+			} 
+			IPath location = res.getLocation();
+			if (location != null) {
+				return location.toOSString();
 			}
 		}
 		return null;		
@@ -461,9 +458,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public String getVariableName() {
 		if (getType() == IRuntimeClasspathEntry.VARIABLE || getType() == IRuntimeClasspathEntry.CONTAINER) {
 			return getPath().segment(0);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -494,9 +490,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	protected boolean equal(Object one, Object two) {
 		if (one == null) {
 			return two == null;
-		} else {
-			return one.equals(two);
 		}
+		return one.equals(two);
 	}
 	
 	/**
@@ -505,9 +500,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public int hashCode() {
 		if (getType() == CONTAINER) {
 			return getPath().segment(0).hashCode() + getType();
-		} else {
-			return getPath().hashCode() + getType();
 		}
+		return getPath().hashCode() + getType();
 	}
 
 	/**

@@ -670,31 +670,29 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				File dir = new File(path.toOSString());
 				if (dir.isDirectory()) {
 					return dir;
-				} else {
-					abort(
-							MessageFormat
-									.format(
-											LaunchingMessages
-													.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), //$NON-NLS-1$
-											new String[]{path.toString()}),
-							null,
-							IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 				}
+				abort(
+					MessageFormat
+							.format(
+									LaunchingMessages
+											.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), //$NON-NLS-1$
+									new String[]{path.toString()}),
+					null,
+					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot()
 						.findMember(path);
 				if (res instanceof IContainer && res.exists()) {
 					return res.getLocation().toFile();
-				} else {
-					abort(
-							MessageFormat
-									.format(
-											LaunchingMessages
-													.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), //$NON-NLS-1$
-											new String[]{path.toString()}),
-							null,
-							IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 				}
+				abort(
+					MessageFormat
+							.format(
+									LaunchingMessages
+											.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), //$NON-NLS-1$
+									new String[]{path.toString()}),
+					null,
+					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 			}
 		}
 		return null;

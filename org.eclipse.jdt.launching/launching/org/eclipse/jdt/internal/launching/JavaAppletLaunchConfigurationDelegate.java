@@ -228,9 +228,8 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	private String getQuotedString(String string) {
 		if (string.indexOf('"') == -1) {
 			return '"' + string + '"';
-		} else {
-			return '\'' + string + '\'';
-		}
+		} 
+		return '\'' + string + '\'';
 	}
 	
 	/* (non-Javadoc)
@@ -367,22 +366,19 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
 			}
 			return resource.getLocation().toFile(); 
+		} 
+		if (path.isAbsolute()) {
+			File dir = new File(path.toOSString());
+			if (dir.isDirectory()) {
+				return dir;
+			} 
+			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 		} else {
-			if (path.isAbsolute()) {
-				File dir = new File(path.toOSString());
-				if (dir.isDirectory()) {
-					return dir;
-				} else {
-					abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
-				}
-			} else {
-				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-				if (res instanceof IContainer && res.exists()) {
-					return res.getLocation().toFile();
-				} else {
-					abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
-				}
-			}
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocation().toFile();
+			} 
+			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		// cannot return null - an exception will be thrown
 		return null;		

@@ -41,13 +41,11 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 			if (proj == null) {
 				//no project - use JRE's default libraries
 				return computeJRELibraries(configuration);				
-			} else {
-				return JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
 			}
-		} else {
-			// recover persisted classpath
-			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
+			return JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
 		}
+		// recover persisted classpath
+		return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
 	}
 
 	private IRuntimeClasspathEntry[] computeJRELibraries(ILaunchConfiguration configuration) throws CoreException {

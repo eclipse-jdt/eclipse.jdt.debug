@@ -114,40 +114,39 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		if (vm == null) { 
 			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.JRE_referenced_by_classpath_container_{0}_does_not_exist._1"), new String[]{containerPath.toString()}), null); //$NON-NLS-1$
 			throw new CoreException(status);
-		} else {
-			// update of the vm with new library locations
-			
-			IClasspathEntry[] entries = containerSuggestion.getClasspathEntries();
-			LibraryLocation[] libs = new LibraryLocation[entries.length];
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-					IPath path = entry.getPath();
-					File lib = path.toFile();
-					if (lib.exists() && lib.isFile()) {
-						IPath srcPath = entry.getSourceAttachmentPath();
-						if (srcPath == null) {
-							srcPath = Path.EMPTY;
-						}
-						IPath rootPath = entry.getSourceAttachmentRootPath();
-						if (rootPath == null) {
-							rootPath = Path.EMPTY;
-						}
-						libs[i] = new LibraryLocation(path, srcPath, rootPath);
-					} else {
-						IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_an_existing_library._2"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
-						throw new CoreException(status);
+		}
+		// update of the vm with new library locations
+		
+		IClasspathEntry[] entries = containerSuggestion.getClasspathEntries();
+		LibraryLocation[] libs = new LibraryLocation[entries.length];
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+				IPath path = entry.getPath();
+				File lib = path.toFile();
+				if (lib.exists() && lib.isFile()) {
+					IPath srcPath = entry.getSourceAttachmentPath();
+					if (srcPath == null) {
+						srcPath = Path.EMPTY;
 					}
+					IPath rootPath = entry.getSourceAttachmentRootPath();
+					if (rootPath == null) {
+						rootPath = Path.EMPTY;
+					}
+					libs[i] = new LibraryLocation(path, srcPath, rootPath);
 				} else {
-					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_a_library._3"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_an_existing_library._2"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 					throw new CoreException(status);
 				}
+			} else {
+				IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_a_library._3"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+				throw new CoreException(status);
 			}
-			VMStandin standin = new VMStandin(vm);
-			standin.setLibraryLocations(libs);
-			standin.convertToRealVM();
-			JavaRuntime.saveVMConfiguration();
 		}
+		VMStandin standin = new VMStandin(vm);
+		standin.setLibraryLocations(libs);
+		standin.convertToRealVM();
+		JavaRuntime.saveVMConfiguration();
 	}
 
 	/**
@@ -160,9 +159,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			desc.append(containerPath.segment(2));
 			desc.append("]"); //$NON-NLS-1$
 			return desc.toString();
-		} else {
-			return LaunchingMessages.getString("JREContainerInitializer.Default_System_Library_1"); //$NON-NLS-1$
-		}
+		} 
+		return LaunchingMessages.getString("JREContainerInitializer.Default_System_Library_1"); //$NON-NLS-1$
 	}
-
 }

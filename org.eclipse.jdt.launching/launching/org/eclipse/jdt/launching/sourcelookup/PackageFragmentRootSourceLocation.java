@@ -220,9 +220,8 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 			 PackageFragmentRootSourceLocation root = (PackageFragmentRootSourceLocation)object;
 			 if (getPackageFragmentRoot() == null) {
 			 	return root.getPackageFragmentRoot() == null;
-			 } else {
-			 	return getPackageFragmentRoot().equals(root.getPackageFragmentRoot());
-			 }
+			 } 
+			 return getPackageFragmentRoot().equals(root.getPackageFragmentRoot());
 		}
 		return false;
 	}
@@ -233,8 +232,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	public int hashCode() {
 		if (getPackageFragmentRoot() == null) {
 			return getClass().hashCode();
-		} else {
-			return getPackageFragmentRoot().hashCode();
-		}
+		} 
+		return getPackageFragmentRoot().hashCode();
 	}	
 }

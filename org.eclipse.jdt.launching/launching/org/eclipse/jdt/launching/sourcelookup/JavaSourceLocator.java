@@ -156,9 +156,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			} catch (CoreException e) {
 				if (e instanceof JavaModelException) {
 					throw (JavaModelException)e;
-				} else {
-					throw new JavaModelException(e);
-				}
+				} 
+				throw new JavaModelException(e);
 			}
 		}
 		IJavaSourceLocation[] locations = (IJavaSourceLocation[])list.toArray(new IJavaSourceLocation[list.size()]);

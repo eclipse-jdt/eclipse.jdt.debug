@@ -271,12 +271,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 						if (handler == null) {
 							// if there is no handler, throw the exception
 							throw new CoreException(status);
-						} else {
-							Object result = handler.handleStatus(status, this);
-							if (result instanceof Boolean) {
-								retry = ((Boolean)result).booleanValue();
-							}
 						} 
+						Object result = handler.handleStatus(status, this);
+						if (result instanceof Boolean) {
+							retry = ((Boolean)result).booleanValue();
+						}
 					}
 				} while (retry);
 			} finally {
@@ -300,8 +299,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 		try {
 			if (index > 0 && nextIndex>index) {
 				return Double.parseDouble(version.substring(0,nextIndex));
-			} else
-				return Double.parseDouble(version);
+			} 
+			return Double.parseDouble(version);
 		} catch (NumberFormatException e) {
 			return 0D;
 		}

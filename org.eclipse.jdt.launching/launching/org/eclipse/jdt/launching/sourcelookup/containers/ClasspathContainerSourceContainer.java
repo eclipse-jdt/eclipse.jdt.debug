@@ -66,9 +66,8 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 		}
 		if (container == null) {
 			return getPath().lastSegment().toString();
-		} else {
-			return container.getDescription();
-		}
+		} 
+		return container.getDescription();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()

@@ -39,9 +39,8 @@ public class ClasspathVariableSourceContainerTypeDelegate extends AbstractSource
 					abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.5"), null); //$NON-NLS-1$
 				}
 				return new ClasspathVariableSourceContainer(new Path(string));
-			} else {
-				abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
-			}
+			} 
+			abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
 		}
 		abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.7"), null); //$NON-NLS-1$
 		return null;

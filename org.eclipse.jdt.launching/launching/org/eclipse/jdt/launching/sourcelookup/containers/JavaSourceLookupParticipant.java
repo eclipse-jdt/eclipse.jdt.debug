@@ -109,9 +109,8 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 		ISourceContainer delegate = (ISourceContainer) fDelegateContainers.get(container);
 		if (delegate == null) {
 			return container;
-		} else {
-			return delegate; 
-		}
+		} 
+		return delegate; 
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
