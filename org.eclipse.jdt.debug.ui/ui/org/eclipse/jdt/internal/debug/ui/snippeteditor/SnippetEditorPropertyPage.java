@@ -60,6 +60,13 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		}
 
 		/**
+		 * @see ILaunchConfigurationDialog#getActiveTab()
+		 */
+		public ILaunchConfigurationTab getActiveTab() {
+			return fWorkingDirBlock;
+		}
+
+		/**
 		 * @see ILaunchConfigurationDialog#setName(String)
 		 */
 		public void setName(String name) {
