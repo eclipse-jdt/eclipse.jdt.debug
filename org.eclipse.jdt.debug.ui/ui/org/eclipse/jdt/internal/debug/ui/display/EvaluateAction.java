@@ -223,6 +223,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		Object sourceElement = sourceLocator.getSourceElement(stackFrame);
 		JDIModelPresentation presentation = new JDIModelPresentation();
 		IEditorInput sfEditorInput = presentation.getEditorInput(sourceElement);
+		presentation.dispose();
 		if (fWorkbenchPart instanceof IEditorPart) {
 			return ((IEditorPart)fWorkbenchPart).getEditorInput().equals(sfEditorInput);
 		}
