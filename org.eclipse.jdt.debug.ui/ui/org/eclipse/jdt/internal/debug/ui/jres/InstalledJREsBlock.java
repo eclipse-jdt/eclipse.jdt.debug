@@ -639,10 +639,21 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param vms
 	 */
 	public void removeJREs(IVMInstall[] vms) {
+		IStructuredSelection prev = (IStructuredSelection) getSelection();
 		for (int i = 0; i < vms.length; i++) {
 			fVMs.remove(vms[i]);
 		}
 		fVMList.refresh();
+		IStructuredSelection curr = (IStructuredSelection) getSelection();
+		if (!curr.equals(prev)) {
+			IVMInstall[] installs = getJREs();
+			if (curr.size() == 0 && installs.length == 1) {
+				// pick a default VM automatically
+				setSelection(new StructuredSelection(installs[0]));
+			} else {
+				fireSelectionChanged();
+			}
+		}
 	}
 	
 	/**
