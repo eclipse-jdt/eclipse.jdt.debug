@@ -6,11 +6,9 @@
 	<target name="build" description="Cleans, builds and refreshes the impacted resources">
 		<antcall target="clean"/>
 		<antcall target="snippetsupport.jar"/>
-		<antcall target="refresh"/>
 	</target>
 
 	<target name="init" depends="properties">
-		<property name="plugin" value="org.eclipse.jdt.debug.ui"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 	</target>
@@ -42,9 +40,4 @@
 		<delete file="${build.result.folder}/snippetsupport.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
-
-	<target name="refresh" depends="init" if="eclipse.running">
-		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
-	</target>
-
 </project>
