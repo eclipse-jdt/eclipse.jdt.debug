@@ -138,5 +138,14 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
 	public IJavaThread getThreadFilter(IJavaDebugTarget target) throws CoreException;
+	/**
+	 * Returns the threads in which this breakpoint is enabled or an empty array 
+	 * if this breakpoint is enabled in all threads.
+	 * 
+	 * @return the threads that this breakpoint is enabled for
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public IJavaThread[] getThreadFilters() throws CoreException; 
 }
 

@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */ 
  
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -910,6 +911,17 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public IJavaThread getThreadFilter(IJavaDebugTarget target) throws CoreException {
 		return (IJavaThread)fFilteredThreadsByTarget.get(target);
+	}
+	
+	/**
+	 * @see IJavaBreakpoint#getThreadFilters()
+	 */
+	public IJavaThread[] getThreadFilters() throws CoreException {
+		IJavaThread[] threads= null;
+		Collection values= fFilteredThreadsByTarget.values();
+		threads= new IJavaThread[values.size()];
+		values.toArray(threads);
+		return threads;
 	}
 
 	/**
