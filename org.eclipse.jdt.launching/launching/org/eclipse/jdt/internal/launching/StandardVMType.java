@@ -17,8 +17,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -45,6 +47,12 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * The root path for the attached src
 	 */
 	private String fDefaultRootPath;
+	
+	/**
+	 * Map of the install path for which we were unable to generate
+	 * the library info during this session.
+	 */
+	private static Map fgFailedInstallPath= new HashMap();
 		
 	/**
 	 * Convenience handle to the system-specific file separator character
@@ -106,12 +114,16 @@ public class StandardVMType extends AbstractVMInstallType {
 		String installPath = javaHome.getAbsolutePath();
 		LibraryInfo info = LaunchingPlugin.getLibraryInfo(installPath);
 		if (info == null) {
-			info = generateLibraryInfo(javaHome, javaExecutable);
+			info= (LibraryInfo)fgFailedInstallPath.get(installPath);
 			if (info == null) {
-				info = getDefaultLibraryInfo(javaHome);
-			} else {
-			    // only persist if we were able to generate info - see bug 70011
-			    LaunchingPlugin.setLibraryInfo(installPath, info);
+				info = generateLibraryInfo(javaHome, javaExecutable);
+				if (info == null) {
+					info = getDefaultLibraryInfo(javaHome);
+					fgFailedInstallPath.put(installPath, info);
+				} else {
+				    // only persist if we were able to generate info - see bug 70011
+				    LaunchingPlugin.setLibraryInfo(installPath, info);
+				}
 			}
 		} 
 		return info;
@@ -536,7 +548,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	public void disposeVMInstall(String id) {
 		IVMInstall vm = findVMInstall(id);
 		if (vm != null) {
-			LaunchingPlugin.setLibraryInfo(vm.getInstallLocation().getAbsolutePath(), null);
+			String path = vm.getInstallLocation().getAbsolutePath();
+            LaunchingPlugin.setLibraryInfo(path, null);
+            fgFailedInstallPath.remove(path);
 		}		
 		super.disposeVMInstall(id);
 	}
