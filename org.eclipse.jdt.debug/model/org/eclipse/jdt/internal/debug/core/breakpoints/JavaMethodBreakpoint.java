@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -22,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
@@ -123,7 +123,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * Used to match type names 
 	 */
-	private StringMatcher fMatcher;
+	private Pattern fPattern;
 	
 	/**
 	 * Cache of whether this breakpoint uses a type name pattern
@@ -155,10 +155,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				
 				register(register);
 			}
-
+			
 		};
 		run(null, wr);
-		fMatcher= new StringMatcher(typePattern, false, false);
+		String type = convertToRegularExpression(typePattern);
+		fPattern = Pattern.compile((String) type);
 	}
 	
 	/**
@@ -414,8 +415,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				}
 			}
 			
-			if (fMatcher != null) {
-				if (!fMatcher.match(method.declaringType().name())) {
+			if (fPattern != null) {
+				if (!fPattern.matcher(method.declaringType().name()).find()) {
 					return true;
 				}
 			}
@@ -558,10 +559,15 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		fMethodSignature = marker.getAttribute(METHOD_SIGNATURE, null);
 		String typePattern= marker.getAttribute(TYPE_NAME, ""); //$NON-NLS-1$
 		if (typePattern != null) {
-			fMatcher= new StringMatcher(typePattern, false, false);
+			fPattern = Pattern.compile(convertToRegularExpression(typePattern));
 		}
-		
 	}	
+	
+	private String convertToRegularExpression(String stringMatcherPattern) {
+	    String regex = stringMatcherPattern.replaceAll("\\.", "\\\\.");  //$NON-NLS-1$//$NON-NLS-2$
+	    regex = regex.replaceAll("\\*", "\\.\\*");  //$NON-NLS-1$//$NON-NLS-2$
+	    return regex;
+	}
 	
 	/**
 	 * If this breakpoint is not entry or exit enabled,

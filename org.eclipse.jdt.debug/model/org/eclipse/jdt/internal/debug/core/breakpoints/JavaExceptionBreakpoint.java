@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -26,7 +27,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
@@ -311,15 +311,18 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @return boolean
 	 */
 	protected boolean matchesFilters(String[] filters, String typeName, boolean defaultPackage) {
-		for (int i = 0; i < filters.length; i++) {
-			String filter = filters[i];
-			if (defaultPackage && filter.length() == 0) {
-				return true;
-			}
-			StringMatcher matcher = new StringMatcher(filter, false, false);
-			if (matcher.match(typeName)) {
-				return true;
-			}
+	    for (int i = 0; i < filters.length; i++) {
+	        String filter = filters[i];
+	        if (defaultPackage && filter.length() == 0) {
+	            return true;
+	        }
+	        
+	        filter = filter.replaceAll("\\.", "\\\\.");  //$NON-NLS-1$//$NON-NLS-2$
+	        filter = filter.replaceAll("\\*", "\\.\\*");  //$NON-NLS-1$//$NON-NLS-2$
+	        Pattern pattern = Pattern.compile((String) filter);
+	        if (pattern.matcher(typeName).find()) {
+	            return true;
+	        }
 		}
 		return false;
 	}
