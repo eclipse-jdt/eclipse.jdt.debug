@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -115,12 +116,16 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 			return text;
 		}
 
-
-
-
 		public void setInformation(String information) {
 			if(information != null)
 				text.setText(information);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getDialogSettings()
+		 */
+		public IDialogSettings getDialogSettings() {
+			return JDIDebugUIPlugin.getDefault().getDialogSettings();
 		}
 	}
 
