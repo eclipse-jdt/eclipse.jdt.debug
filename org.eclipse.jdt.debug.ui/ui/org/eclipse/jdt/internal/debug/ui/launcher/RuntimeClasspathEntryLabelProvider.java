@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -82,8 +84,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				}
 				return JavaPluginImages.get(key);
 			case IRuntimeClasspathEntry.VARIABLE:
-				//TODO: illegal internal access
-				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_ENV_VAR);				
+				return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);				
 			case IRuntimeClasspathEntry.CONTAINER:
 				// TODO: illegal internal access
 				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
