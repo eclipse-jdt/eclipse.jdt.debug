@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -23,6 +24,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDialogRequestor {
@@ -32,10 +34,14 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected Combo fJRECombo;
 	protected Button fJREAddButton;
 
-	// Collections used to populating the JRE Combo box
+	// Collections used to populate the JRE Combo box
 	protected IVMInstallType[] fVMTypes;
 	protected java.util.List fVMStandins;	
-
+	
+	// Dynamic JRE UI widgets
+	private ILaunchConfigurationTab fDynamicTab;
+	private Composite fDynamicTabHolder;
+	
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 		
 	/**
@@ -66,7 +72,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		initializeJREComboBox();
 		fJRECombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
+				handleJREComboBoxModified();
 			}
 		});
 		
@@ -75,7 +81,30 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			public void widgetSelected(SelectionEvent evt) {
 				handleJREAddButtonSelected();
 			}
-		});				
+		});	
+		
+		setDynamicTabHolder(new Composite(topComp, SWT.NONE));
+		GridLayout tabHolderLayout = new GridLayout();
+		tabHolderLayout.numColumns = 1;
+		getDynamicTabHolder().setLayout(tabHolderLayout);
+		gd = new GridData(GridData.FILL_BOTH);
+		getDynamicTabHolder().setLayoutData(gd);
+	}
+
+	protected void setDynamicTabHolder(Composite tabHolder) {
+		this.fDynamicTabHolder = tabHolder;
+	}
+
+	protected Composite getDynamicTabHolder() {
+		return fDynamicTabHolder;
+	}
+
+	protected void setDynamicTab(ILaunchConfigurationTab tab) {
+		fDynamicTab = tab;
+	}
+
+	protected ILaunchConfigurationTab getDynamicTab() {
+		return fDynamicTab;
 	}
 
 	/**
@@ -95,6 +124,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		} else {
 			initializeHardCodedDefaults(config);	
 		}
+		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.setDefaults(config);
+		}
 	}
 	
 	/**
@@ -108,6 +141,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateJREFromConfig(configuration);
+		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.initializeFrom(configuration);
+		}
 	}
 
 	/**
@@ -121,20 +158,17 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmID);
 			String vmTypeID = vmStandin.getVMInstallType().getId();
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-		}		
+		}	
+		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.performApply(configuration);
+		}
 	}
 
 	/**
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
-		return isValid();
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#isValid()
-	 */
-	public boolean isValid() {
 		
 		setErrorMessage(null);
 		setMessage(null);
@@ -156,7 +190,11 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			setErrorMessage(LauncherMessages.getString("JavaJRETab.JRE_not_specified_38")); //$NON-NLS-1$
 			return false;
 		}		
-		
+
+		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			return dynamicTab.isValid(config);
+		}
 		return true;
 	}
 
@@ -220,6 +258,14 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	}
 	
 	/**
+	 * Notification that the user changed the selection in the JRE combo box.
+	 */
+	protected void handleJREComboBoxModified() {
+		loadDynamicJREArea();
+		updateLaunchConfigurationDialog();		
+	}
+	
+	/**
 	 * Show a dialog that lets the user add a new JRE definition
 	 */
 	protected void handleJREAddButtonSelected() {
@@ -248,8 +294,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	
 	/**
 	 * Cause the VM with the specified ID to be selected in the JRE combo box.
-	 * This relies on the fact that the items set on the combo box are done so in 
-	 * the same order as they in the <code>fVMStandins</code> list.
+	 * This relies on the fact that the JRE names in the combo box are in the
+	 * same order as they in the <code>fVMStandins</code> list.
 	 */
 	protected void selectJREComboBoxEntry(String vmID) {
 		int index = -1;
@@ -284,4 +330,53 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		return vms;
 	}	
 	
+	/**
+	 * Return the class that implements <code>ILaunchConfigurationTab</code>
+	 * that is registered against the install type of the currently selected VM.
+	 */
+	protected ILaunchConfigurationTab getTabForCurrentJRE() {
+		int selectedIndex = fJRECombo.getSelectionIndex();
+		VMStandin vmStandin = (VMStandin) fVMStandins.get(selectedIndex);
+		String vmInstallTypeID = vmStandin.getVMInstallType().getId();
+		return JDIDebugUIPlugin.getDefault().getVMInstallTypePage(vmInstallTypeID);		
+	}
+	
+	/**
+	 * Show the contributed piece of UI that was registered for the install type
+	 * of the currently selected VM.
+	 */
+	protected void loadDynamicJREArea() {
+		
+		// Dispose of any current child widgets in the tab holder area
+		Control[] children = getDynamicTabHolder().getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].dispose();
+		}
+		
+		// Retrieve the dynamic UI for the current JRE 
+		setDynamicTab(getTabForCurrentJRE());
+		if (getDynamicTab() == null) {
+			return;
+		}
+		
+		// Ask the dynamic UI to create its Control
+		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+		getDynamicTab().createControl(getDynamicTabHolder());
+		getDynamicTabHolder().layout();		
+	}
+	
+	/**
+	 * Overridden here so that any error message in the dynamic UI gets returned.
+	 * 
+	 * @see ILaunchConfigurationTab#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		ILaunchConfigurationTab tab = getDynamicTab();
+		if ((super.getErrorMessage() != null) || (tab == null)) {
+			return super.getErrorMessage();
+		} else {
+			return tab.getErrorMessage();
+		}
+	}
+
 }

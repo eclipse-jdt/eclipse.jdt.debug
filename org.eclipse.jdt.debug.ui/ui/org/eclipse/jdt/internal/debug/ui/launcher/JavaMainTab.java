@@ -308,13 +308,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
-		return isValid();
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#isPageComplete()
-	 */
-	public boolean isValid() {
 		
 		setErrorMessage(null);
 		setMessage(null);

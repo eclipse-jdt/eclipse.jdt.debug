@@ -29,6 +29,7 @@
 </runtime>
 
 <!-- Extensions Points -->
+<extension-point name="%vmInstallTypePage" id="vmInstallTypePage"/>
 
 <!-- Extensions -->
 - <extension point="org.eclipse.jdt.ui.javaEditorTextHovers">

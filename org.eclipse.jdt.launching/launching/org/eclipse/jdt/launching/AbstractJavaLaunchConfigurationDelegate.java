@@ -400,6 +400,18 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	}	
 
 	/**
+	 * Returns the Map of VM-specific attributes specified by the given launch configuration,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the <code>Map</code> of VM-specific attributes
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	protected Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+	}
+	
+	/**
 	 * Returns the working directory specified by
 	 * the given launch configuration, or <code>null</code> if none.
 	 * 

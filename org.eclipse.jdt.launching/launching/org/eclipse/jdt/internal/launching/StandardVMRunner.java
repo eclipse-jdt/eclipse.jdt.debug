@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -140,10 +141,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 		arguments.add(program);
 				
 		// VM args are the first thing after the java program so that users can specify
-		// options like '-client' & '-server' which are required to be the first options
+		// options like '-client' & '-server' which are required to be the first option
 		String[] vmArgs= config.getVMArguments();
 		addArguments(vmArgs, arguments);
-		
+				
 		String[] bootCP= config.getBootClassPath();
 		if (bootCP.length > 0) {
 			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$

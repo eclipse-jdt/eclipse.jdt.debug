@@ -6,18 +6,23 @@ package org.eclipse.jdt.internal.debug.ui;
  */
  
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -66,6 +71,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private IJavaHotCodeReplaceListener fHCRListener;
 	private IElementChangedListener fJavaModelListener;
 	
+	// Map of VMInstallTypeIDs to IConfigurationElements
+	protected Map fVmInstallTypePageMap;
+
 	/**
 	 * @see Plugin(IPluginDescriptor)
 	 */
@@ -337,6 +345,38 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		dialog.setIgnoreCase(false);
 		dialog.setElements(packageList.toArray()); // XXX inefficient
 		return dialog;
+	}
+	
+	/**
+	 * Return an object that implements <code>ILaunchConfigurationTab</code> for the
+	 * specified vm install type ID.  
+	 */
+	public ILaunchConfigurationTab getVMInstallTypePage(String vmInstallTypeID) {
+		if (fVmInstallTypePageMap == null) {	
+			initializeVMInstallTypePageMap();
+		}
+		IConfigurationElement configElement = (IConfigurationElement) fVmInstallTypePageMap.get(vmInstallTypeID);
+		ILaunchConfigurationTab tab = null;
+		if (configElement != null) {
+			try {
+				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+			} catch(CoreException ce) {			 
+				log(new Status(Status.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "An error occurred retrieving a VMInstallType page", ce));
+			} 
+		}
+		return tab;
+	}
+	
+	protected void initializeVMInstallTypePageMap() {
+		fVmInstallTypePageMap = new HashMap(10);
+
+		IPluginDescriptor descriptor= JDIDebugUIPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_TYPE_PAGE);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		for (int i = 0; i < infos.length; i++) {
+			String id = infos[i].getAttribute("vmInstallTypeID"); //$NON-NLS-1$
+			fVmInstallTypePageMap.put(id, infos[i]);
+		}		
 	}
 }
 

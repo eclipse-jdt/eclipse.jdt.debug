@@ -6,6 +6,8 @@ package org.eclipse.jdt.launching;
  * All Rights Reserved.
  */
  
+import java.util.Map;
+
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 /**
@@ -28,6 +30,7 @@ public class VMRunnerConfiguration {
 	private String[] fClassPath;
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
+	private Map fVMSpecificAttributesMap;
 	
 	private static final String[] fgEmpty= new String[0];
 	
@@ -48,7 +51,17 @@ public class VMRunnerConfiguration {
 		fClassToLaunch= classToLaunch;
 		fClassPath= classPath;
 	}
-	
+
+	/**
+	 * Sets the <code>Map</code> that contains String name/value pairs that represent
+	 * VM-specific attributes.
+	 * 
+	 * @param map the <code>Map</code> of VM-specific attributes.
+	 */
+	public void setVMSpecificAttributesMap(Map map) {
+		fVMSpecificAttributesMap = map;
+	}
+
 	/**
 	 * Sets the custom VM arguments. These arguments will be appended to the list of 
 	 * VM arguments that a IVMRunner uses when launching a VM. Typically, these VM arguments
@@ -93,6 +106,16 @@ public class VMRunnerConfiguration {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.bootClassPathNotNull")); //$NON-NLS-1$
 		}
 		fBootClassPath= bootClassPath;
+	}
+	
+	/**
+	 * Returns the <code>Map</code> that contains String name/value pairs that represent
+	 * VM-specific attributes.
+	 * 
+	 * @return The <code>Map</code> of VM-specific attributes.
+	 */
+	public Map getVMSpecificAttributesMap() {
+		return fVMSpecificAttributesMap;
 	}
 	
 	/**

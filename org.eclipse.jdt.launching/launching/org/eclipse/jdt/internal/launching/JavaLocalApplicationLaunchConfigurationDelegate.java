@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,6 +53,9 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		String vmArgs = getVMArguments(configuration);
 		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 		
+		// VM-specific attributes
+		Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
+		
 		// Classpath
 		String[] classpath = getClasspath(configuration);
 		
@@ -60,6 +64,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(workingDirName);
+		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 
 		// Bootpath
 		String[] bootpath = getBootpath(configuration);

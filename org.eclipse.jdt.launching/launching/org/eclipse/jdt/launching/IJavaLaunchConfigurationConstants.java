@@ -83,6 +83,12 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	
 	/**
+	 * A Map attribute for launch configurations containing attributes specific
+	 * to a particular VM install type.
+	 */
+	public static final String ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP = LaunchingPlugin.getUniqueIdentifier() + "VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
+	
+	/**
 	 * VM connector launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMConnector</code>
 	 * identifying a connector to use for a remote attach.
