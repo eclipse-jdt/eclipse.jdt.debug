@@ -1613,6 +1613,18 @@
          </action>
       </objectContribution>
       <objectContribution
+            objectClass="org.eclipse.jdt.core.IType"
+            id="org.eclipse.jdt.debug.ui.TypeActions">
+         <action
+               label="%toggleClassPrepareAction.label"
+               helpContextId="toggle_class_prepare_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.breakpoints.ToggleClassPrepareBreakpointAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.ToggleClassPrepare">
+         </action>
+      </objectContribution>      
+      <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.InstanceFiltersActions">
          <filter
