@@ -129,7 +129,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 * @return Returns string representation.
 	 */
 	public String toString() {
-		return super.toString() + (fRequestID == null ? " (not enabled)" : ": " + fRequestID);
+		return super.toString() + (fRequestID == null ? RequestMessages.getString("EventRequestImpl._(not_enabled)_1") : RequestMessages.getString("EventRequestImpl.___2") + fRequestID); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -428,7 +428,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			case SUSPEND_ALL:
 				return SUSPENDPOL_ALL_JDWP;
 			default:
-				throw new InternalException("Invalid suspend policy encountered: " + fSuspendPolicy);
+				throw new InternalException(RequestMessages.getString("EventRequestImpl.Invalid_suspend_policy_encountered___3") + fSuspendPolicy); //$NON-NLS-1$
 		}
 	}
 
@@ -442,7 +442,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			case StepRequest.STEP_LINE:
 				return STEP_SIZE_LINE_JDWP;
 			default:
-				throw new InternalException("Invalid step size encountered: " + threadStepSize);
+				throw new InternalException(RequestMessages.getString("EventRequestImpl.Invalid_step_size_encountered___4") + threadStepSize); //$NON-NLS-1$
 		}
 	}
 	
@@ -458,7 +458,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			case StepRequest.STEP_OUT:
 				return STEP_DEPTH_OUT_JDWP;
 			default:
-				throw new InternalException("Invalid step depth encountered: " + threadStepDepth);
+				throw new InternalException(RequestMessages.getString("EventRequestImpl.Invalid_step_depth_encountered___5") + threadStepDepth); //$NON-NLS-1$
 		}
 	}
 

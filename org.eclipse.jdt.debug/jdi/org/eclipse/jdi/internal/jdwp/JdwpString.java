@@ -36,7 +36,7 @@ public class JdwpString {
 				int b = utfBytes[i + 1] & 0xFF;
 				if ((a >> 4) < 14) {
 					if ((b & 0xBF) == 0) {
-						throw new UTFDataFormatException("Second byte input does not match UTF Specification");
+						throw new UTFDataFormatException(JDWPMessages.getString("JdwpString.Second_byte_input_does_not_match_UTF_Specification_1")); //$NON-NLS-1$
 					}
 					strBuffer.append((char) (((a & 0x1F) << 6) | (b & 0x3F)));
 					i += 2;
@@ -44,12 +44,12 @@ public class JdwpString {
 					int c = utfBytes[i + 2] & 0xFF;
 					if ((a & 0xEF) > 0) {
 						if (((b & 0xBF) == 0) || ((c & 0xBF) == 0)) {
-							throw new UTFDataFormatException("Second or third byte input does not mach UTF Specification");
+							throw new UTFDataFormatException(JDWPMessages.getString("JdwpString.Second_or_third_byte_input_does_not_mach_UTF_Specification_2")); //$NON-NLS-1$
 						}
 						strBuffer.append((char) (((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
 						i += 3;
 					} else {
-						throw new UTFDataFormatException("Input does not match UTF Specification");
+						throw new UTFDataFormatException(JDWPMessages.getString("JdwpString.Input_does_not_match_UTF_Specification_3")); //$NON-NLS-1$
 					}
 				}
 			}
@@ -65,7 +65,7 @@ public class JdwpString {
 	 */
 	public static void write(String str, DataOutputStream out) throws IOException {
 		if (str == null)
-			throw new NullPointerException("str is null");
+			throw new NullPointerException(JDWPMessages.getString("JdwpString.str_is_null_4")); //$NON-NLS-1$
 		int utfCount = 0;
 		for (int i = 0; i < str.length(); i++) {
 			int charValue = (int) str.charAt(i);

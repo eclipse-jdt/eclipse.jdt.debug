@@ -7,6 +7,7 @@ package org.eclipse.jdi.internal.connect;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,7 +125,8 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 			virtualMachine = (VirtualMachineImpl)listenConnector.accept(args);
 		} catch (InterruptedIOException e) {
 			proc.destroy();
-			throw new VMStartException("VM did not connect within given time: " + ((Connector.IntegerArgument)args.get("timeout")).value() + " ms.", proc); //$NON-NLS-2$
+			String message= MessageFormat.format(ConnectMessages.getString("SocketLaunchingConnectorImpl.VM_did_not_connect_within_given_time__{0}_ms_1"), new String[]{((Connector.IntegerArgument)args.get("timeout")).value()}); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new VMStartException(message, proc);
 		}
 		
 		virtualMachine.setLauncedProcess(proc);
