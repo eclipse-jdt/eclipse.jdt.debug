@@ -1203,10 +1203,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		if (isTerminated()) {
+		if (!isAvailable()) {
 			return;
 		}
-		if (!canTerminate()) {
+		if (!supportsTerminate()) {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_termination")); //$NON-NLS-1$
 		}
 		try {
