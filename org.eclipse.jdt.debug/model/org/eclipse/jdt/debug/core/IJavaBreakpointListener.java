@@ -30,35 +30,35 @@ public interface IJavaBreakpointListener {
 	 * 
 	 * @since 3.0
 	 */
-	public static int SUSPEND= 0x0000;
+	public static int SUSPEND= 0x0001;
 	/**
 	 * Return code in response to a "breakpoint hit" notification, indicating
 	 * a vote to not suspend (i.e. resume) the associated thread.
 	 * 
 	 * @since 3.0
 	 */
-	public static int DONT_SUSPEND= 0x0001;
+	public static int DONT_SUSPEND= 0x0002;
 	/**
 	 * Return code in response to an "installing" notification, indicating
 	 * a vote to install the associated breakpoint.
 	 * 
 	 * @since 3.0
 	 */
-	public static int INSTALL= 0x0000;
+	public static int INSTALL= 0x0001;
 	/**
 	 * Return code in response to an "installing" notification, indicating
 	 * a vote to not install the associated breakpoint.
 	 * 
 	 * @since 3.0
 	 */
-	public static int DONT_INSTALL= 0x0001;
+	public static int DONT_INSTALL= 0x0002;
 	/**
 	 * Return code indicating that this listener should not be considered
 	 * in a vote to suspend a thread or install a breakpoint.
 	 * 
 	 * @since 3.0
 	 */
-	public static int DONT_CARE= 0x0002;
+	public static int DONT_CARE= 0x0004;
 	
 	/**
 	 * Notification that the given breakpoint is about to be added to

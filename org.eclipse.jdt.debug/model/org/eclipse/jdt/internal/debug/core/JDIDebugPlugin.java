@@ -478,8 +478,9 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 				Platform.run(this);
 			}
 			dispose();
-			// If any listener voted to not install, return false
-			return (fInstall & IJavaBreakpointListener.DONT_INSTALL) == 0;
+			// install if any listener voted to install, or if no one voted to not install
+			return (fInstall & IJavaBreakpointListener.INSTALL) > 0 ||
+				(fInstall & IJavaBreakpointListener.DONT_INSTALL) == 0;
 		}
 	}	
 	
@@ -528,7 +529,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			fBreakpoint = null;
 			fListener = null;
 			// Suspend if any listener voted to suspend or no one voted "don't suspend"
-			return (fSuspend & IJavaBreakpointListener.SUSPEND) != 0 || (fSuspend & IJavaBreakpointListener.DONT_SUSPEND) == 0;
+			return (fSuspend & IJavaBreakpointListener.SUSPEND) > 0 ||
+					(fSuspend & IJavaBreakpointListener.DONT_SUSPEND) == 0;
 		}
 	}	
 }
