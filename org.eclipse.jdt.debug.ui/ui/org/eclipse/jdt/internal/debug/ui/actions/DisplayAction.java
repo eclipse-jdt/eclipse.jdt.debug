@@ -77,7 +77,6 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	protected void displayResult(IEvaluationResult result) {
 		IJavaValue value= result.getValue();
 		String resultString= " "; //$NON-NLS-1$
-		final IDataDisplay dataDisplay= getDataDisplay();
 		try {
 			String sig= null;
 			IJavaType type= value.getJavaType();
@@ -95,19 +94,20 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 		} catch(DebugException x) {
 			resultString= getExceptionMessage(x);
 		}
-		
-		if (dataDisplay != null) {
-			final String finalString= resultString;
-			final Display display= JDIDebugUIPlugin.getStandardDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (display.isDisposed()) {
-						return;
-					}
+	
+		final String finalString= resultString;
+		final Display display= JDIDebugUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (display.isDisposed()) {
+					return;
+				}
+				final IDataDisplay dataDisplay= getDataDisplay();
+				if (dataDisplay != null) {
 					dataDisplay.displayExpressionValue(finalString);
 				}
-			});
-		}
+			}
+		});
 	}
 	
 	/**
