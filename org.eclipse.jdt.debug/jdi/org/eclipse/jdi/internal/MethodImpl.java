@@ -192,7 +192,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			lineNrObj = (Integer)codeIndexToLine().get(lineCodeIndexObj);
 		} while (lineNrObj == null && --lineCodeIndex >= fLowestValidCodeIndex);
 		if (lineNrObj == null)
-			throw new InvalidCodeIndexException (JDIMessages.getString("MethodImpl.Invalid_code_index_of_a_location_given_5")); //$NON-NLS-1$
+			throw new InvalidCodeIndexException (JDIMessages.getString("MethodImpl.Invalid_code_index_of_a_location_given_4")); //$NON-NLS-1$
 		return lineNrObj.intValue();
 	}
 

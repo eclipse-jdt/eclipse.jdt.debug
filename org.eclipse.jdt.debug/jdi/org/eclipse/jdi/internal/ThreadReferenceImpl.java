@@ -137,7 +137,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_2")); //$NON-NLS-1$
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_1")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -177,7 +177,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new ObjectCollectedException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_3")); //$NON-NLS-1$
+					throw new IncompatibleThreadStateException(JDIMessages.getString("ThreadReferenceImpl.Thread_was_not_suspended_1")); //$NON-NLS-1$
 				case JdwpReplyPacket.INVALID_INDEX:
 					throw new IndexOutOfBoundsException(JDIMessages.getString("ThreadReferenceImpl.Invalid_index_of_stack_frames_given_4")); //$NON-NLS-1$
 			}

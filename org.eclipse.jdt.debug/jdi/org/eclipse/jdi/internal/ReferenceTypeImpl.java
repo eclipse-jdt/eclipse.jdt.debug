@@ -967,7 +967,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			case InterfaceTypeImpl.typeTag:
 				return InterfaceTypeImpl.readWithSignature(target, in);
 		}
-		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___9") + typeTag); //$NON-NLS-1$
+		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___8") + typeTag); //$NON-NLS-1$
 	}
 		
 	/**
