@@ -2406,6 +2406,15 @@
       </variable>
    </extension> 
    
+   <!-- Adapters for runtime classpath entries -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.classpath.VariableClasspathEntryAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.launching.VariableClasspathEntry">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+    </extension>
+         
    <!-- Adapters for retargettable actions -->
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 

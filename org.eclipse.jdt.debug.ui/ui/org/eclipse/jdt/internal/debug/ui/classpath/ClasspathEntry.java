@@ -13,12 +13,13 @@ package org.eclipse.jdt.internal.debug.ui.classpath;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 
-public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeClasspathEntry {
+public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeClasspathEntry, IAdaptable {
 
 	private IRuntimeClasspathEntry entry= null;
 	
@@ -197,5 +198,15 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	 */
 	public boolean isEditable() {
 		return getParent() instanceof ClasspathGroup;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (getDelegate() instanceof IAdaptable) {
+			return ((IAdaptable)getDelegate()).getAdapter(adapter);
+		}
+		return null;
 	}
 }

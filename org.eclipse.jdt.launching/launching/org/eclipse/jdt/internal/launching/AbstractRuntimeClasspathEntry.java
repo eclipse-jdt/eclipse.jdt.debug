@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -30,7 +31,7 @@ import org.w3c.dom.Element;
  * </p>
  * @since 3.0
  */
-public abstract class AbstractRuntimeClasspathEntry implements IRuntimeClasspathEntry2 {
+public abstract class AbstractRuntimeClasspathEntry extends PlatformObject implements IRuntimeClasspathEntry2 {
 	
 	private IPath sourceAttachmentPath = null;
 	private IPath rootSourcePath = null;

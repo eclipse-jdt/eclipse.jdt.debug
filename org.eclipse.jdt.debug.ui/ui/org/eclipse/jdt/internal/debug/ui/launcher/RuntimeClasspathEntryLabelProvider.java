@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
 import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
@@ -89,6 +90,14 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				// TODO: illegal internal access
 				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
 			case IRuntimeClasspathEntry.OTHER:
+				IRuntimeClasspathEntry delegate = entry;
+				if (entry instanceof ClasspathEntry) {
+					delegate = ((ClasspathEntry)entry).getDelegate();
+				}
+				Image image = lp.getImage(delegate);
+				if (image != null) {
+					return image;
+				}
 				if (resource == null) {
 					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
 				} else {
@@ -182,7 +191,16 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				}
 				return entry.getPath().toString();
 			case IRuntimeClasspathEntry.OTHER:
-				return ((IRuntimeClasspathEntry2)entry).getName();	
+				IRuntimeClasspathEntry delegate = entry;
+				if (entry instanceof ClasspathEntry) {
+					delegate = ((ClasspathEntry)entry).getDelegate();
+				}
+				String name = lp.getText(delegate);
+				if (name == null || name.length() == 0) {
+					return ((IRuntimeClasspathEntry2)delegate).getName();
+				} else {
+					return name;
+				}
 		}	
 		return ""; //$NON-NLS-1$
 	}
