@@ -351,7 +351,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		} catch (CoreException ce) {
 			JDIDebugPlugin.log(ce);
 		}
-		return true;
+		return false;
 	}
 	
 	/**
