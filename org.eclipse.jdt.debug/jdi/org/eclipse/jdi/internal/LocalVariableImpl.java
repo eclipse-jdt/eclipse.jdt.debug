@@ -169,7 +169,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		if (signature == null) {
 			signature= signature();
 		}
-		return GenericSignature.signatureToName(fSignature);
+		return GenericSignature.signatureToName(signature);
 	}
 	
 	/** 
