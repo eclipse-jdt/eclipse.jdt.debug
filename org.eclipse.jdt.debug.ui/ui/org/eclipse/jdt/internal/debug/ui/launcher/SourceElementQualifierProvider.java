@@ -13,16 +13,17 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.io.File;
 import java.util.zip.ZipFile;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -71,7 +72,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 			IJavaElement parent = ((IJavaElement)element).getParent();
 			return fJavaLabels.getImage(parent);
 		} else if (element instanceof ZipEntryStorage) {
-			return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_JAR_WSRC);
+            return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR_WITH_SOURCE);
 		} else if (element instanceof LocalFileStorage) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}

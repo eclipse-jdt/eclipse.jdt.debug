@@ -29,11 +29,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
@@ -63,7 +64,6 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				IJavaElement proj = JavaCore.create(resource);
 				return lp.getImage(proj);
 			case IRuntimeClasspathEntry.ARCHIVE:
-				//TODO illegal access to images
 				if (resource instanceof IContainer) {
 					return lp.getImage(resource);
 				}
@@ -72,23 +72,22 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				String key = null;
 				if (external) {
 					if (source) {
-						key = JavaPluginImages.IMG_OBJS_EXTJAR_WSRC;
+                        key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
 					} else {
-						key = JavaPluginImages.IMG_OBJS_EXTJAR;
+						key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
 					}	
 				} else {
 					if (source) {
-						key = JavaPluginImages.IMG_OBJS_JAR_WSRC;
+						key = ISharedImages.IMG_OBJS_JAR_WITH_SOURCE;
 					} else {
-						key = JavaPluginImages.IMG_OBJS_JAR;
+						key = ISharedImages.IMG_OBJS_JAR;
 					}
 				}
-				return JavaPluginImages.get(key);
+				return JavaUI.getSharedImages().getImage(key);
 			case IRuntimeClasspathEntry.VARIABLE:
 				return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);				
 			case IRuntimeClasspathEntry.CONTAINER:
-				// TODO: illegal internal access
-				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+                return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 			case IRuntimeClasspathEntry.OTHER:
 				IRuntimeClasspathEntry delegate = entry;
 				if (entry instanceof ClasspathEntry) {
@@ -99,7 +98,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					return image;
 				}
 				if (resource == null) {
-					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+                    return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 				}
 				return lp.getImage(resource);
 		}	

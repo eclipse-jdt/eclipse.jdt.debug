@@ -29,11 +29,12 @@ import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsComboBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -274,7 +275,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 	}	
 
 	protected void updateJREFromConfig(ILaunchConfiguration config) {

@@ -19,16 +19,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -177,7 +179,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
-				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 			}
 			return null;
 		}

@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
@@ -35,7 +36,7 @@ public abstract class JREResolution implements IMarkerResolution {
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
-			return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+            return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 		}
 
 		/**

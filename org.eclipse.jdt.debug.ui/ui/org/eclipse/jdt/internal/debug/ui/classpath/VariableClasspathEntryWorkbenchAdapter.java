@@ -11,7 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.classpath;
 
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -32,8 +33,7 @@ public class VariableClasspathEntryWorkbenchAdapter implements IWorkbenchAdapter
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (object instanceof VariableClasspathEntry) {
-			// TODO: illegal reference
-			return JavaPluginImages.DESC_OBJS_JAR;
+			return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_JAR);
 		}
 		return null;
 	}
