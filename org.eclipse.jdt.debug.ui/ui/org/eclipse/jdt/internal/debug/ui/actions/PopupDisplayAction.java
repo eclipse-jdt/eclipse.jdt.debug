@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.debug.internal.ui.views.expression.PopupInformationControl;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayView;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -133,6 +134,11 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 
 	protected void displayStringResult(String currentSnippet, String currentResultString) {
 		IWorkbenchPart part = getTargetPart();
+		
+		if (part instanceof DisplayView) {
+			super.displayStringResult(currentSnippet, currentResultString);
+			return;
+		}
 		viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
 		if (viewer == null) {
 			if (part instanceof JavaEditor) {
