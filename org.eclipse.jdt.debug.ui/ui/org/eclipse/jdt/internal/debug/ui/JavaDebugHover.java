@@ -125,11 +125,11 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		if (debugTargetName != null) {
 			buffer.append('[' + debugTargetName + "]&nbsp;"); //$NON-NLS-1$ 
 		}
-		buffer.append(makeHTMLSafe(variable.getName()));
+		buffer.append("<pre>").append(variable.getName()).append("</pre>");
 		buffer.append(" ="); //$NON-NLS-1$
 		
 		String type= getTypeName(variable);
-		String value= "<b>" + makeHTMLSafe(variable.getValue().getValueString().trim()) + "</b>"; //$NON-NLS-1$ //$NON-NLS-2$
+		String value= "<b><pre>" + variable.getValue().getValueString() + "</pre></b>"; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (type == null) {
 			buffer.append(" null"); //$NON-NLS-1$
@@ -142,7 +142,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 			buffer.append(value);
 		} else {
 			buffer.append(" ("); //$NON-NLS-1$
-			buffer.append(makeHTMLSafe(type));
+			buffer.append("<pre>").append(type).append("</pre>");
 			buffer.append(") "); //$NON-NLS-1$
 			buffer.append(value);			
 		}		
@@ -159,38 +159,6 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 			return type.getName();
 		}
 		return value.getReferenceTypeName();
-	}
-	
-	/**
-	 * Replace any characters in the given String that would confuse an HTML 
-	 * parser with their escape sequences.
-	 */
-	private static String makeHTMLSafe(String string) {
-		StringBuffer buffer= new StringBuffer(string.length());
-	
-		for (int i= 0; i != string.length(); i++) {
-			char ch= string.charAt(i);
-			
-			switch (ch) {
-				case '&':
-					buffer.append("&amp;"); //$NON-NLS-1$
-					break;
-					
-				case '<':
-					buffer.append("&lt;"); //$NON-NLS-1$
-					break;
-
-				case '>':
-					buffer.append("&gt;"); //$NON-NLS-1$
-					break;
-
-				default:
-					buffer.append(ch);
-					break;
-			}
-		}
-
-		return buffer.toString();		
 	}
 
 }
