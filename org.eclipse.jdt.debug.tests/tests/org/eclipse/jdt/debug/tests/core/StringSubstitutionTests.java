@@ -13,13 +13,20 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
 import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
 import org.eclipse.debug.internal.core.stringsubstitution.IValueVariable;
 import org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener;
 import org.eclipse.debug.internal.core.stringsubstitution.StringVariableManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Tests string substitutions
@@ -309,5 +316,258 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void variablesRemoved(IValueVariable[] variables) {
 		fRemoved = variables;
 	}
+	
+	/**
+	 * Test the <code>${workspace_loc}</code> variable.
+	 */
+	public void testWorkspaceLoc() throws CoreException {
+		String expression = "${workspace_loc}";
+		String result = doSubs(expression);
+		assertEquals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString(), result);
+	}
 
+	/**
+	 * Test the <code>${workspace_loc}</code> variable with an argument
+	 */
+	public void testWorkspaceLocArg() throws CoreException {
+		String expression = "${workspace_loc:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFolder("src").getLocation().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${project_loc}</code> variable with a project name argument
+	 */
+	public void testProjectLocArgProjectName() throws CoreException {
+		String expression = "${project_loc:DebugTests}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getLocation().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${project_loc}</code> variable with a folder path argument
+	 */
+	public void testProjectLocArgFolderPath() throws CoreException {
+		String expression = "${project_loc:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getLocation().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${project_loc}</code> variable with a folder selected
+	 */
+	public void testProjectLocSelectFolder() throws CoreException {
+		String expression = "${project_loc}";
+		IResource resource = getJavaProject().getProject().getFolder("src");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getProject().getLocation().toOSString(), result);
+	}
+		
+	/**
+	 * Test the <code>${project_path}</code> variable with a project name argument
+	 */
+	public void testProjectPathArgProjectName() throws CoreException {
+		String expression = "${project_path:DebugTests}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFullPath().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${project_path}</code> variable with a file selected
+	 */
+	public void testProjectPathSelectFile() throws CoreException {
+		String expression = "${project_path}";
+		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getProject().getFullPath().toOSString(), result);
+	}				
+	
+	/**
+	 * Test the <code>${project_path}</code> variable with a folder path argument
+	 */
+	public void testProjectPathArgFolderPath() throws CoreException {
+		String expression = "${project_path:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFullPath().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${project_name}</code> variable with a project name argument
+	 */
+	public void testProjectNameArgProjectName() throws CoreException {
+		String expression = "${project_name:DebugTests}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getName(), result);
+	}
+	
+	/**
+	 * Test the <code>${project_name}</code> variable with a project selected
+	 */
+	public void testProjectNameSelectProject() throws CoreException {
+		String expression = "${project_name}";
+		IResource resource = getJavaProject().getProject();
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getProject().getName(), result);
+	}				
+	
+	/**
+	 * Test the <code>${project_name}</code> variable with a folder path argument
+	 */
+	public void testProjectNameArgFolderPath() throws CoreException {
+		String expression = "${project_name:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getName(), result);
+	}
+	
+	/**
+	 * Test the <code>${container_loc}</code> variable with a folder name argument.
+	 * Will resolve to the container of the specified folder.
+	 */
+	public void testContainerLocArgFolderName() throws CoreException {
+		String expression = "${container_loc:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getLocation().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${container_loc}</code> variable with a folder selected.
+	 * Will resolve to the container of the specified folder.
+	 */
+	public void testContainerLocSelectFolder() throws CoreException {
+		String expression = "${container_loc}";
+		IResource resource = getJavaProject().getProject().getFolder("src");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getParent().getLocation().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${container_path}</code> variable with a folder name argument.
+	 * Will resolve to the container of the specified folder.
+	 */
+	public void testContainerPathArgFolderName() throws CoreException {
+		String expression = "${container_path:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFullPath().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${container_path}</code> variable with a folder selected.
+	 * Will resolve to the container of the specified folder.
+	 */
+	public void testContainerPathSelectFolder() throws CoreException {
+		String expression = "${container_path}";
+		IResource resource = getJavaProject().getProject().getFolder("src"); 
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getParent().getFullPath().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${container_name}</code> variable with a folder name argument.
+	 * Will resolve to the container of the specified folder.
+	 */
+	public void testContainerNameArgFolderName() throws CoreException {
+		String expression = "${container_name:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getName(), result);
+	}
+	
+	/**
+	 * Test the <code>${container_name}</code> variable with a folder selected.
+	 * Will resolve to the container of the specified folder.
+	 */
+	public void testContainerNameSelectFolder() throws CoreException {
+		String expression = "${container_name}";
+		IResource resource = getJavaProject().getProject().getFolder("src"); 
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getParent().getName(), result);
+	}
+	
+	/**
+	 * Test the <code>${resource_loc}</code> variable with a folder name argument.
+	 */
+	public void testResourceLocArgFolderName() throws CoreException {
+		String expression = "${resource_loc:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFolder("src").getLocation().toOSString(), result);
+	}
+	
+	/**
+	 * Test the <code>${resource_loc}</code> variable with a folder selected.
+	 */
+	public void testResourceLocSelectFolder() throws CoreException {
+		String expression = "${resource_loc}";
+		IResource resource = getJavaProject().getProject().getFolder("src");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getLocation().toOSString(), result);
+	}	
+		
+	/**
+	 * Test the <code>${resource_path}</code> variable with a folder name argument.
+	 */
+	public void testResourcePathArgFolderName() throws CoreException {
+		String expression = "${resource_path:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFolder("src").getFullPath().toOSString(), result);
+	}
+
+	/**
+	 * Test the <code>${resource_path}</code> variable with a file selected.
+	 */
+	public void testResourcePathSelectFile() throws CoreException {
+		String expression = "${resource_path}";
+		IResource resource = getJavaProject().getProject().getFile(".classpath"); 
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getFullPath().toOSString(), result);
+	}	
+	
+	/**
+	 * Test the <code>${resource_name}</code> variable with a folder name argument.
+	 */
+	public void testResourceNameArgFolderName() throws CoreException {
+		String expression = "${resource_name:DebugTests/src}";
+		String result = doSubs(expression);
+		assertEquals(getJavaProject().getProject().getFolder("src").getName(), result);
+	}	
+
+	/**
+	 * Test the <code>${resource_name}</code> variable with a file selected.
+	 */
+	public void testResourceNameSelectFile() throws CoreException {
+		String expression = "${resource_name}";
+		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getName(), result);
+	}	
+	
+	/**
+	 * Sets the selected resource in the navigator view.
+	 * 
+	 * @param resource resource to select
+	 */
+	protected void setSelection(final IResource resource) {
+		Runnable r = new Runnable() {
+			public void run() {
+				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+				IViewPart part;
+				try {
+					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
+					part.getSite().getSelectionProvider().setSelection(new StructuredSelection(resource));
+				} catch (PartInitException e) {
+					assertNotNull("Failed to open navigator view", null);
+				}
+				
+			}
+		};
+		DebugUIPlugin.getStandardDisplay().syncExec(r);
+	}
+	
 }
