@@ -103,7 +103,13 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		if (originalTypeName == null) {
 			return null;
 		}
+		
 		String typeName= originalTypeName;
+		// strip off generic info
+		int genIndex = typeName.indexOf('<');
+		if (genIndex >= 0) {
+			typeName = typeName.substring(0, genIndex);
+		}
 		int dollarIndex= typeName.indexOf('$');
 		if (dollarIndex >= 0) {
 			typeName= typeName.substring(0, dollarIndex);
