@@ -1,0 +1,48 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Workbench Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Java VM Connectors</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.jdt.launching.vmConnectors
+<p><b><i>Description: </i></b>This extension point represents different
+kinds connections to remote VMs. Each extension
+must implement <code>org.eclipse.jdt.launching.IVMConnector</code>. An IVMConnector
+is responsible for establishing a connection with a remote VM.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT vmConnector EMPTY&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST vmConnector</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id</b> - a unique identifier that can be used to reference this IVMConnector</li>
+
+<li>
+<b>class</b> - the class that implements this connector. The class
+must implement IVMConnector.</li>
+</ul>
+<b><i>Examples:</i></b>
+<br>The following is an example of an IVMConnector:
+<p>&lt;extension
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point="org.eclipse.jdt.launching.vmConnectors">
+<br>&nbsp;&nbsp; &lt;vmConnector
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="com.example.ConnectorImplementation"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.example.ConnectorId">
+<br>&nbsp;&nbsp; &lt;/vmConnector>
+<br>&lt;/extension>
+<p><b><i>Supplied Implementation:</i></b>
+<br>An abstract implementation of IVMConnector is provided, as well as
+a standard socket connector.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
