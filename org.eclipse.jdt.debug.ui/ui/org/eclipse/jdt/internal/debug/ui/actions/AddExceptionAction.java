@@ -27,17 +27,14 @@ public class AddExceptionAction implements IViewActionDelegate {
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		AddExceptionDialog dialog= new AddExceptionDialog(shell);
 		if (dialog.open() == dialog.OK) {
-			IType result= (IType)dialog.getResult();
-			int exceptionKind= dialog.getExceptionType();
-			if (exceptionKind < 0)
-				return;
-				
+			IType type= dialog.getType();
+			boolean checked= dialog.getExceptionType() == AddExceptionDialog.CHECKED_EXCEPTION;
 			boolean caught= dialog.isCaughtSelected();
 			boolean uncaught= dialog.isUncaughtSelected();
 			try {
 				Map attributes = new HashMap(10);
-				BreakpointUtils.addJavaBreakpointAttributes(attributes, result);
-				JDIDebugModel.createExceptionBreakpoint(BreakpointUtils.getBreakpointResource(result), result.getFullyQualifiedName(), caught, uncaught, exceptionKind == AddExceptionDialog.CHECKED_EXCEPTION, true, attributes);
+				BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
+				JDIDebugModel.createExceptionBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), caught, uncaught, checked, true, attributes);
 			} catch (CoreException exc) {
 				ExceptionHandler.handle(exc, ActionMessages.getString("AddExceptionAction.error.title"), ActionMessages.getString("AddExceptionAction.error.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			}
