@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
@@ -55,13 +56,22 @@ public class TerminateErrorDialog extends ErrorDialogWithToggle {
 	 */
 	protected void buttonPressed(int id) {
 		if (id == TERMINATE_ID) {
-			try {
-				terminable.terminate();
-			} catch (DebugException e) {
-				JDIDebugUIPlugin.errorDialog(DebugUIMessages.getString("TerminateErrorDialog.2"), e.getStatus()); //$NON-NLS-1$
-			} finally {
-				okPressed();
+			final DebugException[] ex = new DebugException[1];
+			ex[0] = null;
+			Runnable r = new Runnable() {
+				public void run() {
+					try {
+						terminable.terminate();
+					} catch (DebugException e) {
+						ex[0] = e;
+					}
+				}
+			};
+			BusyIndicator.showWhile(getShell().getDisplay(), r);
+			if (ex[0] != null) {
+				JDIDebugUIPlugin.errorDialog(DebugUIMessages.getString("TerminateErrorDialog.2"), ex[0].getStatus()); //$NON-NLS-1$
 			}
+			okPressed();
 		} else {
 			super.buttonPressed(id);
 		}
