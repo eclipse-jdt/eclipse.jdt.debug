@@ -71,8 +71,8 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		setPackageFragmentRoot(root);
 	}
 
-	/**
-	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
 		if (name != null && getPackageFragmentRoot() != null) {
@@ -110,7 +110,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		return null;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
@@ -135,8 +135,8 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
@@ -196,7 +196,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		fRoot = root;
 	}
 	
-	/**
+	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {
@@ -204,7 +204,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		throw new CoreException(s);		
 	}	
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
@@ -219,7 +219,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		return false;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -229,5 +229,4 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 			return getPackageFragmentRoot().hashCode();
 		}
 	}	
-
 }

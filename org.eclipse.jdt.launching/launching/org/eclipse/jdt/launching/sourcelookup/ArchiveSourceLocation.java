@@ -61,6 +61,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Returns a zip file with the given name
 	 * 
 	 * @param name zip file name
+	 * @return The zip file with the given name
 	 * @exception IOException if unable to create the specified zip
 	 * 	file
 	 */
@@ -177,7 +178,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Automatically detect the root path, if required.
 	 * 
 	 * @param path source file name, excluding root path
-	 * @exception if unable to detect the root path for this source archive
+	 * @throws CoreException  if unable to detect the root path for this source archive
 	 */
 	private void autoDetectRoot(IPath path) throws CoreException {
 		if (!fRootDetected) {
@@ -218,6 +219,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * location.
 	 * 
 	 * @return zip file
+	 * @throws IOException if unable to create the zip
+	 * 	file associated with this location
 	 */
 	protected ZipFile getArchive() throws IOException {
 		return getZipFile(getName());
@@ -276,7 +279,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		fName = name;
 	}	
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
@@ -284,15 +287,15 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			 getName().equals(((ArchiveSourceLocation)object).getName());
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getName().hashCode();
 	}	
 	
-	/**
-	 * @see IJavaSourceLocation#getMemento()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		try {
@@ -316,8 +319,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		return null;
 	}
 
-	/**
-	 * @see IJavaSourceLocation#initializeFrom(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
@@ -352,7 +355,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		return string == null || string.length() == 0;
 	}
 	
-	/**
+	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {

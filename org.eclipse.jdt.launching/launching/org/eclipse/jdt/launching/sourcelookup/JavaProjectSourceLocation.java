@@ -79,8 +79,8 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		setJavaProject(project);
 	}	
 	
-	/**
-	 * @see IJavaSourceLocation#findSourceElement(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
 		if (fRootLocations != null) {
@@ -130,7 +130,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		return fProject;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
@@ -138,14 +138,15 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			 getJavaProject().equals(((JavaProjectSourceLocation)object).getJavaProject());
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getJavaProject().hashCode();
-	}		
-	/**
-	 * @see IJavaSourceLocation#getMemento()
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		try {
@@ -165,8 +166,8 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		return null;
 	}
 
-	/**
-	 * @see IJavaSourceLocation#initializeFrom(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
@@ -200,7 +201,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		return string == null || string.length() == 0;
 	}
 	
-	/**
+	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {

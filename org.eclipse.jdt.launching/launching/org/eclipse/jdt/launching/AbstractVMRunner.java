@@ -41,6 +41,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
 	 * @param code error code
+	 * @throws CoreException The exception encapsulating the reason for the abort
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, getPluginIdentifier(), code, message, exception));

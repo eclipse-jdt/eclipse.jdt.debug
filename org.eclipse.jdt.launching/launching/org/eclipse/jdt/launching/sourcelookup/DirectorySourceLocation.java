@@ -199,7 +199,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		return string == null || string.length() == 0;
 	}
 	
-	/**
+	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {

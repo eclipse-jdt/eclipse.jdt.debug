@@ -231,8 +231,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		return null;
 	}	
 			
-	/**
-	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
 		if (stackFrame instanceof IJavaStackFrame) {
@@ -352,8 +352,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		return locator.getSourceLocations();
 	}
 	
-	/**
-	 * @see IPersistableSourceLocator#getMemento()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		try {
@@ -381,8 +381,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		return null;
 	}
 
-	/**
-	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
@@ -390,8 +390,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		setSourceLocations(getSourceLocations(resolved));
 	}
 
-	/**
-	 * @see IPersistableSourceLocator#initializeFromMemento(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
 	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;

@@ -345,9 +345,11 @@ public final class JavaRuntime {
 	/**
 	 * Sets a VM connector as the system-wide default VM. This setting is persisted when
 	 * saveVMConfiguration is called. 
-	 * @param	connector The connector to make the default. May be null to clear 
+	 * @param	connector The connector to make the default. May be <code>null</code> to clear 
 	 * 				the default.
+	 * @param monitor The progress monitor to use
 	 * @since 2.0
+	 * @throws CoreException Thrown if saving the new default setting fails
 	 */
 	public static void setDefaultVMConnector(IVMConnector connector, IProgressMonitor monitor) throws CoreException {
 		fgDefaultVMConnectorId= connector.getIdentifier();
@@ -1649,10 +1651,11 @@ public final class JavaRuntime {
 	}
 		
 	/**
-	 * Returns the resovler registered for the give variable, or
+	 * Returns the resolver registered for the given variable, or
 	 * <code>null</code> if none.
 	 * 
-	 * @return the resovler registered for the give variable, or
+	 * @param variableName the variable to determine the resolver for
+	 * @return the resolver registered for the given variable, or
 	 * <code>null</code> if none
 	 */
 	private static IRuntimeClasspathEntryResolver getVariableResolver(String variableName) {
@@ -1660,10 +1663,11 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Returns the resovler registered for the give container id, or
+	 * Returns the resolver registered for the given container id, or
 	 * <code>null</code> if none.
 	 * 
-	 * @return the resovler registered for the give container id, or
+	 * @param containerId the container to determine the resolver for
+	 * @return the resolver registered for the given container id, or
 	 * <code>null</code> if none
 	 */	
 	private static IRuntimeClasspathEntryResolver getContainerResolver(String containerId) {

@@ -1122,11 +1122,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 	}
+
 	/**
 	 * Begin listening for resource changes when a launch is
 	 * registered with a hot swapable target.
 	 * 
-	 * @see ILaunchListener#launchAdded(ILaunch)
+	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchAdded(ILaunch launch) {
 		IDebugTarget[] debugTargets= launch.getDebugTargets();
@@ -1156,8 +1157,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		launchAdded(launch);
 	}	
 	
-	/**
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -1200,7 +1201,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	
 	/**
 	 * Adds the given target to the list of hot-swappable targets.
-	 * Has no effect if the target is alread registered.
+	 * Has no effect if the target is already registered.
 	 * 
 	 * @param target a target that supports hot swap
 	 */
@@ -1212,7 +1213,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	
 	/**
 	 * Adds the given target to the list of non hot-swappable targets.
-	 * Has no effect if the target is alread registered.
+	 * Has no effect if the target is already registered.
 	 * 
 	 * @param target a target that does not support hot swap
 	 */
