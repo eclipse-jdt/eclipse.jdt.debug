@@ -1385,10 +1385,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			for (int i = 0; i < arrayValues.length; i++) {
 				IJavaValue value = arrayValues[i];
-				if (value instanceof IJavaObject) {
+				if (value instanceof IJavaArray) {
+					appendArrayDetail((IJavaArray)value, thread);	
+				} else if (value instanceof IJavaObject) {
 					appendObjectDetail((IJavaObject)value, thread);
-				} else if (value instanceof IJavaArray) {
-					appendArrayDetail((IJavaArray)value, thread);
 				} else {
 					appendJDIValueString(value);
 				}
