@@ -231,6 +231,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean useDefault = true;
+		setErrorMessage(null);
 		try {
 			useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 		} catch (CoreException e) {
@@ -251,10 +252,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		try {
 			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
 		} catch (CoreException e) {
-			if (e.getStatus().getCode() != IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT) {
-				// do not log error if this is a reference to a non-existent project
-				JDIDebugUIPlugin.log(e);
-			}
+			setErrorMessage(e.getMessage());
 		}
 		fClasspathViewer.setEnabled(!useDefault);
 		fBootpathViewer.setEnabled(!useDefault);
