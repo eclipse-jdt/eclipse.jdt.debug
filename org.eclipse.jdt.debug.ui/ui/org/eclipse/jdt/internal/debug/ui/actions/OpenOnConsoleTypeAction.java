@@ -38,6 +38,8 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -93,7 +95,19 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		doOpenType();
+		openTypeWithProgress();
+	}
+	
+	/**
+	 * Do the work to open the type while displaying a busy cursor.
+	 */
+	protected void openTypeWithProgress() {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				doOpenType();
+			}	
+		};
+		BusyIndicator.showWhile(getShell().getDisplay(), runnable);
 	}
 
 	/**
@@ -105,6 +119,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	}
 
 	protected void doOpenType() {		
+		
 		// determine what we're searching for
 		setPkgName(null);
 		setTypeName(null);
@@ -376,7 +391,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	public void handleEvent(Event event) {
 		try {
 			setInitiatedFromDoubleClick(true);
-			doOpenType();
+			openTypeWithProgress();
 		} finally {
 			setInitiatedFromDoubleClick(false);
 		}
