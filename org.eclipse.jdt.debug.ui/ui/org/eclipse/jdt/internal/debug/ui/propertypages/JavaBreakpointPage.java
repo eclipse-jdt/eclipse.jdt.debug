@@ -137,29 +137,18 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	}
 
 	/**
+	 * Creates the labels and editors displayed for the breakpoint.
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		Composite mainComposite= new Composite(parent, SWT.NONE);
-		mainComposite.setFont(parent.getFont());
-		mainComposite.setLayout(new GridLayout());
-		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		IJavaBreakpoint breakpoint= (IJavaBreakpoint) getElement();
-		try {
-			String typeName = breakpoint.getTypeName();
-			if (typeName != null) {
-				createLabel(mainComposite, MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.3"), new String[] {typeName})); //$NON-NLS-1$
-			}
-			createTypeSpecificLabels(mainComposite);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
+		Composite mainComposite= createComposite(parent, 1);
+		createLabels(mainComposite);
 		try {
 			createEnabledButton(mainComposite);
 			createHitCountEditor(mainComposite);
-			createSuspendPolicyEditor(mainComposite);
 			createTypeSpecificEditors(mainComposite);
+			createSuspendPolicyEditor(mainComposite); // Suspend policy is considered uncommon. Add it last.
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
@@ -168,6 +157,27 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	}
 	
 	/**
+	 * Creates the labels displayed for the breakpoint.
+	 * @param parent
+	 */
+	protected void createLabels(Composite parent) {
+		IJavaBreakpoint breakpoint= (IJavaBreakpoint) getElement();
+		Composite labelComposite= createComposite(parent, 2);
+		try {
+			String typeName = breakpoint.getTypeName();
+			if (typeName != null) {
+				createLabel(labelComposite, PropertyPageMessages.getString("JavaBreakpointPage.3")); //$NON-NLS-1$
+				createLabel(labelComposite, typeName);
+			}
+			createTypeSpecificLabels(labelComposite);
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}
+	}
+
+	/**
+	 * Creates the editor for configuring the suspend policy (suspend
+	 * VM or suspend thread) of the breakpoint.
 	 * @param parent the composite in which the suspend policy
 	 * 		editor will be created.
 	 */
@@ -175,9 +185,10 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		IJavaBreakpoint breakpoint= getBreakpoint();
 		createLabel(parent, "Suspend Policy");
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
-		fSuspendThreadButton= createRadioButton(parent, "Suspend &Thread");
+		Composite radioComposite= createComposite(parent, 2);
+		fSuspendThreadButton= createRadioButton(radioComposite, "Suspend &Thread");
 		fSuspendThreadButton.setSelection(suspendThread);
-		fSuspendVMButton= createRadioButton(parent, "Suspend &VM");
+		fSuspendVMButton= createRadioButton(radioComposite, "Suspend &VM");
 		fSuspendVMButton.setSelection(!suspendThread);
 	}
 
@@ -187,7 +198,8 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void createHitCountEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		fHitCountButton= createCheckButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.4")); //$NON-NLS-1$
+		Composite hitCountComposite= createComposite(parent, 2);
+		fHitCountButton= createCheckButton(hitCountComposite, PropertyPageMessages.getString("JavaBreakpointPage.6")); //$NON-NLS-1$
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				fHitCountText.setEnabled(fHitCountButton.getSelection());
@@ -202,7 +214,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		} else {
 			fHitCountButton.setSelection(false);
 		}
-		fHitCountText= createText(parent, PropertyPageMessages.getString("JavaBreakpointPage.6"), hitCountString); //$NON-NLS-1$
+		fHitCountText= createText(hitCountComposite, hitCountString); //$NON-NLS-1$
 		if (hitCount <= 0) {
 			fHitCountText.setEnabled(false);
 		}
@@ -273,7 +285,13 @@ public abstract class JavaBreakpointPage extends PropertyPage {
    		// Do nothing
    }
 	
-	protected Text createText(Composite parent, String label, String initialValue) {
+	/**
+	 * Creates a fully configured text editor with the given initial value
+	 * @param parent
+	 * @param initialValue
+	 * @return the configured text editor
+	 */
+	protected Text createText(Composite parent, String initialValue) {
 		Composite textComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
@@ -282,12 +300,29 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		textComposite.setLayout(layout);
 		textComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		textComposite.setFont(parent.getFont());
-		createLabel(textComposite, label);
 		Text text= new Text(textComposite, SWT.SINGLE | SWT.BORDER);
 		text.setText(initialValue);
 		text.setFont(parent.getFont());
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return text;
+	}
+	
+	/**
+	 * Creates a fully configured composite with the given number of columns
+	 * @param parent
+	 * @param numColumns
+	 * @return the configured composite
+	 */
+	protected Composite createComposite(Composite parent, int numColumns) {
+		Composite composit= new Composite(parent, SWT.NONE);
+		composit.setFont(parent.getFont());
+		GridLayout layout= new GridLayout();
+		layout.numColumns= numColumns;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		composit.setLayout(layout);
+		composit.setLayoutData(new GridData(GridData.FILL_BOTH));
+		return composit;
 	}
 
 	/**

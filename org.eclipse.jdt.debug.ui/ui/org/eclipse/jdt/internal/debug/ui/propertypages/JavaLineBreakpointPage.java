@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
@@ -27,6 +25,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -110,8 +109,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			JDIDebugUIPlugin.log(ce);
 		}
 		if (lineNumber.length() > 0) {
-			Label label = new Label(parent, SWT.SINGLE);
-			label.setText(MessageFormat.format(PropertyPageMessages.getString("JavaLineBreakpointPage.2"), new String[] { lineNumber.toString()})); //$NON-NLS-1$
+			createLabel(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.2")); //$NON-NLS-1$
+			createLabel(parent, lineNumber.toString());
 		}
 		// Member
 		try {
@@ -126,7 +125,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			} else if (breakpoint instanceof IJavaWatchpoint) {
 				label = PropertyPageMessages.getString("JavaLineBreakpointPage.5"); //$NON-NLS-1$
 			}
-			createLabel(parent, MessageFormat.format(label, new String[] { memberName }));
+			createLabel(parent, label);
+			createLabel(parent, memberName);
 		} catch (CoreException exception) {
 			JDIDebugUIPlugin.log(exception);
 		}
@@ -211,7 +211,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		} else {
 			label = PropertyPageMessages.getString("JavaLineBreakpointPage.13"); //$NON-NLS-1$
 		}
-		Composite conditionComposite= new Composite(parent, SWT.NONE);
+		Composite conditionComposite= new Group(parent, SWT.NONE);
 		conditionComposite.setFont(parent.getFont());
 		conditionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		conditionComposite.setLayout(new GridLayout());
