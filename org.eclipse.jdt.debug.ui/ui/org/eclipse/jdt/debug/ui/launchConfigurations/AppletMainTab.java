@@ -207,14 +207,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 */
 	private void handleSearchButtonSelected() {
 		
-		IJavaProject javaProject = getJavaProject();
-		IJavaSearchScope searchScope = null;
-		if ((javaProject == null) || !javaProject.exists()) {
-			searchScope = SearchEngine.createWorkspaceScope();
-		} else {
-			searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {javaProject}, false);
-		}		
-		
+		IJavaProject javaProject = getJavaProject();		
 		Shell shell = getShell();
 		AppletSelectionDialog dialog =
 			new AppletSelectionDialog(
