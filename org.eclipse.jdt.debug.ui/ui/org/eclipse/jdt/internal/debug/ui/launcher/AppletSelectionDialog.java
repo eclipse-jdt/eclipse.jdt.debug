@@ -13,9 +13,14 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.util.Set;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.util.Assert;
@@ -51,7 +56,6 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		super(shell, new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS | JavaElementLabelProvider.SHOW_OVERLAY_ICONS), new PackageRenderer());
 
 		Assert.isNotNull(context);
-		Assert.isNotNull(project);
 
 		fRunnableContext = context;
 		fProject = project;
@@ -68,13 +72,52 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
-		IType[] types = null;
-		Set result = AppletLaunchConfigurationUtils.collectAppletTypesInProject(new NullProgressMonitor(), fProject);
-		types = (IType[]) result.toArray(new IType[result.size()]);
+		IType[] types = getAppletTypes();
 		if (types != null) {
 			setElements(types);
 		}
 		return super.open();
+	}
+	
+	/**
+	 * Return all types extending <code>java.lang.Applet</code> in the project, or
+	 * all types extending Applet in the workspace if the project is <code>null</code>.
+	 */
+	private IType[] getAppletTypes() {
+		// Populate an array of java projects with either the project specified in
+		// the constructor, or ALL projects in the workspace if it is null
+		IJavaProject[] javaProjects = null;
+		if (fProject == null) {
+			try {
+				javaProjects = getJavaModel().getJavaProjects();
+			} catch (JavaModelException e) {
+				return null;
+			}
+		} else {
+			javaProjects = new IJavaProject[] {fProject};
+		}
+		
+		// For each java project, collect the Applet types it contains and add 
+		// them the results
+		Set results = null;
+		for (int i = 0; i < javaProjects.length; i++) {
+			IJavaProject javaProject = javaProjects[i];
+			Set applets = AppletLaunchConfigurationUtils.collectAppletTypesInProject(new NullProgressMonitor(), javaProject);
+			if (results == null) {
+				results = applets;
+			} else {
+				results.addAll(applets);
+			}
+		}
+
+		// Convert the results to an array and return it
+		if (results != null) {
+			IType[] types = null;
+			types = (IType[]) results.toArray(new IType[results.size()]);		
+			return types;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -85,4 +128,19 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		applyDialogFont(control);
 		return control;
 	}
+
+	/**
+	 * Convenience method to get access to the java model.
+	 */
+	private IJavaModel getJavaModel() {
+		return JavaCore.create(getWorkspaceRoot());
+	}
+
+	/**
+	 * Convenience method to get the workspace root.
+	 */
+	private IWorkspaceRoot getWorkspaceRoot() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
 }
