@@ -225,7 +225,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 			IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier());
 			IJavaBreakpoint breakpoint= null;
 			for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
-				if (!(breakpoint instanceof IJavaBreakpoint)) {
+				if (!(breakpoints[i] instanceof IJavaBreakpoint)) {
 					continue;
 				}
 				breakpoint= (IJavaBreakpoint)breakpoints[i];
