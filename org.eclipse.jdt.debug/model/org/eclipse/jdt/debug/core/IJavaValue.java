@@ -47,6 +47,7 @@ public interface IJavaValue extends IValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>The type associated with the signature is not yet loaded</li></ul>
+	 * @since 3.1
 	 */
 	public String getGenericSignature() throws DebugException;
 		
