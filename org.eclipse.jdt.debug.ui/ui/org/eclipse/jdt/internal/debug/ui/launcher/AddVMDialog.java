@@ -103,11 +103,13 @@ public class AddVMDialog extends StatusDialog {
 	protected void createDialogFields() {
 		fVMTypeCombo= new ComboDialogField(SWT.READ_ONLY);
 		fVMTypeCombo.setLabelText(LauncherMessages.getString("addVMDialog.jreType")); //$NON-NLS-1$
-		fVMTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				updateVMType();
-			}
-		});
+		if (fEditedVM == null) {
+			fVMTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
+				public void dialogFieldChanged(DialogField field) {
+					updateVMType();
+				}
+			});
+		}
 		
 		fVMName= new StringDialogField();
 		fVMName.setLabelText(LauncherMessages.getString("addVMDialog.jreName")); //$NON-NLS-1$
