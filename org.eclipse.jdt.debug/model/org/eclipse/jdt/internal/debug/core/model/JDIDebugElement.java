@@ -22,7 +22,6 @@ import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.hcr.OperationRefusedException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.ClassNotPreparedException;

@@ -11,7 +11,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;

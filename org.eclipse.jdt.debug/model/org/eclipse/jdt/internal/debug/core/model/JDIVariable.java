@@ -12,7 +12,6 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;

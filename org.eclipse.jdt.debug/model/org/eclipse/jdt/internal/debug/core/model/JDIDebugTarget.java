@@ -59,7 +59,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.core.Util;
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JDIDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;

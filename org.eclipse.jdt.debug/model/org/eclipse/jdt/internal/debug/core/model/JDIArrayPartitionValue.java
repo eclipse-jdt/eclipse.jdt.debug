@@ -14,7 +14,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.ArrayReference;
 

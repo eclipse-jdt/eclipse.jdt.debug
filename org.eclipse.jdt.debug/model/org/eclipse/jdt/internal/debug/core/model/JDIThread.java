@@ -20,7 +20,6 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 

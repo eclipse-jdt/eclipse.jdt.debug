@@ -8,7 +8,6 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Type;
