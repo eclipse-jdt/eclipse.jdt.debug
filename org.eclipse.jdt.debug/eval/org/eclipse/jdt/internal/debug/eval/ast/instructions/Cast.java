@@ -95,7 +95,7 @@ public class Cast extends CompoundInstruction {
 	private String typeName() {
 		String result= fBaseTypeName;
 		for (int i= 0; i < fDimension; i++) {
-			result+= "[]";
+			result+= "[]"; //$NON-NLS-1$
 		}
 		return result;
 	}
