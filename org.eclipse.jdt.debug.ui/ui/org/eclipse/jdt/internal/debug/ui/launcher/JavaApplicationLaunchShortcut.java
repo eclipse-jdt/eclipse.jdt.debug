@@ -14,9 +14,13 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -25,10 +29,17 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.console.StringMatcher;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -38,6 +49,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -45,7 +57,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * Performs single click launching for local Java applications.
  */
-public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
+public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFilter {
 	
 	/**
 	 * @param search the java elements to search for a main type
@@ -258,4 +270,80 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
+	 */
+	public boolean testAttribute(Object target, String name, String value) {
+		if ("ContextualLaunchActionFilter".equals(name)) {
+			return hasMain2(target);
+		} else if ("NameMatches".equals(name)) {
+			return nameMatches(target, value);
+		}
+		return false;
+	}
+	
+	/**
+	 * @param target
+	 * @param value
+	 * @return
+	 */
+	private boolean nameMatches(Object target, String value) {
+		try {
+			Object[] selections = ((IStructuredSelection) target).toArray();
+			IResource resource = (IResource) selections[0];
+			String filename = resource.getName();
+			StringMatcher sm = new StringMatcher(value, true, false);
+			return sm.match(filename);
+		} catch (ClassCastException e) {
+			return false;
+		}
+	}
+
+	private boolean hasMain(Object target) {
+		if (target != null && target instanceof IStructuredSelection) {
+			Object[] selections = ((IStructuredSelection )target).toArray();
+			IResource resource = (IResource)selections[0];
+			IType[] types= null;
+				try {
+					final Set result= new HashSet();
+					MainMethodFinder.collectTypes(resource, new NullProgressMonitor(), result);
+					if (result.size() > 0) {
+						return true;
+					}
+				} catch (JavaModelException e) {
+					return false;
+				}
+			}
+		return false;
+		}
+	
+	private boolean hasMain2(Object target) {
+		if (target != null && target instanceof IStructuredSelection) {
+			Object[] selections = ((IStructuredSelection )target).toArray();
+			IResource resource = (IResource)selections[0];
+			IJavaElement element = JavaCore.create(resource);
+			if (element instanceof ICompilationUnit) {
+				ICompilationUnit cu = (ICompilationUnit) element;
+				IType mainType= cu.getType(Signature.getQualifier(cu.getElementName()));
+				try {
+					if (mainType.exists() && JavaModelUtil.hasMainMethod(mainType)) {
+						return true;
+					}
+				} catch (JavaModelException e) {
+					return false;
+				}
+			} else if (element instanceof IClassFile) {
+				IType mainType;
+				try {
+					mainType = ((IClassFile)element).getType();
+					if (JavaModelUtil.hasMainMethod(mainType)) {
+						return true;
+					}
+				} catch (JavaModelException e) {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
 }

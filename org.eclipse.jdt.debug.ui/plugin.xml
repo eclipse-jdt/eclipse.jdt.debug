@@ -1973,8 +1973,21 @@
             icon="icons/full/ctool16/java_app.gif"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
             modes="run, debug"
+            filterClass="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
             id="org.eclipse.jdt.debug.ui.localJavaShortcut">
+         <contextLabel
+         	mode="run"
+         	label="%ContextualRunJavaApplication.label"/>
+  		 <contextLabel
+  		 	mode="debug"
+  		 	label="%ContextualDebugJavaApplication.label"/>
+         <filter
+            name="NameMatches"
+            value="*.java"/>
+         <filter
+         	name="ContextualLaunchActionFilter"
+         	value="supportsContextualLaunch"/>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>
@@ -1993,8 +2006,21 @@
             icon="icons/full/ctool16/java_applet.gif"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
             modes="run, debug"
+            filterClass="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
             id="org.eclipse.jdt.debug.ui.javaAppletShortcut">
+         <filter
+            name="NameMatches"
+            value="*.java"/>
+         <filter
+         	name="ContextualLaunchActionFilter"
+         	value="supportsContextualLaunch"/>
+         <contextLabel
+         	mode="run"
+         	label="%ContextualRunJavaApplet.label"/>
+  		 <contextLabel
+  		 	mode="debug"
+  		 	label="%ContextualDebugJavaApplet.label"/>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>

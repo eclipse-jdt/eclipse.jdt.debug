@@ -13,9 +13,13 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -26,25 +30,28 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletParametersTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.console.StringMatcher;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.editors.text.WorkspaceOperationRunner;
 
-public class JavaAppletLaunchShortcut implements ILaunchShortcut {
+public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -53,7 +60,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 
 		if (search != null) {
 			try {
-				types = AppletLaunchConfigurationUtils.findApplets(new ProgressMonitorDialog(getShell()), search);
+				types = AppletLaunchConfigurationUtils.findApplets(new WorkspaceOperationRunner(), search);
 			} catch (InterruptedException e) {
 				JDIDebugUIPlugin.log(e);
 				return;
@@ -261,4 +268,51 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 		}
 		return (IStructuredSelection)selection;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
+	 */
+	public boolean testAttribute(Object target, String name, String value) {
+		if ("ContextualLaunchActionFilter".equals(name)) {
+			return isApplet(target);
+			// return false;
+		} else if ("NameMatches".equals(name)) {
+			return nameMatches(target, value);
+		}
+		return false;
+	}
+	
+	/**
+	 * @param target
+	 * @param value
+	 * @return
+	 */
+	private boolean nameMatches(Object target, String value) {
+		try {
+			Object[] selections = ((IStructuredSelection) target).toArray();
+			IResource resource = (IResource) selections[0];
+			String filename = resource.getName();
+			StringMatcher sm = new StringMatcher(value, true, false);
+			return sm.match(filename);
+		} catch (ClassCastException e) {
+			return false;
+		}
+	}
+	
+	private boolean isApplet(Object target) {
+		if (target != null && target instanceof IStructuredSelection) {
+			Object[] selections = ((IStructuredSelection )target).toArray();
+			IResource resource = (IResource)selections[0];
+			IType[] types= null;
+				try {
+					final Set result= new HashSet();
+					AppletLaunchConfigurationUtils.collectTypes(resource, new NullProgressMonitor(), result);
+					if (result.size() > 0) {
+						return true;
+					}
+				} catch (JavaModelException e) {
+					return false;
+				}
+			}
+		return false;
+		}
 }

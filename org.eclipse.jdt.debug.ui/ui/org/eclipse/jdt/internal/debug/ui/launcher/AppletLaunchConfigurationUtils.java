@@ -129,7 +129,7 @@ public class AppletLaunchConfigurationUtils {
 		return result;
 	}
 	
-	private static void collectTypes(Object element, IProgressMonitor monitor, Set result) throws JavaModelException/*, InvocationTargetException*/ {
+	public static void collectTypes(Object element, IProgressMonitor monitor, Set result) throws JavaModelException/*, InvocationTargetException*/ {
 		element= computeScope(element);
 		while((element instanceof IJavaElement) && !(element instanceof ICompilationUnit) && (element instanceof ISourceReference)) {
 			if(element instanceof IType) {

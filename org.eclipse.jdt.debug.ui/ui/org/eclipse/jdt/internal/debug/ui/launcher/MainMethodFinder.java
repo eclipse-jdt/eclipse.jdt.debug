@@ -69,7 +69,7 @@ public class MainMethodFinder {
 		return (IType[]) result.toArray(new IType[result.size()]) ;
 	}
 			
-	private static void collectTypes(Object element, IProgressMonitor monitor, Set result) throws JavaModelException {
+	public static void collectTypes(Object element, IProgressMonitor monitor, Set result) throws JavaModelException {
 		if (element instanceof IProcess) {
 			element= ((IProcess)element).getLaunch();
 		} else if (element instanceof IDebugTarget) {
