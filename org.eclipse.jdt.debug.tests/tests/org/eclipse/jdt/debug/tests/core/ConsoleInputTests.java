@@ -75,8 +75,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			verifyOutput(new String[]{"one", "two", "exitone", "two"}, list);
 			
 			// end the program
-			list = appendAndGet(fConsole, "three\n", 2);
-			verifyOutput(new String[]{"three", "exitthree"}, list);
+			list = appendAndGet(fConsole, "three\n", 3);
+			verifyOutput(new String[]{"three", "exitthree", ""}, list);
 
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
@@ -109,19 +109,20 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			fLinesRead.clear();
 			proxy2.closeInputStream();
 			int attempts = 0;
-			while (fLinesRead.size() < 1) {
+			while (fLinesRead.size() < 2) {
 				synchronized (fLinesRead) {
-					if (fLinesRead.size() < 1) {
-						fLinesRead.wait(6000);
+					if (fLinesRead.size() < 2) {
+						fLinesRead.wait(200);
 					}
 				}
 				attempts++;
-				if (attempts > 5) {
+				if (attempts > 150) {
 					break;
 				}
 			}
-			assertEquals("Wrong number of lines", 1, fLinesRead.size());
+			assertEquals("Wrong number of lines", 2, fLinesRead.size());
 			assertEquals("Should be EOF message", "EOF", fLinesRead.get(0));
+			assertEquals("Should be empty line", "", fLinesRead.get(1));
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
@@ -162,11 +163,11 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		while (fLinesRead.size() < linesExpected) {
 			synchronized (fLinesRead) {
 				if (fLinesRead.size() < linesExpected) {
-					fLinesRead.wait(6000);
+					fLinesRead.wait(200);
 				}
 			}
 			attempts++;
-			if (attempts > 5) {
+			if (attempts > 150) {
 				break;
 			}
 		}
