@@ -506,7 +506,6 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
 	 */
 	public boolean visit(EnumConstantDeclaration node) {
-		// TODO: test when the compiler correctly manage Enums
 		if (visit(node, false)) {
 			List arguments= node.arguments();
 			for (Iterator iter= arguments.iterator(); iter.hasNext();) {
@@ -524,11 +523,10 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
 	 */
 	public boolean visit(EnumDeclaration node) {
-		// TODO: test when the compiler correctly manage Enums
 		if (visit(node, false)) {
-			EnumConstantDeclaration[] enumConstants= node.getEnumConstants();
-			for (int i= 0; i < enumConstants.length; i++) {
-				enumConstants[i].accept(this);
+			List enumConstants= node.enumConstants();
+			for (Iterator iter = enumConstants.iterator(); iter.hasNext();) {
+				((EnumConstantDeclaration) iter.next()).accept(this);
 			}
 			List bodyDeclaration= node.bodyDeclarations();
 			for (Iterator iter= bodyDeclaration.iterator(); iter.hasNext();) {
