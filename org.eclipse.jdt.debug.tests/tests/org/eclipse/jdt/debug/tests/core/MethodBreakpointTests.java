@@ -18,6 +18,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
@@ -302,4 +304,52 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}	
+	
+	/**
+	 * Test for bug 43611
+	 */
+	public void testLabelWithoutSignature() throws Exception {
+		IDebugModelPresentation modelPresentation = DebugUITools.newDebugModelPresentation();
+		try {
+			String typeName = "DefPkgReturnType";
+			IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "self", null, true, false);
+			String label = modelPresentation.getText(bp);
+			assertTrue(label.indexOf("self") >= 0);
+		} finally {
+			removeAllBreakpoints();
+			modelPresentation.dispose();
+		}
+	}
+	
+	/**
+	 * Test for bug 43611
+	 */
+	public void testLabelWithoutMethodName() throws Exception {
+		IDebugModelPresentation modelPresentation = DebugUITools.newDebugModelPresentation();
+		try {
+			String typeName = "DefPkgReturnType";
+			IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, null, "()LDefPkgReturnType;", true, false);
+			String label = modelPresentation.getText(bp);
+			assertTrue(label.indexOf(typeName) >= 0);
+		} finally {
+			removeAllBreakpoints();
+			modelPresentation.dispose();
+		}
+	}	
+	
+	/**
+	 * Test for bug 43611
+	 */
+	public void testLabelWithoutSigOrMethodName() throws Exception {
+		IDebugModelPresentation modelPresentation = DebugUITools.newDebugModelPresentation();
+		try {
+			String typeName = "DefPkgReturnType";
+			IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, null, null, true, false);
+			String label = modelPresentation.getText(bp);
+			assertTrue(label.indexOf(typeName) >= 0);
+		} finally {
+			removeAllBreakpoints();
+			modelPresentation.dispose();
+		}
+	}		
 }
