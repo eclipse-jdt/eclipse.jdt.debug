@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -296,6 +297,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * The VM is resumed. This event is not generated when
 	 * an attach is made to a VM that is already running
 	 * (has already started up).
+	 * <p>
+	 * When a debug target is first created, we query the target
+	 * VM for threads and their state. It is possible that we query 
+	 * the state at a point in time where the threads in the VM
+	 * are suspeneded. When the VM is resumed, we update any threads
+	 * that were suspened, to be running, and fire resume events
+	 * for them such that the UI updates.
+	 * </p>
 	 * 
 	 * @param event VM start event
 	 */
@@ -303,9 +312,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		try {
 			List threads = getThreadList();
 			for (int i= 0; i < threads.size(); i++) {
-				((JDIThread) threads.get(i)).setRunning(true);
+				JDIThread thread = (JDIThread) threads.get(i);
+				if (thread.isSuspended()) {
+					thread.setRunning(true);
+					thread.fireResumeEvent(DebugEvent.UNSPECIFIED);
+				}
 			}
 			getVM().resume();
+			// fire a change event on the debug target - it's label
+			// may need to be updated
+			fireChangeEvent();
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
