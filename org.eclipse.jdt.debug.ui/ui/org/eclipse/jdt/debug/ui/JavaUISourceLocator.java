@@ -126,7 +126,10 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	}
 	
 	/**
-	 * Prompts to locate the source of the given type.
+	 * Prompts to locate the source of the given type. Prompts in the UI
+	 * thread, since a source lookup could be the result of a conditional
+	 * breakpoint looking up source for an evaluation, from the event
+	 * dispatch thread.
 	 * 
 	 * @param typeName the name of the type for which source
 	 *  could not be located
