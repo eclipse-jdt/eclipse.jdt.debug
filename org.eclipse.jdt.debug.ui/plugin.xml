@@ -501,14 +501,14 @@
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DetailsEvaluationActions"
 		targetID="org.eclipse.debug.ui.VariableView.detail">
-		<action id="org.eclipse.jdt.debug.ui.Display" 
+		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display" 
 			label="%Display.label" 
 			menubarPath="variableGroup" 
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+        <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="variableGroup" 
 			icon="icons/full/ctool16/insp_sbook.gif" 
@@ -519,19 +519,21 @@
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DisplayEvaluationActions"
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
-		<action id="org.eclipse.jdt.debug.ui.Display" 
+		<action id="org.eclipse.jdt.debug.ui.displayView.Display" 
 			label="%Display.label" 
 			menubarPath="evaluationGroup"
 			icon="icons/full/ctool16/disp_sbook.gif" 
 			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+			enablesFor="+"> 
 		</action>
-		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+		<action id="org.eclipse.jdt.debug.ui.displayView.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="evaluationGroup"
 			icon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+			enablesFor="+">
 		</action> 
 	</viewerContribution>
 </extension>
@@ -638,7 +640,7 @@
 	<viewContribution
 		id="org.eclipse.jdt.debug.ui.DisplayViewActions"
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
-		<action id="org.eclipse.jdt.debug.ui.Display" 
+		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display" 
 			label="%Display.label" 
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup"
@@ -648,7 +650,7 @@
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action>
-		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect" 
 			label="%Inspect.label" 
 			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup"
@@ -794,21 +796,21 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
-    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
+    	<action id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
     		label="%runToLineAction.label"
     		icon="icons/full/clcl16/runtoline_co.gif"
     		menubarPath="additions"
     		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
 		</action>
-    	<action id="org.eclipse.jdt.debug.ui.Display" 
+    	<action id="org.eclipse.jdt.debug.ui.cuPopup.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+        <action id="org.eclipse.jdt.debug.ui.cuPopup.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/ctool16/insp_sbook.gif"
@@ -819,21 +821,21 @@
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
     	targetID="#ClassFileEditorContext">
-    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
+    	<action id="org.eclipse.jdt.debug.ui.cfPopup.RunToLine"
  		   	icon="icons/full/clcl16/runtoline_co.gif"
     		label="%runToLineAction.label"
     		menubarPath="additions"
      		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
 		</action> 
-    	<action id="org.eclipse.jdt.debug.ui.Display" 
+    	<action id="org.eclipse.jdt.debug.ui.cfPopup.Display" 
 			label="%Display.label" 
 			menubarPath="additions"
 			icon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+        <action id="org.eclipse.jdt.debug.ui.cfPopup.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions"
 			icon="icons/full/ctool16/insp_sbook.gif"
@@ -880,7 +882,7 @@
       <editorContribution 
          id="org.eclipse.jdt.debug.ui.JavaSnippetToolbarActions" 
          targetID="org.eclipse.jdt.debug.ui.SnippetEditor"> 
-         <action id="org.eclipse.jdt.debug.ui.Display" 
+         <action id="org.eclipse.jdt.debug.ui.SnippetDisplay" 
 			label="%Display.label"
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup" 
@@ -890,7 +892,7 @@
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+        <action id="org.eclipse.jdt.debug.ui.SnippetInspect" 
 			label="%Inspect.label" 
 			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup" 
