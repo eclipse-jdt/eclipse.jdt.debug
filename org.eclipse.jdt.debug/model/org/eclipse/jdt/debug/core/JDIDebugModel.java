@@ -147,7 +147,7 @@ public class JDIDebugModel {
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(r, null);
+			ResourcesPlugin.getWorkspace().run(r, null, 0, null);
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
 		}
