@@ -577,7 +577,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAddFilterButton.setLayoutData(gd);
 		fAddFilterButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
-				addActiveFilter();
+				editFilter();
 			}
 			public void widgetDefaultSelected(SelectionEvent se) {
 			}
@@ -674,17 +674,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * Create a new filter in the table (with the default 'new filter' value),
 	 * then open up an in-place editor on it.
 	 */
-	private void addActiveFilter() {
-		fNewStepFilter = fStepFilterContentProvider.addFilter(DEFAULT_NEW_FILTER_TEXT, true);		
-		fNewTableItem = fFilterTable.getItem(0);
-		editFilter();
-	}
-	
 	private void editFilter() {
 		// if a previous edit is still in progress, finish it
 		if (fEditorText != null) {
 			validateChangeAndCleanup();
 		}
+		
+		fNewStepFilter = fStepFilterContentProvider.addFilter(DEFAULT_NEW_FILTER_TEXT, true);		
+		fNewTableItem = fFilterTable.getItem(0);
 		
 		// create & configure Text widget for editor
 		// Fix for bug 1766.  Border behavior on Windows & Linux for text
