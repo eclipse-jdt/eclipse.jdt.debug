@@ -16,6 +16,8 @@ import java.util.List;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
@@ -81,6 +83,50 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			launch.getProcesses()[0].terminate();
 		}
 	} 
+	
+    /**
+     * Tests closing standard in
+     */
+	public void testEOF() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		ILaunchConfiguration configuration = getLaunchConfiguration("ConsoleInput");
+		ILaunch launch = null;
+		try {
+			launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+			synchronized (fConsoleLock) {
+				if (!fStarted) {
+					fConsoleLock.wait(30000);
+				}
+			}
+			assertNotNull("Console is null", fConsole);
+			String[] list = appendAndGet(fConsole, "one\ntwo\n", 4);
+			verifyOutput(new String[]{"one", "two", "one", "two"}, list);
+			
+			// send EOF
+			IStreamsProxy streamsProxy = launch.getProcesses()[0].getStreamsProxy();
+			assertTrue("should be an IStreamsProxy2", streamsProxy instanceof IStreamsProxy2);
+			IStreamsProxy2 proxy2 = (IStreamsProxy2)streamsProxy;
+			fLinesRead.clear();
+			proxy2.closeInputStream();
+			int attempts = 0;
+			while (fLinesRead.size() < 1) {
+				synchronized (fLinesRead) {
+					if (fLinesRead.size() < 1) {
+						fLinesRead.wait(6000);
+					}
+				}
+				attempts++;
+				if (attempts > 5) {
+					break;
+				}
+			}
+			assertEquals("Wrong number of lines", 1, fLinesRead.size());
+			assertEquals("Should be EOF message", "EOF", fLinesRead.get(0));
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			launch.getProcesses()[0].terminate();
+		}
+	} 	
 	
 	private void verifyOutput(String[] expected, String[] actual) {
 		for (int i = 0; i < actual.length; i++) {

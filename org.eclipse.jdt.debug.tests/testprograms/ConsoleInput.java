@@ -31,6 +31,7 @@ public class ConsoleInput {
 					}
 				} else {
 					done = true;
+					System.out.println("EOF");
 				}
 			} catch (IOException e) {
 			}
