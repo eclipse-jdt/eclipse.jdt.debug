@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
  */
 public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
+
 	/**
 	 * Create the helper class that handles deleting configs whose underlying main type gets deleted
 	 */
@@ -47,79 +48,17 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 */
 	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		
-		// Main type
-		String mainTypeName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
-			abort("Main type not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
-		}
-		
-		// Java project
 		IJavaProject javaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
-						
-		// VM install type
-		String vmInstallTypeId = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		if (vmInstallTypeId == null) {
-			abort("JRE type not specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL_TYPE);
-		}		
-		IVMInstallType type = JavaRuntime.getVMInstallType(vmInstallTypeId);
-		if (type == null) {
-			abort(MessageFormat.format("JRE type {0} does not exist.", new String[] {vmInstallTypeId}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_TYPE_DOES_NOT_EXIST);
-		}
+								
+		IVMInstall vm  = verifyVMInstall(configuration);
 		
-		// VM
-		String vmInstallId = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
-		if (vmInstallId == null) {
-			abort("JRE not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL); 
-		}
-		IVMInstall install = type.findVMInstall(vmInstallId);
-		if (install == null) {
-			abort(MessageFormat.format("JRE {0} does not exist.", new String[]{vmInstallId}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
-		}		
-		IVMRunner runner = install.getVMRunner(mode);
+		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format("Internal error: JRE {0} does not specify a VM Runner.", new String[]{vmInstallId}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);
-		}
-		
-		// Working directory
-		String workingDir = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-		if ((workingDir != null) && (workingDir.trim().length() > 0)) {
-			File dir = new File(workingDir);
-			if (!dir.isDirectory()) {
-				abort(MessageFormat.format("Working directory does not exist: {0}", new String[] {workingDir}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
-			}
-		}
-		
-		// Program & VM args
-		String pgmArgs = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "");	
-		String vmArgs = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); 
-		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
-		
-		// Classpath
-		List classpathList = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (List)null);
-		String[] classpath;
-		if (classpathList == null) {
-			classpath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
-		} else {
-			classpath = new String[classpathList.size()];
-			classpathList.toArray(classpath);
-		}
-		
-		// Create VM config
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
-		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
-		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
-		runConfig.setWorkingDirectory(workingDir);
-
-		// Bootpath
-		List bootpathList = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, (List)null);
-		if (bootpathList != null) {
-			String[] bootpath = new String[bootpathList.size()];
-			bootpathList.toArray(bootpath);
-			runConfig.setBootClassPath(bootpath);
+			abort(MessageFormat.format("Internal error: JRE {0} does not specify a VM Runner.", new String[]{vm.getId()}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);
 		}
 		
 		// Launch the configuration
-		VMRunnerResult result = runner.run(runConfig);
+		VMRunnerResult result = runner.run(configuration);
 		
 		if (result == null) {
 			return null;
@@ -145,5 +84,117 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		JavaLaunchConfigurationHelper.abort(message, exception, code);
 	}	
+	
+	/**
+	 * Returns the VM install specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM install specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	protected IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
+		String id = getVMInstallId(configuration);
+		if (id != null) {
+			IVMInstallType type = getVMInstallType(configuration);
+			if (type != null) {
+				return type.findVMInstall(id);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the VM install identifier specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM install identifier specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	protected String getVMInstallId(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
+	}
+
+	/**
+	 * Returns the VM install type specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM install type specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	protected IVMInstallType getVMInstallType(ILaunchConfiguration configuration) throws CoreException {
+		String id = getVMInstallTypeId(configuration);
+		if (id != null) {
+			IVMInstallType type = JavaRuntime.getVMInstallType(id);
+			if (type != null) {
+				return type;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the VM install type identifier specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM install type identifier specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	protected String getVMInstallTypeId(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+	}
+
+	/**
+	 * Verifies a VM install type is specified by the given 
+	 * launch configuration, and returns the VM install type.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM install type specified by the given 
+	 *  launch configuration
+	 * @exception CoreException if unable to retrieve the attribute
+	 * 	or the attribute is unspecified
+	 */	
+	protected IVMInstallType verifyVMInstallType(ILaunchConfiguration configuration) throws CoreException {
+		String vmInstallTypeId = getVMInstallTypeId(configuration);
+		if (vmInstallTypeId == null) {
+			abort("JRE type not specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL_TYPE);
+		}		
+		IVMInstallType type = getVMInstallType(configuration);
+		if (type == null) {
+			abort(MessageFormat.format("JRE type {0} does not exist.", new String[] {vmInstallTypeId}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_TYPE_DOES_NOT_EXIST);
+		}	
+		return type;	
+	}
+
+	/**
+	 * Verifies a VM install is specified by the given 
+	 * launch configuration, and returns the VM install.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM install specified by the given 
+	 *  launch configuration
+	 * @exception CoreException if unable to retrieve the attribute
+	 * 	or the attribute is unspecified
+	 */	
+	protected IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
+		IVMInstallType type = verifyVMInstallType(configuration);
+		String id = getVMInstallId(configuration);
+		if (id == null) {
+			abort("JRE not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL); 
+		}
+		IVMInstall vm = getVMInstall(configuration);
+		if (vm == null) {
+			abort(MessageFormat.format("JRE {0} does not exist.", new String[]{id}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+		}
+		return vm;
+	}	
+	
 }
 

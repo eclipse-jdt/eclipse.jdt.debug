@@ -6,14 +6,12 @@
 package org.eclipse.jdt.launching;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 
 
 /**
  * A VM runner starts a Java VM running a Java program.
- * A VM runner is responsible for launching the Java VM and for
- * registering relevant launch objects (processes, debug targets) with the 
- * launching infrastructure.
  * <p>
  * Clients may implement this interface to launch a new kind of VM.
  * </p>
@@ -32,7 +30,19 @@ public interface IVMRunner {
 	 * @param configuration the configuration settings for this run
 	 * @return a result object containing the create processes and 
 	 *   debug target if the launch was successful, and <code>null</code> otherwise
+	 * @deprecated use run(ILaunchConfiguration)
 	 */
-	VMRunnerResult run(VMRunnerConfiguration configuration) throws CoreException;
+	public VMRunnerResult run(VMRunnerConfiguration configuration) throws CoreException;
+
+	/**
+	 * Launches a Java VM as specified in the given configuration.
+	 *
+	 * @param configuration a launch configuration of type
+	 * 	<code>ID_JAVA_APPLICATION</code>
+	 * @return a result object containing the launched processes and 
+	 *   debug target
+	 * @exception CoreException if launching fails
+	 */
+	public VMRunnerResult run(ILaunchConfiguration configuration) throws CoreException;
 	
 }

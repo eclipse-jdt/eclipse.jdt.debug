@@ -40,6 +40,7 @@ import org.eclipse.jdt.internal.launching.*;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @deprecated replaced by launch configuration
  */
 public class ExecutionArguments {
 	private String fVMArgs;

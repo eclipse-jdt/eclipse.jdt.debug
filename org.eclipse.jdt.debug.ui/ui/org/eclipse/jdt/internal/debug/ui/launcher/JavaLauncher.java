@@ -17,9 +17,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.VMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
-public abstract class JavaLauncher implements IVMRunner {
+public abstract class JavaLauncher extends VMRunner {
 	protected IVMInstall fVMInstance;
 
 	public JavaLauncher(IVMInstall vmInstance) {
@@ -109,5 +110,11 @@ public abstract class JavaLauncher implements IVMRunner {
 		}
 	}
 	
+	/**
+	 * @see VMRunner#getPluginIdentifier()
+	 */
+	protected String getPluginIdentifier() {
+		return JavaDebugUI.PLUGIN_ID;
+	}
 	
 }

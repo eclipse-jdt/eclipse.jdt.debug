@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdi.Bootstrap;
@@ -157,6 +158,113 @@ public class JDKDebugLauncher extends JDKLauncher {
 		return null;
 	}
 
+	/**
+	 * @see IVMRunner#run(ILaunchConfiguration)
+	 */
+	public VMRunnerResult run(ILaunchConfiguration config) throws CoreException {
+		verifyVMInstall();
+		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
+		if (port == -1) {
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noPort"), null)); //$NON-NLS-1$
+		}
+		
+		String program= constructProgramString();
+		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
+		File javaw= new File(program + "w"); //$NON-NLS-1$
+		
+		if (javawexe.isFile()) {
+			program= javawexe.getAbsolutePath();
+		} else if (javaw.isFile()) {
+			program= javaw.getAbsolutePath();
+		}
+
+		List arguments= new ArrayList(12);
+
+		arguments.add(program);
+
+		String[] bootCP= getBootpath(config);
+		if (bootCP.length > 0) {
+			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
+		} 
+		
+		String[] cp= getClasspath(config);
+		if (cp.length > 0) {
+			arguments.add("-classpath"); //$NON-NLS-1$
+			arguments.add(convertClassPath(cp));
+		}
+		addArguments(getVMArgumentsArray(config), arguments);
+
+		arguments.add("-Xdebug"); //$NON-NLS-1$
+		arguments.add("-Xnoagent"); //$NON-NLS-1$
+		arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
+		arguments.add("-Xrunjdwp:transport=dt_socket,address=localhost:" + port); //$NON-NLS-1$
+
+		arguments.add(getMainTypeName(config));
+		addArguments(getProgramArgumentsArray(config), arguments);
+		String[] cmdLine= new String[arguments.size()];
+		arguments.toArray(cmdLine);
+
+		ListeningConnector connector= getConnector();
+		if (connector == null) {
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.noConnector"), null)); //$NON-NLS-1$
+		}
+		Map map= connector.defaultArguments();
+		int timeout= fVMInstance.getDebuggerTimeout();
+		
+		specifyArguments(map, port, timeout);
+		Process p= null;
+		try {
+			try {
+				connector.startListening(map);
+				try {
+					File workingDir = verifyWorkingDirectory(config);
+					p = createProcess(workingDir, cmdLine);
+				} catch (NoSuchMethodError e) {
+					//attempting launches on 1.2.* - no ability to set working directory
+					boolean retry= createRetryQueryForNoWorkingDirectory().queryRetry();
+					if (retry) {
+						p= createProcess(null, cmdLine);
+					}
+				}
+				
+				if (p == null) {
+					return null;
+				}
+				IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
+				process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
+				
+				boolean retry= false;
+				do  {
+					try {
+						VirtualMachine vm= connector.accept(map);
+						setTimeout(vm);
+						IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(vm, renderDebugTarget(getMainTypeName(config), port), process, true, false);
+						return new VMRunnerResult(debugTarget, new IProcess[] { process });
+					} catch (InterruptedIOException e) {
+						String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
+						if (errorMessage.length() == 0) {
+							errorMessage= process.getStreamsProxy().getOutputStreamMonitor().getContents();
+						}
+						if (errorMessage.length() != 0) {
+							reportError(errorMessage);
+						} else {
+							retry= getRetryQuery().queryRetry();
+						}
+					}
+				} while (retry);
+			} finally {
+				connector.stopListening(map);
+			}
+		} catch (IOException e) {
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.connect"), e)); //$NON-NLS-1$
+		} catch (IllegalConnectorArgumentsException e) {
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.connect"), e)); //$NON-NLS-1$
+		}
+		if (p != null) {
+			p.destroy();
+		}
+		return null;
+	}
 	
 	private void reportError(final String errorMessage) {
 		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {

@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -154,5 +155,65 @@ public class JDKLauncher extends JavaLauncher {
 		buff.append(File.separator);
 		buff.append("java"); //$NON-NLS-1$
 		return buff.toString();
+	}	
+	
+	/**
+	 * @see IVMRunner#run(ILaunchConfiguration)
+	 */
+	public VMRunnerResult run(ILaunchConfiguration config) throws CoreException {
+		verifyVMInstall();
+		
+		String program= constructProgramString();
+		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
+		File javaw= new File(program + "w"); //$NON-NLS-1$
+		
+		if (javawexe.isFile()) {
+			program= javaw.getAbsolutePath();
+		} else if (javaw.isFile()) {
+			program= javawexe.getAbsolutePath();
+		}
+		
+		List arguments= new ArrayList();
+
+		arguments.add(program);
+				
+		String[] bootCP= getBootpath(config);
+		if (bootCP.length > 0) {
+			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
+		} 
+		
+		String[] cp= getClasspath(config);
+		if (cp.length > 0) {
+			arguments.add("-classpath"); //$NON-NLS-1$
+			arguments.add(convertClassPath(cp));
+		}
+		String[] vmArgs= getVMArgumentsArray(config);
+		addArguments(vmArgs, arguments);
+		
+		arguments.add(verifyMainTypeName(config));
+		
+		String[] programArgs= getProgramArgumentsArray(config);
+		addArguments(programArgs, arguments);
+				
+		String[] cmdLine= new String[arguments.size()];
+		arguments.toArray(cmdLine);
+
+		Process p= null;
+		try {
+			File workingDir = verifyWorkingDirectory(config);
+			p= createProcess(workingDir, cmdLine);
+		} catch (NoSuchMethodError e) {
+			//attempting launches on 1.2.* - no ability to set working directory
+			boolean retry= createRetryQueryForNoWorkingDirectory().queryRetry();
+			if (retry) {
+				p= createProcess(null, cmdLine);
+			}
+		}
+		if (p == null) {
+			return null;
+		}
+		IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
+		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		return new VMRunnerResult(null, new IProcess[] { process });
 	}	
 }
