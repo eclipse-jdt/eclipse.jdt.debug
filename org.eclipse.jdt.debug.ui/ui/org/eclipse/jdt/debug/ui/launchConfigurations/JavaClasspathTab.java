@@ -202,11 +202,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		try {
 			boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			fClassPathDefaultButton.setSelection(useDefault);
-			if (useDefault) {
-				displayDefaultClasspath();
-			} else {
-				// read from config
-			}
+			setClasspathEntries(JavaRuntime.computeRuntimeClasspath(configuration));
 			fClasspathViewer.setEnabled(!useDefault);
 			fBootpathViewer.setEnabled(!useDefault);
 		} catch (CoreException e) {
@@ -221,25 +217,31 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		IJavaProject project = getProject();
 		if (project != null) {
 			try {
-				IRuntimeClasspathEntry[] entries = JavaRuntime.computeRuntimeClasspath(project);
-				List cp = new ArrayList(entries.length);
-				List bp = new ArrayList(entries.length);
-				for (int i = 0; i < entries.length; i++) {
-					switch (entries[i].getClasspathProperty()) {
-						case IRuntimeClasspathEntry.USER_CLASSES:
-							cp.add(entries[i]);
-							break;
-						default:
-							bp.add(entries[i]);
-							break;
-					}
-				}
-				fClasspathViewer.setEntries((IRuntimeClasspathEntry[])cp.toArray(new IRuntimeClasspathEntry[cp.size()]));
-				fBootpathViewer.setEntries((IRuntimeClasspathEntry[])bp.toArray(new IRuntimeClasspathEntry[bp.size()]));
+				setClasspathEntries(JavaRuntime.computeRuntimeClasspath(project));
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}
 		}		
+	}
+	
+	/**
+	 * Displays the given classpath entries, grouping into user and bootstrap entries
+	 */
+	protected void setClasspathEntries(IRuntimeClasspathEntry[] entries) {
+		List cp = new ArrayList(entries.length);
+		List bp = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			switch (entries[i].getClasspathProperty()) {
+				case IRuntimeClasspathEntry.USER_CLASSES:
+					cp.add(entries[i]);
+					break;
+				default:
+					bp.add(entries[i]);
+					break;
+			}
+		}
+		fClasspathViewer.setEntries((IRuntimeClasspathEntry[])cp.toArray(new IRuntimeClasspathEntry[cp.size()]));
+		fBootpathViewer.setEntries((IRuntimeClasspathEntry[])bp.toArray(new IRuntimeClasspathEntry[bp.size()]));		
 	}
 	
 	/**
