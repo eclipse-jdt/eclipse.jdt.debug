@@ -102,9 +102,8 @@ class JavaParseTreeBuilder extends SourceElementRequestorAdapter implements ICom
 		pop(declarationEnd);
 	}
 	
-	public void acceptInitializer(int modifiers, int declarationSourceStart, int declarationSourceEnd) {
+	public void enterInitializer(int declarationSourceStart, int modifiers) {
 		push(JavaNode.INIT, getCurrentContainer().getInitializerCount(), declarationSourceStart);
-		pop(declarationSourceEnd);
 	}
 	
 	public void enterConstructor(int declarationStart, int p2, char[] name, int p4, int p5, char[][] parameterTypes, char[][] p7, char[][] p8) {
@@ -127,7 +126,7 @@ class JavaParseTreeBuilder extends SourceElementRequestorAdapter implements ICom
 		push(JavaNode.FIELD, new String(name), declarationStart);
 	}
 	
-	public void exitField(int initializationStart, int declarationEnd) {
+	public void exitField(int initializationStart, int declarationEnd, int declarationSourceEnd) {
 		pop(declarationEnd);
 	}
 
@@ -186,4 +185,12 @@ class JavaParseTreeBuilder extends SourceElementRequestorAdapter implements ICom
 		buffer.append(')');
 		return buffer.toString();
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.internal.compiler.ISourceElementRequestor#exitInitializer(int)
+	 */
+	public void exitInitializer(int declarationEnd) {
+		pop(declarationEnd);
+	}
+
 }
