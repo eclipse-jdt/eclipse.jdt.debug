@@ -1,7 +1,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
 
@@ -25,8 +25,6 @@ public class PushFieldVariable extends CompoundInstruction {
 	
 	private int  fSuperClassLevel;
 	
-	public static final String LENGTH= "length"; //$NON-NLS-1$
-	
 	public PushFieldVariable(String name, int superClassLevel, int start) {
 		super(start);
 		fName= name;
@@ -40,25 +38,16 @@ public class PushFieldVariable extends CompoundInstruction {
 	}
 	
 	public void execute() throws CoreException {
-		Object receiver= pop();
+		IJavaObject receiver=(IJavaObject) popValue();
 		
 		IJavaVariable field= null;
 		
-		if (receiver instanceof IJavaVariable) {
-			receiver = ((IJavaVariable) receiver).getValue();
+		if (fDeclaringTypeSignature == null) {
+			field= ((JDIObjectValue)receiver).getField(fName, fSuperClassLevel);
+		} else {
+			field= ((IJavaObject)receiver).getField(fName, fDeclaringTypeSignature);
 		}
 		
-		if (receiver instanceof IJavaArray && LENGTH.equals(fName)) {
-			int length= ((IJavaArray)receiver).getLength();
-			pushNewValue(length);
-			return;
-		} else if (receiver instanceof IJavaObject) {
-			if (fDeclaringTypeSignature == null) {
-				field= ((JDIObjectValue)receiver).getField(fName, fSuperClassLevel);
-			} else {
-				field= ((IJavaObject)receiver).getField(fName, fDeclaringTypeSignature);
-			}
-		}
 		if (field == null) {
 			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, InstructionsEvaluationMessages.getString("PushFieldVariable.Cannot_find_the_field__2") + fName + InstructionsEvaluationMessages.getString("PushFieldVariable._for_the_object__3") + receiver, null)); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {

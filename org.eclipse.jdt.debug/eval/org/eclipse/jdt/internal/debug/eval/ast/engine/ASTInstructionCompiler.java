@@ -121,6 +121,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PostfixMinusMinusOpe
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PostfixPlusPlusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PrefixMinusMinusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PrefixPlusPlusOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushArrayLength;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushArrayType;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushBoolean;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushChar;
@@ -1370,12 +1371,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new Pop());
 			storeInstruction();
 		} else {
-			if (isALocalType(declaringTypeBinding)) {
-				setHasError(true);
-				addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31"), node.getStartPosition())); //$NON-NLS-1$
-				return false;
+			if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
+				push(new PushArrayLength(fCounter));
+			} else {
+				if (isALocalType(declaringTypeBinding)) {
+					setHasError(true);
+					addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31"), node.getStartPosition())); //$NON-NLS-1$
+					return false;
+				}
+				push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
 			}
-			push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
 			expression.accept(this);
 		}
 		
@@ -1964,9 +1969,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
 					storeInstruction();
 				} else {
-					Name qualifier = node.getQualifier();
-					push(new PushFieldVariable(fieldId, getSuperLevel(qualifier.resolveTypeBinding(), declaringTypeBinding), fCounter));
-					qualifier.accept(this);
+					String typeSignature= null;
+					if (declaringTypeBinding == null) {
+						push(new PushArrayLength(fCounter));
+					} else {
+						push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
+					}
+					node.getQualifier().accept(this);
 				}
 				break;
 		}
@@ -2012,13 +2021,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				break;
 			case IBinding.VARIABLE:
 				IVariableBinding variableBinding= (IVariableBinding) binding;
-				ITypeBinding declaringClassBinding= variableBinding.getDeclaringClass();
+				ITypeBinding declaringTypeBinding= variableBinding.getDeclaringClass();
 				if (variableBinding.isField()) {
 					if (Modifier.isStatic(variableBinding.getModifiers())) {
-						push(new PushStaticFieldVariable(variableId, getTypeName(declaringClassBinding), fCounter));
+						push(new PushStaticFieldVariable(variableId, getTypeName(declaringTypeBinding), fCounter));
 					} else {
-						push(new PushFieldVariable(variableId, 0, fCounter));
-						push(new PushThis(getEnclosingLevel(node, declaringClassBinding)));
+						push(new PushFieldVariable(variableId, getTypeSignature(declaringTypeBinding), fCounter));
+						push(new PushThis(getEnclosingLevel(node, declaringTypeBinding)));
 						storeInstruction();
 					}
 				} else {
