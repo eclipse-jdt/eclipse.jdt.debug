@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,7 +160,7 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 	
 	/**
 	 * Return an instance of <code>IJavaObjectBrowser</code> that corresponds
-	 * to the specified java type.
+	 * to the specified Java type.
 	 */
 	private IJavaObjectBrowser getExecutableExtension(IJavaType javaType) throws DebugException {
 		
@@ -183,7 +184,8 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 			}
 			if (!(executable instanceof IJavaObjectBrowser)) {
 				String classAttribute = configElement.getAttribute("class"); //$NON-NLS-1$
-				JDIDebugUIPlugin.logErrorMessage(DebugUIMessages.getString("JavaObjectBrowser.4") + classAttribute + DebugUIMessages.getString("JavaObjectBrowser.5"));				 //$NON-NLS-1$ //$NON-NLS-2$
+				String message= MessageFormat.format(DebugUIMessages.getString("JavaObjectBrowser.4"), new String[]{classAttribute, configElement.getDeclaringExtension().getUniqueIdentifier()}); //$NON-NLS-1$
+				JDIDebugUIPlugin.logErrorMessage(message);
 				return null;
 			}	
 			objectBrowser = (IJavaObjectBrowser) executable;
