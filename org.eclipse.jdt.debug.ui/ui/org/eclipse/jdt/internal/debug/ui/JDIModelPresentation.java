@@ -1574,20 +1574,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	/**
 	 * Returns whether the given field variable has the same name as any variables
-	 * @param variable
-	 * @return
 	 */
 	protected boolean isDuplicateName(IJavaFieldVariable variable) {
 		IJavaObject javaObject = variable.getReceiver();
 		try {
 			String[] names = ((IJavaReferenceType)javaObject.getJavaType()).getAllFieldNames();
-			int occurrences = 0;
+			boolean found= false;
 			for (int i = 0; i < names.length; i++) {
 				if (variable.getName().equals(names[i])) {
-					occurrences++;
+					if (found) {
+						return true;
+					}
+					found= true;
 				}
 			}
-			return occurrences > 1;
+			return false;
 		} catch (DebugException e) {
 		}
 		return false;
