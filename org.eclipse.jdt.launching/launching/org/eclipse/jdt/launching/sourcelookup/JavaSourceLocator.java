@@ -282,9 +282,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	}
 
 	/**
-	 * @see IPersistableSourceLocator#initiatlizeFromMemento(String)
+	 * @see IPersistableSourceLocator#initializeFromMemento(String)
 	 */
-	public void initiatlizeFromMemento(String memento) throws CoreException {
+	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;
 		try {
 			Element root = null;

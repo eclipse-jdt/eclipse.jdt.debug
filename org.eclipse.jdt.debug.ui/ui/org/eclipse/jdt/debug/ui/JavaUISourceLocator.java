@@ -250,14 +250,14 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	}
 
 	/**
-	 * @see IPersistableSourceLocator#initiatlizeFromMemento(String)
+	 * @see IPersistableSourceLocator#initializeFromMemento(String)
 	 */
-	public void initiatlizeFromMemento(String memento) throws CoreException {
+	public void initializeFromMemento(String memento) throws CoreException {
 		int index = memento.indexOf('\n');
 		String handle = memento.substring(0, index);
 		String rest = memento.substring(index + 1);
 		fJavaProject = (IJavaProject)JavaCore.create(handle);
-		fSourceLocator.initiatlizeFromMemento(rest);
+		fSourceLocator.initializeFromMemento(rest);
 	}
 	
 	/**

@@ -68,7 +68,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		JavaSourceLocator locator = new JavaSourceLocator(new IJavaSourceLocation[] {location1, location2, location3});
 		String memento = locator.getMemento();
 		JavaSourceLocator restored = new JavaSourceLocator();
-		restored.initiatlizeFromMemento(memento);
+		restored.initializeFromMemento(memento);
 		IJavaSourceLocation[] locations = restored.getSourceLocations();
 		
 		assertEquals("wrong number of source locations", 3, locations.length);
