@@ -1809,7 +1809,7 @@
       <page
             name="%installJREPageName"
             category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.VMPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage"
             id="org.eclipse.jdt.debug.ui.preferences.VMPreferencePage">
       </page>
       <page
