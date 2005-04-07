@@ -45,8 +45,6 @@ public class PerformanceSuite extends DebugSuite {
 		addTest(new TestSuite(PerfConditionalBreakpointsTests.class));
 		addTest(new TestSuite(PerfSteppingTests.class));
 		addTest(new TestSuite(PerfConsoleTests.class));
-//		addTest(new TestSuite(PerfLaunchTests.class));
-		
 	}
 }
 
