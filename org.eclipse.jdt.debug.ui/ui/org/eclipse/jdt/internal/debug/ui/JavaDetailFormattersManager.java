@@ -131,7 +131,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			public void run() {
 				Runnable postEventProcess = new Runnable() {
 					public void run() {
-						if (thread.isPerformingEvaluation() && thread.isSuspended()) {
+						if (!thread.isSuspended() && !thread.isPerformingEvaluation()) {
 							listener.detailComputed(objectValue, DebugUIMessages.JavaDetailFormattersManager_9); //$NON-NLS-1$
 						} else {
 							thread.queueRunnable(new Runnable() {
