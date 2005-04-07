@@ -193,7 +193,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 	public IClasspathEntry getBootstrapEntry() {
 		if (bootstrapEntries == null) {
-			String name= ClasspathMessages.getString("ClasspathModel.0"); //$NON-NLS-1$
+			String name= ClasspathMessages.ClasspathModel_0; //$NON-NLS-1$
 			bootstrapEntries= createGroupEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
 		}
 		return bootstrapEntries;
@@ -201,7 +201,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public IClasspathEntry getUserEntry() {
 		if (userEntries == null) {
-			String name= ClasspathMessages.getString("ClasspathModel.1"); //$NON-NLS-1$
+			String name= ClasspathMessages.ClasspathModel_1; //$NON-NLS-1$
 			userEntries= createGroupEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
 		}
 		return userEntries;

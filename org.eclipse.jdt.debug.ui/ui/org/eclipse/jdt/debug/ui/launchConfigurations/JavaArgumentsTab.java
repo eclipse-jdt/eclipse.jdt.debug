@@ -97,7 +97,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		String controlName = (LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
+		String controlName = (LauncherMessages.JavaArgumentsTab__Program_arguments__5); //$NON-NLS-1$
 		group.setText(controlName);
 		
 		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
@@ -113,7 +113,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		});
 		ControlAccessibleListener.addListener(fPrgmArgumentsText, group.getText());
 		
-		String buttonLabel = LauncherMessages.getString("JavaArgumentsTab.5");  //$NON-NLS-1$
+		String buttonLabel = LauncherMessages.JavaArgumentsTab_5;  //$NON-NLS-1$
 		Button pgrmArgVariableButton = createPushButton(group, buttonLabel, null); 
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
@@ -176,7 +176,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			fVMArgumentsBlock.initializeFrom(configuration);
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);
 		}
 	}
@@ -207,7 +207,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("JavaArgumentsTab.&Arguments_16"); //$NON-NLS-1$
+		return LauncherMessages.JavaArgumentsTab__Arguments_16; //$NON-NLS-1$
 	}	
 	
 	/**

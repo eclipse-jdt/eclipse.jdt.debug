@@ -54,7 +54,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 	};
 
 	public AddJarAction(IClasspathViewer viewer) {
-		super(ActionMessages.getString("AddJarAction.Add_&JARs_1"), viewer); //$NON-NLS-1$
+		super(ActionMessages.AddJarAction_Add__JARs_1, viewer); //$NON-NLS-1$
 	}	
 
 	/**
@@ -71,8 +71,8 @@ public class AddJarAction extends RuntimeClasspathAction {
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
 		dialog.setValidator(validator);
-		dialog.setTitle(ActionMessages.getString("AddJarAction.JAR_Selection_7")); //$NON-NLS-1$
-		dialog.setMessage(ActionMessages.getString("AddJarAction.Choose_jars_to_add__8")); //$NON-NLS-1$
+		dialog.setTitle(ActionMessages.AddJarAction_JAR_Selection_7); //$NON-NLS-1$
+		dialog.setMessage(ActionMessages.AddJarAction_Choose_jars_to_add__8); //$NON-NLS-1$
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));

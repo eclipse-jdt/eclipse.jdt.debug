@@ -34,7 +34,7 @@ public class JavaBreakpointPropertiesRulerAction extends AbstractBreakpointRuler
 	public JavaBreakpointPropertiesRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
 		setInfo(info);
 		setTextEditor(editor);
-		setText(ActionMessages.getString("JavaBreakpointPropertiesRulerAction.Breakpoint_&Properties_1")); //$NON-NLS-1$
+		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1); //$NON-NLS-1$
 	}
 	/**
 	 * @see Action#run()

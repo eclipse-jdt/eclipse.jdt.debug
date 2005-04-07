@@ -39,7 +39,7 @@ public class JavaBreakpointIPackageFragmentRenameParticipant extends RenameParti
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.getString("JavaBreakpointIPackageFragmentRenameParticipant.0"); //$NON-NLS-1$
+		return RefactoringMessages.JavaBreakpointIPackageFragmentRenameParticipant_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -27,7 +27,7 @@ public class SuspendTimeoutStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		IJavaThread thread= (IJavaThread) source;
-		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), DebugUIMessages.getString("SuspendTimeoutHandler.suspend"), MessageFormat.format(DebugUIMessages.getString("SuspendTimeoutHandler.timeout_occurred"), new String[] {thread.getName()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); //$NON-NLS-1$ //$NON-NLS-2$
+		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), DebugUIMessages.SuspendTimeoutHandler_suspend, MessageFormat.format(DebugUIMessages.SuspendTimeoutHandler_timeout_occurred, new String[] {thread.getName()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); //$NON-NLS-1$ //$NON-NLS-2$
 		Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {

@@ -199,12 +199,12 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				}
 				// prompt
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(JDIDebugUIPlugin.getActiveWorkbenchShell(), new SourceElementLabelProvider(),new SourceElementQualifierProvider());
-				dialog.setTitle(DebugUIMessages.getString("JavaUISourceLocator.Select_Source_1")); //$NON-NLS-1$
-				dialog.setMessage(MessageFormat.format(DebugUIMessages.getString("JavaUISourceLocator.&Select_the_source_that_corresponds_to_{0}_2"), new String[]{type.getName()})); //$NON-NLS-1$
+				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1); //$NON-NLS-1$
+				dialog.setMessage(MessageFormat.format(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()})); //$NON-NLS-1$
 				dialog.setElements(sourceElements);
 				dialog.setMultipleSelection(false);
-				dialog.setUpperListLabel(DebugUIMessages.getString("JavaUISourceLocator.&Matching_files__3")); //$NON-NLS-1$
-				dialog.setLowerListLabel(DebugUIMessages.getString("JavaUISourceLocator.&Location__4")); //$NON-NLS-1$
+				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3); //$NON-NLS-1$
+				dialog.setLowerListLabel(DebugUIMessages.JavaUISourceLocator__Location__4); //$NON-NLS-1$
 				dialog.open();
 				Object[] result = dialog.getResult();
 				if (result == null) {
@@ -248,7 +248,8 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		Runnable prompter = new Runnable() {
 			public void run() {
 				try {
-					String message = LauncherMessages.getFormattedString("JavaUISourceLocator.selectprojects.message", frame.getDeclaringTypeName()); //$NON-NLS-1$
+					String message = MessageFormat.format(LauncherMessages.JavaUISourceLocator_selectprojects_message, new String[] {frame.getDeclaringTypeName()});
+
 					ILaunchConfiguration configuration =
 						frame.getLaunch().getLaunchConfiguration();
 					JavaSourceLookupDialog dialog =

@@ -51,9 +51,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		super();
 		
 		// only used when page is shown programatically
-		setTitle(JREMessages.getString("JREsPreferencePage.1"));	 //$NON-NLS-1$
+		setTitle(JREMessages.JREsPreferencePage_1);	 //$NON-NLS-1$
 		
-		setDescription(JREMessages.getString("JREsPreferencePage.2")); //$NON-NLS-1$
+		setDescription(JREMessages.JREsPreferencePage_2); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +109,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				IVMInstall install = getCurrentDefaultVM();
 				if (install == null) {
 					setValid(false);
-					setErrorMessage(JREMessages.getString("JREsPreferencePage.13")); //$NON-NLS-1$
+					setErrorMessage(JREMessages.JREsPreferencePage_13); //$NON-NLS-1$
 				} else {
 					setValid(true);
 					setErrorMessage(null);
@@ -178,7 +178,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				} else {
 					fJREBlock.setCheckedJRE(def);
 				}
-				ErrorDialog.openError(getControl().getShell(), JREMessages.getString("JREsPreferencePage.1"), JREMessages.getString("JREsPreferencePage.10"), new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.getString("JREsPreferencePage.11"), null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ErrorDialog.openError(getControl().getShell(), JREMessages.JREsPreferencePage_1, JREMessages.JREsPreferencePage_10, new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.JREsPreferencePage_11, null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return;
 			}
 		} else {
@@ -196,7 +196,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			setTitle(JREMessages.getString("JREsPreferencePage.12")); //$NON-NLS-1$
+			setTitle(JREMessages.JREsPreferencePage_12); //$NON-NLS-1$
 		}
 	}
 }

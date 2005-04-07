@@ -127,7 +127,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			return; 
 		}		
 		if (!tos.equals(frame)) {
-			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_top_stack_frame._3")); //$NON-NLS-1$
+			showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_top_stack_frame__3); //$NON-NLS-1$
 			return;
 		}
 		StepIntoSelectionHandler handler = new StepIntoSelectionHandler((IJavaThread)frame.getThread(), frame, method);
@@ -237,7 +237,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			runToLineAction.runToLine(getActiveEditor(), textSelection, thread);
 		} catch (CoreException e) {
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
-			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.4")); //$NON-NLS-1$
+			showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_4); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e.getStatus());
 		}
 	}
@@ -248,7 +248,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			ITextEditor editor = (ITextEditor)part;
 			return (ITextSelection)editor.getSelectionProvider().getSelection();
 		}
-		showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_Java_editor._4")); //$NON-NLS-1$
+		showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_Java_editor__4); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -264,7 +264,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			codeAssist = ((ICodeAssist)element);
 		} else {
 			// editor does not support code assist
-			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_for_types_in_Java_projects._1")); //$NON-NLS-1$
+			showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_for_types_in_Java_projects__1); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -283,7 +283,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		if (method == null) {
 			// no resolved method
-			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.No_Method")); //$NON-NLS-1$
+			showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_No_Method); //$NON-NLS-1$
 		}
 		return method;
 	}

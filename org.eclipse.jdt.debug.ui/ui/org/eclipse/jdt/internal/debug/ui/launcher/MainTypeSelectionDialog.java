@@ -54,9 +54,9 @@ public class MainTypeSelectionDialog extends TwoPaneElementSelector {
 
 		Assert.isNotNull(types);
 		fTypes= types;
-		setMessage(LauncherMessages.getString("MainTypeSelectionDialog.Choose_a_type")); //$NON-NLS-1$		
-		setUpperListLabel(LauncherMessages.getString("MainTypeSelectionDialog.Matching_types")); //$NON-NLS-1$
-		setLowerListLabel(LauncherMessages.getString("MainTypeSelectionDialog.Qualifier")); //$NON-NLS-1$
+		setMessage(LauncherMessages.MainTypeSelectionDialog_Choose_a_type); //$NON-NLS-1$		
+		setUpperListLabel(LauncherMessages.MainTypeSelectionDialog_Matching_types); //$NON-NLS-1$
+		setLowerListLabel(LauncherMessages.MainTypeSelectionDialog_Qualifier); //$NON-NLS-1$
 	}
 
 	/**

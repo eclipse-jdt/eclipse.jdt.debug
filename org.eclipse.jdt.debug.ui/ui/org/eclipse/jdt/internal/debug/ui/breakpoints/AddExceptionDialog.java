@@ -127,13 +127,13 @@ public class AddExceptionDialog extends TypeSelectionDialog {
         fCaughtButton = new Button(contents, SWT.CHECK);
         fCaughtButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fCaughtButton.setFont(contents.getFont());
-        fCaughtButton.setText(BreakpointMessages.getString("AddExceptionDialog.15")); //$NON-NLS-1$
+        fCaughtButton.setText(BreakpointMessages.AddExceptionDialog_15); //$NON-NLS-1$
         fCaughtButton.setSelection(c);
 
         fUncaughtButton = new Button(contents, SWT.CHECK);
         fUncaughtButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fUncaughtButton.setFont(contents.getFont());
-        fUncaughtButton.setText(BreakpointMessages.getString("AddExceptionDialog.16")); //$NON-NLS-1$
+        fUncaughtButton.setText(BreakpointMessages.AddExceptionDialog_16); //$NON-NLS-1$
         fUncaughtButton.setSelection(u);
     }
 
@@ -167,13 +167,13 @@ public class AddExceptionDialog extends TypeSelectionDialog {
             return false;
         }
         if (type == null) {
-            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.getString("AddExceptionDialog.17"))); //$NON-NLS-1$
+            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.AddExceptionDialog_17)); //$NON-NLS-1$
             return false;
         }
         final int exType = getExceptionType(type);
 
         if (exType == NO_EXCEPTION) {
-            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.getString("AddExceptionDialog.17"))); //$NON-NLS-1$
+            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.AddExceptionDialog_17)); //$NON-NLS-1$
             return false;
         }
 
@@ -183,7 +183,7 @@ public class AddExceptionDialog extends TypeSelectionDialog {
         final IType finalType = type;
         final boolean caught = fCaughtButton.getSelection();
         final boolean uncaught = fUncaughtButton.getSelection();
-        new Job(BreakpointMessages.getString("AddExceptionDialog.0")) { //$NON-NLS-1$
+        new Job(BreakpointMessages.AddExceptionDialog_0) { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
                 try {
                     IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(BreakpointUtils.getBreakpointResource(finalType), finalType.getFullyQualifiedName(), caught, uncaught, exType == CHECKED_EXCEPTION, true, attributes);
@@ -227,13 +227,13 @@ public class AddExceptionDialog extends TypeSelectionDialog {
             return false;
         }
         if (type == null) {
-            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.getString("AddExceptionDialog.17"))); //$NON-NLS-1$
+            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.AddExceptionDialog_17)); //$NON-NLS-1$
             return false;
         }
         int exType = getExceptionType(type);
 
         if (exType == NO_EXCEPTION) {
-            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.getString("AddExceptionDialog.17"))); //$NON-NLS-1$
+            updateStatus(new StatusInfo(IStatus.ERROR, BreakpointMessages.AddExceptionDialog_17)); //$NON-NLS-1$
             return false;
         }
 
@@ -243,7 +243,7 @@ public class AddExceptionDialog extends TypeSelectionDialog {
             IJavaExceptionBreakpoint breakpoint = breakpoints[i];
             try {
                 if (breakpoint.getTypeName().equals(name)) {
-                    updateStatus(new StatusInfo(IStatus.INFO, BreakpointMessages.getString("AddExceptionDialog.21"))); //$NON-NLS-1$
+                    updateStatus(new StatusInfo(IStatus.INFO, BreakpointMessages.AddExceptionDialog_21)); //$NON-NLS-1$
                     return false;
                 }
             } catch (CoreException e) {

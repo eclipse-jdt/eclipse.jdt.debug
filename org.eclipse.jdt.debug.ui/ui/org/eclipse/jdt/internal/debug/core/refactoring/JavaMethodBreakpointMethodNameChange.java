@@ -72,7 +72,7 @@ public class JavaMethodBreakpointMethodNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.getString("JavaMethodBreakpointMethodNameChange.0"), new String[] {fDeclaringType.getElementName(), fOldMethodName}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.JavaMethodBreakpointMethodNameChange_0, new String[] {fDeclaringType.getElementName(), fOldMethodName}); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -87,7 +87,7 @@ public class JavaMethodBreakpointMethodNameChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus status= new RefactoringStatus();
 		if (!fMethodBreakpoint.isRegistered()) {
-			status.addFatalError(MessageFormat.format(RefactoringMessages.getString("JavaMethodBreakpointMethodNameChange.1"), new String[] {fDeclaringType.getElementName(), fOldMethodName})); //$NON-NLS-1$
+			status.addFatalError(MessageFormat.format(RefactoringMessages.JavaMethodBreakpointMethodNameChange_1, new String[] {fDeclaringType.getElementName(), fOldMethodName})); //$NON-NLS-1$
 		}
 		return status;
 	}

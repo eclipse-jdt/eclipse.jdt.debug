@@ -169,7 +169,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))) {
 							// default JRE - resolve the name for the launch config, rather than using the "workspace" default description
 							IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfiguration);
-							return MessageFormat.format(LauncherMessages.getString("RuntimeClasspathEntryLabelProvider.JRE_System_Library_[{0}]_2"), new String[]{vm.getName()}); //$NON-NLS-1$
+							return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2, new String[]{vm.getName()}); //$NON-NLS-1$
 						}
 						IJavaProject project = null;
 						try {

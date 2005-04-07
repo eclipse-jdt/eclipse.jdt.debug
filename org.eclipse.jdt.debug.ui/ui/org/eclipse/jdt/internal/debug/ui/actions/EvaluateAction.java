@@ -212,14 +212,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IJavaObject object = getObjectContext();		
 		IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame == null) {
-			reportError(ActionMessages.getString("Evaluate.error.message.stack_frame_context")); //$NON-NLS-1$
+			reportError(ActionMessages.Evaluate_error_message_stack_frame_context); //$NON-NLS-1$
 			return;
 		}
 		
 		// check for nested evaluation
 		IJavaThread thread = (IJavaThread)stackFrame.getThread();
 		if (thread.isPerformingEvaluation()) {
-			reportError(ActionMessages.getString("EvaluateAction.Cannot_perform_nested_evaluations._1")); //$NON-NLS-1$
+			reportError(ActionMessages.EvaluateAction_Cannot_perform_nested_evaluations__1); //$NON-NLS-1$
 			return;
 		}
 		
@@ -249,11 +249,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					reportError(getExceptionMessage(e));
 				}
 			} else {
-				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
+				reportError(ActionMessages.Evaluate_error_message_src_context); //$NON-NLS-1$
 			}
 		} else {
 			// thread not suspended
-			reportError(ActionMessages.getString("EvaluateAction.Thread_not_suspended_-_unable_to_perform_evaluation._1")); //$NON-NLS-1$
+			reportError(ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); //$NON-NLS-1$
 		}
 		evaluationCleanup();
 	}
@@ -414,7 +414,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					try {
 						view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 					} catch (PartInitException e) {
-						JDIDebugUIPlugin.errorDialog(ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e); //$NON-NLS-1$
+						JDIDebugUIPlugin.errorDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e); //$NON-NLS-1$
 					} finally {
 						page.activate(activePart);
 					}
@@ -485,13 +485,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
-				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.getString("EvaluateAction.(evaluation_failed)_Reason"), new String[] {format(message)})); //$NON-NLS-1$
+				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)})); //$NON-NLS-1$
 			} else {
-				dataDisplay.displayExpressionValue(ActionMessages.getString("EvaluateAction.(evaluation_failed)_1")); //$NON-NLS-1$
+				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); //$NON-NLS-1$
 			}
 		} else {
 			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("Evaluate.error.title.eval_problems"), null, status); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); //$NON-NLS-1$
 		}
 	}
 	
@@ -519,9 +519,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
+		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); //$NON-NLS-1$
 		if (exception.getMessage() != null) {
-			message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
+			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
 		}
 		return message;
 	}
@@ -532,7 +532,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
+			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
 	}
 	
 	protected String getErrorMessage(IEvaluationResult result) {
@@ -550,7 +550,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (i == 0) {
 				message= msg;
 			} else {
-				message= MessageFormat.format(ActionMessages.getString("Evaluate.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
+				message= MessageFormat.format(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg }); //$NON-NLS-1$
 			}
 		}
 		return message;

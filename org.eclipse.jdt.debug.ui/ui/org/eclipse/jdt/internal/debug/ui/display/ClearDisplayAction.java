@@ -27,9 +27,9 @@ public class ClearDisplayAction extends Action {
 	public ClearDisplayAction(IWorkbenchPart workbenchPart) {
 		fWorkbenchPart= workbenchPart;
 		
-		setText(DisplayMessages.getString("ClearDisplay.label")); //$NON-NLS-1$
-		setToolTipText(DisplayMessages.getString("ClearDisplay.tooltip")); //$NON-NLS-1$
-		setDescription(DisplayMessages.getString("ClearDisplay.description")); //$NON-NLS-1$
+		setText(DisplayMessages.ClearDisplay_label); //$NON-NLS-1$
+		setToolTipText(DisplayMessages.ClearDisplay_tooltip); //$NON-NLS-1$
+		setDescription(DisplayMessages.ClearDisplay_description); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaDebugHelpContextIds.CLEAR_DISPLAY_VIEW_ACTION);
 		
 		JavaDebugImages.setLocalImageDescriptors(this, "clear_co.gif"); //$NON-NLS-1$

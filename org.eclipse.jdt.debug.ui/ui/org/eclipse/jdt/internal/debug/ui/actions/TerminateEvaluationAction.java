@@ -57,8 +57,8 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 					final Display display= JDIDebugUIPlugin.getStandardDisplay();
 						display.asyncExec(new Runnable() {
 							public void run() {
-								MessageDialog dialog = new MessageDialog(display.getActiveShell(), ActionMessages.getString("TerminateEvaluationActionTerminate_Evaluation_1"), null, //$NON-NLS-1$
-									ActionMessages.getString("TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements._The_currently_executing_statement_(such_as_a_method_invocation)_cannot_be_interrupted._2"), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0); //$NON-NLS-1$
+								MessageDialog dialog = new MessageDialog(display.getActiveShell(), ActionMessages.TerminateEvaluationActionTerminate_Evaluation_1, null, //$NON-NLS-1$
+									ActionMessages.TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements__The_currently_executing_statement__such_as_a_method_invocation__cannot_be_interrupted__2, MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0); //$NON-NLS-1$
 								dialog.setBlockOnOpen(false);
 								dialog.open();
 							}
@@ -70,7 +70,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 		try {
 			fThread.terminateEvaluation();
 		} catch (DebugException exception) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("TerminateEvaluationActionAn_exception_occurred_while_terminating_the_evaluation_3"), new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception)); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.TerminateEvaluationActionAn_exception_occurred_while_terminating_the_evaluation_3, new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception)); //$NON-NLS-1$
 		}
 	}
 

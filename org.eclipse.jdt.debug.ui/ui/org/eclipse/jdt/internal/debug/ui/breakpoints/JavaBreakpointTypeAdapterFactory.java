@@ -64,7 +64,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
                     if (stratum != null) {
                         Object type = fStratumTypes.get(stratum);
                         if (type == null) {
-                            String label = MessageFormat.format(BreakpointMessages.getString("JavaBreakpointTypeAdapterFactory.0"), new String[]{stratum}); //$NON-NLS-1$
+                            String label = MessageFormat.format(BreakpointMessages.JavaBreakpointTypeAdapterFactory_0, new String[]{stratum}); //$NON-NLS-1$
                             if (stratum.equalsIgnoreCase("jsp")) { //$NON-NLS-1$
                             	type = new BreakpointTypeCategory(label, JavaDebugImages.DESC_OBJS_JSP_BRKPT_TYPE);
                             } else {

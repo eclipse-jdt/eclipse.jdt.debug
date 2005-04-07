@@ -54,17 +54,17 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		getButton(IDialogConstants.OK_ID).setText(DebugUIMessages.getString("HotCodeReplaceErrorDialog.0")); //$NON-NLS-1$
+		getButton(IDialogConstants.OK_ID).setText(DebugUIMessages.HotCodeReplaceErrorDialog_0); //$NON-NLS-1$
 		boolean canTerminate= target.canTerminate();
 		boolean canDisconnect= target.canDisconnect();
 		if (canTerminate) {
-			createButton(parent, TERMINATE_ID, DebugUIMessages.getString("HotCodeReplaceErrorDialog.1"), false); //$NON-NLS-1$
+			createButton(parent, TERMINATE_ID, DebugUIMessages.HotCodeReplaceErrorDialog_1, false); //$NON-NLS-1$
 		} 
 		if (canDisconnect) {
-			createButton(parent, DISCONNECT_ID, DebugUIMessages.getString("HotCodeReplaceErrorDialog.3"), false); //$NON-NLS-1$
+			createButton(parent, DISCONNECT_ID, DebugUIMessages.HotCodeReplaceErrorDialog_3, false); //$NON-NLS-1$
 		}
 		if (canTerminate && !canDisconnect) {
-			createButton(parent, RESTART_ID, DebugUIMessages.getString("HotCodeReplaceErrorDialog.7"), false); //$NON-NLS-1$
+			createButton(parent, RESTART_ID, DebugUIMessages.HotCodeReplaceErrorDialog_7, false); //$NON-NLS-1$
 		}
 	}
 
@@ -80,13 +80,13 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 				public void run() {
 					try {
 						if (id == TERMINATE_ID) {
-							operation[0]= DebugUIMessages.getString("HotCodeReplaceErrorDialog.5"); //$NON-NLS-1$
+							operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_5; //$NON-NLS-1$
 							target.terminate();
 						} else if (id == DISCONNECT_ID){
-							operation[0]= DebugUIMessages.getString("HotCodeReplaceErrorDialog.6"); //$NON-NLS-1$
+							operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_6; //$NON-NLS-1$
 							target.disconnect();
 						} else {
-							operation[0]= DebugUIMessages.getString("HotCodeReplaceErrorDialog.8"); //$NON-NLS-1$
+							operation[0]= DebugUIMessages.HotCodeReplaceErrorDialog_8; //$NON-NLS-1$
 							ILaunch launch = target.getLaunch();
 							launch.terminate();
 							ILaunchConfiguration config = launch.getLaunchConfiguration();
@@ -101,7 +101,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 			};
 			BusyIndicator.showWhile(getShell().getDisplay(), r);
 			if (ex[0] != null) {
-				JDIDebugUIPlugin.errorDialog(MessageFormat.format(DebugUIMessages.getString("HotCodeReplaceErrorDialog.2"), operation), ex[0].getStatus()); //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog(MessageFormat.format(DebugUIMessages.HotCodeReplaceErrorDialog_2, operation), ex[0].getStatus()); //$NON-NLS-1$
 			}
 			okPressed();
 		} else {

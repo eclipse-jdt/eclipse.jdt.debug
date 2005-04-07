@@ -46,7 +46,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		this.filter = filter;
 		this.existingFilters = existingFilters;
 		
-		setTitle(DebugUIMessages.getString("CreateStepFilterDialog.2")); //$NON-NLS-1$
+		setTitle(DebugUIMessages.CreateStepFilterDialog_2); //$NON-NLS-1$
 		setStatusLineAboveButtons(false);
 		
 	}
@@ -76,7 +76,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 
 		int textStyles = SWT.SINGLE | SWT.LEFT;
 		Label label= new Label(container, textStyles);
-		label.setText(DebugUIMessages.getString("CreateStepFilterDialog.3")); //$NON-NLS-1$
+		label.setText(DebugUIMessages.CreateStepFilterDialog_3); //$NON-NLS-1$
 		label.setFont(container.getFont());
 		
 		// create & configure Text widget for editor
@@ -100,9 +100,9 @@ public class CreateStepFilterDialog extends StatusDialog {
 			public void modifyText(ModifyEvent e) {
 				validateChange();
 				if (!filterValid) 
-					updateStatus(new StatusInfo(IStatus.ERROR, DebugUIMessages.getString("CreateStepFilterDialog.4"))); //$NON-NLS-1$
+					updateStatus(new StatusInfo(IStatus.ERROR, DebugUIMessages.CreateStepFilterDialog_4)); //$NON-NLS-1$
 				else if (isDuplicateFilter(text.getText().trim())) {
-					updateStatus(new StatusInfo(IStatus.WARNING, DebugUIMessages.getString("CreateStepFilterDialog.5"))); //$NON-NLS-1$
+					updateStatus(new StatusInfo(IStatus.WARNING, DebugUIMessages.CreateStepFilterDialog_5)); //$NON-NLS-1$
 					return;
 				} else 
 					updateStatus(new StatusInfo());		

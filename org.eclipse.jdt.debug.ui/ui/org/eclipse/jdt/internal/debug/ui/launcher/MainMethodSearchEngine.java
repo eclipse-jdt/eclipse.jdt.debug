@@ -100,7 +100,7 @@ public class MainMethodSearchEngine{
 	 * @param includeSubtypes whether to consider types that inherit a main method
 	 */	
 	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, int style, boolean includeSubtypes) {
-		pm.beginTask(LauncherMessages.getString("MainMethodSearchEngine.1"), 100); //$NON-NLS-1$
+		pm.beginTask(LauncherMessages.MainMethodSearchEngine_1, 100); //$NON-NLS-1$
 		int searchTicks = 100;
 		if (includeSubtypes) {
 			searchTicks = 25;
@@ -119,7 +119,7 @@ public class MainMethodSearchEngine{
 		List result = collector.getResult();
 		if (includeSubtypes) {
 			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);
-			subtypesMonitor.beginTask(LauncherMessages.getString("MainMethodSearchEngine.2"), result.size()); //$NON-NLS-1$
+			subtypesMonitor.beginTask(LauncherMessages.MainMethodSearchEngine_2, result.size()); //$NON-NLS-1$
 			Set set = addSubtypes(result, subtypesMonitor, scope);
 			return (IType[]) set.toArray(new IType[set.size()]);
 		}

@@ -52,8 +52,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	private Button fMethodEntry;
 	private Button fMethodExit;
 	
-	private static final String fgWatchpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.0"); //$NON-NLS-1$
-	private static final String fgMethodBreakpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.1");//$NON-NLS-1$
+	private static final String fgWatchpointError= PropertyPageMessages.JavaLineBreakpointPage_0; //$NON-NLS-1$
+	private static final String fgMethodBreakpointError= PropertyPageMessages.JavaLineBreakpointPage_1;//$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#doStore()
@@ -115,7 +115,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			JDIDebugUIPlugin.log(ce);
 		}
 		if (lineNumber.length() > 0) {
-			createLabel(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.2")); //$NON-NLS-1$
+			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_2); //$NON-NLS-1$
 			createLabel(parent, lineNumber.toString());
 		}
 		// Member
@@ -124,12 +124,12 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			if (member == null) {
 				return;
 			}
-			String label = PropertyPageMessages.getString("JavaLineBreakpointPage.3"); //$NON-NLS-1$
+			String label = PropertyPageMessages.JavaLineBreakpointPage_3; //$NON-NLS-1$
 			String memberName = fJavaLabelProvider.getText(member);
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
-				label = PropertyPageMessages.getString("JavaLineBreakpointPage.4"); //$NON-NLS-1$
+				label = PropertyPageMessages.JavaLineBreakpointPage_4; //$NON-NLS-1$
 			} else if (breakpoint instanceof IJavaWatchpoint) {
-				label = PropertyPageMessages.getString("JavaLineBreakpointPage.5"); //$NON-NLS-1$
+				label = PropertyPageMessages.JavaLineBreakpointPage_5; //$NON-NLS-1$
 			}
 			createLabel(parent, label);
 			createLabel(parent, memberName);
@@ -154,12 +154,12 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 					validateWatchpoint();
 				}
 			};
-			createLabel(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.6")); //$NON-NLS-1$
+			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_6); //$NON-NLS-1$
 			fEnabledButton.addSelectionListener(watchpointValidator);
-			fFieldAccess= createCheckButton(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.7")); //$NON-NLS-1$
+			fFieldAccess= createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_7); //$NON-NLS-1$
 			fFieldAccess.setSelection(watchpoint.isAccess());
 			fFieldAccess.addSelectionListener(watchpointValidator);
-			fFieldModification= createCheckButton(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.8")); //$NON-NLS-1$
+			fFieldModification= createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_8); //$NON-NLS-1$
 			fFieldModification.setSelection(watchpoint.isModification());
 			fFieldModification.addSelectionListener(watchpointValidator);
 		}
@@ -170,12 +170,12 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 					validateMethodBreakpoint();
 				}
 			}; 
-			createLabel(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.9")); //$NON-NLS-1$
+			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_9); //$NON-NLS-1$
 			fEnabledButton.addSelectionListener(methodBreakpointValidator);
-			fMethodEntry= createCheckButton(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.10")); //$NON-NLS-1$
+			fMethodEntry= createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_10); //$NON-NLS-1$
 			fMethodEntry.setSelection(methodBreakpoint.isEntry());
 			fMethodEntry.addSelectionListener(methodBreakpointValidator);
-			fMethodExit= createCheckButton(parent, PropertyPageMessages.getString("JavaLineBreakpointPage.11")); //$NON-NLS-1$
+			fMethodExit= createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_11); //$NON-NLS-1$
 			fMethodExit.setSelection(methodBreakpoint.isExit());
 			fMethodExit.addSelectionListener(methodBreakpointValidator);
 		}
@@ -215,12 +215,12 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 				List keyBindings = command.getKeySequenceBindings();
 				if (keyBindings != null && keyBindings.size() > 0) {
 					IKeySequenceBinding binding = (IKeySequenceBinding)keyBindings.get(0);
-					label = MessageFormat.format(PropertyPageMessages.getString("JavaLineBreakpointPage.12"), new String[] {binding.getKeySequence().format()}); //$NON-NLS-1$
+					label = MessageFormat.format(PropertyPageMessages.JavaLineBreakpointPage_12, new String[] {binding.getKeySequence().format()}); //$NON-NLS-1$
 				} 
 			}
 		}
 		if (label == null) {
-			label = PropertyPageMessages.getString("JavaLineBreakpointPage.13"); //$NON-NLS-1$
+			label = PropertyPageMessages.JavaLineBreakpointPage_13; //$NON-NLS-1$
 		}
 		Composite conditionComposite= new Group(parent, SWT.NONE);
 		conditionComposite.setFont(parent.getFont());
@@ -236,9 +236,9 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		
 		fConditionEditor = new BreakpointConditionEditor(conditionComposite, this); //$NON-NLS-1$
 		
-		fSuspendWhenLabel= createLabel(conditionComposite, PropertyPageMessages.getString("JavaLineBreakpointPage.15")); //$NON-NLS-1$
-		fConditionIsTrue= createRadioButton(conditionComposite, PropertyPageMessages.getString("JavaLineBreakpointPage.16")); //$NON-NLS-1$
-		fConditionHasChanged= createRadioButton(conditionComposite, PropertyPageMessages.getString("JavaLineBreakpointPage.17")); //$NON-NLS-1$
+		fSuspendWhenLabel= createLabel(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_15); //$NON-NLS-1$
+		fConditionIsTrue= createRadioButton(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_16); //$NON-NLS-1$
+		fConditionHasChanged= createRadioButton(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_17); //$NON-NLS-1$
 		if (breakpoint.isConditionSuspendOnTrue()) {
 			fConditionIsTrue.setSelection(true);
 		} else {

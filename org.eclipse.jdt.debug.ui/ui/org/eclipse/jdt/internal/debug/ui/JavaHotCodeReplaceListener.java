@@ -61,16 +61,16 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		final String preference;
 		final String alertMessage;
 		if (exception == null) {
-			status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.The_target_VM_does_not_support_hot_code_replace_1"), null); //$NON-NLS-1$
+			status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1, null); //$NON-NLS-1$
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
-			alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.3"); //$NON-NLS-1$
+			alertMessage= DebugUIMessages.JDIDebugUIPlugin_3; //$NON-NLS-1$
 		} else {
 			status= exception.getStatus();
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED;
-			alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.1"); //$NON-NLS-1$
+			alertMessage= DebugUIMessages.JDIDebugUIPlugin_1; //$NON-NLS-1$
 		}
-		final String title= DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"); //$NON-NLS-1$
-		final String message= MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), //$NON-NLS-1$
+		final String title= DebugUIMessages.JDIDebugUIPlugin_Hot_code_replace_failed_1; //$NON-NLS-1$
+		final String message= MessageFormat.format(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, //$NON-NLS-1$
 					new Object[] {vmName});
 		display.asyncExec(new Runnable() {
 			public void run() {
@@ -97,10 +97,10 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 			return;
 		}
 		final String vmName= fLabelProvider.getText(target);
-		final String dialogTitle= DebugUIMessages.getString("JDIDebugUIPlugin.Obsolete_methods_remain_1"); //$NON-NLS-1$
-		final String message= MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_contains_obsolete_methods_1"), new Object[] {vmName}); //$NON-NLS-1$
-		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.Stepping_may_be_hazardous_1"), null); //$NON-NLS-1$
-		final String toggleMessage= DebugUIMessages.getString("JDIDebugUIPlugin.2"); //$NON-NLS-1$
+		final String dialogTitle= DebugUIMessages.JDIDebugUIPlugin_Obsolete_methods_remain_1; //$NON-NLS-1$
+		final String message= MessageFormat.format(DebugUIMessages.JDIDebugUIPlugin__0__contains_obsolete_methods_1, new Object[] {vmName}); //$NON-NLS-1$
+		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_Stepping_may_be_hazardous_1, null); //$NON-NLS-1$
+		final String toggleMessage= DebugUIMessages.JDIDebugUIPlugin_2; //$NON-NLS-1$
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (display.isDisposed()) {

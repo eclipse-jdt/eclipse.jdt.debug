@@ -77,7 +77,7 @@ public class BreakpointConditionEditor {
 			JDIDebugUIPlugin.log(exception);
 			return;
 		}
-		fErrorMessage= PropertyPageMessages.getString("BreakpointConditionEditor.1"); //$NON-NLS-1$
+		fErrorMessage= PropertyPageMessages.BreakpointConditionEditor_1; //$NON-NLS-1$
 		fOldValue= ""; //$NON-NLS-1$
 			
 		// the source viewer

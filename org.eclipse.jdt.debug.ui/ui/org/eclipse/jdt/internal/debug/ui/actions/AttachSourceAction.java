@@ -34,7 +34,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	 * @param style a button or radio button
 	 */
 	public AttachSourceAction(RuntimeClasspathViewer viewer, int style) {
-		super((style == SWT.RADIO) ? ActionMessages.getString("AttachSourceAction.2") : ActionMessages.getString("AttachSourceAction.3"), viewer); //$NON-NLS-1$ //$NON-NLS-2$
+		super((style == SWT.RADIO) ? ActionMessages.AttachSourceAction_2 : ActionMessages.AttachSourceAction_3, viewer); //$NON-NLS-1$ //$NON-NLS-2$
 	}	
 
 	/**

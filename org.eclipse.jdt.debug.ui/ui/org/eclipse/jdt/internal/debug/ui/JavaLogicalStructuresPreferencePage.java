@@ -88,7 +88,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
                 buffer.append(logicalStructure.getDescription());
                 String pluginId= logicalStructure.getContributingPluginId();
                 if (pluginId != null) {
-                    buffer.append(MessageFormat.format(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.8"), new String[] {pluginId})); //$NON-NLS-1$
+                    buffer.append(MessageFormat.format(DebugUIMessages.JavaLogicalStructuresPreferencePage_8, new String[] {pluginId})); //$NON-NLS-1$
                 }
             }
             return buffer.toString();
@@ -220,8 +220,8 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         "showAs", //$NON-NLS-1$
     };
     protected String[] fTableColumnHeaders= {
-        DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.9"), //$NON-NLS-1$
-        DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.10"), //$NON-NLS-1$
+        DebugUIMessages.JavaLogicalStructuresPreferencePage_9, //$NON-NLS-1$
+        DebugUIMessages.JavaLogicalStructuresPreferencePage_10, //$NON-NLS-1$
     };
     protected ColumnLayoutData[] fTableColumnLayouts= {
         new ColumnWeightData(70),
@@ -230,9 +230,9 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     private SourceViewer fCodeViewer;
 
 	public JavaLogicalStructuresPreferencePage() {
-		super(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.0")); //$NON-NLS-1$
+		super(DebugUIMessages.JavaLogicalStructuresPreferencePage_0); //$NON-NLS-1$
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-        setDescription(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.11")); //$NON-NLS-1$
+        setDescription(DebugUIMessages.JavaLogicalStructuresPreferencePage_11); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -262,7 +262,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     
     public void createSourceViewer(Composite parent) {
         Label label= new Label(parent, SWT.NONE);
-        label.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.12")); //$NON-NLS-1$
+        label.setText(DebugUIMessages.JavaLogicalStructuresPreferencePage_12); //$NON-NLS-1$
         label.setFont(parent.getFont());
         
         fCodeViewer= new SourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -303,22 +303,22 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         buttonContainer.setFont(font);
         // add button
 		fAddLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
-        fAddLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.2")); //$NON-NLS-1$
-        fAddLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.3")); //$NON-NLS-1$
+        fAddLogicalStructureButton.setText(DebugUIMessages.JavaLogicalStructuresPreferencePage_2); //$NON-NLS-1$
+        fAddLogicalStructureButton.setToolTipText(DebugUIMessages.JavaLogicalStructuresPreferencePage_3); //$NON-NLS-1$
         fAddLogicalStructureButton.setFont(font);
         setButtonLayoutData(fAddLogicalStructureButton);
         fAddLogicalStructureButton.addListener(SWT.Selection, this);
         // edit button
 		fEditLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
-        fEditLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.4")); //$NON-NLS-1$
-        fEditLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.5")); //$NON-NLS-1$
+        fEditLogicalStructureButton.setText(DebugUIMessages.JavaLogicalStructuresPreferencePage_4); //$NON-NLS-1$
+        fEditLogicalStructureButton.setToolTipText(DebugUIMessages.JavaLogicalStructuresPreferencePage_5); //$NON-NLS-1$
         fEditLogicalStructureButton.setFont(font);
         setButtonLayoutData(fEditLogicalStructureButton);
         fEditLogicalStructureButton.addListener(SWT.Selection, this);
         // remove button
 		fRemoveLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
-        fRemoveLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.6")); //$NON-NLS-1$
-        fRemoveLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.7")); //$NON-NLS-1$
+        fRemoveLogicalStructureButton.setText(DebugUIMessages.JavaLogicalStructuresPreferencePage_6); //$NON-NLS-1$
+        fRemoveLogicalStructureButton.setToolTipText(DebugUIMessages.JavaLogicalStructuresPreferencePage_7); //$NON-NLS-1$
         fRemoveLogicalStructureButton.setFont(font);
         setButtonLayoutData(fRemoveLogicalStructureButton);
         fRemoveLogicalStructureButton.addListener(SWT.Selection, this);
@@ -331,7 +331,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
      */
     private void createTable(Composite parent) {
         Label label= new Label(parent, SWT.NONE);
-        label.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.1")); //$NON-NLS-1$
+        label.setText(DebugUIMessages.JavaLogicalStructuresPreferencePage_1); //$NON-NLS-1$
         GridData gd= new GridData();
         gd.horizontalSpan= 2;
         label.setLayoutData(gd);

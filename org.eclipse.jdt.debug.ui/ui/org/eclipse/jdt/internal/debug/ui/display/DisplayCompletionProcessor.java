@@ -129,7 +129,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-        setErrorMessage(DisplayMessages.getString("DisplayCompletionProcessor.0")); //$NON-NLS-1$
+        setErrorMessage(DisplayMessages.DisplayCompletionProcessor_0); //$NON-NLS-1$
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context == null) {
 			return new ICompletionProposal[0];
@@ -151,7 +151,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				IType receivingType= getReceivingType(project, stackFrame);
 				
 				if (receivingType == null) {
-                    setErrorMessage(DisplayMessages.getString("DisplayCompletionProcessor.1")); //$NON-NLS-1$
+                    setErrorMessage(DisplayMessages.DisplayCompletionProcessor_1); //$NON-NLS-1$
 					return new ICompletionProposal[0];
 				}
 				IVariable[] variables= stackFrame.getLocalVariables();
@@ -188,7 +188,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				 //applies to all proposals and not just those of the compilation unit. 
 				return order(results);	
 			}
-            setErrorMessage(DisplayMessages.getString("DisplayCompletionProcessor.2")); //$NON-NLS-1$
+            setErrorMessage(DisplayMessages.DisplayCompletionProcessor_2); //$NON-NLS-1$
 		} catch (JavaModelException x) {
 			handle(viewer, x);
 		} catch (DebugException de) {
@@ -245,8 +245,8 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	protected void handle(ITextViewer viewer, CoreException x) {
 		Shell shell= viewer.getTextWidget().getShell();
 		ErrorDialog.openError(shell,
-			DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
-			DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$ 
+			DisplayMessages.DisplayCompletionProcessor_Problems_during_completion_1, //$NON-NLS-1$
+			DisplayMessages.DisplayCompletionProcessor_An_exception_occurred_during_code_completion_2, //$NON-NLS-1$ 
 			x.getStatus());  
 		JDIDebugUIPlugin.log(x);
 	}

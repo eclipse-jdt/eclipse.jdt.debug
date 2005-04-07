@@ -129,7 +129,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		widthHeightNameComp.setLayout(widthHeightNameLayout);
 		
 		fWidthLabel= new Label(widthHeightNameComp, SWT.NONE);
-		fWidthLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.widthlabel.text")); //$NON-NLS-1$
+		fWidthLabel.setText(LauncherMessages.appletlauncher_argumenttab_widthlabel_text); //$NON-NLS-1$
 		fWidthLabel.setFont(font);
 		
 		fWidthText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
@@ -139,7 +139,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		fWidthText.addModifyListener(fListener);
 
 		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
-		fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
+		fNameLabel.setText(LauncherMessages.appletlauncher_argumenttab_namelabel_text); //$NON-NLS-1$
 		fNameLabel.setFont(font);
 		
 		fNameText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
@@ -149,7 +149,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		fNameText.addModifyListener(fListener);	
 
 		fHeightLabel= new Label(widthHeightNameComp, SWT.NONE);
-		fHeightLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.heightlabel.text")); //$NON-NLS-1$
+		fHeightLabel.setText(LauncherMessages.appletlauncher_argumenttab_heightlabel_text); //$NON-NLS-1$
 		fHeightLabel.setFont(font);
 		
 		fHeightText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
@@ -161,7 +161,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		Label blank = new Label(widthHeightNameComp, SWT.NONE);
 		blank.setText(EMPTY_STRING);
 		Label hint = new Label(widthHeightNameComp, SWT.NONE);
-		hint.setText(LauncherMessages.getString("AppletParametersTab.(optional_applet_instance_name)_1")); //$NON-NLS-1$
+		hint.setText(LauncherMessages.AppletParametersTab__optional_applet_instance_name__1); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		hint.setLayoutData(gd);
 		hint.setFont(font);
@@ -179,7 +179,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		parametersComp.setFont(font);
 		
 		Label parameterLabel = new Label(parametersComp, SWT.NONE);
-		parameterLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterslabel.text")); //$NON-NLS-1$
+		parameterLabel.setText(LauncherMessages.appletlauncher_argumenttab_parameterslabel_text); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		parameterLabel.setLayoutData(gd);
@@ -193,9 +193,9 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_BOTH);
 		fParametersTable.setLayoutData(gd);
 		TableColumn column1 = new TableColumn(this.fParametersTable, SWT.NONE);
-		column1.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.name.text")); //$NON-NLS-1$
+		column1.setText(LauncherMessages.appletlauncher_argumenttab_parameterscolumn_name_text); //$NON-NLS-1$
 		TableColumn column2 = new TableColumn(this.fParametersTable, SWT.NONE);
-		column2.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.value.text"));		 //$NON-NLS-1$
+		column2.setText(LauncherMessages.appletlauncher_argumenttab_parameterscolumn_value_text);		 //$NON-NLS-1$
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		fParametersTable.setHeaderVisible(true);
@@ -219,13 +219,13 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		envButtonComp.setLayoutData(gd);
 		envButtonComp.setFont(font);
 		
-		fParametersAddButton = createPushButton(envButtonComp ,LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.add.text"), null); //$NON-NLS-1$
+		fParametersAddButton = createPushButton(envButtonComp ,LauncherMessages.appletlauncher_argumenttab_parameters_button_add_text, null); //$NON-NLS-1$
 		fParametersAddButton.addSelectionListener(fListener);
 		
-		fParametersEditButton = createPushButton(envButtonComp, LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.edit.text"), null); //$NON-NLS-1$
+		fParametersEditButton = createPushButton(envButtonComp, LauncherMessages.appletlauncher_argumenttab_parameters_button_edit_text, null); //$NON-NLS-1$
 		fParametersEditButton.addSelectionListener(fListener);
 		
-		fParametersRemoveButton = createPushButton(envButtonComp, LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.remove.text"), null); //$NON-NLS-1$
+		fParametersRemoveButton = createPushButton(envButtonComp, LauncherMessages.appletlauncher_argumenttab_parameters_button_remove_text, null); //$NON-NLS-1$
 		fParametersRemoveButton.addSelectionListener(fListener);
 	}
 
@@ -238,13 +238,13 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		try {
 			Integer.parseInt(getWidthText());
 		} catch(NumberFormatException nfe) {
-			setErrorMessage(LauncherMessages.getString("appletlauncher.argumenttab.width.error.notaninteger")); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.appletlauncher_argumenttab_width_error_notaninteger); //$NON-NLS-1$
 			return false;
 		}
 		try {
 			Integer.parseInt(getHeightText());
 		} catch(NumberFormatException nfe) {
-			setErrorMessage(LauncherMessages.getString("appletlauncher.argumenttab.height.error.notaninteger")); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.appletlauncher_argumenttab_height_error_notaninteger); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -253,8 +253,8 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	private void handleParametersAddButtonSelected() {
 		NameValuePairDialog dialog = 
 			new NameValuePairDialog(getShell(), 
-				LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.add.title"),  //$NON-NLS-1$
-				new String[] {LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.add.name.text"), LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.add.value.text")},  //$NON-NLS-1$ //$NON-NLS-2$
+				LauncherMessages.appletlauncher_argumenttab_parameters_dialog_add_title,  //$NON-NLS-1$
+				new String[] {LauncherMessages.appletlauncher_argumenttab_parameters_dialog_add_name_text, LauncherMessages.appletlauncher_argumenttab_parameters_dialog_add_value_text},  //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] {EMPTY_STRING, EMPTY_STRING}); 
 		openNewParameterDialog(dialog, null);
 		setParametersButtonsEnableState();
@@ -266,8 +266,8 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		String value = selectedItem.getText(1);
 		NameValuePairDialog dialog =
 			new NameValuePairDialog(getShell(), 
-				LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.edit.title"),  //$NON-NLS-1$
-				new String[] {LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.edit.name.text"), LauncherMessages.getString("appletlauncher.argumenttab.parameters.dialog.edit.value.text")},  //$NON-NLS-1$ //$NON-NLS-2$
+				LauncherMessages.appletlauncher_argumenttab_parameters_dialog_edit_title,  //$NON-NLS-1$
+				new String[] {LauncherMessages.appletlauncher_argumenttab_parameters_dialog_edit_name_text, LauncherMessages.appletlauncher_argumenttab_parameters_dialog_edit_value_text},  //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] {name, value});
 		openNewParameterDialog(dialog, selectedItem);		
 	}
@@ -432,9 +432,9 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 			fHeightText.setText(Integer.toString(DEFAULT_APPLET_HEIGHT)); //$NON-NLS-1$
 		}
 		try {
-			fNameText.setText(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, LauncherMessages.getString("appletlauncher.argumenttab.name.defaultvalue"))); //$NON-NLS-1$
+			fNameText.setText(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, LauncherMessages.appletlauncher_argumenttab_name_defaultvalue)); //$NON-NLS-1$
 		} catch(CoreException ce) {
-			fNameText.setText(LauncherMessages.getString("appletlauncher.argumenttab.name.defaultvalue")); //$NON-NLS-1$
+			fNameText.setText(LauncherMessages.appletlauncher_argumenttab_name_defaultvalue); //$NON-NLS-1$
 		}
 		updateParametersFromConfig(config);
 	}
@@ -450,7 +450,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("appletlauncher.argumenttab.name"); //$NON-NLS-1$
+		return LauncherMessages.appletlauncher_argumenttab_name; //$NON-NLS-1$
 	}	
 	
 	/**

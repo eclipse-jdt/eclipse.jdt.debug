@@ -57,7 +57,7 @@ public class ThreadFilterEditor {
 	
 	private void createThreadViewer(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
-		label.setText(PropertyPageMessages.getString("ThreadFilterEditor.1")); //$NON-NLS-1$
+		label.setText(PropertyPageMessages.ThreadFilterEditor_1); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		label.setLayoutData(new GridData());
 		
@@ -272,7 +272,7 @@ public class ThreadFilterEditor {
 				if (checkedThread) {
 					fPage.setErrorMessage(null);
 				} else {
-					fPage.setErrorMessage(PropertyPageMessages.getString("ThreadFilterEditor.2")); //$NON-NLS-1$
+					fPage.setErrorMessage(PropertyPageMessages.ThreadFilterEditor_2); //$NON-NLS-1$
 				}
 			}
 		}

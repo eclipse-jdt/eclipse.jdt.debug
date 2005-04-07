@@ -85,7 +85,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 					try {
 						int lineNumber= lineBreakpoint.getLineNumber();
 						if (lineNumber != -1) {
-							label.append(DebugUIMessages.getString("JavaBreakpointWorkbenchAdapterFactory.1")); //$NON-NLS-1$
+							label.append(DebugUIMessages.JavaBreakpointWorkbenchAdapterFactory_1); //$NON-NLS-1$
 							label.append(lineNumber);
 							label.append(']');
 						}

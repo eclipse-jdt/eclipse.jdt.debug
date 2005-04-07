@@ -39,7 +39,7 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.getString("LaunchConfigurationIJavaProjectRenameParticipant.0"); //$NON-NLS-1$
+		return RefactoringMessages.LaunchConfigurationIJavaProjectRenameParticipant_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

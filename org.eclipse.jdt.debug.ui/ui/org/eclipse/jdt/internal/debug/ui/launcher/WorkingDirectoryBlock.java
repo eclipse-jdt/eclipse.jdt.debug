@@ -105,7 +105,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		group.setFont(font);
 		setControl(group);
 		
-		group.setText(LauncherMessages.getString("WorkingDirectoryBlock.12")); //$NON-NLS-1$
+		group.setText(LauncherMessages.WorkingDirectoryBlock_12); //$NON-NLS-1$
 				
 		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -115,7 +115,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkingDirText.addModifyListener(fListener);
 		
 		fUseDefaultWorkingDirButton = new Button(group,SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText(LauncherMessages.getString("JavaArgumentsTab.Use_de&fault_working_directory_4")); //$NON-NLS-1$
+		fUseDefaultWorkingDirButton.setText(LauncherMessages.JavaArgumentsTab_Use_de_fault_working_directory_4); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
@@ -129,13 +129,13 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComp.setLayoutData(gd);
 		buttonComp.setFont(font);		
-		fWorkspaceButton = createPushButton(buttonComp, LauncherMessages.getString("WorkingDirectoryBlock.0"), null); //$NON-NLS-1$
+		fWorkspaceButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_0, null); //$NON-NLS-1$
 		fWorkspaceButton.addSelectionListener(fListener);
 		
-		fFileSystemButton = createPushButton(buttonComp, LauncherMessages.getString("WorkingDirectoryBlock.1"), null); //$NON-NLS-1$
+		fFileSystemButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_1, null); //$NON-NLS-1$
 		fFileSystemButton.addSelectionListener(fListener);
 		
-		fVariablesButton = createPushButton(buttonComp, LauncherMessages.getString("WorkingDirectoryBlock.17"), null); //$NON-NLS-1$
+		fVariablesButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_17, null); //$NON-NLS-1$
 		fVariablesButton.addSelectionListener(fListener);
 	}
 					
@@ -150,7 +150,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(LauncherMessages.getString("WorkingDirectoryBlock.7")); //$NON-NLS-1$
+		dialog.setMessage(LauncherMessages.WorkingDirectoryBlock_7); //$NON-NLS-1$
 		String currentWorkingDir = fWorkingDirText.getText();
 		if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
 			File path = new File(currentWorkingDir);
@@ -177,7 +177,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		ContainerSelectionDialog dialog = 
 			new ContainerSelectionDialog(getShell(),
 					currentContainer, false,
-					LauncherMessages.getString("WorkingDirectoryBlock.4")); //$NON-NLS-1$
+					LauncherMessages.WorkingDirectoryBlock_4); //$NON-NLS-1$
 		dialog.showClosedProjects(false);
 		dialog.open();
 		Object[] results = dialog.getResult();		
@@ -286,7 +286,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 				if (dir.isDirectory()) {
 					return true;
 				}
-				setErrorMessage(LauncherMessages.getString("WorkingDirectoryBlock.10")); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.WorkingDirectoryBlock_10); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -318,7 +318,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);
 		}
 	}
@@ -351,7 +351,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("WorkingDirectoryBlock.Working_Directory_8"); //$NON-NLS-1$
+		return LauncherMessages.WorkingDirectoryBlock_Working_Directory_8; //$NON-NLS-1$
 	}	
 	
 	/**

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 public class AddExternalFolderAction extends OpenDialogAction {
 
 	public AddExternalFolderAction(IClasspathViewer viewer, String dialogSettingsPrefix) {
-		super(ActionMessages.getString("AddExternalFolderAction.Add_External_Folder_1"), viewer, dialogSettingsPrefix); //$NON-NLS-1$
+		super(ActionMessages.AddExternalFolderAction_Add_External_Folder_1, viewer, dialogSettingsPrefix); //$NON-NLS-1$
 	}	
 
 	/**
@@ -40,7 +40,7 @@ public class AddExternalFolderAction extends OpenDialogAction {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
 		DirectoryDialog dialog= new DirectoryDialog(getShell(), SWT.MULTI);
-		dialog.setText(ActionMessages.getString("AddExternalFolderAction.Folder_Selection_3")); //$NON-NLS-1$
+		dialog.setText(ActionMessages.AddExternalFolderAction_Folder_Selection_3); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String res= dialog.open();
 		if (res == null) {

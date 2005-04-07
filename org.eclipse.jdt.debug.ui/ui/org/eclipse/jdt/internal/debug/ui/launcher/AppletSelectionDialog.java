@@ -112,7 +112,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		try {
 			fRunnableContext.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {	
-					monitor.beginTask(LauncherMessages.getString("AppletSelectionDialog.Searching..._1"), projectCount); //$NON-NLS-1$
+					monitor.beginTask(LauncherMessages.AppletSelectionDialog_Searching____1, projectCount); //$NON-NLS-1$
 					for (int i = 0; i < projectCount; i++) {
 						IJavaProject javaProject = javaProjects[i];
 						SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1); 

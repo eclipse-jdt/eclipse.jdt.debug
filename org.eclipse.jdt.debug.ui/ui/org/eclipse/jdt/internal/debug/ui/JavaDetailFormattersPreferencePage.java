@@ -73,9 +73,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	public JavaDetailFormattersPreferencePage() {
 		super();
-		setTitle(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.0")); //$NON-NLS-1$
+		setTitle(DebugUIMessages.JavaDetailFormattersPreferencePage_0); //$NON-NLS-1$
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Override_default___toString()___for_Variables_and_Expressions_view_details._1")); //$NON-NLS-1$
+		setDescription(DebugUIMessages.JavaDetailFormattersPreferencePage_Override_default___toString_____for_Variables_and_Expressions_view_details__1); //$NON-NLS-1$
 	}
 
 	protected Control createContents(Composite parent) {
@@ -113,21 +113,21 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
         gridData.horizontalSpan= 2;
         group.setLayoutData(gridData);
         group.setLayout(new GridLayout());
-        group.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.1")); //$NON-NLS-1$
+        group.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_1); //$NON-NLS-1$
         
         String preference= getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
         
         // Create the 3 detail option radio buttons
         fInlineFormattersButton = new Button(group, SWT.RADIO);
-        fInlineFormattersButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.2")); //$NON-NLS-1$
+        fInlineFormattersButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_2); //$NON-NLS-1$
         fInlineFormattersButton.setSelection(preference.equals(IJDIPreferencesConstants.INLINE_FORMATTERS));
         
         fInlineAllButton = new Button(group, SWT.RADIO);
-        fInlineAllButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.3")); //$NON-NLS-1$
+        fInlineAllButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_3); //$NON-NLS-1$
         fInlineAllButton.setSelection(preference.equals(IJDIPreferencesConstants.INLINE_ALL));
         
         Button detailPane = new Button(group, SWT.RADIO);
-        detailPane.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.4")); //$NON-NLS-1$
+        detailPane.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_4); //$NON-NLS-1$
         detailPane.setSelection(preference.equals(IJDIPreferencesConstants.DETAIL_PANE));
     }
 	
@@ -139,7 +139,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		//table label
 		fTableLabel= new Label(parent, SWT.NONE);
-		fTableLabel.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Types_with_detail_formatters__2")); //$NON-NLS-1$
+		fTableLabel.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Types_with_detail_formatters__2); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
@@ -191,7 +191,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		createDetailFormatsButtons(parent);
 
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Detail_formatter_code_snippet_defined_for_selected_type__3")); //$NON-NLS-1$
+		label.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_Detail_formatter_code_snippet_defined_for_selected_type__3); //$NON-NLS-1$
 		label.setFont(font);
         gd= new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan= 2;
@@ -218,8 +218,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		// Add type button
 		fAddFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fAddFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Add_&Formatter..._5")); //$NON-NLS-1$
-		fAddFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Allow_you_to_create_a_new_detail_formatter_6")); //$NON-NLS-1$
+		fAddFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_Add__Formatter____5); //$NON-NLS-1$
+		fAddFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Allow_you_to_create_a_new_detail_formatter_6); //$NON-NLS-1$
 		fAddFormatterButton.setLayoutData(gd);
 		fAddFormatterButton.setFont(font);
 		setButtonLayoutData(fAddFormatterButton);
@@ -231,8 +231,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		// Edit button
 		fEditFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fEditFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Edit..._9")); //$NON-NLS-1$
-		fEditFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Edit_the_selected_detail_formatter_10")); //$NON-NLS-1$
+		fEditFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Edit____9); //$NON-NLS-1$
+		fEditFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Edit_the_selected_detail_formatter_10); //$NON-NLS-1$
 		fEditFormatterButton.setFont(font);
 		setButtonLayoutData(fEditFormatterButton);
 		fEditFormatterButton.addListener(SWT.Selection, new Listener() {
@@ -244,8 +244,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		// Remove button
 		fRemoveFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Remove_7")); //$NON-NLS-1$
-		fRemoveFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Remove_all_selected_detail_formatters_8")); //$NON-NLS-1$
+		fRemoveFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Remove_7); //$NON-NLS-1$
+		fRemoveFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Remove_all_selected_detail_formatters_8); //$NON-NLS-1$
 		fRemoveFormatterButton.setFont(font);
 		setButtonLayoutData(fRemoveFormatterButton);
 		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {

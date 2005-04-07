@@ -38,7 +38,7 @@ public class TypeNameResolver extends ResourceResolver {
 				return type.getFullyQualifiedName();
 			}	
 		}
-		abort(DebugUIMessages.getString("TypeNameResolver.0"), null); //$NON-NLS-1$
+		abort(DebugUIMessages.TypeNameResolver_0, null); //$NON-NLS-1$
 		return null;
 	}
 	

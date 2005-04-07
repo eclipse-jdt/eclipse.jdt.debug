@@ -31,7 +31,7 @@ public class JavaStackTraceConsole extends TextConsole {
     private JavaStackTraceConsolePartitioner partitioner = new JavaStackTraceConsolePartitioner();
 
     public JavaStackTraceConsole() {
-        super(ConsoleMessages.getString("JavaStackTraceConsoleFactory.0"), CONSOLE_TYPE, null, true); //$NON-NLS-1$
+        super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true); //$NON-NLS-1$
         partitioner.connect(getDocument());
     }
 
@@ -51,7 +51,7 @@ public class JavaStackTraceConsole extends TextConsole {
             } catch (IOException e) {
             }
         } else {
-			getDocument().set(ConsoleMessages.getString("JavaStackTraceConsole.0")); //$NON-NLS-1$
+			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0); //$NON-NLS-1$
 		}
     }
 

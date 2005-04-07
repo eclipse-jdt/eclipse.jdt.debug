@@ -47,8 +47,8 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 				IJavaBreakpoint breakpoint= (IJavaBreakpoint) itr.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
-				String title= ActionMessages.getString("BreakpointAction.Breakpoint_configuration_1"); //$NON-NLS-1$
-				String message= ActionMessages.getString("BreakpointAction.Exceptions_occurred_attempting_to_modify_breakpoint._2"); //$NON-NLS-1$
+				String title= ActionMessages.BreakpointAction_Breakpoint_configuration_1; //$NON-NLS-1$
+				String message= ActionMessages.BreakpointAction_Exceptions_occurred_attempting_to_modify_breakpoint__2; //$NON-NLS-1$
 				ExceptionHandler.handle(e, title, message);
 			}			
 		}

@@ -249,7 +249,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		GridData data;
 				
 		Label tableLabel = new Label(parent, SWT.NONE);
-		tableLabel.setText(JREMessages.getString("InstalledJREsBlock.15")); //$NON-NLS-1$
+		tableLabel.setText(JREMessages.InstalledJREsBlock_15); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		tableLabel.setLayoutData(data);
@@ -268,7 +268,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		table.setLayout(tableLayout);
 
 		TableColumn column1= new TableColumn(table, SWT.NULL);
-		column1.setText(JREMessages.getString("InstalledJREsBlock.0")); //$NON-NLS-1$
+		column1.setText(JREMessages.InstalledJREsBlock_0); //$NON-NLS-1$
 		column1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
@@ -276,7 +276,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		});
 	
 		TableColumn column2= new TableColumn(table, SWT.NULL);
-		column2.setText(JREMessages.getString("InstalledJREsBlock.1")); //$NON-NLS-1$
+		column2.setText(JREMessages.InstalledJREsBlock_1); //$NON-NLS-1$
 		column2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
@@ -284,7 +284,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		});
 		
 		TableColumn column3= new TableColumn(table, SWT.NULL);
-		column3.setText(JREMessages.getString("InstalledJREsBlock.2")); //$NON-NLS-1$
+		column3.setText(JREMessages.InstalledJREsBlock_2); //$NON-NLS-1$
 		column3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
@@ -336,21 +336,21 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		buttons.setLayout(layout);
 		buttons.setFont(font);
 		
-		fAddButton = createPushButton(buttons, JREMessages.getString("InstalledJREsBlock.3")); //$NON-NLS-1$
+		fAddButton = createPushButton(buttons, JREMessages.InstalledJREsBlock_3); //$NON-NLS-1$
 		fAddButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				addVM();
 			}
 		});
 		
-		fEditButton= createPushButton(buttons, JREMessages.getString("InstalledJREsBlock.4")); //$NON-NLS-1$
+		fEditButton= createPushButton(buttons, JREMessages.InstalledJREsBlock_4); //$NON-NLS-1$
 		fEditButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				editVM();
 			}
 		});
 		
-		fRemoveButton= createPushButton(buttons, JREMessages.getString("InstalledJREsBlock.5")); //$NON-NLS-1$
+		fRemoveButton= createPushButton(buttons, JREMessages.InstalledJREsBlock_5); //$NON-NLS-1$
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				removeVMs();
@@ -366,7 +366,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		gd.heightHint= 4;
 		separator.setLayoutData(gd);
 		
-		fSearchButton = createPushButton(buttons, JREMessages.getString("InstalledJREsBlock.6")); //$NON-NLS-1$
+		fSearchButton = createPushButton(buttons, JREMessages.InstalledJREsBlock_6); //$NON-NLS-1$
 		fSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				search();
@@ -582,7 +582,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void addVM() {
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), null);
-		dialog.setTitle(JREMessages.getString("InstalledJREsBlock.7")); //$NON-NLS-1$
+		dialog.setTitle(JREMessages.InstalledJREsBlock_7); //$NON-NLS-1$
 		if (dialog.open() != Window.OK) {
 			return;
 		}
@@ -617,7 +617,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return;
 		}
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), vm);
-		dialog.setTitle(JREMessages.getString("InstalledJREsBlock.8")); //$NON-NLS-1$
+		dialog.setTitle(JREMessages.InstalledJREsBlock_8); //$NON-NLS-1$
 		if (dialog.open() != Window.OK) {
 			return;
 		}
@@ -666,8 +666,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		// choose a root directory for the search 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(JREMessages.getString("InstalledJREsBlock.9")); //$NON-NLS-1$
-		dialog.setText(JREMessages.getString("InstalledJREsBlock.10")); //$NON-NLS-1$
+		dialog.setMessage(JREMessages.InstalledJREsBlock_9); //$NON-NLS-1$
+		dialog.setText(JREMessages.InstalledJREsBlock_10); //$NON-NLS-1$
 		String path = dialog.open();
 		if (path == null) {
 			return;
@@ -687,7 +687,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(JREMessages.getString("InstalledJREsBlock.11"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+				monitor.beginTask(JREMessages.InstalledJREsBlock_11, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				search(rootDir, locations, types, exstingLocations, monitor);
 				monitor.done();
 			}
@@ -704,7 +704,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 		
 		if (locations.isEmpty()) {
-			MessageDialog.openInformation(getShell(), JREMessages.getString("InstalledJREsBlock.12"), MessageFormat.format(JREMessages.getString("InstalledJREsBlock.13"), new String[]{path})); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, MessageFormat.format(JREMessages.InstalledJREsBlock_13, new String[]{path})); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			iter = locations.iterator();
 			Iterator iter2 = types.iterator();
@@ -774,7 +774,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 			File file = new File(directory, names[i]);
 			try {
-				monitor.subTask(MessageFormat.format(JREMessages.getString("InstalledJREsBlock.14"), new String[]{Integer.toString(found.size()), file.getCanonicalPath()})); //$NON-NLS-1$
+				monitor.subTask(MessageFormat.format(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()), file.getCanonicalPath()})); //$NON-NLS-1$
 			} catch (IOException e) {
 			}		
 			IVMInstallType[] vmTypes = JavaRuntime.getVMInstallTypes();	

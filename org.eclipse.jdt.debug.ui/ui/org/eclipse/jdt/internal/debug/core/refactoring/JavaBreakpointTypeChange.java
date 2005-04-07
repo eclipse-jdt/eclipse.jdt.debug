@@ -87,7 +87,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 				}
 			}
 		}
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("JavaBreakpointTypeChange.0")); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.JavaBreakpointTypeChange_0); //$NON-NLS-1$
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			}
 		}
 				
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("JavaBreakpointTypeChange.0")); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.JavaBreakpointTypeChange_0); //$NON-NLS-1$
 	}
 	
 	private static Change createChangesForOuterTypeChange(IJavaBreakpoint javaBreakpoint, IType type, IType changedType, Object argument, int changeType) throws CoreException {
@@ -173,7 +173,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 				}
 			}
 		}
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("JavaBreakpointTypeChange.0")); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.JavaBreakpointTypeChange_0); //$NON-NLS-1$
 	}
 	
 	/**

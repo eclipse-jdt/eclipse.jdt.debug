@@ -165,7 +165,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 			Throwable cause= exception.getStatus().getException();
 			if (cause instanceof InvocationException) {
 				String  nestedMessage= ((InvocationException) cause).exception().referenceType().name();
-				return new String[] { MessageFormat.format(DisplayMessages.getString("JavaInspectExpression.0"), new String[] {nestedMessage}) }; //$NON-NLS-1$
+				return new String[] { MessageFormat.format(DisplayMessages.JavaInspectExpression_0, new String[] {nestedMessage}) }; //$NON-NLS-1$
 			}
 			return new String[] { exception.getMessage() };
 		}

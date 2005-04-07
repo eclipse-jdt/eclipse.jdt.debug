@@ -62,7 +62,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			checkbox.setLayoutData(data);
 			checkbox.setFont(parent.getFont());
-			checkbox.setText(ActionMessages.getString("BreakpointHitCountAction.Enable_Hit_Count_1")); //$NON-NLS-1$
+			checkbox.setText(ActionMessages.BreakpointHitCountAction_Enable_Hit_Count_1); //$NON-NLS-1$
 			checkbox.setSelection(true);
 			fHitCountEnabled = true;
 			checkbox.addSelectionListener(new SelectionListener() {
@@ -114,14 +114,14 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					breakpoint.setHitCount(newHitCount);
 				}
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("BreakpointHitCountAction.Exception_occurred_attempting_to_set_hit_count_1"), ce); //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog(ActionMessages.BreakpointHitCountAction_Exception_occurred_attempting_to_set_hit_count_1, ce); //$NON-NLS-1$
 			}
 		}
 	}
 	
 	protected int hitCountDialog(IJavaBreakpoint breakpoint) {
-		String title= ActionMessages.getString("BreakpointHitCountAction.Set_Breakpoint_Hit_Count_2"); //$NON-NLS-1$
-		String message= ActionMessages.getString("BreakpointHitCountAction.&Enter_the_new_hit_count_for_the_breakpoint__3"); //$NON-NLS-1$
+		String title= ActionMessages.BreakpointHitCountAction_Set_Breakpoint_Hit_Count_2; //$NON-NLS-1$
+		String message= ActionMessages.BreakpointHitCountAction__Enter_the_new_hit_count_for_the_breakpoint__3; //$NON-NLS-1$
 		IInputValidator validator= new IInputValidator() {
 			int hitCount= -1;
 			public String isValid(String value) {
@@ -131,7 +131,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					hitCount= -1;
 				}
 				if (hitCount < 1) {
-					return ActionMessages.getString("BreakpointHitCountAction.Value_must_be_positive_integer"); //$NON-NLS-1$
+					return ActionMessages.BreakpointHitCountAction_Value_must_be_positive_integer; //$NON-NLS-1$
 				}
 				//no error
 				return null;

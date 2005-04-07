@@ -116,7 +116,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
     private MenuItem createMenuItem(Menu m, final String stratum, final IJavaStackFrame frame, final IJavaDebugTarget target) {
         MenuItem item = new MenuItem(m, SWT.CHECK);
         if (stratum == null) {
-            item.setText(ActionMessages.getString("ShowStratumAction.0")); //$NON-NLS-1$
+            item.setText(ActionMessages.ShowStratumAction_0); //$NON-NLS-1$
         } else {
             item.setText(stratum);
         }

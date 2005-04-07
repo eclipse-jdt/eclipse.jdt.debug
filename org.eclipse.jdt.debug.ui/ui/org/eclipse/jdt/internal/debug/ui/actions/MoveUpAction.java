@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class MoveUpAction extends RuntimeClasspathAction {
 
 	public MoveUpAction(IClasspathViewer viewer) {
-		super(ActionMessages.getString("MoveUpAction.Move_U&p_1"), viewer); //$NON-NLS-1$
+		super(ActionMessages.MoveUpAction_Move_U_p_1, viewer); //$NON-NLS-1$
 	}
 	/**
 	 * Moves all selected entries up one position (if possible).

@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class MoveDownAction extends RuntimeClasspathAction {
 
 	public MoveDownAction(IClasspathViewer viewer) {
-		super(ActionMessages.getString("MoveDownAction.M&ove_Down_1"), viewer); //$NON-NLS-1$
+		super(ActionMessages.MoveDownAction_M_ove_Down_1, viewer); //$NON-NLS-1$
 	}
 	/**
 	 * @see IAction#run()

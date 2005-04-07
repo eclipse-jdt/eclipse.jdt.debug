@@ -80,7 +80,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		comp.setLayoutData(gd);
 		
 		Label viewerLabel= new Label(comp, SWT.LEFT);
-		viewerLabel.setText(LauncherMessages.getString("SourceLookupBlock.&Source_Lookup_Path__1")); //$NON-NLS-1$
+		viewerLabel.setText(LauncherMessages.SourceLookupBlock__Source_Lookup_Path__1); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		viewerLabel.setLayoutData(gd);
@@ -104,7 +104,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		createVerticalSpacer(comp, 2);
 						
 		fDefaultButton = new Button(comp, SWT.CHECK);
-		fDefaultButton.setText(LauncherMessages.getString("SourceLookupBlock.Use_defau&lt_source_lookup_path_1")); //$NON-NLS-1$
+		fDefaultButton.setText(LauncherMessages.SourceLookupBlock_Use_defau_lt_source_lookup_path_1); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
@@ -116,7 +116,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		});
 		
 		fDuplicatesButton = new Button(comp, SWT.CHECK);
-		fDuplicatesButton.setText(LauncherMessages.getString("SourceLookupBlock.&Search_for_duplicate_source_files_on_path_1")); //$NON-NLS-1$
+		fDuplicatesButton.setText(LauncherMessages.SourceLookupBlock__Search_for_duplicate_source_files_on_path_1); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDuplicatesButton.setLayoutData(gd);
@@ -290,7 +290,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 					}
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, mementos);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("SourceLookupBlock.Unable_to_save_source_lookup_path_1"), e); //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.SourceLookupBlock_Unable_to_save_source_lookup_path_1, e); //$NON-NLS-1$
 				}	
 			}
 			boolean dup = fDuplicatesButton.getSelection();
@@ -333,7 +333,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("SourceLookupBlock.Source_1"); //$NON-NLS-1$
+		return LauncherMessages.SourceLookupBlock_Source_1; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -112,7 +112,7 @@ public class ExceptionHandler {
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
 		if (exceptionMessage == null || exceptionMessage.length() == 0) {
-			msg.write(DebugUIMessages.getString("ExceptionHandler.seeErrorLogMessage")); //$NON-NLS-1$
+			msg.write(DebugUIMessages.ExceptionHandler_seeErrorLogMessage); //$NON-NLS-1$
 		}
 		else {
 			msg.write(exceptionMessage);

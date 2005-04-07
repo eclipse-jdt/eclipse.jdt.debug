@@ -38,7 +38,7 @@ public class JavaMethodBreakpointIMethodRenameParticipant extends RenameParticip
 	}
 	
 	public String getName() {
-		return RefactoringMessages.getString("JavaMethodBreakpointIMethodRenameParticipant.0"); //$NON-NLS-1$
+		return RefactoringMessages.JavaMethodBreakpointIMethodRenameParticipant_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

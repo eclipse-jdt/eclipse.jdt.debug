@@ -63,14 +63,14 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		group.setLayoutData(gd);
 		group.setFont(font);
 		
-		group.setText(JREMessages.getString("AbstractJavaCommandTab.1"));  //$NON-NLS-1$
+		group.setText(JREMessages.AbstractJavaCommandTab_1);  //$NON-NLS-1$
 		
 		fDefaultButton = new Button(group, SWT.RADIO);
 		fDefaultButton.setFont(font);
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setText(MessageFormat.format(JREMessages.getString("AbstractJavaCommandTab.2"), new String[]{getDefaultCommand()})); //$NON-NLS-1$
+		fDefaultButton.setText(MessageFormat.format(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()})); //$NON-NLS-1$
 		
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -82,7 +82,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		fSpecificButton.setFont(font);
 		gd = new GridData(GridData.BEGINNING);
 		fSpecificButton.setLayoutData(gd);
-		fSpecificButton.setText(JREMessages.getString("AbstractJavaCommandTab.4")); //$NON-NLS-1$
+		fSpecificButton.setText(JREMessages.AbstractJavaCommandTab_4); //$NON-NLS-1$
 		
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -119,7 +119,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return JREMessages.getString("AbstractJavaCommandTab.3"); //$NON-NLS-1$
+		return JREMessages.AbstractJavaCommandTab_3; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -178,7 +178,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			setErrorMessage(null);
 			setMessage(null);
 		} else {
-			setErrorMessage(JREMessages.getString("AbstractJavaCommandTab.Java_executable_must_be_specified_5")); //$NON-NLS-1$
+			setErrorMessage(JREMessages.AbstractJavaCommandTab_Java_executable_must_be_specified_5); //$NON-NLS-1$
 			setMessage(null);
 		}
 		return valid;

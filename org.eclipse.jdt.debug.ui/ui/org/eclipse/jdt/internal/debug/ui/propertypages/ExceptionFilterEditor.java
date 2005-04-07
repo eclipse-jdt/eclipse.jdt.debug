@@ -115,7 +115,7 @@ public class ExceptionFilterEditor {
 		outer.setFont(parent.getFont());
 		// filter table
 		Label label= new Label(outer, SWT.NONE);
-		label.setText(PropertyPageMessages.getString("ExceptionFilterEditor.5")); //$NON-NLS-1$
+		label.setText(PropertyPageMessages.ExceptionFilterEditor_5); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		gd= new GridData();
 		gd.horizontalSpan= 2;
@@ -209,17 +209,17 @@ public class ExceptionFilterEditor {
 		buttonContainer.setLayout(buttonLayout);
 
 		fAddFilterButton = createPushButton(buttonContainer,
-				PropertyPageMessages.getString("ExceptionFilterEditor.6"), //$NON-NLS-1$
-				PropertyPageMessages.getString("ExceptionFilterEditor.7")); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_6, //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_7); //$NON-NLS-1$
 		fAddTypeButton = createPushButton(buttonContainer,
-				PropertyPageMessages.getString("ExceptionFilterEditor.8"), //$NON-NLS-1$
-				PropertyPageMessages.getString("ExceptionFilterEditor.9")); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_8, //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_9); //$NON-NLS-1$
 		fAddPackageButton = createPushButton(buttonContainer,
-				PropertyPageMessages.getString("ExceptionFilterEditor.10"), //$NON-NLS-1$
-				PropertyPageMessages.getString("ExceptionFilterEditor.11")); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_10, //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_11); //$NON-NLS-1$
 		fRemoveFilterButton = createPushButton(buttonContainer,
-				PropertyPageMessages.getString("ExceptionFilterEditor.12"), //$NON-NLS-1$
-				PropertyPageMessages.getString("ExceptionFilterEditor.13")); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_12, //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_13); //$NON-NLS-1$
 		fRemoveFilterButton.setEnabled(false);
 	}
 	
@@ -334,7 +334,7 @@ public class ExceptionFilterEditor {
 		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText = trimmedValue;
-			fEditorText.setText(PropertyPageMessages.getString("ExceptionFilterEditor.14")); //$NON-NLS-1$
+			fEditorText.setText(PropertyPageMessages.ExceptionFilterEditor_14); //$NON-NLS-1$
 			fEditorText.getDisplay().beep();
 			return;
 			// otherwise, commit the new value if not a duplicate
@@ -418,16 +418,16 @@ public class ExceptionFilterEditor {
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, false);
 		} catch (JavaModelException jme) {
-			String title = PropertyPageMessages.getString("ExceptionFilterEditor.15"); //$NON-NLS-1$
-			String message = PropertyPageMessages.getString("ExceptionFilterEditor.16"); //$NON-NLS-1$
+			String title = PropertyPageMessages.ExceptionFilterEditor_15; //$NON-NLS-1$
+			String message = PropertyPageMessages.ExceptionFilterEditor_16; //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 		if (dialog == null) {
 			return;
 		}
-		dialog.setTitle(PropertyPageMessages.getString("ExceptionFilterEditor.15")); //$NON-NLS-1$
-		dialog.setMessage(PropertyPageMessages.getString("ExceptionFilterEditor.18")); //$NON-NLS-1$
+		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_15); //$NON-NLS-1$
+		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_18); //$NON-NLS-1$
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
@@ -454,14 +454,14 @@ public class ExceptionFilterEditor {
 		try {
 			dialog = JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
-			String title = PropertyPageMessages.getString("ExceptionFilterEditor.19"); //$NON-NLS-1$
-			String message = PropertyPageMessages.getString("ExceptionFilterEditor.20"); //$NON-NLS-1$
+			String title = PropertyPageMessages.ExceptionFilterEditor_19; //$NON-NLS-1$
+			String message = PropertyPageMessages.ExceptionFilterEditor_20; //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 
-		dialog.setTitle(PropertyPageMessages.getString("ExceptionFilterEditor.19")); //$NON-NLS-1$
-		dialog.setMessage(PropertyPageMessages.getString("ExceptionFilterEditor.22")); //$NON-NLS-1$
+		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_19); //$NON-NLS-1$
+		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_22); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

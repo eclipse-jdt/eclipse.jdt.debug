@@ -279,7 +279,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 				public IInformationControl createInformationControl(Shell parent) {
 	  				return new DefaultInformationControl(parent, SWT.NONE, 
 	  					new HTMLTextPresenter(true),
-				   		DebugUIMessages.getString("JavaDebugHover.16")); //$NON-NLS-1$
+				   		DebugUIMessages.JavaDebugHover_16); //$NON-NLS-1$
 			 	}
   			};
 		}

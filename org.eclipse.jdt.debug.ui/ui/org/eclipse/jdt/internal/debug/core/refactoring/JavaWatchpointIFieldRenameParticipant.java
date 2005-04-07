@@ -37,7 +37,7 @@ public class JavaWatchpointIFieldRenameParticipant extends RenameParticipant {
 	}
 	
 	public String getName() {
-		return RefactoringMessages.getString("JavaWatchpointIFieldRenameParticipant.0"); //$NON-NLS-1$
+		return RefactoringMessages.JavaWatchpointIFieldRenameParticipant_0; //$NON-NLS-1$
 	}
 
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {

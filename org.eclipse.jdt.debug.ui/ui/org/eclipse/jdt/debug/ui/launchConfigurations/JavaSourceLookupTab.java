@@ -102,7 +102,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("JavaSourceLookupTab.Source_1"); //$NON-NLS-1$
+		return LauncherMessages.JavaSourceLookupTab_Source_1; //$NON-NLS-1$
 	}
 	
 	/**

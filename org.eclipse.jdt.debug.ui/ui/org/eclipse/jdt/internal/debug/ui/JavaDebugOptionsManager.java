@@ -123,11 +123,11 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	class InitJob extends Job {
 		
 		public InitJob() {
-			super(DebugUIMessages.getString("JavaDebugOptionsManager.0")); //$NON-NLS-1$
+			super(DebugUIMessages.JavaDebugOptionsManager_0); //$NON-NLS-1$
 		}
 		
 		protected IStatus run(IProgressMonitor monitor) {
-			MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JavaDebugOptionsManager.1"), null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.JavaDebugOptionsManager_1, null); //$NON-NLS-1$
 			// compilation error breakpoint 
 			try {
 				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
@@ -622,7 +622,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		} else {
 			status= exception.getStatus();
 		}
-		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_encountered_runtime_exception._1"), status); //$NON-NLS-1$
+		openConditionErrorDialog(breakpoint, DebugUIMessages.JavaDebugOptionsManager_Conditional_breakpoint_encountered_runtime_exception__1, status); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -637,7 +637,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			message.append("\n "); //$NON-NLS-1$
 		}
 		IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message.toString(), null);
-		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_has_compilation_error(s)._2"), status); //$NON-NLS-1$
+		openConditionErrorDialog(breakpoint, DebugUIMessages.JavaDebugOptionsManager_Conditional_breakpoint_has_compilation_error_s___2, status); //$NON-NLS-1$
 	}
 	
 	private void openConditionErrorDialog(final IJavaLineBreakpoint breakpoint, final String errorMessage, final IStatus status) {
@@ -740,13 +740,13 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					IBreakpoint breakpoint = breakpoints[i];
 					if (breakpoint instanceof IJavaBreakpoint) {
 						String info = fLabelProvider.getText(breakpoint);
-						String type = DebugUIMessages.getString("JavaDebugOptionsManager.Breakpoint___1"); //$NON-NLS-1$
+						String type = DebugUIMessages.JavaDebugOptionsManager_Breakpoint___1; //$NON-NLS-1$
 						if (breakpoint instanceof IJavaMethodBreakpoint || breakpoint instanceof IJavaMethodEntryBreakpoint) {
-							type = DebugUIMessages.getString("JavaDebugOptionsManager.Method_breakpoint___2"); //$NON-NLS-1$
+							type = DebugUIMessages.JavaDebugOptionsManager_Method_breakpoint___2; //$NON-NLS-1$
 						} else if (breakpoint instanceof IJavaWatchpoint) {
-							type = DebugUIMessages.getString("JavaDebugOptionsManager.Watchpoint___3");  //$NON-NLS-1$
+							type = DebugUIMessages.JavaDebugOptionsManager_Watchpoint___3;  //$NON-NLS-1$
 						} else if (breakpoint instanceof IJavaLineBreakpoint) {
-							type = DebugUIMessages.getString("JavaDebugOptionsManager.Line_breakpoint___4"); //$NON-NLS-1$
+							type = DebugUIMessages.JavaDebugOptionsManager_Line_breakpoint___4; //$NON-NLS-1$
 						}
 						breakpoint.getMarker().setAttribute(IMarker.MESSAGE, type + info);
 					}

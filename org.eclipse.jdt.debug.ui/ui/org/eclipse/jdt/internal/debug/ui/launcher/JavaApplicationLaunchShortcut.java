@@ -68,18 +68,18 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getMessage()); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), LauncherMessages.JavaApplicationAction_Launch_failed_7, e.getMessage()); //$NON-NLS-1$
 				return;
 			}
 			IType type = null;
 			if (types.length == 0) {
 				String message = null;
 				if (editor) {
-					message = LauncherMessages.getString("JavaApplicationLaunchShortcut.The_active_editor_does_not_contain_a_main_type._1"); //$NON-NLS-1$
+					message = LauncherMessages.JavaApplicationLaunchShortcut_The_active_editor_does_not_contain_a_main_type__1; //$NON-NLS-1$
 				} else {
-					message = LauncherMessages.getString("JavaApplicationLaunchShortcut.The_selection_does_not_contain_a_main_type._2"); //$NON-NLS-1$
+					message = LauncherMessages.JavaApplicationLaunchShortcut_The_selection_does_not_contain_a_main_type__2; //$NON-NLS-1$
 				}
-				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), message); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), LauncherMessages.JavaApplicationAction_Launch_failed_7, message); //$NON-NLS-1$
 			} else if (types.length > 1) {
 				type = chooseType(types, mode);
 			} else {
@@ -127,9 +127,9 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	protected IType chooseType(IType[] types, String mode) {
 		MainTypeSelectionDialog dialog= new MainTypeSelectionDialog(getShell(), types);		
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_Debug")); //$NON-NLS-1$
+			dialog.setTitle(LauncherMessages.JavaApplicationAction_Type_Selection_Debug); //$NON-NLS-1$
 		} else {
-			dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_Run")); //$NON-NLS-1$
+			dialog.setTitle(LauncherMessages.JavaApplicationAction_Type_Selection_Run); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == Window.OK) {
@@ -202,11 +202,11 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Launch_Configuration_Selection_1"));  //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.JavaApplicationAction_Launch_Configuration_Selection_1);  //$NON-NLS-1$
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_launch_configuration_to_debug_2"));  //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.JavaApplicationAction_Choose_a_launch_configuration_to_debug_2);  //$NON-NLS-1$
 		} else {
-			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_launch_configuration_to_run_3")); //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.JavaApplicationAction_Choose_a_launch_configuration_to_run_3); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
@@ -243,7 +243,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	protected void reportCreatingConfiguration(final CoreException exception) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ErrorDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationLaunchShortcut.Error_Launching_1"), LauncherMessages.getString("JavaApplicationLaunchShortcut.Exception"), exception.getStatus()); //new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception)); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError(getShell(), LauncherMessages.JavaApplicationLaunchShortcut_Error_Launching_1, LauncherMessages.JavaApplicationLaunchShortcut_Exception, exception.getStatus()); //new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 	}
@@ -275,7 +275,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		if (je != null) {
 			searchAndLaunch(new Object[] {je}, mode, true);
 		} else {
-			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_active_editor_does_not_contain_a_main_type._1")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getShell(), LauncherMessages.JavaApplicationAction_Launch_failed_7, LauncherMessages.JavaApplicationLaunchShortcut_The_active_editor_does_not_contain_a_main_type__1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 	}
@@ -287,7 +287,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, false);
 		} else {
-			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_selection_does_not_contain_a_main_type._2")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getShell(), LauncherMessages.JavaApplicationAction_Launch_failed_7, LauncherMessages.JavaApplicationLaunchShortcut_The_selection_does_not_contain_a_main_type__2); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

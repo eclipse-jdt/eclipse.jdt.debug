@@ -1,36 +1,45 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * BreakpointMessages
- */
-public class BreakpointMessages {
+public class BreakpointMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.breakpoints.BreakpointMessages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2000, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.breakpoints.BreakpointMessages"; //$NON-NLS-1$
+	public static String AddExceptionAction_0;
+	public static String AddExceptionAction_1;
 
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
+	public static String AddExceptionDialog_15;
+	public static String AddExceptionDialog_16;
+	public static String AddExceptionDialog_17;
+	public static String AddExceptionDialog_21;
+	public static String AddExceptionDialog_0;
 
-	private BreakpointMessages() {
-	}
+	public static String AddClassPrepareBreakpointAction_0;
+	public static String AddClassPrepareBreakpointAction_1;
+	public static String AddClassPrepareBreakpointAction_2;
+	public static String JavaBreakpointTypeAdapterFactory_0;
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, BreakpointMessages.class);
 	}
 }

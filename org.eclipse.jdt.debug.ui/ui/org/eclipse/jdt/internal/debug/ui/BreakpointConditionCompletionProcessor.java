@@ -37,7 +37,7 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
         setErrorMessage(null);
 		if (fType == null) {
-            setErrorMessage(DebugUIMessages.getString("BreakpointConditionCompletionProcessor.0")); //$NON-NLS-1$
+            setErrorMessage(DebugUIMessages.BreakpointConditionCompletionProcessor_0); //$NON-NLS-1$
 			return new ICompletionProposal[0];
 		}
 		

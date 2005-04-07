@@ -124,20 +124,20 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 				SubElement subElement= (SubElement) element;
 				StringBuffer text= new StringBuffer();
 				if (subElement.getType() == SubElement.SOURCE_PATH) {
-					text.append(JREMessages.getString("VMLibraryBlock.0")); //$NON-NLS-1$
+					text.append(JREMessages.VMLibraryBlock_0); //$NON-NLS-1$
 					IPath systemLibrarySourcePath= subElement.getParent().getSystemLibrarySourcePath();
 					if (systemLibrarySourcePath != null && !Path.EMPTY.equals(systemLibrarySourcePath)) {
 						text.append(systemLibrarySourcePath.toOSString());
 					} else {
-						text.append(JREMessages.getString("VMLibraryBlock.1")); //$NON-NLS-1$
+						text.append(JREMessages.VMLibraryBlock_1); //$NON-NLS-1$
 					}
 				} else {
-					text.append(JREMessages.getString("VMLibraryBlock.2")); //$NON-NLS-1$
+					text.append(JREMessages.VMLibraryBlock_2); //$NON-NLS-1$
 					URL javadocLocation= subElement.getParent().getJavadocLocation();
 					if (javadocLocation != null) {
 						text.append(javadocLocation.toExternalForm());
 					} else {
-						text.append(JREMessages.getString("VMLibraryBlock.1")); //$NON-NLS-1$
+						text.append(JREMessages.VMLibraryBlock_1); //$NON-NLS-1$
 					}
 				}
 				return text.toString();
@@ -400,7 +400,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		comp.setLayoutData(gd);
 		
 		fDefaultButton = new Button(comp, SWT.CHECK);
-		fDefaultButton.setText(JREMessages.getString("VMLibraryBlock.Use_default_system_libraries_1")); //$NON-NLS-1$
+		fDefaultButton.setText(JREMessages.VMLibraryBlock_Use_default_system_libraries_1); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
@@ -430,19 +430,19 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		pathButtonComp.setLayoutData(gd);
 		pathButtonComp.setFont(font);
 		
-		fUpButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.4")); //$NON-NLS-1$
+		fUpButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4); //$NON-NLS-1$
 		fUpButton.addSelectionListener(this);
 		
-		fDownButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.5")); //$NON-NLS-1$
+		fDownButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_5); //$NON-NLS-1$
 		fDownButton.addSelectionListener(this);
 
-		fRemoveButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.6")); //$NON-NLS-1$
+		fRemoveButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(this);
 
-		fAddButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.7")); //$NON-NLS-1$
+		fAddButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7); //$NON-NLS-1$
 		fAddButton.addSelectionListener(this);
 		
-		fEditButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.8")); //$NON-NLS-1$
+		fEditButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_8); //$NON-NLS-1$
 		fEditButton.addSelectionListener(this);
 
 		return comp;
@@ -535,7 +535,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		updateButtons();
 		if (fLibraryContentProvider.getLibraries().length == 0 && !isDefaultSystemLibrary()) {
 			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
-				JREMessages.getString("VMLibraryBlock.Libraries_cannot_be_empty._1"), null); //$NON-NLS-1$
+				JREMessages.VMLibraryBlock_Libraries_cannot_be_empty__1, null); //$NON-NLS-1$
 		} else if (status == null) {
 			status = new StatusInfo();
 		}		
@@ -633,7 +633,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
 		FileDialog dialog= new FileDialog(fLibraryViewer.getControl().getShell(), SWT.MULTI);
-		dialog.setText(ActionMessages.getString("AddExternalJar.Jar_Selection_3")); //$NON-NLS-1$
+		dialog.setText(ActionMessages.AddExternalJar_Jar_Selection_3); //$NON-NLS-1$
 		dialog.setFilterExtensions(new String[] {"*.jar;*.zip"}); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String res= dialog.open();

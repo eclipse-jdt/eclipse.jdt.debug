@@ -124,9 +124,9 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 		fTypeSearched= false;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		if (editDialog) {
-			setTitle(DebugUIMessages.getString("DetailFormatterDialog.Edit_Detail_Formatter_1")); //$NON-NLS-1$
+			setTitle(DebugUIMessages.DetailFormatterDialog_Edit_Detail_Formatter_1); //$NON-NLS-1$
 		} else {
-			setTitle(DebugUIMessages.getString("DetailFormatterDialog.Add_Detail_Formatter_2")); //$NON-NLS-1$
+			setTitle(DebugUIMessages.DetailFormatterDialog_Add_Detail_Formatter_2); //$NON-NLS-1$
 		}
 		fEditTypeName= editTypeName;
 		fDefinedTypes= definedTypes;
@@ -162,7 +162,7 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 		
 		// type name label
 		Label label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_&name__2")); //$NON-NLS-1$
+		label.setText(DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
@@ -191,7 +191,7 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 		
 		// type search button
 		Button typeSearchButton = new Button(innerContainer, SWT.PUSH); 
-		typeSearchButton.setText(DebugUIMessages.getString("DetailFormatterDialog.Select_&type_4"));  //$NON-NLS-1$
+		typeSearchButton.setText(DebugUIMessages.DetailFormatterDialog_Select__type_4);  //$NON-NLS-1$
 		setButtonLayoutData(typeSearchButton);
 		gd= (GridData)typeSearchButton.getLayoutData();
 		gd.horizontalAlignment = GridData.END;
@@ -213,11 +213,11 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 			List keyBindings = command.getKeySequenceBindings();
 			if (keyBindings != null && keyBindings.size() > 0) {
 				IKeySequenceBinding binding = (IKeySequenceBinding)keyBindings.get(0);
-				labelText = MessageFormat.format(DebugUIMessages.getString("DetailFormatterDialog.17"), new String[] {binding.getKeySequence().format()});  //$NON-NLS-1$
+				labelText = MessageFormat.format(DebugUIMessages.DetailFormatterDialog_17, new String[] {binding.getKeySequence().format()});  //$NON-NLS-1$
 			} 
 		}
 		if (labelText == null) {
-			labelText = DebugUIMessages.getString("DetailFormatterDialog.Detail_formatter_&code_snippet__1"); //$NON-NLS-1$
+			labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1; //$NON-NLS-1$
 		}
 		
 		label= new Label(container, SWT.NONE);
@@ -260,7 +260,7 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 		
 		// enable checkbox
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
-		fCheckBox.setText(DebugUIMessages.getString("DetailFormatterDialog.&Enable_1")); //$NON-NLS-1$
+		fCheckBox.setText(DebugUIMessages.DetailFormatterDialog__Enable_1); //$NON-NLS-1$
 		fCheckBox.setSelection(fDetailFormatter.isEnabled());
 		fCheckBox.setFont(font);
 		
@@ -275,13 +275,13 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 		StatusInfo status= new StatusInfo();
 		String typeName= fTypeNameText.getText().trim();
 		if (typeName.length() == 0) {
-			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name_must_not_be_empty._3")); //$NON-NLS-1$
+			status.setError(DebugUIMessages.DetailFormatterDialog_Qualified_type_name_must_not_be_empty__3); //$NON-NLS-1$
 		} else if (fDefinedTypes != null && fDefinedTypes.contains(typeName)) {
-			status.setError(DebugUIMessages.getString("DetailFormatterDialog.A_detail_formatter_is_already_defined_for_this_type_2")); //$NON-NLS-1$
+			status.setError(DebugUIMessages.DetailFormatterDialog_A_detail_formatter_is_already_defined_for_this_type_2); //$NON-NLS-1$
 		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
-			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Associated_code_must_not_be_empty_3")); //$NON-NLS-1$
+			status.setError(DebugUIMessages.DetailFormatterDialog_Associated_code_must_not_be_empty_3); //$NON-NLS-1$
 		} else if (fType == null && fTypeSearched) {
-			status.setWarning(DebugUIMessages.getString("No_type_with_the_given_name_found_in_the_workspace._1")); //$NON-NLS-1$
+			status.setWarning(DebugUIMessages.No_type_with_the_given_name_found_in_the_workspace__1); //$NON-NLS-1$
 		}
 		updateStatus(status);
 	}
@@ -307,14 +307,14 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_ALL_TYPES, false, fTypeNameText.getText());
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.getString("DetailFormatterDialog.Select_type_6"); //$NON-NLS-1$
-			String message= DebugUIMessages.getString("DetailFormatterDialog.Could_not_open_type_selection_dialog_for_detail_formatters_7"); //$NON-NLS-1$
+			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6; //$NON-NLS-1$
+			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7; //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("DetailFormatterDialog.Select_type_8")); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.getString("DetailFormatterDialog.Select_a_type_to_format_when_displaying_its_detail_9")); //$NON-NLS-1$
+		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8); //$NON-NLS-1$
+		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

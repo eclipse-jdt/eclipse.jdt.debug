@@ -44,7 +44,7 @@ public class DefineSystemLibraryQuickFix implements IMarkerResolution {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		return LauncherMessages.getString("DefineSystemLibraryQuickFix.Create_a_system_library_definition_2"); //$NON-NLS-1$
+		return LauncherMessages.DefineSystemLibraryQuickFix_Create_a_system_library_definition_2; //$NON-NLS-1$
 	}
 
 	protected void showPreferencePage(String id, IPreferencePage page) {

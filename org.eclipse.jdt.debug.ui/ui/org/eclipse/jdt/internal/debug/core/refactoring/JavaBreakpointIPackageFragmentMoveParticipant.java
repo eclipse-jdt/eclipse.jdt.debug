@@ -47,7 +47,7 @@ public class JavaBreakpointIPackageFragmentMoveParticipant extends MoveParticipa
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.getString("JavaBreakpointIPackageFragmentMoveParticipant.0"); //$NON-NLS-1$
+		return RefactoringMessages.JavaBreakpointIPackageFragmentMoveParticipant_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

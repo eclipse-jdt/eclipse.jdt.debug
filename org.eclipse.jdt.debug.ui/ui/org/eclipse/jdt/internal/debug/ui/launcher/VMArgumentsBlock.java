@@ -52,7 +52,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(gd);
 		group.setFont(font);
-		group.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
+		group.setText(LauncherMessages.JavaArgumentsTab_VM_ar_guments__6); //$NON-NLS-1$
 		
 		fVMArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -67,7 +67,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		});	
 		ControlAccessibleListener.addListener(fVMArgumentsText, group.getText());
 				
-		Button pgrmArgVariableButton = createPushButton(group, LauncherMessages.getString("VMArgumentsBlock.4"), null); //$NON-NLS-1$
+		Button pgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null); //$NON-NLS-1$
 		pgrmArgVariableButton.setFont(font);
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
@@ -99,7 +99,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		try {
 			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);			
 		}
 	}
@@ -115,7 +115,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("VMArgumentsBlock.VM_Arguments"); //$NON-NLS-1$
+		return LauncherMessages.VMArgumentsBlock_VM_Arguments; //$NON-NLS-1$
 	}
 	
 	/**

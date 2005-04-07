@@ -53,14 +53,14 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		try {
 			handleContainerResolutionError(fUnboundPath, fProject);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JREContainerResolution.Unable_to_update_classpath_1"), e.getStatus());  //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(LauncherMessages.JREContainerResolution_Unable_to_update_classpath_1, e.getStatus());  //$NON-NLS-1$
 		}
 	}
 	
 	protected void handleContainerResolutionError(final IPath unboundPath, final IJavaProject project) throws CoreException {			
 		
-		String title = LauncherMessages.getString("JREResolution.Select_System_Library_1"); //$NON-NLS-1$
-		String message = MessageFormat.format(LauncherMessages.getString("JREResolution.Select_a_system_library_to_use_when_building_{0}_2"), new String[]{project.getElementName()}); //$NON-NLS-1$
+		String title = LauncherMessages.JREResolution_Select_System_Library_1; //$NON-NLS-1$
+		String message = MessageFormat.format(LauncherMessages.JREResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{project.getElementName()}); //$NON-NLS-1$
 		
 		final IVMInstall vm = chooseVMInstall(title, message);
 		if (vm == null) {
@@ -112,7 +112,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 			throw new CoreException(new Status(IStatus.ERROR,
 				JDIDebugUIPlugin.getUniqueIdentifier(),
 				IJavaDebugUIConstants.INTERNAL_ERROR,
-				LauncherMessages.getString("JREContainerResolution.An_exception_occurred_while_updating_the_classpath._1"), e.getTargetException())); //$NON-NLS-1$
+				LauncherMessages.JREContainerResolution_An_exception_occurred_while_updating_the_classpath__1, e.getTargetException())); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// cancelled
 		}
@@ -121,7 +121,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		return MessageFormat.format(LauncherMessages.getString("JREContainerResolution.Select_a_system_library_to_use_when_building_{0}_2"), new String[]{fProject.getElementName()}); //$NON-NLS-1$
+		return MessageFormat.format(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()}); //$NON-NLS-1$
 	}
 
 }

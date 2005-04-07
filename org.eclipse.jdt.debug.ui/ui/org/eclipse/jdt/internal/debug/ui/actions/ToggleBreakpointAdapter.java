@@ -161,7 +161,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							if (offset < start || offset > end) {
 								// not in the inner type
 								IStatusLineManager statusLine = editorPart.getEditorSite().getActionBars().getStatusLineManager();
-								statusLine .setErrorMessage(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[] { type.getTypeQualifiedName()})); //$NON-NLS-1$
+								statusLine .setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { type.getTypeQualifiedName()})); //$NON-NLS-1$
 								Display.getCurrent().beep();
 								return;
 							}
@@ -212,21 +212,21 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					scheduleLineBreakpointCreation(resource, typeName, lineNumber, -1, -1, 0, true, attributes, document, bestMatch, type, editorPart);
 				}
 			} catch (CoreException ce) {
-                ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                ExceptionHandler.handle(ce, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}
 	}
     
 	private void scheduleLineBreakpointCreation(final IResource resource, final String typeName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes, final IDocument document, final boolean bestMatch, final IType type, final IEditorPart editorPart) {
-        new Job(ActionMessages.getString("ToggleBreakpointAdapter.0")) { //$NON-NLS-1$
+        new Job(ActionMessages.ToggleBreakpointAdapter_0) { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
                 try {
                     IJavaLineBreakpoint breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, charStart, charEnd, hitCount, register, attributes);
                     new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, bestMatch, typeName, type, resource, editorPart).schedule();
                     return Status.OK_STATUS;
                 } catch (CoreException e) {
-                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                    ExceptionHandler.handle(e, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
                 } 
                 return Status.CANCEL_STATUS;
             }
@@ -255,13 +255,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					compilationUnit.accept(locator);
 					String methodName= locator.getMethodName();
 					if (methodName == null) {
-						report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd"), part); //$NON-NLS-1$
+						report(ActionMessages.ManageMethodBreakpointActionDelegate_CantAdd, part); //$NON-NLS-1$
 						return;
 					}
 					String typeName= locator.getTypeName();
 					String methodSignature= locator.getMethodSignature();
 					if (methodSignature == null) {
-						report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.methodNonAvailable"), part); //$NON-NLS-1$
+						report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); //$NON-NLS-1$
 						return;
 					}
 					// check if this method breakpoint already exist. If yes, remove it.
@@ -286,7 +286,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		} else if (selection instanceof IStructuredSelection) {
 			IMethod[] members= getMethods((IStructuredSelection)selection);
 			if (members.length == 0) {
-				report(ActionMessages.getString("ToggleBreakpointAdapter.9"), part); //$NON-NLS-1$
+				report(ActionMessages.ToggleBreakpointAdapter_9, part); //$NON-NLS-1$
 				return;
 			}
 			for (int i= 0, length= members.length; i < length; i++) {
@@ -331,13 +331,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	}
 
     private void scheduleBreakpointRemoval(final IBreakpoint breakpoint, final boolean delete) {
-        new Job(ActionMessages.getString("ToggleBreakpointAdapter.1")) { //$NON-NLS-1$
+        new Job(ActionMessages.ToggleBreakpointAdapter_1) { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
                 try {
                     DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, delete);
                     return Status.OK_STATUS;
                 } catch (CoreException e) {
-                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                    ExceptionHandler.handle(e, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return Status.CANCEL_STATUS;
             } 
@@ -345,13 +345,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
 
     private void scheduleMethodBreakpointCreation(final IResource resource, final String typeName, final String methodName, final String methodSignature, final boolean entry, final boolean exit, final boolean nativeOnly, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) {
-        new Job(ActionMessages.getString("ToggleBreakpointAdapter.2")) { //$NON-NLS-1$
+        new Job(ActionMessages.ToggleBreakpointAdapter_2) { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
                 try {
                     JDIDebugModel.createMethodBreakpoint(resource, typeName, methodName, methodSignature, entry, exit, nativeOnly, lineNumber, charStart, charEnd, hitCount, register, attributes);
                     return Status.OK_STATUS;
                 } catch (CoreException e) {
-                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                    ExceptionHandler.handle(e, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return Status.CANCEL_STATUS;
             }
@@ -434,7 +434,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				compilationUnit.accept(locator);
 				String fieldName= locator.getFieldName();
 				if (fieldName == null) {
-					report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd"), part); //$NON-NLS-1$
+					report(ActionMessages.ManageWatchpointActionDelegate_CantAdd, part); //$NON-NLS-1$
 					return;
 				}
 				String typeName= locator.getTypeName();
@@ -457,7 +457,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		} else if (selection instanceof IStructuredSelection) {
 			IField[] members = getFields((IStructuredSelection)selection);
 			if (members.length == 0) {
-				report(ActionMessages.getString("ToggleBreakpointAdapter.10"), part); //$NON-NLS-1$
+				report(ActionMessages.ToggleBreakpointAdapter_10, part); //$NON-NLS-1$
 				return;
 			}
 			for (int i= 0, length= members.length; i < length; i++) {
@@ -483,13 +483,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 	}
 	private void scheduleWatchpointCreation(final IResource resource, final String typeName, final String fieldName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean register, final Map attributes) {
-        new Job(ActionMessages.getString("ToggleBreakpointAdapter.3")) { //$NON-NLS-1$
+        new Job(ActionMessages.ToggleBreakpointAdapter_3) { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
                 try {
                     JDIDebugModel.createWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
                     return Status.OK_STATUS;
                 } catch (CoreException e) {
-                    ExceptionHandler.handle(e, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+                    ExceptionHandler.handle(e, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return Status.CANCEL_STATUS;
             }

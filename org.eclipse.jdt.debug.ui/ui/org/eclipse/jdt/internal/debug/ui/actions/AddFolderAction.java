@@ -40,7 +40,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class AddFolderAction extends RuntimeClasspathAction {
 
 	public AddFolderAction(IClasspathViewer viewer) {
-		super(ActionMessages.getString("AddFolderAction.Add_&Folders_1"), viewer); //$NON-NLS-1$
+		super(ActionMessages.AddFolderAction_Add__Folders_1, viewer); //$NON-NLS-1$
 	}	
 
 	/**
@@ -55,9 +55,9 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IContainer)) {
-						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddFolderAction.Selection_must_be_a_folder_2"), null); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddFolderAction_Selection_must_be_a_folder_2, null); //$NON-NLS-1$
 					} else if (fAlreadySelected.contains(selection[i])) {
-						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddFolderAction.Classpath_already_includes_selected_folder(s)._1"), null); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddFolderAction_Classpath_already_includes_selected_folder_s___1, null); //$NON-NLS-1$
 					}
 					
 				}
@@ -71,8 +71,8 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		dialog.setValidator(validator);
-		dialog.setTitle(ActionMessages.getString("AddFolderAction.Folder_Selection_4")); //$NON-NLS-1$
-		dialog.setMessage(ActionMessages.getString("AddFolderAction.Choose_folders_to_add__5")); //$NON-NLS-1$
+		dialog.setTitle(ActionMessages.AddFolderAction_Folder_Selection_4); //$NON-NLS-1$
+		dialog.setMessage(ActionMessages.AddFolderAction_Choose_folders_to_add__5); //$NON-NLS-1$
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 
 		if (dialog.open() == Window.OK) {

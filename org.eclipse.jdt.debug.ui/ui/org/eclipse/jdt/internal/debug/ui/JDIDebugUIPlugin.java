@@ -162,7 +162,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.Internal_Error_1"), e));  //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.JDIDebugUIPlugin_Internal_Error_1, e));  //$NON-NLS-1$
 	}
 	
 	/**
@@ -214,7 +214,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		log(status);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
+			ErrorDialog.openError(shell, DebugUIMessages.JDIDebugUIPlugin_Error_1, message, status); //$NON-NLS-1$
 		}
 	}
 	
@@ -226,7 +226,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
 			IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
-			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
+			ErrorDialog.openError(shell, DebugUIMessages.JDIDebugUIPlugin_Error_1, message, status); //$NON-NLS-1$
 		}
 	}
 	
@@ -378,7 +378,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			public void run(IProgressMonitor monitor) {
 				try {
 					Set packageNameSet= new HashSet();
-					monitor.beginTask(DebugUIMessages.getString("JDIDebugUIPlugin.Searching_1"), projects.length); //$NON-NLS-1$
+					monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length); //$NON-NLS-1$
 					for (int i = 0; i < projects.length; i++) {						
 						IPackageFragment[] pkgs= projects[i].getPackageFragments();	
 						for (int j = 0; j < pkgs.length; j++) {
@@ -441,7 +441,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			try {
 				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch(CoreException ce) {			 
-				log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.An_error_occurred_retrieving_a_VMInstallType_page_1"), ce)); //$NON-NLS-1$
+				log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.JDIDebugUIPlugin_An_error_occurred_retrieving_a_VMInstallType_page_1, ce)); //$NON-NLS-1$
 			} 
 		}
 		return tab;

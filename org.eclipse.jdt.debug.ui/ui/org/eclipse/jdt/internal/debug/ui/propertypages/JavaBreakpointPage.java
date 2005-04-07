@@ -62,7 +62,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	public static final String ATTR_DELETE_ON_CANCEL = JDIDebugUIPlugin.getUniqueIdentifier() + ".ATTR_DELETE_ON_CANCEL";  //$NON-NLS-1$
 	
-	private static final String fgHitCountErrorMessage= PropertyPageMessages.getString("JavaBreakpointPage.0"); //$NON-NLS-1$
+	private static final String fgHitCountErrorMessage= PropertyPageMessages.JavaBreakpointPage_0; //$NON-NLS-1$
 	
 	/**
 	 * Store the breakpoint properties.
@@ -85,7 +85,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.getString("JavaBreakpointPage.1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.JavaBreakpointPage_1, e); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);
 		}
 		return super.performOk();
@@ -170,7 +170,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			try {
 				hitCount= Integer.parseInt(fHitCountText.getText());
 			} catch (NumberFormatException e) {
-				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.2"), new String[] { fHitCountText.getText() }), e)); //$NON-NLS-1$
+				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_2, new String[] { fHitCountText.getText() }), e)); //$NON-NLS-1$
 			}
 		}
 		breakpoint.setHitCount(hitCount);
@@ -212,7 +212,7 @@ public class JavaBreakpointPage extends PropertyPage {
             	getShell().addShellListener(new ShellListener() {
                     public void shellActivated(ShellEvent e) {
                         Shell shell = (Shell)e.getSource();
-                        shell.setText(MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.10"), new String[]{getName(getBreakpoint())})); //$NON-NLS-1$
+                        shell.setText(MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); //$NON-NLS-1$
                         shell.removeShellListener(this);
                     }
                     public void shellClosed(ShellEvent e) {
@@ -256,7 +256,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		try {
 			String typeName = breakpoint.getTypeName();
 			if (typeName != null) {
-				createLabel(labelComposite, PropertyPageMessages.getString("JavaBreakpointPage.3")); //$NON-NLS-1$
+				createLabel(labelComposite, PropertyPageMessages.JavaBreakpointPage_3); //$NON-NLS-1$
 				createLabel(labelComposite, typeName);
 			}
 			createTypeSpecificLabels(labelComposite);
@@ -273,12 +273,12 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void createSuspendPolicyEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		createLabel(parent, PropertyPageMessages.getString("JavaBreakpointPage.6")); //$NON-NLS-1$
+		createLabel(parent, PropertyPageMessages.JavaBreakpointPage_6); //$NON-NLS-1$
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 		Composite radioComposite= createComposite(parent, 2);
-		fSuspendThreadButton= createRadioButton(radioComposite, PropertyPageMessages.getString("JavaBreakpointPage.7")); //$NON-NLS-1$
+		fSuspendThreadButton= createRadioButton(radioComposite, PropertyPageMessages.JavaBreakpointPage_7); //$NON-NLS-1$
 		fSuspendThreadButton.setSelection(suspendThread);
-		fSuspendVMButton= createRadioButton(radioComposite, PropertyPageMessages.getString("JavaBreakpointPage.8")); //$NON-NLS-1$
+		fSuspendVMButton= createRadioButton(radioComposite, PropertyPageMessages.JavaBreakpointPage_8); //$NON-NLS-1$
 		fSuspendVMButton.setSelection(!suspendThread);
 	}
 
@@ -289,7 +289,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	private void createHitCountEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
 		Composite hitCountComposite= createComposite(parent, 2);
-		fHitCountButton= createCheckButton(hitCountComposite, PropertyPageMessages.getString("JavaBreakpointPage.4")); //$NON-NLS-1$
+		fHitCountButton= createCheckButton(hitCountComposite, PropertyPageMessages.JavaBreakpointPage_4); //$NON-NLS-1$
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				fHitCountText.setEnabled(fHitCountButton.getSelection());
@@ -347,7 +347,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @throws CoreException
 	 */
 	protected void createEnabledButton(Composite parent) throws CoreException {
-		fEnabledButton= createCheckButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.5")); //$NON-NLS-1$
+		fEnabledButton= createCheckButton(parent, PropertyPageMessages.JavaBreakpointPage_5); //$NON-NLS-1$
 		fEnabledButton.setSelection(getBreakpoint().isEnabled());
 	}
 	
@@ -468,7 +468,7 @@ public class JavaBreakpointPage extends PropertyPage {
 				getBreakpoint().delete();
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.getString("JavaBreakpointPage.9"), e.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.JavaBreakpointPage_9, e.getStatus()); //$NON-NLS-1$
 		}
 		return super.performCancel();
 	}

@@ -29,8 +29,8 @@ public class VMConnectTimeoutStatusHandler implements IStatusHandler {
 		final boolean[] result = new boolean[1];
 		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
-				String title= LauncherMessages.getString("VMConnectTimeoutStatusHandler.Java_Application_1"); //$NON-NLS-1$
-				String message= LauncherMessages.getString("jdkLauncher.error.timeout"); //$NON-NLS-1$
+				String title= LauncherMessages.VMConnectTimeoutStatusHandler_Java_Application_1; //$NON-NLS-1$
+				String message= LauncherMessages.jdkLauncher_error_timeout; //$NON-NLS-1$
 				result[0]= (MessageDialog.openQuestion(JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message));
 			}
 		});
