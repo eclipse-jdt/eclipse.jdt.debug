@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.launching; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: launching.jar
 Bundle-Activator: org.eclipse.jdt.internal.launching.LaunchingPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
