@@ -26,15 +26,22 @@ import org.eclipse.test.performance.Dimension;
  */
 public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTest {
     private String fTypeName = "PerfLoop";
+
     private int fHitCount = 0;
+
     private IJavaLineBreakpoint fBP;
+
     private IJavaDebugTarget fTarget;
+
     private Exception fException;
-    
+
     private boolean fConditionalBreakpointSet = false;
+
     private boolean fWarmUpComplete = false;
-    private int fWarmUpRuns = 5;
-    private int fMeasuredRuns = 25;
+
+    private int fWarmUpRuns = 2;
+
+    private int fMeasuredRuns = 10;
 
     private class BreakpointListener implements IDebugEventSetListener {
         public void handleDebugEvents(DebugEvent[] events) {
@@ -59,33 +66,36 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
         fBP = createLineBreakpoint(22, fTypeName);
 
-		BreakpointListener listener = new BreakpointListener();
+        BreakpointListener listener = new BreakpointListener();
         DebugPlugin.getDefault().addDebugEventListener(listener);
         ILaunchConfiguration config = getLaunchConfiguration(fTypeName);
-        fTarget = launchAndTerminate(config, 5 * 60 * 1000);
-        
-        if(fException != null) {
-            throw fException;
+        try {
+            fTarget = launchAndTerminate(config, 5 * 60 * 1000);
+
+            if (fException != null) {
+                throw fException;
+            }
+
+            commitMeasurements();
+            assertPerformance();
+
+            removeAllBreakpoints();
+        } finally {
+            DebugPlugin.getDefault().removeDebugEventListener(listener);
         }
-        
-        commitMeasurements();
-        assertPerformance();
-        
-        removeAllBreakpoints();
-		DebugPlugin.getDefault().removeDebugEventListener(listener);
     }
 
     private synchronized void breakpointHit(IJavaThread thread) {
         try {
             if (!fConditionalBreakpointSet) {
                 fBP.delete();
-                fBP = createConditionalLineBreakpoint(22, fTypeName, "i%20==0", true);
+                fBP = createConditionalLineBreakpoint(22, fTypeName, "i%100==0", true);
                 fConditionalBreakpointSet = true;
             } else if (!fWarmUpComplete) {
                 fHitCount++;
                 if (fHitCount == fWarmUpRuns) {
                     fWarmUpComplete = true;
-                    fHitCount =  0;
+                    fHitCount = 0;
                 }
                 return;
             } else {
@@ -94,6 +104,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
                 }
                 fHitCount++;
                 if (fHitCount <= fMeasuredRuns) {
+                    System.gc();
                     startMeasuring();
                 } else {
                     fBP.delete();
