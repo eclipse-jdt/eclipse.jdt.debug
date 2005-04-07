@@ -74,7 +74,7 @@ public abstract class JdwpID {
 	 * @see java.lang.Object#equals(Object)
 	 */
 	public boolean equals(Object object) {
-		return object != null && object.getClass().equals(this.getClass()) && fValue == ((JdwpID)object).fValue;
+		return object instanceof JdwpID && fValue == ((JdwpID)object).fValue;
 	}
 	
 	/**
