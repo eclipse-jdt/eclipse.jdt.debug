@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,16 +13,6 @@ import org.eclipse.osgi.util.NLS;
 
 public class EvaluationEngineMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.eval.ast.engine.EvaluationEngineMessages";//$NON-NLS-1$
-	//
-	// Copyright (c) 2000, 2005 IBM Corporation and others.
-	// All rights reserved. This program and the accompanying materials
-	// are made available under the terms of the Eclipse Public License v1.0
-	// which accompanies this distribution, and is available at
-	// http://www.eclipse.org/legal/epl-v10.html
-	//
-	// Contributors:
-	//     IBM Corporation - initial API and implementation
-	//
 
 	public static String ASTInstructionCompiler_Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2;
 	public static String ASTInstructionCompiler_Assert_statement_cannot_be_used_in_an_evaluation_expression_3;
