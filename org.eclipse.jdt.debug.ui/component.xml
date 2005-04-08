@@ -1,0 +1,13 @@
+<component name="Eclipse Java Debug">
+ <plugin id="org.eclipse.jdt.debug.ui" />
+
+ <package name="org.eclipse.jdt.debug.ui">
+ 	<type name="IJavaDebugUIConstants" implement="false"/>
+ 	<type name="JavaDebugUtils" subclass="false" instantiate="false"/>
+ 	<type name="JavaSourceLookupDialog" subclass="false" />
+ 	<type name="JavaUISourceLocator" subclass="false" />
+ </package>
+ 
+ <component-depends unrestricted="true"/>
+
+</component>
