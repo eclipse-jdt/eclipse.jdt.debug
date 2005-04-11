@@ -32,7 +32,6 @@ import java.util.TreeSet;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
-import org.eclipse.jdt.core.Signature;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
@@ -295,7 +294,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return fArgumentTypeSignatures;
 		}
 		
-		fArgumentTypeSignatures= Arrays.asList(Signature.getParameterTypes(signature()));
+		fArgumentTypeSignatures= GenericSignature.getParameterTypes(signature());
 		return fArgumentTypeSignatures;
 	}
 
@@ -468,7 +467,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fReturnTypeName != null) {
 			return fReturnTypeName;
 		}
-		fReturnTypeName= TypeImpl.signatureToName(Signature.getReturnType(signature())).replace('/','.');
+		int startIndex = signature().lastIndexOf(')') + 1;	// Signature position is just after ending brace.
+		fReturnTypeName= TypeImpl.signatureToName(signature().substring(startIndex));
 		return fReturnTypeName;
 	}	
 	
@@ -547,12 +547,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		
 		// try to generate the right generic signature for each argument
 		String genericSignature= genericSignature();
-		String[] signatures= Signature.getParameterTypes(signature());
+		String[] signatures= (String[]) argumentTypeSignatures().toArray(new String[0]);
 		String[] genericSignatures;
 		if (genericSignature == null) {
 			genericSignatures= new String[signatures.length];
 		} else {
-			genericSignatures= Signature.getParameterTypes(genericSignature);
+			genericSignatures= (String[]) GenericSignature.getParameterTypes(genericSignature).toArray(new String[0]);
 			for (int i= 0; i < genericSignatures.length; i++) {
 				if (genericSignatures[i].equals(signatures[i])) {
 					genericSignatures[i]= null;

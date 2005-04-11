@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
@@ -205,8 +204,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
                         return;
                     }
                 } catch (ClassNotLoadedException e) {
-                    // should not append, log anyway
-                    JDIDebugPlugin.log(e);
+                    // should not append
                 }
             }
         } else {
