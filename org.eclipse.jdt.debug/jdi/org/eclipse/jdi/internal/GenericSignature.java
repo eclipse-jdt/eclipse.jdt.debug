@@ -11,6 +11,7 @@
 package org.eclipse.jdi.internal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +35,8 @@ public class GenericSignature {
 		int parameterStart= methodSignature.indexOf(C_PARAMETERS_START);
 		int parametersEnd= methodSignature.lastIndexOf(C_PARAMETERS_END);
 		if (parameterStart == -1 || parametersEnd == -1) {
-			throw new IllegalArgumentException();
+			// used to throw illegal argument exception, but now return empty list if we can't parse it
+			return Collections.EMPTY_LIST;
 		}
 		return getTypeSignatureList(methodSignature.substring(parameterStart + 1, parametersEnd));
 	}
