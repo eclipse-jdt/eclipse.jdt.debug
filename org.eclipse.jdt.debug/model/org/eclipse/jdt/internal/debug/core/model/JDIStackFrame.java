@@ -551,7 +551,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		JDIThread thread= (JDIThread) getThread();
 		JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
 		try {
-			if (!target.isAvailable() || !thread.isSuspended() || thread.isTerminated()) {
+			if (!target.isAvailable() || !thread.isSuspended() || thread.isTerminated() ||
+					thread.isInvokingMethod()) {
 				return false;
 			} 
 			boolean j9Support= false;
