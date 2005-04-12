@@ -10,7 +10,7 @@ import org.eclipse.test.performance.PerformanceTestCase;
 public class PerfDebugBaselineTest extends PerformanceTestCase {
 
     public void testBaseline() {
-        tagAsSummary("Baseline Test", Dimension.CPU_TIME);
+        tagAsSummary("Baseline Test", Dimension.ELAPSED_PROCESS);
         Performance perf = Performance.getDefault();
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < 10000; i++) {

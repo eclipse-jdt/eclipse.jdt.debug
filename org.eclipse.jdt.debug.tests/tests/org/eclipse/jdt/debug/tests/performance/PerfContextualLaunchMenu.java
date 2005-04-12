@@ -28,7 +28,7 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
     }
 
     public void testContextualLaunchMenu() throws Exception {
-        tagAsGlobalSummary("Fill Contextual Launch Menu", Dimension.CPU_TIME);
+        tagAsGlobalSummary("Fill Contextual Launch Menu", Dimension.ELAPSED_PROCESS);
         final PerfTestContextualLaunchAction action = new PerfTestContextualLaunchAction();
         
         ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");        
