@@ -119,7 +119,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	 * @throws Exception
 	 */
 	public void testBareStepOver() throws Exception {
-		tagAsSummary("Bare Step Over", Dimension.CPU_TIME);
+		tagAsSummary("Bare Step Over", Dimension.ELAPSED_PROCESS);
 		String typeName = "PerfLoop";
 		IJavaLineBreakpoint bp = createLineBreakpoint(20, typeName);
 		

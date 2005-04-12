@@ -58,7 +58,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
     }
 
     public void testConditionalBreakpoints() throws Exception {
-        tagAsGlobalSummary("Conditional Breakpoint Test", Dimension.CPU_TIME);
+        tagAsGlobalSummary("Conditional Breakpoint Test", Dimension.ELAPSED_PROCESS);
         // just in case
         removeAllBreakpoints();
 

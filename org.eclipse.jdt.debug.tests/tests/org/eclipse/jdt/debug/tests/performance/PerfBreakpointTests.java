@@ -35,7 +35,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
     }
 
     public void testLineBreakpointCreation() throws Exception {
-        tagAsSummary("Install Line Breakpoints", Dimension.CPU_TIME);
+        tagAsSummary("Install Line Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
         IResource resource = getBreakpointResource(typeName);
 
