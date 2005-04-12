@@ -113,6 +113,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("InstanceFilterObject");
 		
 		createLaunchConfiguration("PerfLoop");
+		createLaunchConfiguration("LargeSourceFile");
+		createLaunchConfiguration("LotsOfFields");
 	}
 	
 	/**

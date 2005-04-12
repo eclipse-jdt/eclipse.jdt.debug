@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -67,6 +67,31 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	public void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
 		Performance performance= Performance.getDefault();
 		performance.tagAsGlobalSummary(fPerformanceMeter, shortName, dimensions );
+	}
+	
+	/**
+	 * Mark the scenario of this test case
+	 * to be included into the component performance summary. The summary shows
+	 * the given dimension of the scenario and labels the scenario with the short name.
+	 * 
+	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
+	 * @param dimension the dimension to show in the summary
+	 */
+	public void tagAsSummary(String shortName, Dimension dimension) {
+		tagAsSummary(shortName, new Dimension[]{dimension});
+	}
+	
+	/**
+	 * Mark the scenario of this test case
+	 * to be included into the component performance summary. The summary shows
+	 * the given dimension of the scenario and labels the scenario with the short name.
+	 * 
+	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
+	 * @param dimensions an array of dimensions to show in the summary
+	 */
+	public void tagAsSummary(String shortName, Dimension[] dimensions) {
+		Performance performance= Performance.getDefault();
+		performance.tagAsSummary(fPerformanceMeter, shortName, dimensions);
 	}
 	
 	/**
