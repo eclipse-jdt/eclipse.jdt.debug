@@ -35,7 +35,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
     }
 
     public void testLineBreakpointCreation() throws Exception {
-        tagAsSummary("Install Line Breakpoints", Dimension.CPU_TIME);
+        tagAsSummary("Install Line Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
         IResource resource = getBreakpointResource(typeName);
 
@@ -79,7 +79,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
     }
 
     public void testBreakpointRemoval() throws Exception {
-        tagAsSummary("Remove Line Breakpoints", Dimension.CPU_TIME);
+        tagAsSummary("Remove Line Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
         IResource resource = getBreakpointResource(typeName);
 
@@ -131,7 +131,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
 
 
     public void testMethodEntryBreakpointCreation() throws Exception {
-        tagAsSummary("Install Method Entry Breakpoints", Dimension.CPU_TIME);
+        tagAsSummary("Install Method Entry Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
         IProject project = getJavaProject().getProject();
         
@@ -174,7 +174,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
     }
 
     public void testWatchpointCreation() throws Exception {
-        tagAsSummary("Install Watchpoints", Dimension.CPU_TIME);
+        tagAsSummary("Install Watchpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LotsOfFields";
         IResource resource = getBreakpointResource(typeName);
         
