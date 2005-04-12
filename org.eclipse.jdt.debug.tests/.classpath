@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="test plugin"/>
-	<classpathentry kind="src" path="tests"/>
-	<classpathentry kind="src" path="testprograms"/>
-	<classpathentry sourcepath="JRE_SRC" kind="var" path="JRE_LIB"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="test plugin">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="tests">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="testprograms">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
