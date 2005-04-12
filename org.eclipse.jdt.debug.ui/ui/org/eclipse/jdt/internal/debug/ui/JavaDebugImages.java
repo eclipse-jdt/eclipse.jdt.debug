@@ -13,10 +13,8 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
 
-import org.eclipse.jface.action.IAction;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -26,147 +24,93 @@ import org.eclipse.swt.graphics.Image;
  */
 public class JavaDebugImages {
 
-	private static final String NAME_PREFIX= "org.eclipse.jdt.debug.ui."; //$NON-NLS-1$
-	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
+	/* Declare Common paths */
+	private static URL ICON_BASE_URL= null;
 
-	private static URL fgIconBaseURL= null;
-	
 	static {
-		String pathSuffix= "icons/full/"; //$NON-NLS-1$
-		fgIconBaseURL= JDIDebugUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
+		String pathSuffix = "icons/full/"; //$NON-NLS-1$
+		ICON_BASE_URL= JDIDebugUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 	
 	// The plugin registry
 	private static ImageRegistry fgImageRegistry = null;
-	private static HashMap fgAvoidSWTErrorMap = null;
 
 	/*
 	 * Available cached Images in the Java debug plug-in image registry.
 	 */	
-	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.gif";			//$NON-NLS-1$
-	public static final String IMG_OBJS_EXCEPTION_DISABLED= NAME_PREFIX + "jexceptiond_obj.gif";			//$NON-NLS-1$
-	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
+	public static final String IMG_OBJS_EXCEPTION= "IMG_OBJS_EXCEPTION";			//$NON-NLS-1$
+	public static final String IMG_OBJS_EXCEPTION_DISABLED= "IMG_OBJS_EXCEPTION_DISABLED";			//$NON-NLS-1$
+	public static final String IMG_OBJS_ERROR= "IMG_OBJS_ERROR";			//$NON-NLS-1$	
 	
-	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "installed_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED= NAME_PREFIX + "installed_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OVR_BREAKPOINT_INSTALLED= "IMG_OBJS_BREAKPOINT_INSTALLED";	//$NON-NLS-1$
+	public static final String IMG_OVR_BREAKPOINT_INSTALLED_DISABLED= "IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED";	//$NON-NLS-1$
 		
-	public static final String IMG_OBJS_LOCAL_VARIABLE = NAME_PREFIX + "localvariable_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_LOCAL_VARIABLE = "IMG_OBJS_LOCAL_VARIABLE";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY= NAME_PREFIX + "entry_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= NAME_PREFIX + "entry_ovr_disabled.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT= NAME_PREFIX + "exit_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= NAME_PREFIX + "exit_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OVR_METHOD_BREAKPOINT_ENTRY= "IMG_OBJS_METHOD_BREAKPOINT_ENTRY";	//$NON-NLS-1$
+	public static final String IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED= "IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED";	//$NON-NLS-1$
+	public static final String IMG_OVR_METHOD_BREAKPOINT_EXIT= "IMG_OBJS_METHOD_BREAKPOINT_EXIT";	//$NON-NLS-1$
+	public static final String IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED= "IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT= NAME_PREFIX + "conditional_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= NAME_PREFIX + "conditional_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OVR_CONDITIONAL_BREAKPOINT= "IMG_OBJS_CONDITIONAL_BREAKPOINT";	//$NON-NLS-1$
+	public static final String IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED= "IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED";	//$NON-NLS-1$
 
-	public static final String IMG_OBJS_SCOPED_BREAKPOINT= NAME_PREFIX + "scoped_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_SCOPED_BREAKPOINT_DISABLED= NAME_PREFIX + "scoped_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OVR_SCOPED_BREAKPOINT= "IMG_OBJS_SCOPED_BREAKPOINT";	//$NON-NLS-1$
+	public static final String IMG_OVR_SCOPED_BREAKPOINT_DISABLED= "IMG_OBJS_SCOPED_BREAKPOINT_DISABLED";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT= NAME_PREFIX + "uncaught_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "uncaught_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OVR_UNCAUGHT_BREAKPOINT= "IMG_OBJS_UNCAUGHT_BREAKPOINT";	//$NON-NLS-1$
+	public static final String IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED= "IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_CAUGHT_BREAKPOINT= NAME_PREFIX + "caught_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OVR_CAUGHT_BREAKPOINT= "IMG_OBJS_CAUGHT_BREAKPOINT";	//$NON-NLS-1$
+	public static final String IMG_OVR_CAUGHT_BREAKPOINT_DISABLED= "IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED";	//$NON-NLS-1$
 	
-	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SNIPPET_EVALUATING= "IMG_OBJS_SNIPPET_EVALUATING";	//$NON-NLS-1$
 	
-	public static final String IMG_VIEW_ARGUMENTS_TAB= NAME_PREFIX + "variable_tab.gif";  //$NON-NLS-1$
+	public static final String IMG_VIEW_ARGUMENTS_TAB= "IMG_VIEW_ARGUMENTS_TAB";  //$NON-NLS-1$
 	
-	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_CONTENDED_MONITOR = NAME_PREFIX + "contended_monitor_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_OWNED_MONITOR = NAME_PREFIX + "owned_monitor_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR = "IMG_OBJS_MONITOR";  //$NON-NLS-1$
+	public static final String IMG_OBJS_CONTENDED_MONITOR = "IMG_OBJS_CONTENDED_MONITOR";  //$NON-NLS-1$
+	public static final String IMG_OBJS_OWNED_MONITOR = "IMG_OBJS_OWNED_MONITOR";  //$NON-NLS-1$
 	
-	public static final String IMG_OBJS_EXCEPTION_BRKPT_TYPE = NAME_PREFIX + "jexcept_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_LINE_BRKPT_TYPE = NAME_PREFIX + "jline_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_CLASSLOAD_BRKPT_TYPE = NAME_PREFIX + "jload_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_WATCHPOINT_TYPE = NAME_PREFIX + "jwatch_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_JSP_BRKPT_TYPE = NAME_PREFIX + "jspbrkpt_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_METHOD_BRKPT_TYPE = NAME_PREFIX + "jmeth_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OVR_OWNED = "IMG_OVR_OWNED";			//$NON-NLS-1$
+	public static final String IMG_OVR_OWNS_MONITOR = "IMG_OVR_OWNS_MONITOR";		//$NON-NLS-1$
+	public static final String IMG_OVR_IN_CONTENTION = "IMG_OVR_IN_CONTENTION";			//$NON-NLS-1$
+	public static final String IMG_OVR_IN_CONTENTION_FOR_MONITOR = "IMG_OVR_IN_CONTENTION_FOR_MONITOR";		//$NON-NLS-1$
+	public static final String IMG_OVR_IN_DEADLOCK = "IMG_OVR_IN_DEADLOCK"; //$NON-NLS-1$
 	
-	public static final String IMG_OBJS_PLUS_SIGN = NAME_PREFIX + "plus_sign.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_MINUS_SIGN = NAME_PREFIX + "minus_sign.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_CLASSPATH = NAME_PREFIX + "classpath_obj.gif"; //$NON-NLS-1$
-
+	public static final String IMG_OBJS_EXCEPTION_BRKPT_TYPE = "IMG_OBJS_EXCEPTION_BRKPT_TYPE";  //$NON-NLS-1$
+	public static final String IMG_OBJS_LINE_BRKPT_TYPE = "IMG_OBJS_LINE_BRKPT_TYPE";  //$NON-NLS-1$
+	public static final String IMG_OBJS_CLASSLOAD_BRKPT_TYPE = "IMG_OBJS_CLASSLOAD_BRKPT_TYPE";  //$NON-NLS-1$
+	public static final String IMG_OBJS_WATCHPOINT_TYPE = "IMG_OBJS_WATCHPOINT_TYPE";  //$NON-NLS-1$
+	public static final String IMG_OBJS_JSP_BRKPT_TYPE = "IMG_OBJS_JSP_BRKPT_TYPE";  //$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_BRKPT_TYPE = "IMG_OBJS_METHOD_BRKPT_TYPE";  //$NON-NLS-1$
+	
+	public static final String IMG_OBJS_CLASSPATH = "IMG_OBJS_CLASSPATH"; //$NON-NLS-1$
+	
+	public static final String IMG_OVR_OUT_OF_SYNCH = "IMG_OVR_OUT_OF_SYNCH"; //$NON-NLS-1$
+	public static final String IMG_OVR_MAY_BE_OUT_OF_SYNCH = "IMG_OVR_MAY_BE_OUT_OF_SYNCH"; //$NON-NLS-1$
+	public static final String IMG_OVR_SYNCHRONIZED = "IMG_OVR_SYNCHRONIZED"; //$NON-NLS-1$
+	
+	public static final String IMG_WIZBAN_NEWSCRAPPAGE = "IMG_WIZBAN_NEWSCRAPPAGE"; //$NON-NLS-1$
+	public static final String IMG_WIZBAN_LIBRARY = "IMG_WIZBAN_LIBRARY"; //$NON-NLS-1$
+	public static final String IMG_TOOL_TERMSNIPPET = "IMG_TOOL_TERMSNIPPET"; //$NON-NLS-1$
+	public static final String IMG_TOOL_TERMSNIPPET_HOVER = "IMG_TOOL_TERMSNIPPET_HOVER"; //$NON-NLS-1$
+	public static final String IMG_TOOL_TERMSNIPPET_DISABLED = "IMG_TOOL_TERMSNIPPET_DISABLED"; //$NON-NLS-1$
+	public static final String IMG_OBJ_JAVA_INSPECT_EXPRESSION = "IMG_OBJ_JAVA_INSPECT_EXPRESSION"; //$NON-NLS-1$
+	
+	public static final String IMG_ELCL_CLEAR = "IMG_ELCL_CLEAR"; //$NON-NLS-1$
+	public static final String IMG_DLCL_CLEAR = "IMG_DLCL_CLEAR"; //$NON-NLS-1$
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
-	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
-	private static final String T_OVR= "ovr16"; 		//$NON-NLS-1$
-	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
-	private static final String T_EVIEW= "eview16"; 	//$NON-NLS-1$
-	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
-	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
-	public static final ImageDescriptor DESC_OBJS_EXCEPTION_DISABLED= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_DISABLED);
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED= createManaged(T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED);
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED= createManaged(T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED);
-		
-	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE = createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
-	
-	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_ENTRY= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_ENTRY);
-	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED);
-	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_EXIT= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_EXIT);
-	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED);
-	
-	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT);
-	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED);
-	
-	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_SCOPED_BREAKPOINT);
-	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_SCOPED_BREAKPOINT_DISABLED);
-	
-	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT);
-	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED);
-	
-	public static final ImageDescriptor DESC_OBJS_CAUGHT_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CAUGHT_BREAKPOINT);
-	public static final ImageDescriptor DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED);
-	
-	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
-	
-	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
-	
-	public static final ImageDescriptor DESC_VIEW_ARGUMENTS_TAB = createManaged(T_EVIEW, IMG_VIEW_ARGUMENTS_TAB);
+	private static final String T_OBJ= "obj16/"; 		//$NON-NLS-1$
+	private static final String T_OVR= "ovr16/"; 		//$NON-NLS-1$
+	private static final String T_WIZBAN= "wizban/"; 	//$NON-NLS-1$
+	private static final String T_EVIEW= "eview16/"; 	//$NON-NLS-1$
+	private static final String T_DLCL= "dtool16/"; 	//$NON-NLS-1$
+	private static final String T_ELCL= "etool16/"; 	//$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_OBJ_MONITOR = createManaged(T_OBJ, IMG_OBJS_MONITOR);
-	
-	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_SYNCHRONIZED= create(T_OVR, "sync_ovr.gif");				//$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_OVR_OWNED= create(T_OVR, "owned_ovr.gif");			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_OWNS_MONITOR= create(T_OVR, "ownsmonitor_ovr.gif");		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_IN_CONTENTION= create(T_OVR, "contention_ovr.gif");			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_IN_CONTENTION_FOR_MONITOR= create(T_OVR, "contentionformonitor_ovr.gif");		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_IN_DEADLOCK= create(T_OVR, "deadlock_ovr.gif");		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_CONTENDED_MONITOR = createManaged(T_OBJ, IMG_OBJS_CONTENDED_MONITOR);
-	public static final ImageDescriptor DESC_OBJS_OWNED_MONITOR = createManaged(T_OBJ, IMG_OBJS_OWNED_MONITOR);
-			
-	public static final ImageDescriptor DESC_WIZBAN_NEWSCRAPPAGE= create(T_WIZBAN, "newsbook_wiz.gif");		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_JAVA_ATTACH= create(T_WIZBAN, "java_attach_wiz.gif"); 	//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_LIBRARY= create(T_WIZBAN, "library_wiz.gif"); 	//$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_ETOOL, "run_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_HOVER= create(T_ETOOL, "run_sbook.gif"); 	//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_DISABLED= create(T_DTOOL, "run_sbook.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_DISABLED= create(T_DTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_OBJS_PLUS_SIGN= createManaged(T_OBJ, IMG_OBJS_PLUS_SIGN);
-	public static final ImageDescriptor DESC_OBJS_MINUS_SIGN= createManaged(T_OBJ, IMG_OBJS_MINUS_SIGN);
 
-	public static final ImageDescriptor DESC_OBJ_JAVA_INSPECT_EXPRESSION= create(T_OBJ, "insp_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_CLASSPATH= createManaged(T_OBJ, IMG_OBJS_CLASSPATH);
-	
-	public static final ImageDescriptor DESC_OBJS_EXCEPTION_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_BRKPT_TYPE);
-	public static final ImageDescriptor DESC_OBJS_LINE_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_LINE_BRKPT_TYPE);
-	public static final ImageDescriptor DESC_OBJS_CLASSLOAD_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_CLASSLOAD_BRKPT_TYPE);
-	public static final ImageDescriptor DESC_OBJS_METHOD_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_METHOD_BRKPT_TYPE);
-	public static final ImageDescriptor DESC_OBJS_JSP_BRKPT_TYPE= createManaged(T_OBJ, IMG_OBJS_JSP_BRKPT_TYPE);
-	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_TYPE= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_TYPE);
 	
 	/**
 	 * Returns the image managed under the given key in this registry.
@@ -179,70 +123,115 @@ public class JavaDebugImages {
 	}
 	
 	/**
-	 * Sets the two image descriptors for enabled, disabled. The actions
-	 * are retrieved from the *lcl16 folders.
+	 * Returns the <code>ImageDescriptor</code> identified by the given key,
+	 * or <code>null</code> if it does not exist.
 	 */
-	public static void setLocalImageDescriptors(IAction action, String relPath) {
-		String type= "lcl16"; //$NON-NLS-1$
-		try {
-			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
-			if (id != null)
-				action.setDisabledImageDescriptor(id);
-		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-	
-		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
-	}
+	public static ImageDescriptor getImageDescriptor(String key) {
+		return getImageRegistry().getDescriptor(key);
+	}	
 	
 	/*
 	 * Helper method to access the image registry from the JDIDebugUIPlugin class.
 	 */
 	/* package */ static ImageRegistry getImageRegistry() {
 		if (fgImageRegistry == null) {
-			fgImageRegistry= new ImageRegistry();
-			for (Iterator iter= fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
-				String key= (String) iter.next();
-				fgImageRegistry.put(key, (ImageDescriptor) fgAvoidSWTErrorMap.get(key));
-			}
-			fgAvoidSWTErrorMap= null;
+			initializeImageRegistry();
 		}
 		return fgImageRegistry;
 	}
 	
-	private static ImageDescriptor createManaged(String prefix, String name) {
-		try {
-			ImageDescriptor result= ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
-			if (fgAvoidSWTErrorMap == null) {
-				fgAvoidSWTErrorMap = new HashMap(); 
-			}
-			fgAvoidSWTErrorMap.put(name, result);
-			if (fgImageRegistry != null) {
-				JDIDebugUIPlugin.logErrorMessage("Internal Error: Image registry already defined"); //$NON-NLS-1$
-			}
-			return result;
-		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.log(e);
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
+	private static void initializeImageRegistry() {
+		fgImageRegistry= new ImageRegistry(DebugUIPlugin.getStandardDisplay());
+		declareImages();
 	}
 	
-	private static ImageDescriptor create(String prefix, String name) {
-		try {
-			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
-		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.log(e);
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
-	}
-	
-	private static URL makeIconFileURL(String prefix, String name) throws MalformedURLException {
-		if (fgIconBaseURL == null)
-			throw new MalformedURLException();
+	private static void declareImages() {
+		declareRegistryImage(IMG_OBJS_EXCEPTION, T_OBJ + "jexception_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_EXCEPTION_DISABLED, T_OBJ + "jexceptiond_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED, T_OVR + "installed_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED_DISABLED, T_OVR + "installed_ovr_disabled.gif"); //$NON-NLS-1$
 			
-		StringBuffer buffer= new StringBuffer(prefix);
-		buffer.append('/');
-		buffer.append(name);
-		return new URL(fgIconBaseURL, buffer.toString());
+		declareRegistryImage(IMG_OBJS_LOCAL_VARIABLE, T_OBJ + "localvariable_obj.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY, T_OVR + "entry_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED, T_OVR + "entry_ovr_disabled.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_EXIT, T_OVR + "exit_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED, T_OVR + "exit_ovr_disabled.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OVR_CONDITIONAL_BREAKPOINT, T_OVR + "conditional_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED, T_OVR + "conditional_ovr_disabled.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OVR_SCOPED_BREAKPOINT, T_OVR + "scoped_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_SCOPED_BREAKPOINT_DISABLED, T_OVR + "scoped_ovr_disabled.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OVR_UNCAUGHT_BREAKPOINT, T_OVR + "uncaught_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED, T_OVR + "uncaught_ovr_disabled.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OVR_CAUGHT_BREAKPOINT, T_OVR + "caught_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_CAUGHT_BREAKPOINT_DISABLED, T_OVR + "caught_ovr_disabled.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OBJS_ERROR, T_OBJ + "jrtexception_obj.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OBJS_SNIPPET_EVALUATING, T_OBJ + "jsbook_run_obj.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_VIEW_ARGUMENTS_TAB, T_EVIEW + "variable_tab.gif"); //$NON-NLS-1$
+
+		declareRegistryImage(IMG_OVR_OUT_OF_SYNCH, T_OVR + "error_co.gif");			//$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_MAY_BE_OUT_OF_SYNCH, T_OVR + "warning_co.gif");		//$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_SYNCHRONIZED, T_OVR + "sync_ovr.gif");				//$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OBJS_MONITOR, T_OBJ + "monitor_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_OWNED, T_OVR + "owned_ovr.gif");			//$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_OWNS_MONITOR, T_OVR +  "ownsmonitor_ovr.gif");		//$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_CONTENTION, T_OVR + "contention_ovr.gif");			//$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_CONTENTION_FOR_MONITOR, T_OVR + "contentionformonitor_ovr.gif");		//$NON-NLS-1$
+		declareRegistryImage(IMG_OVR_IN_DEADLOCK, T_OVR + "deadlock_ovr.gif");		//$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CONTENDED_MONITOR, T_OBJ + "contended_monitor_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_OWNED_MONITOR, T_OBJ + "owned_monitor_obj.gif"); //$NON-NLS-1$
+				
+		declareRegistryImage(IMG_WIZBAN_NEWSCRAPPAGE, T_WIZBAN + "newsbook_wiz.gif");		//$NON-NLS-1$
+		declareRegistryImage(IMG_WIZBAN_LIBRARY, T_WIZBAN + "library_wiz.gif"); 	//$NON-NLS-1$
+				
+		declareRegistryImage(IMG_TOOL_TERMSNIPPET, T_ELCL + "term_sbook.gif"); 			//$NON-NLS-1$
+		declareRegistryImage(IMG_TOOL_TERMSNIPPET_HOVER, T_ELCL + "term_sbook.gif"); 			//$NON-NLS-1$
+		declareRegistryImage(IMG_TOOL_TERMSNIPPET_DISABLED, T_DLCL + "term_sbook.gif"); 			//$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OBJ_JAVA_INSPECT_EXPRESSION, T_OBJ + "insp_sbook.gif"); 			//$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CLASSPATH, T_OBJ + "classpath_obj.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_OBJS_EXCEPTION_BRKPT_TYPE, T_OBJ + "jexcept_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_LINE_BRKPT_TYPE, T_OBJ + "jline_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CLASSLOAD_BRKPT_TYPE, T_OBJ + "jload_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_METHOD_BRKPT_TYPE, T_OBJ + "jmeth_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_JSP_BRKPT_TYPE, T_OBJ + "jspbrkpt_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_WATCHPOINT_TYPE, T_OBJ + "jwatch_obj.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IMG_ELCL_CLEAR, T_ELCL + "clear_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_DLCL_CLEAR, T_DLCL + "clear_co.gif"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Declare an Image in the registry table.
+	 * @param key 	The key to use when registering the image
+	 * @param path	The path where the image can be found. This path is relative to where
+	 *				this plugin class is found (i.e. typically the packages directory)
+	 */
+	private final static void declareRegistryImage(String key, String path) {
+		ImageDescriptor desc= ImageDescriptor.getMissingImageDescriptor();
+		try {
+			desc= ImageDescriptor.createFromURL(makeIconFileURL(path));
+		} catch (MalformedURLException me) {
+			JDIDebugUIPlugin.log(me);
+		}
+		fgImageRegistry.put(key, desc);
 	}	
+	
+	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
+		if (ICON_BASE_URL == null) {
+			throw new MalformedURLException();
+		}
+			
+		return new URL(ICON_BASE_URL, iconPath);
+	}	
+
 }

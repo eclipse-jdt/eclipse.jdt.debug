@@ -115,6 +115,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		drawOverlays();
 	}
 
+	private ImageData getImageData(String imageDescriptorKey) {
+		return JavaDebugImages.getImageDescriptor(imageDescriptorKey).getImageData();
+	}
 	/**
 	 * Add any overlays to the image as specified in the flags.
 	 */
@@ -126,52 +129,52 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		if ((flags & IS_OUT_OF_SYNCH) != 0) {
 			x= getSize().x;
 			y= 0;
-			data= JavaDebugImages.DESC_OVR_IS_OUT_OF_SYNCH.getImageData();
+			data= getImageData(JavaDebugImages.IMG_OVR_OUT_OF_SYNCH);
 			x -= data.width;
 			drawImage(data, x, y);
 		} else if ((flags & MAY_BE_OUT_OF_SYNCH) != 0) {
 			x= getSize().x;
 			y= 0;
-			data= JavaDebugImages.DESC_OVR_MAY_BE_OUT_OF_SYNCH.getImageData();
+			data= getImageData(JavaDebugImages.IMG_OVR_MAY_BE_OUT_OF_SYNCH);
 			x -= data.width;
 			drawImage(data, x, y);
 		} else if ((flags & SYNCHRONIZED) != 0) {
 			x= getSize().x;
 			y= 0;
-			data= JavaDebugImages.DESC_OVR_SYNCHRONIZED.getImageData();
+			data= getImageData(JavaDebugImages.IMG_OVR_SYNCHRONIZED);
 			x -= data.width;
 			drawImage(data, x, y);
 		} else {
 			if ((flags & IN_DEADLOCK) != 0) {
 				x= 0;
 				y= 0;
-				data= JavaDebugImages.DESC_OVR_IN_DEADLOCK.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_IN_DEADLOCK);
 				drawImage(data, x, y);
 			}
 			if ((flags & OWNED_MONITOR) != 0) {
 				x= getSize().x;
 				y= getSize().y;
-				data= JavaDebugImages.DESC_OVR_OWNED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_OWNED);
 				x -= data.width;
 				y -= data.height;
 				drawImage(data, x, y);
 			} else if ((flags & CONTENTED_MONITOR) != 0) {
 				x= getSize().x;
 				y= getSize().y;
-				data= JavaDebugImages.DESC_OVR_IN_CONTENTION.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_IN_CONTENTION);
 				x -= data.width;
 				y -= data.height;
 				drawImage(data, x, y);
 			} else if ((flags & OWNS_MONITOR) != 0) {
 				x= getSize().x;
 				y= 0;
-				data= JavaDebugImages.DESC_OVR_OWNS_MONITOR.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_OWNS_MONITOR);
 				x -= data.width;
 				drawImage(data, x, y);
 			} else if ((flags & IN_CONTENTION_FOR_MONITOR) != 0) {
 				x= getSize().x;
 				y= 0;
-				data= JavaDebugImages.DESC_OVR_IN_CONTENTION_FOR_MONITOR.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR);
 				x -= data.width;
 				drawImage(data, x, y);
 			} else {
@@ -189,9 +192,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			x= 0;
 			y= getSize().y;
 			if ((flags & ENABLED) !=0) {
-				data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED);
 			}
 				
 			y -= data.height;
@@ -199,9 +202,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & CAUGHT) != 0) {
 			if ((flags & ENABLED) !=0) {
-			data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT.getImageData();
+			data= getImageData(JavaDebugImages.IMG_OVR_CAUGHT_BREAKPOINT);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED);
 			}
 			x= 0;
 			y= 0;
@@ -209,9 +212,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & UNCAUGHT) != 0) {
 			if ((flags & ENABLED) !=0) {
-				data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED);
 			}
 			x= data.width;
 			y= data.height;
@@ -219,9 +222,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & SCOPED) != 0) {
 			if ((flags & ENABLED) !=0) {
-				data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_SCOPED_BREAKPOINT);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED);
 			}
 			x= 0;
 			y= getSize().y;
@@ -230,9 +233,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & CONDITIONAL) != 0) {
 			if ((flags & ENABLED) !=0) {
-				data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED);
 			}
 			x= 0;
 			y= 0;
@@ -242,9 +245,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			x= getSize().x;
 			y= 0;
 			if ((flags & ENABLED) !=0) {
-				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
 			}
 			x -= data.width;
 			drawImage(data, x, y);
@@ -253,9 +256,9 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			x= getSize().x;
 			y= getSize().y;
 			if ((flags & ENABLED) != 0) {
-				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT);
 			} else {
-				data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
+				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
 			}
 			x -= data.width;
 			y -= data.height;

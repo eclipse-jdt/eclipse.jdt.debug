@@ -31,8 +31,8 @@ public class ClearDisplayAction extends Action {
 		setToolTipText(DisplayMessages.ClearDisplay_tooltip); //$NON-NLS-1$
 		setDescription(DisplayMessages.ClearDisplay_description); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaDebugHelpContextIds.CLEAR_DISPLAY_VIEW_ACTION);
-		
-		JavaDebugImages.setLocalImageDescriptors(this, "clear_co.gif"); //$NON-NLS-1$
+		setImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_ELCL_CLEAR));
+		setDisabledImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_DLCL_CLEAR));
 	}
 
 	/**

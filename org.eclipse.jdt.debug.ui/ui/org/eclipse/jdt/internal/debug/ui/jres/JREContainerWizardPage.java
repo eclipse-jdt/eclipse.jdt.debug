@@ -41,11 +41,6 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * JRE control
 	 */
 	private JREsComboBlock fJREBlock;
-		
-	/**
-	 * Image
-	 */
-	private Image fImage;
 	
 	/**
 	 * Constructs a new page.
@@ -148,20 +143,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
 	public Image getImage() {
-		if (fImage == null) {
-			fImage = JavaDebugImages.DESC_WIZBAN_LIBRARY.createImage();
-		}
-		return fImage;
+		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		if (fImage != null) {
-			fImage.dispose();
-		}
-	}
 }

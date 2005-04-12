@@ -28,9 +28,9 @@ public class StopAction extends SnippetAction {
 		setToolTipText(SnippetMessages.getString("StopAction.tooltip")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("StopAction.description"));  //$NON-NLS-1$
 
-		setImageDescriptor(JavaDebugImages.DESC_TOOL_TERMSNIPPET);
-		setDisabledImageDescriptor(JavaDebugImages.DESC_TOOL_TERMSNIPPET_DISABLED);
-		setHoverImageDescriptor(JavaDebugImages.DESC_TOOL_TERMSNIPPET_HOVER);
+		setImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_TOOL_TERMSNIPPET));
+		setDisabledImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_TOOL_TERMSNIPPET_DISABLED));
+		setHoverImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_TOOL_TERMSNIPPET_HOVER));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaDebugHelpContextIds.TERMINATE_SCRAPBOOK_VM_ACTION);
 	}
 	

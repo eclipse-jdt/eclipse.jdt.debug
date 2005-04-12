@@ -64,7 +64,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		fSelection= selection;
-		setDefaultPageImageDescriptor(JavaDebugImages.DESC_WIZBAN_NEWSCRAPPAGE);
+		setDefaultPageImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_WIZBAN_NEWSCRAPPAGE));
 	}
 	
 	/**
