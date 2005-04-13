@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -721,6 +724,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		if (types != null && types.length > 0) {
 			fType = (IType)types[0];
 			fQualifiedTypeNameText.setText(fType.getFullyQualifiedName());
+			fTypeSearched = true;
 		}		
 	}
 	
@@ -772,7 +776,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		if (pattern == null || "".equals(pattern)) { //$NON-NLS-1$
 			return;
 		}
-		
+		final IProgressMonitor monitor = new NullProgressMonitor();
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
 			
@@ -789,6 +793,8 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 				if (enclosingElement instanceof IType) {
 					fType= (IType) enclosingElement;
 				}
+				// stop after we find one
+				monitor.setCanceled(true);
 			}
 		};
 		
@@ -797,9 +803,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		try {
-			engine.search(searchPattern, participants, scope, collector, null);
+			engine.search(searchPattern, participants, scope, collector, monitor);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
+		} catch (OperationCanceledException e){
 		}
 	}
 	
