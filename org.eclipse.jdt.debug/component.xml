@@ -1,4 +1,8 @@
-<component name="Eclipse Java Debug">
+<?xml version="1.0" encoding="UTF-8"?>
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="Eclipse Java Debug">
  <plugin id="org.eclipse.jdt.debug" />
 
  <package name="org.eclipse.jdt.debug.core">
