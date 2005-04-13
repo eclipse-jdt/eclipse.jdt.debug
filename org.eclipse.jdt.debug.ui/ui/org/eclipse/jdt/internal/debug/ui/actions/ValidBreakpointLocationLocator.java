@@ -120,6 +120,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	private CompilationUnit fCompilationUnit;
 	private int fLineNumber;
 	private boolean fBindingsResolved;
+	private boolean fNeedBindings = false;
 	private boolean fBestMatch;
 
 	private int fLocationType;
@@ -139,6 +140,18 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		fBindingsResolved= bindingsResolved;
 		fBestMatch= bestMatch;
 		fLocationFound= false;
+	}
+	
+	/**
+	 * Returns whether binding information would be helpful in validating a breakpoint
+	 * location. If this locator makes a pass of the tree and determines that binding
+	 * information would be helpful but was not available, this method returns
+	 * <code>true</code>.
+	 * 
+	 * @return whether binding information would be helpful in validating a breakpoint location
+	 */
+	public boolean isBindingsRequired() {
+		return fNeedBindings;
 	}
 	
 	/**
@@ -294,6 +307,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	private boolean isReplacedByConstantValue(Name node) {
 		if (!fBindingsResolved) {
+			fNeedBindings = true;
 			return false;
 		}
 		// if node is a variable with a constant value (static final field)
@@ -306,6 +320,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	private boolean isReplacedByConstantValue(FieldAccess node) {
 		if (!fBindingsResolved) {
+			fNeedBindings = true;
 			return false;
 		}
 		// if the node is 'this.<field>', and the field is static final
@@ -319,6 +334,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	private boolean isReplacedByConstantValue(SuperFieldAccess node) {
 		if (!fBindingsResolved) {
+			fNeedBindings = true;
 			return false;
 		}
 		// if the field is static final
@@ -390,20 +406,22 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	public boolean visit(Assignment node) {
 		if (visit(node, false)) {
-			if (fBindingsResolved) {
-				Expression leftHandSide= node.getLeftHandSide();
-				// if the left hand side represent a local variable, or a static field
-				// and the breakpoint was requested on a line before the line where
-				// starts the assigment, set the location to be the first executable
-				// instruction of the right hand side, as it will be the first part of
-				// this assigment to be executed
-				if (leftHandSide instanceof Name) {
-					IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
-					if (binding != null && !binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
-						int startLine = fCompilationUnit.lineNumber(node.getStartPosition());
-						if (fLineNumber < startLine) {
+			// if the left hand side represent a local variable, or a static field
+			// and the breakpoint was requested on a line before the line where
+			// starts the assigment, set the location to be the first executable
+			// instruction of the right hand side, as it will be the first part of
+			// this assigment to be executed
+			Expression leftHandSide= node.getLeftHandSide();
+			if (leftHandSide instanceof Name) {
+				int startLine = fCompilationUnit.lineNumber(node.getStartPosition());
+				if (fLineNumber < startLine) {
+					if (fBindingsResolved) {
+						IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
+						if (binding != null && !binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
 							node.getRightHandSide().accept(this);
 						}
+					} else {
+						fNeedBindings = true;
 					}
 				}
 			}

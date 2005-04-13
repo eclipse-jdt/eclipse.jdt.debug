@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -107,42 +106,46 @@ public class BreakpointLocationVerifierJob extends Job {
 	}
 	
 	public IStatus run(IProgressMonitor monitor) {
-		IJavaElement javaElement = JavaCore.create(fResource);
-		IJavaProject project = null;
-		if (javaElement != null) {
-			project= javaElement.getJavaProject();
-		}
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setSource(fDocument.get().toCharArray());
-		boolean resolveBindings= project != null;
-		if (resolveBindings) {
-			String unitName;
-			if (fType == null) {
-				unitName= fResource.getName();
-				if (!unitName.endsWith(".java")) { //$NON-NLS-1$
-					resolveBindings= false;
-				}
-			} else {
-				if (fType.isBinary()) {
-					String className= fType.getClassFile().getElementName();
-					int nameLength= className.indexOf('$');
-					if (nameLength < 0) {
-						nameLength= className.indexOf('.');
+		char[] source = fDocument.get().toCharArray();
+		parser.setSource(source);
+		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
+		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, false, fBestMatch);
+		compilationUnit.accept(locator);
+		if (locator.isBindingsRequired()) {
+			IJavaElement javaElement = JavaCore.create(fResource);
+			if (javaElement != null) {
+				// try again with bindings if required and available
+				String unitName = null;
+				if (fType == null) {
+					String name = fResource.getName();
+					if (name.endsWith(".java")) { //$NON-NLS-1$
+						unitName = name;
 					}
-					unitName= className.substring(0, nameLength) + ".java"; //$NON-NLS-1$
 				} else {
-					unitName= fType.getCompilationUnit().getElementName();
+					if (fType.isBinary()) {
+						String className= fType.getClassFile().getElementName();
+						int nameLength= className.indexOf('$');
+						if (nameLength < 0) {
+							nameLength= className.indexOf('.');
+						}
+						unitName= className.substring(0, nameLength) + ".java"; //$NON-NLS-1$
+					} else {
+						unitName= fType.getCompilationUnit().getElementName();
+					}
 				}
-			}
-			if (resolveBindings) {
-				parser.setProject(project);
-				parser.setUnitName(unitName);
-				parser.setResolveBindings(true);
+				if (unitName != null) {
+					parser = ASTParser.newParser(AST.JLS3);
+					parser.setSource(source);
+					parser.setProject(javaElement.getJavaProject());
+					parser.setUnitName(unitName);
+					parser.setResolveBindings(true);
+					compilationUnit= (CompilationUnit)parser.createAST(null);
+					locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, true, fBestMatch);
+					compilationUnit.accept(locator);
+				}
 			}
 		}
-		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
-		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, resolveBindings, fBestMatch);
-		compilationUnit.accept(locator);
 		int lineNumber= locator.getLineLocation();		
 		String typeName= locator.getFullyQualifiedTypeName();
 		
