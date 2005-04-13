@@ -215,17 +215,22 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 *	contains some executable code, even if split in multiple lines.
 	 */
 	private boolean visit(ASTNode node, boolean isCode) {
-		int startPosition= node.getStartPosition();
-		int startLine = fCompilationUnit.lineNumber(startPosition);
-		int endLine= fCompilationUnit.lineNumber(startPosition + node.getLength() - 1);
-		// if we already found a correct location, or if the position is not in this part of the code,
+		// if we already found a correct location
 		// no need to check the element inside.
-		if (fLocationFound || endLine < fLineNumber) {
+		if (fLocationFound) {
+			return false;
+		}
+		int startPosition= node.getStartPosition();
+		int endLine= fCompilationUnit.lineNumber(startPosition + node.getLength() - 1);
+		// if the position is not in this part of the code
+		// no need to check the element inside.
+		if (endLine < fLineNumber) {
 			return false;
 		}
 		// if the first line of this node always represents some executable code and the
 		// breakpoint is requested on this line or on a previous line, this is a valid 
 		// location
+		int startLine = fCompilationUnit.lineNumber(startPosition);
 		if (isCode && (fLineNumber <= startLine)) {
 			fLineLocation= startLine;
 			fLocationFound= true;
