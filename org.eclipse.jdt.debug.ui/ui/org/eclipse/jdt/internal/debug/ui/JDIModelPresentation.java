@@ -1647,7 +1647,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return label.toString();
 			}
 			
-			boolean javaStratum= frame.getDeclaringType().getDefaultStratum().equals("Java"); //$NON-NLS-1$
+			boolean javaStratum= true;
+			try {
+				javaStratum = frame.getDeclaringType().getDefaultStratum().equals("Java"); //$NON-NLS-1$
+			} catch (DebugException e) {
+			}
 			
 			if (javaStratum) {
 				// receiver name
