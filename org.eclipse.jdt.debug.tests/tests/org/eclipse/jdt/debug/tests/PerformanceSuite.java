@@ -19,6 +19,7 @@ import org.eclipse.jdt.debug.tests.performance.PerfConsoleTests;
 import org.eclipse.jdt.debug.tests.performance.PerfContextualLaunchMenu;
 import org.eclipse.jdt.debug.tests.performance.PerfDebugBaselineTest;
 import org.eclipse.jdt.debug.tests.performance.PerfSteppingTests;
+import org.eclipse.jdt.debug.tests.performance.PerfVariableDetailTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -44,5 +45,6 @@ public class PerformanceSuite extends DebugSuite {
         addTest(new TestSuite(PerfConditionalBreakpointsTests.class));
         addTest(new TestSuite(PerfSteppingTests.class));
         addTest(new TestSuite(PerfConsoleTests.class));
+        addTest(new TestSuite(PerfVariableDetailTests.class));
     }
 }

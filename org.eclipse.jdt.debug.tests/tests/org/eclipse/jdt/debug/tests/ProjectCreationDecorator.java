@@ -135,7 +135,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("ConsoleVariableLineLength");
 		createLaunchConfiguration("StackTraces");
 		createLaunchConfiguration("ConsoleInput");
-		createLaunchConfiguration("PrintConcatenation");        
+		createLaunchConfiguration("PrintConcatenation");
+		createLaunchConfiguration("VariableDetails");  
 	}
 	
 	/**
