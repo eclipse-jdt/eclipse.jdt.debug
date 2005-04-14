@@ -25,6 +25,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
@@ -42,7 +43,11 @@ import com.sun.jdi.Value;
 public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	/** JDWP Tag. */
 	public static final byte typeTag = JdwpID.TYPE_TAG_ARRAY;
-
+	/** component type */
+	private Type fComponentType;
+	/** Component type name	 */
+	private String fComponentTypeName;
+	
 	/**
 	 * Creates new ArrayTypeImpl.
 	 */
@@ -82,14 +87,20 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns the type of the array components. 
 	 */
 	public Type componentType() throws ClassNotLoadedException {
-		return TypeImpl.create(virtualMachineImpl(), componentSignature(), classLoader());
+		if (fComponentType == null) {
+			fComponentType = TypeImpl.create(virtualMachineImpl(), componentSignature(), classLoader());
+		}
+		return fComponentType;
 	}
 
 	/**
 	 * @return Returns a text representation of the component type.
 	 */
 	public String componentTypeName() {
-		return signatureToName(componentSignature());
+		if (fComponentTypeName == null) {
+			fComponentTypeName = signatureToName(componentSignature());
+		}
+		return fComponentTypeName;
 	}
 
 	/**

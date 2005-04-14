@@ -16,6 +16,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import org.eclipse.jdi.internal.jdwp.JdwpFieldID;
+
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
 import com.sun.jdi.Type;
@@ -29,6 +30,8 @@ import com.sun.jdi.Type;
 public class FieldImpl extends TypeComponentImpl implements Field {
 	/** ID that corresponds to this reference. */
 	private JdwpFieldID fFieldID;
+	private Type fType;
+	private String fTypeName;
 
 	/**
 	 * Creates new FieldImpl.
@@ -96,14 +99,20 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	 * @return Returns a text representation of the declared type.
 	 */
 	public String typeName() {
-		return TypeImpl.signatureToName(signature());
+		if (fTypeName == null) {
+			fTypeName = TypeImpl.signatureToName(signature());
+		}
+		return fTypeName;
 	}
 	
 	/** 
 	 * @return Returns the type of the this Field.
 	 */
 	public Type type() throws ClassNotLoadedException {
-		return TypeImpl.create(virtualMachineImpl(), signature(), declaringType().classLoader());
+		if (fType == null) {
+			fType = TypeImpl.create(virtualMachineImpl(), signature(), declaringType().classLoader()); 
+		}
+		return fType;
 	}
 
 	/** 

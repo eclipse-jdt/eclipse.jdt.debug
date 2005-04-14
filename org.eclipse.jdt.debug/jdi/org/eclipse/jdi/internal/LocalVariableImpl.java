@@ -34,6 +34,10 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	private String fSignature;
 	/** The variable type generic signature. */
 	private String fGenericSignature;
+	/** The variable's type */
+	private Type fType;
+	/** The variables type name */
+	private String fTypeName;
 	/**
 	 * Unsigned value used in conjunction with codeIndex.
 	 * The variable can be get or set only when the current
@@ -158,14 +162,20 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	 * @return Returns the type of the this LocalVariable. 
 	 */
 	public Type type() throws ClassNotLoadedException {
-		return TypeImpl.create(virtualMachineImpl(), fSignature, method().declaringType().classLoader());
+		if (fType == null) {
+			fType = TypeImpl.create(virtualMachineImpl(), fSignature, method().declaringType().classLoader());
+		}
+		return fType;
 	}
 	
 	/** 
 	 * @return Returns a text representation of the declared type of this variable.
 	 */
-	public String typeName() { 
-		return TypeImpl.signatureToName(fSignature);
+	public String typeName() {
+		if (fTypeName == null) {
+			fTypeName = TypeImpl.signatureToName(fSignature); 
+		}
+		return fTypeName;
 	}
 	
 	/** 
