@@ -83,6 +83,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		setSuspendOnUncaughtExceptionsPreference(false);
 		
 		// create launch configurations
+		createLaunchConfiguration("VariableDetails");
 		createLaunchConfiguration("Breakpoints");
 		createLaunchConfiguration("InstanceVariablesTests");
 		createLaunchConfiguration("LocalVariablesTests");
