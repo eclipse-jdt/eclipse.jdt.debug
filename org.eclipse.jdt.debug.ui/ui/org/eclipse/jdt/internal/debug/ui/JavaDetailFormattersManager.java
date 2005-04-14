@@ -52,7 +52,6 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -149,22 +148,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 	
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
-		ICompiledExpression compiledExpression= null;
 		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
 		if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
 			IJavaObject objectValue= (IJavaObject) value;
 			try {
-				IJavaProject project= getJavaProject(objectValue, thread);
-				if (project != null) {
-					// get the evaluation engine
-					JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
-					IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
-					// get the compiled expression to use
-					compiledExpression= getCompiledExpression(objectValue, debugTarget, evaluationEngine);
-					if (compiledExpression != null) {
-						evaluationEngine.evaluateExpression(compiledExpression, objectValue, thread, evaluationListener, DebugEvent.EVALUATION_IMPLICIT, false);
-						return;
-					}
+				IJavaDebugTarget debugTarget= (IJavaDebugTarget) thread.getDebugTarget();
+				// get the compiled expression to use
+				Expression expression= getCompiledExpression(objectValue, debugTarget, thread);
+				if (expression != null) {
+					expression.getEngine().evaluateExpression(expression.getExpression(), objectValue, thread,
+							evaluationListener, DebugEvent.EVALUATION_IMPLICIT, false);
+					return;
 				}
 			} catch (DebugException e) {
 				DebugUIPlugin.log(e);
@@ -304,22 +298,28 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 	
 	/**
-	 * Return the compiled expression which corresponds to the code formatter associated
-	 * with the type of the given object.
+	 * Return the expression which corresponds to the code formatter associated with the type of
+	 * the given object or <code>null</code> if none.
+	 * 
 	 * The code snippet is compiled in the context of the given object.
 	 */
-	private ICompiledExpression getCompiledExpression(IJavaObject javaObject, JDIDebugTarget debugTarget, IAstEvaluationEngine evaluationEngine) throws DebugException {
+	private Expression getCompiledExpression(IJavaObject javaObject, IJavaDebugTarget debugTarget, IJavaThread thread) throws DebugException {
 		IJavaClassType type= (IJavaClassType)javaObject.getJavaType();
 		String typeName= type.getName();
 		Key key= new Key(typeName, debugTarget);
 		if (fCacheMap.containsKey(key)) {
-			return (ICompiledExpression) fCacheMap.get(key);
+			return (Expression) fCacheMap.get(key);
 		}
-		String snippet= getDetailFormatter(type);
-		if (snippet != null) {
-			ICompiledExpression res= evaluationEngine.getCompiledExpression(snippet, javaObject);
-			fCacheMap.put(key, res);
-			return res;
+		IJavaProject project= getJavaProject(javaObject, thread);
+		if (project != null) {
+			String snippet= getDetailFormatter(type);
+			if (snippet != null) {
+				IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
+				ICompiledExpression res= evaluationEngine.getCompiledExpression(snippet, javaObject);
+				Expression exp = new Expression(res, evaluationEngine);
+				fCacheMap.put(key, exp);
+				return exp;
+			}
 		}
 		return null;
 	}
@@ -352,8 +352,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			if (event.getSource() instanceof JDIDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
-				deleteCacheForTarget((JDIDebugTarget) event.getSource());
+			if (event.getSource() instanceof IJavaDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
+				deleteCacheForTarget((IJavaDebugTarget) event.getSource());
 			}	
 		}
 	}
@@ -378,8 +378,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			ILaunch launch = launches[i];
 			IDebugTarget[] debugTargets= launch.getDebugTargets();
 			for (int j = 0; j < debugTargets.length; j++) {
-				if (debugTargets[j] instanceof JDIDebugTarget) {
-					deleteCacheForTarget((JDIDebugTarget)debugTargets[j]);		
+				if (debugTargets[j] instanceof IJavaDebugTarget) {
+					deleteCacheForTarget((IJavaDebugTarget)debugTargets[j]);		
 				}
 			}
 		}
@@ -391,7 +391,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * 
 	 * @param debugTarget 
 	 */
-	private synchronized void deleteCacheForTarget(JDIDebugTarget debugTarget) {
+	private synchronized void deleteCacheForTarget(IJavaDebugTarget debugTarget) {
 		for (Iterator iter= fCacheMap.keySet().iterator(); iter.hasNext();) {
 			Key key= (Key) iter.next();
 			if ((key).fDebugTarget == debugTarget) {
@@ -406,9 +406,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */
 	static private class Key {
 		private String fTypeName;
-		private JDIDebugTarget fDebugTarget;
+		private IJavaDebugTarget fDebugTarget;
 		
-		Key(String typeName, JDIDebugTarget debugTarget) {
+		Key(String typeName, IJavaDebugTarget debugTarget) {
 			fTypeName= typeName;
 			fDebugTarget= debugTarget;
 		}
@@ -423,6 +423,25 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		
 		public int hashCode() {
 			return fTypeName.hashCode() / 2 + fDebugTarget.hashCode() / 2;
+		}
+	}
+	
+	/**
+	 * Stores a compiled expression and evaluation engine used to eval the expression.
+	 */
+	static private class Expression {
+		private ICompiledExpression fExpression;
+		private IAstEvaluationEngine fEngine;
+		
+		Expression(ICompiledExpression expression, IAstEvaluationEngine engine) {
+			fExpression = expression;
+			fEngine = engine;
+		}
+		public ICompiledExpression getExpression() {
+			return fExpression;
+		}
+		public IAstEvaluationEngine getEngine() {
+			return fEngine;
 		}
 	}
 	
