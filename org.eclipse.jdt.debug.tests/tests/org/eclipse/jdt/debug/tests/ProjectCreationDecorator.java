@@ -91,6 +91,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		}
 		
 		// create launch configurations
+		createLaunchConfiguration("VariableDetails");
 		createLaunchConfiguration("LargeSourceFile");
 		createLaunchConfiguration("LotsOfFields");
 		createLaunchConfiguration("Breakpoints");
