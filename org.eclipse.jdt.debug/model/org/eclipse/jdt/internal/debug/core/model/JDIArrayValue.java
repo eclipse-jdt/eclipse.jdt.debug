@@ -27,6 +27,8 @@ import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.Value;
 
 public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexedValue{
+	
+	private int fLength = -1; 
 
 	/**
 	 * Constructs a value which is a reference to an array.
@@ -64,15 +66,15 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 	/**
 	 * @see IJavaArray#getLength()
 	 */
-	public int getLength() throws DebugException {
-		try {
-			return getArrayReference().length();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_array_length, new String[] {e.toString()}), e); //$NON-NLS-1$
+	public synchronized int getLength() throws DebugException {
+		if (fLength == -1) {
+			try {
+				fLength = getArrayReference().length();
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_array_length, new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
 		}
-		// exectution will not reach this line as an
-		// exception will be thrown
-		return 0;
+		return fLength;
 	}
 
 	/**
