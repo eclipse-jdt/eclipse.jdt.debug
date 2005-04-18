@@ -31,6 +31,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 /**
@@ -311,7 +312,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 		} catch (IncompatibleThreadStateException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_1, e); //$NON-NLS-1$
-		}
+		} catch (VMDisconnectedException e) {
+		    return null;
+        }
 		return owningThread;
 	}
 	
