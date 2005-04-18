@@ -266,7 +266,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					|| problemId == IProblem.NotVisibleConstructor
 					|| problemId == IProblem.NotVisibleField
 					|| problemId == IProblem.NotVisibleType) {
-					break;
+					continue;
 				}
 				if (problem.isError()) {
 					if (codeSnippetStart <= errorOffset && errorOffset <= codeSnippetEnd) {
