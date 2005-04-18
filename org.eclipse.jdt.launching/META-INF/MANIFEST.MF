@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.jdt.internal.launching.LaunchingPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jdt.internal.launching,
- org.eclipse.jdt.internal.launching.support,
  org.eclipse.jdt.launching,
  org.eclipse.jdt.launching.sourcelookup,
  org.eclipse.jdt.launching.sourcelookup.containers
