@@ -35,11 +35,13 @@ public class DeferredJavaThread extends DeferredMonitorElement {
             if (!isDisplayMonitors()) {
                 return frames;
             }
-            IDebugElement[] ownedMonitors = JavaDebugUtils.getOwnedMonitors(thread);
-            IDebugElement contendedMonitor = JavaDebugUtils.getContendedMonitor(thread);
+
             Object[] children;
             int length = frames.length;
             if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
+                IDebugElement[] ownedMonitors = JavaDebugUtils.getOwnedMonitors(thread);
+                IDebugElement contendedMonitor = JavaDebugUtils.getContendedMonitor(thread);
+                
                 if (ownedMonitors != null) {
                     length+=ownedMonitors.length;
                 }
