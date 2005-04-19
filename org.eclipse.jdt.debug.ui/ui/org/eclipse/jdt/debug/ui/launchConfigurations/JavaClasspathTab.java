@@ -439,7 +439,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			if (entries[i].getType() == IRuntimeClasspathEntry.ARCHIVE 
 					&& (!entries[i].getPath().isAbsolute()))
 			{
-				setErrorMessage(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1);
+				setErrorMessage(MessageFormat.format(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, new String[]{entries[i].getPath().toString()}));
 				return false;
 			}
 		}
