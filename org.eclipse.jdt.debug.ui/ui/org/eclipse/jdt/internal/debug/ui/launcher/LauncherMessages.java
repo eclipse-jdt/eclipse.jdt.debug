@@ -6,6 +6,7 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * BEA - Daniel R Somerfield - Bug 88939
  **********************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
@@ -82,6 +83,7 @@ public class LauncherMessages extends NLS {
 	public static String JavaClasspathTab_Cla_ss_path_3;
 	public static String JavaClasspathTab_0;
 	public static String JavaClasspathTab_Unable_to_save_classpath_1;
+	public static String JavaClasspathTab_Invalid_runtime_classpath_1;
 
 	public static String JavaSourceLookupTab_Source_1;
 
@@ -112,6 +114,7 @@ public class LauncherMessages extends NLS {
 	public static String RuntimeClasspathAdvancedDialog_Select_an_advanced_option__1;
 
 	public static String RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2;
+	public static String RuntimeClasspathEntryLabelProvider_Invalid_path;
 
 	public static String appletlauncher_argumenttab_widthlabel_text;
 	public static String appletlauncher_argumenttab_heightlabel_text;

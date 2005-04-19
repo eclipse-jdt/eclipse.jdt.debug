@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     BEA - Daniel R Somerfield - Bug 88939
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
@@ -431,6 +432,18 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 				return false;
 			}
 		}
+		
+		IRuntimeClasspathEntry [] entries = fModel.getAllEntries();
+		for (int i=0; i<entries.length; i++)
+		{
+			if (entries[i].getType() == IRuntimeClasspathEntry.ARCHIVE 
+					&& (!entries[i].getPath().isAbsolute()))
+			{
+				setErrorMessage(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1);
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	

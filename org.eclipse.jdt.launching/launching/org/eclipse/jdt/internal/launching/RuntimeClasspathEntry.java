@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     BEA - Daniel R Somerfield - Bug 88939
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -72,6 +73,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * Associated Java project, or <code>null</code>
 	 */
 	private IJavaProject fJavaProject = null;
+	
+	/**
+	 * The path if the entry was invalid and fClasspathEntry is null
+	 */
+	private IPath fInvalidPath;
 	
 	/**
 	 * Constructs a new runtime classpath entry based on the
@@ -164,11 +170,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					if (isEmpty(path)) {
 						abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_archive_path_5, null); //$NON-NLS-1$
 					} else {
-						setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
+						setClasspathEntry(createLibraryEntry(sourcePath, rootPath, path));
 					}
 				} else {
 					// external
-					setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
+					setClasspathEntry(createLibraryEntry(sourcePath, rootPath, path));
 				}
 				break;
 			case VARIABLE :
@@ -196,6 +202,17 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			IProject project2 = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			fJavaProject = JavaCore.create(project2);
 		}
+	}
+
+	private IClasspathEntry createLibraryEntry(IPath sourcePath, IPath rootPath, String path) throws CoreException {
+		Path p = new Path(path);
+		if (!p.isAbsolute())
+		{
+			fInvalidPath = p;
+			return null;
+			//abort("There was a problem with path \" " + path + "\": paths must be absolute.", null);			
+		}
+		return JavaCore.newLibraryEntry(p, sourcePath, rootPath);
 	}
 	
 	/**
@@ -297,7 +314,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getPath()
 	 */
 	public IPath getPath() {
-		return getClasspathEntry().getPath();
+		IClasspathEntry entry = getClasspathEntry();
+		return entry != null ? entry.getPath() : fInvalidPath;
 	}
 
 	/**
@@ -345,7 +363,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
 	public IPath getSourceAttachmentPath() {
-		return getClasspathEntry().getSourceAttachmentPath();
+		IClasspathEntry entry = getClasspathEntry();
+		return entry != null ? entry.getSourceAttachmentPath() : null;
 	}
 
 	/**
@@ -362,7 +381,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
 	public IPath getSourceAttachmentRootPath() {
-		IPath path = getClasspathEntry().getSourceAttachmentRootPath();
+		IClasspathEntry entry = getClasspathEntry();
+		IPath path = entry != null ? getClasspathEntry().getSourceAttachmentRootPath() : null;
 		if (path == null && getSourceAttachmentPath() != null) {
 			return Path.EMPTY;
 		}
@@ -497,7 +517,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					Object comparisonID1 = initializer.getComparisonID(getPath(), javaProject1);
 					Object comparisonID2 = initializer.getComparisonID(r.getPath(), javaProject2);
 					return comparisonID1.equals(comparisonID2);
-				} else if (getPath().equals(r.getPath())) {
+				} else if (getPath() != null && getPath().equals(r.getPath())) {
 					IPath sa1 = getSourceAttachmentPath();
 					IPath root1 = getSourceAttachmentRootPath();
 					IPath sa2 = r.getSourceAttachmentPath();

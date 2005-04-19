@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     BEA - Daniel R Somerfield - Bug 88939
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
@@ -72,14 +73,19 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				String key = null;
 				if (external) {
 					IPath path = entry.getPath();
-					File file = path.toFile();
-					if (file.exists() && file.isDirectory()) {
-						key = ISharedImages.IMG_OBJS_PACKFRAG_ROOT;
-					} else if (source) {
-                        key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
-					} else {
-						key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
-					}	
+					if (path != null)
+					{
+						//TODO: check for invalid paths and change image
+						File file = path.toFile();
+						if (file.exists() && file.isDirectory()) {
+							key = ISharedImages.IMG_OBJS_PACKFRAG_ROOT;
+						} else if (source) {
+	                        key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
+						} else {
+							key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
+						}	
+					}
+
 				} else {
 					if (source) {
 						key = ISharedImages.IMG_OBJS_JAR_WITH_SOURCE;
@@ -121,6 +127,10 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				return lp.getText(proj);
 			case IRuntimeClasspathEntry.ARCHIVE:
 				IPath path = entry.getPath();
+				if (path == null  || !path.isAbsolute() || !path.isValidPath(path.toString()))
+				{
+					return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{path.toOSString()});
+				}
 				String[] segments = path.segments();
 				StringBuffer displayPath = new StringBuffer();
 				if (segments.length > 0) {
