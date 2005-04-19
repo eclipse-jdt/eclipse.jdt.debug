@@ -438,6 +438,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				};
 				
 				Thread t = new Thread(r);
+                t.setDaemon(true);
 				t.start();
 			} catch (DebugException d) {
 				evaluationAborted();

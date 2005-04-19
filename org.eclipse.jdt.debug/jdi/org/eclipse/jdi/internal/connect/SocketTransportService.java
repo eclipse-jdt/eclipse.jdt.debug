@@ -140,7 +140,7 @@ public class SocketTransportService extends TransportService {
                 }                
             }
         }, ConnectMessages.SocketTransportService_0); //$NON-NLS-1$
-        
+        attachThread.setDaemon(true);
         attachThread.start();
         try {
             attachThread.join(attachTimeout);

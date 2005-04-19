@@ -217,6 +217,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 						
 						ConnectRunnable runnable = new ConnectRunnable(connector, map);
 						Thread connectThread = new Thread(runnable, "Listening Connector"); //$NON-NLS-1$
+                        connectThread.setDaemon(true);
 						connectThread.start();
 						while (connectThread.isAlive()) {
 							if (monitor.isCanceled()) {

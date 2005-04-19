@@ -159,11 +159,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		
 		fPacketReceiveManager = new PacketReceiveManager(connection, this);
 		Thread receiveThread = new Thread(fPacketReceiveManager, JDIMessages.VirtualMachineImpl_0);  //$NON-NLS-1$
+        receiveThread.setDaemon(true);
 		fPacketReceiveManager.setPartnerThread(receiveThread);
 		receiveThread.start();
 		
 		fPacketSendManager = new PacketSendManager(connection);
 		Thread sendThread = new Thread(fPacketSendManager, JDIMessages.VirtualMachineImpl_1); //$NON-NLS-1$
+        sendThread.setDaemon(true);
 		fPacketReceiveManager.setPartnerThread(sendThread);
 		sendThread.start();
 	}

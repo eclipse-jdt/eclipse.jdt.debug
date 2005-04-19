@@ -66,6 +66,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 				}
 			}
 		});
+        timerThread.setDaemon(true);
 		timerThread.start();
 		try {
 			fThread.terminateEvaluation();
