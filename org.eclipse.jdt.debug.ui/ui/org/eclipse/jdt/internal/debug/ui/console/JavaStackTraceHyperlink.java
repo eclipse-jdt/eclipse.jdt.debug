@@ -24,6 +24,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -66,8 +67,16 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	public void linkActivated() {
 		try {
-			String typeName = getTypeName();
-			int lineNumber = getLineNumber();
+			String typeName;
+            int lineNumber;
+            try {
+                typeName = getTypeName();
+                lineNumber = getLineNumber();
+            } catch (CoreException e1) {
+                ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Error, ConsoleMessages.JavaStackTraceHyperlink_Error, e1.getStatus()); 
+                return;
+            }
+			
 			// documents start at 0
 			if (lineNumber > 0) {
 				lineNumber--;
