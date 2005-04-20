@@ -69,35 +69,35 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
     }
 	
 	private void showPopup() {		
-		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.PopupDisplayAction_2, ACTION_DEFINITION_ID); //$NON-NLS-1$
-				control.addDisposeListener(new DisposeListener() {
-                    public void widgetDisposed(DisposeEvent e) {
-                        getInformationPresenter().uninstall();
-                    }
-				});
-                return control; //$NON-NLS-1$
-			}
-		});
-		
-		setInformationPresenter(infoPresenter);
-		
-		Point p = viewer.getSelectedRange();
-		IDocument doc = viewer.getDocument();
-		try {
-			String contentType = doc.getContentType(p.x);
-			infoPresenter.setInformationProvider(PopupDisplayAction.this, contentType);				
-			
-			infoPresenter.install(viewer);
-			infoPresenter.showInformation();
-		} catch (BadLocationException e) {
-			return;
-		} finally {
-			viewer = null;
-			evaluationCleanup();
-		}
-		
+        if (viewer != null) {
+            final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
+                public IInformationControl createInformationControl(Shell parent) {
+                    DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.PopupDisplayAction_2, ACTION_DEFINITION_ID); //$NON-NLS-1$
+                    control.addDisposeListener(new DisposeListener() {
+                        public void widgetDisposed(DisposeEvent e) {
+                            getInformationPresenter().uninstall();
+                        }
+                    });
+                    return control; //$NON-NLS-1$
+                }
+            });
+
+            setInformationPresenter(infoPresenter);
+
+            Point p = viewer.getSelectedRange();
+            IDocument doc = viewer.getDocument();
+            try {
+                String contentType = doc.getContentType(p.x);
+                infoPresenter.setInformationProvider(PopupDisplayAction.this, contentType);
+
+                infoPresenter.install(viewer);
+                infoPresenter.showInformation();
+            } catch (BadLocationException e) {
+                return;
+            } finally {
+                viewer = null;
+            }
+        }
 	}
 
     private class DisplayInformationControl extends PopupInformationControl {
@@ -181,6 +181,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 					showPopup();
 				}
 			});
+            evaluationCleanup();
 		}
 	}
 

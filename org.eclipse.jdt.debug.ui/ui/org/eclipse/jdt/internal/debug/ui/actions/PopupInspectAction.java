@@ -89,20 +89,23 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		setInformationPresenter(infoPresenter);
 
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() { 
-				Point p = viewer.getSelectedRange();
-				IDocument doc = viewer.getDocument();
-				try {
-					String contentType = TextUtilities.getContentType(doc, infoPresenter.getDocumentPartitioning(), p.x, true);
-					infoPresenter.setInformationProvider(PopupInspectAction.this, contentType);				
-					infoPresenter.install(viewer);
-					infoPresenter.showInformation();
-				} catch (BadLocationException e) {
-					return;
-				} finally {
-					viewer = null;
-				}
-			}
+			public void run() {
+                if (viewer != null) {
+                    Point p = viewer.getSelectedRange();
+                    IDocument doc = viewer.getDocument();
+                    try {
+                        String contentType = TextUtilities.getContentType(doc, infoPresenter.getDocumentPartitioning(), p.x, true);
+                        infoPresenter.setInformationProvider(PopupInspectAction.this, contentType);
+                        infoPresenter.install(viewer);
+                        infoPresenter.showInformation();
+                    } catch (BadLocationException e) {
+                        return;
+                    } finally {
+                        viewer = null;
+                        evaluationCleanup();
+                    }
+                }
+            }
 		});
 	}
 	
