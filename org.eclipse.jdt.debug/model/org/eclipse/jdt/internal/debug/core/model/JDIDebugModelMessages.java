@@ -14,9 +14,6 @@ import org.eclipse.osgi.util.NLS;
 public class JDIDebugModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages";//$NON-NLS-1$
 
-	public static String JDIArrayEntryVariable_exception_attempting_to_set_value_of_field;
-	public static String JDIArrayEntryVariable_exception_modifying_variable_value_2;
-	public static String JDIArrayEntryVariable_exception_modifying_variable_value_3;
 	public static String JDIArrayEntryVariable_exception_modifying_variable_value;
 	public static String JDIArrayEntryVariable_exception_retrieving_reference_type;
 	public static String JDIArrayEntryVariable_exception_retrieving_type_signature;
@@ -58,20 +55,15 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIDebugTarget_Unable_to_create_class_prepare_request__3;
 	public static String JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4;
 
-	public static String JDIFieldVariable_exception_modifying_value_1;
-	public static String JDIFieldVariable_exception_modifying_value_2;
-	public static String JDIFieldVariable_exception_modifying_value_3;
+	public static String JDIFieldVariable_exception_modifying_value;
 	public static String JDIFieldVariable_exception_retrieving_field_name;
 	public static String JDIFieldVariable_exception_retrieving_field_signature;
 	public static String JDIFieldVariable_exception_while_retrieving_type_of_field;
 
-	public static String JDILocalVariable_exception_modifying_local_variable_value_1;
-	public static String JDILocalVariable_exception_modifying_local_variable_value_2;
-	public static String JDILocalVariable_exception_modifying_local_variable_value_3;
+	public static String JDILocalVariable_exception_modifying_local_variable_value;
 	public static String JDILocalVariable_exception_retrieving_local_variable_name;
 	public static String JDILocalVariable_exception_retrieving_local_variable_type_name;
 	public static String JDILocalVariable_exception_retrieving_local_variable_type_signature;
-	public static String JDILocalVariable_exception_while_attempting_to_set_value_of_local_variable;
 	public static String JDILocalVariable_exception_while_retrieving_type_of_local_variable;
 
 	public static String JDIModificationVariable_Unable_to_generate_value___VM_disconnected__1;

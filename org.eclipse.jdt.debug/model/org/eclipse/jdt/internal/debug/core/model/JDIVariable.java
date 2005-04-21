@@ -38,6 +38,12 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 */
 	private int fLastChangeIndex = -1;
 	
+	/**
+	 * Counter noting the last time this variable's value
+	 * was retrieved.
+	 */
+	private int fLastRetrievalIndex = -1;
+	
 	protected final static String jdiStringSignature= "Ljava/lang/String;"; //$NON-NLS-1$
 	
 	public JDIVariable(JDIDebugTarget target) {
@@ -64,7 +70,15 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 */
 	protected final Value getCurrentValue() throws DebugException {
 		try {
-			return retrieveValue();
+			int time = getJavaDebugTarget().getSuspendCount();
+			if (fLastRetrievalIndex < time) {
+				fLastRetrievalIndex = time;
+				return retrieveValue();
+			}
+			if (fValue == null) {
+				return null;
+			}
+			return fValue.getUnderlyingValue();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIVariable_exception_retrieving, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
@@ -233,6 +247,16 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 */
 	protected void setChangeCount(int count) {
 		fLastChangeIndex = count;
+	}
+	
+	/**
+	 * Clears the counter indicating the last time this variable's value
+	 * was retrieved. This method should be called when a variable's
+	 * value is set from a client, to force a new retrieval without
+	 * requiring a thread resume/suspend.
+	 */
+	protected void clearRetrievalCount() {
+		fLastRetrievalIndex = -1;
 	}
 	
 	/**

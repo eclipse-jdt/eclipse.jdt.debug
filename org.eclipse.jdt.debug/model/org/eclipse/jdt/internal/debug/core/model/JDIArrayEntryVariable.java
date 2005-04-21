@@ -80,13 +80,14 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		}
 		try {
 			ar.setValue(getIndex(), value);
+			clearRetrievalCount();
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value_2, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value_3, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
@@ -169,16 +170,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public	void setValue(IValue v) throws DebugException {
 		if (verifyValue(v)) {
 			JDIValue value = (JDIValue)v;
-			try {
-				getArrayReference().setValue(getIndex(), value.getUnderlyingValue());
-				fireChangeEvent(DebugEvent.CONTENT);
-			} catch (InvalidTypeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_attempting_to_set_value_of_field, new String[]{e.toString()}), e); //$NON-NLS-1$
-			} catch (ClassNotLoadedException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_attempting_to_set_value_of_field, new String[]{e.toString()}), e); //$NON-NLS-1$
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_attempting_to_set_value_of_field, new String[]{e.toString()}), e); //$NON-NLS-1$
-			}
+			setJDIValue(value.getUnderlyingValue());
 		}
 	}	
 	

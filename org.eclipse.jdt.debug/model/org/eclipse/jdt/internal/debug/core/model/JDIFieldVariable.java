@@ -104,13 +104,14 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 			} else {
 				getObjectReference().setValue(getField(), value);
 			}
+			clearRetrievalCount();
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIFieldVariable_exception_modifying_value_1, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIFieldVariable_exception_modifying_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIFieldVariable_exception_modifying_value_2, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIFieldVariable_exception_modifying_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIFieldVariable_exception_modifying_value_3, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIFieldVariable_exception_modifying_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
