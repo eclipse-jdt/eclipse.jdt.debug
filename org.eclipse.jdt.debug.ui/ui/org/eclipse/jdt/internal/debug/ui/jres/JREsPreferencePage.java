@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -190,13 +191,4 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		return fJREBlock.getCheckedJRE();
 	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible) {
-			setTitle(JREMessages.JREsPreferencePage_12); //$NON-NLS-1$
-		}
-	}
 }
