@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -69,6 +70,7 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -222,7 +224,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	protected void createActions() {
 				
-		fClearDisplayAction= new ClearDisplayAction(this);
+		fClearDisplayAction= new ClearOutputAction(fSourceViewer);
 
 		IActionBars actionBars = getViewSite().getActionBars();		
 		

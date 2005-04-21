@@ -98,8 +98,6 @@ public class JavaDebugImages {
 	public static final String IMG_TOOL_TERMSNIPPET_DISABLED = "IMG_TOOL_TERMSNIPPET_DISABLED"; //$NON-NLS-1$
 	public static final String IMG_OBJ_JAVA_INSPECT_EXPRESSION = "IMG_OBJ_JAVA_INSPECT_EXPRESSION"; //$NON-NLS-1$
 	
-	public static final String IMG_ELCL_CLEAR = "IMG_ELCL_CLEAR"; //$NON-NLS-1$
-	public static final String IMG_DLCL_CLEAR = "IMG_DLCL_CLEAR"; //$NON-NLS-1$
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -206,8 +204,6 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OBJS_JSP_BRKPT_TYPE, T_OBJ + "jspbrkpt_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_WATCHPOINT_TYPE, T_OBJ + "jwatch_obj.gif"); //$NON-NLS-1$
 		
-		declareRegistryImage(IMG_ELCL_CLEAR, T_ELCL + "clear_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IMG_DLCL_CLEAR, T_DLCL + "clear_co.gif"); //$NON-NLS-1$
 	}
 	
 	/**
