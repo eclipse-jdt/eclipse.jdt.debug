@@ -1373,7 +1373,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Notifies this thread that is about to be resumed due
 	 * to a VM resume.
 	 */
-	protected synchronized void resumedByVM() {
+	protected synchronized void resumedByVM() throws DebugException {
 		setRunning(true);
 		preserveStackFrames();
 		// This method is called *before* the VM is actually resumed.
@@ -1382,7 +1382,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// is no greater than 1. @see Bugs 23328 and 27622
 		ThreadReference thread= getUnderlyingThread();
 		while (thread.suspendCount() > 1) {
-			thread.resume();
+			try {
+				thread.resume();
+			} catch (ObjectCollectedException e) {
+			} catch (VMDisconnectedException e) {
+				disconnected();
+			}catch (RuntimeException e) {
+				setRunning(false);
+				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); //$NON-NLS-1$				
+			}
 		}
 	}
 

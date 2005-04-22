@@ -1176,7 +1176,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * Notifies threads that they have been resumed
 	 */
-	protected void resumeThreads() {
+	protected void resumeThreads() throws DebugException {
 		Iterator threads = getThreadIterator();
 		while (threads.hasNext()) {
 			((JDIThread)threads.next()).resumedByVM();
@@ -1216,7 +1216,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param breakpoint the breakpoint that caused the
 	 *  suspension
 	 */
-	protected void cancelSuspendByBreakpoint(JavaBreakpoint breakpoint) {
+	protected void cancelSuspendByBreakpoint(JavaBreakpoint breakpoint) throws DebugException {
 		setSuspended(false);
 		resumeThreads();
 	}	
