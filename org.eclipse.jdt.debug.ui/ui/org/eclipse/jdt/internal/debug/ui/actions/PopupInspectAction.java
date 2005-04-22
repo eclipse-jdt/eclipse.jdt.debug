@@ -102,7 +102,6 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
                         return;
                     } finally {
                         viewer = null;
-                        evaluationCleanup();
                     }
                 }
             }
