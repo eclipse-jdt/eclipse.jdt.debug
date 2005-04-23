@@ -82,7 +82,7 @@ public class JDIType implements IJavaType {
 	/**
 	 * Returns the debug target this type originated from.
 	 * 
-	 * @return the debug targe this type originated
+	 * @return the debug target this type originated
 	 * 	from
 	 */
 	protected JDIDebugTarget getDebugTarget() {
