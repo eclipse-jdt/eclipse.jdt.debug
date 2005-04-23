@@ -181,7 +181,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		
 			String[] strings = JavaRuntime.computeJavaLibraryPath(getJavaProject("PathTests1"), false);
 			assertEquals("Wrong number of entries", 1, strings.length);
-			assertEquals("Wrong entry", jar.getAbsolutePath(), strings[0]);
+			assertEquals("Wrong entry", jar.getCanonicalFile(), new File(strings[0]));
 		} finally {
 			manager.removeVariables(new IValueVariable[]{variable});
 		}
