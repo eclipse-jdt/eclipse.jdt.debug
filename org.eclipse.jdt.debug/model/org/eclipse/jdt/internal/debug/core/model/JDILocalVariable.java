@@ -83,7 +83,6 @@ public class JDILocalVariable extends JDIModificationVariable {
 			synchronized (getStackFrame().getThread()) {
 				getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value);
 			}
-			clearRetrievalCount();
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_modifying_local_variable_value, new String[] {e.toString()}), e); //$NON-NLS-1$

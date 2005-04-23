@@ -80,7 +80,6 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		}
 		try {
 			ar.setValue(getIndex(), value);
-			clearRetrievalCount();
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value, new String[] {e.toString()}), e); //$NON-NLS-1$
