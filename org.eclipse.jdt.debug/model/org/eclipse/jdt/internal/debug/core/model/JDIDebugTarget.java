@@ -2151,7 +2151,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
             if (event.getSource() == this && event.getKind() == DebugEvent.CREATE) {
                 EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
                 if (dispatcher != null) {
-                    new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher).start(); //$NON-NLS-1$
+                    Thread t= new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher); //$NON-NLS-1$
+                    t.setDaemon(true);
+                    t.start();
                 }
                 DebugPlugin.getDefault().removeDebugEventListener(this);
             }

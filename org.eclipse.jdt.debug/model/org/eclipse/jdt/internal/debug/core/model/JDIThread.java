@@ -1353,6 +1353,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 			}
 		});
+		thread.setDaemon(true);
 		thread.start();
 	}
 	

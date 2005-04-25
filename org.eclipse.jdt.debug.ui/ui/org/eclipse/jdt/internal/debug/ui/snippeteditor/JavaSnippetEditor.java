@@ -191,6 +191,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		 */
 		private WaitThread(Display display, Object lock) {
 			super("Snippet Wait Thread"); //$NON-NLS-1$
+			setDaemon(true);
 			fDisplay = display;
 			fLock= lock;
 		}

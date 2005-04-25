@@ -174,7 +174,7 @@ public class SocketTransportService extends TransportService {
                 }
             }
         }, ConnectMessages.SocketTransportService_1); //$NON-NLS-1$
-        
+        t.setDaemon(true);
         t.start();
         try {
             t.join(timeout);
