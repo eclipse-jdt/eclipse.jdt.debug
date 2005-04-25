@@ -15,37 +15,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
+
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
+
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
-import org.eclipse.jdt.internal.corext.util.TypeInfo;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.jdt.internal.ui.dialogs.TypeSelectionDialog;
-import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -54,20 +39,41 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
+
+import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
+import org.eclipse.jdt.internal.corext.util.TypeInfo;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+
+import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.jdt.internal.ui.dialogs.TypeSelectionDialog2;
+import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
 
 /**
  * A dialog to create an exception breakpoint
  */
-public class AddExceptionDialog extends TypeSelectionDialog {
+public class AddExceptionDialog extends TypeSelectionDialog2 {
 
     private Button fCaughtButton;
 
     private Button fUncaughtButton;
-
-    private Text fTextWidget;
 
     private IJavaExceptionBreakpoint[] fExisting;
 
@@ -90,7 +96,7 @@ public class AddExceptionDialog extends TypeSelectionDialog {
     private static final String SETTING_UNCAUGHT_CHECKED = "uncaughtChecked"; //$NON-NLS-1$
 
     public AddExceptionDialog(Shell parent, IRunnableContext context) {
-        super(parent, context, IJavaSearchConstants.CLASS, SearchEngine.createWorkspaceScope());
+        super(parent, false, context, SearchEngine.createWorkspaceScope(), IJavaSearchConstants.CLASS);
         setFilter("*Exception*"); //$NON-NLS-1$
     }
 
@@ -137,28 +143,12 @@ public class AddExceptionDialog extends TypeSelectionDialog {
         fUncaughtButton.setSelection(u);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#createFilterText(org.eclipse.swt.widgets.Composite)
-     */
-    protected Text createFilterText(Composite parent) {
-        fTextWidget = super.createFilterText(parent);
-        return fTextWidget;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#create()
-     */
-    public void create() {
-        super.create();
-        fTextWidget.setSelection(0, 0);
-    }
-
     protected boolean createBreakpoint() {
-        TypeInfo typeRef = (TypeInfo) getLowerSelectedElement();
+    	TypeInfo[] selection= getSelectedTypes();
+    	// can only happen when the dash line is selected.
+    	if (selection.length != 1)
+    		return false;
+        TypeInfo typeRef = selection[0];
         IType type = null;
         try {
             type = typeRef.resolveType(SearchEngine.createWorkspaceScope());
@@ -215,7 +205,10 @@ public class AddExceptionDialog extends TypeSelectionDialog {
     }
 
     protected boolean validateBreakpoint() {
-        TypeInfo typeRef = (TypeInfo) getLowerSelectedElement();
+    	TypeInfo[] selection= getSelectedTypes();
+    	if (selection.length != 1)
+    		return false;
+        TypeInfo typeRef = selection[0];
         if (typeRef == null) {
             return false;
         }
@@ -357,13 +350,16 @@ public class AddExceptionDialog extends TypeSelectionDialog {
             int x = s.getInt("x"); //$NON-NLS-1$
             int y = s.getInt("y"); //$NON-NLS-1$
             fLocation = new Point(x, y);
+        } catch (NumberFormatException e) {
+            fLocation = null;
+        }
+        try {
             int width = s.getInt("width"); //$NON-NLS-1$
             int height = s.getInt("height"); //$NON-NLS-1$
             fSize = new Point(width, height);
-
         } catch (NumberFormatException e) {
-            fLocation = null;
-            fSize = null;
+        	// use an acceptable default size for the dialog
+            fSize = new Point(420, 460);
         }
     }
 
@@ -453,10 +449,14 @@ public class AddExceptionDialog extends TypeSelectionDialog {
      * 
      * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleDefaultSelected()
      */
-    protected void handleDefaultSelected() {
+    protected void handleDefaultSelected(TypeInfo[] selection) {
         if (getButton(IDialogConstants.OK_ID).isEnabled()) {
-            super.handleDefaultSelected();
+            super.handleDefaultSelected(selection);
         }
     }
-
+    
+    protected void handleWidgetSelected(TypeInfo[] selection) {
+    	updateStatus(new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, "", null)); //$NON-NLS-1$
+    	super.handleWidgetSelected(selection);
+    }
 }
