@@ -38,6 +38,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 
 	// VM arguments widgets
 	protected Text fVMArgumentsText;
+	private Button fPgrmArgVariableButton;
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
@@ -67,10 +68,10 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		});	
 		ControlAccessibleListener.addListener(fVMArgumentsText, group.getText());
 				
-		Button pgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null); //$NON-NLS-1$
-		pgrmArgVariableButton.setFont(font);
-		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
+		fPgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null);
+		fPgrmArgVariableButton.setFont(font);
+		fPgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		fPgrmArgVariableButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -133,5 +134,6 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 	
 	public void setEnabled(boolean enabled) {
 		fVMArgumentsText.setEnabled(enabled);
+		fPgrmArgVariableButton.setEnabled(enabled);
 	}
 }
