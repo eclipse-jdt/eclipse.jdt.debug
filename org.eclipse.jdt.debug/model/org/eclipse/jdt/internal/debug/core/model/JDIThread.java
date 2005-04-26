@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     BEA - Daniel R Somerfield - Bug 89643
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -70,6 +71,12 @@ import com.sun.jdi.request.StepRequest;
  * thread on a VM.
  */
 public class JDIThread extends JDIDebugElement implements IJavaThread {
+	
+	/**
+	 * Constant for the name of the default Java stratum 
+	 */
+	private static final String JAVA_STRATUM_CONSTANT = "Java"; //$NON-NLS-1$
+	
 	/**
 	 * Constant for the name of the main thread group.
 	 */
@@ -1809,7 +1816,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			
 			if (applyStepFilters() && isStepFiltersEnabled()) {
 				Location currentLocation= getOriginalStepLocation();
-				if (currentLocation == null) {
+				if (currentLocation == null || !JAVA_STRATUM_CONSTANT.equals(currentLocation.declaringType().defaultStratum())) {
 					return;
 				}
 // Removed the fix for bug 5587, to address bug 41510				
@@ -2002,15 +2009,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return DebugEvent.STEP_INTO;
 		}
 		
-		/**
-		 * Returns <code>true</code>. Step filters are applied for
-		 * stepping into new frames.
-		 * 
-		 * @see StepHandler#applyStepFilters()
-		 */
-		protected boolean applyStepFilters() {
-			return true;
-		}
 	}
 	
 	/**
