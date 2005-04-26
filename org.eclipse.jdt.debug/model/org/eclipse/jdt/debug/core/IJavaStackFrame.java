@@ -414,7 +414,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	 * </ul>
 	 * @since 3.1
 	 */
-	public boolean isVarargs() throws DebugException;
+	public boolean isVarArgs() throws DebugException;
 }
 
 

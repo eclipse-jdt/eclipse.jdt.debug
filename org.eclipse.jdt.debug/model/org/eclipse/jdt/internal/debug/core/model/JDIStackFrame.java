@@ -1221,7 +1221,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#isVarargs()
 	 */
-	public boolean isVarargs() throws DebugException {
+	public boolean isVarArgs() throws DebugException {
 		return getUnderlyingMethod().isVarArgs();
 	}
 
