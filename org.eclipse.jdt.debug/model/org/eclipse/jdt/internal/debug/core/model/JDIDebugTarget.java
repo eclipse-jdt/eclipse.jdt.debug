@@ -1824,7 +1824,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * Contructs a job to cleanup a hanging target.
 		 */
 		public CleanUpJob() {
-			super("Clean Java Debug Target");
+			super(JDIDebugModelMessages.JDIDebugTarget_0);
 			setSystem(true);
 		}
 
