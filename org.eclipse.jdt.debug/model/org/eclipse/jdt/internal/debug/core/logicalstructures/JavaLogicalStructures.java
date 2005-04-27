@@ -60,6 +60,13 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
      * The list of java logical structures listeners.
      */
     private static Set fListeners= new HashSet();
+    
+	/**
+	 * Preference key for the list of user defined Java logical structures
+	 * 
+	 * @since 3.1
+	 */
+	private static final String PREF_JAVA_LOGICAL_STRUCTURES= JDIDebugModel.getPluginIdentifier() + ".PREF_JAVA_LOGICAL_STRUCTURES"; //$NON-NLS-1$
 	
 	/**
 	 * Get the logical structure from the extension point and the preference store,
@@ -120,7 +127,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 */
 	 private static void initUserDefinedJavaLogicalStructures() {
 		fUserDefinedJavaLogicalStructures= new ArrayList();
-		String logicalStructuresString= JDIDebugModel.getPreferences().getString(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES);
+		String logicalStructuresString= JDIDebugModel.getPreferences().getString(PREF_JAVA_LOGICAL_STRUCTURES);
 		StringTokenizer tokenizer= new StringTokenizer(logicalStructuresString, "\0", true); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String type= tokenizer.nextToken();
@@ -173,7 +180,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 				logicalStructuresString.append(strings[1]).append('\0');
 			}
 		}
-		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES, logicalStructuresString.toString());
+		JDIDebugModel.getPreferences().setValue(PREF_JAVA_LOGICAL_STRUCTURES, logicalStructuresString.toString());
 
         initJavaLogicalStructureMap();
         Iterator iter = fListeners.iterator();
