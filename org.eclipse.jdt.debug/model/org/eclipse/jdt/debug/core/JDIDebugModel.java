@@ -73,6 +73,10 @@ public class JDIDebugModel {
 	
 	/**
 	 * Preference key for the list of user defined Java logical structures
+	 * 
+	 * TODO: remove from API - only used internally
+	 * 
+	 * @since 3.1
 	 */
 	public static final String PREF_JAVA_LOGICAL_STRUCTURES= getPluginIdentifier() + ".PREF_JAVA_LOGICAL_STRUCTURES"; //$NON-NLS-1$
 	

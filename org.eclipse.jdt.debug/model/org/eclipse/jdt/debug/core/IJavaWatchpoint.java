@@ -23,6 +23,10 @@ import org.eclipse.debug.core.model.IWatchpoint;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
+ * <p>
+ * Since 3.1, <code>IJavaWatchpoint</code> also implements
+ * {@link org.eclipse.debug.core.model.IWatchpoint}.
+ * </p>
  * @since 2.0
  */
 public interface IJavaWatchpoint extends IJavaLineBreakpoint, IWatchpoint {	

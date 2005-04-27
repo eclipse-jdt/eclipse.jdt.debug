@@ -23,6 +23,10 @@ import org.eclipse.debug.core.model.IStackFrame;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
+ * <p>
+ * Since 3.1, <code>IJavaStackFrame</code> also implements
+ * {@link org.eclipse.debug.core.model.IDropToFrame}.
+ * </p>
  * @see org.eclipse.debug.core.model.IStackFrame
  */
 
