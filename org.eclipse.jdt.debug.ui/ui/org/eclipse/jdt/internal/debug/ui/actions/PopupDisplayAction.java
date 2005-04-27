@@ -152,7 +152,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		public void setInformation(String information) {
 			if(information != null) {
 				text.setFont(viewer.getTextWidget().getFont());
-				text.setText(information);
+				text.setText(DisplayAction.trimDisplayResult(information));
 			}
 		}
 

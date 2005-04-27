@@ -40,6 +40,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionInformationControl;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -67,6 +68,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
+import org.eclipse.jdt.internal.debug.ui.actions.DisplayAction;
 import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -713,10 +715,10 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 					} else {
 						resultString.append(" "); //$NON-NLS-1$
 					}   
-					resultString.append(evaluateToString(result));
+                    resultString.append(DisplayAction.trimDisplayResult(evaluateToString(result)));
 				}
 			} else {
-				resultString.append(result.getValueString());
+				resultString.append(DisplayAction.trimDisplayResult(result.getValueString()));
 			}
 		} catch(DebugException e) {
 			JDIDebugUIPlugin.log(e);

@@ -15,6 +15,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -67,7 +69,7 @@ public class DisplayAction extends EvaluateAction {
 				}
 				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
 					public void detailComputed(IValue value, String result) {
-						displayStringResult(snippet, MessageFormat.format(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, result})); //$NON-NLS-1$
+						displayStringResult(snippet, MessageFormat.format(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)})); //$NON-NLS-1$
 					}
 				});
 			}
@@ -87,7 +89,7 @@ public class DisplayAction extends EvaluateAction {
 						if (directDisplay == null) {
 							dataDisplay.displayExpression(snippet);
 						}
-						dataDisplay.displayExpressionValue(resultString);
+						dataDisplay.displayExpressionValue(trimDisplayResult(resultString));
 					}
 				}
 				evaluationCleanup();
@@ -103,5 +105,19 @@ public class DisplayAction extends EvaluateAction {
 		}
 		super.run();
 	}
+    
+    /**
+     * Trims the result based on the preference of how long the
+     * variable details should be.
+     * 
+     * TODO: illegal internal reference to IInternalDebugUIConstants
+     */
+    public static String trimDisplayResult(String result) {
+        int max = DebugUITools.getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+        if (max > 0 && result.length() > max) {
+            result = result.substring(0, max) + "..."; //$NON-NLS-1$
+        }
+        return result;
+    }
 
 }
