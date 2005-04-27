@@ -210,14 +210,12 @@ public class EventDispatcher implements Runnable {
 				try {
 					try {
 						// Get the next event set.
-						eventSet= q.remove();
-						if (eventSet == null)
-							break;
+						eventSet= q.remove(1000);
 					} catch (VMDisconnectedException e) {
 						break;
 					}
 									
-					if(!isShutdown()) {
+					if(!isShutdown() && eventSet != null) {
 						dispatch(eventSet);
 					}
 				} catch (InterruptedException e) {

@@ -22,6 +22,10 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -1814,6 +1818,46 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 	}
 	
+	class CleanUpJob extends Job {
+
+		/**
+		 * Contructs a job to cleanup a hanging target.
+		 */
+		public CleanUpJob() {
+			super("Clean Java Debug Target");
+			setSystem(true);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			if (isAvailable()) {
+				if (fEventDispatcher != null) {
+					fEventDispatcher.shutdown();
+				}
+				disconnected();
+			}
+			return Status.OK_STATUS;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+		 */
+		public boolean shouldRun() {
+			return isAvailable();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
+		 */
+		public boolean shouldSchedule() {
+			return isAvailable();
+		}
+		
+		
+	}
+	
 	protected ThreadStartHandler getThreadStartHandler() {
 		return fThreadStartHandler;
 	}
@@ -2155,8 +2199,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
                     t.setDaemon(true);
                     t.start();
                 }
-                DebugPlugin.getDefault().removeDebugEventListener(this);
+            } else if (event.getSource().equals(getProcess()) && event.getKind() == DebugEvent.TERMINATE) {
+            	// schedule a job to clean up the target in case we never get a terminate/disconnect
+            	// event from the VM
+            	int timeout = getRequestTimeout();
+            	if (timeout < 0) {
+            		timeout = 3000;
+            	}
+            	new CleanUpJob().schedule(timeout);
             }
+            
         }
     }
     

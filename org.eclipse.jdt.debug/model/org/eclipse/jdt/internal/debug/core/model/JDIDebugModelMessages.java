@@ -170,4 +170,6 @@ public class JDIDebugModelMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, JDIDebugModelMessages.class);
 	}
+
+	public static String JDIDebugTarget_0;
 }
