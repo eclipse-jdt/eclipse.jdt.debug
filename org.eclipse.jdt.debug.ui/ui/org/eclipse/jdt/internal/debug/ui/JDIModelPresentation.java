@@ -1123,14 +1123,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IJavaValue javaValue= null;
 		try {
 			javaValue = (IJavaValue) var.getValue();
-			if (isShowLabelDetails(javaValue)) {
-	    		String detail = getVariableDetail(var);
-	            if (detail != null) {
-	                StringBuffer buffer= new StringBuffer(varLabel);
-	                buffer.append("= ").append(detail); //$NON-NLS-1$
-	                return buffer.toString();
-	        	}
-			}
 		} catch (DebugException e1) {
 		}
 		boolean showTypes= isShowVariableTypeNames();
@@ -1167,9 +1159,16 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 		String valueString= DebugUIMessages.JDIModelPresentation_unknown_value__3; //$NON-NLS-1$
 		if (javaValue != null) {
-			try {
-				valueString= getValueText(javaValue);
-			} catch (DebugException exception) {
+			if (isShowLabelDetails(javaValue)) {
+	    		valueString = getVariableDetail(var);
+	    		if (valueString == null) {
+	    			valueString = DebugUIMessages.JDIModelPresentation_unknown_value__3;
+	    		}
+			} else {
+				try {
+					valueString= getValueText(javaValue);
+				} catch (DebugException exception) {
+				}
 			}
 		}
 		//do not put the equal sign for array partitions
