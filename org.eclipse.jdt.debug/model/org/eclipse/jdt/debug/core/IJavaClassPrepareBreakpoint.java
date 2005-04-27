@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A breakpoint that suspends execution when a class is prepared in
  * a target VM.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IJavaClassPrepareBreakpoint extends IJavaBreakpoint {

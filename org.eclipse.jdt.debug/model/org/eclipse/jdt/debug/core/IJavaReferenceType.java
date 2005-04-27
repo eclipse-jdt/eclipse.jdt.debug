@@ -15,7 +15,9 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Represents the type of an object in a virtual machine - including classes,
  * interfaces and array types.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IJavaReferenceType extends IJavaType {

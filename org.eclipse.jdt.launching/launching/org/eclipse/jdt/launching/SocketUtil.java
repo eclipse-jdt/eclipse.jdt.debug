@@ -19,6 +19,9 @@ import java.util.Random;
 
 /**
  * Utility class to find a port to debug on.
+ * <p>
+ * Clients are not intended to subclass or instantiate this class.
+ * </p>
  */
 public class SocketUtil {
 	private static final Random fgRandom= new Random(System.currentTimeMillis());

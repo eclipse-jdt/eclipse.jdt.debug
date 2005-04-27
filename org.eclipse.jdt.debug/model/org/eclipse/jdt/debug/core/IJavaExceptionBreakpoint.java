@@ -162,7 +162,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	
 	/**
 	 * Returns whether any inclusive filters have been applied.
-	 * @return <code>true<code> if the inclusive filters have been applied
+	 * @return <code>true</code> if the inclusive filters have been applied
 	 * @exception CoreException if unable to access the property on 
 	 *  this breakpoint's underlying marker
 	 * @deprecated Exception breakpoints can have a mixed set of filters
