@@ -84,13 +84,16 @@ public class SocketConnection extends Connection {
         if (!isOpen()) {
             throw new ClosedConnectionException();
         }
-        if (packet == null || packet.length < 11) {
-            throw new IllegalArgumentException("Invalid JDWP Packet, must be at least 11 byte. PacketSize:" + packet.length); //$NON-NLS-1$
+        if (packet == null){
+            throw new IllegalArgumentException("Invalid JDWP Packet, packet cannot be null"); //$NON-NLS-1$
+        }
+        if (packet.length < 11) {
+            throw new IllegalArgumentException("Invalid JDWP Packet, must be at least 11 bytes. PacketSize:" + packet.length); //$NON-NLS-1$
         }
 
         int packetSize = getPacketLength(packet);
         if (packetSize < 11) {
-            throw new IllegalArgumentException("Invalid JDWP Packet, must be at least 11 byte. PacketSize:" + packetSize); //$NON-NLS-1$
+            throw new IllegalArgumentException("Invalid JDWP Packet, must be at least 11 bytes. PacketSize:" + packetSize); //$NON-NLS-1$
         }
 
         if (packetSize > packet.length) {

@@ -401,8 +401,8 @@ public class VerboseWriter {
 		Integer val = new Integer(value);
 		if (valueToString == null) {
 			print(val.toString());
+            return;
 		}
-
 		String result = (String)valueToString.get(val);
 		if (result == null) {
 			print(val.toString() + JDIMessages.VerboseWriter___unknown_value__1); //$NON-NLS-1$
@@ -432,6 +432,7 @@ public class VerboseWriter {
 		Integer val = new Integer(value);
 		if (bitNames == null) {
 			print(val.toString());
+            return;
 		}
 			
 		boolean bitsSet = false;
