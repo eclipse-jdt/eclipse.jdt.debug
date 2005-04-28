@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -42,24 +43,14 @@ public class MainMethodSearchEngine{
 	
 	private class MethodCollector extends SearchRequestor {
 		private List fResult;
-		private int fStyle;
 
-		public MethodCollector(int style) {
+		public MethodCollector() {
 			fResult = new ArrayList(200);
-			fStyle= style;
 		}
 
 		public List getResult() {
 			return fResult;
-		}
-
-		private boolean considerExternalJars() {
-			return (fStyle & IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS) != 0;
-		}
-				
-		private boolean considerBinaries() {
-			return (fStyle & IJavaElementSearchConstants.CONSIDER_BINARIES) != 0;
-		}		
+		}	
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
@@ -70,15 +61,6 @@ public class MainMethodSearchEngine{
 				try {
 					IMethod curr= (IMethod) enclosingElement;
 					if (curr.isMainMethod()) {
-						if (!considerExternalJars()) {
-							IPackageFragmentRoot root= getPackageFragmentRoot(curr);
-							if (root == null || root.isArchive()) {
-								return;
-							}
-						}
-						if (!considerBinaries() && curr.isBinary()) {
-							return;
-						}
 						IType declaringType = curr.getDeclaringType();
 						fResult.add(declaringType);
 					}
@@ -96,10 +78,9 @@ public class MainMethodSearchEngine{
 	 * 
 	 * @param pm progress monitor
 	 * @param scope search scope
-	 * @param style search style
 	 * @param includeSubtypes whether to consider types that inherit a main method
 	 */	
-	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, int style, boolean includeSubtypes) {
+	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, boolean includeSubtypes) {
 		pm.beginTask(LauncherMessages.MainMethodSearchEngine_1, 100); //$NON-NLS-1$
 		int searchTicks = 100;
 		if (includeSubtypes) {
@@ -108,7 +89,7 @@ public class MainMethodSearchEngine{
 		
 		SearchPattern pattern = SearchPattern.createPattern("main(String[]) void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE); //$NON-NLS-1$
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
-		MethodCollector collector = new MethodCollector(style);
+		MethodCollector collector = new MethodCollector();
 		IProgressMonitor searchMonitor = new SubProgressMonitor(pm, searchTicks);
 		try {
 			new SearchEngine().search(pattern, participants, scope, collector, searchMonitor);
@@ -167,15 +148,12 @@ public class MainMethodSearchEngine{
 	 * 
 	 * @param includeSubtypes whether to consider types that inherit a main method
 	 */
-	public IType[] searchMainMethods(IRunnableContext context, final IJavaSearchScope scope, final int style, final boolean includeSubtypes) throws InvocationTargetException, InterruptedException  {
-		int allFlags=  IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS | IJavaElementSearchConstants.CONSIDER_BINARIES;
-		Assert.isTrue((style | allFlags) == allFlags);
-		
+	public IType[] searchMainMethods(IRunnableContext context, final IJavaSearchScope scope, final boolean includeSubtypes) throws InvocationTargetException, InterruptedException  {		
 		final IType[][] res= new IType[1][];
 		
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
-				res[0]= searchMainMethods(pm, scope, style, includeSubtypes);
+				res[0]= searchMainMethods(pm, scope, includeSubtypes);
 			}
 		};
 		context.run(true, true, runnable);

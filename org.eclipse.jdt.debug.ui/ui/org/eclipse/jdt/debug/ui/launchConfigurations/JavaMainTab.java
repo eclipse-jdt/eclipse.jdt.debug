@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -41,7 +42,6 @@ import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainTypeSelectionDialog;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
@@ -323,22 +323,33 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	protected void handleSearchButtonSelected() {
 		
 		IJavaProject javaProject = getJavaProject();
-		IJavaSearchScope searchScope = null;
+		IJavaElement[] elements = null;
 		if ((javaProject == null) || !javaProject.exists()) {
-			searchScope = SearchEngine.createWorkspaceScope();
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IJavaModel model = JavaCore.create(root);
+			if (model != null) {
+				try {
+					elements = model.getJavaProjects();
+				} catch (JavaModelException e) {
+				}
+			}
 		} else {
-			searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {javaProject}, false);
+			elements = new IJavaElement[]{javaProject};
 		}		
-		
-		int constraints = IJavaElementSearchConstants.CONSIDER_BINARIES;
-		if (fSearchExternalJarsCheckButton.getSelection()) {
-			constraints |= IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS;
+		if (elements == null) {
+			elements = new IJavaElement[]{};
 		}
+		int constraints = IJavaSearchScope.SOURCES;
+		if (fSearchExternalJarsCheckButton.getSelection()) {
+			constraints |= IJavaSearchScope.APPLICATION_LIBRARIES;
+			constraints |= IJavaSearchScope.SYSTEM_LIBRARIES;
+		}		
+		IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, constraints);
 		
 		MainMethodSearchEngine engine = new MainMethodSearchEngine();
 		IType[] types = null;
 		try {
-			types = engine.searchMainMethods(getLaunchConfigurationDialog(), searchScope, constraints, fConsiderInheritedMainButton.getSelection());
+			types = engine.searchMainMethods(getLaunchConfigurationDialog(), searchScope, fConsiderInheritedMainButton.getSelection());
 		} catch (InvocationTargetException e) {
 			setErrorMessage(e.getMessage());
 			return;
@@ -509,9 +520,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			try {
 				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(new IJavaElement[]{javaElement}, false);
 				MainMethodSearchEngine engine = new MainMethodSearchEngine();
-				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope,
-						IJavaElementSearchConstants.CONSIDER_BINARIES | IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS,
-						false);				
+				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);				
 				if (types != null && (types.length > 0)) {
 					// Simply grab the first main type found in the searched element
 					name = types[0].getFullyQualifiedName();

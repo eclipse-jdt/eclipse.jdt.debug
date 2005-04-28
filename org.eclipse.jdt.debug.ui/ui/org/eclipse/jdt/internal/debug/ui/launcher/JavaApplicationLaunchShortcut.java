@@ -62,9 +62,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 				IJavaElement[] elements = getJavaElements(search);
 				MainMethodSearchEngine engine = new MainMethodSearchEngine();
 				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements, false);
-				types = engine.searchMainMethods(PlatformUI.getWorkbench().getProgressService(),
-						scope, IJavaElementSearchConstants.CONSIDER_BINARIES | IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS,
-						true);
+				types = engine.searchMainMethods(PlatformUI.getWorkbench().getProgressService(), scope, true);
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
