@@ -58,8 +58,10 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
         StringBuffer formattedTrace = new StringBuffer();
         
         boolean insideAt = false;
-        boolean newline = true;
+        boolean newLine = true;
         int pendingSpaces = 0;
+        boolean antTrace = false;
+        
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             if (token.length() == 0)
@@ -68,14 +70,14 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
             // handle delimiters
             switch (c) {
             case ' ':
-                if (newline) {
+                if (newLine) {
                     pendingSpaces++;
                 } else {
                     pendingSpaces = 1;
                 }
                 continue;
             case '\t':
-                if (newline) {
+                if (newLine) {
                     pendingSpaces += 4;
                 } else {
                     pendingSpaces = 1;
@@ -88,13 +90,13 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
                     pendingSpaces = 1;
                 } else {
                     pendingSpaces = 0;
-                    newline = true;
+                    newLine = true;
                 }
                 continue;
             }
             // consider newlines only before token starting with char '\"' or
             // token "at" or "-".
-            if (newline) {
+            if (newLine || antTrace) {
                 if (c == '\"') { // leading thread name, e.g. "Worker-124"
                                     // prio=5
                     formattedTrace.append("\n\n"); //$NON-NLS-1$  print 2 lines to break between threads
@@ -105,14 +107,27 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
                     pendingSpaces = 0;
                     continue;
                 } else if ("at".equals(token)) { //$NON-NLS-1$  at ...
-                    formattedTrace.append("\n"); //$NON-NLS-1$
-                    formattedTrace.append("    "); //$NON-NLS-1$
-                    formattedTrace.append(token);
+                    if (!antTrace) {
+                        formattedTrace.append("\n"); //$NON-NLS-1$
+                        formattedTrace.append("    "); //$NON-NLS-1$
+                    } else {
+                        formattedTrace.append(' ');
+                    }
                     insideAt = true;
+                    formattedTrace.append(token);
                     pendingSpaces = 0;
                     continue;
-                } 
-                newline = false;
+                } else if (c == '[') { //$NON-NLS-1$
+                    if(antTrace) {
+                        formattedTrace.append("\n"); //$NON-NLS-1$
+                    }
+                    formattedTrace.append(token);
+                    pendingSpaces = 0;
+                    newLine = false;
+                    antTrace = true;
+                    continue;
+                }
+                newLine = false;
             }
             if (pendingSpaces > 0) {
                 for (int i = 0; i < pendingSpaces; i++) {
