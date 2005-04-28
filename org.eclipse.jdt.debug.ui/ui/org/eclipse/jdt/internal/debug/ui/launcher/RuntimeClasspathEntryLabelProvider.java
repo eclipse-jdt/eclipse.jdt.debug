@@ -127,8 +127,10 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				return lp.getText(proj);
 			case IRuntimeClasspathEntry.ARCHIVE:
 				IPath path = entry.getPath();
-				if (path == null  || !path.isAbsolute() || !path.isValidPath(path.toString()))
-				{
+				if (path == null) {
+                    return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{"null"}); //$NON-NLS-1$
+                }
+                if (!path.isAbsolute() || !path.isValidPath(path.toString())) {
 					return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{path.toOSString()});
 				}
 				String[] segments = path.segments();

@@ -417,7 +417,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				if (fLineNumber < startLine) {
 					if (fBindingsResolved) {
 						IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
-						if (binding != null && !binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
+						if (binding != null && (!binding.isField() || Modifier.isStatic(binding.getModifiers())))  {
 							node.getRightHandSide().accept(this);
 						}
 					} else {
