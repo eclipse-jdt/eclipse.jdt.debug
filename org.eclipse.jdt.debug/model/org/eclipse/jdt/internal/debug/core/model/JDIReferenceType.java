@@ -69,8 +69,14 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getDefaultStratum()
 	 */
-	public String getDefaultStratum() {
-		return getReferenceType().defaultStratum();
+	public String getDefaultStratum() throws DebugException {
+        try {
+            return getReferenceType().defaultStratum();
+        } catch (RuntimeException e) {
+            targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_1, e);
+        }
+        // exectution will not reach here
+        return null;
 	}
 	
 	/* (non-Javadoc)

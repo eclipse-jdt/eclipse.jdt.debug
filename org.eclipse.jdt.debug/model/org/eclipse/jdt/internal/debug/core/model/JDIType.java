@@ -13,8 +13,12 @@ package org.eclipse.jdt.internal.debug.core.model;
  
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
@@ -47,6 +51,44 @@ public class JDIType implements IJavaType {
 		setDebugTarget(target);
 		setUnderlyingType(type);
 	}
+    
+    /**
+     * Throws a new debug exception with the given status code.
+     * 
+     * @param message Failure message
+     * @param e Exception that has occurred (<code>can be null</code>)
+     * @param code status code
+     * @throws DebugException a new exception with given status code
+     */
+    public void requestFailed(String message,  Throwable e, int code) throws DebugException {
+        throwDebugException(message, code, e);
+    }
+    
+    /**
+     * Throws a debug exception with the given message, error code, and underlying
+     * exception.
+     */
+    protected void throwDebugException(String message, int code, Throwable exception) throws DebugException {
+        throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+            code, message, exception));
+    }
+    
+    /**
+     * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+     * with the given underlying exception. If the underlying exception is not a JDI
+     * exception, the original exception is thrown.
+     * 
+     * @param message Failure message
+     * @param e underlying exception that has occurred
+     * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+     */
+    public void targetRequestFailed(String message, RuntimeException e) throws DebugException {
+        if (e == null || e.getClass().getName().startsWith("com.sun.jdi") || e instanceof TimeoutException) { //$NON-NLS-1$
+            requestFailed(message, e, DebugException.TARGET_REQUEST_FAILED);
+        } else {
+            throw e;
+        }
+    }    
 
 	/**
 	 * Creates the appropriate kind of type, based on the specialized
