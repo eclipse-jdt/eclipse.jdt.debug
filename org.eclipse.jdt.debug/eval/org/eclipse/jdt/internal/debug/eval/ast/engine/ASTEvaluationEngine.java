@@ -390,24 +390,28 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			} catch (DebugException e) {
 				exception = e;
 			}
-			IJavaValue value = interpreter.getResult();
+		
+            IJavaValue value = interpreter.getResult();
 
 			if (exception == null) {
 				exception = er.getException();
 			}
-
-			if (value != null) {
-				result.setValue(value);
-			} else {
-				result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation); //$NON-NLS-1$
-			}
+            
 			if (exception != null) {
-				if (exception instanceof DebugException) {
-					result.setException((DebugException)exception);
-				} else {
-					result.setException(new DebugException(exception.getStatus()));
-				}
+			    if (exception instanceof DebugException) {
+			        result.setException((DebugException)exception);
+			    } else {
+			        result.setException(new DebugException(exception.getStatus()));
+			    }
+			} else {   
+			    if (value != null) {
+			        result.setValue(value);
+			    } else {
+			        result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation); //$NON-NLS-1$
+			    }
 			}
+            
+			
 			evaluationFinished(result);
 		}
 		private void evaluationFinished(IEvaluationResult result) {
