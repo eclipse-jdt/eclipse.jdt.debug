@@ -49,6 +49,9 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	private static final String SOURCE_PATH= "org.eclipse.jdt.debug.source_path"; //$NON-NLS-1$
 	private static final String STRATUM_BREAKPOINT= "org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"; //$NON-NLS-1$
 	private String[] fTypeNamePatterns;
+	// corresponds to type name patterns with beginning/trailing '*' removed
+	private String[] fSuffix;
+	private String[] fPrefix;
 
 	public JavaStratumLineBreakpoint() {
 	}
@@ -211,23 +214,21 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	private boolean validType(String typeName) throws CoreException {
 
 		String[] patterns = getTypeNamePatterns();
-		for (int i=0; i<patterns.length; i++)
-		{
-			String pattern = patterns[i];
-			if (pattern.charAt(0) == '*') {
-				if (pattern.length() == 1) {
+		for (int i=0; i<patterns.length; i++) {
+			if (fSuffix[i] != null) {
+				// pattern starting with '*'
+				if (fSuffix[i].length() == 0) {
 					return true;
 				}
-				if (typeName.endsWith(pattern.substring(1)))
+				if (typeName.endsWith(fSuffix[i]))
+					return true;
+			} else if (fPrefix[i] != null) {
+				if (typeName.startsWith(fPrefix[i]))
+					return true;
+			} else {
+				if (typeName.startsWith(patterns[i]))
 					return true;
 			}
-			int length= pattern.length();
-			if (pattern.charAt(length - 1) == '*') {
-				if (typeName.startsWith(pattern.substring(0, length - 1)))
-					return true;
-			}
-			if (typeName.startsWith(pattern))
-				return true;
 		}
 
 		// return false if we cannot find a type name to match
@@ -368,7 +369,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		}
 	}
 
-	public String[] getTypeNamePatterns() throws CoreException
+	public synchronized String[] getTypeNamePatterns() throws CoreException
 	{
 		if (fTypeNamePatterns != null)
 			return fTypeNamePatterns;
@@ -377,8 +378,20 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		
 		// delimit by ","
 		fTypeNamePatterns =  patterns.split(","); //$NON-NLS-1$  
+		fSuffix = new String[fTypeNamePatterns.length];
+		fPrefix = new String[fTypeNamePatterns.length];
 		for (int i = 0; i < fTypeNamePatterns.length; i++) {
 			fTypeNamePatterns[i] = fTypeNamePatterns[i].trim();
+			String pattern = fTypeNamePatterns[i];
+			if (pattern.charAt(0) == '*') {
+				if (pattern.length() > 1) {
+					fSuffix[i] = pattern.substring(1);
+				} else {
+					fSuffix[i] = ""; //$NON-NLS-1$
+				}
+			} else if (pattern.charAt(pattern.length() - 1) == '*') {
+				fPrefix[i] = pattern.substring(0, pattern.length() - 1); 
+			}
 		}
 		
 		return fTypeNamePatterns;
