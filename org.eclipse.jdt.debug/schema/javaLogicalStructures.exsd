@@ -116,14 +116,15 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;extension
-    point=&quot;org.eclipse.jdt.debug.javaLogicalStructures&quot;&gt;
-    
+         Following is an example of a Java logical structure extension point with two structures:
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.jdt.debug.javaLogicalStructures&quot;&gt;
   &lt;javaLogitalStructure
       subtypes=&quot;true&quot;
       value=&quot;return entrySet().toArray();&quot;
       type=&quot;java.util.Map&quot;/&gt;
-      
   &lt;javaLogitalStructure
       subtypes=&quot;true&quot;
       type=&quot;java.util.Map$Entry&quot;&gt;
@@ -134,8 +135,11 @@
       value=&quot;return getValue();&quot;
       name=&quot;value&quot;/&gt;
   &lt;/javaLogitalStructure&gt;
-  
 &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above a Map is translated into its entries and a Map$Entry is translated into its key and value.
       </documentation>
    </annotation>
 
