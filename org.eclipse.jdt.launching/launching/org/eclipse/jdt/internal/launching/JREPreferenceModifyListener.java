@@ -103,8 +103,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 		try {
 			node.accept(new Visitor());
 		} catch (BackingStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            LaunchingPlugin.log(e);
 		}
 		return node;
 	}
