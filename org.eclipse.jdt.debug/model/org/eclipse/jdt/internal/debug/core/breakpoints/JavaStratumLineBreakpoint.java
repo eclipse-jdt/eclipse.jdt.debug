@@ -48,6 +48,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	private static final String STRATUM= "org.eclipse.jdt.debug.stratum"; //$NON-NLS-1$
 	private static final String SOURCE_PATH= "org.eclipse.jdt.debug.source_path"; //$NON-NLS-1$
 	private static final String STRATUM_BREAKPOINT= "org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"; //$NON-NLS-1$
+	private String[] fTypeNamePatterns;
 
 	public JavaStratumLineBreakpoint() {
 	}
@@ -208,18 +209,29 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	 * @return
 	 */
 	private boolean validType(String typeName) throws CoreException {
-		String pattern= getPattern();
-		if (pattern.charAt(0) == '*') {
-			if (pattern.length() == 1) {
-				return true;
+
+		String[] patterns = getTypeNamePatterns();
+		for (int i=0; i<patterns.length; i++)
+		{
+			String pattern = patterns[i];
+			if (pattern.charAt(0) == '*') {
+				if (pattern.length() == 1) {
+					return true;
+				}
+				if (typeName.endsWith(pattern.substring(1)))
+					return true;
 			}
-			return typeName.endsWith(pattern.substring(1));
+			int length= pattern.length();
+			if (pattern.charAt(length - 1) == '*') {
+				if (typeName.startsWith(pattern.substring(0, length - 1)))
+					return true;
+			}
+			if (typeName.startsWith(pattern))
+				return true;
 		}
-		int length= pattern.length();
-		if (pattern.charAt(length - 1) == '*') {
-			return typeName.startsWith(pattern.substring(0, length - 1));
-		}
-		return typeName.startsWith(pattern);
+
+		// return false if we cannot find a type name to match
+		return false;
 	}
 
 	/**
@@ -317,18 +329,22 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		if (target.isTerminated() || shouldSkipBreakpoint()) {
 			return;
 		}
-		String referenceTypeName;
+		
+		String[] patterns = null;
 		try {
-			referenceTypeName = getPattern();
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
+			patterns = getTypeNamePatterns();
+		} catch (CoreException e1) {
+			JDIDebugPlugin.log(e1);
 			return;
 		}
 		
-		String classPrepareTypeName= referenceTypeName;
-		// create request to listen to class loads
-		//name may only be partially resolved
-		registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);
+		for (int i=0; i<patterns.length; i++)
+		{
+			String classPrepareTypeName= patterns[i];
+			// create request to listen to class loads
+			//name may only be partially resolved
+			registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);
+		}
 		
 		// create breakpoint requests for each class currently loaded
 		VirtualMachine vm = target.getVM();
@@ -351,4 +367,21 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			}
 		}
 	}
+
+	public String[] getTypeNamePatterns() throws CoreException
+	{
+		if (fTypeNamePatterns != null)
+			return fTypeNamePatterns;
+			
+		String patterns = getPattern();
+		
+		// delimit by ","
+		fTypeNamePatterns =  patterns.split(","); //$NON-NLS-1$  
+		for (int i = 0; i < fTypeNamePatterns.length; i++) {
+			fTypeNamePatterns[i] = fTypeNamePatterns[i].trim();
+		}
+		
+		return fTypeNamePatterns;
+	}
+	
 }

@@ -28,9 +28,12 @@ public interface IJavaStratumLineBreakpoint extends IJavaLineBreakpoint {
 	 * in which to install itself. Patterns may begin or end with '*'. Will
 	 * not return <code>null</code>. In the case that a stratum breakpoint
 	 * was created with a <code>null</code> pattern, "*" is returned.
-	 * 
-	 * @return the type name pattern this breakpoint uses to identify types
-	 *  in which to install itself
+	 * <p>
+	 * Multiple patterns can be specified in this breakpoint by delimiting
+	 * the patterns with a comma - e.g. "x.y.z,a.b.c". 
+	 * </p>
+	 * @return the type name patterns this breakpoint uses to identify types
+	 *  in which to install itself.
 	 * @exception CoreException if unable to access the property from
 	 *  this breakpoint's underlying marker
 	 */

@@ -333,7 +333,10 @@ public class JDIDebugModel {
 	 *   matches this class name pattern, with a satisfying source name and source path.
 	 *   Patterns may begin or end with '*', which matches 0 or more characters. A pattern that
 	 *   does not contain a '*' is equivalent to a pattern ending in '*'. Specifying <code>null</code>,
-	 *   or an empty string is the equivalent to "*". 
+	 *   or an empty string is the equivalent to "*".   Multiple patterns can be specified
+	 *   by delimiting the patterns with a comma - e.g.  "x.y.z,a.b.c".  When multiple patterns
+	 *   are specified, The breakpoint will install itself in each of the types that
+	 *   match any of the specified class pattern, with a satisfying source name and source path.
 	 * @param lineNumber the lineNumber on which the breakpoint is set - line
 	 *   numbers are 1 based, associated with the source file (stratum) in which
 	 *   the breakpoint is set
