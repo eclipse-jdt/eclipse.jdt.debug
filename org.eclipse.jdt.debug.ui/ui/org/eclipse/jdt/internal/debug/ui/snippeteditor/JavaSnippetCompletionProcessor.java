@@ -41,6 +41,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
 	private CompletionProposalComparator fComparator;
+	private String fErrorMessage;
 	
 	private char[] fProposalAutoActivationSet;
 			
@@ -58,7 +59,14 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return fCollector.getErrorMessage();
+		return fErrorMessage;
+	}
+	
+	protected void setErrorMessage(String message) {
+		if (message != null && message.length() == 0) {
+			message = null;
+		}
+		fErrorMessage = message;
 	}
 
 	/**
@@ -90,6 +98,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		try {
+			setErrorMessage(null);
 			try {
 				fCollector = new CompletionProposalCollector(fEditor.getJavaProject());
 				fEditor.codeComplete(fCollector);
@@ -115,6 +124,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			}
 			return order(results);
 		} finally {
+			setErrorMessage(fCollector.getErrorMessage());
 			fCollector = null;
 		}
 	}

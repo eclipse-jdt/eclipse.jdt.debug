@@ -39,9 +39,9 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
-import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
 import org.eclipse.jdt.ui.text.java.CompletionProposalCollector;
+import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -98,6 +98,9 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
      * @param string message
      */
     protected void setErrorMessage(String string) {
+    	if (string != null && string.length() == 0) {
+			string = null;
+		}
         fErrorMessage = string;
     }
 
@@ -455,6 +458,9 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * Clears reference to result proposal collector.
 	 */
 	protected void releaseCollector() {
+		if (fCollector != null && fCollector.getErrorMessage().length() > 0 && fErrorMessage != null) {
+			setErrorMessage(fCollector.getErrorMessage());
+		}		
 		fCollector = null;
 	}
 
