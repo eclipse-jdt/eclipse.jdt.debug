@@ -39,69 +39,73 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_0); //$NON-NLS-1$
-		IAdaptable context = DebugUITools.getDebugContext();
-		if (context == null) {
-			return new ICompletionProposal[0];
-		}
-		IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
-		if (stackFrame == null) {
-			return new ICompletionProposal[0];
-		}
-		
-        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_1); //$NON-NLS-1$
-		IWorkbenchWindow window= JDIDebugUIPlugin.getActiveWorkbenchWindow();
-		if (window == null) {
-			return new ICompletionProposal[0];
-		}
-		IWorkbenchPage page= window.getActivePage();
-		if (page == null) {
-			return new ICompletionProposal[0];
-		}
-		IDebugView view= (IDebugView)page.getActivePart();
-		if (view == null) {
-			return new ICompletionProposal[0];
-		}
-		ISelection selection= view.getViewer().getSelection();
-		if (selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
-			return super.computeCompletionProposals(stackFrame, viewer, documentOffset);
-		}
-		
-		IStructuredSelection viewerSelection= (IStructuredSelection)selection;
-		if (viewerSelection.size() > 1) {
-			return new ICompletionProposal[0];
-		}
-		Object element= viewerSelection.getFirstElement();	
-		IJavaProject project= getJavaProject(stackFrame);
-		if (project != null) {
-			try {
-                setErrorMessage(null);
-				ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
-				IType receivingType= getReceivingType(project, element);
-					
-				if (receivingType == null) {
-                    setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); //$NON-NLS-1$
-					return new ICompletionProposal[0];
-				}
-		
-				configureResultCollector(project, textSelection);	
-				int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
-				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
-					 new char[0][], new char[0][],
-					 new int[0], false, getCollector());
-					 
-				 //Order here and not in result collector to make sure that the order
-				 //applies to all proposals and not just those of the compilation unit. 
-				return order(getCollector().getJavaCompletionProposals());	
-			} catch (JavaModelException x) {
-				handle(viewer, x);
-			} catch (DebugException de) {
-				handle(viewer, de);
+		try {
+	        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_0); //$NON-NLS-1$
+			IAdaptable context = DebugUITools.getDebugContext();
+			if (context == null) {
+				return new ICompletionProposal[0];
 			}
-		} else {
-            setErrorMessage(DisplayMessages.DetailsCompletionProcessor_3); //$NON-NLS-1$
-        }
-		return null;
+			IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
+			if (stackFrame == null) {
+				return new ICompletionProposal[0];
+			}
+			
+	        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_1); //$NON-NLS-1$
+			IWorkbenchWindow window= JDIDebugUIPlugin.getActiveWorkbenchWindow();
+			if (window == null) {
+				return new ICompletionProposal[0];
+			}
+			IWorkbenchPage page= window.getActivePage();
+			if (page == null) {
+				return new ICompletionProposal[0];
+			}
+			IDebugView view= (IDebugView)page.getActivePart();
+			if (view == null) {
+				return new ICompletionProposal[0];
+			}
+			ISelection selection= view.getViewer().getSelection();
+			if (selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
+				return super.computeCompletionProposals(stackFrame, viewer, documentOffset);
+			}
+			
+			IStructuredSelection viewerSelection= (IStructuredSelection)selection;
+			if (viewerSelection.size() > 1) {
+				return new ICompletionProposal[0];
+			}
+			Object element= viewerSelection.getFirstElement();	
+			IJavaProject project= getJavaProject(stackFrame);
+			if (project != null) {
+				try {
+	                setErrorMessage(null);
+					ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
+					IType receivingType= getReceivingType(project, element);
+						
+					if (receivingType == null) {
+	                    setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); //$NON-NLS-1$
+						return new ICompletionProposal[0];
+					}
+			
+					configureResultCollector(project, textSelection);	
+					int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
+					receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
+						 new char[0][], new char[0][],
+						 new int[0], false, getCollector());
+						 
+					 //Order here and not in result collector to make sure that the order
+					 //applies to all proposals and not just those of the compilation unit. 
+					return order(getCollector().getJavaCompletionProposals());	
+				} catch (JavaModelException x) {
+					handle(viewer, x);
+				} catch (DebugException de) {
+					handle(viewer, de);
+				}
+			} else {
+	            setErrorMessage(DisplayMessages.DetailsCompletionProcessor_3); //$NON-NLS-1$
+	        }
+			return null;
+		} finally {
+			releaseCollector();
+		}
 	}
 	
 	private IType getReceivingType(IJavaProject project, Object element) throws DebugException {

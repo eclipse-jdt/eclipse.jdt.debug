@@ -90,29 +90,33 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		try {
-			fCollector = new CompletionProposalCollector(fEditor.getJavaProject());
-			fEditor.codeComplete(fCollector);
-		} catch (JavaModelException x) {
-			Shell shell= viewer.getTextWidget().getShell();
-			ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
-			JDIDebugUIPlugin.log(x);
+			try {
+				fCollector = new CompletionProposalCollector(fEditor.getJavaProject());
+				fEditor.codeComplete(fCollector);
+			} catch (JavaModelException x) {
+				Shell shell= viewer.getTextWidget().getShell();
+				ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+				JDIDebugUIPlugin.log(x);
+			}
+			
+			IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
+			
+			if (fTemplateEngine != null) {
+				fTemplateEngine.reset();
+				fTemplateEngine.complete(viewer, position, null);			
+			
+				TemplateProposal[] templateResults= fTemplateEngine.getResults();
+	
+				// concatenate arrays
+				IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
+				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
+				System.arraycopy(results, 0, total, templateResults.length, results.length);
+				results= total;
+			}
+			return order(results);
+		} finally {
+			fCollector = null;
 		}
-		
-		IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
-		
-		if (fTemplateEngine != null) {
-			fTemplateEngine.reset();
-			fTemplateEngine.complete(viewer, position, null);			
-		
-			TemplateProposal[] templateResults= fTemplateEngine.getResults();
-
-			// concatenate arrays
-			IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
-			System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-			System.arraycopy(results, 0, total, templateResults.length, results.length);
-			results= total;
-		}
-		return order(results);
 	}
 	
 	/**

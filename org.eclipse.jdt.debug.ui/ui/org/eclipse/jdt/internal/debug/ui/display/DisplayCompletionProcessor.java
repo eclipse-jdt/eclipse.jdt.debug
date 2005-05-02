@@ -129,18 +129,22 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-        setErrorMessage(DisplayMessages.DisplayCompletionProcessor_0); //$NON-NLS-1$
-		IAdaptable context = DebugUITools.getDebugContext();
-		if (context == null) {
-			return new ICompletionProposal[0];
+		try {
+	        setErrorMessage(DisplayMessages.DisplayCompletionProcessor_0); //$NON-NLS-1$
+			IAdaptable context = DebugUITools.getDebugContext();
+			if (context == null) {
+				return new ICompletionProposal[0];
+			}
+			
+			IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
+			if (stackFrame == null) {
+				return new ICompletionProposal[0];
+			}
+	        setErrorMessage(null);	
+			return computeCompletionProposals(stackFrame, viewer, documentOffset);
+		} finally {
+			releaseCollector();
 		}
-		
-		IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
-		if (stackFrame == null) {
-			return new ICompletionProposal[0];
-		}
-        setErrorMessage(null);	
-		return computeCompletionProposals(stackFrame, viewer, documentOffset);
 	}
 
 	protected ICompletionProposal[] computeCompletionProposals(IJavaStackFrame stackFrame, ITextViewer viewer, int documentOffset) {
@@ -445,6 +449,13 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	
 	protected CompletionProposalCollector getCollector() {
 		return fCollector;
+	}
+	
+	/**
+	 * Clears reference to result proposal collector.
+	 */
+	protected void releaseCollector() {
+		fCollector = null;
 	}
 
 	protected void setCollector(CompletionProposalCollector collector) {

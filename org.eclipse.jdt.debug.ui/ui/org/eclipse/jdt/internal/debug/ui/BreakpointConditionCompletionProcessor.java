@@ -35,43 +35,47 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-        setErrorMessage(null);
-		if (fType == null) {
-            setErrorMessage(DebugUIMessages.BreakpointConditionCompletionProcessor_0); //$NON-NLS-1$
-			return new ICompletionProposal[0];
-		}
-		
-		IJavaProject project= fType.getJavaProject();
 		try {
-			// Generate selections from the compilation unit
-			ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
-			configureResultCollector(project, textSelection);	
-			fType.codeComplete(viewer.getDocument().get().toCharArray(), fPosition, documentOffset,
-				 new char[0][], new char[0][],
-				 new int[0], false, getCollector());
-				 
-			IJavaCompletionProposal[] results= getCollector().getJavaCompletionProposals();
+	        setErrorMessage(null);
+			if (fType == null) {
+	            setErrorMessage(DebugUIMessages.BreakpointConditionCompletionProcessor_0); //$NON-NLS-1$
+				return new ICompletionProposal[0];
+			}
 			
-			// Generate selections from the template engine
-			TemplateEngine templateEngine= getTemplateEngine();
-			if (templateEngine != null) {
-				templateEngine.reset();
-				templateEngine.complete(viewer, documentOffset, null);
-				TemplateProposal[] templateResults= templateEngine.getResults();
-
-				// concatenate arrays
-				IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
-				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-				System.arraycopy(results, 0, total, templateResults.length, results.length);
-				results= total;					
-			}	 
-			 //Order here and not in result collector to make sure that the order
-			 //applies to all proposals and not just those of the compilation unit. 
-			return order(results);	
-		} catch (JavaModelException x) {
-			handle(viewer, x);
+			IJavaProject project= fType.getJavaProject();
+			try {
+				// Generate selections from the compilation unit
+				ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
+				configureResultCollector(project, textSelection);	
+				fType.codeComplete(viewer.getDocument().get().toCharArray(), fPosition, documentOffset,
+					 new char[0][], new char[0][],
+					 new int[0], false, getCollector());
+					 
+				IJavaCompletionProposal[] results= getCollector().getJavaCompletionProposals();
+				
+				// Generate selections from the template engine
+				TemplateEngine templateEngine= getTemplateEngine();
+				if (templateEngine != null) {
+					templateEngine.reset();
+					templateEngine.complete(viewer, documentOffset, null);
+					TemplateProposal[] templateResults= templateEngine.getResults();
+	
+					// concatenate arrays
+					IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
+					System.arraycopy(templateResults, 0, total, 0, templateResults.length);
+					System.arraycopy(results, 0, total, templateResults.length, results.length);
+					results= total;					
+				}	 
+				 //Order here and not in result collector to make sure that the order
+				 //applies to all proposals and not just those of the compilation unit. 
+				return order(results);	
+			} catch (JavaModelException x) {
+				handle(viewer, x);
+			}
+			return null;
+		} finally {
+			releaseCollector();
 		}
-		return null;
 	}
 	/**
 	 * Sets the type.
