@@ -791,7 +791,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         ArrayList typeRefsFound = new ArrayList(3);
         TypeInfoRequestor requestor = new TypeInfoRequestor(typeRefsFound);
         try {
-            engine.searchAllTypeNames(getPackage(typeName), getTypeName(typeName), SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE, IJavaSearchConstants.CLASS, scope, requestor, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+            engine.searchAllTypeNames(getPackage(typeName), getTypeName(typeName), SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE, IJavaSearchConstants.CLASS |IJavaSearchConstants.INTERFACE | IJavaSearchConstants.ENUM, scope, requestor, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
         } catch (JavaModelException x) {
             JDIDebugUIPlugin.log(x);
             return types;
