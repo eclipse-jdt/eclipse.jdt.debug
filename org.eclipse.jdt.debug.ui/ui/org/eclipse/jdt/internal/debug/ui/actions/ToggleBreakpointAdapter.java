@@ -90,6 +90,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @since 3.0
  */
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
+	
+	public ToggleBreakpointAdapter() {
+		// init helper in UI thread
+		ActionDelegateHelper.getDefault();
+	}
 
     protected void report(final String message, final IWorkbenchPart part) {
         JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
