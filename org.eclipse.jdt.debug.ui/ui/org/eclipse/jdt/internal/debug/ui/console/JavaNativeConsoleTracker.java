@@ -27,7 +27,7 @@ public class JavaNativeConsoleTracker extends JavaConsoleTracker {
             int length = event.getLength();
             TextConsole console = getConsole();
             IHyperlink link = new JavaNativeStackTraceHyperlink(console);
-            console.addHyperlink(link, offset, length);   
+            console.addHyperlink(link, offset+1, length-2);   
         } catch (BadLocationException e) {
         }
     }

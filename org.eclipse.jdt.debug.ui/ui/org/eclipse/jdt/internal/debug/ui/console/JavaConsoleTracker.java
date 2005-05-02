@@ -53,7 +53,7 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
             int offset = event.getOffset();
             int length = event.getLength();
             IHyperlink link = new JavaStackTraceHyperlink(fConsole);
-            fConsole.addHyperlink(link, offset, length);   
+            fConsole.addHyperlink(link, offset+1, length-2);   
         } catch (BadLocationException e) {
         }
     }

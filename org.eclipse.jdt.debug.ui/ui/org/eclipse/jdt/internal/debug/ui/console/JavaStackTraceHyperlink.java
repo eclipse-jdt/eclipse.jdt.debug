@@ -214,9 +214,18 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @exception CoreException if unable to retrieve the text
 	 */
 	protected String getLinkText() throws CoreException {
-		try {
-			IRegion region = getConsole().getRegion(this);
-			return getConsole().getDocument().get(region.getOffset(), region.getLength());
+	    try {
+	        IRegion region = getConsole().getRegion(this);
+	        IDocument document = getConsole().getDocument();
+            int regionOffset = region.getOffset();
+	        int lineNumber = document.getLineOfOffset(regionOffset);
+	        IRegion lineInformation = document.getLineInformation(lineNumber);
+            int lineOffset = lineInformation.getOffset();
+	        String line = document.get(lineOffset, lineInformation.getLength());
+            int paren = line.lastIndexOf("("); //$NON-NLS-1$
+            String upToParen = line.substring(0, paren);
+            int index = upToParen.lastIndexOf(' ');
+            return line.substring(index+1);            
 		} catch (BadLocationException e) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); //$NON-NLS-1$
 			throw new CoreException(status);
