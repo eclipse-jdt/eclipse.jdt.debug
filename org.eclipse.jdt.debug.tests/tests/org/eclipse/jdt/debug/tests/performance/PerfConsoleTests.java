@@ -45,7 +45,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     public void testProcessConsolePlainOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
-        runConsole80CharsTest(10000, 5);
+        runConsole80CharsTest(10000, 10);
     }
     
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
