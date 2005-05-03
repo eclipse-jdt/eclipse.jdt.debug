@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
@@ -46,7 +47,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
         runConsole80CharsTest(10000, 10);
     }
-
+    
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
         runStackTrace(5000, 10); // 2 lines * 5000 repeats = 10000 lines
@@ -151,9 +152,15 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         fWarmingUp = false;
     }
 
-    protected void launchWorkingCopyAndWait(ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
-        System.gc();
-        workingCopy.launch(ILaunchManager.RUN_MODE, null, false);
+    protected void launchWorkingCopyAndWait(final ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                DebugUITools.launch(workingCopy, ILaunchManager.RUN_MODE);
+            }
+        };
+        
+        DebugUIPlugin.getStandardDisplay().asyncExec(runnable);
+        
         synchronized (fLock) {
             if (!fStopped) {
                 fLock.wait(360000);

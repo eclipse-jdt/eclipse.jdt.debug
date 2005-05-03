@@ -164,6 +164,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.ALWAYS);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, MessageDialogWithToggle.NEVER);
 		
 		preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't warn about HCR failures
