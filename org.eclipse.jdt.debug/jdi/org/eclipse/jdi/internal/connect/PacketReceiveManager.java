@@ -13,7 +13,7 @@ package org.eclipse.jdi.internal.connect;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.text.MessageFormat;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -45,6 +45,10 @@ public class PacketReceiveManager extends PacketManager {
     /** List of Reply packets received from Virtual Machine. */
     private LinkedList fReplyPackets;
 
+    /** List of Packets that have timed out already. Maintained so that responses can be
+     * discarded if/when they are received. */
+    private ArrayList fTimedOutPackets;
+    
     private VirtualMachineImpl fVM;
 
     /**
@@ -55,6 +59,7 @@ public class PacketReceiveManager extends PacketManager {
         fVM = vmImpl;
         fCommandPackets = new LinkedList();
         fReplyPackets = new LinkedList();
+        fTimedOutPackets = new ArrayList();
     }
 
     public void disconnectVM() {
@@ -163,16 +168,10 @@ public class PacketReceiveManager extends PacketManager {
 
         // Check for a timeout.
         if (packet == null) {
-            StringBuffer buffer = new StringBuffer();
-            int numberOfPackets = 0;
-            synchronized (fReplyPackets) {
-                numberOfPackets = fReplyPackets.size();
-                for (Iterator iter = fReplyPackets.iterator(); iter.hasNext();) {
-                    JdwpReplyPacket replyPacket = (JdwpReplyPacket) iter.next();
-                    buffer.append(replyPacket.getId() + " "); //$NON-NLS-1$
-                }
+            synchronized (fTimedOutPackets) {
+                fTimedOutPackets.add(new Integer(id));
             }
-            throw new TimeoutException(MessageFormat.format(ConnectMessages.PacketReceiveManager_0, new String[] { id + "", remainingTime+"", numberOfPackets + "", buffer.toString() })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            throw new TimeoutException(MessageFormat.format(ConnectMessages.PacketReceiveManager_0, new String[] {id+""})); //$NON-NLS-1$
         }
 
         return packet;
@@ -232,6 +231,12 @@ public class PacketReceiveManager extends PacketManager {
      * Add a command packet to the command packet list.
      */
     private void addCommandPacket(JdwpCommandPacket packet) {
+        synchronized (fTimedOutPackets) {
+            Integer id = new Integer(packet.getId());
+            if (fTimedOutPackets.remove(id)) {
+                return; // already timed out. No need to keep this one
+            }
+        }
         synchronized (fCommandPackets) {
             fCommandPackets.add(packet);
             fCommandPackets.notifyAll();
@@ -242,6 +247,12 @@ public class PacketReceiveManager extends PacketManager {
      * Add a reply packet to the reply packet list.
      */
     private void addReplyPacket(JdwpReplyPacket packet) {
+        synchronized (fTimedOutPackets) {
+            Integer id = new Integer(packet.getId());
+            if (fTimedOutPackets.remove(id)) {
+                return; // already timed out. No need to keep this one
+            }
+        }
         synchronized (fReplyPackets) {
             fReplyPackets.add(packet);
             fReplyPackets.notifyAll();
