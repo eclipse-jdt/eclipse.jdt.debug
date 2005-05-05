@@ -160,23 +160,44 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @exception CoreException if unable to parse the type name
 	 */
 	protected String getTypeName() throws CoreException {
-		String linkText = getLinkText();		
-		int index = linkText.indexOf('(');
-		if (index >= 0) {
-			String typeName = linkText.substring(0, index);
-			// remove the method name
-			index = typeName.lastIndexOf('.');
-			int innerClassIndex = typeName.indexOf('$');
-			if (innerClassIndex != -1)
-				index = innerClassIndex;
-			if (index >= 0) {
-				typeName = typeName.substring(0, index);
-			}
-			return typeName;
-		}
-		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); //$NON-NLS-1$
-		throw new CoreException(status);
-	}	
+        String linkText = getLinkText();
+        int start = linkText.indexOf('(');
+        int end = linkText.indexOf(')');
+        if (start >= 0 && end > start) {
+            //linkText could be something like packageA.TypeB(TypeA.java:45)
+            //need to look in packageA.TypeA for line 45 since TypeB is defined
+            //in TypeA.java 
+            //Inner classes can be ignored because we're using file and line number
+            
+            // get File name (w/o .java)
+            String typeName = linkText.substring(start + 1, end - 2);
+            int index = typeName.indexOf(".java"); //$NON-NLS-1$
+            if (index >= 0) {
+                typeName = typeName.substring(0, index);
+            }
+
+            String qualifier = linkText.substring(0, start);
+            // remove the method name
+            start = qualifier.lastIndexOf('.');
+
+            // remove the class name
+            start = new String((String) qualifier.subSequence(0, start)).lastIndexOf('.');
+            if (start == -1) {
+                start = 0; // default package
+            }
+
+            if (start >= 0) {
+                qualifier = qualifier.substring(0, start);
+            }
+            
+            if (qualifier.length() > 0) {
+                typeName = qualifier + "." + typeName; //$NON-NLS-1$
+            }
+            return typeName;
+        }
+        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); //$NON-NLS-1$
+        throw new CoreException(status);
+    }	
 	
 	/**
 	 * Returns the line number associated with the stack trace or -1 if none.
