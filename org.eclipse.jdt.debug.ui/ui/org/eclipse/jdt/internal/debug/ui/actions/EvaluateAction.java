@@ -12,11 +12,13 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -25,6 +27,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -54,6 +57,7 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListe
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -71,6 +75,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -209,8 +214,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	
 	protected void run() {		
 		// eval in context of object or stack frame
-		IJavaObject object = getObjectContext();		
-		IJavaStackFrame stackFrame= getStackFrameContext();
+		final IJavaObject object = getObjectContext();		
+		final IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame == null) {
 			reportError(ActionMessages.Evaluate_error_message_stack_frame_context); //$NON-NLS-1$
 			return;
@@ -224,38 +229,54 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		
 		setNewTargetPart(getTargetPart());
-		if (stackFrame.isSuspended()) {
-			IJavaElement javaElement= getJavaElement(stackFrame);
-			if (javaElement != null) {
-				IJavaProject project = javaElement.getJavaProject();
-				IEvaluationEngine engine = null;
-				try {
-					Object selection= getSelectedObject();
-					if (!(selection instanceof String)) {
-						return;
-					}
-					String expression= (String)selection;
-					
-					engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
-					setEvaluating(true);
-					boolean hitBreakpoints= JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION);
-					if (object == null) {
-						engine.evaluate(expression, stackFrame, this, DebugEvent.EVALUATION, hitBreakpoints);
-					} else {
-						engine.evaluate(expression, object, (IJavaThread)stackFrame.getThread(), this, DebugEvent.EVALUATION, hitBreakpoints);
-					}
-					return;
-				} catch (CoreException e) {
-					reportError(getExceptionMessage(e));
-				}
-			} else {
-				reportError(ActionMessages.Evaluate_error_message_src_context); //$NON-NLS-1$
-			}
-		} else {
-			// thread not suspended
-			reportError(ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); //$NON-NLS-1$
-		}
-		evaluationCleanup();
+        
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                if (stackFrame.isSuspended()) {
+                    IJavaElement javaElement= getJavaElement(stackFrame);
+                    if (javaElement != null) {
+                        IJavaProject project = javaElement.getJavaProject();
+                        IEvaluationEngine engine = null;
+                        try {
+                            Object selection= getSelectedObject();
+                            if (!(selection instanceof String)) {
+                                return;
+                            }
+                            String expression= (String)selection;
+                            
+                            engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
+                            setEvaluating(true);
+                            boolean hitBreakpoints= JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION);
+                            if (object == null) {
+                                engine.evaluate(expression, stackFrame, EvaluateAction.this, DebugEvent.EVALUATION, hitBreakpoints);
+                            } else {
+                                engine.evaluate(expression, object, (IJavaThread)stackFrame.getThread(), EvaluateAction.this, DebugEvent.EVALUATION, hitBreakpoints);
+                            }
+                            return;
+                        } catch (CoreException e) {
+                            reportError(getExceptionMessage(e));
+                        } finally {
+                            evaluationCleanup();
+                        }
+                    } else {
+                        reportError(ActionMessages.Evaluate_error_message_src_context); //$NON-NLS-1$
+                    }
+                } else {
+                    // thread not suspended
+                    reportError(ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); //$NON-NLS-1$
+                }
+                evaluationCleanup();
+                return;                
+            }
+        };
+        
+        IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
+        try {
+            workbench.getProgressService().busyCursorWhile(runnable);
+        } catch (InvocationTargetException e) {
+            DebugUIPlugin.log(e);
+        } catch (InterruptedException e) {
+        }
 	}
 		
 	protected IJavaElement getJavaElement(IStackFrame stackFrame) {

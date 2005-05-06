@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -36,8 +38,11 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
@@ -107,10 +112,32 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * @throws DebugException if an exception occurs evaluating the expression
      *  or setting the variable's value
      */
-    protected void setValue(IVariable variable, Shell shell, String expression) throws DebugException {
-        IValue newValue = evaluate(shell, expression);
-        if (newValue != null) {
-            variable.setValue(newValue);
+    protected void setValue(final IVariable variable, final Shell shell, final String expression) throws DebugException {
+        IProgressService service= PlatformUI.getWorkbench().getProgressService();
+        
+        final DebugException[] debugException = new DebugException[1];
+        
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                try {
+                IValue newValue = evaluate(shell, expression);
+                if (newValue != null) {
+                    variable.setValue(newValue);
+                }
+                } catch (DebugException de) {
+                    debugException[0] = de;
+                    throw new InterruptedException();
+                }
+            }
+        };
+        
+        try {
+            service.busyCursorWhile(runnable);
+        } catch (InvocationTargetException e) {
+        } catch (InterruptedException e) {
+            if (debugException[0] != null) {
+                throw debugException[0];
+            }
         }
     }
 
