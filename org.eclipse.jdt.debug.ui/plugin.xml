@@ -1827,7 +1827,7 @@
                  <or>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-                   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
+                   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
                    <instanceof value="org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
@@ -1863,7 +1863,7 @@
                  <or>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-				   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
+				   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
 				   <instanceof value="org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.isApplet"/>
