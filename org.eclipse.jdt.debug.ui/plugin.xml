@@ -1681,30 +1681,36 @@
             category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage"
             id="org.eclipse.jdt.debug.ui.preferences.VMPreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.jres"/>
       </page>
       <page
             name="%javaDebugPrefName"
             category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
             id="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.general"/>
       </page>
       <page
             name="%javaStepFilterPrefName"
             category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
             id="org.eclipse.jdt.debug.ui.JavaStepFilterPreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.stepFilters"/>
       </page>
       <page
             name="%javaDetailFormattersPrefName"
             category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
             id="org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.detailFormatters"/>
       </page>
       <page
-            class="org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage"
             category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
-            name="%javaLogicalStruturePref.name"
-            id="org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage"/>
+            class="org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage"
+            id="org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage"
+            name="%javaLogicalStruturePref.name">
+         <keywordReference id="org.eclipse.jdt.debug.ui.logicalStructures"/>
+      </page>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -2599,6 +2605,24 @@ M4 = Platform-specific fourth key
     <variableValueEditor
           modelId="org.eclipse.jdt.debug"
           class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariableValueEditor"/>
+ </extension>
+ <extension
+       point="org.eclipse.ui.keywords">
+    <keyword
+          id="org.eclipse.jdt.debug.ui.general"
+          label="%preferenceKeywords.general"/>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.jres"
+          label="%preferenceKeywords.jres"/>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.detailFormatters"
+          label="%preferenceKeywords.detailFormatters"/>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.logicalStructures"
+          label="%preferenceKeywords.logicalStructures"/>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.stepFilters"
+          label="%preferenceKeywords.stepFilters"/>
  </extension>	
     
 </plugin>
