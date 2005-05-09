@@ -26,6 +26,8 @@ import java.net.URL;
  * <p>
  * This interface is intended to be implemented by clients that contribute
  * to the <code>"org.eclipse.jdt.launching.vmType"</code> extension point.
+ * Rather than implementing this interface directly, clients must subclass
+ * {@link org.eclipse.jdt.launching.AbstractVMInstall}.
  * </p>
  */
 public interface IVMInstall {

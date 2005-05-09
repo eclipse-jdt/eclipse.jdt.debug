@@ -18,7 +18,7 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
 /**
  * Abstract implementation of a VM install.
  * <p>
- * Clients implenmenting VM installs should subclass this class.
+ * Clients implementing VM installs must subclass this class.
  * </p>
  */
 public abstract class AbstractVMInstall implements IVMInstall {
