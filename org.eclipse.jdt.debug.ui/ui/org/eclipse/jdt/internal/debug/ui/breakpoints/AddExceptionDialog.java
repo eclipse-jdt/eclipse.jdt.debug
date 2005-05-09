@@ -97,7 +97,7 @@ public class AddExceptionDialog extends TypeSelectionDialog2 {
 
     public AddExceptionDialog(Shell parent, IRunnableContext context) {
         super(parent, false, context, SearchEngine.createWorkspaceScope(), IJavaSearchConstants.CLASS);
-        setFilter("*Exception*"); //$NON-NLS-1$
+        setFilter("*Exception*", CARET_BEGINNING); //$NON-NLS-1$
     }
 
     /*
