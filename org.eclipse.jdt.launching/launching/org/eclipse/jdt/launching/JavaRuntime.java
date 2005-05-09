@@ -1910,7 +1910,7 @@ public final class JavaRuntime {
 				}
 			}
 		}
-		return (String[])resolved.toArray(new String[entries.size()]);
+		return (String[])resolved.toArray(new String[resolved.size()]);
 	}
 
 	/**
