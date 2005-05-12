@@ -59,6 +59,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -69,6 +70,7 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -194,17 +196,19 @@ public final class JavaRuntime {
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 	
 	/**
-	 * Attribute key for a classpath attribute corresponding to a shared
-	 * library that should appear on the <code>-Djava.library.path</code>
-	 * system property.
+	 * Attribute key for a classpath attribute referencing a
+	 * list of shared libraries that should appear on the
+	 * <code>-Djava.library.path</code> system property.
 	 * <p>
-	 * The value is a string used to create an <code>IPath</code>
-	 * from the factory method <code>Path.fromPortableString(String)</code>.
-	 * The string may contain <code>IStringVariable</code>'s or be the name of a
-	 * Java classpath variable. The string will be translated before a path
-	 * is created from the string.  
+	 * The factory methods <code>newLibraryPathsAttribute(String[])</code>
+	 * and <code>getLibraryPaths(IClasspathAttribute)</code> should be used to
+	 * encode and decode the attribute value. 
 	 * </p>
 	 * <p>
+	 * Each string is used to create an <code>IPath</code> using the constructor
+	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
+	 * Variable substitution is performed on the string prior to constructing
+	 * a path from the string.
 	 * If the resulting <code>IPath</code> is a relative path, it is interpretted
 	 * as relative to the workspace location. If the path is absolute, it is 
 	 * interpretted as an absolute path in the local file system.
@@ -1893,10 +1897,7 @@ public final class JavaRuntime {
 		while (iterator.hasNext()) {
 			String entry = (String) iterator.next();
 			String resolvedEntry = manager.performStringSubstitution(entry);
-			IPath path = JavaCore.getClasspathVariable(resolvedEntry);
-			if (path == null) {
-				path = Path.fromPortableString(resolvedEntry);
-			}
+			IPath path = new Path(resolvedEntry);
 			if (path.isAbsolute()) {
 				File file = path.toFile();
 				resolved.add(file.getAbsolutePath());
@@ -1966,9 +1967,16 @@ public final class JavaRuntime {
 			IClasspathEntry entry = classpathEntries[i];
 			IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
 			for (int j = 0; j < extraAttributes.length; j++) {
-				IClasspathAttribute attribute = extraAttributes[j];
-				if (attribute.getName().equals(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY)) {
-					entries.add(attribute.getValue());
+				try {
+					String[] paths = getLibraryPaths(extraAttributes[j]);
+					if (paths != null) {
+						for (int k = 0; k < paths.length; k++) {
+							entries.add(paths[k]);
+						}
+					}
+				} catch (CoreException e) {
+					LaunchingPlugin.log(MessageFormat.format("Failed to generate java.library.path property from classpath entry {0} in project {1}", new String[]{entry.getPath().toString(), project.getElementName()}));
+					LaunchingPlugin.log(e);
 				}
 			}
 			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
@@ -1994,4 +2002,106 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
+	
+	/**
+	 * Creates a new classpath attribute referencing a list of shared libraries that should
+	 * appear on the <code>-Djava.library.path</code> system property at runtime
+	 * for an associated {@link IClasspathEntry}.
+	 * <p>
+	 * The factory methods <code>newLibraryPathsAttribute(String[])</code>
+	 * and <code>getLibraryPaths(IClasspathAttribute)</code> should be used to
+	 * encode and decode the attribute value.
+	 * </p>
+	 * @param paths an array of strings representing paths of shared libraries.
+	 * Each string is used to create an <code>IPath</code> using the constructor
+	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
+	 * Variable substitution is performed on each string before a path is constructed
+	 * from a string.
+	 * @return a claspath attribute with the name <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>
+	 * and an value encoded to the specified paths.
+	 * @exception CoreException if unable to encode the paths into a classpath attribute
+	 * @since 3.1
+	 */
+	public static IClasspathAttribute newLibraryPathsAttribute(String[] paths) throws CoreException {
+		Document doc = null;
+		try {
+			doc = LaunchingPlugin.getDocument();
+		} catch (ParserConfigurationException e) {
+			abort("Failed to create library classpath attribute", e);
+		}
+		Element node = doc.createElement("libraries"); //$NON-NLS-1$
+		doc.appendChild(node);
+		for (int i = 0; i < paths.length; i++) {
+			Element element = doc.createElement("library"); //$NON-NLS-1$
+			node.appendChild(element);
+			element.setAttribute("path", paths[i]); //$NON-NLS-1$
+		}
+		try {
+			String value = JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return JavaCore.newClasspathAttribute(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, value);
+		} catch (IOException e) {
+			abort("Failed to create library classpath attribute", e);
+		} catch (TransformerException e) {
+			abort("Failed to create library classpath attribute", e);
+		}
+		// won't reach this point
+		return null;
+	}
+	
+	/**
+	 * Returns an array of strings referencing shared libraries that should
+	 * appear on the <code>-Djava.library.path</code> system property at runtime
+	 * for an associated {@link IClasspathEntry}, or <code>null</code> if the
+	 * given attribute is not a <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>.
+	 * Each string is used to create an <code>IPath</code> using the constructor
+	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s. 
+	 * <p>
+	 * The factory methods <code>newLibraryPathsAttribute(String[])</code>
+	 * and <code>getLibraryPaths(IClasspathAttribute)</code> should be used to
+	 * encode and decode the attribute value. 
+	 * </p>
+	 * @param attribute a <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code> classpath attribute
+	 * @return an array of strings referencing shared libraries that should
+	 * appear on the <code>-Djava.library.path</code> system property at runtime
+	 * for an associated {@link IClasspathEntry}, or <code>null</code> if the
+	 * given attribute is not a <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>.
+	 * Each string is used to create an <code>IPath</code> using the constructor
+	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
+	 * @exception CoreException if unable to decode the paths
+	 * @since 3.1
+	 */	
+	public static String[] getLibraryPaths(IClasspathAttribute attribute) throws CoreException {
+		if (attribute.getName().equals(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY)) {
+			String xml = attribute.getValue();
+			try {
+				Element root = null;
+				DocumentBuilder parser = LaunchingPlugin.getParser();
+				StringReader reader = new StringReader(xml);
+				InputSource source = new InputSource(reader);
+				root = parser.parse(source).getDocumentElement();
+				// get the extension & create a new one
+				List paths = new ArrayList();
+				NodeList list = root.getChildNodes();
+				for (int i = 0; i < list.getLength(); i++) {
+					Node node = list.item(i);
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element)node;
+						if ("library".equals(element.getNodeName())) { //$NON-NLS-1$
+							String path = element.getAttribute("path"); //$NON-NLS-1$
+							if (path.length() > 0) {
+								paths.add(path);
+							}
+						}
+					}
+				}
+				return (String[]) paths.toArray(new String[paths.size()]);
+			} catch (SAXException e) {
+				abort("Failed to parse library paths", e);
+			} catch (IOException e) {
+				abort("Failed to parse library paths", e);
+			}
+		}
+		return null;
+	}
+
 }

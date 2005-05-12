@@ -518,7 +518,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				path.append(" -Djava.library.path="); //$NON-NLS-1$
 				for (int i = 0; i < javaLibraryPath.length; i++) {
 					if (i > 0) {
-						path.append(";"); //$NON-NLS-1$
+						path.append(File.pathSeparatorChar);
 					}
 					path.append(javaLibraryPath[i]);
 				}
