@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -184,15 +183,21 @@ public class AppletLaunchConfigurationUtils {
 	}
 	
 	private static Object computeScope(Object element) {
+        if (element instanceof IJavaElement) {
+            return element;
+        }
 		if (element instanceof IAdaptable) {
-			element= ((IAdaptable)element).getAdapter(IFile.class);
+			element = ((IAdaptable)element).getAdapter(IResource.class);
 		}
 		if (element instanceof IResource) {
 			IJavaElement javaElement = JavaCore.create((IResource)element);
 			if (javaElement != null && !javaElement.exists()) {
 				// do not consider the resouce - corresponding java element does not exist
 				element = null;
-			}
+			} else {
+			    element= javaElement;
+            }
+            
 		}
 		return element;
 	}
