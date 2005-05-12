@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -333,7 +334,12 @@ public class VMDefinitionsContainer {
 			Element element = doc.createElement("libraryLocation");  //$NON-NLS-1$
 			element.setAttribute("jreJar", locations[i].getSystemLibraryPath().toString()); //$NON-NLS-1$
 			element.setAttribute("jreSrc", locations[i].getSystemLibrarySourcePath().toString()); //$NON-NLS-1$
-			element.setAttribute("pkgRoot", locations[i].getPackageRootPath().toString()); //$NON-NLS-1$
+
+			IPath packageRootPath = locations[i].getPackageRootPath();
+            if (packageRootPath != null) {
+                element.setAttribute("pkgRoot", packageRootPath.toString()); //$NON-NLS-1$
+            }
+            
 			URL url= locations[i].getJavadocLocation();
 			if (url != null) {
 				element.setAttribute("jreJavadoc", url.toExternalForm()); //$NON-NLS-1$
