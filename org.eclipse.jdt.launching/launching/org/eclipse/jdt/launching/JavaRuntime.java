@@ -59,7 +59,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -70,7 +69,6 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1967,16 +1965,11 @@ public final class JavaRuntime {
 			IClasspathEntry entry = classpathEntries[i];
 			IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
 			for (int j = 0; j < extraAttributes.length; j++) {
-				try {
-					String[] paths = getLibraryPaths(extraAttributes[j]);
-					if (paths != null) {
-						for (int k = 0; k < paths.length; k++) {
-							entries.add(paths[k]);
-						}
+				String[] paths = getLibraryPaths(extraAttributes[j]);
+				if (paths != null) {
+					for (int k = 0; k < paths.length; k++) {
+						entries.add(paths[k]);
 					}
-				} catch (CoreException e) {
-					LaunchingPlugin.log(MessageFormat.format("Failed to generate java.library.path property from classpath entry {0} in project {1}", new String[]{entry.getPath().toString(), project.getElementName()}));
-					LaunchingPlugin.log(e);
 				}
 			}
 			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
@@ -2019,33 +2012,17 @@ public final class JavaRuntime {
 	 * from a string.
 	 * @return a claspath attribute with the name <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>
 	 * and an value encoded to the specified paths.
-	 * @exception CoreException if unable to encode the paths into a classpath attribute
 	 * @since 3.1
 	 */
-	public static IClasspathAttribute newLibraryPathsAttribute(String[] paths) throws CoreException {
-		Document doc = null;
-		try {
-			doc = LaunchingPlugin.getDocument();
-		} catch (ParserConfigurationException e) {
-			abort("Failed to create library classpath attribute", e);
-		}
-		Element node = doc.createElement("libraries"); //$NON-NLS-1$
-		doc.appendChild(node);
+	public static IClasspathAttribute newLibraryPathsAttribute(String[] paths) {
+		StringBuffer value = new StringBuffer();
 		for (int i = 0; i < paths.length; i++) {
-			Element element = doc.createElement("library"); //$NON-NLS-1$
-			node.appendChild(element);
-			element.setAttribute("path", paths[i]); //$NON-NLS-1$
+			value.append(paths[i]);
+			if (i < (paths.length - 1)) {
+				value.append("|"); //$NON-NLS-1$
+			}
 		}
-		try {
-			String value = JavaLaunchConfigurationUtils.serializeDocument(doc);
-			return JavaCore.newClasspathAttribute(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, value);
-		} catch (IOException e) {
-			abort("Failed to create library classpath attribute", e);
-		} catch (TransformerException e) {
-			abort("Failed to create library classpath attribute", e);
-		}
-		// won't reach this point
-		return null;
+		return JavaCore.newClasspathAttribute(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, value.toString());
 	}
 	
 	/**
@@ -2067,39 +2044,12 @@ public final class JavaRuntime {
 	 * given attribute is not a <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>.
 	 * Each string is used to create an <code>IPath</code> using the constructor
 	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
-	 * @exception CoreException if unable to decode the paths
 	 * @since 3.1
 	 */	
-	public static String[] getLibraryPaths(IClasspathAttribute attribute) throws CoreException {
-		if (attribute.getName().equals(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY)) {
-			String xml = attribute.getValue();
-			try {
-				Element root = null;
-				DocumentBuilder parser = LaunchingPlugin.getParser();
-				StringReader reader = new StringReader(xml);
-				InputSource source = new InputSource(reader);
-				root = parser.parse(source).getDocumentElement();
-				// get the extension & create a new one
-				List paths = new ArrayList();
-				NodeList list = root.getChildNodes();
-				for (int i = 0; i < list.getLength(); i++) {
-					Node node = list.item(i);
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element)node;
-						if ("library".equals(element.getNodeName())) { //$NON-NLS-1$
-							String path = element.getAttribute("path"); //$NON-NLS-1$
-							if (path.length() > 0) {
-								paths.add(path);
-							}
-						}
-					}
-				}
-				return (String[]) paths.toArray(new String[paths.size()]);
-			} catch (SAXException e) {
-				abort("Failed to parse library paths", e);
-			} catch (IOException e) {
-				abort("Failed to parse library paths", e);
-			}
+	public static String[] getLibraryPaths(IClasspathAttribute attribute) {
+		if (CLASSPATH_ATTR_LIBRARY_PATH_ENTRY.equals(attribute.getName())) {
+			String value = attribute.getValue();
+			return value.split("\\|"); //$NON-NLS-1$
 		}
 		return null;
 	}
