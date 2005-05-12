@@ -311,4 +311,293 @@ public class JdwpCommandPacket extends JdwpPacket {
 		} 
 		return str.substring(i + 1);
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append('[');
+		buffer.append(getId());
+		buffer.append("] "); //$NON-NLS-1$
+		switch (getCommand()) {
+		
+			/** Commands VirtualMachine. */
+			case VM_VERSION:
+				buffer.append("VM_VERSION"); //$NON-NLS-1$
+				break;
+			case VM_CLASSES_BY_SIGNATURE:
+				buffer.append("VM_CLASSES_BY_SIGNATURE"); //$NON-NLS-1$
+				break;
+			case VM_ALL_CLASSES:
+				buffer.append("VM_ALL_CLASSES"); //$NON-NLS-1$
+				break;
+			case VM_ALL_THREADS:
+				buffer.append("VM_ALL_THREADS"); //$NON-NLS-1$
+				break;
+			case VM_TOP_LEVEL_THREAD_GROUPS:
+				buffer.append("VM_TOP_LEVEL_THREAD_GROUPS"); //$NON-NLS-1$
+				break;
+			case VM_DISPOSE:
+				buffer.append("VM_DISPOSE"); //$NON-NLS-1$
+				break;
+			case VM_ID_SIZES:
+				buffer.append("VM_ID_SIZES"); //$NON-NLS-1$
+				break;
+			case VM_SUSPEND:
+				buffer.append("VM_SUSPEND"); //$NON-NLS-1$
+				break;
+			case VM_RESUME:
+				buffer.append("VM_RESUME"); //$NON-NLS-1$
+				break;
+			case VM_EXIT:
+				buffer.append("VM_EXIT"); //$NON-NLS-1$
+				break;
+			case VM_CREATE_STRING:
+				buffer.append("VM_CREATE_STRING"); //$NON-NLS-1$
+				break;
+			case VM_CAPABILITIES:
+				buffer.append("VM_CAPABILITIES"); //$NON-NLS-1$
+				break;
+			case VM_CLASS_PATHS:
+				buffer.append("VM_CLASS_PATHS"); //$NON-NLS-1$
+				break;
+			case VM_DISPOSE_OBJECTS:
+				buffer.append("VM_DISPOSE_OBJECTS"); //$NON-NLS-1$
+				break;
+			case VM_HOLD_EVENTS:
+				buffer.append("VM_HOLD_EVENTS"); //$NON-NLS-1$
+				break;
+			case VM_RELEASE_EVENTS:
+				buffer.append("VM_RELEASE_EVENTS"); //$NON-NLS-1$
+				break;
+			case VM_CAPABILITIES_NEW:
+				buffer.append("VM_CAPABILITIES_NEW"); //$NON-NLS-1$
+				break;
+			case VM_REDEFINE_CLASSES:
+				buffer.append("VM_REDEFINE_CLASSES"); //$NON-NLS-1$
+				break;
+			case VM_SET_DEFAULT_STRATUM:
+				buffer.append("VM_SET_DEFAULT_STRATUM"); //$NON-NLS-1$
+				break;
+			case VM_ALL_CLASSES_WITH_GENERIC:
+				buffer.append("VM_ALL_CLASSES_WITH_GENERIC"); //$NON-NLS-1$
+				break;
+				
+			/** Commands ReferenceType. */
+			case RT_SIGNATURE:
+				buffer.append("RT_SIGNATURE"); //$NON-NLS-1$
+				break;
+			case RT_CLASS_LOADER:
+				buffer.append("RT_CLASS_LOADER"); //$NON-NLS-1$
+				break;
+			case RT_MODIFIERS:
+				buffer.append("RT_MODIFIERS"); //$NON-NLS-1$
+				break;
+			case RT_FIELDS:
+				buffer.append("RT_FIELDS"); //$NON-NLS-1$
+				break;
+			case RT_METHODS:
+				buffer.append("RT_METHODS"); //$NON-NLS-1$
+				break;
+			case RT_GET_VALUES:
+				buffer.append("RT_GET_VALUES"); //$NON-NLS-1$
+				break;
+			case RT_SOURCE_FILE:
+				buffer.append("RT_SOURCE_FILE"); //$NON-NLS-1$
+				break;
+			case RT_NESTED_TYPES:
+				buffer.append("RT_NESTED_TYPES"); //$NON-NLS-1$
+				break;
+			case RT_STATUS:
+				buffer.append("RT_STATUS"); //$NON-NLS-1$
+				break;
+			case RT_INTERFACES:
+				buffer.append("RT_INTERFACES"); //$NON-NLS-1$
+				break;
+			case RT_CLASS_OBJECT:
+				buffer.append("RT_CLASS_OBJECT"); //$NON-NLS-1$
+				break;
+			case RT_SOURCE_DEBUG_EXTENSION:
+				buffer.append("RT_SOURCE_DEBUG_EXTENSION"); //$NON-NLS-1$
+				break;
+			case RT_SIGNATURE_WITH_GENERIC:
+				buffer.append("RT_SIGNATURE_WITH_GENERIC"); //$NON-NLS-1$
+				break;
+			case RT_FIELDS_WITH_GENERIC:
+				buffer.append("RT_FIELDS_WITH_GENERIC"); //$NON-NLS-1$
+				break;
+			case RT_METHODS_WITH_GENERIC:
+				buffer.append("RT_METHODS_WITH_GENERIC"); //$NON-NLS-1$
+				break;
+				
+			/** Commands ClassType. */
+			case CT_SUPERCLASS:
+				buffer.append("CT_SUPERCLASS"); //$NON-NLS-1$
+				break;
+			case CT_SET_VALUES:
+				buffer.append("CT_SET_VALUES"); //$NON-NLS-1$
+				break;
+			case CT_INVOKE_METHOD:
+				buffer.append("CT_INVOKE_METHOD"); //$NON-NLS-1$
+				break;
+			case CT_NEW_INSTANCE:
+				buffer.append("CT_NEW_INSTANCE"); //$NON-NLS-1$
+				break;
+
+			/** Commands ArrayType. */
+			case AT_NEW_INSTANCE:
+				buffer.append("AT_NEW_INSTANCE"); //$NON-NLS-1$
+				break;
+
+			/** Commands Method. */
+			case M_LINE_TABLE:
+				buffer.append("M_LINE_TABLE"); //$NON-NLS-1$
+				break;
+			case M_VARIABLE_TABLE:
+				buffer.append("M_VARIABLE_TABLE"); //$NON-NLS-1$
+				break;
+			case M_BYTECODES:
+				buffer.append("M_BYTECODES"); //$NON-NLS-1$
+				break;
+			case M_OBSOLETE:
+				buffer.append("M_OBSOLETE"); //$NON-NLS-1$
+				break;
+			case M_VARIABLE_TABLE_WITH_GENERIC:
+				buffer.append("M_VARIABLE_TABLE_WITH_GENERIC"); //$NON-NLS-1$
+				break;
+
+			/** Commands ObjectReference. */
+			case OR_REFERENCE_TYPE:
+				buffer.append("OR_REFERENCE_TYPE"); //$NON-NLS-1$
+				break;
+			case OR_GET_VALUES:
+				buffer.append("OR_GET_VALUES"); //$NON-NLS-1$
+				break;
+			case OR_SET_VALUES:
+				buffer.append("OR_SET_VALUES"); //$NON-NLS-1$
+				break;
+			case OR_MONITOR_INFO:
+				buffer.append("OR_MONITOR_INFO"); //$NON-NLS-1$
+				break;
+			case OR_INVOKE_METHOD:
+				buffer.append("OR_INVOKE_METHOD"); //$NON-NLS-1$
+				break;
+			case OR_DISABLE_COLLECTION:
+				buffer.append("OR_DISABLE_COLLECTION"); //$NON-NLS-1$
+				break;
+			case OR_ENABLE_COLLECTION:
+				buffer.append("OR_ENABLE_COLLECTION"); //$NON-NLS-1$
+				break;
+			case OR_IS_COLLECTED:
+				buffer.append("OR_IS_COLLECTED"); //$NON-NLS-1$
+				break;
+
+			/** Commands StringReference. */
+			case SR_VALUE:
+				buffer.append("SR_VALUE"); //$NON-NLS-1$
+				break;
+
+			/** Commands ThreadReference. */
+			case TR_NAME:
+				buffer.append("TR_NAME"); //$NON-NLS-1$
+				break;
+			case TR_SUSPEND:
+				buffer.append("TR_SUSPEND"); //$NON-NLS-1$
+				break;
+			case TR_RESUME:
+				buffer.append("TR_RESUME"); //$NON-NLS-1$
+				break;
+			case TR_STATUS:
+				buffer.append("TR_STATUS"); //$NON-NLS-1$
+				break;
+			case TR_THREAD_GROUP:
+				buffer.append("TR_THREAD_GROUP"); //$NON-NLS-1$
+				break;
+			case TR_FRAMES:
+				buffer.append("TR_FRAMES"); //$NON-NLS-1$
+				break;
+			case TR_FRAME_COUNT:
+				buffer.append("TR_FRAME_COUNT"); //$NON-NLS-1$
+				break;
+			case TR_OWNED_MONITORS:
+				buffer.append("TR_OWNED_MONITORS"); //$NON-NLS-1$
+				break;
+			case TR_CURRENT_CONTENDED_MONITOR:
+				buffer.append("TR_CURRENT_CONTENDED_MONITOR"); //$NON-NLS-1$
+				break;
+			case TR_STOP:
+				buffer.append("TR_STOP"); //$NON-NLS-1$
+				break;
+			case TR_INTERRUPT:
+				buffer.append("TR_INTERRUPT"); //$NON-NLS-1$
+				break;
+			case TR_SUSPEND_COUNT:
+				buffer.append("TR_SUSPEND_COUNT"); //$NON-NLS-1$
+				break;
+
+			/** Commands ThreadGroupReference. */
+			case TGR_NAME:
+				buffer.append("TGR_NAME"); //$NON-NLS-1$
+				break;
+			case TGR_PARENT:
+				buffer.append("TGR_PARENT"); //$NON-NLS-1$
+				break;
+			case TGR_CHILDREN:
+				buffer.append("TGR_CHILDREN"); //$NON-NLS-1$
+				break;
+
+			/** Commands ArrayReference. */
+			case AR_LENGTH:
+				buffer.append("AR_LENGTH"); //$NON-NLS-1$
+				break;
+			case AR_GET_VALUES:
+				buffer.append("AR_GET_VALUES"); //$NON-NLS-1$
+				break;
+			case AR_SET_VALUES:
+				buffer.append("AR_SET_VALUES"); //$NON-NLS-1$
+				break;
+
+			/** Commands ClassLoaderReference. */
+			case CLR_VISIBLE_CLASSES:
+				buffer.append("CLR_VISIBLE_CLASSES"); //$NON-NLS-1$
+				break;
+
+			/** Commands EventRequest. */
+			case ER_SET:
+				buffer.append("ER_SET"); //$NON-NLS-1$
+				break;
+			case ER_CLEAR:
+				buffer.append("ER_CLEAR"); //$NON-NLS-1$
+				break;
+			case ER_CLEAR_ALL_BREAKPOINTS:
+				buffer.append("ER_CLEAR_ALL_BREAKPOINTS"); //$NON-NLS-1$
+				break;
+
+			/** Commands StackFrame. */
+			case SF_GET_VALUES:
+				buffer.append("SF_GET_VALUES"); //$NON-NLS-1$
+				break;
+			case SF_SET_VALUES:
+				buffer.append("SF_SET_VALUES"); //$NON-NLS-1$
+				break;
+			case SF_THIS_OBJECT:
+				buffer.append("SF_THIS_OBJECT"); //$NON-NLS-1$
+				break;
+			case SF_POP_FRAME:
+				buffer.append("SF_POP_FRAME"); //$NON-NLS-1$
+				break;
+
+			/** Commands ClassObjectReference. */
+			case COR_REFLECTED_TYPE:
+				buffer.append("COR_REFLECTED_TYPE"); //$NON-NLS-1$
+				break;
+			
+		default:
+			buffer.append("UNKNOWN COMMAND: "); //$NON-NLS-1$
+			buffer.append(getCommand());
+			break;
+		}
+		return buffer.toString();
+	}
 }
