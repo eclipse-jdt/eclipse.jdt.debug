@@ -1974,13 +1974,15 @@ public final class JavaRuntime {
 			}
 			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 				IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-				IClasspathEntry[] requiredProjects = processJavaLibraryPathEntries(project, collectRequired, container.getClasspathEntries(), entries);
-				if (requiredProjects != null) {
-					if (req == null) {
-						req = new ArrayList();
-					}
-					for (int j = 0; j < requiredProjects.length; j++) {
-						req.add(requiredProjects[j]);
+				if (container != null) {
+					IClasspathEntry[] requiredProjects = processJavaLibraryPathEntries(project, collectRequired, container.getClasspathEntries(), entries);
+					if (requiredProjects != null) {
+						if (req == null) {
+							req = new ArrayList();
+						}
+						for (int j = 0; j < requiredProjects.length; j++) {
+							req.add(requiredProjects[j]);
+						}
 					}
 				}
 			} else if (collectRequired && entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
