@@ -189,4 +189,6 @@ public class LaunchingMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LaunchingMessages.class);
 	}
+
+    public static String SocketAttachConnector_0;
 }
