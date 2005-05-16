@@ -142,6 +142,8 @@ public class SocketAttachConnector implements IVMConnector {
 			launch.addDebugTarget(debugTarget);
 			subMonitor.worked(1);
 			subMonitor.done();
+        } catch (TimeoutException e) {
+            abort(LaunchingMessages.SocketAttachConnector_0, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (UnknownHostException e) {
 			abort(MessageFormat.format(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 		} catch (ConnectException e) {
