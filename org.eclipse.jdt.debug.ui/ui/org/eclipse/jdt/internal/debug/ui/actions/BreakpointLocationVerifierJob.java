@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -109,11 +110,19 @@ public class BreakpointLocationVerifierJob extends Job {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		char[] source = fDocument.get().toCharArray();
 		parser.setSource(source);
+		IJavaElement javaElement = JavaCore.create(fResource);
+		IJavaProject project= null;
+		if (javaElement != null) {
+			project= javaElement.getJavaProject();
+			Map options=JavaCore.getDefaultOptions();
+			options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+			options.put(JavaCore.COMPILER_SOURCE, project.getOption(JavaCore.COMPILER_SOURCE, true));
+			parser.setCompilerOptions(options);
+		}
 		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, false, fBestMatch);
 		compilationUnit.accept(locator);
 		if (locator.isBindingsRequired()) {
-			IJavaElement javaElement = JavaCore.create(fResource);
 			if (javaElement != null) {
 				// try again with bindings if required and available
 				String unitName = null;
@@ -137,7 +146,7 @@ public class BreakpointLocationVerifierJob extends Job {
 				if (unitName != null) {
 					parser = ASTParser.newParser(AST.JLS3);
 					parser.setSource(source);
-					parser.setProject(javaElement.getJavaProject());
+					parser.setProject(project);
 					parser.setUnitName(unitName);
 					parser.setResolveBindings(true);
 					compilationUnit= (CompilationUnit)parser.createAST(null);
