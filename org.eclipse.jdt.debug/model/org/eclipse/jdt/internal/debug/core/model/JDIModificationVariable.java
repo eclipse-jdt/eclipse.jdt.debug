@@ -45,7 +45,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
 	public boolean supportsValueModification() {
-		return !isFinal();
+		return true;
 	}
 	
 	protected Value generateVMValue(String expression) throws DebugException {
