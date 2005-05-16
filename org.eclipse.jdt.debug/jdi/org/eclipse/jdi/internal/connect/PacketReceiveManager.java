@@ -231,27 +231,37 @@ public class PacketReceiveManager extends PacketManager {
      * Add a command packet to the command packet list.
      */
     private void addCommandPacket(JdwpCommandPacket packet) {
-        synchronized (fTimedOutPackets) {
-            Integer id = new Integer(packet.getId());
-            if (fTimedOutPackets.remove(id)) {
-                return; // already timed out. No need to keep this one
-            }
+        if (isTimedOut(packet)) {
+        	return; // already timed out. No need to keep this one
         }
         synchronized (fCommandPackets) {
             fCommandPackets.add(packet);
             fCommandPackets.notifyAll();
         }
     }
+    
+    /**
+     * Returns whether the request for the given packet has already timed out.
+     * 
+     * @param packet response packet
+     * @return whether the request for the given packet has already timed out
+     */
+    private boolean isTimedOut(JdwpPacket packet) {
+        synchronized (fTimedOutPackets) {
+        	if (fTimedOutPackets.isEmpty()) {
+        		return false;
+        	}
+            Integer id = new Integer(packet.getId());
+            return fTimedOutPackets.remove(id);
+        }    	
+    }
 
     /**
      * Add a reply packet to the reply packet list.
      */
     private void addReplyPacket(JdwpReplyPacket packet) {
-        synchronized (fTimedOutPackets) {
-            Integer id = new Integer(packet.getId());
-            if (fTimedOutPackets.remove(id)) {
-                return; // already timed out. No need to keep this one
-            }
+       if (isTimedOut(packet)) {
+    	   return; // already timed out. No need to keep this one
         }
         synchronized (fReplyPackets) {
             fReplyPackets.add(packet);
