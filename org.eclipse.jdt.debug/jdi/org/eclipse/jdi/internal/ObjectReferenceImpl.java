@@ -485,8 +485,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns a unique identifier for this ObjectReference. 
 	 */
 	public long uniqueID() {
-		if (isCollected())
-			throw new ObjectCollectedException();
 		return fObjectID.value();
 	}
 		

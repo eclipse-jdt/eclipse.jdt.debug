@@ -42,6 +42,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.ARRAY_TAG;
 	
+	private int fLength = -1;
+	
 	/**
 	 * Creates new ArrayReferenceImpl.
 	 */
@@ -181,18 +183,21 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	 * @returns Returns the number of components in this array.
 	 */
 	public int length() {
-		initJdwpRequest();
-		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_LENGTH, this);
-			defaultReplyErrorHandler(replyPacket.errorCode());
-			DataInputStream replyData = replyPacket.dataInStream();
-			return readInt("length", replyData); //$NON-NLS-1$
-		} catch (IOException e) {
-			defaultIOExceptionHandler(e);
-			return 0;
-		} finally {
-			handledJdwpRequest();
+		if (fLength == -1) {
+			initJdwpRequest();
+			try {
+				JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_LENGTH, this);
+				defaultReplyErrorHandler(replyPacket.errorCode());
+				DataInputStream replyData = replyPacket.dataInStream();
+				fLength = readInt("length", replyData); //$NON-NLS-1$ 
+			} catch (IOException e) {
+				defaultIOExceptionHandler(e);
+				return 0;
+			} finally {
+				handledJdwpRequest();
+			}
 		}
+		return fLength;
 	}
 	
 	/**
