@@ -16,11 +16,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.TextConsole;
 
@@ -29,9 +34,19 @@ public class JavaStackTraceConsole extends TextConsole {
     public final static String FILE_NAME = JDIDebugUIPlugin.getDefault().getStateLocation().toOSString() + File.separator + "stackTraceConsole.txt"; //$NON-NLS-1$
 
     private JavaStackTraceConsolePartitioner partitioner = new JavaStackTraceConsolePartitioner();
+    private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            String property = event.getProperty();
+            if (property.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
+                setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+            }
+        }
+    };
 
     public JavaStackTraceConsole() {
         super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true); //$NON-NLS-1$
+        Font font = JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT);
+        setFont(font);
         partitioner.connect(getDocument());
     }
 
@@ -55,6 +70,10 @@ public class JavaStackTraceConsole extends TextConsole {
 		}
     }
 
+    protected void init() {
+        JFaceResources.getFontRegistry().addListener(propertyListener);
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -62,6 +81,7 @@ public class JavaStackTraceConsole extends TextConsole {
      */
     protected void dispose() {
         saveDocument();
+        JFaceResources.getFontRegistry().removeListener(propertyListener);
         super.dispose();
     }
 
