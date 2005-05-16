@@ -109,11 +109,12 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 			}
 		}
 		LibraryLocation[] libs = vm.getLibraryLocations();
+		LibraryLocation[] defaultLibs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 		if (libs == null) {
 			// default system libs
-			libs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
-		} else {
-			// custom system libs - place on bootpath explicitly
+			libs = defaultLibs;
+		} else if (!isSameArchives(libs, defaultLibs)) {
+			// determine if bootpath should be explicit
 			kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
 		}
 		List resolvedEntries = new ArrayList(libs.length);
@@ -133,6 +134,29 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
 	}
 		
+	/**
+	 * Return whether the given list of libraries refer to the same archives in the same
+	 * order. Only considers the binary archive (not source or javadoc locations). 
+	 *  
+	 * @param libs
+	 * @param defaultLibs
+	 * @return whether the given list of libraries refer to the same archives in the same
+	 * order
+	 */
+	public static boolean isSameArchives(LibraryLocation[] libs, LibraryLocation[] defaultLibs) {
+		if (libs.length != defaultLibs.length) {
+			return false;
+		}
+		for (int i = 0; i < defaultLibs.length; i++) {
+			LibraryLocation def = defaultLibs[i];
+			LibraryLocation lib = libs[i];
+			if (!def.getSystemLibraryPath().equals(lib.getSystemLibraryPath())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveVMInstall(IClasspathEntry)
 	 */

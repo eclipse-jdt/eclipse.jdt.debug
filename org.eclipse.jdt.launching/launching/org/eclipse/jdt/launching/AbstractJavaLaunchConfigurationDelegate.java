@@ -45,6 +45,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -351,26 +352,29 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			IVMInstall install = getVMInstall(configuration);
 			LibraryLocation[] libraryLocations = install.getLibraryLocations();
 			if (libraryLocations != null) {
-				// non-default JRE libaries - use explicit bootpath only
-				String[] bootpath = new String[bootEntriesPrep.length
-						+ libraryLocations.length + bootEntriesApp.length];
-				if (bootEntriesPrep.length > 0) {
-					System.arraycopy(bootpathInfo[0], 0, bootpath, 0,
-							bootEntriesPrep.length);
+				// determine if explicit bootpath should be used
+				if (!JRERuntimeClasspathEntryResolver.isSameArchives(libraryLocations, install.getVMInstallType().getDefaultLibraryLocations(install.getInstallLocation()))) {
+					// non-default JRE libaries - use explicit bootpath only
+					String[] bootpath = new String[bootEntriesPrep.length
+							+ libraryLocations.length + bootEntriesApp.length];
+					if (bootEntriesPrep.length > 0) {
+						System.arraycopy(bootpathInfo[0], 0, bootpath, 0,
+								bootEntriesPrep.length);
+					}
+					int dest = bootEntriesPrep.length;
+					for (int i = 0; i < libraryLocations.length; i++) {
+						bootpath[dest] = libraryLocations[i].getSystemLibraryPath()
+								.toOSString();
+						dest++;
+					}
+					if (bootEntriesApp.length > 0) {
+						System.arraycopy(bootpathInfo[2], 0, bootpath, dest,
+								bootEntriesApp.length);
+					}
+					bootpathInfo[0] = null;
+					bootpathInfo[1] = bootpath;
+					bootpathInfo[2] = null;
 				}
-				int dest = bootEntriesPrep.length;
-				for (int i = 0; i < libraryLocations.length; i++) {
-					bootpath[dest] = libraryLocations[i].getSystemLibraryPath()
-							.toOSString();
-					dest++;
-				}
-				if (bootEntriesApp.length > 0) {
-					System.arraycopy(bootpathInfo[2], 0, bootpath, dest,
-							bootEntriesApp.length);
-				}
-				bootpathInfo[0] = null;
-				bootpathInfo[1] = bootpath;
-				bootpathInfo[2] = null;
 			}
 		} else {
 			if (entriesPrep == null) {
