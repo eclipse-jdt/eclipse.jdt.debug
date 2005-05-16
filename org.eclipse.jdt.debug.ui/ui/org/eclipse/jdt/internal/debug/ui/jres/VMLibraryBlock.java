@@ -38,6 +38,8 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -435,6 +437,16 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		
 		fEditButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_8); //$NON-NLS-1$
 		fEditButton.addSelectionListener(this);
+		fLibraryViewer.addDoubleClickListener(new IDoubleClickListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+			 */
+			public void doubleClick(DoubleClickEvent event) {
+				if (fEditButton.isEnabled()) {
+					edit((IStructuredSelection) fLibraryViewer.getSelection());
+				}
+			}
+		});
 
 		fRemoveButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(this);
