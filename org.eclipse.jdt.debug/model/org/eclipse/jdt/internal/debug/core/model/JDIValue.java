@@ -28,6 +28,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.Field;
+import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.PrimitiveValue;
 import com.sun.jdi.ReferenceType;
@@ -89,15 +90,14 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 * @see IValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
-		if (!isAllocated()) {
-			return JDIDebugModelMessages.JDIValue_deallocated; //$NON-NLS-1$
-		}
 		if (fValue == null) {
 			return JDIDebugModelMessages.JDIValue_null_4; //$NON-NLS-1$
 		}
 		if (fValue instanceof StringReference) {
 			try {
 				return ((StringReference) fValue).value();
+			} catch (ObjectCollectedException e) {
+				return JDIDebugModelMessages.JDIValue_deallocated; //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as
@@ -117,6 +117,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			name.append('=');  //$NON-NLS-1$
 			try {
 				name.append(((ObjectReference)fValue).uniqueID());
+			} catch (ObjectCollectedException e) {
+				return JDIDebugModelMessages.JDIValue_deallocated; //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_unique_id, new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as
@@ -186,9 +188,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	protected synchronized List getVariablesList() throws DebugException {
-		if (!isAllocated()) {
-			return Collections.EMPTY_LIST;
-		}
 		if (fVariables != null) {
 			return fVariables;
 		} else
@@ -196,17 +195,26 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				ObjectReference object= (ObjectReference) fValue;
 				fVariables= new ArrayList();
 				if (isArray()) {
-					int length= getArrayLength();
-					ArrayList list = new ArrayList(length);
-					for (int i = 0; i < length; i++) {
-						list.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i));
+					try {
+						int length= getArrayLength();
+						ArrayList list = new ArrayList(length);
+						for (int i = 0; i < length; i++) {
+							list.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i));
+						}
+						fVariables= list;
+					} catch (DebugException e) {
+						if (e.getCause() instanceof ObjectCollectedException) {
+							return Collections.EMPTY_LIST;
+						}
+						throw e;
 					}
-					fVariables= list;
 				} else {		
 					List fields= null;
 					try {
 						ReferenceType refType= object.referenceType();
 						fields= refType.allFields();
+					} catch (ObjectCollectedException e) {
+						return Collections.EMPTY_LIST;
 					} catch (RuntimeException e) {
 						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_fields, new String[] {e.toString()}), e); //$NON-NLS-1$
 						// execution will not reach this line, as
