@@ -160,4 +160,21 @@ public class JdwpReplyPacket extends JdwpPacket {
 		getConstantMaps();
 		return fErrorMap;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("["); //$NON-NLS-1$
+		buffer.append(getId());
+		buffer.append("] "); //$NON-NLS-1$
+		buffer.append("(reply)"); //$NON-NLS-1$
+		short ec = errorCode();
+		if (ec != NONE) {
+			buffer.append(" ERROR CODE: "); //$NON-NLS-1$
+			buffer.append(ec);
+		}
+		return buffer.toString();
+	}
 }

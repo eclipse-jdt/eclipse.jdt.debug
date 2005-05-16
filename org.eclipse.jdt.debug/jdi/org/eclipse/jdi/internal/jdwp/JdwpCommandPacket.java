@@ -592,6 +592,11 @@ public class JdwpCommandPacket extends JdwpPacket {
 			case COR_REFLECTED_TYPE:
 				buffer.append("COR_REFLECTED_TYPE"); //$NON-NLS-1$
 				break;
+				
+			/** Commands Event. */
+			case E_COMPOSITE:
+				buffer.append("E_COMPOSITE"); //$NON-NLS-1$
+				break;
 			
 		default:
 			buffer.append("UNKNOWN COMMAND: "); //$NON-NLS-1$
