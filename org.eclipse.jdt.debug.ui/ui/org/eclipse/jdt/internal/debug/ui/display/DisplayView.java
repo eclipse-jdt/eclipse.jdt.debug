@@ -75,6 +75,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 public class DisplayView extends ViewPart implements ITextInputListener, IPerspectiveListener2 {
 		
@@ -254,7 +255,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
+		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action.", this); //$NON-NLS-1$
+		findReplaceAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), findReplaceAction);
 		
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.COPY.getId());
