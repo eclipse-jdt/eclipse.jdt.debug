@@ -117,8 +117,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			name.append('=');  //$NON-NLS-1$
 			try {
 				name.append(((ObjectReference)fValue).uniqueID());
-			} catch (ObjectCollectedException e) {
-				return JDIDebugModelMessages.JDIValue_deallocated; //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_unique_id, new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as
