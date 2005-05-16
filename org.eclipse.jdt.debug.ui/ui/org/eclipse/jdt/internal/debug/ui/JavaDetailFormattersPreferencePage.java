@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
@@ -98,6 +99,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		createDetailFormatsPreferences(container);	
         createLabelPreferences(container);
         
+        Dialog.applyDialogFont(container);
         return container;
 	}
 
