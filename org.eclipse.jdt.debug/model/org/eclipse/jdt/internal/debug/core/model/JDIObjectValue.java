@@ -295,6 +295,10 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 		} catch (IncompatibleThreadStateException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_0, e); //$NON-NLS-1$
+		} catch (VMDisconnectedException e) {
+			// Ignore
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_0, e); //$NON-NLS-1$
 		}
 		return (IJavaThread[]) waiting.toArray(new IJavaThread[waiting.size()]);
 	}
@@ -314,6 +318,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_1, e); //$NON-NLS-1$
 		} catch (VMDisconnectedException e) {
 		    return null;
+        } catch (RuntimeException e) {
+        	targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_1, e); //$NON-NLS-1$
         }
 		return owningThread;
 	}
