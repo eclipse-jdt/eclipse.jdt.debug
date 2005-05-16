@@ -430,20 +430,20 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		pathButtonComp.setLayoutData(gd);
 		pathButtonComp.setFont(font);
 		
-		fUpButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4); //$NON-NLS-1$
-		fUpButton.addSelectionListener(this);
-		
-		fDownButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_5); //$NON-NLS-1$
-		fDownButton.addSelectionListener(this);
-
-		fRemoveButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6); //$NON-NLS-1$
-		fRemoveButton.addSelectionListener(this);
-
 		fAddButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7); //$NON-NLS-1$
 		fAddButton.addSelectionListener(this);
 		
 		fEditButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_8); //$NON-NLS-1$
 		fEditButton.addSelectionListener(this);
+
+		fRemoveButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6); //$NON-NLS-1$
+		fRemoveButton.addSelectionListener(this);
+		
+		fUpButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4); //$NON-NLS-1$
+		fUpButton.addSelectionListener(this);
+		
+		fDownButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_5); //$NON-NLS-1$
+		fDownButton.addSelectionListener(this);
 
 		return comp;
 	}
