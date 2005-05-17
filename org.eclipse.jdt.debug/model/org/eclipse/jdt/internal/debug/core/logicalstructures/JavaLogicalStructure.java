@@ -223,17 +223,17 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	 */
 	public IValue getLogicalStructure(IValue value) {
 		if (!(value instanceof IJavaObject)) {
-			return null;
+			return value;
 		}
 		IJavaObject javaValue= (IJavaObject) value;
 		try {
 			IJavaReferenceType type = getType(javaValue);
 			if (type == null) {
-				return null;
+				return value;
 			}
 			IJavaStackFrame stackFrame= getStackFrame(javaValue);
 			if (stackFrame == null) {
-				return null;
+				return value;
 			}
 			
 			// find the project the snippets will be compiled in.
@@ -266,7 +266,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				}
 			}
 			if (project == null) {
-				return null;
+				return value;
 			}
 			
 			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
@@ -286,7 +286,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
 		}
-		return null;
+		return value;
 	}
 	
 	private IJavaReferenceType getType(IJavaObject value) {
