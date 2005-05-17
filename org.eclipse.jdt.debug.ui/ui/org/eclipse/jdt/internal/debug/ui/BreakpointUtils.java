@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -60,8 +61,8 @@ public class BreakpointUtils {
 	/**
 	 * Returns the resource on which a breakpoint marker should
 	 * be created for the given member. The resource returned is the 
-	 * associated file, or project in the case of a class file in 
-	 * a jar.
+	 * associated file, or workspace root in the case of a binary in 
+	 * an external archive.
 	 * 
 	 * @param member member in which a breakpoint is being created
 	 * @return resource the resource on which a breakpoint marker
@@ -74,7 +75,7 @@ public class BreakpointUtils {
 		}
 		IResource res = member.getResource();
 		if (res == null) {
-			res = member.getJavaProject().getProject();
+			res = ResourcesPlugin.getWorkspace().getRoot();
 		}
 		return res;
 	}

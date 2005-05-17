@@ -123,15 +123,18 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	protected Object getSourceElement(String typeName) {
 		ISourceLocator locator = getSourceLocator();
-		if (locator == null) {
+		Object result = null;
+		if (locator != null) {
+			result = OpenTypeAction.findSourceElement(typeName, locator);
+		}
+		if (result == null) {
 			try {
 				// search for the type in the workspace
-				return OpenTypeAction.findTypeInWorkspace(typeName);
+				result = OpenTypeAction.findTypeInWorkspace(typeName);
 			} catch (JavaModelException e) {
-				return null;
 			}
 		}
-		return OpenTypeAction.findSourceElement(typeName, locator);
+		return result;
 	}
 	
 	/**

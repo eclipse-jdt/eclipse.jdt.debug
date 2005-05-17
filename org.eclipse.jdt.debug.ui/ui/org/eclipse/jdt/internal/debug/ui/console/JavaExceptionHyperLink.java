@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionDialog;
@@ -69,18 +70,8 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 			// create a new exception breakpoint
 			Object sourceElement = getSourceElement(fExceptionName);
 			if (sourceElement != null) {
-				IResource res = null;
+				IResource res = ResourcesPlugin.getWorkspace().getRoot();
 				IType type = null;
-				if (sourceElement instanceof IJavaElement) {
-					IJavaElement element = (IJavaElement)sourceElement;
-					res = element.getResource();
-					if (res == null) {
-						res = element.getJavaProject().getResource();
-					}
-				}
-				if (res == null) {
-					res = ResourcesPlugin.getWorkspace().getRoot();
-				}
 				if (sourceElement instanceof ICompilationUnit) {
 					type = ((ICompilationUnit)sourceElement).findPrimaryType();
 				} else if (sourceElement instanceof IClassFile) {
@@ -89,6 +80,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 				boolean checked = false;
 				if (type != null) {
 					checked = AddExceptionDialog.getExceptionType(type) == AddExceptionDialog.CHECKED_EXCEPTION;
+					res = BreakpointUtils.getBreakpointResource(type);
 				}
 				Map map = new HashMap();
 				map.put(JavaBreakpointPage.ATTR_DELETE_ON_CANCEL, JavaBreakpointPage.ATTR_DELETE_ON_CANCEL);
