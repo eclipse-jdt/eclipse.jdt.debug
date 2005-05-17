@@ -40,20 +40,40 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 			if (proj == null) {
 				//no project - use JRE's default libraries
-				return computeJRELibraries(configuration);				
+				return new IRuntimeClasspathEntry[]{computeJRELibraryEntry(configuration)};				
 			}
-			return JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
+			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
+			// replace JRE with config's JRE if different
+			IVMInstall projJRE = JavaRuntime.getVMInstall(proj);
+			IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
+			if (configJRE.equals(projJRE)) {
+				return entries;
+			}
+			for (int i = 0; i < entries.length; i++) {
+				IRuntimeClasspathEntry entry = entries[i];
+				switch (entry.getType()) {
+					case IRuntimeClasspathEntry.CONTAINER:
+						if (entry.getPath().segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+							entries[i] = computeJRELibraryEntry(configuration);
+							return entries;
+						}
+					case IRuntimeClasspathEntry.VARIABLE:
+						if (entry.getPath().segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
+							entries[i] = computeJRELibraryEntry(configuration);
+							return entries;
+						}
+				}
+			}
 		}
 		// recover persisted classpath
 		return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
 	}
 
-	private IRuntimeClasspathEntry[] computeJRELibraries(ILaunchConfiguration configuration) throws CoreException {
+	private IRuntimeClasspathEntry computeJRELibraryEntry(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
 		path = path.append(vm.getVMInstallType().getId()).append(vm.getName());
-		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(path, IRuntimeClasspathEntry.STANDARD_CLASSES);
-		return new IRuntimeClasspathEntry[]{entry};
+		return JavaRuntime.newRuntimeContainerClasspathEntry(path, IRuntimeClasspathEntry.STANDARD_CLASSES);
 	}
 
 	/* (non-Javadoc)
