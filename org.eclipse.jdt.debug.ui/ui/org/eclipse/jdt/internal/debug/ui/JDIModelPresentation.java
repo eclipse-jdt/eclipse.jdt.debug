@@ -454,7 +454,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		boolean isArray= value instanceof IJavaArray;
 		StringBuffer buffer= new StringBuffer();
 		// Always show type name for objects & arrays (but not Strings)
-		if ((isObject || isArray) && !isString && (refTypeName.length() > 0)) {
+		if (isObject && !isString && (refTypeName.length() > 0)) {
 			String qualTypeName= getQualifiedName(refTypeName);
 			if (isArray) {
 				qualTypeName= adjustTypeNameForArrayIndex(qualTypeName, ((IJavaArray)value).getLength());
@@ -533,7 +533,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		for (int i= 0; i < signature.length(); i++) {
 			sigChar= signature.charAt(i);
 			if (sigChar == '[') {
-				continue;
+				return true;
 			}
 			break;
 		}

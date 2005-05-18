@@ -155,8 +155,6 @@ public class ActionMessages extends NLS {
 	public static String JavaObjectValueEditor_1;
 	public static String JavaObjectValueEditor_2;
 	public static String JavaObjectValueEditor_3;
-	public static String JavaObjectValueEditor_4;
-	public static String JavaObjectValueEditor_5;
 	public static String JavaPrimitiveValueEditor_0;
 	public static String JavaPrimitiveValueEditor_1;
 	public static String JavaPrimitiveValueEditor_2;

@@ -134,6 +134,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
         try {
             service.busyCursorWhile(runnable);
         } catch (InvocationTargetException e) {
+        	e.printStackTrace();
         } catch (InterruptedException e) {
             if (debugException[0] != null) {
                 throw debugException[0];
@@ -201,8 +202,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                         buffer.append(messages[i]).append("\n "); //$NON-NLS-1$
                     }
     			    IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, buffer.toString(), null);
-    			    DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_4,	ActionMessages.JavaObjectValueEditor_5, status); //$NON-NLS-1$ //$NON-NLS-2$
-    			    return null;
+    			    throw new DebugException(status);
+    			    //DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_4,	ActionMessages.JavaObjectValueEditor_5, status); //$NON-NLS-1$ //$NON-NLS-2$
+    			    //return null;
     			}
     			return result.getValue();
             }
