@@ -260,6 +260,10 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 				checkValues();
 			}
 		});
+        
+        if (!fEditTypeName) {
+            fSnippetViewer.getControl().setFocus();
+        }
 		
 		// enable checkbox
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
