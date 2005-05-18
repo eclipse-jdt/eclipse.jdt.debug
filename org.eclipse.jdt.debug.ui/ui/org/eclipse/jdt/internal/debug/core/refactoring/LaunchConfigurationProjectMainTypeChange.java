@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -42,27 +48,8 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	private String fNewLaunchConfigurationName;
 	private String fOldMainTypeName;
 	private String fOldProjectName;
-	private ILaunchConfiguration fNewLaunchConfiguration;
-
-	/**
-	 * launch configuration listener used to get the new ILaunchConfiguration object when a launch
-	 * configuration is renamed.
-	 */
-	private ILaunchConfigurationListener configurationListener= new ILaunchConfigurationListener() {
-		public void launchConfigurationAdded(final ILaunchConfiguration launchConfiguration) {
-			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-			final ILaunchConfiguration oldConfig= manager.getMovedFrom(launchConfiguration);
-			if (oldConfig != null && oldConfig == fLaunchConfiguration) {
-				fNewLaunchConfiguration= launchConfiguration;
-			}
-		}
-
-		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		}
-
-		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		}
-	};
+	private ILaunchConfigurationWorkingCopy fNewLaunchConfiguration;
+    private String fNewConfigContainerName;
 
 	/**
 	 * Create a change for each launch configuration which needs to be updated for this IType rename.
@@ -119,11 +106,11 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		// Java application launch configurations
 		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfiguration[] configs= manager.getLaunchConfigurations(configurationType);
-		List changes= createChangesForProjectRename(configs, projectName, newProjectName);
+		List changes= createChangesForProjectRename(javaProject, configs, projectName, newProjectName);
 		// Java applet launch configurations
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
-		changes.addAll(createChangesForProjectRename(configs, projectName, newProjectName));
+		changes.addAll(createChangesForProjectRename(javaProject, configs, projectName, newProjectName));
 		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); //$NON-NLS-1$
 	}
 	
@@ -231,18 +218,40 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	 * Create a change for each launch configuration from the given list which needs 
 	 * to be updated for this IJavaProject rename.
 	 */
-	private static List createChangesForProjectRename(ILaunchConfiguration[] configs, String projectName, String newProjectName) throws CoreException {
+	private static List createChangesForProjectRename(IJavaProject javaProject, ILaunchConfiguration[] configs, String projectName, String newProjectName) throws CoreException {
 		List changes= new ArrayList();
 		for (int i= 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
 			String launchConfigurationProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			if (projectName.equals(launchConfigurationProjectName)) {
-				changes.add(new LaunchConfigurationProjectMainTypeChange(launchConfiguration, null, newProjectName));
+				LaunchConfigurationProjectMainTypeChange change = new LaunchConfigurationProjectMainTypeChange(launchConfiguration, null, newProjectName);
+                String newContainerName = computeNewContainerName(javaProject, launchConfiguration);
+                if (newContainerName != null) {
+                    change.setNewContainerName(newContainerName);
+                }
+
+				changes.add(change);
 			}
 		}
 		return changes;
 	}
 
+    private void setNewContainerName(String newContainerName) {
+        fNewConfigContainerName = newContainerName;
+    }
+
+    private static String computeNewContainerName(IJavaProject javaProject, ILaunchConfiguration launchConfiguration) {
+        IPath currentLocation = launchConfiguration.getLocation();
+        IProject project = javaProject.getProject();
+        IPath projectLocation = project.getLocation();
+        if (projectLocation.isPrefixOf(currentLocation)) {
+            String projectFile = new File(projectLocation.toOSString()).getAbsolutePath();
+            String configDir = new File(currentLocation.toOSString()).getParent();
+            return new String(configDir.substring(projectFile.length()));
+        }
+        return null;
+    }
+    
 	/**
 	 * Create a change for each launch configuration from the given list which needs 
 	 * to be updated for this IPackageFragment rename.
@@ -308,9 +317,10 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	 */
 	private LaunchConfigurationProjectMainTypeChange(ILaunchConfiguration launchConfiguration, String newMainTypeName, String newProjectName) throws CoreException {
 		fLaunchConfiguration= launchConfiguration;
-		fNewLaunchConfiguration= launchConfiguration;
+		fNewLaunchConfiguration= launchConfiguration.getWorkingCopy();
 		fNewMainTypeName= newMainTypeName;
-		fNewProjectName= newProjectName;
+        fNewProjectName= newProjectName;
+
 		fOldMainTypeName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
 		fOldProjectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 		if (fNewMainTypeName != null) {
@@ -368,29 +378,32 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Change perform(IProgressMonitor pm) throws CoreException {
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationWorkingCopy copy = fLaunchConfiguration.getWorkingCopy();
+	public Change perform(IProgressMonitor pm) throws CoreException {        
+        if (fNewConfigContainerName != null) {
+            IWorkspace workspace = ResourcesPlugin.getWorkspace();
+            IWorkspaceRoot root = workspace.getRoot();
+            IProject project = root.getProject(fNewProjectName);
+            IContainer container = (IContainer) project.findMember(fNewConfigContainerName);
+            fNewLaunchConfiguration.setContainer(container);
+        }
+
 		String oldMainTypeName;
 		String oldProjectName;
 		if (fNewMainTypeName != null) {
 			oldMainTypeName= fOldMainTypeName;
-			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fNewMainTypeName);
+			fNewLaunchConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fNewMainTypeName);
 		} else {
 			oldMainTypeName= null;
 		}
 		if (fNewProjectName != null) {
 			oldProjectName= fOldProjectName;
-			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
+			fNewLaunchConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
 		} else {
 			oldProjectName= null;
 		}
-		if (fNewLaunchConfigurationName != null) {
-			launchManager.addLaunchConfigurationListener(configurationListener);
-			copy.rename(fNewLaunchConfigurationName);
-		}
-		copy.doSave();
-		launchManager.removeLaunchConfigurationListener(configurationListener);
+
+		fNewLaunchConfiguration.doSave();
+
 		// create the undo change
 		return new LaunchConfigurationProjectMainTypeChange(fNewLaunchConfiguration, oldMainTypeName, oldProjectName);
 	}
