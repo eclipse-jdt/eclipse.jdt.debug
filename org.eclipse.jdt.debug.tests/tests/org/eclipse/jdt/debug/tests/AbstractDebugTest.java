@@ -915,7 +915,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
     }
 	
 	protected boolean isFileSystemCaseSensitive() {
-		return !(new File("A").equals(new File("a")));
+		return Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 
