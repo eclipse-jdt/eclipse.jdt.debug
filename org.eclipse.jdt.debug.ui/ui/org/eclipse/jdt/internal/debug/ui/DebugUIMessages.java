@@ -284,4 +284,6 @@ public class DebugUIMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
 	}
+
+	public static String JavaDebugPreferencePage_0;
 }

@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
  
 import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -34,6 +35,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Preference page for debug preferences that apply specifically to
@@ -112,6 +115,15 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);		
 		composite.setFont(font);
+		
+		PreferenceLinkArea runLink = new PreferenceLinkArea(composite, SWT.NONE,
+				"org.eclipse.debug.ui.DebugPreferencePage", DebugUIMessages.JavaDebugPreferencePage_0, //$NON-NLS-1$
+				(IWorkbenchPreferenceContainer) getContainer(),null);
+
+		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		runLink.getControl().setLayoutData(data);	
+		
+		createSpacer(composite, 1);
 		
 		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1); //$NON-NLS-1$
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1); //$NON-NLS-1$
