@@ -113,10 +113,16 @@ public class BreakpointLocationVerifierJob extends Job {
 		IJavaElement javaElement = JavaCore.create(fResource);
 		IJavaProject project= null;
 		if (javaElement != null) {
-			project= javaElement.getJavaProject();
 			Map options=JavaCore.getDefaultOptions();
-			options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
-			options.put(JavaCore.COMPILER_SOURCE, project.getOption(JavaCore.COMPILER_SOURCE, true));
+            project= javaElement.getJavaProject();
+            String compilerCompliance = JavaCore.VERSION_1_5;
+            String compilerSource = JavaCore.VERSION_1_5;
+            if (project != null) {
+                compilerCompliance = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+                compilerSource = project.getOption(JavaCore.COMPILER_SOURCE, true);
+            }
+            options.put(JavaCore.COMPILER_COMPLIANCE, compilerCompliance);
+            options.put(JavaCore.COMPILER_SOURCE, compilerSource);
 			parser.setCompilerOptions(options);
 		}
 		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
