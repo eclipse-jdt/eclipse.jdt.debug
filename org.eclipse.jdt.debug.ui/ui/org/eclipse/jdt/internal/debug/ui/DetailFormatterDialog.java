@@ -261,7 +261,7 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 			}
 		});
         
-        if (!fEditTypeName) {
+        if (fDetailFormatter.getTypeName().length() > 0) {
             fSnippetViewer.getControl().setFocus();
         }
 		
