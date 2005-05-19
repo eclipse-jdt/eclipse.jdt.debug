@@ -255,7 +255,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayMessages"); //$NON-NLS-1$
-		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action.", this); //$NON-NLS-1$
+		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action_", this); //$NON-NLS-1$
 		findReplaceAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), findReplaceAction);
 		
