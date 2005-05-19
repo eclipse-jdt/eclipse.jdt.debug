@@ -64,7 +64,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.corext.util.TypeInfo;
 import org.eclipse.jdt.internal.corext.util.TypeInfoRequestor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -81,6 +80,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -157,7 +157,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     ITextSelection textSelection = (ITextSelection) selection;
                     IType type = getType(textSelection);
                     IEditorInput editorInput = editorPart.getEditorInput();
-                    IDocument document = ((ITextEditor) editorPart).getDocumentProvider().getDocument(editorInput);
+                    IDocumentProvider documentProvider = ((ITextEditor) editorPart).getDocumentProvider();
+                    if (documentProvider == null) {
+                        return Status.CANCEL_STATUS;
+                    }
+                    IDocument document = documentProvider.getDocument(editorInput);
                     int lineNumber = textSelection.getStartLine() + 1;
                     int offset = textSelection.getOffset();
                     try {
@@ -226,8 +230,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes, document, bestMatch, type, editorPart);
                         }
                     } catch (CoreException ce) {
-                        ExceptionHandler.handle(ce, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
-                        return Status.OK_STATUS;
+                        return ce.getStatus();
                     }
                 }
                 return Status.OK_STATUS;
@@ -237,13 +240,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.schedule();
     }
 
-    private void createLineBreakpoint(IResource resource, String typeName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes, IDocument document, boolean bestMatch, IType type, IEditorPart editorPart) {
-        try {
-            IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, charStart, charEnd, hitCount, register, attributes);
-            new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, bestMatch, typeName, type, resource, editorPart).schedule();
-        } catch (CoreException e) {
-            ExceptionHandler.handle(e, ActionMessages.ManageBreakpointActionDelegate_error_title1, ActionMessages.ManageBreakpointActionDelegate_error_message1); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+    private void createLineBreakpoint(IResource resource, String typeName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes, IDocument document, boolean bestMatch, IType type, IEditorPart editorPart) throws CoreException {
+        IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, charStart, charEnd, hitCount, register, attributes);
+        new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, bestMatch, typeName, type, resource, editorPart).schedule();
     }
 
     /*
@@ -658,9 +657,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         return (breakpointField.getElementName().equals(watchpoint.getFieldName()) && breakpointField.getDeclaringType().getFullyQualifiedName().equals(watchpoint.getTypeName()));
     }
 
-    protected CompilationUnit parseCompilationUnit(ITextEditor editor) {
+    protected CompilationUnit parseCompilationUnit(ITextEditor editor) throws CoreException {
         IEditorInput editorInput = editor.getEditorInput();
-        IDocument document = editor.getDocumentProvider().getDocument(editorInput);
+        IDocumentProvider documentProvider = editor.getDocumentProvider();
+        if (documentProvider == null) {
+            throw new CoreException(Status.CANCEL_STATUS);
+        }
+        IDocument document = documentProvider.getDocument(editorInput);
         ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setSource(document.get().toCharArray());
         return (CompilationUnit) parser.createAST(null);
@@ -696,7 +699,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             ITextSelection textSelection = (ITextSelection) selection;
             ITextEditor editorPart = (ITextEditor) part;
             IEditorInput editorInput = editorPart.getEditorInput();
-            IDocument document = editorPart.getDocumentProvider().getDocument(editorInput);
+            IDocumentProvider documentProvider = editorPart.getDocumentProvider();
+            if (documentProvider == null) {
+                throw new CoreException(Status.CANCEL_STATUS);
+            }
+            IDocument document = documentProvider.getDocument(editorInput);
             int offset = textSelection.getOffset();
             if (document != null) {
                 try {

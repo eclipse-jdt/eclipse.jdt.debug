@@ -14,9 +14,6 @@ import org.eclipse.osgi.util.NLS;
 public class ActionMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.actions.ActionMessages";//$NON-NLS-1$
 
-	public static String ManageBreakpointActionDelegate_error_message1;
-	public static String ManageBreakpointActionDelegate_error_title1;
-
 	public static String BreakpointAction_Breakpoint_configuration_1;
 	public static String BreakpointAction_Exceptions_occurred_attempting_to_modify_breakpoint__2;
 
