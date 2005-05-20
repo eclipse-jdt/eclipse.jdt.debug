@@ -109,6 +109,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         } catch (DebugException e) {
             DebugUIPlugin.log(e);
         }
+        fTextViewer.getControl().setFocus();
         fWrapText= new Button(parent, SWT.CHECK);
         fWrapText.setText(ActionMessages.StringValueInputDialog_4); //$NON-NLS-1$
         boolean wrap= true;
