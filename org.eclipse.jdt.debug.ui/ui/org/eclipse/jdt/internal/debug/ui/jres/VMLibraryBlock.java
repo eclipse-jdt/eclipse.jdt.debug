@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -345,6 +346,12 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 			for (int i= 0; i < fLibraries.length; i++) {
 				LibraryLocation library= fLibraries[i];
 				if (libraries.contains(library)) {
+					if (sourceAttachmentPath == null) {
+						sourceAttachmentPath = Path.EMPTY;
+					}
+					if (sourceAttachmentRootPath == null) {
+						sourceAttachmentRootPath = Path.EMPTY;
+					}
 					LibraryLocation lib= new LibraryLocation(library.getSystemLibraryPath(), sourceAttachmentPath, sourceAttachmentRootPath, library.getJavadocLocation());
 					newSelection[j++]= getChildren(lib)[1];
 					newLibraries[i]= lib;
