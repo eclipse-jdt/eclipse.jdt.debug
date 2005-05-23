@@ -145,7 +145,9 @@ public class RunToLineTests extends AbstractDebugTest {
 					public void run() {
 						IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	                    IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
-	                    System.out.println("ACTIVE: " + activeEditor.getTitle());
+                        if (activeEditor != null) {
+                            System.out.println("ACTIVE: " + activeEditor.getTitle());    
+                        }
 					}
 				};
 				display.syncExec(r);
