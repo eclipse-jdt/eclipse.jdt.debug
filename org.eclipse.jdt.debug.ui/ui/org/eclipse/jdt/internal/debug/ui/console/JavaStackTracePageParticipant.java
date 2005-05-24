@@ -46,7 +46,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
         fCloseAction = new CloseConsoleAction(console);
         
         IToolBarManager manager = page.getSite().getActionBars().getToolBarManager();
-        manager.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fCloseAction);
+        manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fCloseAction);
         
         fFormatAction = new FormatStackTraceActionDelegate((JavaStackTraceConsole) console);
         IHandler formatHandler = new AbstractHandler() {
