@@ -106,6 +106,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         try {
             String valueString = fVariable.getValue().getValueString();
             fTextViewer.getDocument().set(valueString);
+            fTextViewer.setSelectedRange(0, valueString.length());
         } catch (DebugException e) {
             DebugUIPlugin.log(e);
         }
