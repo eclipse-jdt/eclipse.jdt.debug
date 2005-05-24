@@ -115,18 +115,15 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     protected void setValue(final IVariable variable, final Shell shell, final String expression) throws DebugException {
         IProgressService service= PlatformUI.getWorkbench().getProgressService();
         
-        final DebugException[] debugException = new DebugException[1];
-        
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
                 IValue newValue = evaluate(shell, expression);
                 if (newValue != null) {
                     variable.setValue(newValue);
                 }
                 } catch (DebugException de) {
-                    debugException[0] = de;
-                    throw new InterruptedException();
+                    throw new InvocationTargetException(de);
                 }
             }
         };
@@ -134,11 +131,10 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
         try {
             service.busyCursorWhile(runnable);
         } catch (InvocationTargetException e) {
-        	e.printStackTrace();
-        } catch (InterruptedException e) {
-            if (debugException[0] != null) {
-                throw debugException[0];
+        	if (e.getTargetException() instanceof DebugException) {
+                throw (DebugException)e.getTargetException();
             }
+        } catch (InterruptedException e) {
         }
     }
 
