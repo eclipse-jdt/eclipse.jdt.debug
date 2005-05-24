@@ -520,6 +520,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			if (javaLibraryPath != null && javaLibraryPath.length > 0) {
 				StringBuffer path = new StringBuffer(args);
 				path.append(" -Djava.library.path="); //$NON-NLS-1$
+				path.append("\""); //$NON-NLS-1$
 				for (int i = 0; i < javaLibraryPath.length; i++) {
 					if (i > 0) {
 						path.append(File.pathSeparatorChar);
@@ -527,6 +528,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 					path.append(javaLibraryPath[i]);
 				}
 				args = path.toString();
+				path.append("\""); //$NON-NLS-1$
 			}
 		}
 		return args;
