@@ -96,7 +96,7 @@ public class AddExceptionDialog extends TypeSelectionDialog2 {
     private static final String SETTING_UNCAUGHT_CHECKED = "uncaughtChecked"; //$NON-NLS-1$
 
     public AddExceptionDialog(Shell parent, IRunnableContext context) {
-        super(parent, false, context, SearchEngine.createWorkspaceScope(), IJavaSearchConstants.CLASS);
+        super(parent, false, context, null, IJavaSearchConstants.CLASS);
         setFilter("*Exception*", CARET_BEGINNING); //$NON-NLS-1$
     }
 
