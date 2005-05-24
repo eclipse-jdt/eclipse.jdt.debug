@@ -85,9 +85,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 import com.sun.jdi.ObjectCollectedException;
 
@@ -1065,12 +1066,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @see IDebugModelPresentation#getEditorId(IEditorInput, Object)
 	 */
 	public String getEditorId(IEditorInput input, Object inputObject) {
-		IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-		IEditorDescriptor descriptor= registry.getDefaultEditor(input.getName());
-		if (descriptor != null)
+		try {
+			IEditorDescriptor descriptor= IDE.getEditorDescriptor(input.getName());
 			return descriptor.getId();
-		
-		return null;
+		} catch (PartInitException e) {
+			return null;
+		}
 	}
 
 	/**
