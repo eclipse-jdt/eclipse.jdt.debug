@@ -501,7 +501,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		reportError(message);
 	}
 	
-	protected void reportError(String message) {
+	protected void reportError(final String message) {
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
@@ -510,8 +510,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); //$NON-NLS-1$
 			}
 		} else {
-			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
-			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); //$NON-NLS-1$
+            JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
+                    ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); //$NON-NLS-1$   
+                } 
+            });
 		}
 	}
 	
