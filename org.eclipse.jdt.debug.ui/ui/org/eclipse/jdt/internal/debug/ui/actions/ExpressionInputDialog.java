@@ -12,12 +12,13 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.text.MessageFormat;
 import java.util.Map;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
@@ -153,7 +154,7 @@ public class ExpressionInputDialog extends Dialog {
         try {
             name= fVariable.getName();
         } catch (DebugException e) {
-            DebugUIPlugin.log(e);
+            JDIDebugUIPlugin.log(e);
         }
         
         fEvaluateLabel= new Label(parent, SWT.WRAP);

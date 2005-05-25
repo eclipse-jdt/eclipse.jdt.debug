@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -139,7 +138,7 @@ public class JavaDebugImages {
 	}
 	
 	private static void initializeImageRegistry() {
-		fgImageRegistry= new ImageRegistry(DebugUIPlugin.getStandardDisplay());
+		fgImageRegistry= new ImageRegistry(JDIDebugUIPlugin.getStandardDisplay());
 		declareImages();
 	}
 	

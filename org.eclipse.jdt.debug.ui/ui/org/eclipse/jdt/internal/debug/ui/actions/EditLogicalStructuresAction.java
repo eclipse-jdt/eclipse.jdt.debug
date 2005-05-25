@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -42,9 +42,9 @@ public class EditLogicalStructuresAction implements IViewActionDelegate {
         
         PreferenceManager manager = new PreferenceManager();
         manager.addToRoot(targetNode);
-        final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+        final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
         final boolean [] result = new boolean[] { false };
-        BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+        BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
             public void run() {
                 dialog.create();
                 dialog.setMessage(targetNode.getLabelText());

@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
@@ -108,7 +107,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             fTextViewer.getDocument().set(valueString);
             fTextViewer.setSelectedRange(0, valueString.length());
         } catch (DebugException e) {
-            DebugUIPlugin.log(e);
+            JDIDebugUIPlugin.log(e);
         }
         fTextViewer.getControl().setFocus();
         fWrapText= new Button(parent, SWT.CHECK);
