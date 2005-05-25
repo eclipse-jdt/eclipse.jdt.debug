@@ -1,8 +1,9 @@
-#Wed Jul 28 10:33:19 CDT 2004
-org.eclipse.jdt.core.compiler.problem.unnecessaryTypeCheck=ignore
-org.eclipse.jdt.core.compiler.problem.emptyStatement=ignore
-org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
+#Wed May 25 09:46:05 CDT 2005
 eclipse.preferences.version=1
+org.eclipse.jdt.core.compiler.problem.discouragedReference=ignore
+org.eclipse.jdt.core.compiler.problem.emptyStatement=ignore
 org.eclipse.jdt.core.compiler.problem.indirectStaticAccess=ignore
+org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
+org.eclipse.jdt.core.compiler.problem.unnecessaryTypeCheck=ignore
 org.eclipse.jdt.core.compiler.problem.unusedLocal=ignore
 org.eclipse.jdt.core.compiler.problem.unusedPrivateMember=ignore

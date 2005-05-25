@@ -6,7 +6,7 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.jdt.internal.launching.LaunchingPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.jdt.internal.launching,
+Export-Package: org.eclipse.jdt.internal.launching;x-internal:=true,
  org.eclipse.jdt.launching,
  org.eclipse.jdt.launching.sourcelookup,
  org.eclipse.jdt.launching.sourcelookup.containers
