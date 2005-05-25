@@ -253,19 +253,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
                             }
                             return;
                         } catch (CoreException e) {
-                            reportError(getExceptionMessage(e));
-                        } finally {
-                            evaluationCleanup();
+                            throw new InvocationTargetException(e, getExceptionMessage(e));
                         }
-                    } else {
-                        reportError(ActionMessages.Evaluate_error_message_src_context); //$NON-NLS-1$
                     }
-                } else {
-                    // thread not suspended
-                    reportError(ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); //$NON-NLS-1$
+                    throw new InvocationTargetException(null, ActionMessages.Evaluate_error_message_src_context); //$NON-NLS-1$
                 }
-                evaluationCleanup();
-                return;                
+                // thread not suspended
+                throw new InvocationTargetException(null, ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); //$NON-NLS-1$
             }
         };
         
@@ -273,7 +267,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
         try {
             workbench.getProgressService().busyCursorWhile(runnable);
         } catch (InvocationTargetException e) {
-            JDIDebugUIPlugin.log(e);
+        	evaluationCleanup();
+            reportError(e.getMessage());
         } catch (InterruptedException e) {
         }
 	}
@@ -501,7 +496,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		reportError(message);
 	}
 	
-	protected void reportError(final String message) {
+	protected void reportError(String message) {
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
@@ -510,12 +505,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); //$NON-NLS-1$
 			}
 		} else {
-            JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                public void run() {
-                    Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
-                    ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); //$NON-NLS-1$   
-                } 
-            });
+			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
+			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); //$NON-NLS-1$
 		}
 	}
 	
