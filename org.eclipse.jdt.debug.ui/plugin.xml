@@ -2623,6 +2623,21 @@ M4 = Platform-specific fourth key
     <keyword
           id="org.eclipse.jdt.debug.ui.stepFilters"
           label="%preferenceKeywords.stepFilters"/>
+ </extension>
+ <extension
+       point="org.eclipse.ui.preferenceTransfer">
+    <transfer
+          icon="icons/full/obj16/library_obj.gif"
+          id="org.eclipse.jdt.debug.ui.transfer.jres"
+          name="%preference.transfer.jres">
+       <mapping scope="instance">
+          <entry node="org.eclipse.jdt.launching">
+             <key name="org.eclipse.jdt.launching.PREF_VM_XML"/>
+          </entry>
+       </mapping>
+       <description>%preference.transfer.jres.description
+       </description>
+    </transfer>
  </extension>	
     
 </plugin>
