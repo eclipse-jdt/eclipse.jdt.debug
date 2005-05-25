@@ -27,7 +27,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -270,11 +269,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
             }
         };
         
-        IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
+        IWorkbench workbench = JDIDebugUIPlugin.getDefault().getWorkbench();
         try {
             workbench.getProgressService().busyCursorWhile(runnable);
         } catch (InvocationTargetException e) {
-            DebugUIPlugin.log(e);
+            JDIDebugUIPlugin.log(e);
         } catch (InterruptedException e) {
         }
 	}
