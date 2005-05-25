@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -77,33 +78,41 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			DebugEvent debugEvent= events[i];
 			Object eventSource= debugEvent.getSource();
 			int eventKind= debugEvent.getKind();
-			if (eventSource instanceof IJavaThread) {
-				switch (eventKind) {
-					case DebugEvent.SUSPEND:
-					case DebugEvent.RESUME:
-						// refresh on suspend/resume
-						if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-							handleSuspendResume();
+			IJavaThread javaThread = null;
+			if (eventSource instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable)eventSource;
+				javaThread = (IJavaThread) adaptable.getAdapter(IJavaThread.class);
+				if (javaThread != null) {
+					switch (eventKind) {
+						case DebugEvent.SUSPEND:
+						case DebugEvent.RESUME:
+							// refresh on suspend/resume
+							if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+								handleSuspendResume();
+							}
+							break;
+						case DebugEvent.TERMINATE:
+							// clean the thread map when a thread terminates
+							handleThreadTerminate(javaThread);
+							break;
+					}
+				} else {
+					IJavaDebugTarget target = (IJavaDebugTarget) adaptable.getAdapter(IJavaDebugTarget.class);
+					if (target != null) {
+						switch (eventKind) {
+							case DebugEvent.SUSPEND:
+							case DebugEvent.RESUME:
+								// refresh on suspend/resume
+								if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+									handleSuspendResume();
+								}
+								break;
+							case DebugEvent.TERMINATE:
+								// clean the maps when a target terminates
+								handleDebugTargetTerminate(target);
+								break;
 						}
-						break;
-					case DebugEvent.TERMINATE:
-						// clean the thread map when a thread terminates
-						handleThreadTerminate((IJavaThread)eventSource);
-						break;
-				}
-			} else if (eventSource instanceof IJavaDebugTarget) {
-				switch (eventKind) {
-					case DebugEvent.SUSPEND:
-					case DebugEvent.RESUME:
-						// refresh on suspend/resume
-						if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-							handleSuspendResume();
-						}
-						break;
-					case DebugEvent.TERMINATE:
-						// clean the maps when a target terminates
-						handleDebugTargetTerminate((IJavaDebugTarget) eventSource);
-						break;
+					}
 				}
 			}
 		}
