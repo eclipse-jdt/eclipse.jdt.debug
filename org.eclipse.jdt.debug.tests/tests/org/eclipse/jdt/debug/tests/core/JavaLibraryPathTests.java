@@ -124,7 +124,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		assertTrue(delegate instanceof JavaLaunchDelegate);
 		JavaLaunchDelegate launcher = (JavaLaunchDelegate) delegate;
 		String arguments = launcher.getVMArguments(workingCopy);
-		String expect = "-Djava.library.path=" + path.toFile().getAbsolutePath();
+		String expect = "-Djava.library.path=\"" + path.toFile().getAbsolutePath() + "\"";
 		assertTrue("wrong VM args", arguments.indexOf(expect) >= 0);
 	}	
 	
@@ -146,7 +146,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		assertTrue(delegate instanceof JavaLaunchDelegate);
 		JavaLaunchDelegate launcher = (JavaLaunchDelegate) delegate;
 		String arguments = launcher.getVMArguments(workingCopy);
-		String expect = "-Djava.library.path=" + path.toFile().getAbsolutePath() + File.pathSeparator + path2.toFile().getAbsolutePath();
+		String expect = "-Djava.library.path=\"" + path.toFile().getAbsolutePath() + File.pathSeparator + path2.toFile().getAbsolutePath() + "\"";
 		assertTrue("wrong VM args", arguments.indexOf(expect) >= 0);
 	}		
 

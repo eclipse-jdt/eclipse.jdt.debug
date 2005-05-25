@@ -527,8 +527,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 					}
 					path.append(javaLibraryPath[i]);
 				}
-				args = path.toString();
 				path.append("\""); //$NON-NLS-1$
+				args = path.toString();
 			}
 		}
 		return args;
