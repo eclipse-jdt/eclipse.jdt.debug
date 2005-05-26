@@ -183,10 +183,12 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             // remove the method name
             start = qualifier.lastIndexOf('.');
 
-            // remove the class name
-            start = new String((String) qualifier.subSequence(0, start)).lastIndexOf('.');
-            if (start == -1) {
-                start = 0; // default package
+            if (start >= 0) {
+	            // remove the class name
+	            start = new String((String) qualifier.subSequence(0, start)).lastIndexOf('.');
+	            if (start == -1) {
+	                start = 0; // default package
+	            }
             }
 
             if (start >= 0) {
