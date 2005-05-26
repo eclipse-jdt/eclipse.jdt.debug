@@ -211,7 +211,11 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		String linkText = getLinkText();
 		int index = linkText.lastIndexOf(':');
 		if (index >= 0) {
-			String numText = linkText.substring(index + 1, linkText.length() - 1);
+			String numText = linkText.substring(index + 1);
+			index = numText.indexOf(')');
+			if (index >= 0) {
+				numText = numText.substring(0, index);
+			}
 			try {
 				return Integer.parseInt(numText);
 			} catch (NumberFormatException e) {
