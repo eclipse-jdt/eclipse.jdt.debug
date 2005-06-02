@@ -99,7 +99,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
         final IJavaStackFrame javaStackFrame = (IJavaStackFrame) frame.getAdapter(IJavaStackFrame.class);
         try {
             IJavaClassType declaringType = javaStackFrame.getDeclaringType();
-            final IJavaDebugTarget target = ((IJavaDebugTarget)frame.getDebugTarget());
+            final IJavaDebugTarget target = (IJavaDebugTarget) javaStackFrame.getDebugTarget();
             String currentStratum = target.getDefaultStratum();
             String[] strata = declaringType.getAvailableStrata();
             for (int i = 0; i < strata.length; i++) {
