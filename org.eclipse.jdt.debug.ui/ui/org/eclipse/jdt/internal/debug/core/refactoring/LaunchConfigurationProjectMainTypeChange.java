@@ -401,6 +401,9 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		} else {
 			oldProjectName= null;
 		}
+		if (fNewLaunchConfiguration != null) {
+			fNewLaunchConfiguration.rename(fNewLaunchConfigurationName);
+		}
 
 		fNewLaunchConfiguration.doSave();
 
