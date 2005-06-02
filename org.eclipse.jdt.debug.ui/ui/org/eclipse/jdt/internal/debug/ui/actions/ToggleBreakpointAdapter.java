@@ -708,7 +708,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             if (document != null) {
                 try {
                     IRegion region = document.getLineInformationOfOffset(offset);
-                    int end = offset + region.getLength();
+                    int end = region.getOffset() + region.getLength();
                     while (Character.isWhitespace(document.getChar(offset)) && offset < end) {
                         offset++;
                     }
