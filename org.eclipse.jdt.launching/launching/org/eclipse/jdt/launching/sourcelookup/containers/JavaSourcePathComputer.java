@@ -41,13 +41,15 @@ public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 	public static final String ID = "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer#getId()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer#getId()
+     * @since 3.1 No longer used.
 	 */
 	public String getId() {
 		return ID;
 	}
+    
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
