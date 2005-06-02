@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -65,8 +65,8 @@ public class BinaryBasedSourceGenerator {
 	/**
 	 * Build source for a class type (static context)
 	 */
-	public void buildSourceStatic(JDIClassType type) {
-		Type underlyingType= type.getUnderlyingType();
+	public void buildSourceStatic(IJavaReferenceType type) {
+		Type underlyingType= ((JDIReferenceType)type).getUnderlyingType();
 		if (!(underlyingType instanceof ReferenceType)) {
 			return;
 		}

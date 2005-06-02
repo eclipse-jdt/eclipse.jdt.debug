@@ -13,9 +13,9 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
  
@@ -25,7 +25,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
  * The evaluation may be in the context of a method, in which case
  * there could be local variables.
  * <p>
- * Clients are intended to implement this interface.
+ * Clients are not intended to implement this interface.
  */
 
 public interface IRuntimeContext {
@@ -55,7 +55,7 @@ public interface IRuntimeContext {
 	/**
 	 * Returns the receiving type context in which to perform 
 	 * the evaluation. The type of 'this', or in the case of a 
-	 * static context, the class in which the evaluation is being
+	 * static context, the class or interface in which the evaluation is being
 	 * performed.
 	 * 
 	 * @return receiving class
@@ -64,7 +64,7 @@ public interface IRuntimeContext {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
 	 */
-	IJavaClassType getReceivingType() throws CoreException;
+	IJavaReferenceType getReceivingType() throws CoreException;
 	
 	/**
 	 * Returns the local variables visible for the evaluation.

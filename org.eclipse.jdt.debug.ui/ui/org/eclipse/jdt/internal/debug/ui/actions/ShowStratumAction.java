@@ -14,8 +14,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -98,7 +98,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
         IStackFrame frame = (IStackFrame) fSelection.getFirstElement();
         final IJavaStackFrame javaStackFrame = (IJavaStackFrame) frame.getAdapter(IJavaStackFrame.class);
         try {
-            IJavaClassType declaringType = javaStackFrame.getDeclaringType();
+            IJavaReferenceType declaringType = javaStackFrame.getReferenceType();
             final IJavaDebugTarget target = (IJavaDebugTarget) javaStackFrame.getDebugTarget();
             String currentStratum = target.getDefaultStratum();
             String[] strata = declaringType.getAvailableStrata();

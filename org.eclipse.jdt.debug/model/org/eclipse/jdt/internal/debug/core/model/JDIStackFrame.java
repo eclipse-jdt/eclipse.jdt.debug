@@ -30,12 +30,14 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.LocalVariable;
@@ -1068,12 +1070,29 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		Method method = getUnderlyingMethod();
 		try {
 			Type type = method.declaringType();
-			return (IJavaClassType)JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
+			if (type instanceof ClassType) {
+				return (IJavaClassType)JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
+			}
+			targetRequestFailed(JDIDebugModelMessages.JDIStackFrame_0, null);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_exception_retreiving_declaring_type, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getReferenceType()
+	 */
+	public IJavaReferenceType getReferenceType() throws DebugException {
+		Method method = getUnderlyingMethod();
+		try {
+			Type type = method.declaringType();
+			return (IJavaReferenceType)JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_exception_retreiving_declaring_type, new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		return null;
+	}	
 
 	/**
 	 * Expression level stepping not supported.

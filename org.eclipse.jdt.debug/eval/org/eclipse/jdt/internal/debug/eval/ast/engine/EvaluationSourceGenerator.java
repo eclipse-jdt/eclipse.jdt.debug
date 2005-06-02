@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
@@ -188,9 +187,9 @@ public class EvaluationSourceGenerator {
 		return objectToEvaluationSourceMapper;
 	}
 	
-	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) {
+	private BinaryBasedSourceGenerator getStaticSourceMapper(IJavaReferenceType refType, boolean isInStaticMethod) {
 		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
-		objectToEvaluationSourceMapper.buildSourceStatic(classType);
+		objectToEvaluationSourceMapper.buildSourceStatic(refType);
 		return objectToEvaluationSourceMapper;
 	}
 			
@@ -200,7 +199,7 @@ public class EvaluationSourceGenerator {
 				String baseSource= getSourceFromFrame(frame);
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource, frame.getDeclaringType().getName(), frame.getLineNumber(), frame.isStatic(), javaProject);
+					createEvaluationSourceFromSource(baseSource, frame.getReferenceType().getName(), frame.getLineNumber(), frame.isStatic(), javaProject);
 				} 
 				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
@@ -210,7 +209,7 @@ public class EvaluationSourceGenerator {
 						mapper= getInstanceSourceMapper((JDIReferenceType)object.getJavaType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
 					} else {
 						// Static context
-						mapper= getStaticSourceMapper((JDIClassType)frame.getDeclaringType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
+						mapper= getStaticSourceMapper(frame.getReferenceType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
 					}
 					createEvaluationSourceFromJDIObject(mapper);
 				}

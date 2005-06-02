@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.DebugUIMessages;
@@ -192,7 +192,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 			}
 			try {
 				IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
-				IJavaClassType type = frame.getDeclaringType();
+				IJavaReferenceType type = frame.getReferenceType();
 				Object cachedSource = getSourceElement(type);
 				if (cachedSource != null) {
 					return cachedSource;
@@ -221,14 +221,14 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		return fSourceLocator.getSourceElement(stackFrame);
 	}
 	
-	private Object getSourceElement(IJavaClassType type) {
+	private Object getSourceElement(IJavaReferenceType type) {
 		if (fTypesToSource == null) {
 			return null; 
 		}
 		return fTypesToSource.get(type);
 	}
 	
-	private void cacheSourceElement(Object sourceElement, IJavaClassType type) {
+	private void cacheSourceElement(Object sourceElement, IJavaReferenceType type) {
 		if (fTypesToSource == null) {
 			fTypesToSource = new HashMap();
 		}

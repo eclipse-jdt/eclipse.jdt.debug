@@ -29,7 +29,7 @@ public class JavaDebugPropertyTester extends PropertyTester {
                 IJavaStackFrame frame = (IJavaStackFrame) ((IStackFrame)receiver).getAdapter(IJavaStackFrame.class);
                 if (frame != null) {
                     try {
-                        return frame.getDeclaringType().getAvailableStrata().length > 1;
+                        return frame.getReferenceType().getAvailableStrata().length > 1;
                     } catch (DebugException e) {
                     }
                 }

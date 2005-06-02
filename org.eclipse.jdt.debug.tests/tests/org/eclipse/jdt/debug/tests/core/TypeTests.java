@@ -54,7 +54,7 @@ public class TypeTests extends AbstractDebugTest {
 				ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 				int lineNumber = breakpoint.getLineNumber();
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-				types[index] = frame.getDeclaringType();
+				types[index] = frame.getReferenceType();
 				
 				if (index == 1) {
 					assertEquals("First two types should be the same", types[0], types[1]);
@@ -100,7 +100,7 @@ public class TypeTests extends AbstractDebugTest {
                 ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
                 int lineNumber = breakpoint.getLineNumber();
                 IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-                loaders[index] = frame.getDeclaringType().getClassLoaderObject();
+                loaders[index] = frame.getReferenceType().getClassLoaderObject();
                 assertNotNull("class loader cannot be null", loaders[index]);
                 
                 if (index == 1) {

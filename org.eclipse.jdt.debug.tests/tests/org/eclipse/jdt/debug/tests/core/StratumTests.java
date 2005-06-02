@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -38,7 +38,7 @@ public class StratumTests extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			IJavaClassType type = ((IJavaStackFrame)thread.getTopStackFrame()).getDeclaringType();
+			IJavaReferenceType type = ((IJavaStackFrame)thread.getTopStackFrame()).getReferenceType();
 			String[] strata = type.getAvailableStrata();
 			assertEquals("Wrong number of available strata", 1, strata.length);
 			assertEquals("Wrong strata", "Java", strata[0]);
@@ -61,7 +61,7 @@ public class StratumTests extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			IJavaClassType type = ((IJavaStackFrame)thread.getTopStackFrame()).getDeclaringType();
+			IJavaReferenceType type = ((IJavaStackFrame)thread.getTopStackFrame()).getReferenceType();
 			String stratum = type.getDefaultStratum();
 			assertEquals("Wrong strata", "Java", stratum);
 		} finally {

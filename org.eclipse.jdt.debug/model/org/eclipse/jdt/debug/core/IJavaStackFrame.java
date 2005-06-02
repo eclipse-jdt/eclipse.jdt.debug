@@ -370,6 +370,29 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	public IJavaObject getThis() throws DebugException;
 	
 	/**
+	 * Returns the class in which this stack frame's method is
+	 * declared.
+	 * 
+	 * @return the class in which this stack frame's method is
+	 *   declared
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 * @since 2.0
+	 * @deprecated Use <code>getReferenceType()</code> instead, as a method is not
+	 * 	restricted to occurr in a class. An interface may contain a synthetic
+	 * 	class initializer methods. Since 3.1, this method throws a 
+	 * 	<code>DebugException</code> when a stack frame's method is contained
+	 *  in an interface.
+	 */
+	public IJavaClassType getDeclaringType() throws DebugException;	
+	
+	/**
 	 * Returns the type in which this stack frame's method is
 	 * declared.
 	 * 
@@ -383,9 +406,9 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
-	 * @since 2.0
+	 * @since 3.1
 	 */
-	public IJavaClassType getDeclaringType() throws DebugException;	
+	public IJavaReferenceType getReferenceType() throws DebugException;		
 	
 	/**
 	 * Returns whether local variable information was available

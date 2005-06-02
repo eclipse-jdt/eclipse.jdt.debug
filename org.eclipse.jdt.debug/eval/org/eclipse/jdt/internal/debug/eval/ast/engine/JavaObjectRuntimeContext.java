@@ -13,9 +13,9 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
@@ -66,8 +66,8 @@ public class JavaObjectRuntimeContext implements IRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getReceivingType()
 	 */
-	public IJavaClassType getReceivingType() throws CoreException {
-		return (IJavaClassType)getThis().getJavaType();
+	public IJavaReferenceType getReceivingType() throws CoreException {
+		return (IJavaReferenceType)getThis().getJavaType();
 	}
 
 	/**
