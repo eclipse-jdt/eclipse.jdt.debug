@@ -268,7 +268,17 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
             workbench.getProgressService().busyCursorWhile(runnable);
         } catch (InvocationTargetException e) {
         	evaluationCleanup();
-            reportError(e.getMessage());
+        	String message = e.getMessage();
+        	if (message == null) {
+        		message = e.getClass().getName();
+        		if (e.getCause() != null) {
+        			message = e.getCause().getClass().getName();
+        			if (e.getCause().getMessage() != null) {
+        				message = e.getCause().getMessage();
+        			}
+        		}
+        	}
+            reportError(message);
         } catch (InterruptedException e) {
         }
 	}
