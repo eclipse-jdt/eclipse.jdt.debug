@@ -86,16 +86,18 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	protected void initializeFromSelection() {
 		if (getControl() != null) {
 			String typeId = null;
-			String name = null;		
-			if (fSelection != null) {
-				IPath path = fSelection.getPath();
-				if (path.segmentCount() > 1) {
-					typeId = path.segment(1);
-					name = path.segment(2);
-				} else {
-					fJREBlock.setUseDefaultJRE();
-					return;
-				}
+			String name = null;	
+			if (fSelection == null) {
+				fJREBlock.setUseDefaultJRE();
+				return;
+			}
+			IPath path = fSelection.getPath();
+			if (path.segmentCount() > 1) {
+				typeId = path.segment(1);
+				name = path.segment(2);
+			} else {
+				fJREBlock.setUseDefaultJRE();
+				return;
 			}
 			IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 			for (int i = 0; i < types.length; i++) {
@@ -111,7 +113,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 					}
 				}
 			}
-			fJREBlock.setJRE(null);
+			fJREBlock.setUseDefaultJRE();
 		}
 	}
 	
