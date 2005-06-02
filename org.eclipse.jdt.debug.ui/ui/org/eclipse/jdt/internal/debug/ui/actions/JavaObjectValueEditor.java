@@ -186,21 +186,17 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     			}
     			if (result.hasErrors()) {
     			    DebugException exception = result.getException();
-    			    if (exception != null) {
-    			        String message = getExceptionMessage(exception);
-    			        IStatus status= DebugUIPlugin.newErrorStatus(message, null);
-    			        reportProblem(shell, status);
-    			        return null;
+    			    StringBuffer buffer = new StringBuffer();
+    			    if (exception == null) {
+        			    String[] messages = result.getErrorMessages();
+        			    for (int i = 0; i < messages.length; i++) {
+                            buffer.append(messages[i]).append("\n "); //$NON-NLS-1$
+                        }    			    	
+    			    } else {
+    			    	buffer.append(EvaluateAction.getExceptionMessage(exception));
     			    }
-    			    String[] messages = result.getErrorMessages();
-    			    StringBuffer buffer= new StringBuffer();
-    			    for (int i = 0; i < messages.length; i++) {
-                        buffer.append(messages[i]).append("\n "); //$NON-NLS-1$
-                    }
     			    IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, buffer.toString(), null);
     			    throw new DebugException(status);
-    			    //DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_4,	ActionMessages.JavaObjectValueEditor_5, status); //$NON-NLS-1$ //$NON-NLS-2$
-    			    //return null;
     			}
     			return result.getValue();
             }

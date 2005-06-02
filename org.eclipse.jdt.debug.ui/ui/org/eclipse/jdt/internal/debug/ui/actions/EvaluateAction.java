@@ -532,7 +532,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		return result.toString();
 	}
 	
-	protected String getExceptionMessage(Throwable exception) {
+	public static String getExceptionMessage(Throwable exception) {
 		if (exception instanceof CoreException) {
 			CoreException ce = (CoreException)exception;
 			Throwable throwable= ce.getStatus().getException();
@@ -554,7 +554,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * Returns a message for the exception wrapped in an invocation exception
 	 */
-	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
+	protected static String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
 			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
