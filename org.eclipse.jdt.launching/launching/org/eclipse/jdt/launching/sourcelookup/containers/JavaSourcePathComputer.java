@@ -42,7 +42,8 @@ public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer#getId()
-     * @since 3.1 No longer used.
+	 * 
+     * No longer used.
 	 */
 	public String getId() {
 		return ID;
