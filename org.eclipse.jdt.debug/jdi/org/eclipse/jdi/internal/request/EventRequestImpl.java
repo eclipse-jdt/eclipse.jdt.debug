@@ -402,13 +402,11 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
    	/**
 	 * Restricts reported step events to those which satisfy depth and size constraints.
 	 */
-	 public void addStepFilter(ThreadReferenceImpl thread, int size, int depth) throws VMMismatchException, ObjectCollectedException {
+	 public void addStepFilter(ThreadReferenceImpl thread, int size, int depth) throws VMMismatchException {
 	 	checkDisabled();
 		// Used in createStepRequest.
 	 	checkVM(thread);
-		if (thread.isCollected())
-			throw new ObjectCollectedException();
-			
+	 	
 		if (fThreadStepFilters == null)
 			fThreadStepFilters = new ArrayList();
 			
