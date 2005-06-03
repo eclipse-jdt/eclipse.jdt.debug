@@ -12,6 +12,18 @@
  	<type name="JavaUISourceLocator" subclass="false" />
  </package>
  
+ <package name="org.eclipse.jdt.debug.ui.launchConfigurations">
+ 	<type name="AppletArgumentsTab" subclass="false" instantiate="true"/>
+ 	<type name="AppletMainTab" subclass="false" instantiate="true"/>
+ 	<type name="AppletParametersTab" subclass="false" instantiate="true"/>
+ 	<type name="JavaArgumentsTab" subclass="false" instantiate="true"/>
+ 	<type name="JavaClasspathTab" subclass="false" instantiate="true"/>
+ 	<type name="JavaConnectTab" subclass="false" instantiate="true"/>
+ 	<type name="JavaJRETab" subclass="false" instantiate="true"/>
+ 	<type name="JavaMainTab" subclass="false" instantiate="true"/>
+ 	<type name="JavaSourceLookupTab" subclass="false" instantiate="true"/>
+ </package>
+ 
  <component-depends unrestricted="true"/>
 
 </component>
