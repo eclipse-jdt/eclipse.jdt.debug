@@ -331,24 +331,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			String genericSignature= underlyingMethod.genericSignature();
 			if (genericSignature == null) {
 				// no generic signature
-				List argumentTypeNames= underlyingMethod.argumentTypeNames();
-				if (underlyingMethod.isVarArgs()) {
-					String argumentTypeName= (String)argumentTypeNames.remove(argumentTypeNames.size() - 1);
-					argumentTypeNames.add(argumentTypeName.substring(0, argumentTypeName.length() - 2) + "..."); //$NON-NLS-1$
-				}
-				return argumentTypeNames;
+				return underlyingMethod.argumentTypeNames();
 			}
 			// generic signature
 			String[] parameterTypes= Signature.getParameterTypes(genericSignature);
 			List argumentTypeNames= new ArrayList();
-			for (int i= 0; i < parameterTypes.length - 1; i++) {
+			for (int i= 0; i < parameterTypes.length; i++) {
 				argumentTypeNames.add(Signature.toString(parameterTypes[i]).replace('/', '.'));
-			}
-			if (underlyingMethod.isVarArgs()) {
-				String parameterTypeName= Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.');
-				argumentTypeNames.add(parameterTypeName.substring(0, parameterTypeName.length() - 2) + "..."); //$NON-NLS-1$
-			} else if (parameterTypes.length > 0) {
-				argumentTypeNames.add(Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.'));
 			}
 			return argumentTypeNames;
 		} catch (RuntimeException e) {

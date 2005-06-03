@@ -1686,6 +1686,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 							label.append(getQualifiedName((String) iter.next()));
 							if (iter.hasNext()) {
 								label.append(", "); //$NON-NLS-1$
+							} else if (frame.isVarArgs()) {
+								label.replace(label.length() - 2, label.length(), "..."); //$NON-NLS-1$
 							}
 						}
 						label.append(')');
