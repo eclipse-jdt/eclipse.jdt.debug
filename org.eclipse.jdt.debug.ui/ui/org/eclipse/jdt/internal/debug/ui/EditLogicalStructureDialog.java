@@ -377,7 +377,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fSnippetViewer.setDocument(fSnippetDocument);
 		
 		Control control= fSnippetViewer.getControl();
-		GridData gd= new GridData(SWT.FILL, SWT.FILL, false, true);
+		GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint= convertHeightInCharsToPixels(isValue ? 20 : 10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
