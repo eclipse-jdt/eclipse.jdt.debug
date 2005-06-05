@@ -200,7 +200,11 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	public EditLogicalStructureDialog(Shell parentShell, JavaLogicalStructure logicalStructure) {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.MAX | SWT.RESIZE);
-		setTitle(DebugUIMessages.EditLogicalStructureDialog_31); //$NON-NLS-1$
+		if (logicalStructure.getQualifiedTypeName().length() == 0) {
+			setTitle(DebugUIMessages.EditLogicalStructureDialog_32);
+		} else {
+			setTitle(DebugUIMessages.EditLogicalStructureDialog_31); //$NON-NLS-1$
+		}
 		fLogicalStructure= logicalStructure;
 	}
 	
@@ -262,16 +266,17 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fDescriptionText.addListener(SWT.Modify, this);
 		
 		// isSubtype button
-		fSubTypeButton= new Button(container, SWT.CHECK);
+		fSubTypeButton= new Button(typeNameDescriptionContainer, SWT.CHECK);
 		fSubTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_3); //$NON-NLS-1$
 		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26); //$NON-NLS-1$
 		fSubTypeButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
 		// value/variable container
-		Composite radioContainer= new Composite(container, SWT.NONE);
-		gridLayout= new GridLayout(2, true);
+		Group radioContainer= new Group(container, SWT.NONE);
+		radioContainer.setText(DebugUIMessages.EditLogicalStructureDialog_33);
+		gridLayout= new GridLayout(1, true);
 		radioContainer.setLayout(gridLayout);
-		radioContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+		radioContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
 		// value button
 		fValueButton= new Button(radioContainer, SWT.RADIO);
@@ -287,6 +292,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		// attribute list container
 		fAttributesContainer= new Composite(container, SWT.NONE);
 		gridLayout= new GridLayout(2, false);
+		gridLayout.marginWidth = 0;
 		fAttributesContainer.setLayout(gridLayout);
 		fAttributesContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		
@@ -317,13 +323,14 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private void createCodeGroupWidgets(boolean isValue) {
         Font font= fCodeGroup.getFont();
 		if (isValue) {
-			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_6); //$NON-NLS-1$
+			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_9); //$NON-NLS-1$
 		} else {
 			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7); //$NON-NLS-1$
 		
 			// if it's a variable, create the attribute name text area
 			Composite attributeNameContainer= new Composite(fCodeGroup, SWT.NONE);
 			GridLayout gridLayout = new GridLayout(2, false);
+			gridLayout.marginWidth = 0;
 			attributeNameContainer.setLayout(gridLayout);
 			attributeNameContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 			
@@ -338,10 +345,12 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
             fAttributeNameText.setFont(font);
 		}
 
-		Label attributeValueLabel= new Label(fCodeGroup, SWT.NONE);
-		attributeValueLabel.setText(DebugUIMessages.EditLogicalStructureDialog_9); //$NON-NLS-1$
-		attributeValueLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, true, false));
-        attributeValueLabel.setFont(font);
+		if (!isValue) {
+			Label attributeValueLabel= new Label(fCodeGroup, SWT.NONE);
+			attributeValueLabel.setText(DebugUIMessages.EditLogicalStructureDialog_9); //$NON-NLS-1$
+			attributeValueLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, true, false));
+	        attributeValueLabel.setFont(font);
+		}
 		
 		// snippet viewer
 		fSnippetViewer= new JDISourceViewer(fCodeGroup,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );

@@ -251,7 +251,6 @@ public class DebugUIMessages extends NLS {
 	public static String EditLogicalStructureDialog_3;
 	public static String EditLogicalStructureDialog_4;
 	public static String EditLogicalStructureDialog_5;
-	public static String EditLogicalStructureDialog_6;
 	public static String EditLogicalStructureDialog_7;
 	public static String EditLogicalStructureDialog_8;
 	public static String EditLogicalStructureDialog_9;
@@ -286,4 +285,8 @@ public class DebugUIMessages extends NLS {
 	}
 
 	public static String JavaDebugPreferencePage_0;
+
+	public static String EditLogicalStructureDialog_32;
+
+	public static String EditLogicalStructureDialog_33;
 }
