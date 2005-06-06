@@ -245,6 +245,12 @@ public final class JavaRuntime {
 	private static ListenerList fgVMListeners = new ListenerList(5);
 	
 	/**
+	 * Cache of already resolved projects in container entries. Used to avoid
+	 * cycles in project dependencies when resolving classpath container entries.
+	 */
+	private static ThreadLocal fgProjects = new ThreadLocal();
+	
+	/**
 	 * This class contains only static methods, and is not intended
 	 * to be instantiated.
 	 */
@@ -1077,13 +1083,28 @@ public final class JavaRuntime {
 			if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 				IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
 				IJavaProject jp = JavaCore.create(p);
-				IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
-				IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
-				for (int j = 0; j < entries.length; j++) {
-					IRuntimeClasspathEntry e = entries[j];
-					if (!resolved.contains(e)) {
-						resolved.add(entries[j]);
+				List projects = (List) fgProjects.get();
+				if (projects == null) {
+					projects = new ArrayList();
+					fgProjects.set(projects);
+				}
+				if (!projects.contains(jp)) {
+					try {
+						projects.add(jp);
+						IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
+						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
+						for (int j = 0; j < entries.length; j++) {
+							IRuntimeClasspathEntry e = entries[j];
+							if (!resolved.contains(e)) {
+								resolved.add(entries[j]);
+							}
+						}
+					} finally {
+						projects.remove(jp);
 					}
+				}
+				if (projects.isEmpty()) {
+					fgProjects.set(null);
 				}
 			} else {
 				IRuntimeClasspathEntry e = newRuntimeClasspathEntry(cpe);
