@@ -11,6 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.ui.console.TextConsole;
 
 /**
@@ -27,6 +31,27 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 	 */
 	protected int getLineNumber() {
 		return -1;
+	}
+
+	protected String getTypeName() throws CoreException {
+		String linkText = getLinkText();
+		String typeName;
+    	int index = linkText.indexOf('(');
+		if (index >= 0) {
+			typeName = linkText.substring(0, index);
+			// remove the method name
+			index = typeName.lastIndexOf('.');
+			int innerClassIndex = typeName.lastIndexOf('$', index);
+			if (innerClassIndex != -1)
+				index = innerClassIndex;
+			if (index >= 0) {
+				typeName = typeName.substring(0, index);
+			}
+			return typeName;
+		}
+		
+        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); //$NON-NLS-1$
+        throw new CoreException(status);
 	}
 
 }
