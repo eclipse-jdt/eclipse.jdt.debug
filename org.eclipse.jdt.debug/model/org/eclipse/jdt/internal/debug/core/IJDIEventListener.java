@@ -39,5 +39,17 @@ public interface IJDIEventListener {
 	 * @return whether the thread in which the event occurred should be resumed
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target);
+	
+	/**
+	 * Notifies this event handler that event that a vote to resume took place,
+	 * and that this handler voted to suspend and won that vote.
+	 * <p>
+	 * This is a fix for bug 78764.
+	 * </p>
+	 * @param event the event that was handled
+	 * @param target the target in which the event occurred
+	 * @since 3.1
+	 */
+	public void wonSuspendVote(Event event, JDIDebugTarget target);
 }
 

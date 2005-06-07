@@ -110,6 +110,9 @@ public class EventDispatcher implements Runnable {
 		EventIterator iter= eventSet.eventIterator();
 		boolean vote = false; 
 		boolean resume = true;
+		int voters = 0; 
+		Event winningEvent = null;
+		IJDIEventListener winner = null;
 		while (iter.hasNext()) {
 			if (isShutdown()) {
 				return;
@@ -135,6 +138,11 @@ public class EventDispatcher implements Runnable {
 				}
 				vote = true;
 				resume = listener.handleEvent(event, fTarget) && resume;
+				voters++;
+				if (!resume && winner == null) {
+					winner = listener;
+					winningEvent = event;
+				}
 				continue;
 			}
 			
@@ -177,6 +185,11 @@ public class EventDispatcher implements Runnable {
 		}
 		// clear any deferred events (processed or not)
 		getDeferredEvents().clear();
+		
+		// let the winner know they won
+		if (winner != null && voters > 1) {
+			winner.wonSuspendVote(winningEvent, fTarget);
+		}
 		
 		fireEvents();
 		

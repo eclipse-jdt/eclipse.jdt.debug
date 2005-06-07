@@ -991,6 +991,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 	
+	public void wonSuspendVote(JavaBreakpoint breakpoint) {
+		setSuspendedQuiet(false);
+		try {
+			setRunning(false);
+			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+				((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, false);
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}		
+	}
+	
 	/**
 	 * Updates the state of this thread to suspend for
 	 * the given breakpoint  but does not fire notification
@@ -1882,6 +1894,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 		
+		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+		 */
+		public void wonSuspendVote(Event event, JDIDebugTarget target) {
+			// do nothing
+		}
+
 		/**
 		 * Returns <code>true</code> if the StepEvent's Location is a Method that the 
 		 * user has indicated (via the step filter preferences) should be 

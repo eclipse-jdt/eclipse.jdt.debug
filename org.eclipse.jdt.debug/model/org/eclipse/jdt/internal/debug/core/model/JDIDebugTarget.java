@@ -1746,6 +1746,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 			return !jdiThread.isSuspended();
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+		 */
+		public void wonSuspendVote(Event event, JDIDebugTarget target) {
+			// do nothing
+		}
 		
 		/**
 		 * Deregisters this event listener.
@@ -1816,6 +1823,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 			return true;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+		 */
+		public void wonSuspendVote(Event event, JDIDebugTarget target) {
+			// do nothing
+		}
+	
 	}
 	
 	class CleanUpJob extends Job {
