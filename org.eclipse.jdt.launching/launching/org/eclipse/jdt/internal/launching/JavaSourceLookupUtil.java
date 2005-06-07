@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -74,8 +75,14 @@ public class JavaSourceLookupUtil {
 				case IRuntimeClasspathEntry.PROJECT:
 					IResource resource = entry.getResource();
 					if (resource != null && resource.getType() == IResource.PROJECT) {
-						ISourceContainer container = new JavaProjectSourceContainer(JavaCore.create((IProject)resource));
-						if (!containers.contains(container)) {
+						IJavaProject javaProject = JavaCore.create((IProject)resource);
+						ISourceContainer container = null;
+						if (javaProject.exists()) {
+							container = new JavaProjectSourceContainer(javaProject);
+						} else if (resource.exists()) {
+							container = new ProjectSourceContainer((IProject)resource, false);
+						}
+						if (container != null && !containers.contains(container)) {
 							containers.add(container);
 						}
 					}
