@@ -114,4 +114,11 @@ public class FolderSourceContainerTests extends AbstractDebugTest {
 			assertEquals("Wrong file", getFolder(container).getFile(new Path("org/eclipse/debug/tests/targets/InfiniteLoop.java")), objects[0]);
 		}
 	}	
+	
+	public void testRelativePathName() throws Exception {
+		FolderSourceContainer container = getContainer(false, false);
+		Object[] objects = container.findSourceElements("..\\.classpath");
+		assertEquals("Expected a hit", 1, objects.length);
+		assertEquals("Wrong file", getJavaProject().getProject().getFile(new Path(".classpath")), objects[0]);
+	}
 }
