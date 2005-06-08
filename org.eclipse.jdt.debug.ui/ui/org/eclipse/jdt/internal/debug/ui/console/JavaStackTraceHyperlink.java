@@ -252,10 +252,10 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	        IRegion lineInformation = document.getLineInformation(lineNumber);
             int lineOffset = lineInformation.getOffset();
 	        String line = document.get(lineOffset, lineInformation.getLength());
-            int paren = line.lastIndexOf("("); //$NON-NLS-1$
-            String upToParen = line.substring(0, paren);
-            int index = upToParen.lastIndexOf(' ');
-            return line.substring(index+1);            
+            int linkMiddle = line.indexOf(".java:"); //$NON-NLS-1$
+            int linkStart = line.lastIndexOf(' ', linkMiddle);
+            int linkEnd = line.indexOf(')', linkMiddle);
+            return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
 		} catch (BadLocationException e) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); //$NON-NLS-1$
 			throw new CoreException(status);
