@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -73,64 +74,59 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 				return new ICompletionProposal[0];
 			}
 			Object element= viewerSelection.getFirstElement();	
-			IJavaProject project= getJavaProject(stackFrame);
-			if (project != null) {
-				try {
-	                setErrorMessage(null);
-					ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
-					IType receivingType= getReceivingType(project, element);
-						
-					if (receivingType == null) {
-	                    setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); //$NON-NLS-1$
-						return new ICompletionProposal[0];
-					}
-			
-					configureResultCollector(project, textSelection);	
-					int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
-					receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
-						 new char[0][], new char[0][],
-						 new int[0], false, getCollector());
-						 
-					 //Order here and not in result collector to make sure that the order
-					 //applies to all proposals and not just those of the compilation unit. 
-					return order(getCollector().getJavaCompletionProposals());	
-				} catch (JavaModelException x) {
-					handle(viewer, x);
-				} catch (DebugException de) {
-					handle(viewer, de);
+			try {
+                setErrorMessage(null);
+				ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
+				IType receivingType= getReceivingType(stackFrame.getLaunch(), element);
+				if (receivingType == null) {
+                    setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); //$NON-NLS-1$
+					return new ICompletionProposal[0];
 				}
-			} else {
-	            setErrorMessage(DisplayMessages.DetailsCompletionProcessor_3); //$NON-NLS-1$
-	        }
-			return null;
+				IJavaProject project = receivingType.getJavaProject(); 
+		
+				configureResultCollector(project, textSelection);	
+				int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
+				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
+					 new char[0][], new char[0][],
+					 new int[0], false, getCollector());
+					 
+				 //Order here and not in result collector to make sure that the order
+				 //applies to all proposals and not just those of the compilation unit. 
+				return order(getCollector().getJavaCompletionProposals());	
+			} catch (JavaModelException x) {
+				handle(viewer, x);
+			} catch (DebugException de) {
+				handle(viewer, de);
+			}
+			return new ICompletionProposal[0];
 		} finally {
 			releaseCollector();
 		}
 	}
 	
-	private IType getReceivingType(IJavaProject project, Object element) throws DebugException {
+	private IType getReceivingType(ILaunch launch, Object element) throws DebugException {
 		String originalTypeName= getReceivingTypeName(element);
 		if (originalTypeName == null) {
 			return null;
 		}
 		
-		String typeName= originalTypeName;
+		String sourceName= originalTypeName;
 		// strip off generic info
-		int genIndex = typeName.indexOf('<');
+		int genIndex = sourceName.indexOf('<');
 		if (genIndex >= 0) {
-			typeName = typeName.substring(0, genIndex);
+			sourceName = sourceName.substring(0, genIndex);
 		}
-		int dollarIndex= typeName.indexOf('$');
+		int dollarIndex= sourceName.indexOf('$');
 		if (dollarIndex >= 0) {
-			typeName= typeName.substring(0, dollarIndex);
+			sourceName= sourceName.substring(0, dollarIndex);
 		}
-		int index = typeName.lastIndexOf('.');
+		int index = sourceName.lastIndexOf('.');
 		if (index >= 0) {
-			typeName = typeName.replace('.', IPath.SEPARATOR);
+			sourceName = sourceName.replace('.', IPath.SEPARATOR);
 		} 
-		typeName+=".java"; //$NON-NLS-1$
+		sourceName+=".java"; //$NON-NLS-1$
 		
-		return getType(project, originalTypeName, typeName);
+		return resolveType(launch, originalTypeName, sourceName);
 	}
 
 	private String getReceivingTypeName(Object element) {

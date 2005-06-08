@@ -26,7 +26,6 @@ public class DisplayMessages extends NLS {
 	public static String DisplayView_Copy_description;
 	public static String DisplayCompletionProcessor_0;
 	public static String DisplayCompletionProcessor_1;
-	public static String DisplayCompletionProcessor_2;
 	public static String DisplayView_Copy_label;
 	public static String DisplayView_Copy_tooltip;
 	public static String DisplayView_Cut_description;
@@ -47,7 +46,6 @@ public class DisplayMessages extends NLS {
 	public static String DetailsCompletionProcessor_0;
 	public static String DetailsCompletionProcessor_1;
 	public static String DetailsCompletionProcessor_2;
-	public static String DetailsCompletionProcessor_3;
 
 	static {
 		// load message values from bundle file

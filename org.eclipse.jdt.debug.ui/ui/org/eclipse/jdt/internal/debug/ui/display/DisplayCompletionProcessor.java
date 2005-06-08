@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -153,49 +154,46 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	protected ICompletionProposal[] computeCompletionProposals(IJavaStackFrame stackFrame, ITextViewer viewer, int documentOffset) {
         setErrorMessage(null);
 		try {
-			IJavaProject project= getJavaProject(stackFrame);
-			if (project != null) {
-				IType receivingType= getReceivingType(project, stackFrame);
-				
-				if (receivingType == null) {
-                    setErrorMessage(DisplayMessages.DisplayCompletionProcessor_1); //$NON-NLS-1$
-					return new ICompletionProposal[0];
-				}
-				IVariable[] variables= stackFrame.getLocalVariables();
-				char[][][] res= resolveLocalVariables(variables);
-				char[][] localVariableNames= res[0];
-				char[][] localVariableTypeNames= res[1];
-				
-				ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();
-				configureResultCollector(project, selection);	
-				
-				int[] localModifiers= new int[localVariableNames.length];
-				Arrays.fill(localModifiers, 0);
-				
-				int insertionPosition = computeInsertionPosition(receivingType, stackFrame);
-				
-				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
-					 localVariableTypeNames, localVariableNames,
-					 localModifiers, stackFrame.isStatic(), fCollector);
-				
-				IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
-				
-				if (fTemplateEngine != null) {
-					fTemplateEngine.reset();
-					fTemplateEngine.complete(viewer, documentOffset, null);
-					TemplateProposal[] templateResults= fTemplateEngine.getResults();
-
-					// concatenate arrays
-					IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
-					System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-					System.arraycopy(results, 0, total, templateResults.length, results.length);
-					results= total;					
-				}	 
-				 //Order here and not in result collector to make sure that the order
-				 //applies to all proposals and not just those of the compilation unit. 
-				return order(results);	
+			IType receivingType = resolveType(stackFrame.getLaunch(), stackFrame.getReceivingTypeName(), getReceivingSourcePath(stackFrame));
+			if (receivingType == null) {
+                setErrorMessage(DisplayMessages.DisplayCompletionProcessor_1); //$NON-NLS-1$
+				return new ICompletionProposal[0];
 			}
-            setErrorMessage(DisplayMessages.DisplayCompletionProcessor_2); //$NON-NLS-1$
+			IJavaProject project = receivingType.getJavaProject();
+				
+			IVariable[] variables= stackFrame.getLocalVariables();
+			char[][][] res= resolveLocalVariables(variables);
+			char[][] localVariableNames= res[0];
+			char[][] localVariableTypeNames= res[1];
+			
+			ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();
+			configureResultCollector(project, selection);	
+			
+			int[] localModifiers= new int[localVariableNames.length];
+			Arrays.fill(localModifiers, 0);
+			
+			int insertionPosition = computeInsertionPosition(receivingType, stackFrame);
+			
+			receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
+				 localVariableTypeNames, localVariableNames,
+				 localModifiers, stackFrame.isStatic(), fCollector);
+			
+			IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
+			
+			if (fTemplateEngine != null) {
+				fTemplateEngine.reset();
+				fTemplateEngine.complete(viewer, documentOffset, null);
+				TemplateProposal[] templateResults= fTemplateEngine.getResults();
+
+				// concatenate arrays
+				IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
+				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
+				System.arraycopy(results, 0, total, templateResults.length, results.length);
+				results= total;					
+			}	 
+			 //Order here and not in result collector to make sure that the order
+			 //applies to all proposals and not just those of the compilation unit. 
+			return order(results);	
 		} catch (JavaModelException x) {
 			handle(viewer, x);
 		} catch (DebugException de) {
@@ -388,17 +386,17 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 
 
 	/**
-	 * Returns the receiving type of the the given stack frame.
+	 * Returns a file name for the receiving type associated with the given
+	 * stack frame.
 	 * 
-	 * @return receiving type
+	 * @return file name for the receiving type associated with the given
+	 * stack frame
 	 * @exception DebugException if:<ul>
 	 * <li>A failure occurs while accessing attributes of 
 	 *  the stack frame</li>
-	 * <li>the resolved type is an inner type</li>
-	 * <li>unable to resolve a type</li>
 	 * </ul>
 	 */
-	private IType getReceivingType(IJavaProject project, IJavaStackFrame frame) throws DebugException {
+	protected String getReceivingSourcePath(IJavaStackFrame frame) throws DebugException {
 		String typeName= frame.getReceivingTypeName();
 		String sourceName= frame.getSourceName();
 		if (sourceName == null || !typeName.equals(frame.getDeclaringTypeName())) {
@@ -421,7 +419,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 			}
 			typeName+=sourceName;
 		}
-		return getType(project, frame.getReceivingTypeName(), typeName);
+		return typeName;
 	}
 	
 	/**
@@ -511,4 +509,59 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		return fTemplateEngine;
 	}
 
+	
+	/**
+	 * Returns the type associated with the given type name and source name
+	 * from the given launch, or <code>null</code> if none.
+	 * 
+	 * @param launch the launch in which to resolve a type
+	 * @param typeName fully qualified receiving type name (may include inner types)
+	 * @param sourceName fully qualified name source file name containing the type
+	 * @return associated Java model type or <code>null</code>
+	 * @throws DebugException
+	 */
+	protected IType resolveType(ILaunch launch, String typeName, String sourceName) throws DebugException {
+		ISourceLocator sourceLocator = launch.getSourceLocator();
+		if (sourceLocator != null) {
+			if (sourceLocator instanceof ISourceLookupDirector) {
+				ISourceLookupDirector director = (ISourceLookupDirector) sourceLocator;
+				try {
+					Object[] objects = director.findSourceElements(sourceName);
+					if (objects.length > 0) {
+						Object element = objects[0];
+						if (element instanceof IAdaptable) {
+							IAdaptable adaptable = (IAdaptable) element;
+							IJavaElement javaElement = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+							if (javaElement != null) {
+								IType type = null;
+								String[] typeNames = getNestedTypeNames(typeName);
+								if (javaElement instanceof IClassFile) {
+									type = ((IClassFile)javaElement).getType();
+								} else if (javaElement instanceof ICompilationUnit) {
+									type = ((ICompilationUnit)javaElement).getType(typeNames[0]);
+								} else if (javaElement instanceof IType) {
+									type = (IType)javaElement;
+								}
+								if (type != null) {
+									for (int i = 1; i < typeNames.length; i++) {
+										String innerTypeName= typeNames[i];
+										try {
+											Integer.parseInt(innerTypeName);
+											return type;
+										} catch (NumberFormatException e) {
+										}
+										type = type.getType(innerTypeName);
+									}
+								}
+								return type;
+							}
+						}
+					}
+				} catch (CoreException e) {
+					throw new DebugException(e.getStatus());
+				}
+			}
+		}	
+		return null;
+	}	
 }
