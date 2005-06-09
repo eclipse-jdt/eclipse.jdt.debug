@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -117,7 +119,7 @@ public class FolderSourceContainerTests extends AbstractDebugTest {
 	
 	public void testRelativePathName() throws Exception {
 		FolderSourceContainer container = getContainer(false, false);
-		Object[] objects = container.findSourceElements("..\\.classpath");
+		Object[] objects = container.findSourceElements(".."+File.separatorChar+".classpath");
 		assertEquals("Expected a hit", 1, objects.length);
 		assertEquals("Wrong file", getJavaProject().getProject().getFile(new Path(".classpath")), objects[0]);
 	}
