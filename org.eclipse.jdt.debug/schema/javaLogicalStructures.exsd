@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.jdt.debug" id="javaLogicalStructures" name="Java Logical Structures"/>
       </appInfo>
       <documentation>
-         This extension point allows developper to define logical structure for Java objects of a specific type, by providing code snippets to evaluate to create the logical value.
+         This extension point allows developers to define a logical structure for Java objects of a specified type. The logical value is created by evaluating the provided code snippet.
       </documentation>
    </annotation>
 
