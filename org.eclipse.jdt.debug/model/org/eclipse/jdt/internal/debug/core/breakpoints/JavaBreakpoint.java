@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
@@ -40,6 +41,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
+
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
@@ -260,7 +262,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
 	public void wonSuspendVote(Event event, JDIDebugTarget target) {
-		ThreadReference threadRef= ((LocatableEvent)event).thread();
+		ThreadReference threadRef = null;
+		if (event instanceof ClassPrepareEvent) {
+			threadRef = ((ClassPrepareEvent)event).thread();
+		} else if (event instanceof LocatableEvent) {
+			threadRef = ((LocatableEvent)event).thread();
+		}
+		if (threadRef == null) {
+			return;
+		}
 		JDIThread thread= target.findThread(threadRef);	
 		if (thread == null || thread.isIgnoringBreakpoints()) {
 			return;
