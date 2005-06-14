@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.jdt.launching" id="classpathProviders" name="Java Runtime Classpath Providers"/>
       </appInfo>
       <documentation>
-         This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations. A Java launch configuration is can be associated with a custom classpath provider via the launch configuration attriubte ATTR_CLASSPATH_PROVIDER and a custom source path provider via the attribute ATTR_SOURCE_PATH_PROVIDER. When specified, the launch configuration attribues correspond to the id of a classpath provider extension.
+         This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations. A Java launch configuration is can be associated with a custom classpath provider via the launch configuration attriubte ATTR_CLASSPATH_PROVIDER and a custom source path provider via the attribute ATTR_SOURCE_PATH_PROVIDER. When specified, the launch configuration attributes correspond to the id of a classpath provider extension.
       </documentation>
    </annotation>
 
