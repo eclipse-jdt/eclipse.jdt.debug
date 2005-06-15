@@ -64,6 +64,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 						}
 				}
 			}
+			return entries;
 		}
 		// recover persisted classpath
 		return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
