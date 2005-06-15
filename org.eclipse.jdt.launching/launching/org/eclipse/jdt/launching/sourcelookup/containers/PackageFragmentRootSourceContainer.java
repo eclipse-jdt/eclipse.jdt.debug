@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -70,10 +71,21 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 		}
 		IPackageFragment fragment = fRoot.getPackageFragment(packageName);
 		if (fragment.exists()) {
-			IClassFile file = fragment.getClassFile(typeName + ".class"); //$NON-NLS-1$
-			if (file.exists()) {
-				return new Object[]{file};
+			switch (fragment.getKind()) {
+				case IPackageFragmentRoot.K_BINARY:
+					IClassFile file = fragment.getClassFile(typeName + ".class"); //$NON-NLS-1$
+					if (file.exists()) {
+						return new Object[]{file};
+					}
+					break;
+				case IPackageFragmentRoot.K_SOURCE:
+					ICompilationUnit unit = fragment.getCompilationUnit(typeName + ".java"); //$NON-NLS-1$
+					if (unit.exists()) {
+						return new Object[]{unit};
+					}
+					break;
 			}
+
 		}
 		return EMPTY;
 	}

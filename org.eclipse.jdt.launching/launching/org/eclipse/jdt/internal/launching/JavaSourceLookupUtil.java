@@ -10,16 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -57,13 +61,24 @@ public class JavaSourceLookupUtil {
 						ISourceContainer container = null;
 						if (path == null) {
 							// use the archive itself
-							container = new ExternalArchiveSourceContainer(entry.getLocation(), true);
-						} else {
-							container = new ExternalArchiveSourceContainer(path, true);
-
+							path = entry.getLocation();
 						}
-						if (!containers.contains(container)) {
-							containers.add(container);
+						if (path != null) {
+							// check if file or folder
+							File file = new File(path);
+							if (file.isDirectory()) {
+								IResource resource = entry.getResource();
+								if (resource instanceof IContainer) {
+									container = new FolderSourceContainer((IContainer)resource, false);
+								} else {
+									container = new DirectorySourceContainer(file, false);
+								}
+							} else {
+								container = new ExternalArchiveSourceContainer(path, true);
+							}
+							if (container != null && !containers.contains(container)) {
+								containers.add(container);
+							}
 						}
 					} else {
 						ISourceContainer container = new PackageFragmentRootSourceContainer(root);
