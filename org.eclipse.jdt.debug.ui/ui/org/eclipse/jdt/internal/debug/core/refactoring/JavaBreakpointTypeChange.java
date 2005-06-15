@@ -249,19 +249,19 @@ public abstract class JavaBreakpointTypeChange extends Change {
 		// Get the new type and the new 'changed' type then call the code specific to this type
 		// of breakpoint.
 		IType changedType= getChangedType();
-		String oldChangedTypeName= changedType.getFullyQualifiedName();
+		String oldChangedTypeName= changedType.getFullyQualifiedName('.');
 		String newChangedTypeName;
 		IType parent= changedType.getDeclaringType();
 		if (parent == null) {
 			newChangedTypeName= changedType.getPackageFragment().getElementName() + '.' + getNewName();
 		} else {
-			newChangedTypeName= parent.getFullyQualifiedName() + '.' + getNewName();
+			newChangedTypeName= parent.getFullyQualifiedName('.') + '.' + getNewName();
 		}
 		
 		IType newChangedType;
 		IType newType;
 		IJavaProject project= fDeclaringType.getJavaProject();
-		if (changedType == fDeclaringType) {
+		if (changedType.equals(fDeclaringType)) {
 			newType= project.findType(newChangedTypeName);
 			newChangedType= newType;
 		} else {
