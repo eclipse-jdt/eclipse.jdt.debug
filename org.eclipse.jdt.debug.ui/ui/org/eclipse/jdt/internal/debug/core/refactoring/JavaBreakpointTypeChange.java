@@ -292,7 +292,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			}
 		} else {
 			IType type = (IType)destination;
-			newChangedTypeName= (type).getFullyQualifiedName() + '$' + changedType.getElementName();
+			newChangedTypeName= (type).getFullyQualifiedName('.') + '.' + changedType.getElementName();
 			project= type.getJavaProject();
 		}
 		
@@ -302,8 +302,8 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			newType= project.findType(newChangedTypeName);
 			newChangedType= newType;
 		} else {
-			String oldChangedTypeName= changedType.getFullyQualifiedName();
-			String typeNameSuffix= fDeclaringType.getFullyQualifiedName().substring(oldChangedTypeName.length());
+			String oldChangedTypeName= changedType.getFullyQualifiedName('.');
+			String typeNameSuffix= fDeclaringType.getFullyQualifiedName('.').substring(oldChangedTypeName.length());
 			String newTypeName= newChangedTypeName + typeNameSuffix;
 			newType= project.findType(newTypeName);
 			newChangedType= project.findType(newChangedTypeName);
@@ -321,7 +321,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	private Change performProjectRename() throws CoreException {
 		// Get the new type, then call the code specific to this type of breakpoint.
 		IJavaProject project= JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(getNewName()));
-		IType newType= project.findType(fDeclaringType.getFullyQualifiedName());
+		IType newType= project.findType(fDeclaringType.getFullyQualifiedName('.'));
 		/*return*/ performChange(newType, null, fDeclaringType.getJavaProject().getElementName(), PROJECT_RENAME);
 		return new NullChange();
 	}
@@ -331,7 +331,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 		// to this type of breakpoint.
 		IPackageFragment changedPackage= getChangePackage();
 		IJavaProject project= fDeclaringType.getJavaProject();
-		String newTypeName= getNewName() + fDeclaringType.getFullyQualifiedName().substring(changedPackage.getElementName().length());
+		String newTypeName= getNewName() + fDeclaringType.getFullyQualifiedName('.').substring(changedPackage.getElementName().length());
 		IType newType= project.findType(newTypeName);
 		/*return*/ performChange(newType, newType.getPackageFragment(), changedPackage.getElementName(), PACKAGE_RENAME);
 		return new NullChange();
@@ -341,7 +341,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 		IPackageFragmentRoot destination= getPackageRootDestination();
 		IPackageFragment changedPackage= getChangePackage();
 		IJavaProject project= destination.getJavaProject();
-		IType newType= project.findType(fDeclaringType.getFullyQualifiedName());
+		IType newType= project.findType(fDeclaringType.getFullyQualifiedName('.'));
 		/*return*/ performChange(newType, newType.getPackageFragment(), changedPackage.getParent(), PROJECT_RENAME);
 		return new NullChange();
 	}
