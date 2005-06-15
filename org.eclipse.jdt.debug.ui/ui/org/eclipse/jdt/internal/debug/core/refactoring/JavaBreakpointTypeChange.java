@@ -255,7 +255,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 		if (parent == null) {
 			newChangedTypeName= changedType.getPackageFragment().getElementName() + '.' + getNewName();
 		} else {
-			newChangedTypeName= parent.getFullyQualifiedName() + '$' + getNewName();
+			newChangedTypeName= parent.getFullyQualifiedName() + '.' + getNewName();
 		}
 		
 		IType newChangedType;
