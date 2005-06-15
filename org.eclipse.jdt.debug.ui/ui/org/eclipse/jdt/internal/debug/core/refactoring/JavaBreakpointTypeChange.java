@@ -265,7 +265,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			newType= project.findType(newChangedTypeName);
 			newChangedType= newType;
 		} else {
-			String typeNameSuffix= fDeclaringType.getFullyQualifiedName().substring(oldChangedTypeName.length());
+			String typeNameSuffix= fDeclaringType.getFullyQualifiedName('.').substring(oldChangedTypeName.length());
 			String newTypeName= newChangedTypeName + typeNameSuffix;
 			newType= project.findType(newTypeName);
 			newChangedType= project.findType(newChangedTypeName);
