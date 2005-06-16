@@ -19,6 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.NullChange;
 
 
 /**
@@ -55,6 +56,9 @@ public class JavaLineBreakpointTypeChange extends JavaBreakpointTypeChange {
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#performChange(org.eclipse.jdt.core.IType, java.lang.String)
 	 */
 	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
+		if (newType == null) {
+			return new NullChange();
+		}
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newType);
 		// create the new breakpoint
