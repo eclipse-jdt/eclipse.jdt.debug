@@ -51,6 +51,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
         runStackTrace(5000, 10); // 2 lines * 5000 repeats = 10000 lines
+        setComment("Eclipse 3.1 uses the console plugin's regex pattern matching support to detect stack trace hyperlinks.");
     }
 
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {

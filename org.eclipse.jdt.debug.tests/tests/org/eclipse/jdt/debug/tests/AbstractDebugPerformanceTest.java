@@ -134,4 +134,13 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	protected void assertPerformanceInRelativeBand(Dimension dim, int lowerPercentage, int upperPercentage) {
 		Performance.getDefault().assertPerformanceInRelativeBand(fPerformanceMeter, dim, lowerPercentage, upperPercentage);
 	}
+    
+    /**
+     * Sets a comment to explain performance degradation.
+     * @param comment the explanation for a performance degradation.
+     */
+    protected void setComment(String comment) {
+        Performance performance = Performance.getDefault();
+        performance.setComment(fPerformanceMeter, Performance.EXPLAINS_DEGRADATION_COMMENT, comment);
+    }
 }
