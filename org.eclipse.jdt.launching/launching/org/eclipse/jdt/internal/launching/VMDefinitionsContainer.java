@@ -34,6 +34,7 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -316,9 +317,20 @@ public class VMDefinitionsContainer {
 			element.setAttribute("javadocURL", url.toExternalForm()); //$NON-NLS-1$
 		}
 		
-		String vmArgs = vm.getVMArgs();
-		if (vmArgs != null && vmArgs.length() > 0) {
-			element.setAttribute("vmargs", vmArgs); //$NON-NLS-1$
+		if (vm instanceof IVMInstall2) {
+			String vmArgs = ((IVMInstall2)vm).getVMArgs();
+			if (vmArgs != null && vmArgs.length() > 0) {
+				element.setAttribute("vmargs", vmArgs); //$NON-NLS-1$
+			}
+		} else {
+			String[] vmArgs = vm.getVMArguments();
+			if (vmArgs != null && vmArgs.length > 0) {
+				StringBuffer buffer = new StringBuffer();
+				for (int i = 0; i < vmArgs.length; i++) {
+					buffer.append(vmArgs[i] + " "); //$NON-NLS-1$
+				}
+				element.setAttribute("vmargs", buffer.toString()); //$NON-NLS-1$
+			}
 		}
 		
 		return element;

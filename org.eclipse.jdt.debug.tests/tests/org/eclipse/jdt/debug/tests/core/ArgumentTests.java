@@ -26,6 +26,7 @@ import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -349,12 +350,14 @@ public class ArgumentTests extends AbstractDebugTest {
 	
 	public void testDefaultVMArgs() throws CoreException {
 	    IVMInstall install = JavaRuntime.getDefaultVMInstall();
-	    String prev = install.getVMArgs();
-	    install.setVMArgs("-Dfoo=\"one two three\"");
+	    assertTrue("should be an IVMInstall2", install instanceof IVMInstall2);
+	    IVMInstall2 vm2 = (IVMInstall2) install;
+	    String prev = vm2.getVMArgs();
+	    vm2.setVMArgs("-Dfoo=\"one two three\"");
 	    try {
 	        testWithVMArg(null, "one two three");
 	    } finally {
-	        install.setVMArgs(prev);
+	        vm2.setVMArgs(prev);
 	    }
 	}
 }

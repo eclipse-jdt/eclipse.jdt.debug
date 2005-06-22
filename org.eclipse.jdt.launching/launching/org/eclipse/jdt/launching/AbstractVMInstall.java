@@ -11,8 +11,8 @@
 package org.eclipse.jdt.launching;
 
 
-import java.net.URL;
 import java.io.File;
+import java.net.URL;
 
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 /**
@@ -21,7 +21,7 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * Clients implementing VM installs must subclass this class.
  * </p>
  */
-public abstract class AbstractVMInstall implements IVMInstall {
+public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
 
 	private IVMInstallType fType;
 	private String fId;
@@ -239,13 +239,17 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	 * @since 3.0
 	 */
 	public void setVMArguments(String[] vmArgs) {
-	    StringBuffer buf = new StringBuffer();
-	    for (int i = 0; i < vmArgs.length; i++) {
-            String string = vmArgs[i];
-            buf.append(string);
-            buf.append(" "); //$NON-NLS-1$
-        }
-		setVMArgs(buf.toString().trim());
+		if (vmArgs == null) {
+			setVMArgs(null);
+		} else {
+		    StringBuffer buf = new StringBuffer();
+		    for (int i = 0; i < vmArgs.length; i++) {
+	            String string = vmArgs[i];
+	            buf.append(string);
+	            buf.append(" "); //$NON-NLS-1$
+	        }
+			setVMArgs(buf.toString().trim());
+		}
 	}
 	
 	/*

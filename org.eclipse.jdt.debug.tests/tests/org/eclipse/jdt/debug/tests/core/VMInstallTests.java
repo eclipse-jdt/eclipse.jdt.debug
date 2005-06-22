@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
@@ -26,7 +27,9 @@ public class VMInstallTests extends AbstractDebugTest {
 
 	public void testJavaVersion() throws CoreException {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
-        String javaVersion = def.getJavaVersion();
+		assertTrue("should be an IVMInstall2", def instanceof IVMInstall2);
+		IVMInstall2 vm2 = (IVMInstall2)def;
+        String javaVersion = vm2.getJavaVersion();
         assertNotNull("default VM is missing java.version", javaVersion);
 	}
 	

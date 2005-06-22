@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
@@ -29,6 +30,7 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -234,9 +236,25 @@ public class AddVMDialog extends StatusDialog {
 			fVMName.setText(fEditedVM.getName());
 			fJRERoot.setText(fEditedVM.getInstallLocation().getAbsolutePath());
 			fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
-			String vmArgs = fEditedVM.getVMArgs();
-			if (vmArgs != null) {
-				fVMArgs.setText(vmArgs);
+			if (fEditedVM instanceof IVMInstall2) {
+				IVMInstall2 vm2 = (IVMInstall2) fEditedVM;
+				String vmArgs = vm2.getVMArgs();
+				if (vmArgs != null) {
+					fVMArgs.setText(vmArgs);
+				}
+			} else {
+				String[] vmArgs = fEditedVM.getVMArguments();
+				if (vmArgs != null) {
+					StringBuffer buffer = new StringBuffer();
+					int length= vmArgs.length;
+					if (length > 0) {
+						buffer.append(vmArgs[0]);
+						for (int i = 1; i < length; i++) {
+							buffer.append(' ').append(vmArgs[i]);
+						}
+					}
+					fVMArgs.setText(buffer.toString());
+				}				
 			}
 		}
 		setVMNameStatus(validateVMName());
@@ -372,11 +390,21 @@ public class AddVMDialog extends StatusDialog {
 		vm.setJavadocLocation(getURL());
 		
 		String argString = fVMArgs.getText().trim();
-		if (argString != null && argString.length() >0) {
-			vm.setVMArgs(argString);			
+		if (vm instanceof IVMInstall2) {
+			IVMInstall2 vm2 = (IVMInstall2) vm;
+			if (argString != null && argString.length() >0) {
+				vm2.setVMArgs(argString);			
+			} else {
+				vm2.setVMArgs(null);
+			}
 		} else {
-			vm.setVMArgs(null);
+			if (argString != null && argString.length() >0) {
+				vm.setVMArguments(DebugPlugin.parseArguments(argString));			
+			} else {
+				vm.setVMArguments(null);
+			}			
 		}
+		
 
 		fLibraryBlock.performApply(vm);
 	}

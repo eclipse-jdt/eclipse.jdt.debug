@@ -19,6 +19,7 @@
  	<type name="IRuntimeContainerComparator" />
  	<type name="IVMConnector" />
  	<type name="IVMInstall" />
+ 	<type name="IVMInstall2" />
  	<type name="IVMInstallChangedListener" />
  	<type name="IVMInstallType" />
  	<type name="IVMRunner" />

@@ -26,9 +26,13 @@ import java.net.URL;
  * <p>
  * This interface is intended to be implemented by clients that contribute
  * to the <code>"org.eclipse.jdt.launching.vmInstallTypes"</code> extension point.
- * Rather than implementing this interface directly, clients must subclass
- * {@link org.eclipse.jdt.launching.AbstractVMInstall}.
+ * Rather than implementing this interface directly, it is strongly recommended that
+ * clients subclass {@link org.eclipse.jdt.launching.AbstractVMInstall} to be insulated
+ * from potential API additions. In 3.1, a new optional interface has been added for
+ * implementors of this interface - {@link org.eclipse.jdt.launching.IVMInstall2}.
+ * The new interface is implemented by {@link org.eclipse.jdt.launching.AbstractVMInstall}.
  * </p>
+ * @see org.eclipse.jdt.launching.IVMInstall2
  */
 public interface IVMInstall {
 	/**
@@ -137,16 +141,6 @@ public interface IVMInstall {
 	public String[] getVMArguments();
 	
 	/**
-	 * Returns VM arguments to be used with this vm install whenever this
-	 * VM is launched as a raw string, or <code>null</code> if none.
-	 * 
-	 * @return VM arguments to be used with this vm install whenever this
-	 * VM is launched as a raw string, or <code>null</code> if none
-	 * @since 3.1
-	 */	
-	public String getVMArgs();
-	
-	/**
 	 * Sets VM arguments to be used with this vm install whenever this
 	 * VM is launched, possibly <code>null</code>. This is equivalent
 	 * to <code>setVMArgs(String)</code> with whitespace character delimited
@@ -155,27 +149,9 @@ public interface IVMInstall {
 	 * @param vmArgs VM arguments to be used with this vm install whenever this
 	 * VM is launched, possibly <code>null</code>
 	 * @since 3.0
-	 * @deprecated use setVMArgs(String)
+	 * @deprecated if possible, clients should use setVMArgs(String) on
+	 *  {@link IVMInstall2} when possible
 	 */
 	public void setVMArguments(String[] vmArgs);
-	
-	/**
-	 * Sets VM arguments to be used with this vm install whenever this
-	 * VM is launched as a raw string, possibly <code>null</code>.
-	 * 
-	 * @param vmArgs VM arguments to be used with this vm install whenever this
-	 * VM is launched as a raw string, possibly <code>null</code>
-	 * @since 3.1
-	 */
-	public void setVMArgs(String vmArgs);
-    
-    /**
-     * Returns a string representing the <code>java.version</code> system property
-     * of this VM install, or <code>null</code> if unknown.
-     * 
-     * @return a string representing the <code>java.version</code> system property
-     * of this VM install, or <code>null</code> if unknown.
-     * @since 3.1
-     */
-    public String getJavaVersion();
+	    
 }
