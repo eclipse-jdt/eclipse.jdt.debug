@@ -175,6 +175,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 
 		
 		ISourceLocator locator= javaValue.getLaunch().getSourceLocator();
+		if (locator == null) {
+			return null;
+		}
 		Object sourceElement= null;
 		if (locator instanceof ISourceLookupDirector) {
 			IJavaReferenceType type= (IJavaReferenceType)javaValue.getJavaType();
