@@ -206,6 +206,11 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
                 } catch (ClassNotLoadedException e) {
                     // should not append
                 }
+            } else {
+                // an array can be assigned to an object
+                if (type.signature().equals("Ljava/lang/Object;")) { //$NON-NLS-1$
+                    return;
+                }
             }
         } else {
 	        if (type instanceof ClassType) {
