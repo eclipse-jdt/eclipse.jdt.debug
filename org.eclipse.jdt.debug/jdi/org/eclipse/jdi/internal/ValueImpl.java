@@ -209,20 +209,28 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
             }
         } else {
 	        if (type instanceof ClassType) {
-	            ClassType superClass= (ClassType) valueType;
-	            while (superClass != null) {
-	                if (superClass.equals(type)) {
-	                    return;
-	                }
-	                superClass= superClass.superclass();
-	            }
+	        	if (valueType instanceof ClassType) {
+		            ClassType superClass= (ClassType) valueType;
+		            while (superClass != null) {
+		                if (superClass.equals(type)) {
+		                    return;
+		                }
+		                superClass= superClass.superclass();
+		            }
+	        	}
 	        } else if (type instanceof InterfaceType) {
-	            List interfaces= ((ClassType)valueType).allInterfaces();
-	            for (Iterator iter= interfaces.iterator(); iter.hasNext();) {
-	                if (checkInterfaceType((InterfaceType) iter.next(), (InterfaceType) type)) {
-	                    return;
-	                }
-	            }
+	        	if (valueType instanceof InterfaceType) {
+	        		if (checkInterfaceType((InterfaceType) valueType, (InterfaceType) type)) {
+	        			return;
+	        		}
+	        	} else {
+		            List interfaces= ((ClassType)valueType).allInterfaces();
+		            for (Iterator iter= interfaces.iterator(); iter.hasNext();) {
+		                if (checkInterfaceType((InterfaceType) iter.next(), (InterfaceType) type)) {
+		                    return;
+		                }
+		            }
+	        	}
 	        }
         }
             
