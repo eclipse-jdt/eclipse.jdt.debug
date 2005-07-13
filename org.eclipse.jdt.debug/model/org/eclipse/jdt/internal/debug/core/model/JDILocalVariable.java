@@ -102,9 +102,15 @@ public class JDILocalVariable extends JDIModificationVariable {
 			if (genericSignature != null) {
 				return JDIReferenceType.getTypeName(genericSignature);
 			}
-			Type underlyingType= getUnderlyingType();
-			if (underlyingType instanceof ReferenceType) {
-				return JDIReferenceType.getGenericName((ReferenceType) underlyingType);
+			try {
+				Type underlyingType= getUnderlyingType();
+				if (underlyingType instanceof ReferenceType) {
+					return JDIReferenceType.getGenericName((ReferenceType) underlyingType);
+				}
+			} catch (DebugException e) {
+				if (!(e.getStatus().getException() instanceof ClassNotLoadedException)) {
+					throw e;
+				}
 			}
 			return getLocal().typeName();
 		} catch (RuntimeException e) {

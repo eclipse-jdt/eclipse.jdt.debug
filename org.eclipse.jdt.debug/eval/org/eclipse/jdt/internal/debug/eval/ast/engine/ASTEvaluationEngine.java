@@ -138,16 +138,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			IJavaVariable[] locals= new IJavaVariable[numLocalsVar];
 			int numLocals= 0;
 			for (int i = 0; i < numLocalsVar; i++) {
-				try {
-					if (!isLocalType(localsVar[i].getReferenceTypeName())) {
-						locals[numLocals++]= localsVar[i];
-					}
-				} catch (DebugException e) {
-					// do not throw ClassNotLoadedException
-					// nothing we can do, just ignore this local variable
-					if (!(e.getStatus().getException() instanceof ClassNotLoadedException)) {
-						throw e;
-					}
+				if (!isLocalType(localsVar[i].getSignature())) {
+					locals[numLocals++]= localsVar[i];
 				}
 			}
 			// to solve and remove
