@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
-import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -28,8 +28,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
-
-import com.sun.jdi.InvocationException;
 
 /**
  * Common behavior for instructions.
@@ -199,35 +197,16 @@ public abstract class Instruction {
 		return fTypeTable[typeId][T_int];
 	}
 
-	protected IJavaType getType(String qualifiedName) throws CoreException {
-		// Force the class to be loaded, and record the class reference
-		// for later use if there are multiple classes with the same name.
-		IJavaObject classReference= classForName(qualifiedName);
-		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
-		checkTypes(types, qualifiedName);
-		if (types.length == 1) {
-			// Found only one class.
-			return types[0];
-		} 
-		// Found many classes, look for the right one for this scope.
-		if (classReference == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
-		}
-		for(int i= 0, length= types.length; i < length; i++) {
-			IJavaType type= types[i];
-			if (classReference.equals(getClassObject(type))) {
-				return type;
-			}
-		}
-
-		// At this point a very strange thing has happened,
-		// the VM was able to return multiple types in the classesByName
-		// call, but none of them were the class that was returned in
-		// the classForName call.
-
-		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
-	}
-
+    protected IJavaType getType(String qualifiedName) throws CoreException {
+        // Force the class to be loaded, and record the class reference
+        // for later use if there are multiple classes with the same name.
+        IJavaClassObject classReference= getContext().classForName(qualifiedName);
+        // Found many classes, look for the right one for this scope.
+        if (classReference == null) {
+            throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
+        }
+        return classReference.getInstanceType();
+    }
 
 	protected IJavaArrayType getArrayType(String typeSignature, int dimension) throws CoreException {
 		String qualifiedName = RuntimeSignature.toString(typeSignature);
@@ -239,7 +218,7 @@ public abstract class Instruction {
 		String signature = braces + typeSignature;
 		// Force the class to be loaded, and record the class reference
 		// for later use if there are multiple classes with the same name.
-		IJavaObject classReference= classForName(signature);
+		IJavaObject classReference= getContext().classForName(signature);
 		if (classReference == null) {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
@@ -265,34 +244,11 @@ public abstract class Instruction {
 		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
 	}
 
-	protected IJavaObject classForName(String qualifiedName) throws CoreException {
-		IJavaType[] types= getVM().getJavaTypes(CLASS);
-		checkTypes(types, qualifiedName);
-		if (types.length != 1) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
-		}
-		IJavaType receiver= types[0];
-		IJavaValue[] args = new IJavaValue[] {newValue(qualifiedName)};
-		try {
-			return (IJavaObject)((IJavaClassType)receiver).sendMessage(FOR_NAME, FOR_NAME_SIGNATURE, args, getContext().getThread());
-		} catch (CoreException e) {
-			if (e.getStatus().getException() instanceof InvocationException) {
-				// Don't throw ClassNotFoundException
-				if (((InvocationException)e.getStatus().getException()).exception().referenceType().name().equals("java.lang.ClassNotFoundException")) { //$NON-NLS-1$
-					return null;
-				}
-			}
-			throw e;
-		}
-	}
-
-
 	protected void checkTypes(IJavaType[] types, String qualifiedName) throws CoreException {
 		if (types == null || types.length == 0) {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
 	}
-
 
 	static public final int T_undefined =0;
 	static public final int T_Object =1;
@@ -323,13 +279,5 @@ public abstract class Instruction {
 /* String */	{T_undefined, T_String, T_String, T_String, T_String, T_String, T_undefined, T_String, T_String, T_String, T_String, T_String, T_String},
 /* null */		{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
 	};
-
-	public static final String CLASS= "java.lang.Class"; //$NON-NLS-1$
-
-	public static final String FOR_NAME= "forName"; //$NON-NLS-1$
-
-
-	public static final String FOR_NAME_SIGNATURE= "(Ljava/lang/String;)Ljava/lang/Class;"; //$NON-NLS-1$
-
 }
 

@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-public class JavaObjectRuntimeContext implements IRuntimeContext {
+public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	
 	/**
 	 * <code>this</code> object or this context.

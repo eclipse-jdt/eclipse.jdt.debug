@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -107,5 +108,18 @@ public interface IRuntimeContext {
 	 * the failure.</li></ul>
 	 */
 	public boolean isConstructor() throws CoreException;
+
+    /**
+     * Loads, prepares and returns the class with the given name in this runtime
+     * context's receiving type's class loader. If the class is already loaded,
+     * it is simply returned.
+     * 
+     * @param name fully qualified class name
+     * @return class object
+     * @throws CoreException if unable to load the class
+     * @since 3.2
+     */
+    public IJavaClassObject classForName(String name) throws CoreException;
+    
 }
 

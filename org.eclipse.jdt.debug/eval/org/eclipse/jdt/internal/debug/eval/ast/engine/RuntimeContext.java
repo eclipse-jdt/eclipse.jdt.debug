@@ -20,7 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-public class RuntimeContext implements IRuntimeContext {
+public class RuntimeContext extends AbstractRuntimeContext {
 
 	/**
 	 * Java project context
