@@ -1843,8 +1843,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 //						return;
 //					}
 //				}
-				for (int i = 0; i < activeFilters.length; i++) {
-					request.addClassExclusionFilter(activeFilters[i]);
+				if (activeFilters != null) {
+				    for (int i = 0; i < activeFilters.length; i++) {
+				        request.addClassExclusionFilter(activeFilters[i]);
+				    }
 				}
 			}
 		}
