@@ -48,7 +48,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
-import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -151,7 +150,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				localTypesNames[i] = Signature.toString(locals[i].getGenericSignature()).replace('/', '.');
 			}
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
-			unit = parseCompilationUnit(mapper.getSource(frame, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			IJavaReferenceType receivingType;
+			if (frame.isStatic()) {
+				receivingType= frame.getReferenceType();
+			} else {
+				receivingType= (IJavaReferenceType) frame.getThis().getJavaType();
+			}
+			unit = parseCompilationUnit(mapper.getSource(receivingType, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());

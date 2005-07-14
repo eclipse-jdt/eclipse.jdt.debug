@@ -13,30 +13,23 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
-import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
@@ -187,39 +180,6 @@ public class EvaluationSourceGenerator {
 		return objectToEvaluationSourceMapper;
 	}
 	
-	private BinaryBasedSourceGenerator getStaticSourceMapper(IJavaReferenceType refType, boolean isInStaticMethod) {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
-		objectToEvaluationSourceMapper.buildSourceStatic(refType);
-		return objectToEvaluationSourceMapper;
-	}
-			
-	public String getSource(IJavaStackFrame frame, IJavaProject javaProject) throws DebugException {
-		if (fSource == null) {
-			try {
-				String baseSource= getSourceFromFrame(frame);
-				int lineNumber= frame.getLineNumber();
-				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource, frame.getReferenceType().getName(), frame.getLineNumber(), frame.isStatic(), javaProject);
-				} 
-				if (fSource == null) {
-					JDIObjectValue object= (JDIObjectValue)frame.getThis();
-					BinaryBasedSourceGenerator mapper;
-					if (object != null) {
-						// Class instance context
-						mapper= getInstanceSourceMapper((JDIReferenceType)object.getJavaType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
-					} else {
-						// Static context
-						mapper= getStaticSourceMapper(frame.getReferenceType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
-					}
-					createEvaluationSourceFromJDIObject(mapper);
-				}
-			} catch (JavaModelException e) {
-				throw new DebugException(e.getStatus());
-			}
-		}
-		return fSource;
-	}
-	
 	public String getSource(IJavaReferenceType type, IJavaProject javaProject) throws DebugException {
 		if (fSource == null) {
 			String baseSource= getTypeSourceFromProject(type.getName(), javaProject);
@@ -247,34 +207,6 @@ public class EvaluationSourceGenerator {
 		return -1;
 	}
 
-	protected String getSourceFromFrame(IJavaStackFrame frame) throws JavaModelException {
-		ILaunch launch= frame.getLaunch();
-		if (launch == null) {
-			return null;
-		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null) {
-			return null;
-		}
-		Object sourceElement= locator.getSourceElement(frame);
-		if (sourceElement == null) {
-			return null;
-		}
-		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
-		}
-		if (sourceElement instanceof IType) {
-			return ((IType)sourceElement).getCompilationUnit().getSource();
-		}
-		if (sourceElement instanceof ICompilationUnit) {
-			return ((ICompilationUnit)sourceElement).getSource();
-		}
-		if (sourceElement instanceof IClassFile) {
-			return ((IClassFile)sourceElement).getSource();
-		}
-		return null;
-	}
-	
 	protected void setCompilationUnitName(String name) {
 		fCompilationUnitName= name;
 	}
