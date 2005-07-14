@@ -100,7 +100,11 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	protected void setJDIValue(Value value) throws DebugException {
 		try {
 			if (isStatic()) { 
-				((ClassType)getField().declaringType()).setValue(getField(), value);
+				ReferenceType declaringType = getField().declaringType();
+                if (declaringType instanceof InterfaceType) {
+                    requestFailed(JDIDebugModelMessages.JDIFieldVariable_0, null);
+                }
+                ((ClassType)declaringType).setValue(getField(), value);
 			} else {
 				getObjectReference().setValue(getField(), value);
 			}

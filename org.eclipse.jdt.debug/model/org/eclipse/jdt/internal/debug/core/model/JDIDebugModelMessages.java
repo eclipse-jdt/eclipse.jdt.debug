@@ -174,4 +174,6 @@ public class JDIDebugModelMessages extends NLS {
 	}
 
 	public static String JDIStackFrame_0;
+
+    public static String JDIFieldVariable_0;
 }

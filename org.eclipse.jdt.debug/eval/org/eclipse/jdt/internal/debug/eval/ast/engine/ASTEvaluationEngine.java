@@ -31,12 +31,14 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
@@ -74,6 +76,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String, org.eclipse.jdt.debug.core.IJavaStackFrame, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+        checkInterface(frame);
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
 		evaluateExpression(expression, frame, listener, evaluationDetail, hitBreakpoints);
 	}
@@ -85,6 +88,21 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
 		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail, hitBreakpoints);
 	}
+    
+    /**
+     * Checks if the stack frame is declared in an interface an aborts
+     * if so.
+     * 
+     * @param frame stack frmae
+     * @throws DebugException if declaring type is an interface
+     */
+    private void checkInterface(IJavaStackFrame frame) throws DebugException {
+        if (frame.getReferenceType() instanceof IJavaInterfaceType) {
+            IStatus status = new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+                    EvaluationEngineMessages.ASTEvaluationEngine_0, null);
+            throw new DebugException(status);
+        }
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org.eclipse.jdt.debug.eval.ICompiledExpression, org.eclipse.jdt.debug.core.IJavaStackFrame, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)

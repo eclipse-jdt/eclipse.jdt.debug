@@ -57,4 +57,6 @@ public class EvaluationEngineMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, EvaluationEngineMessages.class);
 	}
+
+    public static String ASTEvaluationEngine_0;
 }
