@@ -173,7 +173,7 @@ public class VerboseWriter {
 	public void println(String description, boolean value) {
 		printDescription(description);
 		printHex(value);
-		print(new Boolean(value).toString());
+		print(Boolean.valueOf(value).toString());
 		println();
 	}
 	

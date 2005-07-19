@@ -336,7 +336,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 					if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
 						editor.getPreferenceStore().setValue(key, value);
 					} else if (arg instanceof Connector.BooleanArgument) {
-						boolean b = new Boolean(value).booleanValue();
+						boolean b = Boolean.valueOf(value).booleanValue();
 						editor.getPreferenceStore().setValue(key, b);
 					} else if (arg instanceof Connector.IntegerArgument) {
 						int i = new Integer(value).intValue();
@@ -381,7 +381,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				attrMap.put(key, value);
 			} else if (arg instanceof Connector.BooleanArgument) {
 				boolean value = editor.getPreferenceStore().getBoolean(key);
-				attrMap.put(key, new Boolean(value).toString());
+				attrMap.put(key, Boolean.valueOf(value).toString());
 			} else if (arg instanceof Connector.IntegerArgument) {
 				int value = editor.getPreferenceStore().getInt(key);
 				attrMap.put(key, new Integer(value).toString());

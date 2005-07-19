@@ -236,7 +236,7 @@ public abstract class ConnectorImpl implements Connector {
 		}
 		
 		public void setValue(String value) {
-			fValue = new Boolean(value);
+			fValue = Boolean.valueOf(value);
 		}
 
 		public boolean isValid(String value) {
@@ -252,11 +252,11 @@ public abstract class ConnectorImpl implements Connector {
 		}
 
 		public void setValue(boolean value) {
-			fValue = new Boolean(value);
+			fValue = Boolean.valueOf(value);
 		}
 		
 		public String stringValueOf(boolean value) {
-			return new Boolean(value).toString();
+			return Boolean.valueOf(value).toString();
 		}
 	}
 	

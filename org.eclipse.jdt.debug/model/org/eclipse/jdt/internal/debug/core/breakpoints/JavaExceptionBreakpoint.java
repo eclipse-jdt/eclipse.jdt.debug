@@ -128,9 +128,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				attributes.put(IBreakpoint.ID, getModelIdentifier());
 				attributes.put(TYPE_NAME, exceptionName);
 				attributes.put(ENABLED, Boolean.TRUE);
-				attributes.put(CAUGHT, new Boolean(caught));
-				attributes.put(UNCAUGHT, new Boolean(uncaught));
-				attributes.put(CHECKED, new Boolean(checked));
+				attributes.put(CAUGHT, Boolean.valueOf(caught));
+				attributes.put(UNCAUGHT, Boolean.valueOf(uncaught));
+				attributes.put(CHECKED, Boolean.valueOf(checked));
 				
 				ensureMarker().setAttributes(attributes);
 				
@@ -194,7 +194,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * and caught or not caught.
 	 */
 	protected void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
-		Object[] values= new Object[]{new Boolean(caught), new Boolean(uncaught)};
+		Object[] values= new Object[]{Boolean.valueOf(caught), Boolean.valueOf(uncaught)};
 		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
 		setAttributes(attributes, values);
 	}

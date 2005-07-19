@@ -48,7 +48,7 @@ public class PlusOperator extends BinaryOperator {
 		IJavaPrimitiveValue primitiveValue= (IJavaPrimitiveValue)value;
 		switch (typeId) {
 			case T_boolean:
-				return new Boolean(primitiveValue.getBooleanValue()).toString();
+				return Boolean.valueOf(primitiveValue.getBooleanValue()).toString();
 			case T_byte:
 				return new Integer(primitiveValue.getByteValue()).toString();
 			case T_char:

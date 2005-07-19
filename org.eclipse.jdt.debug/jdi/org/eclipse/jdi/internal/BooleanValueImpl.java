@@ -64,7 +64,7 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements BooleanValue
 	public static BooleanValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		boolean value = target.readBoolean("booleanValue", in); //$NON-NLS-1$
-		return new BooleanValueImpl(vmImpl, new Boolean(value));
+		return new BooleanValueImpl(vmImpl, Boolean.valueOf(value));
 	}
 
 	/**

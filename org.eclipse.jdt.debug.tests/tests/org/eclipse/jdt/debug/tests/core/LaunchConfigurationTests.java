@@ -120,8 +120,8 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		 // retrieve attributes
 		 assertEquals("String1 should be String1", "String1", attributes.get("String1"));
 		 assertEquals("Int1 should be 1", new Integer(1), attributes.get("Int1"));
-		 assertEquals("Boolean1 should be true", new Boolean(true), attributes.get("Boolean1"));
-		 assertEquals("Boolean2 should be false", new Boolean(false), attributes.get("Boolean2"));
+		 assertEquals("Boolean1 should be true", Boolean.valueOf(true), attributes.get("Boolean1"));
+		 assertEquals("Boolean2 should be false", Boolean.valueOf(false), attributes.get("Boolean2"));
 
 		 // cleanup
 		 handle.delete();

@@ -358,7 +358,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */	
 	public void addLineBreakpointAttributes(Map attributes, String modelIdentifier, boolean enabled, int lineNumber, int charStart, int charEnd) {
 		attributes.put(IBreakpoint.ID, modelIdentifier);
-		attributes.put(IBreakpoint.ENABLED, new Boolean(enabled));
+		attributes.put(IBreakpoint.ENABLED, Boolean.valueOf(enabled));
 		attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 		attributes.put(IMarker.CHAR_START, new Integer(charStart));
 		attributes.put(IMarker.CHAR_END, new Integer(charEnd)); 
@@ -713,7 +713,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionEnabled(boolean)
 	 */
 	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
-		setAttributes(new String[]{CONDITION_ENABLED}, new Object[]{new Boolean(conditionEnabled)});
+		setAttributes(new String[]{CONDITION_ENABLED}, new Object[]{Boolean.valueOf(conditionEnabled)});
 		recreate();
 	}
 	
@@ -747,7 +747,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	public void setConditionSuspendOnTrue(boolean suspendOnTrue) throws CoreException {
 		if (isConditionSuspendOnTrue() != suspendOnTrue) {
-			setAttributes(new String[]{CONDITION_SUSPEND_ON_TRUE}, new Object[]{new Boolean(suspendOnTrue)});
+			setAttributes(new String[]{CONDITION_SUSPEND_ON_TRUE}, new Object[]{Boolean.valueOf(suspendOnTrue)});
 			fConditionValues.clear();
 			recreate();
 		}

@@ -672,7 +672,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @return Returns newly created BooleanValue for the given value. 
 	 */
 	public BooleanValue mirrorOf(boolean value) {
-		return new BooleanValueImpl(virtualMachineImpl(), new Boolean(value));
+		return new BooleanValueImpl(virtualMachineImpl(), Boolean.valueOf(value));
 	}
 		
 	/**

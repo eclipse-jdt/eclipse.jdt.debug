@@ -34,6 +34,6 @@ public class VMConnectTimeoutStatusHandler implements IStatusHandler {
 				result[0]= (MessageDialog.openQuestion(JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message));
 			}
 		});
-		return new Boolean(result[0]);
+		return Boolean.valueOf(result[0]);
 	}
 }

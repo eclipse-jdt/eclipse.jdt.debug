@@ -73,7 +73,7 @@ public class InstanceFilterEditor {
 		fInstanceViewer.getTable().setLayoutData(data);
 		fInstanceViewer.setContentProvider(fContentProvider);
 		IDebugModelPresentation pres = DebugUITools.newDebugModelPresentation();
-		pres.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, new Boolean(true));
+		pres.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, Boolean.TRUE);
 		fInstanceViewer.setLabelProvider(pres);
 		fInstanceViewer.setInput(fBreakpoint);
 		setInitialCheckedState();
