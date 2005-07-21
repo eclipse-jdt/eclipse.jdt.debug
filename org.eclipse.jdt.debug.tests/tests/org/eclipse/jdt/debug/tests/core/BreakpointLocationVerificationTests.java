@@ -40,7 +40,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
-		IType type= getJavaProject().findType("BreakpointsLocation");
+		IType type= getJavaProject().findType(expectedTypeName);
 		assertNotNull("Cannot find type", type);
 		CompilationUnit compilationUnit= parseCompilationUnit(type.getCompilationUnit());
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, true, false);
@@ -48,7 +48,11 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		int lineNumber= locator.getLineLocation();		
 		assertEquals("Wrong line number", expectedLineNumber, lineNumber);
 		String typeName= locator.getFullyQualifiedTypeName();
-		assertEquals("Wrong type name", expectedTypeName, typeName);
+        if (lineNumber == -1) {
+            assertEquals("Wrong type name", null, typeName);
+        } else {
+            assertEquals("Wrong type name", expectedTypeName, typeName);
+        }
 	}
 
 	/**
@@ -74,14 +78,26 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	
 	public void testLineAfterAllCode() throws Exception {
 		// ********* this test need to be updated everytime BreakpointsLocation.java is modified *************
-		testLocation(74, -1, null);
+		testLocation(74, -1, "BreakpointsLocation");
 		// ******************************
 	}
 	
 	public void testLineVariableDeclarationWithAssigment() throws Exception {
 		testLocation(43, 46, "BreakpointsLocation");
 	}
+    
+    public void testEmptyLabel() throws Exception {
+        testLocation(15, 16, "LabelTest");
+    }
 	
+    public void testNestedEmptyLabels() throws Exception {
+        testLocation(19, 21, "LabelTest");
+    }
+    
+    public void testLabelWithCode() throws Exception {
+        testLocation(21, 21, "LabelTest");
+    }
+    
 	public void testLineFieldDeclarationWithAssigment() throws Exception {
 		testLocation(51, 55, "BreakpointsLocation");
 	}

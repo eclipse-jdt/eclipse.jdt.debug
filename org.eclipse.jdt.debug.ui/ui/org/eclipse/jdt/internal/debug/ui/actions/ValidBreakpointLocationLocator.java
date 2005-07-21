@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -128,6 +129,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	private String fTypeName;
 	private int fLineLocation;
 	private int fMemberOffset;
+    private List fLabels;
 
 	/**
 	 * @param compilationUnit the JDOM CompilationUnit of the source code.
@@ -735,10 +737,40 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.LabeledStatement)
 	 */
 	public boolean visit(LabeledStatement node) {
+        nestLabel(node.getLabel().getFullyQualifiedName());
 		return visit(node, false);
 	}
-
+    
 	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.LabeledStatement)
+	 */
+	public void endVisit(LabeledStatement node) {
+        popLabel();
+        super.endVisit(node);
+    }
+    
+    private String getLabel() {
+        if (fLabels == null || fLabels.isEmpty()) {
+            return null;
+        }
+        return (String) fLabels.get(fLabels.size() - 1);
+    }
+    
+    private void nestLabel(String label) {
+        if (fLabels == null) {
+            fLabels = new ArrayList();
+        }
+        fLabels.add(label);
+    }
+    
+    private void popLabel() {
+        if (fLabels == null || fLabels.isEmpty()) {
+            return;
+        }
+        fLabels.remove(fLabels.size() - 1);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.LineComment)
 	 */
 	public boolean visit(LineComment node) {
@@ -917,7 +949,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.SimpleName)
 	 */
 	public boolean visit(SimpleName node) {
-		return visit(node, true);
+        // the name is only code if its not the current label (if any)
+		return visit(node, !node.getFullyQualifiedName().equals(getLabel()));
 	}
 
 	/**
