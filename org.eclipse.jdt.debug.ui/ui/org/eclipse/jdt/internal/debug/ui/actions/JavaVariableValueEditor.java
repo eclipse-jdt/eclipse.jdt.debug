@@ -66,8 +66,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
         String signature= null;
         IJavaVariable javaVariable = (IJavaVariable) variable.getAdapter(IJavaVariable.class);
         if (javaVariable != null) {
-                IJavaType javaType = javaVariable.getJavaType();
-                signature = javaType.getSignature();
+                signature = javaVariable.getSignature();
         }
         return signature;
     }
