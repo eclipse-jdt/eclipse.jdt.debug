@@ -11,25 +11,21 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 /**
  * Bundle of most images used by the Java debug plug-in.
  */
 public class JavaDebugImages {
 
-	/* Declare Common paths */
-	private static URL ICON_BASE_URL= null;
-
-	static {
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-		ICON_BASE_URL= JDIDebugUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
-	}
+    private static String ICONS_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 	
 	// The plugin registry
 	private static ImageRegistry fgImageRegistry = null;
@@ -100,12 +96,12 @@ public class JavaDebugImages {
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
-	private static final String T_OBJ= "obj16/"; 		//$NON-NLS-1$
-	private static final String T_OVR= "ovr16/"; 		//$NON-NLS-1$
-	private static final String T_WIZBAN= "wizban/"; 	//$NON-NLS-1$
-	private static final String T_EVIEW= "eview16/"; 	//$NON-NLS-1$
-	private static final String T_DLCL= "dtool16/"; 	//$NON-NLS-1$
-	private static final String T_ELCL= "etool16/"; 	//$NON-NLS-1$
+	private static final String T_OBJ= ICONS_PATH + "obj16/"; 		//$NON-NLS-1$
+	private static final String T_OVR= ICONS_PATH + "ovr16/"; 		//$NON-NLS-1$
+	private static final String T_WIZBAN= ICONS_PATH + "wizban/"; 	//$NON-NLS-1$
+	private static final String T_EVIEW= ICONS_PATH + "eview16/"; 	//$NON-NLS-1$
+	private static final String T_DLCL= ICONS_PATH + "dtool16/"; 	//$NON-NLS-1$
+	private static final String T_ELCL= ICONS_PATH + "etool16/"; 	//$NON-NLS-1$
 
 
 	
@@ -205,28 +201,22 @@ public class JavaDebugImages {
 		
 	}
 	
-	/**
-	 * Declare an Image in the registry table.
-	 * @param key 	The key to use when registering the image
-	 * @param path	The path where the image can be found. This path is relative to where
-	 *				this plugin class is found (i.e. typically the packages directory)
-	 */
-	private final static void declareRegistryImage(String key, String path) {
-		ImageDescriptor desc= ImageDescriptor.getMissingImageDescriptor();
-		try {
-			desc= ImageDescriptor.createFromURL(makeIconFileURL(path));
-		} catch (MalformedURLException me) {
-			JDIDebugUIPlugin.log(me);
-		}
-		fgImageRegistry.put(key, desc);
-	}	
-	
-	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
-		if (ICON_BASE_URL == null) {
-			throw new MalformedURLException();
-		}
-			
-		return new URL(ICON_BASE_URL, iconPath);
-	}	
+    
 
+    /**
+     * Declare an Image in the registry table.
+     * @param key   The key to use when registering the image
+     * @param path  The path where the image can be found. This path is relative to where
+     *              this plugin class is found (i.e. typically the packages directory)
+     */
+    private final static void declareRegistryImage(String key, String path) {
+        ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
+        Bundle bundle = Platform.getBundle(JDIDebugUIPlugin.getUniqueIdentifier());
+        URL url = null;
+        if (bundle != null){
+            url = Platform.find(bundle, new Path(path));
+            desc = ImageDescriptor.createFromURL(url);
+        }
+        fgImageRegistry.put(key, desc);
+    }
 }
