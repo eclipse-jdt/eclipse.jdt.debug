@@ -67,7 +67,6 @@ public class JREMessages extends NLS {
 	public static String AddVMDialog_23;
 	public static String AddVMDialog_0;
 
-	public static String VMLibraryBlock_Use_default_system_libraries_1;
 	public static String VMLibraryBlock_Libraries_cannot_be_empty__1;
 
 	public static String JREsUpdater_0;
@@ -84,4 +83,8 @@ public class JREMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, JREMessages.class);
 	}
+
+	public static String VMLibraryBlock_9;
+
+	public static String VMLibraryBlock_10;
 }
