@@ -196,5 +196,12 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
+	 */
+	public boolean hasVariables() throws DebugException {
+		return getLength() > 0;
+	}
+
 }
 
