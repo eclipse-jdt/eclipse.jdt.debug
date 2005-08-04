@@ -61,8 +61,10 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
     
     /**
      * Returns the class loader used to load classes for this runtime context
+     * or <code>null</code> when loaded by the bootstrap loader
      * 
-     * @return the class loader used to load classes for this runtime context
+     * @return the class loader used to load classes for this runtime context or
+     *  <code>null</code> when loaded by the bootstrap loader
      * @throws CoreException if unable to resolve a class loader
      */
     protected IJavaObject getClassLoaderObject() throws CoreException {
@@ -94,7 +96,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
      * to force load the specified class.
      * 
      * @param qualifiedName name of class to load
-     * @param loader the class loader to use
+     * @param loader the class loader to use or <code>null</code> if the bootstrap loader
      * @return the loaded class
      * @throws CoreException if loading fails
      */

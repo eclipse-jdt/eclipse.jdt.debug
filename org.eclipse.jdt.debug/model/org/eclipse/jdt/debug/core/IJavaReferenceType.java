@@ -85,10 +85,10 @@ public interface IJavaReferenceType extends IJavaType {
     
     /**
      * Returns the class loader object that loaded the class corresponding to this
-     * type.
+     * type, or <code>null</code> if this type was loaded by the bootstrap loader.
      *  
      * @return the class loader object that loaded the class corresponding to this
-     *   type
+     *   type or <code>null</code>
      * @throws DebugException
      * @since 3.1
      */

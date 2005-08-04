@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaReferenceType;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayType;
+import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
 import com.sun.jdi.ReferenceType;
@@ -173,12 +174,13 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
     public IJavaObject getClassLoaderObject() throws DebugException {
         try {
             ReferenceType type= (ReferenceType)getUnderlyingType();
-            return (IJavaObject)JDIValue.createValue(getDebugTarget(), type.classLoader());
+            ClassLoaderReference classLoader = type.classLoader();
+            if (classLoader != null) {
+            	return (IJavaObject)JDIValue.createValue(getDebugTarget(), classLoader);
+            }
         } catch (RuntimeException e) {
             getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIReferenceType_0, new String[] {e.toString()}), e); //$NON-NLS-1$
         }
-        // execution will not fall through to here,
-        // as #requestFailed will throw an exception
         return null;
     }
     
