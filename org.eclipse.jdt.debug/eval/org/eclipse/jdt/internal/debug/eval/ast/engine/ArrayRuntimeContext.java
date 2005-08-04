@@ -30,9 +30,10 @@ import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVaria
 public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	
 	/**
-	 * Name used for temp variable referring to array (replaces 'this')
+	 * Name used for temp variable referring to array (replaces 'this').
+	 * The same length as "this" so it does not effect code assist.
 	 */
-	protected static String ARRAY_THIS_VARIABLE = "array_this"; //$NON-NLS-1$
+	public static String ARRAY_THIS_VARIABLE = "_a_t"; //$NON-NLS-1$
 	
 	private IJavaArray fArray = null;
 	private IJavaReferenceType fReceivingType = null;

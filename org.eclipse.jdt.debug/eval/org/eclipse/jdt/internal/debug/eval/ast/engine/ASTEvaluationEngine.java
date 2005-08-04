@@ -237,21 +237,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		try {
 			IJavaProject javaProject = getJavaProject();
 			// replace all occurrences of 'this' with 'array_this'
-			StringBuffer updatedSnippet = new StringBuffer();
-			Matcher matcher = fgThisPattern.matcher(snippet);
-			int start = 0;
-			while (matcher.find()) {
-				int end = matcher.start(2);
-				updatedSnippet.append(snippet.substring(start, end));
-				updatedSnippet.append(ArrayRuntimeContext.ARRAY_THIS_VARIABLE);
-				start = end + 4;
-			}
-			if (start < snippet.length()) {
-				updatedSnippet.append(snippet.substring(start, snippet.length()));
-			}
+			String updatedSnippet = replaceThisReferences(snippet);
 			String[] localTypesNames= new String[]{arrayType.getName()};
 			String[] localVariables= new String[]{ArrayRuntimeContext.ARRAY_THIS_VARIABLE};
-			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, updatedSnippet.toString());
+			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, updatedSnippet);
 			
 			IJavaType[] javaTypes = getDebugTarget().getJavaTypes("java.lang.Object"); //$NON-NLS-1$
 			if (javaTypes.length > 0) {
@@ -497,5 +486,28 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Replaces references to 'this' with the 'array_this' variable.
+	 * 
+	 * @param snippet code snippet
+	 * @return snippet with 'this' references replaced
+	 */
+	public static String replaceThisReferences(String snippet) {
+		// replace all occurrences of 'this' with 'array_this'
+		StringBuffer updatedSnippet = new StringBuffer();
+		Matcher matcher = fgThisPattern.matcher(snippet);
+		int start = 0;
+		while (matcher.find()) {
+			int end = matcher.start(2);
+			updatedSnippet.append(snippet.substring(start, end));
+			updatedSnippet.append(ArrayRuntimeContext.ARRAY_THIS_VARIABLE);
+			start = end + 4;
+		}
+		if (start < snippet.length()) {
+			updatedSnippet.append(snippet.substring(start, snippet.length()));
+		}
+		return updatedSnippet.toString();
 	}
 }
