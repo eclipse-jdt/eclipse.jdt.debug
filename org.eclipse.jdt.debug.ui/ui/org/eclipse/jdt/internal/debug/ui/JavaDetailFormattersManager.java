@@ -27,7 +27,9 @@ import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
@@ -56,7 +58,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvocationException;
 
 public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
@@ -148,7 +149,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
 		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
-		if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
+		if (value instanceof IJavaObject) {
 			IJavaObject objectValue= (IJavaObject) value;
 			try {
 				IJavaDebugTarget debugTarget= (IJavaDebugTarget) thread.getDebugTarget();
@@ -306,7 +307,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * The code snippet is compiled in the context of the given object.
 	 */
 	private Expression getCompiledExpression(IJavaObject javaObject, IJavaDebugTarget debugTarget, IJavaThread thread) throws DebugException {
-		IJavaClassType type= (IJavaClassType)javaObject.getJavaType();
+		IJavaType type= javaObject.getJavaType();
 		String typeName= type.getName();
 		Key key= new Key(typeName, debugTarget);
 		if (fCacheMap.containsKey(key)) {
@@ -314,14 +315,42 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		IJavaProject project= getJavaProject(javaObject, thread);
 		if (project != null) {
-			String snippet= getDetailFormatter(type);
+			String snippet = null;
+			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
+			ICompiledExpression res = null;
+			if (type instanceof IJavaClassType) {
+				snippet= getDetailFormatter((IJavaClassType) type);
+			} else if (type instanceof IJavaArrayType) {
+				snippet= getArraySnippet((IJavaArray)javaObject);
+			}
 			if (snippet != null) {
-				IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
-				ICompiledExpression res= evaluationEngine.getCompiledExpression(snippet, javaObject);
+				res= evaluationEngine.getCompiledExpression(snippet, javaObject);
+			}
+			if (res != null) {
 				Expression exp = new Expression(res, evaluationEngine);
 				fCacheMap.put(key, exp);
 				return exp;
 			}
+		}
+		return null;
+	}
+	
+	protected String getArraySnippet(IJavaArray value) throws DebugException {
+		if (((IJavaArrayType)value.getJavaType()).getComponentType() instanceof IJavaReferenceType) {
+			int length = value.getLength();
+			// guestimate at max entries to print based on char/space/comma per entry
+			int maxEntries = (getMaxDetailLength() / 3) + 1;
+			if (length > maxEntries) {
+				StringBuffer snippet = new StringBuffer();
+				snippet.append("Object[] shorter = new Object["); //$NON-NLS-1$
+				snippet.append(maxEntries);
+				snippet.append("]; System.arraycopy(this, 0, shorter, 0, "); //$NON-NLS-1$
+				snippet.append(maxEntries);
+				snippet.append("); "); //$NON-NLS-1$
+				snippet.append("return java.util.Arrays.asList(shorter).toString();"); //$NON-NLS-1$
+				return snippet.toString();
+			}
+			return "java.util.Arrays.asList(this).toString()"; //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -534,90 +563,36 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		
 		/*
-		 * Tries to use Arrays.asList() on target because List has a better toString() to 
-		 * display. If not possible (or if array is of a primitive type), appendArrayDetailIndividually
-		 * is called.
+		 * Gets all values in array and appends the toString() if it is an array of Objects or the value if primative.
+		 * NB - this method is only called if there is no compiled expression for an array to perform an
+		 * Arrays.asList().toString() to minimize toString() calls on remote target (ie one call to
+		 * List.toString() instead of one call per item in the array). 
 		 */
 		protected void appendArrayDetail(StringBuffer result, IJavaArray arrayValue) throws DebugException {
-			IJavaType componentType = null;
-			try {
-				IJavaArrayType javaArrayType = (IJavaArrayType) arrayValue.getJavaType();
-				componentType = javaArrayType.getComponentType();
-			} catch (DebugException de) {
-				if (de.getStatus().getException() instanceof ClassNotLoadedException) {
-					result.append(DebugUIMessages.JavaDetailFormattersManager_0); //$NON-NLS-1$
-				} else {
-					JDIDebugUIPlugin.log(de);
-					result.append(de.getStatus().getMessage());
-				}
-				return;	
-			}
-			
-			if (!(componentType instanceof IJavaReferenceType)) {
-				//if it is an array of primitives, cannot use Arrays.asList()
-				appendArrayDetailIndividually(result, arrayValue);
-				return;
-			}
-			
-			IJavaDebugTarget target = (IJavaDebugTarget) arrayValue.getDebugTarget();
-			
-			//Load java.util.Arrays
-			IJavaType[] types;
-			try {
-				types = target.getJavaTypes("java.lang.Class"); //$NON-NLS-1$
-			} catch (DebugException de) {
-				types = null;
-			}
-			
-			if (types != null && types.length >0) {
-				try {
-					IJavaClassType type = (IJavaClassType) types[0];
-					IJavaValue arg = target.newValue("java.util.Arrays"); //$NON-NLS-1$
-					type.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", new IJavaValue[] {arg}, fThread);  //$NON-NLS-1$//$NON-NLS-2$
-				} catch (DebugException de) {
-					//java.util.Arrays didn't load properly. Can't use Arrays.asList()
-					appendArrayDetailIndividually(result, arrayValue);
-				}
-			} else {
-				//didn't get java.lang.Class, can't load java.utils.Arrays.
-				appendArrayDetailIndividually(result, arrayValue);
-			}
-			
-			types = null;
-			types = target.getJavaTypes("java.util.Arrays"); //$NON-NLS-1$
-			if (types != null && types.length >0) {
-				IJavaClassType type = (IJavaClassType) types[0];
-				IJavaObject javaObject;
-				try {
-					//execute Arrays.asList() on target
-					javaObject = (IJavaObject) type.sendMessage("asList", "([Ljava/lang/Object;)Ljava/util/List;", new IJavaValue[] {arrayValue}, fThread); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (DebugException de) {
-					//asList() failed.
-					appendArrayDetailIndividually(result, arrayValue);
-					return;
-				}
-				appendObjectDetail(result, javaObject);
-			} else {
-				// didn't get java.util.Arrays. Can't use asList() 
-				appendArrayDetailIndividually(result, arrayValue);
-			}
-		}
-		
-		/*
-		 * Gets all values in array and appends the toString() if it is an array of Objects or the value if primative.
-		 * NB - this method is only called by appendArrayDetail which first tries to use Arrays.asList() to minimize
-		 * toString() calls on remote target (ie one call to List.toString() instead of one call per item in the array). 
-		 */
-		private void appendArrayDetailIndividually(StringBuffer result, IJavaArray arrayValue) throws DebugException {
 			result.append('[');
-			IJavaValue[] arrayValues;
-			try {				
-				arrayValues= arrayValue.getValues();				
+			boolean partial = false;
+			IJavaValue[] arrayValues = null;
+			int maxLength = getMaxDetailLength();
+			int maxEntries = (maxLength / 3) + 1; // guess at char/comma/space per entry
+			int length = -1;
+			try {
+				length = arrayValue.getLength();
+				if (length > maxEntries) {
+					partial = true;
+					IVariable[] variables = arrayValue.getVariables(0, maxEntries);
+					arrayValues = new IJavaValue[variables.length];
+					for (int i = 0; i < variables.length; i++) {
+						arrayValues[i] = (IJavaValue) variables[i].getValue();
+					}
+				} else {
+					arrayValues= arrayValue.getValues();
+				}
 			} catch (DebugException de) {
 				JDIDebugUIPlugin.log(de);
 				result.append(de.getStatus().getMessage());
 				return;
 			}
+			
 			for (int i= 0; i < arrayValues.length; i++) {
 				IJavaValue value= arrayValues[i];
 				if (value instanceof IJavaArray) {
@@ -631,8 +606,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					result.append(',');
 					result.append(' ');
 				}
+				if (partial && result.length() > maxLength) {
+					break;
+				}
 			}
-			result.append(']');	
+			if (!partial) {
+				result.append(']');
+			}
 		}
 		
 		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
@@ -666,6 +646,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	public void removeAssociatedDetailFormatter(DetailFormatter detailFormatter) {
 		fDetailFormattersMap.remove(detailFormatter.getTypeName());
 		savePreference();
+	}
+	
+	/**
+	 * Returns the maximum number of chars to display in the details area.
+	 * 
+	 * @return
+	 */
+	private static int getMaxDetailLength() {
+		return DebugUITools.getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
 	}
 	
 }
