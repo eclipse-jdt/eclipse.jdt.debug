@@ -13,6 +13,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,6 +31,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
+import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -36,6 +39,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -58,6 +62,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	private IJavaProject fProject;
 	
 	private IJavaDebugTarget fDebugTarget;
+	
+	/**
+	 * Regex to find occurrences of 'this' in a code snippet
+	 */
+	private static Pattern fgThisPattern = Pattern.compile("(.*[^a-zA-Z0-9]+|^)(this)([^a-zA-Z0-9]+|$).*"); //$NON-NLS-1$
 	
 	public ASTEvaluationEngine(IJavaProject project, IJavaDebugTarget debugTarget) {
 		setJavaProject(project);
@@ -116,7 +125,12 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org.eclipse.jdt.debug.eval.ICompiledExpression, org.eclipse.jdt.debug.core.IJavaObject, org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
-		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
+		IRuntimeContext context = null;
+		if (thisContext instanceof IJavaArray) {
+			context = new ArrayRuntimeContext((IJavaArray) thisContext, thread, getJavaProject());
+		} else {
+			context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
+		}
 		doEvaluation(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
@@ -213,17 +227,65 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	// ******
 	
+	/**
+	 * Returns a compiled expression for an evaluation in the context of an array
+	 * as a receiver.
+	 */
+	private ICompiledExpression getCompiledExpression(String snippet, IJavaArrayType arrayType) {
+		EvaluationSourceGenerator mapper = null;
+		CompilationUnit unit = null;
+		try {
+			IJavaProject javaProject = getJavaProject();
+			// replace all occurrences of 'this' with 'array_this'
+			StringBuffer updatedSnippet = new StringBuffer();
+			Matcher matcher = fgThisPattern.matcher(snippet);
+			int start = 0;
+			while (matcher.find()) {
+				int end = matcher.start(2);
+				updatedSnippet.append(snippet.substring(start, end));
+				updatedSnippet.append(ArrayRuntimeContext.ARRAY_THIS_VARIABLE);
+				start = end + 4;
+			}
+			if (start < snippet.length()) {
+				updatedSnippet.append(snippet.substring(start, snippet.length()));
+			}
+			String[] localTypesNames= new String[]{arrayType.getName()};
+			String[] localVariables= new String[]{ArrayRuntimeContext.ARRAY_THIS_VARIABLE};
+			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, updatedSnippet.toString());
+			
+			IJavaType[] javaTypes = getDebugTarget().getJavaTypes("java.lang.Object"); //$NON-NLS-1$
+			if (javaTypes.length > 0) {
+				IJavaReferenceType recType = (IJavaReferenceType) javaTypes[0];
+				unit = parseCompilationUnit(mapper.getSource(recType, getJavaProject()).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			} else {
+				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, 
+						EvaluationEngineMessages.ASTEvaluationEngine_1, null);
+				throw new CoreException(status);
+			}
+		} catch (CoreException e) {
+			InstructionSequence expression= new InstructionSequence(snippet);
+			expression.addError(e.getStatus().getMessage());
+			return expression;
+		}
+		
+		return createExpressionFromAST(snippet, mapper, unit);		
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression(java.lang.String, org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
 		try {
+			if (thisContext instanceof IJavaArray) {
+				return getCompiledExpression(snippet, (IJavaArrayType)thisContext.getJavaType());
+			}
 			return getCompiledExpression(snippet, (IJavaReferenceType)thisContext.getJavaType());
 		} catch (DebugException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
 			return expression;
 		}
+			
 	}
 	
 	/* (non-Javadoc)
@@ -231,8 +293,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaReferenceType type) {
 		if (type instanceof IJavaArrayType) {
-			InstructionSequence errorExpression= new InstructionSequence(snippet);
-			errorExpression.addError(EvaluationEngineMessages.ASTEvaluationEngine_Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1); //$NON-NLS-1$
+			return getCompiledExpression(snippet, (IJavaArrayType)type);
 		}
 		IJavaProject javaProject = getJavaProject();
 

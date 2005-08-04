@@ -34,7 +34,6 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -146,7 +145,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 									try {
 										if (!var.getName().equals("this")) { //$NON-NLS-1$
 											IValue value= var.getValue();
-											if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
+											if (value instanceof IJavaObject) {
 												return (IJavaObject)value;
 											}
 										} 
@@ -155,7 +154,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 									}
 								} else if (selection instanceof JavaInspectExpression) {
 									IValue value= ((JavaInspectExpression)selection).getValue();
-									if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
+									if (value instanceof IJavaObject) {
 										return (IJavaObject)value;
 									}
 								}

@@ -23,11 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 public class RuntimeContext extends AbstractRuntimeContext {
 
 	/**
-	 * Java project context
-	 */
-	private IJavaProject fProject;
-	
-	/**
 	 * Stack frame context
 	 */
 	private IJavaStackFrame fFrame;
@@ -42,7 +37,7 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	 * @return a new runtime context
 	 */
 	public RuntimeContext(IJavaProject project, IJavaStackFrame frame) {
-		setProject(project);
+		super(project);
 		setFrame(frame);
 	}
 	
@@ -76,22 +71,6 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	 */
 	public IJavaVariable[] getLocals() throws CoreException {
 		return getFrame().getLocalVariables();
-	}
-
-	/**
-	 * @see IRuntimeContext#getProject()
-	 */
-	public IJavaProject getProject() {
-		return fProject;
-	}
-	
-	/**
-	 * Sets the project context used to compile expressions
-	 * 
-	 * @param project the project context used to compile expressions
-	 */
-	private void setProject(IJavaProject project) {
-		fProject = project;
 	}
 	
 	/**

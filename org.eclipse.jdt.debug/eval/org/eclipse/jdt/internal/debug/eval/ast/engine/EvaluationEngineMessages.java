@@ -41,7 +41,6 @@ public class EvaluationEngineMessages extends NLS {
 	public static String ASTInstructionCompiler_Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32;
 	public static String ASTInstructionCompiler_Must_explicitly_qualify_the_allocation_with_an_instance_of_the_enclosing_type_33;
 	public static String ASTEvaluationEngine_Evaluations_must_contain_either_an_expression_or_a_block_of_well_formed_statements_1;
-	public static String ASTEvaluationEngine_Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1;
 
 	public static String InterpreterVariable_setValue_String__not_supported_for_interpreter_variable_1;
 	public static String InterpreterVariable_verifyValue_IValue__not_supported_for_interpreter_variable_2;
@@ -59,4 +58,6 @@ public class EvaluationEngineMessages extends NLS {
 	}
 
     public static String ASTEvaluationEngine_0;
+	public static String ASTEvaluationEngine_1;
+	public static String ArrayRuntimeContext_0;
 }

@@ -27,11 +27,6 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	private IJavaObject fThisObject;
 	
 	/**
-	 * The project for this context.
-	 */
-	private IJavaProject fJavaProject;
-	
-	/**
 	 * The thread for this context.
 	 */
 	private IJavaThread fThread;
@@ -44,8 +39,8 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	 * @param thread the thread for this context.
 	 */
 	public JavaObjectRuntimeContext(IJavaObject thisObject, IJavaProject javaProject, IJavaThread thread) {
+		super(javaProject);
 		fThisObject= thisObject;
-		fJavaProject= javaProject;
 		fThread= thread;
 	}
 
@@ -75,13 +70,6 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	 */
 	public IJavaVariable[] getLocals() {
 		return new IJavaVariable[0];
-	}
-
-	/**
-	 * @see IRuntimeContext#getProject()
-	 */
-	public IJavaProject getProject() {
-		return fJavaProject;
 	}
 
 	/**
