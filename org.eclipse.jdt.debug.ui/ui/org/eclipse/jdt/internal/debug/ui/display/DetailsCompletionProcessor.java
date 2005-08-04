@@ -25,6 +25,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ArrayRuntimeContext;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
@@ -76,19 +78,47 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 			Object element= viewerSelection.getFirstElement();	
 			try {
                 setErrorMessage(null);
-				ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
-				IType receivingType= getReceivingType(stackFrame.getLaunch(), element);
+        		IValue value= null;
+    			if (element instanceof IVariable) {
+    				value= ((IVariable)element).getValue();
+    			} else if (element instanceof IExpression) {
+    				value= ((IExpression)element).getValue();	
+    			}
+    			String recTypeName = null;
+    			if (value instanceof IJavaArray) {
+    				recTypeName = "java.lang.Object"; //$NON-NLS-1$
+    			} else if (value != null) {
+    				recTypeName = value.getReferenceTypeName();
+    			}
+							
+				IType receivingType= getReceivingType(stackFrame.getLaunch(), recTypeName);
 				if (receivingType == null) {
                     setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); //$NON-NLS-1$
 					return new ICompletionProposal[0];
 				}
 				IJavaProject project = receivingType.getJavaProject(); 
-		
+				ITextSelection textSelection= (ITextSelection)viewer.getSelectionProvider().getSelection();
 				configureResultCollector(project, textSelection);	
 				int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
-				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
-					 new char[0][], new char[0][],
-					 new int[0], false, getCollector());
+				char[][] localTypeNames;
+				char[][] localNames;
+				int[] modifiers;
+				char[] snippet;
+				if (value instanceof IJavaArray) {
+					// do a song and dance to fake 'this' as an array receiver
+					IJavaArray array = (IJavaArray) value;
+					localTypeNames = new char[][]{array.getJavaType().getName().toCharArray()};
+					localNames = new char[][]{ArrayRuntimeContext.ARRAY_THIS_VARIABLE.toCharArray()};
+					modifiers = new int[]{0};
+					snippet = ASTEvaluationEngine.replaceThisReferences(viewer.getDocument().get()).toCharArray();
+				} else {
+					localTypeNames = new char[0][];
+					localNames = new char[0][];
+					modifiers = new int[0];
+					snippet = viewer.getDocument().get().toCharArray();
+				}
+				receivingType.codeComplete(snippet, insertionPosition, documentOffset,
+					 localTypeNames, localNames, modifiers, false, getCollector());
 					 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 
@@ -104,12 +134,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		}
 	}
 	
-	private IType getReceivingType(ILaunch launch, Object element) throws DebugException {
-		String originalTypeName= getReceivingTypeName(element);
-		if (originalTypeName == null) {
-			return null;
-		}
-		
+	private IType getReceivingType(ILaunch launch, String originalTypeName) throws DebugException {
 		String sourceName= originalTypeName;
 		// strip off generic info
 		int genIndex = sourceName.indexOf('<');
@@ -129,25 +154,4 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		return resolveType(launch, originalTypeName, sourceName);
 	}
 
-	private String getReceivingTypeName(Object element) {
-		
-		IValue value= null;
-		try {
-			if (element instanceof IVariable) {
-				value= ((IVariable)element).getValue();
-				if (value instanceof IJavaArray) {
-					return null;
-				}
-			} else if (element instanceof IExpression) {
-				value= ((IExpression)element).getValue();	
-			}
-			if (value != null) {
-				return value.getReferenceTypeName();
-			}
-		} catch (DebugException de) {
-			JDIDebugUIPlugin.log(de);
-		}
-				
-		return null;
-	}
 }
