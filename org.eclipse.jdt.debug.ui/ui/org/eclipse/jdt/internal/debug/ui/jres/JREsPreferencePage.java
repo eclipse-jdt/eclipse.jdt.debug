@@ -52,9 +52,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		super();
 		
 		// only used when page is shown programatically
-		setTitle(JREMessages.JREsPreferencePage_1);	 //$NON-NLS-1$
+		setTitle(JREMessages.JREsPreferencePage_1);	 
 		
-		setDescription(JREMessages.JREsPreferencePage_2); //$NON-NLS-1$
+		setDescription(JREMessages.JREsPreferencePage_2); 
 	}
 
 	/* (non-Javadoc)
@@ -110,7 +110,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				IVMInstall install = getCurrentDefaultVM();
 				if (install == null) {
 					setValid(false);
-					setErrorMessage(JREMessages.JREsPreferencePage_13); //$NON-NLS-1$
+					setErrorMessage(JREMessages.JREsPreferencePage_13); 
 				} else {
 					setValid(true);
 					setErrorMessage(null);
@@ -179,7 +179,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				} else {
 					fJREBlock.setCheckedJRE(def);
 				}
-				ErrorDialog.openError(getControl().getShell(), JREMessages.JREsPreferencePage_1, JREMessages.JREsPreferencePage_10, new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.JREsPreferencePage_11, null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ErrorDialog.openError(getControl().getShell(), JREMessages.JREsPreferencePage_1, JREMessages.JREsPreferencePage_10, new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.JREsPreferencePage_11, null)); //  
 				return;
 			}
 		} else {

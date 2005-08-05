@@ -92,7 +92,7 @@ public class LeftShiftOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.LeftShiftOperator_______operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.LeftShiftOperator_______operator_1; 
 	}
 
 }

@@ -71,7 +71,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 			try {
 				fLength = getArrayReference().length();
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_array_length, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_array_length, new String[] {e.toString()}), e); 
 			}
 		}
 		return fLength;
@@ -86,11 +86,11 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 		} catch (IndexOutOfBoundsException e) {
 			throw e;
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); 
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); 
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); 
 		}
 	}
 
@@ -122,7 +122,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 		} catch (IndexOutOfBoundsException e) {
 			throw e;
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_value_from_array, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_value_from_array, new String[] {e.toString()}), e); 
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
@@ -146,7 +146,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 		} catch (IndexOutOfBoundsException e) {
 			return Collections.EMPTY_LIST;
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_values_from_array, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_retrieving_values_from_array, new String[] {e.toString()}), e); 
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
@@ -165,7 +165,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 	 */
 	public IVariable getVariable(int offset) throws DebugException {
 		if (offset >= getLength()) {
-			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null); 
 		}
 		return new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), offset);
 	}
@@ -175,10 +175,10 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 	 */
 	public IVariable[] getVariables(int offset, int length) throws DebugException {
 		if (offset >= getLength()) {
-			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null); 
 		}
 		if ((offset + length - 1) >= getLength()) {
-			requestFailed(JDIDebugModelMessages.JDIArrayValue_8, null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIArrayValue_8, null); 
 		}
 		IVariable[] variables = new IVariable[length];
 		int index = offset;

@@ -85,9 +85,9 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		IStructuredContentProvider content = new ContentProvider(projects);
-		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects, content, labelProvider, SourceLookupMessages.JavaProjectSourceContainerBrowser_0); //$NON-NLS-1$
-		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1); //$NON-NLS-1$
-		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, SourceLookupMessages.JavaProjectSourceContainerBrowser_2, null); //$NON-NLS-1$
+		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects, content, labelProvider, SourceLookupMessages.JavaProjectSourceContainerBrowser_0); 
+		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1); 
+		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, SourceLookupMessages.JavaProjectSourceContainerBrowser_2, null); 
 				
 		List sourceContainers = new ArrayList();
 		if (dialog.open() == Window.OK) {			

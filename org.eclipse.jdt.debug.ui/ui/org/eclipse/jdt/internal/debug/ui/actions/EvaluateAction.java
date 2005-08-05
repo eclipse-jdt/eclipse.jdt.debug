@@ -215,14 +215,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		final IJavaObject object = getObjectContext();		
 		final IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame == null) {
-			reportError(ActionMessages.Evaluate_error_message_stack_frame_context); //$NON-NLS-1$
+			reportError(ActionMessages.Evaluate_error_message_stack_frame_context); 
 			return;
 		}
 		
 		// check for nested evaluation
 		IJavaThread thread = (IJavaThread)stackFrame.getThread();
 		if (thread.isPerformingEvaluation()) {
-			reportError(ActionMessages.EvaluateAction_Cannot_perform_nested_evaluations__1); //$NON-NLS-1$
+			reportError(ActionMessages.EvaluateAction_Cannot_perform_nested_evaluations__1); 
 			return;
 		}
 		
@@ -255,10 +255,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
                             throw new InvocationTargetException(e, getExceptionMessage(e));
                         }
                     }
-                    throw new InvocationTargetException(null, ActionMessages.Evaluate_error_message_src_context); //$NON-NLS-1$
+                    throw new InvocationTargetException(null, ActionMessages.Evaluate_error_message_src_context); 
                 }
                 // thread not suspended
-                throw new InvocationTargetException(null, ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); //$NON-NLS-1$
+                throw new InvocationTargetException(null, ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); 
             }
         };
         
@@ -438,7 +438,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					try {
 						view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 					} catch (PartInitException e) {
-						JDIDebugUIPlugin.errorDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e); //$NON-NLS-1$
+						JDIDebugUIPlugin.errorDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e); 
 					} finally {
 						page.activate(activePart);
 					}
@@ -509,13 +509,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
-				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)})); //$NON-NLS-1$
+				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)})); 
 			} else {
-				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); //$NON-NLS-1$
+				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); 
 			}
 		} else {
 			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
-			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); 
 		}
 	}
 	
@@ -543,9 +543,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); //$NON-NLS-1$
+		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
 		if (exception.getMessage() != null) {
-			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
+			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
 		}
 		return message;
 	}
@@ -556,7 +556,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected static String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
+			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
 	}
 	
 	protected String getErrorMessage(IEvaluationResult result) {
@@ -574,7 +574,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (i == 0) {
 				message= msg;
 			} else {
-				message= MessageFormat.format(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg }); //$NON-NLS-1$
+				message= MessageFormat.format(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg }); 
 			}
 		}
 		return message;

@@ -50,7 +50,7 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 			return typeName;
 		}
 		
-        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); //$NON-NLS-1$
+        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); 
         throw new CoreException(status);
 	}
 

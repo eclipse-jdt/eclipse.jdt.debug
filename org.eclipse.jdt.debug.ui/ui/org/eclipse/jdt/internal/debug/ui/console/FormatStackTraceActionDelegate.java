@@ -117,7 +117,7 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
                     formattedTrace.append(token);
                     pendingSpaces = 0;
                     continue;
-                } else if (c == '[') { //$NON-NLS-1$
+                } else if (c == '[') { 
                     if(antTrace) {
                         formattedTrace.append("\n"); //$NON-NLS-1$
                     }

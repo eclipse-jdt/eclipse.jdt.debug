@@ -92,7 +92,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	public JavaDebugPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.JavaDebugPreferencePage_description); //$NON-NLS-1$
+		setDescription(DebugUIMessages.JavaDebugPreferencePage_description); 
 	}
 
 	/**
@@ -125,26 +125,26 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		createSpacer(composite, 1);
 		
-		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1); //$NON-NLS-1$
-		fSuspendButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1); //$NON-NLS-1$
-		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1); //$NON-NLS-1$
-		fSuspendDuringEvaluations= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_14); //$NON-NLS-1$
+		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1); 
+		fSuspendButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1); 
+		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1); 
+		fSuspendDuringEvaluations= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_14); 
 		
 		createSpacer(composite, 1);
 				
-		comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2); //$NON-NLS-1$
-		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1); //$NON-NLS-1$
-		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1); //$NON-NLS-1$
-		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1); //$NON-NLS-1$
-		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1); //$NON-NLS-1$
+		comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2); 
+		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1); 
+		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1); 
+		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1); 
+		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1); 
 		
 		createSpacer(composite, 1);
 
-		fPromptUnableToInstallBreakpoint= createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19); //$NON-NLS-1$
+		fPromptUnableToInstallBreakpoint= createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19); 
 		
 		createSpacer(composite, 1);
 
-		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Communication_1); //$NON-NLS-1$
+		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Communication_1); 
 		//Add in an intermediate composite to allow for spacing
 		Composite spacingComposite = new Composite(comp, SWT.NONE);
 		layout = new GridLayout();
@@ -157,22 +157,22 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		int minValue;
 		
-		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, spacingComposite); //$NON-NLS-1$
+		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, spacingComposite); 
 		fTimeoutText.setPreferenceStore(store);
 		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		minValue= store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
-		fTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); //$NON-NLS-1$
+		fTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fTimeoutText.load();
 		fTimeoutText.setPropertyChangeListener(this);
-		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, spacingComposite); //$NON-NLS-1$
+		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, spacingComposite); 
 		fConnectionTimeoutText.setPreferenceStore(store);
 		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		minValue= store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
 		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
-		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); //$NON-NLS-1$
+		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fConnectionTimeoutText.load();
 		fConnectionTimeoutText.setPropertyChangeListener(this);
 		// cannot set preference store, as it is a core preference

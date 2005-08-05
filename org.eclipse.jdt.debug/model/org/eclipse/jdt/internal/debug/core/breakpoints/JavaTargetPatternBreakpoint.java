@@ -97,7 +97,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 		// create breakpoint requests for each class currently loaded
 		VirtualMachine vm = target.getVM();
 		if (vm == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.JavaTargetPatternBreakpoint_Unable_to_add_breakpoint___VM_disconnected__1, null); //$NON-NLS-1$
+			target.requestFailed(JDIDebugBreakpointMessages.JavaTargetPatternBreakpoint_Unable_to_add_breakpoint___VM_disconnected__1, null); 
 		}
 		List classes= vm.allClasses();
 		if (classes != null) {
@@ -143,12 +143,12 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 				if (!target.isAvailable()) {
 					return false;
 				}
-				target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.JavaPatternBreakpoint_exception_source_name,new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
+				target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.JavaPatternBreakpoint_exception_source_name,new String[] {e.toString(), type.name()}) ,e); 
 				// execution will not reach this line, as 
 				// #targetRequestFailed will throw an exception			
 				return false;
 			} catch (RuntimeException e) {
-				target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.JavaPatternBreakpoint_exception_source_name,new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
+				target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.JavaPatternBreakpoint_exception_source_name,new String[] {e.toString(), type.name()}) ,e); 
 				// execution will not reach this line, as 
 				// #targetRequestFailed will throw an exception			
 				return false;

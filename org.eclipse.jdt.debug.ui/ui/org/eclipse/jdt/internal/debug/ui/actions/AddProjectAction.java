@@ -77,7 +77,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	}	
 
 	public AddProjectAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddProjectAction_Add_Project_1, viewer); //$NON-NLS-1$
+		super(ActionMessages.AddProjectAction_Add_Project_1, viewer); 
 	}	
 
 	/**
@@ -90,9 +90,9 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		IStructuredContentProvider content = new ContentProvider(projects);
-		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects, content, labelProvider, ActionMessages.AddProjectAction_Choose__project_s__to_add__3); //$NON-NLS-1$
-		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2); //$NON-NLS-1$
-		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddProjectAction_One_or_more_exceptions_occurred_while_adding_projects__1, null); //$NON-NLS-1$
+		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects, content, labelProvider, ActionMessages.AddProjectAction_Choose__project_s__to_add__3); 
+		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2); 
+		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddProjectAction_One_or_more_exceptions_occurred_while_adding_projects__1, null); 
 				
 		if (dialog.open() == Window.OK) {			
 			Object[] selections = dialog.getResult();

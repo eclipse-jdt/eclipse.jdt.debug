@@ -126,7 +126,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		projComp.setFont(font);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText(LauncherMessages.JavaConnectTab__Project__2); //$NON-NLS-1$
+		fProjLabel.setText(LauncherMessages.JavaConnectTab__Project__2); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -142,7 +142,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 			}
 		});
 		
-		fProjButton = createPushButton(projComp, LauncherMessages.JavaConnectTab__Browse_3, null); //$NON-NLS-1$
+		fProjButton = createPushButton(projComp, LauncherMessages.JavaConnectTab__Browse_3, null); 
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
@@ -159,7 +159,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		connectorComp.setLayoutData(gd);
 		
 		Label l = new Label(connectorComp, SWT.NONE);
-		l.setText(LauncherMessages.JavaConnectTab_Connect_ion_Type__7); //$NON-NLS-1$
+		l.setText(LauncherMessages.JavaConnectTab_Connect_ion_Type__7); 
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
@@ -184,7 +184,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		createVerticalSpacer(comp, 2);
 		
 		Group group = new Group(comp, SWT.NONE);
-		group.setText(LauncherMessages.JavaConnectTab_Connection_Properties_1); //$NON-NLS-1$
+		group.setText(LauncherMessages.JavaConnectTab_Connection_Properties_1); 
 		group.setLayout(new GridLayout());
 		group.setFont(font);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
@@ -202,7 +202,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		fArgumentComposite.setFont(font);
 		createVerticalSpacer(comp, 2);		
 		
-		fAllowTerminateButton = createCheckButton(comp, LauncherMessages.JavaConnectTab__Allow_termination_of_remote_VM_6); //$NON-NLS-1$
+		fAllowTerminateButton = createCheckButton(comp, LauncherMessages.JavaConnectTab__Allow_termination_of_remote_VM_6); 
 		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -226,7 +226,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		try {
 			fArgumentMap = vm.getDefaultArguments();
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaConnectTab_Unable_to_display_connection_arguments__2, e.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaConnectTab_Unable_to_display_connection_arguments__2, e.getStatus()); 
 			return;
 		}
 		
@@ -420,8 +420,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle(LauncherMessages.JavaConnectTab_Project_selection_10); //$NON-NLS-1$
-		dialog.setMessage(LauncherMessages.JavaConnectTab_Choose_a_project_to_constrain_the_search_for_main_types_11); //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.JavaConnectTab_Project_selection_10); 
+		dialog.setMessage(LauncherMessages.JavaConnectTab_Choose_a_project_to_constrain_the_search_for_main_types_11); 
 		dialog.setElements(projects);
 		
 		IJavaProject javaProject = getJavaProject();
@@ -525,7 +525,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage(LauncherMessages.JavaConnectTab_Project_does_not_exist_14); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.JavaConnectTab_Project_does_not_exist_14); 
 				return false;
 			}
 		}
@@ -538,7 +538,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 			if (editor instanceof StringFieldEditor) {
 				String value = ((StringFieldEditor)editor).getStringValue();
 				if (!arg.isValid(value)) {
-					setErrorMessage(arg.label() + LauncherMessages.JavaConnectTab__is_invalid__5); //$NON-NLS-1$
+					setErrorMessage(arg.label() + LauncherMessages.JavaConnectTab__is_invalid__5); 
 					return false;
 				}		
 			}
@@ -551,7 +551,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.JavaConnectTab_Conn_ect_20; //$NON-NLS-1$
+		return LauncherMessages.JavaConnectTab_Conn_ect_20; 
 	}			
 	
 	/**

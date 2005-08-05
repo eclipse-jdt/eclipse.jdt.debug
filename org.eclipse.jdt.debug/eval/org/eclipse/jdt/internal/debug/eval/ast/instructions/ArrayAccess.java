@@ -35,13 +35,13 @@ public class ArrayAccess extends ArrayInstruction {
 		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
 		IJavaArray array = (IJavaArray)popValue();
 		if (index >= array.getLength() || index < 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index, new Object[] {new Integer(index)}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index, new Object[] {new Integer(index)}), null)); 
 		}
 		push(array.getVariable(index));
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.ArrayAccess_array_access_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.ArrayAccess_array_access_1; 
 	}
 }
 

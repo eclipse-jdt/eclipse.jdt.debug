@@ -69,6 +69,6 @@ public class AssignmentOperator extends CompoundInstruction {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.AssignmentOperator_operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.AssignmentOperator_operator_1; 
 	}
 }

@@ -131,7 +131,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				Runnable postEventProcess = new Runnable() {
 					public void run() {
 						if (!thread.isSuspended() && !thread.isPerformingEvaluation()) {
-							listener.detailComputed(objectValue, DebugUIMessages.JavaDetailFormattersManager_9); //$NON-NLS-1$
+							listener.detailComputed(objectValue, DebugUIMessages.JavaDetailFormattersManager_9); 
 						} else {
 							thread.queueRunnable(new Runnable() {
 								public void run() {
@@ -509,13 +509,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		
 		public void evaluationComplete(IEvaluationResult result) {
 			if (result.hasErrors()) {
-				StringBuffer error= new StringBuffer(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1); //$NON-NLS-1$
+				StringBuffer error= new StringBuffer(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1); 
 				DebugException exception= result.getException();
 				if (exception != null) {
 					Throwable throwable= exception.getStatus().getException();
 					error.append("\n\t\t"); //$NON-NLS-1$
 					if (throwable instanceof InvocationException) {
-						error.append(MessageFormat.format(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()})); //$NON-NLS-1$
+						error.append(MessageFormat.format(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()})); 
 					} else {
 						error.append(exception.getStatus().getMessage());
 					}
@@ -541,13 +541,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					StringBuffer result= new StringBuffer();
 					if (objectValue.getSignature() == null) {
 						// no need to spawn a thread for a null fValue
-						result.append(DebugUIMessages.JavaDetailFormattersManager_null); //$NON-NLS-1$
+						result.append(DebugUIMessages.JavaDetailFormattersManager_null); 
 					} else if (objectValue instanceof IJavaPrimitiveValue) {
 						// no need to spawn a thread for a primitive value
 						appendJDIPrimitiveValueString(result, objectValue);
 					} else if (fThread == null || !fThread.isSuspended()) {
 						// no thread available
-						result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads); //$NON-NLS-1$
+						result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads); 
 						appendJDIValueString(result, objectValue);
 					} else if (objectValue instanceof IJavaArray) {
 						appendArrayDetail(result, (IJavaArray) objectValue);
@@ -628,7 +628,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
 			IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
 			if (toStringValue == null) {
-				result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_); //$NON-NLS-1$
+				result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_); 
 			} else {
 				appendJDIValueString(result, toStringValue);
 			}

@@ -46,7 +46,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * Constructs a new page.
 	 */
 	public JREContainerWizardPage() {
-		super(JREMessages.JREContainerWizardPage_JRE_System_Library_1); //$NON-NLS-1$
+		super(JREMessages.JREContainerWizardPage_JRE_System_Library_1); 
 	}
 
 	/* (non-Javadoc)
@@ -129,14 +129,14 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		composite.setFont(parent.getFont());
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
-		fJREBlock.setTitle(JREMessages.JREContainerWizardPage_3); //$NON-NLS-1$
+		fJREBlock.setTitle(JREMessages.JREContainerWizardPage_3); 
 		fJREBlock.createControl(composite);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJREBlock.getControl().setLayoutData(gd);
 		setControl(composite);	
 		
-		setTitle(JREMessages.JREContainerWizardPage_JRE_System_Library_1); //$NON-NLS-1$
-		setMessage(JREMessages.JREContainerWizardPage_Select_the_JRE_used_to_build_this_project__4); //$NON-NLS-1$
+		setTitle(JREMessages.JREContainerWizardPage_JRE_System_Library_1); 
+		setMessage(JREMessages.JREContainerWizardPage_Select_the_JRE_used_to_build_this_project__4); 
 				
 		initializeFromSelection();
 	}

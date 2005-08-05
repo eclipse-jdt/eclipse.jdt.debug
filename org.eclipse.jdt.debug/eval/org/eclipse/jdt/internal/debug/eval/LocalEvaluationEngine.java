@@ -294,7 +294,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				if (field == null) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__4, null) //$NON-NLS-1$
+						DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__4, null) 
 					);
 				}
 				field.setValue(local.getValue());
@@ -306,7 +306,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			if (field == null) {
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize___this___context__5, null) //$NON-NLS-1$
+					DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize___this___context__5, null) 
 				);				
 			} 
 			field.setValue(thisObject);
@@ -336,7 +336,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				if (field == null) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__6, null) //$NON-NLS-1$
+						DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__6, null) 
 					);
 				} 
 				local.setValue(field.getValue());
@@ -584,7 +584,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (isDisposed()) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_context_has_been_disposed__7, null) //$NON-NLS-1$
+				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_context_has_been_disposed__7, null) 
 			);
 		}
 	}
@@ -616,7 +616,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (!getThread().isSuspended()) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_thread_must_be_suspended__8, null) //$NON-NLS-1$
+				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_thread_must_be_suspended__8, null) 
 			);
 		}
 	}	
@@ -645,7 +645,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				if (!file.delete()) {
 					JDIDebugPlugin.log(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-							MessageFormat.format(EvaluationMessages.LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_class_file__0__1, new String[] {file.getAbsolutePath()}), null) //$NON-NLS-1$
+							MessageFormat.format(EvaluationMessages.LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_class_file__0__1, new String[] {file.getAbsolutePath()}), null) 
 					);				
 				}
 			}
@@ -659,7 +659,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			if (dir.exists() && listing != null && listing.length == 0 && !dir.delete()) {
 				JDIDebugPlugin.log(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format(EvaluationMessages.LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_directory__0__2, new String[] {dir.getAbsolutePath()}), null) //$NON-NLS-1$
+						MessageFormat.format(EvaluationMessages.LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_directory__0__2, new String[] {dir.getAbsolutePath()}), null) 
 				);
 			}
 			i--;
@@ -799,7 +799,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			} catch (IOException e) {
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format(EvaluationMessages.LocalEvaluationEngine__0__occurred_deploying_class_file_for_evaluation_9, new String[] {e.toString()}), e) //$NON-NLS-1$
+						MessageFormat.format(EvaluationMessages.LocalEvaluationEngine__0__occurred_deploying_class_file_for_evaluation_9, new String[] {e.toString()}), e) 
 				);
 			}
 		}	
@@ -980,7 +980,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				// unable to load the class
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_instantiate_code_snippet_class__11, null) //$NON-NLS-1$
+					DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_instantiate_code_snippet_class__11, null) 
 				);				
 			}
 			IJavaValue[] args = new IJavaValue[] {getDebugTarget().newValue(className)};
@@ -1054,7 +1054,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		}
 		throw new DebugException(
 			new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___internal_error_retreiving_result__17, null) //$NON-NLS-1$
+			DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___internal_error_retreiving_result__17, null) 
 		);
 	}
 	
@@ -1231,14 +1231,14 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (type == null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_determine_receiving_type_context__18, null) //$NON-NLS-1$
+				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_determine_receiving_type_context__18, null) 
 			);
 		}
 		
 		if (type.getDeclaringType() != null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_in_context_of_inner_type_not_supported__19, null) //$NON-NLS-1$
+				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_in_context_of_inner_type_not_supported__19, null) 
 			);
 		}	
 		
@@ -1303,14 +1303,14 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (type == null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_determine_receiving_type_context__18, null) //$NON-NLS-1$
+				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_determine_receiving_type_context__18, null) 
 			);
 		}
 		
 		if (type.getParent() instanceof IType) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_in_context_of_inner_type_not_supported__19, null) //$NON-NLS-1$
+				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_in_context_of_inner_type_not_supported__19, null) 
 			);
 		}	
 		

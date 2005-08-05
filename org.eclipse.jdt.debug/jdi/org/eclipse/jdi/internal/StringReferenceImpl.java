@@ -91,7 +91,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 		try {
 			return "\"" + value() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (ObjectCollectedException e) {
-			return JDIMessages.StringReferenceImpl__Garbage_Collected__StringReference__3 + idString(); //$NON-NLS-1$
+			return JDIMessages.StringReferenceImpl__Garbage_Collected__StringReference__3 + idString(); 
 		} catch (Exception e) {
 			return fDescription;
 		}

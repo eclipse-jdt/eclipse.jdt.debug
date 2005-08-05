@@ -115,7 +115,7 @@ public class ExceptionFilterEditor {
 		outer.setFont(parent.getFont());
 		// filter table
 		Label label= new Label(outer, SWT.NONE);
-		label.setText(PropertyPageMessages.ExceptionFilterEditor_5); //$NON-NLS-1$
+		label.setText(PropertyPageMessages.ExceptionFilterEditor_5); 
 		label.setFont(parent.getFont());
 		gd= new GridData();
 		gd.horizontalSpan= 2;
@@ -209,17 +209,17 @@ public class ExceptionFilterEditor {
 		buttonContainer.setLayout(buttonLayout);
 
 		fAddFilterButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_6, //$NON-NLS-1$
-				PropertyPageMessages.ExceptionFilterEditor_7); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_6, 
+				PropertyPageMessages.ExceptionFilterEditor_7); 
 		fAddTypeButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_8, //$NON-NLS-1$
-				PropertyPageMessages.ExceptionFilterEditor_9); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_8, 
+				PropertyPageMessages.ExceptionFilterEditor_9); 
 		fAddPackageButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_10, //$NON-NLS-1$
-				PropertyPageMessages.ExceptionFilterEditor_11); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_10, 
+				PropertyPageMessages.ExceptionFilterEditor_11); 
 		fRemoveFilterButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_12, //$NON-NLS-1$
-				PropertyPageMessages.ExceptionFilterEditor_13); //$NON-NLS-1$
+				PropertyPageMessages.ExceptionFilterEditor_12, 
+				PropertyPageMessages.ExceptionFilterEditor_13); 
 		fRemoveFilterButton.setEnabled(false);
 	}
 	
@@ -334,7 +334,7 @@ public class ExceptionFilterEditor {
 		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText = trimmedValue;
-			fEditorText.setText(PropertyPageMessages.ExceptionFilterEditor_14); //$NON-NLS-1$
+			fEditorText.setText(PropertyPageMessages.ExceptionFilterEditor_14); 
 			fEditorText.getDisplay().beep();
 			return;
 			// otherwise, commit the new value if not a duplicate
@@ -418,16 +418,16 @@ public class ExceptionFilterEditor {
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, false);
 		} catch (JavaModelException jme) {
-			String title = PropertyPageMessages.ExceptionFilterEditor_15; //$NON-NLS-1$
-			String message = PropertyPageMessages.ExceptionFilterEditor_16; //$NON-NLS-1$
+			String title = PropertyPageMessages.ExceptionFilterEditor_15; 
+			String message = PropertyPageMessages.ExceptionFilterEditor_16; 
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 		if (dialog == null) {
 			return;
 		}
-		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_15); //$NON-NLS-1$
-		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_18); //$NON-NLS-1$
+		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_15); 
+		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_18); 
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
@@ -454,14 +454,14 @@ public class ExceptionFilterEditor {
 		try {
 			dialog = JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
-			String title = PropertyPageMessages.ExceptionFilterEditor_19; //$NON-NLS-1$
-			String message = PropertyPageMessages.ExceptionFilterEditor_20; //$NON-NLS-1$
+			String title = PropertyPageMessages.ExceptionFilterEditor_19; 
+			String message = PropertyPageMessages.ExceptionFilterEditor_20; 
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 
-		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_19); //$NON-NLS-1$
-		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_22); //$NON-NLS-1$
+		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_19); 
+		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_22); 
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

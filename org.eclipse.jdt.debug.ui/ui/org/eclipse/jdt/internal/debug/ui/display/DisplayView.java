@@ -230,27 +230,27 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		IActionBars actionBars = getViewSite().getActionBars();		
 		
 		IAction action= new DisplayViewAction(this, ITextOperationTarget.CUT);
-		action.setText(DisplayMessages.DisplayView_Cut_label); //$NON-NLS-1$
-		action.setToolTipText(DisplayMessages.DisplayView_Cut_tooltip); //$NON-NLS-1$
-		action.setDescription(DisplayMessages.DisplayView_Cut_description); //$NON-NLS-1$
+		action.setText(DisplayMessages.DisplayView_Cut_label); 
+		action.setToolTipText(DisplayMessages.DisplayView_Cut_tooltip); 
+		action.setDescription(DisplayMessages.DisplayView_Cut_description); 
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.COPY);
-		action.setText(DisplayMessages.DisplayView_Copy_label); //$NON-NLS-1$
-		action.setToolTipText(DisplayMessages.DisplayView_Copy_tooltip); //$NON-NLS-1$
-		action.setDescription(DisplayMessages.DisplayView_Copy_description); //$NON-NLS-1$
+		action.setText(DisplayMessages.DisplayView_Copy_label); 
+		action.setToolTipText(DisplayMessages.DisplayView_Copy_tooltip); 
+		action.setDescription(DisplayMessages.DisplayView_Copy_description); 
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.PASTE);
-		action.setText(DisplayMessages.DisplayView_Paste_label); //$NON-NLS-1$
-		action.setToolTipText(DisplayMessages.DisplayView_Paste_tooltip); //$NON-NLS-1$
-		action.setDescription(DisplayMessages.DisplayView_Paste_Description); //$NON-NLS-1$
+		action.setText(DisplayMessages.DisplayView_Paste_label); 
+		action.setToolTipText(DisplayMessages.DisplayView_Paste_tooltip); 
+		action.setDescription(DisplayMessages.DisplayView_Paste_Description); 
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.SELECT_ALL);
-		action.setText(DisplayMessages.DisplayView_SelectAll_label); //$NON-NLS-1$
-		action.setToolTipText(DisplayMessages.DisplayView_SelectAll_tooltip); //$NON-NLS-1$
-		action.setDescription(DisplayMessages.DisplayView_SelectAll_description); //$NON-NLS-1$
+		action.setText(DisplayMessages.DisplayView_SelectAll_label); 
+		action.setToolTipText(DisplayMessages.DisplayView_SelectAll_tooltip); 
+		action.setDescription(DisplayMessages.DisplayView_SelectAll_description); 
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		//XXX Still using "old" resource access
@@ -265,9 +265,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		
 		fContentAssistAction= new DisplayViewAction(this, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		fContentAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		fContentAssistAction.setText(DisplayMessages.DisplayView_Co_ntent_Assist_Ctrl_Space_1); //$NON-NLS-1$
-		fContentAssistAction.setDescription(DisplayMessages.DisplayView_Content_Assist_2); //$NON-NLS-1$
-		fContentAssistAction.setToolTipText(DisplayMessages.DisplayView_Content_Assist_2); //$NON-NLS-1$
+		fContentAssistAction.setText(DisplayMessages.DisplayView_Co_ntent_Assist_Ctrl_Space_1); 
+		fContentAssistAction.setDescription(DisplayMessages.DisplayView_Content_Assist_2); 
+		fContentAssistAction.setToolTipText(DisplayMessages.DisplayView_Content_Assist_2); 
 		fContentAssistAction.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		fContentAssistAction.setHoverImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		fContentAssistAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
@@ -283,7 +283,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();	
-		fSubmission = new HandlerSubmission(null, null, getSite(), ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		fSubmission = new HandlerSubmission(null, null, getSite(), ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
 		commandSupport.addHandlerSubmission(fSubmission);	
 
 	}

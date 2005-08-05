@@ -45,7 +45,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			return;
 		}
 		
-		monitor.subTask(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1); //$NON-NLS-1$
+		monitor.subTask(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1); 
 						
 		String mainTypeName = verifyMainTypeName(configuration);
 		IVMRunner runner = getVMRunner(configuration, mode);
@@ -92,7 +92,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		// done the verification phase
 		monitor.worked(1);
 		
-		monitor.subTask(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_Creating_source_locator____2); //$NON-NLS-1$
+		monitor.subTask(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_Creating_source_locator____2); 
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
 		monitor.worked(1);		

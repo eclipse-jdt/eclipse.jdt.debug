@@ -46,8 +46,8 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		}
 		
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2); //$NON-NLS-1$
-		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2); //$NON-NLS-1$		
+		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2); 
+		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2); //		
 		
 		String program= constructProgramString(config);
 		
@@ -100,7 +100,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		}
 		
 		subMonitor.worked(1);
-		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3); 
 		
 		Process p= null;
 		File workingDir = getWorkingDir(config);

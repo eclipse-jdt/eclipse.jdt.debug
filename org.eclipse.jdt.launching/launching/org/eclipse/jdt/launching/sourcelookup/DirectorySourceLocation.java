@@ -159,11 +159,11 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
 		} catch (TransformerException e) {
-			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
 		}
 		// execution will not reach here
 		return null;
@@ -185,13 +185,13 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 												
 			String path = root.getAttribute("path"); //$NON-NLS-1$
 			if (isEmpty(path)) {
-				abort(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___missing_directory_path_3, null); //$NON-NLS-1$
+				abort(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___missing_directory_path_3, null); 
 			} else {
 				File dir = new File(path);
 				if (dir.exists() && dir.isDirectory()) {
 					setDirectory(dir);
 				} else {
-					abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___directory_does_not_exist___0__4, new String[] {path}), null); //$NON-NLS-1$
+					abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___directory_does_not_exist___0__4, new String[] {path}), null); 
 				}
 			}
 			return;
@@ -202,7 +202,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.DirectorySourceLocation_Exception_occurred_initializing_source_location__5, ex);		 //$NON-NLS-1$
+		abort(LaunchingMessages.DirectorySourceLocation_Exception_occurred_initializing_source_location__5, ex);		 
 	}
 
 	private boolean isEmpty(String string) {

@@ -162,7 +162,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						buf.append(IPath.SEPARATOR);
 						buf.append(rootPath.toString());
 					}
-					buf.append(']'); //$NON-NLS-1$
+					buf.append(']'); 
 				}
 				// append JRE name if we can compute it
 				if (path.equals(new Path(JavaRuntime.JRELIB_VARIABLE)) && fLaunchConfiguration != null) {
@@ -181,7 +181,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))) {
 							// default JRE - resolve the name for the launch config, rather than using the "workspace" default description
 							IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfiguration);
-							return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2, new String[]{vm.getName()}); //$NON-NLS-1$
+							return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2, new String[]{vm.getName()}); 
 						}
 						IJavaProject project = null;
 						try {

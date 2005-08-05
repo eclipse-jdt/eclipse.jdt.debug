@@ -95,7 +95,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
 	public String getName() {
-		return LaunchingMessages.StandardVMType_Standard_VM_3; //$NON-NLS-1$
+		return LaunchingMessages.StandardVMType_Standard_VM_3; 
 	}
 
 	
@@ -163,7 +163,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		
 		// Retrieve the 'java.home' system property.  If that directory doesn't exist, 
 		// return null.
-		File javaHome; //$NON-NLS-1$
+		File javaHome; 
 		try {
 			javaHome= new File (System.getProperty("java.home")).getCanonicalFile(); //$NON-NLS-1$
 		} catch (IOException e) {
@@ -238,7 +238,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			parent = parent.getParentFile();
 		}
 		setDefaultRootPath(""); //$NON-NLS-1$
-		return Path.EMPTY; //$NON-NLS-1$
+		return Path.EMPTY; 
 	}
 
 	protected IPath getDefaultPackageRootPath() {
@@ -425,16 +425,16 @@ public class StandardVMType extends AbstractVMInstallType {
 	public IStatus validateInstallLocation(File javaHome) {
 		IStatus status = null;
 		if (Platform.getOS().equals(Constants.OS_MACOSX)) {
-			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Standard_VM_not_supported_on_MacOS__1, null); //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Standard_VM_not_supported_on_MacOS__1, null); 
 		} else {
 			File javaExecutable = findJavaExecutable(javaHome);
 			if (javaExecutable == null) {
-				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1, null); //$NON-NLS-1$			
+				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1, null); //			
 			} else {
 				if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
-					status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null); //$NON-NLS-1$
+					status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null); 
 				} else {
-					status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1, null); //$NON-NLS-1$
+					status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1, null); 
 				}
 			}
 		}

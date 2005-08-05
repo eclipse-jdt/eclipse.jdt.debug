@@ -43,13 +43,13 @@ public class InstanceOfOperator extends CompoundInstruction {
 
 		IJavaObject classObject= getClassObject(type);
 		if (classObject == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.InstanceOfOperator_No_class_object, new String[]{type.getName()}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.InstanceOfOperator_No_class_object, new String[]{type.getName()}), null)); 
 		}
 		push(classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {object}, getContext().getThread(), false));
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.InstanceOfOperator__instanceof___operator_3; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.InstanceOfOperator__instanceof___operator_3; 
 	}
 
 }

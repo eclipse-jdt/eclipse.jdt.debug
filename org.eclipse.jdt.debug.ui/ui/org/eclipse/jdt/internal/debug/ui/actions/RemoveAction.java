@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class RemoveAction extends RuntimeClasspathAction {
 
 	public RemoveAction(IClasspathViewer viewer) {
-		super(ActionMessages.RemoveAction__Remove_1, viewer); //$NON-NLS-1$
+		super(ActionMessages.RemoveAction__Remove_1, viewer); 
 	}
 	/**
 	 * Removes all selected entries.

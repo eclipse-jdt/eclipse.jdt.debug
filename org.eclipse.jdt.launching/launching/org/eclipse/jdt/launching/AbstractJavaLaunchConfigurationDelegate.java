@@ -182,29 +182,29 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_The_specified_JRE_installation_does_not_exist_4, //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_The_specified_JRE_installation_does_not_exist_4, 
 					null,
-					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
 		}
 		File location = vm.getInstallLocation();
 		if (location == null) {
 			abort(
 					MessageFormat
 							.format(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, 
 									new String[]{vm.getName()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
 		}
 		if (!location.exists()) {
 			abort(
 					MessageFormat
 							.format(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6, //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6, 
 									new String[]{vm.getName(),
 											location.getAbsolutePath()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
 		}
 		return vm;
 	}
@@ -627,16 +627,16 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		String name = getJavaProjectName(configuration);
 		if (name == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Java_project_not_specified_9, //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Java_project_not_specified_9, 
 					null,
-					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); 
 		}
 		IJavaProject project = getJavaProject(configuration);
 		if (project == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Project_does_not_exist_or_is_not_a_Java_project_10, //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Project_does_not_exist_or_is_not_a_Java_project_10, 
 					null,
-					IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); 
 		}
 		return project;
 	}
@@ -656,9 +656,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		String name = getMainTypeName(configuration);
 		if (name == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Main_type_not_specified_11, //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Main_type_not_specified_11, 
 					null,
-					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
 		}
 		return name;
 	}
@@ -700,10 +700,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				abort(
 					MessageFormat
 							.format(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
 									new String[]{path.toString()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot()
 						.findMember(path);
@@ -713,10 +713,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				abort(
 					MessageFormat
 							.format(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
 									new String[]{path.toString()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
 			}
 		}
 		return null;
@@ -833,7 +833,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 													mainType, "main", //$NON-NLS-1$
 													"([Ljava/lang/String;)V", //$NON-NLS-1$
 													true, false, false, -1, -1,
-													-1, 1, false, map); //$NON-NLS-1$
+													-1, 1, false, map); 
 									bp.setPersisted(false);
 									target.breakpointAdded(bp);
 									DebugPlugin.getDefault()
@@ -887,7 +887,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			String mode, IProgressMonitor monitor) throws CoreException {
 		// build project list
 		if (monitor != null) {
-			monitor.subTask(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_20); //$NON-NLS-1$
+			monitor.subTask(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_20); 
 		}
 		fOrderedProjects = null;
 		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
@@ -925,7 +925,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IVMInstall vm = verifyVMInstall(configuration);
 		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); 
 		}
 		return runner;
 	}

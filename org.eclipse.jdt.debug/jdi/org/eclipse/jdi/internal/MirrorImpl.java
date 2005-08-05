@@ -258,7 +258,7 @@ public class MirrorImpl implements Mirror {
 			case JdwpReplyPacket.VM_DEAD:
 				throw new VMDisconnectedException();
 			default:
-				throw new InternalException(JDIMessages.MirrorImpl_Got_error_code_in_reply___1 + error); //$NON-NLS-1$
+				throw new InternalException(JDIMessages.MirrorImpl_Got_error_code_in_reply___1 + error); 
 		}
 	}
 
@@ -266,7 +266,7 @@ public class MirrorImpl implements Mirror {
 	 * Performs default handling of IOException in creating or interpreting a Jdwp packet.
 	 */
 	public void defaultIOExceptionHandler(Exception e) {
-		throw new InternalException(JDIMessages.MirrorImpl_Got_invalid_data___2 + e); //$NON-NLS-1$
+		throw new InternalException(JDIMessages.MirrorImpl_Got_invalid_data___2 + e); 
 	}
 	
 	/**

@@ -54,7 +54,7 @@ public class PrefixMinusMinusOperator extends XfixOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.PrefixMinusMinusOperator_prefix________operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PrefixMinusMinusOperator_prefix________operator_1; 
 	}
 
 }

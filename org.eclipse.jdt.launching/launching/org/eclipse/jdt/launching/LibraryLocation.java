@@ -64,7 +64,7 @@ public final class LibraryLocation {
 	 */	
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation) {
 		if (libraryPath == null)
-			throw new IllegalArgumentException(LaunchingMessages.libraryLocation_assert_libraryNotNull); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.libraryLocation_assert_libraryNotNull); 
 
 		fSystemLibrary= libraryPath;
 		fSystemLibrarySource= sourcePath;

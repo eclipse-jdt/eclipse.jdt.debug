@@ -71,7 +71,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		inner.setLayoutData(gd);
 		
 		Label l = new Label(inner, SWT.NONE);
-		l.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Select_an_advanced_option__1); //$NON-NLS-1$
+		l.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Select_an_advanced_option__1); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(gd);
 		
@@ -87,7 +87,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		
 		addVariableStringComposite(inner);
 
-		getShell().setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Advanced_Options_1); //$NON-NLS-1$
+		getShell().setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Advanced_Options_1); 
 		
 		Dialog.applyDialogFont(parent);
 		return inner;
@@ -95,7 +95,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 
 	private void addVariableStringComposite(Composite composite) {
 		fAddVariableStringButton = new Button(composite, SWT.RADIO);
-		fAddVariableStringButton.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_6); //$NON-NLS-1$
+		fAddVariableStringButton.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_6); 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fAddVariableStringButton.setLayoutData(gd);
 		
@@ -108,7 +108,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		gd.grabExcessHorizontalSpace = true;
 		fVariableString.setLayoutData(gd);
 		
-		final Button fVariablesButton = createButton(inner, IDialogConstants.IGNORE_ID, LauncherMessages.RuntimeClasspathAdvancedDialog_7, false); //$NON-NLS-1$
+		final Button fVariablesButton = createButton(inner, IDialogConstants.IGNORE_ID, LauncherMessages.RuntimeClasspathAdvancedDialog_7, false); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fVariablesButton.setLayoutData(gd);
 		

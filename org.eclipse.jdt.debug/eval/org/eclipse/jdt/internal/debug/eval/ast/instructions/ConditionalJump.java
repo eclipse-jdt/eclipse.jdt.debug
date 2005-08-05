@@ -35,7 +35,7 @@ public class ConditionalJump extends Jump {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return InstructionsEvaluationMessages.ConditionalJump_conditional_jump_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.ConditionalJump_conditional_jump_1; 
 	}
 
 }

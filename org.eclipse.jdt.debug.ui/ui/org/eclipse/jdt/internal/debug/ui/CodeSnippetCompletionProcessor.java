@@ -44,7 +44,7 @@ public class CodeSnippetCompletionProcessor extends DisplayCompletionProcessor {
 	        setErrorMessage(null);
 			IType receivingType= fTypeProvider.getType();
 			if (receivingType == null) {
-	            setErrorMessage(DebugUIMessages.CodeSnippetCompletionProcessor_0); //$NON-NLS-1$
+	            setErrorMessage(DebugUIMessages.CodeSnippetCompletionProcessor_0); 
 				return new ICompletionProposal[0];
 			}
 			

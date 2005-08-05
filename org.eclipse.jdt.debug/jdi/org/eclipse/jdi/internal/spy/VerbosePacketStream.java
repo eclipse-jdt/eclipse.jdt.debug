@@ -151,7 +151,7 @@ public class VerbosePacketStream extends PrintStream {
 			println();
 		} catch (UnableToParseDataException e) {
 			println("\n" + e.getMessage() + ':'); //$NON-NLS-1$
-			printDescription(TcpIpSpyMessages.VerbosePacketStream_Remaining_data__1); //$NON-NLS-1$
+			printDescription(TcpIpSpyMessages.VerbosePacketStream_Remaining_data__1); 
 			byte[] data= e.getRemainingData();
 			if (data == null) {
 				printHex(packet.data());
@@ -164,26 +164,26 @@ public class VerbosePacketStream extends PrintStream {
 	
 	protected void printHeader(JdwpPacket packet, boolean fromVM) throws UnableToParseDataException {
 		if (fromVM) {
-			println(TcpIpSpyMessages.VerbosePacketStream_From_VM_1); //$NON-NLS-1$
+			println(TcpIpSpyMessages.VerbosePacketStream_From_VM_1); 
 		} else {
-			println(TcpIpSpyMessages.VerbosePacketStream_From_Debugger_2); //$NON-NLS-1$
+			println(TcpIpSpyMessages.VerbosePacketStream_From_Debugger_2); 
 		}
 		
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Packet_ID__3); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Packet_ID__3); 
 		printHex(packet.getId());
 		println();
 				
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Length__4); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Length__4); 
 		print(packet.getLength());
 		println();
 		
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Flags__5); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Flags__5); 
 		byte flags= packet.getFlags();
 		printHex(flags);
 		if ((flags & JdwpPacket.FLAG_REPLY_PACKET) != 0) {
-			print(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream___REPLY_to__0___6, new String[] {(String) JdwpCommandPacket.commandMap().get(new Integer(TcpipSpy.getCommand(packet)))})); //$NON-NLS-1$
+			print(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream___REPLY_to__0___6, new String[] {(String) JdwpCommandPacket.commandMap().get(new Integer(TcpipSpy.getCommand(packet)))})); 
 		} else {
-			print(TcpIpSpyMessages.VerbosePacketStream___COMMAND__7); //$NON-NLS-1$
+			print(TcpIpSpyMessages.VerbosePacketStream___COMMAND__7); 
 		}
 		println();
 		
@@ -199,14 +199,14 @@ public class VerbosePacketStream extends PrintStream {
 	}
 
 	protected void printCommand(JdwpCommandPacket commandPacket) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Command_set__8); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Command_set__8); 
 		int commandAndSet= commandPacket.getCommand();
 		byte set= (byte)(commandAndSet >> 8);
 		byte command= (byte)commandAndSet;
 		printHex(set);
 		printParanthetical(set);
 		println();
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Command__9); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Command__9); 
 		printHex(command);
 		printParanthetical(command);
 		print(" ("); //$NON-NLS-1$
@@ -217,7 +217,7 @@ public class VerbosePacketStream extends PrintStream {
 	protected void printError(JdwpReplyPacket reply) {
 		int error= reply.errorCode();
 		
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Error__10); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Error__10); 
 		printHex(error);
 		if (error != 0) {
 			print(" ("); //$NON-NLS-1$
@@ -528,12 +528,12 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.HCR_DO_RETURN:
 			case JdwpCommandPacket.HCR_REENTER_ON_EXIT:
 			case JdwpCommandPacket.HCR_CAPABILITIES:
-				throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_NOT_MANAGED_COMMAND_11, remainderData(in)); //$NON-NLS-1$
+				throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_NOT_MANAGED_COMMAND_11, remainderData(in)); 
 				
 			default:
 				int cset= commandId >> 8;
 				int cmd= commandId & 0xFF;
-				println(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream_Unknown_command____0___1__12, new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				println(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream_Unknown_command____0___1__12, new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ 
 				break;
 		}
 	}
@@ -832,18 +832,18 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.HCR_DO_RETURN:
 			case JdwpCommandPacket.HCR_REENTER_ON_EXIT:
 			case JdwpCommandPacket.HCR_CAPABILITIES:
-				throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_NOT_MANAGED_COMMAND_11, remainderData(in)); //$NON-NLS-1$
+				throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_NOT_MANAGED_COMMAND_11, remainderData(in)); 
 			
 			default:
 				int cset= commandId >> 8;
 				int cmd= commandId & 0xFF;
-				println(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream_Unknown_command____0___1__12, new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				println(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream_Unknown_command____0___1__12, new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ 
 				break;
 		}
 	}
 	
 	private void printRefTypeTag(byte refTypeTag) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Type_tag__19); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Type_tag__19); 
 		printRefTypeTagValue(refTypeTag);
 		println();
 	}
@@ -862,13 +862,13 @@ public class VerbosePacketStream extends PrintStream {
 				print("ARRAY"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 		}
 		print(')');
 	}
 	
 	private void printClassStatus(int status) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Status__21); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Status__21); 
 		printHex(status);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -896,13 +896,13 @@ public class VerbosePacketStream extends PrintStream {
 			if (spaceNeeded) {
 				print(' ');
 			}
-			print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+			print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 		}
 		println(')');
 	}
 	
 	private void printClassModifiers(int modifiers) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); 
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -978,7 +978,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 
 	private void printMethodModifiers(int modifiers) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); 
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -1078,7 +1078,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printFieldModifiers(int modifiers) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); 
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -1154,7 +1154,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printInvocationOptions(int invocationOptions) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Invocation_Options__24); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Invocation_Options__24); 
 		printHex(invocationOptions);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -1172,7 +1172,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printThreadStatus(int threadStatus) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Thread_status__25); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Thread_status__25); 
 		printHex(threadStatus);
 		print(" ("); //$NON-NLS-1$
 		switch (threadStatus) {
@@ -1192,14 +1192,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("WAIT"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 				break;
 		}
 		println(')');
 	}
 	
 	private void printSuspendStatus(int suspendStatus) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Suspend_status__27); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Suspend_status__27); 
 		printHex(suspendStatus);
 		print(" ("); //$NON-NLS-1$
 		if ((suspendStatus & SUSPEND_STATUS_SUSPENDED) != 0) {
@@ -1209,7 +1209,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printEventKind(byte eventKind) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Event_kind__28); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Event_kind__28); 
 		printHex(eventKind);
 		print(" ("); //$NON-NLS-1$
 		switch (eventKind) {
@@ -1268,14 +1268,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("VM_DISCONNECTED"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 				break;
 		}
 		println(')');
 	}
 
 	private void printSuspendPolicy(byte suspendPolicy) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Suspend_policy__30); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Suspend_policy__30); 
 		printHex(suspendPolicy);
 		print(" ("); //$NON-NLS-1$
 		switch (suspendPolicy) {
@@ -1289,14 +1289,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("ALL"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 				break;
 		}
 		println(')');
 	}
 	
 	private void printStepDepth(int setDepth) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Step_depth__32); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Step_depth__32); 
 		printHex(setDepth);
 		print(" ("); //$NON-NLS-1$
 		switch (setDepth) {
@@ -1310,14 +1310,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("OUT"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 				break;
 		}
 		println(')');
 	}
 	
 	private void printStepSize(int setSize) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Step_size__34); //$NON-NLS-1$
+		printDescription(TcpIpSpyMessages.VerbosePacketStream_Step_size__34); 
 		printHex(setSize);
 		print(" ("); //$NON-NLS-1$
 		switch (setSize) {
@@ -1328,7 +1328,7 @@ public class VerbosePacketStream extends PrintStream {
 				print("LINE"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); //$NON-NLS-1$
+				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
 				break;
 		}
 		println(')');
@@ -1341,61 +1341,61 @@ public class VerbosePacketStream extends PrintStream {
 		String vmVersion= readString(in);
 		String vmName= readString(in);
 		
-		println(TcpIpSpyMessages.VerbosePacketStream_VM_Description__36, description); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_JDWP_Major_Version__37, jdwpMajor); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_JDWP_Minor_Version__38, jdwpMinor); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_VM_Version__39, vmVersion); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_VM_Name__40, vmName); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_VM_Description__36, description); 
+		println(TcpIpSpyMessages.VerbosePacketStream_JDWP_Major_Version__37, jdwpMajor); 
+		println(TcpIpSpyMessages.VerbosePacketStream_JDWP_Minor_Version__38, jdwpMinor); 
+		println(TcpIpSpyMessages.VerbosePacketStream_VM_Version__39, vmVersion); 
+		println(TcpIpSpyMessages.VerbosePacketStream_VM_Name__40, vmName); 
 	}
 	
 	private void printVmClassesBySignatureCommand(DataInputStream in) throws IOException {
 		String signature= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature); 
 	}
 
 	private void printVmClassesBySignatureReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int classesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount); 
 		for(int i= 0; i < classesCount; i++) {
 			byte refTypeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			int status= in.readInt();
 			printRefTypeTag(refTypeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); //$NON-NLS-1$
+			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); 
 			printClassStatus(status);
 		}		
 	}
 
 	private void printVmAllClassesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int classesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount); 
 		for(int i= 0; i < classesCount; i++) {
 			byte refTypeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			String signature= readString(in);
 			int status= in.readInt();
 			printRefTypeTag(refTypeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); //$NON-NLS-1$
-			println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature); //$NON-NLS-1$
+			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); 
+			println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature); 
 			printClassStatus(status);
 		}
 	}
 	
 	private void printVmAllThreadsReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int threadsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Threads_count__47, threadsCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Threads_count__47, threadsCount); 
 		for(int i= 0; i < threadsCount; i++) {
 			long threadId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId); //$NON-NLS-1$
+			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId); 
 		}
 	}
 	
 	private void printVmTopLevelThreadGroupReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int groupsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Threads_count__47, groupsCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Threads_count__47, groupsCount); 
 		for(int i= 0; i < groupsCount; i++) {
 			long threadGroupId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadGroupId); //$NON-NLS-1$
+			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadGroupId); 
 		}
 	}
 	
@@ -1405,11 +1405,11 @@ public class VerbosePacketStream extends PrintStream {
 		int objectIDSize= in.readInt();
 		int referenceTypeIDSize= in.readInt();
 		int frameIDSize= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Field_ID_size__51, fieldIDSize); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Method_ID_size__52, methodIDSize); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Object_ID_size__53, objectIDSize); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reference_type_ID_size__54, referenceTypeIDSize); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Frame_ID_size__55, frameIDSize); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Field_ID_size__51, fieldIDSize); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Method_ID_size__52, methodIDSize); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Object_ID_size__53, objectIDSize); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reference_type_ID_size__54, referenceTypeIDSize); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Frame_ID_size__55, frameIDSize); 
 		TcpipSpy.setFieldIDSize(fieldIDSize);
 		TcpipSpy.setMethodIDSize(methodIDSize);
 		TcpipSpy.setObjectIDSize(objectIDSize);
@@ -1420,17 +1420,17 @@ public class VerbosePacketStream extends PrintStream {
 
 	private void printVmExitCommand(DataInputStream in) throws IOException {
 		int exitCode= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Exit_code__56, exitCode); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Exit_code__56, exitCode); 
 	}
 	
 	private void printVmCreateStringCommand(DataInputStream in) throws IOException {
 		String string= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_String__57, string); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_String__57, string); 
 	}
 	
 	private void printVmCreateStringReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long stringId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_String_id__58, stringId); //$NON-NLS-1$
+		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_String_id__58, stringId); 
 	}
 	
 	private void printVmCapabilitiesReply(DataInputStream in) throws IOException {
@@ -1441,40 +1441,40 @@ public class VerbosePacketStream extends PrintStream {
 		boolean canGetOwnedMonitorInfo= in.readBoolean();
 		boolean canGetCurrentContendedMonitor= in.readBoolean();
 		boolean canGetMonitorInfo= in.readBoolean();
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_watch_field_modification__59, canWatchFieldModification); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_can_watch_field_access__60, canWatchFieldAccess); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_bytecodes__61, canGetBytecodes); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_synthetic_attribute__62, canGetSyntheticAttribute); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_owned_monitor_info__63, canGetOwnedMonitorInfo); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_cur__contended_monitor__64, canGetCurrentContendedMonitor); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_monitor_info__65, canGetMonitorInfo); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_watch_field_modification__59, canWatchFieldModification); 
+		println(TcpIpSpyMessages.VerbosePacketStream_can_watch_field_access__60, canWatchFieldAccess); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_bytecodes__61, canGetBytecodes); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_synthetic_attribute__62, canGetSyntheticAttribute); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_owned_monitor_info__63, canGetOwnedMonitorInfo); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_cur__contended_monitor__64, canGetCurrentContendedMonitor); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_monitor_info__65, canGetMonitorInfo); 
 	}
 	
 	private void printVmClassPathsReply(DataInputStream in) throws IOException {
 		String baseDir= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Base_directory__66, baseDir); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Base_directory__66, baseDir); 
 		int classpathCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classpaths_count__67, classpathCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Classpaths_count__67, classpathCount); 
 		for (int i= 0; i < classpathCount; i++) {
 			String path= readString(in);
-			println(TcpIpSpyMessages.VerbosePacketStream_Classpath__68, path); //$NON-NLS-1$
+			println(TcpIpSpyMessages.VerbosePacketStream_Classpath__68, path); 
 		}
 		int bootclasspathCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Bootclasspaths_count__69, bootclasspathCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Bootclasspaths_count__69, bootclasspathCount); 
 		for (int i= 0; i < bootclasspathCount; i++) {
 			String path= readString(in);
-			println(TcpIpSpyMessages.VerbosePacketStream_Bootclasspath__70, path); //$NON-NLS-1$
+			println(TcpIpSpyMessages.VerbosePacketStream_Bootclasspath__70, path); 
 		}
 	}
 	
 	private void printVmDisposeObjectsCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		int requestsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Requests_Count__71, requestsCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Requests_Count__71, requestsCount); 
 		for (int i=0; i < requestsCount; i++) {
 			long objectId= readObjectID(in);
 			int refsCounts= in.readInt();
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId); //$NON-NLS-1$
-			println(TcpIpSpyMessages.VerbosePacketStream_References_count__73, refsCounts); //$NON-NLS-1$
+			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId); 
+			println(TcpIpSpyMessages.VerbosePacketStream_References_count__73, refsCounts); 
 		}
 	}
 	
@@ -1505,40 +1505,40 @@ public class VerbosePacketStream extends PrintStream {
 		boolean reserved30= in.readBoolean();
 		boolean reserved31= in.readBoolean();
 		boolean reserved32= in.readBoolean();
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_redefine_classes__74, canRedefineClasses); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_add_method__75, canAddMethod); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_unrestrictedly_rd__classes__76, canUnrestrictedlyRedefineClasses); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_pop_frames__77, canPopFrames); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_use_instance_filters__78, canUseInstanceFilters); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_source_debug_extension__79, canGetSourceDebugExtension); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_request_VMDeath_event__80, canRequestVMDeathEvent); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_set_default_stratum__81, canSetDefaultStratum); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved16); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved17); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved18); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved19); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved20); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved21); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved22); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved23); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved24); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved25); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved26); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved27); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved28); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved29); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved30); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved31); //$NON-NLS-1$
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved32); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_redefine_classes__74, canRedefineClasses); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_add_method__75, canAddMethod); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_unrestrictedly_rd__classes__76, canUnrestrictedlyRedefineClasses); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_pop_frames__77, canPopFrames); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_use_instance_filters__78, canUseInstanceFilters); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_source_debug_extension__79, canGetSourceDebugExtension); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_request_VMDeath_event__80, canRequestVMDeathEvent); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Can_set_default_stratum__81, canSetDefaultStratum); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved16); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved17); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved18); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved19); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved20); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved21); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved22); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved23); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved24); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved25); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved26); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved27); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved28); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved29); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved30); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved31); 
+		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved32); 
 	}
 	
 	private void printVmRedefineClassCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		int typesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Types_count__99, typesCount); //$NON-NLS-1$
+		println(TcpIpSpyMessages.VerbosePacketStream_Types_count__99, typesCount); 
 		for (int i= 0; i < typesCount; i++) {
 			long typeId= readReferenceTypeID(in);
 			int classfileLength= in.readInt();
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); //$NON-NLS-1$
+			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); 
 			println(TcpIpSpyMessages.VerbosePacketStream_Classfile_length__101, classfileLength); //$NON-NLS-1$
 			while((classfileLength -= in.skipBytes(classfileLength)) != 0) {
 			}
@@ -1714,7 +1714,7 @@ public class VerbosePacketStream extends PrintStream {
 			printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId); //$NON-NLS-1$
 			println(TcpIpSpyMessages.VerbosePacketStream_Name__110, name); //$NON-NLS-1$
 			println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature); //$NON-NLS-1$
-			println(TcpIpSpyMessages.VerbosePacketStream_Generic_signature__422, genericSignature); //$NON-NLS-1$
+			println(TcpIpSpyMessages.VerbosePacketStream_Generic_signature__422, genericSignature); 
 			printMethodModifiers(modifiers);
 		}
 	}

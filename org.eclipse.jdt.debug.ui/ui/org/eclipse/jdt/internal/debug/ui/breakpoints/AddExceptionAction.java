@@ -29,8 +29,8 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		final AddExceptionDialog dialog= new AddExceptionDialog(shell, PlatformUI.getWorkbench().getProgressService());
-		dialog.setTitle(BreakpointMessages.AddExceptionAction_0); //$NON-NLS-1$
-		dialog.setMessage(BreakpointMessages.AddExceptionAction_1);		 //$NON-NLS-1$
+		dialog.setTitle(BreakpointMessages.AddExceptionAction_0); 
+		dialog.setMessage(BreakpointMessages.AddExceptionAction_1);		 
 		dialog.open();
 	}
 	

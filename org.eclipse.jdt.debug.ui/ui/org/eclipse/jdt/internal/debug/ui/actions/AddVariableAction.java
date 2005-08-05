@@ -23,7 +23,7 @@ import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 public class AddVariableAction extends RuntimeClasspathAction {
 
 	public AddVariableAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddVariableAction_Add_Variables_1, viewer); //$NON-NLS-1$
+		super(ActionMessages.AddVariableAction_Add_Variables_1, viewer); 
 	}	
 
 	/**

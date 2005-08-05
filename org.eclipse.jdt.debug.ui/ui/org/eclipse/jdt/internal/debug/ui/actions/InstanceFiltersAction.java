@@ -103,7 +103,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 						public void inputChanged(Viewer viewer, Object a, Object b) {}
 					};
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
-					ListSelectionDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ //$NON-NLS-1$
+					ListSelectionDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.
 							Object[] checkBreakpoint= getViewer().getCheckedElements();
@@ -120,9 +120,9 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 										}
 									}
 									if (sameTarget) {
-										MessageDialog messageDialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.InstanceFiltersAction_2, //$NON-NLS-1$
-											null, MessageFormat.format(ActionMessages.InstanceFiltersAction_3, new String[] { modelPresentation.getText(breakpoint), var.getName()}), //$NON-NLS-1$
-											MessageDialog.QUESTION, new String[] { ActionMessages.InstanceFiltersAction_Yes_2, ActionMessages.InstanceFiltersAction_Cancel_3}, //$NON-NLS-1$ //$NON-NLS-2$
+										MessageDialog messageDialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.InstanceFiltersAction_2, 
+											null, MessageFormat.format(ActionMessages.InstanceFiltersAction_3, new String[] { modelPresentation.getText(breakpoint), var.getName()}), 
+											MessageDialog.QUESTION, new String[] { ActionMessages.InstanceFiltersAction_Yes_2, ActionMessages.InstanceFiltersAction_Cancel_3}, // 
 											0);
 										if (messageDialog.open() == Window.OK) {
 											for (int i= 0; i < instanceFilters.length; i++) {
@@ -140,7 +140,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 							super.okPressed();
 						}
 					};
-					dialog.setTitle(ActionMessages.InstanceFiltersAction_2); //$NON-NLS-1$
+					dialog.setTitle(ActionMessages.InstanceFiltersAction_2); 
 					
 					// determine initial selection
 					List existing = new ArrayList();

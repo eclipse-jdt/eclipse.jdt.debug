@@ -26,7 +26,7 @@ import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 public class AddLibraryAction extends RuntimeClasspathAction {
 
 	public AddLibraryAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddLibraryAction_0, viewer); //$NON-NLS-1$
+		super(ActionMessages.AddLibraryAction_0, viewer); 
 	}	
 
 	/**
@@ -44,7 +44,7 @@ public class AddLibraryAction extends RuntimeClasspathAction {
 				try {
 					res[i] = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3, e); //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3, e); 
 					return;
 				}
 			}

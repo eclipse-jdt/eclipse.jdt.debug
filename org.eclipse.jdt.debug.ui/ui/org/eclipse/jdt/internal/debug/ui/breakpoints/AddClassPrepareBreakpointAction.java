@@ -54,8 +54,8 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
         SelectionDialog dialog = null;
         try {
             dialog = JavaUI.createTypeDialog(shell, workbenchWindow, SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_TYPES, true);
-            dialog.setTitle(BreakpointMessages.AddClassPrepareBreakpointAction_0); //$NON-NLS-1$
-            dialog.setMessage(BreakpointMessages.AddClassPrepareBreakpointAction_1); //$NON-NLS-1$
+            dialog.setTitle(BreakpointMessages.AddClassPrepareBreakpointAction_0); 
+            dialog.setMessage(BreakpointMessages.AddClassPrepareBreakpointAction_1); 
             if (dialog.open() == Window.OK) {
                 final Object[] selection = dialog.getResult();
                 for (int i = 0; i < selection.length; i++) {
@@ -90,7 +90,7 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
                         final int finalKind = kind;
                         final int finalStart = start;
                         final int finalEnd = end;
-                        new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) { //$NON-NLS-1$
+                        new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) { 
                             protected IStatus run(IProgressMonitor monitor) {
                                 try {
                                     JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), finalKind, finalStart, finalEnd, true, map);

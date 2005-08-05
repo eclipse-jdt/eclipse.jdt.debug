@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.FileDialog;
 public class AddExternalJarAction extends OpenDialogAction {
 
 	public AddExternalJarAction(IClasspathViewer viewer, String dialogSettingsPrefix) {
-		super(ActionMessages.AddExternalJar_Add_E_xternal_JARs_1, viewer, dialogSettingsPrefix); //$NON-NLS-1$
+		super(ActionMessages.AddExternalJar_Add_E_xternal_JARs_1, viewer, dialogSettingsPrefix); 
 	}	
 
 	/**
@@ -40,7 +40,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
 		FileDialog dialog= new FileDialog(getShell(), SWT.MULTI);
-		dialog.setText(ActionMessages.AddExternalJar_Jar_Selection_3); //$NON-NLS-1$
+		dialog.setText(ActionMessages.AddExternalJar_Jar_Selection_3); 
 		dialog.setFilterExtensions(new String[] {"*.jar;*.zip"}); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String res= dialog.open();

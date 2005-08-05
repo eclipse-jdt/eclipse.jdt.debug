@@ -55,7 +55,7 @@ public class JavaElementPropertyTester extends PropertyTester {
 				return true;
 		}
 		if (javaElement != null) {
-			if (PROPERTY_IS_APPLET.equals(method)) { //$NON-NLS-1$
+			if (PROPERTY_IS_APPLET.equals(method)) { 
 				return isApplet(javaElement);
 			} else if (PROPERTY_HAS_MAIN_TYPE.equals(method)) {
 				return hasMain(javaElement);

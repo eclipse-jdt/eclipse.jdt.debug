@@ -58,7 +58,7 @@ public class JavaLaunchConfigurationUtils {
 	 */
 	public static IType getMainType(String mainTypeName, IJavaProject javaProject) throws CoreException {
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
-			abort(LaunchingMessages.JavaLaunchConfigurationUtils_Main_type_not_specified_3, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaLaunchConfigurationUtils_Main_type_not_specified_3, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
 		}
 		IType mainType = null;
 		try {
@@ -66,7 +66,7 @@ public class JavaLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort(LaunchingMessages.JavaLaunchConfigurationUtils_Main_type_does_not_exist_4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaLaunchConfigurationUtils_Main_type_does_not_exist_4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
 		}
 		return mainType;
 	}	

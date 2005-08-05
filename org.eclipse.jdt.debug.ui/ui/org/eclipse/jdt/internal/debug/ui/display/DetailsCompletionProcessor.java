@@ -43,7 +43,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		try {
-	        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_0); //$NON-NLS-1$
+	        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_0); 
 			IAdaptable context = DebugUITools.getDebugContext();
 			if (context == null) {
 				return new ICompletionProposal[0];
@@ -53,7 +53,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 				return new ICompletionProposal[0];
 			}
 			
-	        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_1); //$NON-NLS-1$
+	        setErrorMessage(DisplayMessages.DetailsCompletionProcessor_1); 
 			IWorkbenchWindow window= JDIDebugUIPlugin.getActiveWorkbenchWindow();
 			if (window == null) {
 				return new ICompletionProposal[0];
@@ -93,7 +93,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 							
 				IType receivingType= getReceivingType(stackFrame.getLaunch(), recTypeName);
 				if (receivingType == null) {
-                    setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); //$NON-NLS-1$
+                    setErrorMessage(DisplayMessages.DetailsCompletionProcessor_2); 
 					return new ICompletionProposal[0];
 				}
 				IJavaProject project = receivingType.getJavaProject(); 

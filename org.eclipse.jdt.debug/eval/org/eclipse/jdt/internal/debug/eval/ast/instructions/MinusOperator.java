@@ -66,7 +66,7 @@ public class MinusOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.MinusOperator______operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.MinusOperator______operator_1; 
 	}
 
 }

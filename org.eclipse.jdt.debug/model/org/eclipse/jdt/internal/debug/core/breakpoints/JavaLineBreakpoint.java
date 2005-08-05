@@ -283,7 +283,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		BreakpointRequest request = null;
 		EventRequestManager manager = target.getEventRequestManager();
 		if (manager == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1, null);  //$NON-NLS-1$
+			target.requestFailed(JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1, null);  
 		}
 		try {
 			request= manager.createBreakpointRequest(location);
@@ -316,7 +316,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		try {
 			locations= type.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException aie) {
-			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.JavaLineBreakpoint_Absent_Line_Number_Information_1, null);  //$NON-NLS-1$
+			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.JavaLineBreakpoint_Absent_Line_Number_Information_1, null);  
 			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
 			if (handler != null) {
 				try {
@@ -472,7 +472,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			IJavaProject project= getJavaProject(frame);
 			if (project == null) {
 				throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
-					JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1, null)); //$NON-NLS-1$
+					JDIDebugBreakpointMessages.JavaLineBreakpoint_Unable_to_compile_conditional_breakpoint___missing_Java_project_context__1, null)); 
 			}
 			IAstEvaluationEngine engine = getEvaluationEngine(target, project);
 			if (engine == null) {
@@ -693,10 +693,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount, int suspendPolicy, int lineNumber) {
 		StringBuffer message= new StringBuffer(super.getMarkerMessage(hitCount, suspendPolicy));
 		if (lineNumber != -1) {
-			message.append(MessageFormat.format(JDIDebugBreakpointMessages.JavaLineBreakpoint___line___0___1, new Object[]{Integer.toString(lineNumber)})); //$NON-NLS-1$
+			message.append(MessageFormat.format(JDIDebugBreakpointMessages.JavaLineBreakpoint___line___0___1, new Object[]{Integer.toString(lineNumber)})); 
 		}
 		if (conditionEnabled && condition != null) {
-			message.append(MessageFormat.format(JDIDebugBreakpointMessages.JavaLineBreakpoint___Condition___0___2, new Object[]{condition})); //$NON-NLS-1$
+			message.append(MessageFormat.format(JDIDebugBreakpointMessages.JavaLineBreakpoint___Condition___0___2, new Object[]{condition})); 
 		}
 			
 		return message.toString();

@@ -72,7 +72,7 @@ public class GreaterEqualOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.GreaterEqualOperator_operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.GreaterEqualOperator_operator_1; 
 	}
 
 }

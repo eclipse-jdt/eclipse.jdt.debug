@@ -92,7 +92,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         fTextGroup= new Group(fInputArea, SWT.NONE);
         fTextGroup.setLayout(new GridLayout());
         fTextGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-        fTextGroup.setText(ActionMessages.StringValueInputDialog_0); //$NON-NLS-1$
+        fTextGroup.setText(ActionMessages.StringValueInputDialog_0); 
 
         Composite parent= fTextGroup; 
         
@@ -111,7 +111,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         }
         fTextViewer.getControl().setFocus();
         fWrapText= new Button(parent, SWT.CHECK);
-        fWrapText.setText(ActionMessages.StringValueInputDialog_4); //$NON-NLS-1$
+        fWrapText.setText(ActionMessages.StringValueInputDialog_4); 
         boolean wrap= true;
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
@@ -138,14 +138,14 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      */
     protected void createRadioButtons(Composite parent) {
         fTextButton= new Button(parent, SWT.RADIO);
-        fTextButton.setText(ActionMessages.StringValueInputDialog_1); //$NON-NLS-1$
+        fTextButton.setText(ActionMessages.StringValueInputDialog_1); 
         fTextButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleRadioSelectionChanged();
             }
         });
         fEvaluationButton= new Button(parent, SWT.RADIO);
-        fEvaluationButton.setText(ActionMessages.StringValueInputDialog_2); //$NON-NLS-1$
+        fEvaluationButton.setText(ActionMessages.StringValueInputDialog_2); 
     }
     
     /**
@@ -199,7 +199,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 		String text= getText();
 		boolean valid= text != null && text.trim().length() > 0;
 		if (!valid) {
-			errorMessage= ActionMessages.StringValueInputDialog_3; //$NON-NLS-1$
+			errorMessage= ActionMessages.StringValueInputDialog_3; 
 		}
 		setErrorMessage(errorMessage);
 	}

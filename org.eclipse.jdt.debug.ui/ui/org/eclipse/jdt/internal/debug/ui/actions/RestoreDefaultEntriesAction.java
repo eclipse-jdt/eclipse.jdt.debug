@@ -28,7 +28,7 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 	private JavaClasspathTab fTab;
 	
 	public RestoreDefaultEntriesAction(IClasspathViewer viewer, JavaClasspathTab tab) {
-		super(ActionMessages.RestoreDefaultEntriesAction_0, viewer); //$NON-NLS-1$
+		super(ActionMessages.RestoreDefaultEntriesAction_0, viewer); 
 		fTab = tab;
 	}	
 

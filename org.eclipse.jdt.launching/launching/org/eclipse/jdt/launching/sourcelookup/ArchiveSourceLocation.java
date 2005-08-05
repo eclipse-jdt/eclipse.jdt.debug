@@ -180,7 +180,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			return null;
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-				MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_locate_source_element_in_archive__0__1, new String[] {getName()}), e)); //$NON-NLS-1$
+				MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_locate_source_element_in_archive__0__1, new String[] {getName()}), e)); 
 		}
 	}
 	
@@ -197,7 +197,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				zip = getArchive();
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-					MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__1, new String[] {getName()}), e)); //$NON-NLS-1$
+					MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__1, new String[] {getName()}), e)); 
 			}
 			synchronized (zip) {
 				Enumeration entries = zip.entries();
@@ -218,7 +218,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 					}
 				} catch (IllegalStateException e) {
 					throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-						MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__2, new String[] {getName()}), e)); //$NON-NLS-1$
+						MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__2, new String[] {getName()}), e)); 
 				}
 			}
 		}
@@ -319,11 +319,11 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
 		} catch (TransformerException e) {
-			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
 		}
 		// execution will not reach here
 		return null;
@@ -345,7 +345,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 												
 			String path = root.getAttribute("archivePath"); //$NON-NLS-1$
 			if (isEmpty(path)) {
-				abort(LaunchingMessages.ArchiveSourceLocation_Unable_to_initialize_source_location___missing_archive_path__3, null); //$NON-NLS-1$
+				abort(LaunchingMessages.ArchiveSourceLocation_Unable_to_initialize_source_location___missing_archive_path__3, null); 
 			}
 			String rootPath = root.getAttribute("rootPath"); //$NON-NLS-1$
 			
@@ -359,7 +359,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_initializing_source_location__5, ex);		 //$NON-NLS-1$
+		abort(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_initializing_source_location__5, ex);		 
 	}
 
 	private boolean isEmpty(String string) {

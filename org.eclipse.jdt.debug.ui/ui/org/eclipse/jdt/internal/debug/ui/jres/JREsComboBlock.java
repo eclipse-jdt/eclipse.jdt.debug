@@ -183,7 +183,7 @@ public class JREsComboBlock implements ISelectionProvider {
 		GridData data;
 		
 		if (fTitle == null) {
-			fTitle = JREMessages.JREsComboBlock_3; //$NON-NLS-1$
+			fTitle = JREMessages.JREsComboBlock_3; 
 		}
 		group.setText(fTitle);
 		
@@ -208,7 +208,7 @@ public class JREsComboBlock implements ISelectionProvider {
 		if (fSpecificDescriptor != null) {
 			fSpecificButton.setText(fSpecificDescriptor.getDescription());
 		} else {
-			fSpecificButton.setText(JREMessages.JREsComboBlock_1); //$NON-NLS-1$
+			fSpecificButton.setText(JREMessages.JREsComboBlock_1); 
 		}
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -239,7 +239,7 @@ public class JREsComboBlock implements ISelectionProvider {
 			}
 		});
 				
-		fManageButton = createPushButton(group, JREMessages.JREsComboBlock_2); //$NON-NLS-1$
+		fManageButton = createPushButton(group, JREMessages.JREsComboBlock_2); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IVMInstall oldSelection = getJRE();

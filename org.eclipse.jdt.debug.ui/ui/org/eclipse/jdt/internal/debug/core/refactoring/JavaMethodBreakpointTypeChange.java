@@ -50,14 +50,14 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#getErrorMessageNoMoreExists()
 	 */
 	public String getErrorMessageNoMoreExists() {
-		return MessageFormat.format(RefactoringMessages.JavaMethodBreakpointTypeChange_0, new String[] {getDeclaringType().getElementName(), fMethodName}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.JavaMethodBreakpointTypeChange_0, new String[] {getDeclaringType().getElementName(), fMethodName}); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.JavaMethodBreakpointTypeChange_1, new String[] {getDeclaringType().getElementName(), fMethodName}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.JavaMethodBreakpointTypeChange_1, new String[] {getDeclaringType().getElementName(), fMethodName}); 
 	}
 
 	/* (non-Javadoc)

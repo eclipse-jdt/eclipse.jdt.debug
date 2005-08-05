@@ -36,13 +36,13 @@ public class ClasspathVariableSourceContainerTypeDelegate extends AbstractSource
 			if ("classpathVariable".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_5, null); //$NON-NLS-1$
+					abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_5, null); 
 				}
 				return new ClasspathVariableSourceContainer(new Path(string));
 			} 
-			abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_6, null); //$NON-NLS-1$
+			abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_6, null); 
 		}
-		abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_7, null); //$NON-NLS-1$
+		abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_7, null); 
 		return null;
 	}
 	/* (non-Javadoc)

@@ -76,9 +76,9 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	public void update(IAction action, IJavaBreakpoint breakpoint) {
 		try {
 			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD) {
-				action.setText(ActionMessages.BreakpointSuspendPolicy_Suspend__VM_1); //$NON-NLS-1$
+				action.setText(ActionMessages.BreakpointSuspendPolicy_Suspend__VM_1); 
 			} else {
-				action.setText(ActionMessages.BreakpointSuspendPolicy_Suspend__Thread_2); //$NON-NLS-1$
+				action.setText(ActionMessages.BreakpointSuspendPolicy_Suspend__Thread_2); 
 			}
 		} catch (CoreException e) {
 			 JDIDebugUIPlugin.log(e);

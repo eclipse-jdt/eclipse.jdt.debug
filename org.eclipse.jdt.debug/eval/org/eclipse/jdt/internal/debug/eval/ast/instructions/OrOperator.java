@@ -66,7 +66,7 @@ public class OrOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.OrOperator______operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.OrOperator______operator_1; 
 	}
 
 }

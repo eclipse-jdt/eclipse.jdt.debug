@@ -134,11 +134,11 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 			node.setAttribute("handleId", handle); //$NON-NLS-1$
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
 		} catch (TransformerException e) {
-			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
 		}
 		// execution will not reach here
 		return null;
@@ -160,7 +160,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 												
 			String handle = root.getAttribute("handleId"); //$NON-NLS-1$
 			if (handle == null) {
-				abort(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___missing_handle_identifier_for_package_fragment_root__6, null); //$NON-NLS-1$
+				abort(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___missing_handle_identifier_for_package_fragment_root__6, null); 
 			} else {
 				if (handle.length() == 0) {
 					// empty package fragment
@@ -170,7 +170,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 					if (element instanceof IPackageFragmentRoot) {
 						setPackageFragmentRoot((IPackageFragmentRoot)element);
 					} else {
-						abort(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___package_fragment_root_does_not_exist__7, null); //$NON-NLS-1$
+						abort(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___package_fragment_root_does_not_exist__7, null); 
 					}
 				}
 			}
@@ -182,7 +182,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.PackageFragmentRootSourceLocation_Exception_occurred_initializing_source_location__8, ex); //$NON-NLS-1$
+		abort(LaunchingMessages.PackageFragmentRootSourceLocation_Exception_occurred_initializing_source_location__8, ex); 
 	}
 
 	/**

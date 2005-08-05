@@ -43,7 +43,7 @@ public class InstanceFilterEditor {
 		fCheckHandler= new CheckHandler();
 		Label label= new Label(parent, SWT.NONE);
 		label.setFont(parent.getFont());
-		label.setText(PropertyPageMessages.InstanceFilterEditor_0); //$NON-NLS-1$
+		label.setText(PropertyPageMessages.InstanceFilterEditor_0); 
 		
 		fParent= parent;
 		//fOuter= new Composite(parent, SWT.NONE);

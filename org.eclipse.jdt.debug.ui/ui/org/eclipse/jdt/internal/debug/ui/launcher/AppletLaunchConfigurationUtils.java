@@ -71,7 +71,7 @@ public class AppletLaunchConfigurationUtils {
 	 */
 	public static IType getMainType(String mainTypeName, IJavaProject javaProject) throws CoreException {
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
-			abort(LauncherMessages.appletlauncher_utils_error_main_type_not_specified, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+			abort(LauncherMessages.appletlauncher_utils_error_main_type_not_specified, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
 		}
 		IType mainType = null;
 		try {
@@ -79,7 +79,7 @@ public class AppletLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort(MessageFormat.format(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+			abort(MessageFormat.format(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
 		}
 		return mainType;
 	}		
@@ -209,7 +209,7 @@ public class AppletLaunchConfigurationUtils {
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) throws InterruptedException {
 					int nElements= elements.length;
-					pm.beginTask(LauncherMessages.appletlauncher_search_task_inprogress, nElements); //$NON-NLS-1$
+					pm.beginTask(LauncherMessages.appletlauncher_search_task_inprogress, nElements); 
 					try {
 						for (int i= 0; i < nElements; i++) {
 							try {

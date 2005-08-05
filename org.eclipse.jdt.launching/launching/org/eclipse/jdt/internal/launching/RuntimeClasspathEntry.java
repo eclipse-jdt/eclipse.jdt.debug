@@ -97,7 +97,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(VARIABLE);
 				break;
 			default:
-				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); //$NON-NLS-1$
+				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
 		}
 		setClasspathEntry(entry);
 		initializeClasspathProperty();
@@ -115,7 +115,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(CONTAINER);
 				break;
 			default:
-				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); //$NON-NLS-1$
+				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);
@@ -132,12 +132,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		try {
 			setType(Integer.parseInt(root.getAttribute("type"))); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_type_2, e); //$NON-NLS-1$
+			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_type_2, e); 
 		}
 		try {
 			setClasspathProperty(Integer.parseInt(root.getAttribute("path"))); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_location_3, e); //$NON-NLS-1$
+			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_location_3, e); 
 		}			
 
 		// source attachment
@@ -156,7 +156,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case PROJECT :
 				String name = root.getAttribute("projectName"); //$NON-NLS-1$
 				if (isEmpty(name)) {
-					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_project_name_4, null); //$NON-NLS-1$
+					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_project_name_4, null); 
 				} else {
 					IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 					setClasspathEntry(JavaCore.newProjectEntry(proj.getFullPath()));
@@ -168,7 +168,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					// internal
 					path = root.getAttribute("internalArchive"); //$NON-NLS-1$
 					if (isEmpty(path)) {
-						abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_archive_path_5, null); //$NON-NLS-1$
+						abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_archive_path_5, null); 
 					} else {
 						setClasspathEntry(createLibraryEntry(sourcePath, rootPath, path));
 					}
@@ -180,7 +180,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case VARIABLE :
 				String var = root.getAttribute("containerPath"); //$NON-NLS-1$
 				if (isEmpty(var)) {
-					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null); //$NON-NLS-1$
+					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null); 
 				} else {
 					setClasspathEntry(JavaCore.newVariableEntry(new Path(var), sourcePath, rootPath));
 				}
@@ -188,7 +188,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case CONTAINER :
 				var = root.getAttribute("containerPath"); //$NON-NLS-1$
 				if (isEmpty(var)) {
-					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null); //$NON-NLS-1$
+					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null); 
 				} else {
 					setClasspathEntry(JavaCore.newContainerEntry(new Path(var)));
 				}
@@ -266,7 +266,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		try {
 			doc = LaunchingPlugin.getDocument();
 		} catch (ParserConfigurationException e) {
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
 			throw new CoreException(status);
 		}
 		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
@@ -302,10 +302,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		try {
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
 			throw new CoreException(status);
 		} catch (TransformerException e) {
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
 			throw new CoreException(status);
 		}
 	}

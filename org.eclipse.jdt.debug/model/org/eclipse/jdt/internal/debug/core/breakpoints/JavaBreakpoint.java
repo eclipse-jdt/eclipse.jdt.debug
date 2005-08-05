@@ -834,14 +834,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected String getMarkerMessage(int hitCount, int suspendPolicy) {
 		StringBuffer buff= new StringBuffer();
 		if (hitCount > 0){
-			buff.append(MessageFormat.format(JDIDebugBreakpointMessages.JavaBreakpoint___Hit_Count___0___1, new Object[]{Integer.toString(hitCount)})); //$NON-NLS-1$
+			buff.append(MessageFormat.format(JDIDebugBreakpointMessages.JavaBreakpoint___Hit_Count___0___1, new Object[]{Integer.toString(hitCount)})); 
 			buff.append(' ');
 		}
 		String suspendPolicyString;
 		if (suspendPolicy == IJavaBreakpoint.SUSPEND_THREAD) {
-			suspendPolicyString= JDIDebugBreakpointMessages.JavaBreakpoint__suspend_policy__thread__1; //$NON-NLS-1$
+			suspendPolicyString= JDIDebugBreakpointMessages.JavaBreakpoint__suspend_policy__thread__1; 
 		} else {
-			suspendPolicyString= JDIDebugBreakpointMessages.JavaBreakpoint__suspend_policy__VM__2; //$NON-NLS-1$
+			suspendPolicyString= JDIDebugBreakpointMessages.JavaBreakpoint__suspend_policy__VM__2; 
 		}
 		
 		buff.append(suspendPolicyString);
@@ -1115,7 +1115,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 		for (int i = 0; i < targets.length; i++) {
 			IDebugTarget target = targets[i];
-			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.JavaBreakpoint_Exception, null); //$NON-NLS-1$
+			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.JavaBreakpoint_Exception, null); 
 			IJavaDebugTarget jdiTarget = (IJavaDebugTarget)target.getAdapter(IJavaDebugTarget.class);
 			if (jdiTarget != null) {
 				try {

@@ -77,7 +77,7 @@ public class BreakpointConditionEditor {
 			JDIDebugUIPlugin.log(exception);
 			return;
 		}
-		fErrorMessage= PropertyPageMessages.BreakpointConditionEditor_1; //$NON-NLS-1$
+		fErrorMessage= PropertyPageMessages.BreakpointConditionEditor_1; 
 		fOldValue= ""; //$NON-NLS-1$
 			
 		// the source viewer
@@ -156,7 +156,7 @@ public class BreakpointConditionEditor {
 		        return null;
 			}
 		};
-		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$	
+		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //	
 	}
 
 	/**

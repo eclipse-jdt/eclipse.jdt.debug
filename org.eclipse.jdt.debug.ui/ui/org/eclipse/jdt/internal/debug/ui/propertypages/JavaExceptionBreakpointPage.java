@@ -26,7 +26,7 @@ public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 	private Button fCaughtButton;
 	private Button fUncaughtButton;
 	
-	private static final String fgExceptionBreakpointError= PropertyPageMessages.JavaExceptionBreakpointPage_2; //$NON-NLS-1$
+	private static final String fgExceptionBreakpointError= PropertyPageMessages.JavaExceptionBreakpointPage_2; 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#doStore()
 	 */
@@ -53,16 +53,16 @@ public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 				validateExceptionBreakpoint();
 			}
 		};
-		createLabel(parent, PropertyPageMessages.JavaExceptionBreakpointPage_3); //$NON-NLS-1$
+		createLabel(parent, PropertyPageMessages.JavaExceptionBreakpointPage_3); 
 		fEnabledButton.addSelectionListener(exceptionBreakpointValidator);
-		fCaughtButton= createCheckButton(parent, PropertyPageMessages.JavaExceptionBreakpointPage_0); //$NON-NLS-1$
+		fCaughtButton= createCheckButton(parent, PropertyPageMessages.JavaExceptionBreakpointPage_0); 
 		try {
 			fCaughtButton.setSelection(breakpoint.isCaught());
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
 		}
 		fCaughtButton.addSelectionListener(exceptionBreakpointValidator);
-		fUncaughtButton= createCheckButton(parent, PropertyPageMessages.JavaExceptionBreakpointPage_1); //$NON-NLS-1$
+		fUncaughtButton= createCheckButton(parent, PropertyPageMessages.JavaExceptionBreakpointPage_1); 
 		try {
 			fUncaughtButton.setSelection(breakpoint.isUncaught());
 		} catch (CoreException e) {

@@ -99,7 +99,7 @@ public class InterpreterVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(String)
 	 */
 	public void setValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_setValue_String__not_supported_for_interpreter_variable_1, null)); //$NON-NLS-1$
+		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_setValue_String__not_supported_for_interpreter_variable_1, null)); 
 	}
 
 	/**
@@ -120,14 +120,14 @@ public class InterpreterVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(IValue)
 	 */
 	public boolean verifyValue(IValue value) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_verifyValue_IValue__not_supported_for_interpreter_variable_2, null)); //$NON-NLS-1$
+		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_verifyValue_IValue__not_supported_for_interpreter_variable_2, null)); 
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(String)
 	 */
 	public boolean verifyValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_verifyValue_String__not_supported_for_interpreter_variable_3, null)); //$NON-NLS-1$
+		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_verifyValue_String__not_supported_for_interpreter_variable_3, null)); 
 	}
 
 	/**

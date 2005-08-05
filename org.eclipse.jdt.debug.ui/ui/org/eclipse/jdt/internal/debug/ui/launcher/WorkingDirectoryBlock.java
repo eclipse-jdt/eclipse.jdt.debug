@@ -105,7 +105,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		group.setFont(font);
 		setControl(group);
 		
-		group.setText(LauncherMessages.WorkingDirectoryBlock_12); //$NON-NLS-1$
+		group.setText(LauncherMessages.WorkingDirectoryBlock_12); 
 				
 		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -115,7 +115,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkingDirText.addModifyListener(fListener);
 		
 		fUseDefaultWorkingDirButton = new Button(group,SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText(LauncherMessages.JavaArgumentsTab_Use_de_fault_working_directory_4); //$NON-NLS-1$
+		fUseDefaultWorkingDirButton.setText(LauncherMessages.JavaArgumentsTab_Use_de_fault_working_directory_4); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
@@ -129,13 +129,13 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComp.setLayoutData(gd);
 		buttonComp.setFont(font);		
-		fWorkspaceButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_0, null); //$NON-NLS-1$
+		fWorkspaceButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_0, null); 
 		fWorkspaceButton.addSelectionListener(fListener);
 		
-		fFileSystemButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_1, null); //$NON-NLS-1$
+		fFileSystemButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_1, null); 
 		fFileSystemButton.addSelectionListener(fListener);
 		
-		fVariablesButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_17, null); //$NON-NLS-1$
+		fVariablesButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_17, null); 
 		fVariablesButton.addSelectionListener(fListener);
 	}
 					
@@ -150,7 +150,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(LauncherMessages.WorkingDirectoryBlock_7); //$NON-NLS-1$
+		dialog.setMessage(LauncherMessages.WorkingDirectoryBlock_7); 
 		String currentWorkingDir = fWorkingDirText.getText();
 		if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
 			File path = new File(currentWorkingDir);
@@ -177,7 +177,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		ContainerSelectionDialog dialog = 
 			new ContainerSelectionDialog(getShell(),
 					currentContainer, false,
-					LauncherMessages.WorkingDirectoryBlock_4); //$NON-NLS-1$
+					LauncherMessages.WorkingDirectoryBlock_4); 
 		dialog.showClosedProjects(false);
 		dialog.open();
 		Object[] results = dialog.getResult();		
@@ -286,7 +286,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 				if (dir.isDirectory()) {
 					return true;
 				}
-				setErrorMessage(LauncherMessages.WorkingDirectoryBlock_10); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.WorkingDirectoryBlock_10); 
 				return false;
 			}
 		}
@@ -308,7 +308,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {			
-			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
+			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); 
 			fWorkingDirText.setText(""); //$NON-NLS-1$
 			if (wd == null) {
 				fUseDefaultWorkingDirButton.setSelection(true);
@@ -318,7 +318,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); 
 			JDIDebugUIPlugin.log(e);
 		}
 	}
@@ -351,7 +351,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.WorkingDirectoryBlock_Working_Directory_8; //$NON-NLS-1$
+		return LauncherMessages.WorkingDirectoryBlock_Working_Directory_8; 
 	}	
 	
 	/**

@@ -86,7 +86,7 @@ public class EqualEqualOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.EqualEqualOperator_operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.EqualEqualOperator_operator_1; 
 	}
 
 }

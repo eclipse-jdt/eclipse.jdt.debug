@@ -414,7 +414,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * @param resources the resources which correspond to the changed classes
 	 */
 	private void doHotCodeReplace(List targets, List resources, List qualifiedNames) {
-		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugHCRMessages.JavaHotCodeReplaceManager_drop_to_frame_failed, null); //$NON-NLS-1$
+		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugHCRMessages.JavaHotCodeReplaceManager_drop_to_frame_failed, null); 
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
@@ -528,27 +528,27 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			target.setHCROccurred(true);
 			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) target.getVM();
 			if (vm == null) {
-				target.requestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_Hot_code_replace_failed___VM_disconnected__1, null); //$NON-NLS-1$
+				target.requestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_Hot_code_replace_failed___VM_disconnected__1, null); 
 			}
 			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
 			try {
 				result= vm.classesHaveChanged(typeNames);
 			} catch (RuntimeException e) {
-				target.targetRequestFailed(MessageFormat.format(JDIDebugHCRMessages.JavaHotCodeReplaceManager_exception_replacing_types, new String[] {e.toString()}), e); //$NON-NLS-1$
+				target.targetRequestFailed(MessageFormat.format(JDIDebugHCRMessages.JavaHotCodeReplaceManager_exception_replacing_types, new String[] {e.toString()}), e); 
 			}
 			switch (result) {
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS:
 					break;
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_IGNORED:
-					target.targetRequestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_ignored, null); //$NON-NLS-1$
+					target.targetRequestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_ignored, null); 
 					break;
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
-					target.targetRequestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_failed, null); //$NON-NLS-1$
+					target.targetRequestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_failed, null); 
 					target.addOutOfSynchTypes(qualifiedNames);
 					break;
 			}
 		} else {
-			target.notSupported(JDIDebugHCRMessages.JavaHotCodeReplaceManager_does_not_support_hcr); //$NON-NLS-1$
+			target.notSupported(JDIDebugHCRMessages.JavaHotCodeReplaceManager_does_not_support_hcr); 
 			target.addOutOfSynchTypes(qualifiedNames);
 		}
 	}
@@ -565,32 +565,32 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			try {
 				VirtualMachine vm = target.getVM();
 				if (vm == null) {
-					target.requestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_Hot_code_replace_failed___VM_disconnected__2, null); //$NON-NLS-1$
+					target.requestFailed(JDIDebugHCRMessages.JavaHotCodeReplaceManager_Hot_code_replace_failed___VM_disconnected__2, null); 
 				}
 				vm.redefineClasses(typesToBytes);
 			} catch (UnsupportedOperationException exception) {
 				String detail= exception.getMessage();
 				if (detail != null) {
-					redefineTypesFailedJDK(target, qualifiedNames, MessageFormat.format(JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_operation, new String[] {detail}), exception); //$NON-NLS-1$
+					redefineTypesFailedJDK(target, qualifiedNames, MessageFormat.format(JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_operation, new String[] {detail}), exception); 
 				} else {
-					redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_redefinition, exception); //$NON-NLS-1$
+					redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_redefinition, exception); 
 				}				
 			} catch (NoClassDefFoundError exception) {
-				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_bad_bytes, exception); //$NON-NLS-1$
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_bad_bytes, exception); 
 			} catch (VerifyError exception) {
-				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_verify_error, exception); //$NON-NLS-1$
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_verify_error, exception); 
 			} catch (UnsupportedClassVersionError exception) {
-				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_class_version, exception); //$NON-NLS-1$
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_class_version, exception); 
 			} catch (ClassFormatError exception) {
-				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_class_format_error, exception); //$NON-NLS-1$
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_class_format_error, exception); 
 			} catch (ClassCircularityError exception) {
-				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_class_circularity_error, exception); //$NON-NLS-1$
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_class_circularity_error, exception); 
 			} catch (RuntimeException exception) {
-				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_failed, exception); //$NON-NLS-1$
+				redefineTypesFailedJDK(target, qualifiedNames, JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_failed, exception); 
 			}
 			target.reinstallBreakpointsIn(resources, qualifiedNames);
 		} else {
-			target.notSupported(JDIDebugHCRMessages.JavaHotCodeReplaceManager_does_not_support_hcr); //$NON-NLS-1$
+			target.notSupported(JDIDebugHCRMessages.JavaHotCodeReplaceManager_does_not_support_hcr); 
 		}
 	}
 	
@@ -772,7 +772,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						notifyFailedDrop(((JDIThread)threads[i]).computeStackFrames(), replacedClassNames);
 					}
 					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.NOT_SUPPORTED, JDIDebugHCRMessages.JavaHotCodeReplaceManager_Drop_to_frame_not_supported, null)); //$NON-NLS-1$
+						DebugException.NOT_SUPPORTED, JDIDebugHCRMessages.JavaHotCodeReplaceManager_Drop_to_frame_not_supported, null)); 
 				}
 			}
 		}

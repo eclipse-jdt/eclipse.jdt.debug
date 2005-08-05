@@ -106,7 +106,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 			case 0:
 				return null;
 			default:
-				throw new InternalException(JDIMessages.ValueImpl_Invalid_Value_tag_encountered___1 + type); //$NON-NLS-1$
+				throw new InternalException(JDIMessages.ValueImpl_Invalid_Value_tag_encountered___1 + type); 
 		}
 	}
 
@@ -184,7 +184,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 				return (ValueImpl)value;
 			}
 		}
-		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); //$NON-NLS-1$
+		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
 	}
 
 	/**
@@ -239,7 +239,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	        }
         }
             
-		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); //$NON-NLS-1$
+		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
     }
     
     private static boolean checkInterfaceType(InterfaceType valueType, InterfaceType type) {
@@ -296,6 +296,6 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 				}
 				break;
 		}
-		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); //$NON-NLS-1$
+		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
 	}
 }

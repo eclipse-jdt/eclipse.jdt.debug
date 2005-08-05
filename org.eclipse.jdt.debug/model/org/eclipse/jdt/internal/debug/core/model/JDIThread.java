@@ -380,7 +380,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				fIsSystemThread = false;
 				break;
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_determining_if_system_thread, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_determining_if_system_thread, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
 				// #targetRequestFailed will throw an exception				
 				return;
@@ -501,16 +501,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// Checking isSuspended here eliminates a race condition in resume
 			// between the time stack frames are preserved and the time the
 			// underlying thread is actually resumed.
-			requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_retrieve_stack_frame___thread_not_suspended__1, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_retrieve_stack_frame___thread_not_suspended__1, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		}
 		try {
 			return getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
-			requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_retrieve_stack_frame___thread_not_suspended__1, e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_retrieve_stack_frame___thread_not_suspended__1, e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_stack_frames_2, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_stack_frames_2, new String[] {e.toString()}), e); 
 		} catch (InternalError e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_stack_frames_2, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_stack_frames_2, new String[] {e.toString()}), e); 
 		}
 		// execution will not reach this line, as
 		// #targetRequestFailed will thrown an exception
@@ -534,9 +534,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return getUnderlyingThread().frameCount();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_frame_count, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_frame_count, new String[] {e.toString()}), e); 
 		} catch (IncompatibleThreadStateException e) {
-			requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_frame_count, new String[] {e.toString()}), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+			requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_frame_count, new String[] {e.toString()}), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		}
 		// execution will not reach here - try block will either
 		// return or exception will be thrown
@@ -548,11 +548,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */ 
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		if (isPerformingEvaluation()) {
-			requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations, null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$			
+			requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations, null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //			
 		}
 		
 		if (!canRunEvaluation()) {
-			requestFailed(JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		}
 		
 		fIsPerformingEvaluation = true;
@@ -685,7 +685,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args, boolean invokeNonvirtual) throws DebugException {
 		if (receiverClass != null && receiverObject != null) {
-			throw new IllegalArgumentException(JDIDebugModelMessages.JDIThread_can_only_specify_one_receiver_for_a_method_invocation); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIDebugModelMessages.JDIThread_can_only_specify_one_receiver_for_a_method_invocation); 
 		}
 		Value result= null;
 		int timeout= getRequestTimeout();
@@ -696,10 +696,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// See bugs 6518, 14069
 			synchronized (this) {
 				if (!isSuspended()) {
-					requestFailed(JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+					requestFailed(JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 				}
 				if (isInvokingMethod()) {
-					requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations, null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$
+					requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations, null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); 
 				}
 				// set the request timeout to be infinite
 				setRequestTimeout(Integer.MAX_VALUE);
@@ -722,7 +722,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (ClassNotLoadedException e) {
 			invokeFailed(e, timeout);
 		} catch (IncompatibleThreadStateException e) {
-			invokeFailed(JDIDebugModelMessages.JDIThread_Thread_must_be_suspended_by_step_or_breakpoint_to_perform_method_invocation_1, IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE, e, timeout); //$NON-NLS-1$
+			invokeFailed(JDIDebugModelMessages.JDIThread_Thread_must_be_suspended_by_step_or_breakpoint_to_perform_method_invocation_1, IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE, e, timeout); 
 		} catch (InvocationException e) {
 			invokeFailed(e, timeout);
 		} catch (RuntimeException e) {
@@ -775,7 +775,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected ObjectReference newInstance(ClassType receiverClass, Method constructor, List args) throws DebugException {
 		if (isInvokingMethod()) {
-			requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations_2, null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations_2, null); 
 		}
 		ObjectReference result= null;
 		int timeout= getRequestTimeout();
@@ -818,7 +818,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * </ul>
 	 */
 	protected void invokeFailed(Throwable e, int restoreTimeout) throws DebugException {
-		invokeFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_invoking_method, new String[] {e.toString()}), DebugException.TARGET_REQUEST_FAILED, e, restoreTimeout); //$NON-NLS-1$
+		invokeFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_invoking_method, new String[] {e.toString()}), DebugException.TARGET_REQUEST_FAILED, e, restoreTimeout); 
 	}
 	
 	/**
@@ -892,14 +892,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// Don't bother reporting the exception when retrieving the name (bug 30785 & bug 33276)
 			if (e instanceof ObjectCollectedException) {
 				if (fPreviousName == null) {
-					fPreviousName= JDIDebugModelMessages.JDIThread_garbage_collected_1; //$NON-NLS-1$
+					fPreviousName= JDIDebugModelMessages.JDIThread_garbage_collected_1; 
 				}
 			} else if (e instanceof VMDisconnectedException) {
 				if (fPreviousName == null) {
-					fPreviousName= JDIDebugModelMessages.JDIThread_42; //$NON-NLS-1$
+					fPreviousName= JDIDebugModelMessages.JDIThread_42; 
 				}
 			} else {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_name, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_name, new String[] {e.toString()}), e); 
 			}
 		}
 		return fPreviousName;
@@ -914,15 +914,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			p= getUnderlyingThread().referenceType().fieldByName("priority"); //$NON-NLS-1$
 			if (p == null) {
-				requestFailed(JDIDebugModelMessages.JDIThread_no_priority_field, null); //$NON-NLS-1$
+				requestFailed(JDIDebugModelMessages.JDIThread_no_priority_field, null); 
 			}
 			Value v= getUnderlyingThread().getValue(p);
 			if (v instanceof IntegerValue) {
 				return ((IntegerValue)v).value();
 			}
-			requestFailed(JDIDebugModelMessages.JDIThread_priority_not_an_integer, null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIThread_priority_not_an_integer, null); 
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_priority, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_priority, new String[] {e.toString()}), e); 
 		}
 		// execution will not fall through to this line, as
 		// #targetRequestFailed or #requestFailed will throw
@@ -1059,7 +1059,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			try {
 				fThreadGroupName = tgr.name();
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group_name, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group_name, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
 				// #targetRequestFailed will thrown an exception
 				return null;
@@ -1154,7 +1154,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (RuntimeException e) {
 			setRunning(false);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); 
 		}
 	}
 		
@@ -1320,7 +1320,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			suspendUnderlyingThread();
 		} catch (RuntimeException e) {
 			setRunning(true);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_suspending, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_suspending, new String[] {e.toString()}), e); 
 		}
 	}
 	
@@ -1355,7 +1355,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						}
 					}
 					if (!suspended) {
-						IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), SUSPEND_TIMEOUT, MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, new String[] {new Integer(timeout).toString()}), null); //$NON-NLS-1$
+						IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), SUSPEND_TIMEOUT, MessageFormat.format(JDIDebugModelMessages.JDIThread_suspend_timeout, new String[] {new Integer(timeout).toString()}), null); 
 						IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
 						if (handler != null) {
 							try {
@@ -1410,7 +1410,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}catch (RuntimeException e) {
 				setRunning(false);
 				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); //$NON-NLS-1$				
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); //				
 			}
 		}
 	}
@@ -1442,7 +1442,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				popFrame(frame);
 				stepInto();
 			} catch (RuntimeException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_dropping_to_frame, new String[] {exception.toString()}),exception); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_dropping_to_frame, new String[] {exception.toString()}),exception); 
 			}
 		} else {
 			// J9 support
@@ -1476,15 +1476,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					size= computeStackFrames().size();
 				}
 			} catch (IncompatibleThreadStateException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_popping, new String[] {exception.toString()}),exception); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_popping, new String[] {exception.toString()}),exception); 
 			} catch (InvalidStackFrameException exception) {
 				// InvalidStackFrameException can be thrown when all but the
 				// deepest frame were popped. Fire a changed notification
 				// in case this has occured.
 				fireChangeEvent(DebugEvent.CONTENT);
-				targetRequestFailed(exception.toString(),exception); //$NON-NLS-1$
+				targetRequestFailed(exception.toString(),exception); 
 			} catch (RuntimeException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_popping, new String[] {exception.toString()}),exception); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_popping, new String[] {exception.toString()}),exception); 
 			}
 		}
 	}
@@ -1592,12 +1592,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			try {
 				fThreadGroup = getUnderlyingThread().threadGroup();
 			} catch (UnsupportedOperationException e) {
-				requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group, new String[] {e.toString()}), e); //$NON-NLS-1$
+				requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
 				// #requestFailed will throw an exception				
 				return null;
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
 				// #targetRequestFailed will throw an exception				
 				return null;
@@ -1727,7 +1727,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				getUnderlyingThread().resume();
 			} catch (RuntimeException e) {
 				stepEnd();
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stepping, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stepping, new String[] {e.toString()}), e); 
 			}
 		}
 		
@@ -1747,7 +1747,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected StepRequest createStepRequest() throws DebugException {
 			EventRequestManager manager = getEventRequestManager();
 			if (manager == null) {
-				requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__1, null); //$NON-NLS-1$
+				requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__1, null); 
 			}
 			try {
 				StepRequest request = manager.createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, getStepKind());
@@ -1757,7 +1757,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				request.enable();
 				return request;
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_creating_step_request, new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_creating_step_request, new String[] {e.toString()}), e); 
 			}			
 			// this line will never be executed, as the try block
 			// will either return, or the catch block will throw 
@@ -2208,7 +2208,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					hcrThread.doReturn(null, true);
 				} catch (RuntimeException e) {
 					stepEnd();
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_while_popping_stack_frame, new String[] {e.toString()}), e); //$NON-NLS-1$
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_while_popping_stack_frame, new String[] {e.toString()}), e); 
 				}
 			}
 		}
@@ -2274,7 +2274,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected StepRequest createStepRequest() throws DebugException {
 			EventRequestManager manager = getEventRequestManager();
 			if (manager == null) {
-				requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__2, null); //$NON-NLS-1$
+				requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__2, null); 
 			}
 			int num = getFramesToDrop();
 			if (num > 0) {
@@ -2287,7 +2287,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					request.enable();
 					return request;
 				} catch (RuntimeException e) {
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_creating_step_request, new String[] {e.toString()}), e); //$NON-NLS-1$
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_creating_step_request, new String[] {e.toString()}), e); 
 				}			
 			} else if (num == -1) {
 				try {
@@ -2297,7 +2297,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					request.enable();
 					return request;
 				} catch (RuntimeException e) {
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_creating_step_request, new String[] {e.toString()}), e); //$NON-NLS-1$
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_creating_step_request, new String[] {e.toString()}), e); 
 				}					
 			}
 			// this line will never be executed, as the try block
@@ -2357,9 +2357,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_43, e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_43, e); 
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_44, e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_44, e); 
 		}
 		return null;
 	}
@@ -2374,9 +2374,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return new JDIObjectValue((JDIDebugTarget)getDebugTarget(), monitor);
 			}
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_45, e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_45, e); 
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_46, e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_46, e); 
 		}
 		
 		return null;
@@ -2412,7 +2412,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		private JDIThread fJDIThread;
 		
 		public ThreadJob(JDIThread thread) {
-			super(JDIDebugModelMessages.JDIThread_39); //$NON-NLS-1$
+			super(JDIDebugModelMessages.JDIThread_39); 
 			fJDIThread= thread;
 			fRunnables= new Vector(5);
 			setSystem(true);
@@ -2441,16 +2441,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
         	}
         	
         	MultiStatus failed = null;
-        	monitor.beginTask(this.getName(), runnables.length); //$NON-NLS-1$
+        	monitor.beginTask(this.getName(), runnables.length); 
         	int i = 0;
         	while (i < runnables.length && !fJDIThread.isTerminated() && !monitor.isCanceled()) {
         		try {
         			((Runnable) runnables[i]).run();
         		} catch (Exception e) {
         			if (failed == null) {
-        				failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.JDIThread_0, null); //$NON-NLS-1$
+        				failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.JDIThread_0, null); 
         			}
-        			failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.JDIThread_0, e)); //$NON-NLS-1$
+        			failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.JDIThread_0, e)); 
         		}
         		i++;
         		monitor.worked(1);
@@ -2480,7 +2480,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			getUnderlyingThread().stop(((JDIObjectValue)exception).getUnderlyingObject());
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stoping_thread, new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stoping_thread, new String[] {e.toString()}), e); 
 		}
 	}
 	

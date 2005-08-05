@@ -44,7 +44,7 @@ public abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveTyp
 			case 'F': return new FloatTypeImpl(vmImpl);
 			case 'D': return new DoubleTypeImpl(vmImpl);
 		}
-		throw new InternalError(JDIMessages.PrimitiveTypeImpl_Invalid_primitive_signature____1 + signature + JDIMessages.PrimitiveTypeImpl___2); //$NON-NLS-1$ //$NON-NLS-2$
+		throw new InternalError(JDIMessages.PrimitiveTypeImpl_Invalid_primitive_signature____1 + signature + JDIMessages.PrimitiveTypeImpl___2); // 
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveTyp
 	 * @return Returns modifier bits.
 	 */
 	public int modifiers() {
-		throw new InternalError(JDIMessages.PrimitiveTypeImpl_A_PrimitiveType_does_not_have_modifiers_3); //$NON-NLS-1$
+		throw new InternalError(JDIMessages.PrimitiveTypeImpl_A_PrimitiveType_does_not_have_modifiers_3); 
 	}
 	
 	/* (non-Javadoc)

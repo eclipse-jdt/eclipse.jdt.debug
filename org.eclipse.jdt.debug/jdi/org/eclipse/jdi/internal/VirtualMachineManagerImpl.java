@@ -68,7 +68,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 					out = new FileOutputStream(fVerboseFile);
 				} catch (IOException e) {
 					out = System.out;
-					System.out.println(JDIMessages.VirtualMachineManagerImpl_Could_not_open_verbose_file___1 + fVerboseFile + JDIMessages.VirtualMachineManagerImpl_____2 + e); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println(JDIMessages.VirtualMachineManagerImpl_Could_not_open_verbose_file___1 + fVerboseFile + JDIMessages.VirtualMachineManagerImpl_____2 + e); // 
 				}
 			} else {
 				out = System.out;

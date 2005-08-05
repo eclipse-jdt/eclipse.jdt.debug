@@ -55,12 +55,12 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
 		if (input == null) {
-			errorMessage = ActionMessages.RunToLineAdapter_0; //$NON-NLS-1$
+			errorMessage = ActionMessages.RunToLineAdapter_0; 
 		} else {
 			final ITextEditor textEditor = (ITextEditor)editorPart;
 			final IDocument document= textEditor.getDocumentProvider().getDocument(input);
 			if (document == null) {
-				errorMessage = ActionMessages.RunToLineAdapter_1; //$NON-NLS-1$
+				errorMessage = ActionMessages.RunToLineAdapter_1; 
 			} else {
 				final int[] validLine = new int[1];
 				final String[] typeName = new String[1];
@@ -84,7 +84,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					Map attributes = new HashMap(4);
 					BreakpointUtils.addRunToLineAttributes(attributes);
 					breakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
-					errorMessage = ActionMessages.RunToLineAdapter_2; //$NON-NLS-1$
+					errorMessage = ActionMessages.RunToLineAdapter_2; 
 					if (target instanceof IAdaptable) {
 						IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
 						if (debugTarget != null) {
@@ -96,9 +96,9 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				} else {
 					// invalid line
 					if (textSelection.getLength() > 0) {
-						errorMessage = ActionMessages.RunToLineAdapter_3; //$NON-NLS-1$
+						errorMessage = ActionMessages.RunToLineAdapter_3; 
 					} else {
-						errorMessage = ActionMessages.RunToLineAdapter_4; //$NON-NLS-1$
+						errorMessage = ActionMessages.RunToLineAdapter_4; 
 					}
 
 				}

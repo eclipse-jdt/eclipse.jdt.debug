@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 	
 	public ConditionalBreakpointErrorDialog(Shell parentShell, String message, IStatus status) {
-		super(parentShell, DebugUIMessages.ConditionalBreakpointErrorDialog_Conditional_Breakpoint_Error_1, message, status, IStatus.ERROR); //$NON-NLS-1$
+		super(parentShell, DebugUIMessages.ConditionalBreakpointErrorDialog_Conditional_Breakpoint_Error_1, message, status, IStatus.ERROR); 
 	}
 
 	/**
@@ -28,7 +28,7 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create Edit and Cancel buttons
-		createButton(parent, IDialogConstants.OK_ID, DebugUIMessages.ConditionalBreakpointErrorDialog__Edit_Condition_2, true); //$NON-NLS-1$
+		createButton(parent, IDialogConstants.OK_ID, DebugUIMessages.ConditionalBreakpointErrorDialog__Edit_Condition_2, true); 
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 

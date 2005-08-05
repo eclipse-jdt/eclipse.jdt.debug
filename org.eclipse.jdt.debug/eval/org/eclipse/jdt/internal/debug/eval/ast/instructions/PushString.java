@@ -27,7 +27,7 @@ public class PushString extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.PushString_push__1 + fValue; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushString_push__1 + fValue; 
 	}
 
 }

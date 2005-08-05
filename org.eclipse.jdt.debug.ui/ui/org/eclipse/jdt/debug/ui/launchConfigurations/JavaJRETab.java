@@ -231,7 +231,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		setMessage(null);
 		
 		if (fUnknownVMName != null) {
-			setErrorMessage(MessageFormat.format(LauncherMessages.JavaJRETab_Configuration_specifies_undefined_JRE____0__1, new String[]{fUnknownVMName}));			 //$NON-NLS-1$
+			setErrorMessage(MessageFormat.format(LauncherMessages.JavaJRETab_Configuration_specifies_undefined_JRE____0__1, new String[]{fUnknownVMName}));			 
 			return false;
 		}
 		
@@ -239,17 +239,17 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		IVMInstall vm = fJREBlock.getJRE();
 		if (vm == null) {
 			if (!fJREBlock.isDefaultJRE()) {
-				setErrorMessage(LauncherMessages.JavaJRETab_JRE_not_specified_38); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.JavaJRETab_JRE_not_specified_38); 
 				return false;
 			}			
 		} else {
 			File location = vm.getInstallLocation();
 			if (location == null) {
-				setErrorMessage(LauncherMessages.JavaJRETab_JRE_home_directory_not_specified_36); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.JavaJRETab_JRE_home_directory_not_specified_36); 
 				return false;
 			}
 			if (!location.exists()) {
-				setErrorMessage(LauncherMessages.JavaJRETab_JRE_home_directory_does_not_exist_37); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.JavaJRETab_JRE_home_directory_does_not_exist_37); 
 				return false;
 			}			
 		}		
@@ -265,7 +265,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.JavaJRETab__JRE_1; //$NON-NLS-1$
+		return LauncherMessages.JavaJRETab__JRE_1; 
 	}
 	
 	/**
@@ -322,7 +322,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 							wc = getLaunchConfiguration().getWorkingCopy();
 					}
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaJRETab_Unable_to_initialize_defaults_for_selected_JRE_1, e); //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaJRETab_Unable_to_initialize_defaults_for_selected_JRE_1, e); 
 					return;
 				}
 			}
@@ -454,13 +454,13 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 			 */
 			public String getDescription() {
 				IJavaProject project = getJavaProject();
-				String name = LauncherMessages.JavaJRETab_7; //$NON-NLS-1$
+				String name = LauncherMessages.JavaJRETab_7; 
 				if (project == null) {
 					IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 					if (vm != null) {
 						name = vm.getName();
 					}
-					return MessageFormat.format(LauncherMessages.JavaJRETab_8, new String[]{name}); //$NON-NLS-1$
+					return MessageFormat.format(LauncherMessages.JavaJRETab_8, new String[]{name}); 
 				}
 				try {
 					IVMInstall vm = JavaRuntime.getVMInstall(project);
@@ -469,7 +469,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 					}
 				} catch (CoreException e) {
 				}
-				return MessageFormat.format(LauncherMessages.JavaJRETab_9, new String[]{name}); //$NON-NLS-1$
+				return MessageFormat.format(LauncherMessages.JavaJRETab_9, new String[]{name}); 
 			}
 		};
 	}

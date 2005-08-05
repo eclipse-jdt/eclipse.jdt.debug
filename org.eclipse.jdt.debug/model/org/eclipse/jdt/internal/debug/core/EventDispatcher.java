@@ -199,7 +199,7 @@ public class EventDispatcher implements Runnable {
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
 				try {
-					fTarget.targetRequestFailed(JDIDebugMessages.EventDispatcher_0, e); //$NON-NLS-1$
+					fTarget.targetRequestFailed(JDIDebugMessages.EventDispatcher_0, e); 
 				} catch (DebugException de) {
 					JDIDebugPlugin.log(de);
 				}

@@ -80,16 +80,16 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		int arrayLength= length();
 
 		if (firstIndex < 0 || firstIndex >= arrayLength) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_index_1); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_index_1); 
 		}
 		
 		if (length == -1) {
 			// length == -1 means all elements to the end.
 			length = arrayLength - firstIndex;
 		} else if (length < -1) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_number_of_value_to_get_from_array_1); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_number_of_value_to_get_from_array_1); 
 		} else if (firstIndex + length > arrayLength) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Attempted_to_get_more_values_from_array_than_length_of_array_2); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Attempted_to_get_more_values_from_array_than_length_of_array_2); 
 		}
 			
 		// Note that this information should not be cached.
@@ -104,7 +104,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_GET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.INVALID_INDEX:
-					throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_index_of_array_reference_given_1); //$NON-NLS-1$
+					throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_index_of_array_reference_given_1); 
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
@@ -145,7 +145,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 				case VoidValueImpl.tag:
 				case 0:
 				default:
-					throw new InternalException(JDIMessages.ArrayReferenceImpl_Invalid_ArrayReference_Value_tag_encountered___2 + type); //$NON-NLS-1$
+					throw new InternalException(JDIMessages.ArrayReferenceImpl_Invalid_ArrayReference_Value_tag_encountered___2 + type); 
 			}
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -225,14 +225,14 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		int arrayLength= length();
 		
 		if (index < 0 || index >= arrayLength) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_index_1); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_index_1); 
 		}
 		if (srcIndex < 0 || srcIndex >= valuesSize) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_srcIndex_2); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_srcIndex_2); 
 		}
 		
 		if (length < -1) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_number_of_value_to_set_in_array_3); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Invalid_number_of_value_to_set_in_array_3); 
 		} else if (length == -1) {
 			// length == -1 indicates as much values as possible.
 			length = arrayLength - index;
@@ -241,10 +241,10 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 				length= lengthTmp;
 			}
 		} else if (index + length > arrayLength) {
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Attempted_to_set_more_values_in_array_than_length_of_array_3); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Attempted_to_set_more_values_in_array_than_length_of_array_3); 
 		} else if (srcIndex + length > valuesSize) {
 			// Check if enough values are given.
-			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Attempted_to_set_more_values_in_array_than_given_4); //$NON-NLS-1$
+			throw new IndexOutOfBoundsException(JDIMessages.ArrayReferenceImpl_Attempted_to_set_more_values_in_array_than_given_4); 
 		}
 		
 		// check and convert the values if needed.
@@ -310,7 +310,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			buf.append(idString());
 			return buf.toString();
 		} catch (ObjectCollectedException e) {
-			return JDIMessages.ArrayReferenceImpl__Garbage_Collected__ArrayReference_5 + "[" + length() + "] " + idString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return JDIMessages.ArrayReferenceImpl__Garbage_Collected__ArrayReference_5 + "[" + length() + "] " + idString(); //$NON-NLS-1$ //$NON-NLS-2$ 
 		} catch (Exception e) {
 			return fDescription;
 		}

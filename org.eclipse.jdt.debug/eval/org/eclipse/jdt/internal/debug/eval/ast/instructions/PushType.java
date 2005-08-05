@@ -30,7 +30,7 @@ public class PushType extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.PushType_push_type__1 + fTypeName; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushType_push_type__1 + fTypeName; 
 	}
 
 	

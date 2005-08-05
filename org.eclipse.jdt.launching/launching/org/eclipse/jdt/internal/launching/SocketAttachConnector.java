@@ -62,7 +62,7 @@ public class SocketAttachConnector implements IVMConnector {
 			}
 		}
 		if (connector == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Socket_attaching_connector_not_available_3, null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE); //$NON-NLS-1$
+			abort(LaunchingMessages.SocketAttachConnector_Socket_attaching_connector_not_available_3, null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE); 
 		}
 		return connector;
 	}
@@ -78,7 +78,7 @@ public class SocketAttachConnector implements IVMConnector {
 	 * @see IVMConnector#getName()
 	 */
 	public String getName() {
-		return LaunchingMessages.SocketAttachConnector_Standard__Socket_Attach__4; //$NON-NLS-1$
+		return LaunchingMessages.SocketAttachConnector_Standard__Socket_Attach__4; 
 	}
 	
 	/**
@@ -103,17 +103,17 @@ public class SocketAttachConnector implements IVMConnector {
 		}
 		
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.SocketAttachConnector_Connecting____1, 2); //$NON-NLS-1$
-		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Configuring_connection____1); //$NON-NLS-1$
+		subMonitor.beginTask(LaunchingMessages.SocketAttachConnector_Connecting____1, 2); 
+		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Configuring_connection____1); 
 		
 		AttachingConnector connector= getAttachingConnector();
 		String portNumberString = (String)arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT); //$NON-NLS-1$
+			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT); 
 		}
 		String host = (String)arguments.get("hostname"); //$NON-NLS-1$
 		if (host == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Hostname_unspecified_for_remote_connection__4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME); //$NON-NLS-1$
+			abort(LaunchingMessages.SocketAttachConnector_Hostname_unspecified_for_remote_connection__4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME); 
 		}
 		Map map= connector.defaultArguments();
 		
@@ -134,7 +134,7 @@ public class SocketAttachConnector implements IVMConnector {
 			allowTerminate = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 		}
 		subMonitor.worked(1);
-		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Establishing_connection____2); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Establishing_connection____2); 
 		try {
 			VirtualMachine vm = connector.attach(map);
 			String vmLabel = constructVMLabel(vm, host, portNumberString, configuration);
@@ -145,13 +145,13 @@ public class SocketAttachConnector implements IVMConnector {
         } catch (TimeoutException e) {
             abort(LaunchingMessages.SocketAttachConnector_0, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (UnknownHostException e) {
-			abort(MessageFormat.format(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
 		} catch (ConnectException e) {
-			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_as_connection_was_refused_2, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
+			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_as_connection_was_refused_2, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
 		} catch (IOException e) {
-			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
+			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
 		} catch (IllegalConnectorArgumentsException e) {
-			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
+			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
 		}
 	}
 
@@ -175,11 +175,11 @@ public class SocketAttachConnector implements IVMConnector {
 			}
 		}
 		StringBuffer buffer = new StringBuffer(name);
-		buffer.append('['); //$NON-NLS-1$
+		buffer.append('['); 
 		buffer.append(host);
-		buffer.append(':'); //$NON-NLS-1$
+		buffer.append(':'); 
 		buffer.append(port);
-		buffer.append(']'); //$NON-NLS-1$
+		buffer.append(']'); 
 		return buffer.toString();
 	}
 		

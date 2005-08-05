@@ -66,13 +66,13 @@ public class PacketSendManager extends PacketManager {
 		if (VMIsDisconnected()) {
 			String message;
 			if (getDisconnectException() == null) {
-				message= ConnectMessages.PacketSendManager_Got_IOException_from_Virtual_Machine_1; //$NON-NLS-1$
+				message= ConnectMessages.PacketSendManager_Got_IOException_from_Virtual_Machine_1; 
 			} else {
 				String exMessage = getDisconnectException().getMessage();
 				if (exMessage == null) {
-					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1, new String[] {getDisconnectException().getClass().getName()}); //$NON-NLS-1$
+					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1, new String[] {getDisconnectException().getClass().getName()}); 
 				} else {
-					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1, new String[] {getDisconnectException().getClass().getName(), exMessage}); //$NON-NLS-1$
+					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1, new String[] {getDisconnectException().getClass().getName(), exMessage}); 
 				}
 			}
 			throw new VMDisconnectedException(message);

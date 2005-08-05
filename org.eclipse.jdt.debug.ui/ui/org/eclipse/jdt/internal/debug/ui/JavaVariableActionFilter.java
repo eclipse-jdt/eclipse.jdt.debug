@@ -53,7 +53,7 @@ public class JavaVariableActionFilter implements IActionFilter {
 			IValue varValue;
 			try {
 				varValue= var.getValue();
-				if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ 
 					if (value.equals("isPrimitive")) { //$NON-NLS-1$
 						return isPrimitiveType(var);
 					} else if (value.equals("isValuePrimitive")) { //$NON-NLS-1$

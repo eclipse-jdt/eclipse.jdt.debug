@@ -58,7 +58,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		final Button addExported = new Button(composite, SWT.CHECK);
-		addExported.setText(ActionMessages.ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1); //$NON-NLS-1$
+		addExported.setText(ActionMessages.ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1); 
 		addExported.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fAddExportedEntries = addExported.getSelection();
@@ -68,7 +68,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 		addExported.setFont(font);
 		
 		final Button addRequired = new Button(composite, SWT.CHECK);
-		addRequired.setText(ActionMessages.ProjectSelectionDialog_Add_required_projects_of_selected_projects__2); //$NON-NLS-1$
+		addRequired.setText(ActionMessages.ProjectSelectionDialog_Add_required_projects_of_selected_projects__2); 
 		addRequired.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fAddRequiredProjects = addRequired.getSelection();

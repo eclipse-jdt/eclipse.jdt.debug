@@ -103,7 +103,7 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 		final IJavaThread thread = getThread(value);
 		if (thread == null) {
 			// can't do it
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.LogicalObjectStructureType_1, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.LogicalObjectStructureType_1, null)); 
 		}
 		setObject((IJavaObject)value);
 		final IEvaluationRunnable evaluation = getEvaluation();

@@ -23,7 +23,7 @@ public class PushNull extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.PushNull_push___null__1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushNull_push___null__1; 
 	}
 }
 

@@ -208,7 +208,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor1) throws CoreException {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0, projects.length + 1); //$NON-NLS-1$
+					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0, projects.length + 1); 
 					rebind(monitor1, projects);
 					monitor1.done();
 				}
@@ -283,7 +283,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		private VMChanges fChanges;
 		
 		public JREUpdateJob(VMChanges changes) {
-			super(LaunchingMessages.LaunchingPlugin_1); //$NON-NLS-1$
+			super(LaunchingMessages.LaunchingPlugin_1); 
 			fChanges = changes;
 			setSystem(true);
 		}
@@ -415,7 +415,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			filters= launchFilter;
 			modified = true;
 		} else if (filters.indexOf(launchFilter) == -1) {
-			filters= filters + ',' + launchFilter; //$NON-NLS-1$
+			filters= filters + ',' + launchFilter; 
 			modified = true;
 		}
 
@@ -466,7 +466,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private void initializeVMConnectors() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, LaunchingMessages.LaunchingPlugin_Exception_occurred_reading_vmConnectors_extensions_1, null); //$NON-NLS-1$
+		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, LaunchingMessages.LaunchingPlugin_Exception_occurred_reading_vmConnectors_extensions_1, null); 
 		fVMConnectors = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			try {
@@ -494,7 +494,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 		IConfigurationElement config = (IConfigurationElement) fClasspathEntryExtensions.get(id);
 		if (config == null) {
-			abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null); 
 		}
 		return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
 	}
@@ -960,9 +960,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				fgXMLParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				fgXMLParser.setErrorHandler(new DefaultHandler());
 			} catch (ParserConfigurationException e) {
-				abort(LaunchingMessages.LaunchingPlugin_33, e); //$NON-NLS-1$
+				abort(LaunchingMessages.LaunchingPlugin_33, e); 
 			} catch (FactoryConfigurationError e) {
-				abort(LaunchingMessages.LaunchingPlugin_34, e); //$NON-NLS-1$
+				abort(LaunchingMessages.LaunchingPlugin_34, e); 
 			}
 		}
 		return fgXMLParser;

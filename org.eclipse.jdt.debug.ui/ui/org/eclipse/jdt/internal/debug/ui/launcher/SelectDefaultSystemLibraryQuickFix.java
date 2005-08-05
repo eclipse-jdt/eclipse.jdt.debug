@@ -38,8 +38,8 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 	 */
 	public void run(IMarker marker) {
 		try {
-			String title = LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1; //$NON-NLS-1$
-			String message = LauncherMessages.SelectDefaultSystemLibraryQuickFix__Select_the_system_library_to_use_by_default_for_building_and_running_Java_projects__2; //$NON-NLS-1$
+			String title = LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1; 
+			String message = LauncherMessages.SelectDefaultSystemLibraryQuickFix__Select_the_system_library_to_use_by_default_for_building_and_running_Java_projects__2; 
 		
 			final IVMInstall vm = chooseVMInstall(title, message);
 			if (vm == null) {
@@ -65,12 +65,12 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 				throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugUIPlugin.getUniqueIdentifier(),
 					IJavaDebugUIConstants.INTERNAL_ERROR,
-					LauncherMessages.SelectDefaultSystemLibraryQuickFix_An_exception_occurred_while_updating_the_default_system_library__3, e.getTargetException())); //$NON-NLS-1$
+					LauncherMessages.SelectDefaultSystemLibraryQuickFix_An_exception_occurred_while_updating_the_default_system_library__3, e.getTargetException())); 
 			} catch (InterruptedException e) {
 				// cancelled
 			}			
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus()); 
 		}
 	}
 		
@@ -78,7 +78,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		return LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5; //$NON-NLS-1$
+		return LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5; 
 	}
 
 }

@@ -17,7 +17,7 @@ public class RightShiftAssignmentOperator extends RightShiftOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.RightShiftAssignmentOperator_operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.RightShiftAssignmentOperator_operator_1; 
 	}
 
 }

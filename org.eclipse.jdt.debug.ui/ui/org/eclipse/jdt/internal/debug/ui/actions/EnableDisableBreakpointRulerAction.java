@@ -29,7 +29,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
     public EnableDisableBreakpointRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
         setInfo(info);
         setTextEditor(editor);
-        setText(ActionMessages.EnableDisableBreakpointRulerAction__Enable_Breakpoint_1); //$NON-NLS-1$
+        setText(ActionMessages.EnableDisableBreakpointRulerAction__Enable_Breakpoint_1); 
     }
 
     /**
@@ -37,7 +37,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
      */
     public void run() {
         if (getBreakpoint() != null) {
-            new Job(ActionMessages.EnableDisableBreakpointRulerAction_0) { //$NON-NLS-1$
+            new Job(ActionMessages.EnableDisableBreakpointRulerAction_0) { 
                 protected IStatus run(IProgressMonitor monitor) {
                     try {
                         getBreakpoint().setEnabled(!getBreakpoint().isEnabled());
@@ -45,7 +45,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
                     } catch (final CoreException e) {
                         Display.getDefault().asyncExec(new Runnable(){
                             public void run() {
-                                ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), ActionMessages.EnableDisableBreakpointRulerAction_Enabling_disabling_breakpoints_2, ActionMessages.EnableDisableBreakpointRulerAction_Exceptions_occurred_enabling_disabling_the_breakpoint_3, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$        
+                                ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), ActionMessages.EnableDisableBreakpointRulerAction_Enabling_disabling_breakpoints_2, ActionMessages.EnableDisableBreakpointRulerAction_Exceptions_occurred_enabling_disabling_the_breakpoint_3, e.getStatus()); //         
                             }
                         });                        
                     }
@@ -67,7 +67,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
         setEnabled(true);
         try {
             boolean enabled = getBreakpoint().isEnabled();
-            setText(enabled ? ActionMessages.EnableDisableBreakpointRulerAction__Disable_Breakpoint_4 : ActionMessages.EnableDisableBreakpointRulerAction__Enable_Breakpoint_5); //$NON-NLS-1$ //$NON-NLS-2$
+            setText(enabled ? ActionMessages.EnableDisableBreakpointRulerAction__Disable_Breakpoint_4 : ActionMessages.EnableDisableBreakpointRulerAction__Enable_Breakpoint_5); // 
         } catch (CoreException ce) {
             JDIDebugUIPlugin.log(ce);
         }

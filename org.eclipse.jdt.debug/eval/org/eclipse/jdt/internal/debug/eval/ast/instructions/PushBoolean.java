@@ -26,7 +26,7 @@ public class PushBoolean extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.PushBoolean_push__1 + fValue; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushBoolean_push__1 + fValue; 
 	}
 }
 

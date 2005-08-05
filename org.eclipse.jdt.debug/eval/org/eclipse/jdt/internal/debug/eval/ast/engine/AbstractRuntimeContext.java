@@ -84,7 +84,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
         if (fJavaLangClass == null) {
             IJavaType[] types= getVM().getJavaTypes(CLASS);
             if (types == null || types.length != 1) {
-                throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{CLASS}), null)); //$NON-NLS-1$
+                throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{CLASS}), null)); 
             }
             fJavaLangClass = (IJavaClassType) types[0];
         }

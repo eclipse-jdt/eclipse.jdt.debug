@@ -147,7 +147,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             IStatus status = DebugUIPlugin.newErrorStatus(cause.getMessage(), null);
             reportProblem(shell, status);
         } else {
-            DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_0, ActionMessages.JavaObjectValueEditor_1, e); //$NON-NLS-1$ //$NON-NLS-2$
+            DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_0, ActionMessages.JavaObjectValueEditor_1, e); // 
         }
     }
 
@@ -212,8 +212,8 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * @param status a status which has information about the problem
      */
     public void reportProblem(Shell shell, IStatus status) {
-        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_2, //$NON-NLS-1$
-                ActionMessages.JavaObjectValueEditor_3, status); //$NON-NLS-1$
+        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_2, 
+                ActionMessages.JavaObjectValueEditor_3, status); 
     }
     
     /**
@@ -231,9 +231,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); //$NON-NLS-1$
+		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
 		if (exception.getMessage() != null) {
-			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
+			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
 		}
 		return message;
 	}
@@ -244,7 +244,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
+			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
 	}
     
 	/**

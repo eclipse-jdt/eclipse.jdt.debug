@@ -59,17 +59,17 @@ public class DisplayAction extends EvaluateAction {
 				sig= type.getSignature();
 			}
 			if ("V".equals(sig)) { //$NON-NLS-1$
-				displayStringResult(snippet, ActionMessages.DisplayAction_no_result_value); //$NON-NLS-1$
+				displayStringResult(snippet, ActionMessages.DisplayAction_no_result_value); 
 			} else {
 				final String resultString;
 				if (sig != null) {
-					resultString= MessageFormat.format(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() }); //$NON-NLS-1$
+					resultString= MessageFormat.format(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() }); 
 				} else {
 					resultString= ""; //$NON-NLS-1$
 				}
 				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
 					public void detailComputed(IValue value, String result) {
-						displayStringResult(snippet, MessageFormat.format(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)})); //$NON-NLS-1$
+						displayStringResult(snippet, MessageFormat.format(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)})); 
 					}
 				});
 			}

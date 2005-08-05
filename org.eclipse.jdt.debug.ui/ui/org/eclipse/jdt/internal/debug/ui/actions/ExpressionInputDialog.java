@@ -150,7 +150,7 @@ public class ExpressionInputDialog extends Dialog {
      */
     protected void createSourceViewer() {
         Composite parent= fInputArea;
-        String name= ActionMessages.ExpressionInputDialog_3; //$NON-NLS-1$
+        String name= ActionMessages.ExpressionInputDialog_3; 
         try {
             name= fVariable.getName();
         } catch (DebugException e) {
@@ -158,7 +158,7 @@ public class ExpressionInputDialog extends Dialog {
         }
         
         fEvaluateLabel= new Label(parent, SWT.WRAP);
-        fEvaluateLabel.setText(MessageFormat.format(ActionMessages.ExpressionInputDialog_0, new String[] {name})); //$NON-NLS-1$
+        fEvaluateLabel.setText(MessageFormat.format(ActionMessages.ExpressionInputDialog_0, new String[] {name})); 
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
         fEvaluateLabel.setLayoutData(data);
@@ -216,7 +216,7 @@ public class ExpressionInputDialog extends Dialog {
 		        return null;
 			}
 		};
-		fSubmission = new HandlerSubmission(null, fSourceViewer.getControl().getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		fSubmission = new HandlerSubmission(null, fSourceViewer.getControl().getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		commandSupport.addHandlerSubmission(fSubmission);
@@ -291,7 +291,7 @@ public class ExpressionInputDialog extends Dialog {
 		String text= fSourceViewer.getDocument().get();
 		boolean valid= text != null && text.trim().length() > 0;
 		if (!valid) {
-			errorMessage= ActionMessages.ExpressionInputDialog_1; //$NON-NLS-1$
+			errorMessage= ActionMessages.ExpressionInputDialog_1; 
 		}
 		setErrorMessage(errorMessage);
 	}
@@ -380,7 +380,7 @@ public class ExpressionInputDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(ActionMessages.ExpressionInputDialog_2); //$NON-NLS-1$
+        newShell.setText(ActionMessages.ExpressionInputDialog_2); 
         newShell.addControlListener(new ControlListener() {
             public void controlMoved(ControlEvent e) {
             }

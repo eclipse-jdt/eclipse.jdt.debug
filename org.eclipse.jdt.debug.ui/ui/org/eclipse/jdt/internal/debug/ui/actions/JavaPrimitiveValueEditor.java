@@ -49,8 +49,8 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
     public boolean editVariable(IVariable variable, Shell shell) {
         try {
             String name= variable.getName();
-            String title= ActionMessages.JavaPrimitiveValueEditor_0; //$NON-NLS-1$
-            String message= MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name}); //$NON-NLS-1$
+            String title= ActionMessages.JavaPrimitiveValueEditor_0; 
+            String message= MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name}); 
             String initialValue= variable.getValue().getValueString();
             PrimitiveValidator validator= new PrimitiveValidator();
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator);
@@ -66,7 +66,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
                 variable.setValue(stringValue);
             }
         } catch (DebugException e) {
-            DebugUIPlugin.errorDialog(shell, ActionMessages.JavaPrimitiveValueEditor_2, ActionMessages.JavaPrimitiveValueEditor_3, e); //$NON-NLS-1$ //$NON-NLS-2$
+            DebugUIPlugin.errorDialog(shell, ActionMessages.JavaPrimitiveValueEditor_2, ActionMessages.JavaPrimitiveValueEditor_3, e); // 
         }
         return true;
     }
@@ -150,7 +150,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                break;
             }
             if (type != null) {
-                return MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type }); //$NON-NLS-1$
+                return MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type }); 
             }
             return null;
         }

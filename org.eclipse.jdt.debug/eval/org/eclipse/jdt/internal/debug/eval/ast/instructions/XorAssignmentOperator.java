@@ -17,7 +17,7 @@ public class XorAssignmentOperator extends XorOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.XorAssignmentOperator_operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.XorAssignmentOperator_operator_1; 
 	}
 
 }

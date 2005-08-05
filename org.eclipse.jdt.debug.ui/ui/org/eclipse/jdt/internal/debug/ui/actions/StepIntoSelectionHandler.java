@@ -282,7 +282,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 				} catch (JavaModelException e) {
 					methodName = getMethod().getElementName();
 				}
-				new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),  ActionMessages.StepIntoSelectionHandler_1, null, MessageFormat.format(ActionMessages.StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1, new String[]{methodName}), MessageDialog.INFORMATION, new String[] {ActionMessages.StepIntoSelectionHandler_2}, 0).open();   //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),  ActionMessages.StepIntoSelectionHandler_1, null, MessageFormat.format(ActionMessages.StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1, new String[]{methodName}), MessageDialog.INFORMATION, new String[] {ActionMessages.StepIntoSelectionHandler_2}, 0).open();    
 			}
 		};
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);		

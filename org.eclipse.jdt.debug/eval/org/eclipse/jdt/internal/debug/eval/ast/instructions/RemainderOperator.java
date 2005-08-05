@@ -53,7 +53,7 @@ public class RemainderOperator extends BinaryOperator {
 	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		int divisor= ((IJavaPrimitiveValue) rightOperand).getIntValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.RemainderOperator_Divide_by_zero_1, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.RemainderOperator_Divide_by_zero_1, null)); 
 		}
 		return ((IJavaPrimitiveValue) leftOperand).getIntValue() % divisor;
 	}
@@ -64,7 +64,7 @@ public class RemainderOperator extends BinaryOperator {
 	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		long divisor= ((IJavaPrimitiveValue) rightOperand).getLongValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.RemainderOperator_Divide_by_zero_2, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.RemainderOperator_Divide_by_zero_2, null)); 
 		}
 		return ((IJavaPrimitiveValue) leftOperand).getLongValue() % divisor;
 	}
@@ -77,7 +77,7 @@ public class RemainderOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.RemainderOperator______operator_3; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.RemainderOperator______operator_3; 
 	}
 
 }

@@ -67,7 +67,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.JavaWatchpointFieldNameChange_1, new String[] {fDeclaringType.getElementName(), fOldName}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.JavaWatchpointFieldNameChange_1, new String[] {fDeclaringType.getElementName(), fOldName}); 
 	}
 
 	/* (non-Javadoc)
@@ -82,7 +82,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus status= new RefactoringStatus();
 		if (!fWatchpoint.isRegistered()) {
-			status.addFatalError(MessageFormat.format(RefactoringMessages.JavaWatchpointFieldNameChange_2, new String[] {fDeclaringType.getElementName(), fOldName})); //$NON-NLS-1$
+			status.addFatalError(MessageFormat.format(RefactoringMessages.JavaWatchpointFieldNameChange_2, new String[] {fDeclaringType.getElementName(), fOldName})); 
 		}
 		return status;
 	}

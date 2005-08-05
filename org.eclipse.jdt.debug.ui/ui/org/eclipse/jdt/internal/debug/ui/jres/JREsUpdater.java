@@ -83,7 +83,7 @@ public class JREsUpdater {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					monitor.beginTask(JREMessages.JREsUpdater_0, 100); //$NON-NLS-1$
+					monitor.beginTask(JREMessages.JREsUpdater_0, 100); 
 					String vmDefXML = container.getAsXML();
 					monitor.worked(40);
 					JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_VM_XML, vmDefXML);

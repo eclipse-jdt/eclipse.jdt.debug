@@ -99,7 +99,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		GridData gd;
 		
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(LauncherMessages.JavaClasspathTab_0); //$NON-NLS-1$
+		label.setText(LauncherMessages.JavaClasspathTab_0); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -279,7 +279,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 					}
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e); //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e); 
 				}	
 			}
 		}
@@ -361,7 +361,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.JavaClasspathTab_Cla_ss_path_3; //$NON-NLS-1$
+		return LauncherMessages.JavaClasspathTab_Cla_ss_path_3; 
 	}
 	
 	/**
@@ -420,15 +420,15 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			if (status.isOK()) {
 				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				if (!project.exists()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_20, new String[] {projectName})); //$NON-NLS-1$
+					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_20, new String[] {projectName})); 
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_21, new String[] {projectName})); //$NON-NLS-1$
+					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_21, new String[] {projectName})); 
 					return false;
 				}
 			} else {
-				setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); //$NON-NLS-1$
+				setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
 				return false;
 			}
 		}

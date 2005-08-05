@@ -38,18 +38,18 @@ public class PackageFragmentRootSourceContainerTypeDelegate extends AbstractSour
 			if ("packageFragmentRoot".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("handle"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_6, null); //$NON-NLS-1$
+					abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_6, null); 
 				}
 				IJavaElement root = JavaCore.create(string);
 				if (root != null && root instanceof IPackageFragmentRoot) {
 					return new PackageFragmentRootSourceContainer((IPackageFragmentRoot)root);
 				}
-				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_7, null); //$NON-NLS-1$
+				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_7, null); 
 			} else {
-				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_8, null); //$NON-NLS-1$
+				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_8, null); 
 			}
 		}
-		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null); //$NON-NLS-1$
+		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null); 
 		return null;
 	}
 	/* (non-Javadoc)

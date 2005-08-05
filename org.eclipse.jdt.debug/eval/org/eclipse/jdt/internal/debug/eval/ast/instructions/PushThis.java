@@ -40,7 +40,7 @@ public class PushThis extends SimpleInstruction {
 			if (fEnclosingLevel != 0) {
 				thisInstance= ((JDIObjectValue)thisInstance).getEnclosingObject(fEnclosingLevel);
 				if (thisInstance == null) {
-					throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.PushThis_Unable_to_retrieve_the_correct_enclosing_instance_of__this__2, null)); //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.PushThis_Unable_to_retrieve_the_correct_enclosing_instance_of__this__2, null)); 
 				}
 			}
 			push(thisInstance);
@@ -48,7 +48,7 @@ public class PushThis extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.PushThis_push___this__1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushThis_push___this__1; 
 	}
 }
 

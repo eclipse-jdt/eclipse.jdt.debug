@@ -119,12 +119,12 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 		
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.StandardVMDebugger_Launching_VM____1, 4); //$NON-NLS-1$
-		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Finding_free_socket____2); //$NON-NLS-1$
+		subMonitor.beginTask(LaunchingMessages.StandardVMDebugger_Launching_VM____1, 4); 
+		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Finding_free_socket____2); 
 
 		int port= SocketUtil.findFreePort();
 		if (port == -1) {
-			abort(LaunchingMessages.StandardVMDebugger_Could_not_find_a_free_socket_for_the_debugger_1, null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
+			abort(LaunchingMessages.StandardVMDebugger_Could_not_find_a_free_socket_for_the_debugger_1, null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); 
 		}
 		
 		subMonitor.worked(1);
@@ -134,7 +134,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 			return;
 		}		
 		
-		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Constructing_command_line____3); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Constructing_command_line____3); 
 				
 		String program= constructProgramString(config);
 
@@ -176,11 +176,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}		
 		
 		subMonitor.worked(1);
-		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Starting_virtual_machine____4); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Starting_virtual_machine____4); 
 
 		ListeningConnector connector= getConnector();
 		if (connector == null) {
-			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_find_an_appropriate_debug_connector_2, null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
+			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_find_an_appropriate_debug_connector_2, null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); 
 		}
 		Map map= connector.defaultArguments();
 		
@@ -210,7 +210,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				IProcess process= newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
 				process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 				subMonitor.worked(1);
-				subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Establishing_debug_connection____5); //$NON-NLS-1$
+				subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Establishing_debug_connection____5); 
 				boolean retry= false;
 				do  {
 					try {
@@ -283,9 +283,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.stopListening(map);
 			}
 		} catch (IOException e) {
-			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_connect_to_VM_4, e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED);  //$NON-NLS-1$
+			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_connect_to_VM_4, e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED);  
 		} catch (IllegalConnectorArgumentsException e) {
-			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_connect_to_VM_5, e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED);  //$NON-NLS-1$
+			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_connect_to_VM_5, e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED);  
 		}
 		if (p != null) {
 			p.destroy();

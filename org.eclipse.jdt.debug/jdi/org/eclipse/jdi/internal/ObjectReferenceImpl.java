@@ -249,7 +249,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != nonStaticFieldsSize) 
-				throw new InternalError(JDIMessages.ObjectReferenceImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_1); //$NON-NLS-1$
+				throw new InternalError(JDIMessages.ObjectReferenceImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_1); 
 				
 			for (int i = 0; i < nrOfElements; i++) {
 				resultMap.put(nonStaticFields.get(i), ValueImpl.readWithTag(this, replyData));
@@ -308,13 +308,13 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		
 		// Perform some checks for IllegalArgumentException.
 		if (!isAValidMethod(method))
-			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Class_does_not_contain_given_method_2); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Class_does_not_contain_given_method_2); 
 		if (method.argumentTypeNames().size() != arguments.size())
-			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Number_of_arguments_doesn__t_match_3); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Number_of_arguments_doesn__t_match_3); 
 		if (method.isConstructor() || method.isStaticInitializer())
-			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Method_is_constructor_or_intitializer_4); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Method_is_constructor_or_intitializer_4); 
 		if ((options & INVOKE_NONVIRTUAL) != 0 && method.isAbstract())
-			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Method_is_abstract_and_can_therefore_not_be_invoked_nonvirtual_5); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ObjectReferenceImpl_Method_is_abstract_and_can_therefore_not_be_invoked_nonvirtual_5); 
 
 		// check the type and the vm of the argument, convert the value if needed.
 		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
@@ -346,7 +346,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 				case JdwpReplyPacket.TYPE_MISMATCH:
 					throw new InvalidTypeException();
 				case JdwpReplyPacket.INVALID_CLASS:
-					throw new ClassNotLoadedException(JDIMessages.ObjectReferenceImpl_One_of_the_arguments_of_ObjectReference_invokeMethod___6); //$NON-NLS-1$
+					throw new ClassNotLoadedException(JDIMessages.ObjectReferenceImpl_One_of_the_arguments_of_ObjectReference_invokeMethod___6); 
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new IncompatibleThreadStateException();
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
@@ -502,7 +502,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		try {
 			return type().toString() + " " + idString(); //$NON-NLS-1$
 		} catch (ObjectCollectedException e) {
-			return JDIMessages.ObjectReferenceImpl__Garbage_Collected__ObjectReference__8 + idString(); //$NON-NLS-1$
+			return JDIMessages.ObjectReferenceImpl__Garbage_Collected__ObjectReference__8 + idString(); 
 		} catch (Exception e) {
 			return fDescription;
 		}
@@ -548,7 +548,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			case ThreadReferenceImpl.tag:
 				return ThreadReferenceImpl.read(target, in);
    	   	}
-		throw new InternalException(JDIMessages.ObjectReferenceImpl_Invalid_ObjectID_tag_encountered___9 + objectTag); //$NON-NLS-1$
+		throw new InternalException(JDIMessages.ObjectReferenceImpl_Invalid_ObjectID_tag_encountered___9 + objectTag); 
 	}
 
 	/**

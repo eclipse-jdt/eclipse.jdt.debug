@@ -139,7 +139,7 @@ public class SocketTransportService extends TransportService {
                     ex[0] = e;
                 }                
             }
-        }, ConnectMessages.SocketTransportService_0); //$NON-NLS-1$
+        }, ConnectMessages.SocketTransportService_0); 
         attachThread.setDaemon(true);
         attachThread.start();
         try {
@@ -173,7 +173,7 @@ public class SocketTransportService extends TransportService {
                     ex[0] = e;
                 }
             }
-        }, ConnectMessages.SocketTransportService_1); //$NON-NLS-1$
+        }, ConnectMessages.SocketTransportService_1); 
         t.setDaemon(true);
         t.start();
         try {

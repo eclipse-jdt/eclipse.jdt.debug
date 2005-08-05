@@ -45,10 +45,10 @@ public class VMRunnerConfiguration {
 	 */
 	public VMRunnerConfiguration(String classToLaunch, String[] classPath) {
 		if (classToLaunch == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classNotNull); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classNotNull); 
 		}
 		if (classPath == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classPathNotNull); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classPathNotNull); 
 		}
 		fClassToLaunch= classToLaunch;
 		fClassPath= classPath;
@@ -76,7 +76,7 @@ public class VMRunnerConfiguration {
 	 */
 	public void setVMArguments(String[] args) {
 		if (args == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_vmArgsNotNull); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_vmArgsNotNull); 
 		}
 		fVMArgs= args;
 	}
@@ -92,7 +92,7 @@ public class VMRunnerConfiguration {
 	 */
 	public void setProgramArguments(String[] args) {
 		if (args == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_programArgsNotNull); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_programArgsNotNull); 
 		}
 		fProgramArgs= args;
 	}

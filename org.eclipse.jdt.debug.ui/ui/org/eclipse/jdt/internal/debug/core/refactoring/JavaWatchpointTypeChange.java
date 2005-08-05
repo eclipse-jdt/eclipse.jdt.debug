@@ -44,14 +44,14 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#getErrorMessageNoMoreExists()
 	 */
 	public String getErrorMessageNoMoreExists() {
-		return MessageFormat.format(RefactoringMessages.JavaWatchpointTypeChange_0, new String[] {getDeclaringType().getElementName(), fFieldName}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.JavaWatchpointTypeChange_0, new String[] {getDeclaringType().getElementName(), fFieldName}); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.JavaWatchpointTypeChange_1, new String[] {getDeclaringType().getElementName(), fFieldName}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.JavaWatchpointTypeChange_1, new String[] {getDeclaringType().getElementName(), fFieldName}); 
 	}
 
 	/* (non-Javadoc)

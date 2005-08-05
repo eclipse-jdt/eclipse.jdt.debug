@@ -33,7 +33,7 @@ public class Pop extends Instruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return InstructionsEvaluationMessages.Pop_pop_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.Pop_pop_1; 
 	}
 
 	/* (non-Javadoc)

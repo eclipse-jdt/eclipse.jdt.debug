@@ -53,7 +53,7 @@ public class SendStaticMessage extends CompoundInstruction {
 		if (receiver instanceof IJavaClassType) {
 			result= ((IJavaClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.SendStaticMessage_Cannot_send_a_static_message_to_a_non_class_type_object_1, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.SendStaticMessage_Cannot_send_a_static_message_to_a_non_class_type_object_1, null)); 
 		}
 		setLastValue(result);
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class SendStaticMessage extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.SendStaticMessage_send_static_message__0___1__2, new String[]{fSelector, fSignature}); //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.SendStaticMessage_send_static_message__0___1__2, new String[]{fSelector, fSignature}); 
 	}
 }
 

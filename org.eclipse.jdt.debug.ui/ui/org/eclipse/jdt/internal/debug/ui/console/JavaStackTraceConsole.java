@@ -44,7 +44,7 @@ public class JavaStackTraceConsole extends TextConsole {
     };
 
     public JavaStackTraceConsole() {
-        super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true); //$NON-NLS-1$
+        super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true); 
         Font font = JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT);
         setFont(font);
         partitioner.connect(getDocument());
@@ -66,7 +66,7 @@ public class JavaStackTraceConsole extends TextConsole {
             } catch (IOException e) {
             }
         } else {
-			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0); //$NON-NLS-1$
+			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0); 
 		}
     }
 

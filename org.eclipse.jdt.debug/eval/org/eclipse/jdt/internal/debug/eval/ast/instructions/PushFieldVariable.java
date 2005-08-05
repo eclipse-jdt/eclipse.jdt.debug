@@ -49,7 +49,7 @@ public class PushFieldVariable extends CompoundInstruction {
 	public void execute() throws CoreException {
 		Object value= popValue();
 		if (value instanceof JDINullValue) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.PushFieldVariable_0, null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.PushFieldVariable_0, null)); 
 		}
 		IJavaObject receiver=(IJavaObject) value;
 		
@@ -62,13 +62,13 @@ public class PushFieldVariable extends CompoundInstruction {
 		}
 		
 		if (field == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.PushFieldVariable_Cannot_find_the_field__0__for_the_object__1__1, new String[] {fName, receiver.toString()}), null)); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.PushFieldVariable_Cannot_find_the_field__0__for_the_object__1__1, new String[] {fName, receiver.toString()}), null)); // 
 		} 
 		push(field);
 	}
 	
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.PushFieldVariable_push_field__0__2, new String[] {fName}); //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.PushFieldVariable_push_field__0__2, new String[] {fName}); 
 	}
 }
 

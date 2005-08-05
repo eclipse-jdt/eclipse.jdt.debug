@@ -92,7 +92,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
-		getShell().setText(LauncherMessages.JavaUISourceLocator_selectprojects_title); //$NON-NLS-1$
+		getShell().setText(LauncherMessages.JavaUISourceLocator_selectprojects_title); 
 		
 		Composite composite= (Composite) super.createDialogArea(parent);
 		composite.setLayout(new GridLayout());
@@ -118,7 +118,7 @@ public class JavaSourceLookupDialog extends Dialog {
 		data.widthHint= pixelWidth;
 		fAskAgainCheckBox.setLayoutData(data);
 		fAskAgainCheckBox.setFont(font);
-		fAskAgainCheckBox.setText(LauncherMessages.JavaUISourceLocator_askagain_message); //$NON-NLS-1$
+		fAskAgainCheckBox.setText(LauncherMessages.JavaUISourceLocator_askagain_message); 
 		
 		return composite;
 	}

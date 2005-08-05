@@ -44,7 +44,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 		super(project);
 		fArray = arrayObject;
 		fThread = thread;
-		fLocalArray = new JDIPlaceholderVariable(ARRAY_THIS_VARIABLE, arrayObject); //$NON-NLS-1$
+		fLocalArray = new JDIPlaceholderVariable(ARRAY_THIS_VARIABLE, arrayObject); 
 	}
 
 	/* (non-Javadoc)

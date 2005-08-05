@@ -53,7 +53,7 @@ public class PostfixPlusPlusOperator extends XfixOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.PostfixPlusPlusOperator_postfix________operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PostfixPlusPlusOperator_postfix________operator_1; 
 	}
 
 }

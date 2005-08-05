@@ -106,9 +106,9 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				}
 			}
 			// did not find source
-			MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName})); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName})); // 
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ConsoleMessages.JavaStackTraceHyperlink_An_exception_occurred_while_following_link__3, e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ConsoleMessages.JavaStackTraceHyperlink_An_exception_occurred_while_following_link__3, e); 
 			return;
 		}
 	}
@@ -200,7 +200,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             }
             return typeName;
         }
-        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); //$NON-NLS-1$
+        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); 
         throw new CoreException(status);
     }	
 	
@@ -221,11 +221,11 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			try {
 				return Integer.parseInt(numText);
 			} catch (NumberFormatException e) {
-				IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, e); 
 				throw new CoreException(status);
 			}		
 		}
-		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__7, null); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__7, null); 
 		throw new CoreException(status);			
 	}
 	
@@ -257,7 +257,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             int linkEnd = line.indexOf(')', linkMiddle);
             return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
 		} catch (BadLocationException e) {
-			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); 
 			throw new CoreException(status);
 		}		
 	}

@@ -199,12 +199,12 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				}
 				// prompt
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(JDIDebugUIPlugin.getActiveWorkbenchShell(), new SourceElementLabelProvider(),new SourceElementQualifierProvider());
-				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1); //$NON-NLS-1$
-				dialog.setMessage(MessageFormat.format(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()})); //$NON-NLS-1$
+				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1); 
+				dialog.setMessage(MessageFormat.format(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()})); 
 				dialog.setElements(sourceElements);
 				dialog.setMultipleSelection(false);
-				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3); //$NON-NLS-1$
-				dialog.setLowerListLabel(DebugUIMessages.JavaUISourceLocator__Location__4); //$NON-NLS-1$
+				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3); 
+				dialog.setLowerListLabel(DebugUIMessages.JavaUISourceLocator__Location__4); 
 				dialog.open();
 				Object[] result = dialog.getResult();
 				if (result == null) {

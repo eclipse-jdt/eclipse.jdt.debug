@@ -32,7 +32,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
         try {
             signature= getSignature(variable);
 	    } catch (DebugException e) {
-	        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); //$NON-NLS-1$ //$NON-NLS-2$
+	        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); // 
 	    }
 	    if (signature == null) {
 	        return false;
@@ -57,7 +57,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
 	            return editor.saveVariable(variable, expression, shell);
 	        }
 	    } catch (DebugException e) {
-	        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); //$NON-NLS-1$ //$NON-NLS-2$
+	        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); // 
 	    }
         return false;
     }

@@ -72,13 +72,13 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
         if (viewer != null) {
             final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
                 public IInformationControl createInformationControl(Shell parent) {
-                    DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.PopupDisplayAction_2, ACTION_DEFINITION_ID); //$NON-NLS-1$
+                    DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.PopupDisplayAction_2, ACTION_DEFINITION_ID); 
                     control.addDisposeListener(new DisposeListener() {
                         public void widgetDisposed(DisposeEvent e) {
                             getInformationPresenter().uninstall();
                         }
                     });
-                    return control; //$NON-NLS-1$
+                    return control; 
                 }
             });
 

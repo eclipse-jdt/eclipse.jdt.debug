@@ -24,7 +24,7 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 	private IAction[] fActions;
 
 	public AddAdvancedAction(IClasspathViewer viewer, IAction[] actions) {
-		super(ActionMessages.AddAdvancedAction_Ad_vanced____1, viewer); //$NON-NLS-1$
+		super(ActionMessages.AddAdvancedAction_Ad_vanced____1, viewer); 
 		fActions = actions;
 		setViewer(viewer);
 	}	

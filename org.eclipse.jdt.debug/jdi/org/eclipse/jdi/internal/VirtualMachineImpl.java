@@ -158,13 +158,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		fRequestTimeout = ((VirtualMachineManagerImpl) Bootstrap.virtualMachineManager()).getGlobalRequestTimeout();
 		
 		fPacketReceiveManager = new PacketReceiveManager(connection, this);
-		Thread receiveThread = new Thread(fPacketReceiveManager, JDIMessages.VirtualMachineImpl_0);  //$NON-NLS-1$
+		Thread receiveThread = new Thread(fPacketReceiveManager, JDIMessages.VirtualMachineImpl_0);  
         receiveThread.setDaemon(true);
 		fPacketReceiveManager.setPartnerThread(receiveThread);
 		receiveThread.start();
 		
 		fPacketSendManager = new PacketSendManager(connection);
-		Thread sendThread = new Thread(fPacketSendManager, JDIMessages.VirtualMachineImpl_1); //$NON-NLS-1$
+		Thread sendThread = new Thread(fPacketSendManager, JDIMessages.VirtualMachineImpl_1); 
         sendThread.setDaemon(true);
 		fPacketReceiveManager.setPartnerThread(sendThread);
 		sendThread.start();
@@ -294,7 +294,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	public void checkHCRSupported() throws UnsupportedOperationException {
 		if (!isHCRSupported())
-			throw new UnsupportedOperationException(MessageFormat.format(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, new String[]{name()})); //$NON-NLS-1$
+			throw new UnsupportedOperationException(MessageFormat.format(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, new String[]{name()})); 
 	}
 	
 	/*
@@ -324,7 +324,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			getIDSizes();
 			if (!fGotIDSizes) {	// We can't do much without them.
 				disconnectVM();
-				throw new VMDisconnectedException(JDIMessages.VirtualMachineImpl_Failed_to_get_ID_sizes_2); //$NON-NLS-1$
+				throw new VMDisconnectedException(JDIMessages.VirtualMachineImpl_Failed_to_get_ID_sizes_2); 
 			}
 
 			// tbd: This call should be moved to addKnownRefType() when it can be made specific
@@ -968,7 +968,7 @@ e.printStackTrace();
 				case HCR_RELOAD_IGNORED:
 					return RELOAD_IGNORED;
 			}
-			throw new InternalError(JDIMessages.VirtualMachineImpl_Invalid_result_flag_in_Classes_Have_Changed_response___3 + resultFlag + JDIMessages.VirtualMachineImpl__4); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new InternalError(JDIMessages.VirtualMachineImpl_Invalid_result_flag_in_Classes_Have_Changed_response___3 + resultFlag + JDIMessages.VirtualMachineImpl__4); // 
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return 0;
@@ -1098,17 +1098,17 @@ e.printStackTrace();
 				case JdwpReplyPacket.NAMES_DONT_MATCH:
 					throw new NoClassDefFoundError();
 				case JdwpReplyPacket.ADD_METHOD_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Add_method_not_implemented_1); //$NON-NLS-1$
+					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Add_method_not_implemented_1); 
 				case JdwpReplyPacket.SCHEMA_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Scheme_change_not_implemented_2); //$NON-NLS-1$
+					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Scheme_change_not_implemented_2); 
 				case JdwpReplyPacket.HIERARCHY_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Hierarchy_change_not_implemented_3); //$NON-NLS-1$
+					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Hierarchy_change_not_implemented_3); 
 				case JdwpReplyPacket.DELETE_METHOD_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Delete_method_not_implemented_4); //$NON-NLS-1$
+					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Delete_method_not_implemented_4); 
 				case JdwpReplyPacket.CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Class_modifiers_change_not_implemented_5); //$NON-NLS-1$
+					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Class_modifiers_change_not_implemented_5); 
 				case JdwpReplyPacket.METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Method_modifiers_change_not_implemented_6); //$NON-NLS-1$
+					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Method_modifiers_change_not_implemented_6); 
 				default:
 					defaultReplyErrorHandler(reply.errorCode());
 			}

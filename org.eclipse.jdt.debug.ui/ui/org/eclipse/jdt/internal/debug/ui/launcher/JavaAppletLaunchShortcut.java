@@ -60,7 +60,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 			}
 			IType type = null;
 			if (types.length == 0) {
-				MessageDialog.openInformation(getShell(), LauncherMessages.appletlauncher_search_dialog_title, LauncherMessages.appletlauncher_search_dialog_error_noapplets);   //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openInformation(getShell(), LauncherMessages.appletlauncher_search_dialog_title, LauncherMessages.appletlauncher_search_dialog_error_noapplets);   // 
 			} else if (types.length > 1) {
 				type = chooseType(types, mode);
 			} else {
@@ -81,7 +81,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 		if (javaElement != null) {
 			searchAndLaunch(new Object[] {javaElement}, mode);
 		} else {
-			MessageDialog.openInformation(getShell(), LauncherMessages.appletlauncher_search_dialog_title, LauncherMessages.appletlauncher_search_dialog_error_noapplets);   //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getShell(), LauncherMessages.appletlauncher_search_dialog_title, LauncherMessages.appletlauncher_search_dialog_error_noapplets);   // 
 		}
 	}
 
@@ -102,11 +102,11 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 	protected IType chooseType(IType[] types, String mode) {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider());
 		dialog.setElements(types);
-		dialog.setTitle(LauncherMessages.appletlauncher_selection_type_dialog_title); //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.appletlauncher_selection_type_dialog_title); 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(LauncherMessages.appletlauncher_selection_type_dialog_message_debug);   //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.appletlauncher_selection_type_dialog_message_debug);   
 		} else {
-			dialog.setMessage(LauncherMessages.appletlauncher_selection_type_dialog_message_run);  //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.appletlauncher_selection_type_dialog_message_run);  
 		}
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == Window.OK) {
@@ -198,11 +198,11 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle(LauncherMessages.appletlauncher_selection_configuration_dialog_title);  //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.appletlauncher_selection_configuration_dialog_title);  
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(LauncherMessages.appletlauncher_selection_configuration_dialog_message_debug);  //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.appletlauncher_selection_configuration_dialog_message_debug);  
 		} else {
-			dialog.setMessage(LauncherMessages.appletlauncher_selection_configuration_dialog_message_run);  //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.appletlauncher_selection_configuration_dialog_message_run);  
 		}
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();

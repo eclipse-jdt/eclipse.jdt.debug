@@ -38,7 +38,7 @@ public class BreakpointConditionCompletionProcessor extends DisplayCompletionPro
 		try {
 	        setErrorMessage(null);
 			if (fType == null) {
-	            setErrorMessage(DebugUIMessages.BreakpointConditionCompletionProcessor_0); //$NON-NLS-1$
+	            setErrorMessage(DebugUIMessages.BreakpointConditionCompletionProcessor_0); 
 				return new ICompletionProposal[0];
 			}
 			

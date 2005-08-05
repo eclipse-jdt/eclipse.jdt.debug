@@ -161,7 +161,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IJavaThread thread = getEvaluationThread((IJavaDebugTarget)value.getDebugTarget());
 		if (thread == null) {
-			listener.detailComputed(value, DebugUIMessages.JDIModelPresentation_no_suspended_threads); //$NON-NLS-1$
+			listener.detailComputed(value, DebugUIMessages.JDIModelPresentation_no_suspended_threads); 
 		} else {
 			JavaDetailFormattersManager.getDefault().computeValueDetail((IJavaValue)value, thread, listener);
 		}
@@ -214,7 +214,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				StringBuffer label= new StringBuffer(getStackFrameText((IStackFrame) item));
 				if (item instanceof IJavaStackFrame) {
 					if (((IJavaStackFrame)item).isOutOfSynch()) {
-						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1); //$NON-NLS-1$
+						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1); 
 					}
 				}
 				return label.toString();
@@ -239,35 +239,35 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingTreadText((JavaWaitingThread)item);
 			} else if (item instanceof NoMonitorInformationElement) {
-                return DebugUIMessages.JDIModelPresentation_5; //$NON-NLS-1$
+                return DebugUIMessages.JDIModelPresentation_5; 
             } else {
 				StringBuffer label= new StringBuffer();
 				if (item instanceof IJavaThread) {
 					label.append(getThreadText((IJavaThread) item, showQualified));
 					if (((IJavaThread)item).isOutOfSynch()) {
-						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1); //$NON-NLS-1$
+						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1); 
 					} else if (((IJavaThread)item).mayBeOutOfSynch()) {
-						label.append(DebugUIMessages.JDIModelPresentation___may_be_out_of_synch__2); //$NON-NLS-1$
+						label.append(DebugUIMessages.JDIModelPresentation___may_be_out_of_synch__2); 
 					}
 				} else if (item instanceof IJavaDebugTarget) {
 					label.append(getDebugTargetText((IJavaDebugTarget) item));
 					if (((IJavaDebugTarget)item).isOutOfSynch()) {
-						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1); //$NON-NLS-1$
+						label.append(DebugUIMessages.JDIModelPresentation___out_of_synch__1); 
 					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
-						label.append(DebugUIMessages.JDIModelPresentation___may_be_out_of_synch__2); //$NON-NLS-1$
+						label.append(DebugUIMessages.JDIModelPresentation___may_be_out_of_synch__2); 
 					}
 				} else if (item instanceof IJavaValue) {
 					label.append(getValueText((IJavaValue) item));
 				}
 				if (item instanceof ITerminate) {
 					if (((ITerminate) item).isTerminated()) {
-						label.insert(0, DebugUIMessages.JDIModelPresentation__terminated__2); //$NON-NLS-1$
+						label.insert(0, DebugUIMessages.JDIModelPresentation__terminated__2); 
 						return label.toString();
 					}
 				}
 				if (item instanceof IDisconnect) {
 					if (((IDisconnect) item).isDisconnected()) {
-						label.insert(0, DebugUIMessages.JDIModelPresentation__disconnected__4); //$NON-NLS-1$
+						label.insert(0, DebugUIMessages.JDIModelPresentation__disconnected__4); 
 						return label.toString();
 					}
 				}
@@ -276,25 +276,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (CoreException e) {
-			return DebugUIMessages.JDIModelPresentation__not_responding__6; //$NON-NLS-1$
+			return DebugUIMessages.JDIModelPresentation__not_responding__6; 
 		}
 		return null;
 	}
 
 	private String getJavaOwningTreadText(JavaOwningThread thread) throws CoreException {
-		return getFormattedString(DebugUIMessages.JDIModelPresentation_0, getThreadText(thread.getThread().getThread(), isShowQualifiedNames())); //$NON-NLS-1$
+		return getFormattedString(DebugUIMessages.JDIModelPresentation_0, getThreadText(thread.getThread().getThread(), isShowQualifiedNames())); 
 	}
 
 	private String getJavaWaitingTreadText(JavaWaitingThread thread) throws CoreException {
-		return getFormattedString(DebugUIMessages.JDIModelPresentation_1, getThreadText(thread.getThread().getThread(), isShowQualifiedNames())); //$NON-NLS-1$
+		return getFormattedString(DebugUIMessages.JDIModelPresentation_1, getThreadText(thread.getThread().getThread(), isShowQualifiedNames())); 
 	}
 
 	private String getJavaContendedMonitorText(JavaContendedMonitor monitor) throws DebugException {
-		return getFormattedString(DebugUIMessages.JDIModelPresentation_2, getValueText(monitor.getMonitor().getMonitor())); //$NON-NLS-1$
+		return getFormattedString(DebugUIMessages.JDIModelPresentation_2, getValueText(monitor.getMonitor().getMonitor())); 
 	}
 
 	private String getJavaOwnedMonitorText(JavaOwnedMonitor monitor) throws DebugException {
-		return getFormattedString(DebugUIMessages.JDIModelPresentation_3, getValueText(monitor.getMonitor().getMonitor())); //$NON-NLS-1$
+		return getFormattedString(DebugUIMessages.JDIModelPresentation_3, getValueText(monitor.getMonitor().getMonitor())); 
 	}
 
 	protected IBreakpoint getBreakpoint(IMarker marker) {
@@ -307,27 +307,27 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getThreadText(IJavaThread thread, boolean qualified) throws CoreException {
 		if (thread.isTerminated()) {
 			if (thread.isSystemThread()) {
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread____0____Terminated__7, thread.getName()); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread____0____Terminated__7, thread.getName()); 
 			}
-			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread____0____Terminated__8, thread.getName()); //$NON-NLS-1$
+			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread____0____Terminated__8, thread.getName()); 
 		}
 		if (thread.isStepping()) {
 			if (thread.isSystemThread()) {
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Stepping__9, thread.getName()); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Stepping__9, thread.getName()); 
 			} 
-			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Stepping__10, thread.getName()); //$NON-NLS-1$
+			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Stepping__10, thread.getName()); 
 		}
 		if (thread.isPerformingEvaluation()) {
 			if (thread.isSystemThread()) {
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Evaluating__9, thread.getName()); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Evaluating__9, thread.getName()); 
 			}
-			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Evaluating__10, thread.getName()); //$NON-NLS-1$
+			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Evaluating__10, thread.getName()); 
 		}
 		if (!thread.isSuspended() || (thread instanceof JDIThread && ((JDIThread)thread).isSuspendedQuiet())) {
 			if (thread.isSystemThread()) {
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Running__11, thread.getName()); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Running__11, thread.getName()); 
 			} 
-			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Running__12, thread.getName()); //$NON-NLS-1$
+			return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Running__12, thread.getName()); 
 		}
 		IBreakpoint[] breakpoints= thread.getBreakpoints();
 		if (breakpoints.length > 0) {
@@ -347,11 +347,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					problem = JavaDebugOptionsManager.getDefault().getProblem(frame);
 				}
 				if (problem != null) {
-					String message = problem.getAttribute(IMarker.MESSAGE, DebugUIMessages.JDIModelPresentation_Compilation_error_1); //$NON-NLS-1$
+					String message = problem.getAttribute(IMarker.MESSAGE, DebugUIMessages.JDIModelPresentation_Compilation_error_1); 
 					if (thread.isSystemThread()) {
-						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended___1____2, new String[] {thread.getName(), message}); //$NON-NLS-1$
+						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended___1____2, new String[] {thread.getName(), message}); 
 					}
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended___1____3, new String[] {thread.getName(), message}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended___1____3, new String[] {thread.getName(), message}); 
 				}
 			}			
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
@@ -363,38 +363,38 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					exName = exName.substring(index + 1);
 				} 
 				if (thread.isSystemThread()) {
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__exception__1____13, new String[] {thread.getName(), exName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__exception__1____13, new String[] {thread.getName(), exName}); 
 				}
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__exception__1____14, new String[] {thread.getName(), exName}); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__exception__1____14, new String[] {thread.getName(), exName}); 
 			}
 			if (breakpoint instanceof IJavaWatchpoint) {
 				IJavaWatchpoint wp = (IJavaWatchpoint)breakpoint;
-				String fieldName = wp.getFieldName(); //$NON-NLS-1$
+				String fieldName = wp.getFieldName(); 
 				if (wp.isAccessSuspend(thread.getDebugTarget())) {
 					if (thread.isSystemThread()) {
-						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__access_of_field__1__in__2____16, new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
+						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__access_of_field__1__in__2____16, new String[] {thread.getName(), fieldName, typeName}); 
 					}
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__access_of_field__1__in__2____17, new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__access_of_field__1__in__2____17, new String[] {thread.getName(), fieldName, typeName}); 
 				}
 				// modification
 				if (thread.isSystemThread()) {
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__modification_of_field__1__in__2____18, new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__modification_of_field__1__in__2____18, new String[] {thread.getName(), fieldName, typeName}); 
 				} 
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__modification_of_field__1__in__2____19, new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__modification_of_field__1__in__2____19, new String[] {thread.getName(), fieldName, typeName}); 
 			}
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint me= (IJavaMethodBreakpoint)breakpoint;
 				String methodName= me.getMethodName();
 				if (me.isEntrySuspend(thread.getDebugTarget())) {
 					if (thread.isSystemThread()) {
-						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__entry_into_method__1__in__2____21, new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__entry_into_method__1__in__2____21, new String[] {thread.getName(), methodName, typeName}); 
 					}
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__entry_into_method__1__in__2____22, new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__entry_into_method__1__in__2____22, new String[] {thread.getName(), methodName, typeName}); 
 				}
 				if (thread.isSystemThread()) {
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__exit_of_method__1__in__2____21, new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__exit_of_method__1__in__2____21, new String[] {thread.getName(), methodName, typeName}); 
 				}
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__exit_of_method__1__in__2____22, new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$					
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__exit_of_method__1__in__2____22, new String[] {thread.getName(), methodName, typeName}); //					
 			}
 			if (breakpoint instanceof IJavaLineBreakpoint) {
 				IJavaLineBreakpoint jlbp = (IJavaLineBreakpoint)breakpoint;
@@ -402,26 +402,26 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (lineNumber > -1) {
 					if (thread.isSystemThread()) {
 						if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
-							return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__run_to_line__1__in__2____23, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
+							return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__run_to_line__1__in__2____23, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); 
 						}
-						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__breakpoint_at_line__1__in__2____24, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
+						return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__breakpoint_at_line__1__in__2____24, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); 
 					}
 					if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
-						return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__run_to_line__1__in__2____25, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
+						return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__run_to_line__1__in__2____25, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); 
 					}
-					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__breakpoint_at_line__1__in__2____26, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__breakpoint_at_line__1__in__2____26, new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); 
 				}
 			}
 			if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
-				return getFormattedString(DebugUIMessages.JDIModelPresentation_115, new String[]{thread.getName(), getQualifiedName(breakpoint.getTypeName())}); //$NON-NLS-1$
+				return getFormattedString(DebugUIMessages.JDIModelPresentation_115, new String[]{thread.getName(), getQualifiedName(breakpoint.getTypeName())}); 
 			}
 		}
 
 		// Otherwise, it's just suspended
 		if (thread.isSystemThread()) {
-			return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__27, thread.getName()); //$NON-NLS-1$
+			return getFormattedString(DebugUIMessages.JDIModelPresentation_System_Thread___0____Suspended__27, thread.getName()); 
 		}
-		return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__28, thread.getName()); //$NON-NLS-1$
+		return getFormattedString(DebugUIMessages.JDIModelPresentation_Thread___0____Suspended__28, thread.getName()); 
 	}
 
 	/**
@@ -430,7 +430,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getDebugTargetText(IJavaDebugTarget debugTarget) throws DebugException {
 		String labelString= debugTarget.getName();
 		if (debugTarget.isSuspended()) {
-			labelString += DebugUIMessages.JDIModelPresentation_target_suspended; //$NON-NLS-1$
+			labelString += DebugUIMessages.JDIModelPresentation_target_suspended; 
 		}
 		return labelString;
 	}
@@ -449,7 +449,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			signature= type.getSignature();
 		}
 		if ("V".equals(signature)) { //$NON-NLS-1$
-			valueString= DebugUIMessages.JDIModelPresentation__No_explicit_return_value__30; //$NON-NLS-1$
+			valueString= DebugUIMessages.JDIModelPresentation__No_explicit_return_value__30; 
 		}
 		boolean isObject= isObjectValue(signature);
 		boolean isArray= value instanceof IJavaArray;
@@ -600,7 +600,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		StringBuffer charText = new StringBuffer();
 		if (Character.getType(charValue) == Character.CONTROL) {
 			Character ctrl = new Character((char) (charValue + 64));
-			charText.append('^'); //$NON-NLS-1$
+			charText.append('^'); 
 			charText.append(ctrl);
 			switch (charValue) { // common use
 				case 0: charText.append(" (NUL)"); break; //$NON-NLS-1$
@@ -1115,7 +1115,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getVariableText(IJavaVariable var) {
-		String varLabel= DebugUIMessages.JDIModelPresentation_unknown_name__1; //$NON-NLS-1$
+		String varLabel= DebugUIMessages.JDIModelPresentation_unknown_name__1; 
 		try {
 			varLabel= var.getName();
 		} catch (DebugException exception) {
@@ -1129,7 +1129,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		boolean showTypes= isShowVariableTypeNames();
 		int spaceIndex= varLabel.lastIndexOf(' ');
 		StringBuffer buff= new StringBuffer();
-		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2; //$NON-NLS-1$
+		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2; 
 		try {
 			typeName= var.getReferenceTypeName();
 			if (showTypes && spaceIndex == -1) {
@@ -1158,7 +1158,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		
-		String valueString= DebugUIMessages.JDIModelPresentation_unknown_value__3; //$NON-NLS-1$
+		String valueString= DebugUIMessages.JDIModelPresentation_unknown_value__3; 
 		if (javaValue != null) {
 			if (isShowLabelDetails(javaValue)) {
 	    		valueString = getVariableDetail(var);
@@ -1254,7 +1254,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				// ObjectCollectedException is an expected exception which will
 				// occur if the inspected object has been garbage collected.
 				if (exception.getStatus().getException() instanceof ObjectCollectedException) {
-					return DebugUIMessages.JDIModelPresentation__garbage_collected_object__6; //$NON-NLS-1$
+					return DebugUIMessages.JDIModelPresentation__garbage_collected_object__6; 
 				}
 				throw exception;
 			}
@@ -1279,7 +1279,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	protected String getWatchExpressionText(IWatchExpression expression) throws DebugException {
-		return getExpressionText(expression) + (expression.isEnabled() ? "" : DebugUIMessages.JDIModelPresentation_116); //$NON-NLS-1$ //$NON-NLS-2$
+		return getExpressionText(expression) + (expression.isEnabled() ? "" : DebugUIMessages.JDIModelPresentation_116); //$NON-NLS-1$ 
 	}
 
 	/**
@@ -1401,10 +1401,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	    	// if the breakpoint has been deleted, don't log exception
 	    	IMarker marker = breakpoint.getMarker();
 			if (marker == null || !marker.exists()) {
-	    		return DebugUIMessages.JDIModelPresentation_6; //$NON-NLS-1$
+	    		return DebugUIMessages.JDIModelPresentation_6; 
 	    	}
 	        JDIDebugUIPlugin.log(e);
-	        return DebugUIMessages.JDIModelPresentation_4; //$NON-NLS-1$
+	        return DebugUIMessages.JDIModelPresentation_4; 
 	    }
 	}
 
@@ -1447,24 +1447,24 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendSuspendPolicy(breakpoint, buffer);
 		appendThreadFilter(breakpoint, buffer);
 		if (breakpoint.getExclusionFilters().length > 0 || breakpoint.getInclusionFilters().length > 0) {
-			buffer.append(DebugUIMessages.JDIModelPresentation___scoped__1); //$NON-NLS-1$
+			buffer.append(DebugUIMessages.JDIModelPresentation___scoped__1); 
 		}
 		appendInstanceFilter(breakpoint, buffer);
 		String state= null;
 		boolean c= breakpoint.isCaught();
 		boolean u= breakpoint.isUncaught();
 		if (c && u) {
-			state= DebugUIMessages.JDIModelPresentation_caught_and_uncaught_60; //$NON-NLS-1$
+			state= DebugUIMessages.JDIModelPresentation_caught_and_uncaught_60; 
 		} else if (c) {
-			state= DebugUIMessages.JDIModelPresentation_caught_61; //$NON-NLS-1$
+			state= DebugUIMessages.JDIModelPresentation_caught_61; 
 		} else if (u) {
-			state= DebugUIMessages.JDIModelPresentation_uncaught_62; //$NON-NLS-1$
+			state= DebugUIMessages.JDIModelPresentation_uncaught_62; 
 		}
 		String label= null;
 		if (state == null) {
 			label= buffer.toString();
 		} else {
-			String format= DebugUIMessages.JDIModelPresentation__1____0__63; //$NON-NLS-1$
+			String format= DebugUIMessages.JDIModelPresentation__1____0__63; 
 			label= MessageFormat.format(format, new Object[] {state, buffer});
 		}
 		return label;
@@ -1504,7 +1504,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		int lineNumber= breakpoint.getLineNumber();
 		if (lineNumber > 0) {
 			label.append(" ["); //$NON-NLS-1$
-			label.append(DebugUIMessages.JDIModelPresentation_line__65); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_line__65); 
 			label.append(' ');
 			label.append(lineNumber);
 			label.append(']');
@@ -1517,7 +1517,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		int hitCount= breakpoint.getHitCount();
 		if (hitCount > 0) {
 			label.append(" ["); //$NON-NLS-1$
-			label.append(DebugUIMessages.JDIModelPresentation_hit_count__67); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_hit_count__67); 
 			label.append(' ');
 			label.append(hitCount);
 			label.append(']');
@@ -1573,11 +1573,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		boolean access= watchpoint.isAccess();
 		boolean modification= watchpoint.isModification();
 		if (access && modification) {
-			label.append(DebugUIMessages.JDIModelPresentation_access_and_modification_70); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_access_and_modification_70); 
 		} else if (access) {
-			label.append(DebugUIMessages.JDIModelPresentation_access_71); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_access_71); 
 		} else if (modification) {
-			label.append(DebugUIMessages.JDIModelPresentation_modification_72); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_modification_72); 
 		}
 		
 		label.append(" - "); //$NON-NLS-1$
@@ -1604,11 +1604,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		boolean entry = methodBreakpoint.isEntry();
 		boolean exit = methodBreakpoint.isExit();
 		if (entry && exit) {
-			label.append(DebugUIMessages.JDIModelPresentation_entry_and_exit); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_entry_and_exit); 
 		} else if (entry) {
-			label.append(DebugUIMessages.JDIModelPresentation_entry); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_entry); 
 		} else if (exit) {
-			label.append(DebugUIMessages.JDIModelPresentation_exit); //$NON-NLS-1$
+			label.append(DebugUIMessages.JDIModelPresentation_exit); 
 		}
 		appendConditional(methodBreakpoint, label);
 		
@@ -1635,13 +1635,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (frame != null) {
 			StringBuffer label= new StringBuffer();
 			
-			String dec= DebugUIMessages.JDIModelPresentation_unknown_declaring_type__4; //$NON-NLS-1$
+			String dec= DebugUIMessages.JDIModelPresentation_unknown_declaring_type__4; 
 			try {
 				dec= frame.getDeclaringTypeName();
 			} catch (DebugException exception) {
 			}
 			if (frame.isObsolete()) {
-				label.append(DebugUIMessages.JDIModelPresentation__obsolete_method_in__1); //$NON-NLS-1$
+				label.append(DebugUIMessages.JDIModelPresentation__obsolete_method_in__1); 
 				label.append(dec);
 				label.append('>');
 				return label.toString();
@@ -1655,7 +1655,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			
 			if (javaStratum) {
 				// receiver name
-				String rec= DebugUIMessages.JDIModelPresentation_unknown_receiving_type__5; //$NON-NLS-1$
+				String rec= DebugUIMessages.JDIModelPresentation_unknown_receiving_type__5; 
 				try {
 					rec= frame.getReceivingTypeName();
 				} catch (DebugException exception) {
@@ -1673,7 +1673,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				try {
 					label.append(frame.getMethodName());
 				} catch (DebugException exception) {
-					label.append(DebugUIMessages.JDIModelPresentation_unknown_method_name__6); //$NON-NLS-1$
+					label.append(DebugUIMessages.JDIModelPresentation_unknown_method_name__6); 
 				}
 				try {
 					List args= frame.getArgumentTypeNames();
@@ -1693,7 +1693,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						label.append(')');
 					}
 				} catch (DebugException exception) {
-					label.append(DebugUIMessages.JDIModelPresentation__unknown_arguements___7); //$NON-NLS-1$
+					label.append(DebugUIMessages.JDIModelPresentation__unknown_arguements___7); 
 				}
 			} else {
 				if (isShowQualifiedNames()) {
@@ -1706,24 +1706,24 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			try {
 				int lineNumber= frame.getLineNumber();
 				label.append(' ');
-				label.append(DebugUIMessages.JDIModelPresentation_line__76); //$NON-NLS-1$
+				label.append(DebugUIMessages.JDIModelPresentation_line__76); 
 				label.append(' ');
 				if (lineNumber >= 0) {
 					label.append(lineNumber);
 				} else {
-					label.append(DebugUIMessages.JDIModelPresentation_not_available); //$NON-NLS-1$
+					label.append(DebugUIMessages.JDIModelPresentation_not_available); 
 					if (frame.isNative()) {
 						label.append(' ');
-						label.append(DebugUIMessages.JDIModelPresentation_native_method); //$NON-NLS-1$
+						label.append(DebugUIMessages.JDIModelPresentation_native_method); 
 					}
 				}
 			} catch (DebugException exception) {
-				label.append(DebugUIMessages.JDIModelPresentation__unknown_line_number__8); //$NON-NLS-1$
+				label.append(DebugUIMessages.JDIModelPresentation__unknown_line_number__8); 
 			}
 			
 			if (!frame.wereLocalsAvailable()) {
 				label.append(' ');
-				label.append(DebugUIMessages.JDIModelPresentation_local_variables_unavailable); //$NON-NLS-1$
+				label.append(DebugUIMessages.JDIModelPresentation_local_variables_unavailable); 
 			}
 			
 			return label.toString();
@@ -1834,21 +1834,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
 			buffer.append(' ');
-			buffer.append(DebugUIMessages.JDIModelPresentation_Suspend_VM); //$NON-NLS-1$
+			buffer.append(DebugUIMessages.JDIModelPresentation_Suspend_VM); 
 		}
 	}
 	
 	protected void appendThreadFilter(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.getThreadFilters().length != 0) {
 			buffer.append(' ');
-			buffer.append(DebugUIMessages.JDIModelPresentation_thread_filtered); //$NON-NLS-1$
+			buffer.append(DebugUIMessages.JDIModelPresentation_thread_filtered); 
 		}
 	}
 	
 	protected void appendConditional(IJavaLineBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.isConditionEnabled() && breakpoint.getCondition() != null) {
 			buffer.append(' ');
-			buffer.append(DebugUIMessages.JDIModelPresentation__conditional__2); //$NON-NLS-1$
+			buffer.append(DebugUIMessages.JDIModelPresentation__conditional__2); 
 		}
 	}
 	
@@ -1858,7 +1858,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			String instanceText= instances[i].getValueString();
 			if (instanceText != null) {
 				buffer.append(' ');
-				buffer.append(MessageFormat.format(DebugUIMessages.JDIModelPresentation_instance_1, new String[] {instanceText})); //$NON-NLS-1$
+				buffer.append(MessageFormat.format(DebugUIMessages.JDIModelPresentation_instance_1, new String[] {instanceText})); 
 			}				
 		}
 	}

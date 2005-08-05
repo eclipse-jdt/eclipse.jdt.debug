@@ -101,22 +101,22 @@ public class AddVMDialog extends StatusDialog {
 	
 	protected void createDialogFields() {
 		fVMTypeCombo= new ComboDialogField(SWT.READ_ONLY);
-		fVMTypeCombo.setLabelText(JREMessages.addVMDialog_jreType); //$NON-NLS-1$
+		fVMTypeCombo.setLabelText(JREMessages.addVMDialog_jreType); 
 		fVMTypeCombo.setItems(getVMTypeNames());
 		
 		fVMName= new StringDialogField();
-		fVMName.setLabelText(JREMessages.addVMDialog_jreName); //$NON-NLS-1$
+		fVMName.setLabelText(JREMessages.addVMDialog_jreName); 
 		
 		fJRERoot= new StringButtonDialogField(new IStringButtonAdapter() {
 			public void changeControlPressed(DialogField field) {
 				browseForInstallDir();
 			}
 		});
-		fJRERoot.setLabelText(JREMessages.addVMDialog_jreHome); //$NON-NLS-1$
-		fJRERoot.setButtonLabel(JREMessages.addVMDialog_browse1); //$NON-NLS-1$
+		fJRERoot.setLabelText(JREMessages.addVMDialog_jreHome); 
+		fJRERoot.setButtonLabel(JREMessages.addVMDialog_browse1); 
 			
 		fVMArgs= new StringDialogField();
-		fVMArgs.setLabelText(JREMessages.AddVMDialog_23); //$NON-NLS-1$
+		fVMArgs.setLabelText(JREMessages.AddVMDialog_23); 
 	}
 	
 	protected void createFieldListeners() {
@@ -165,7 +165,7 @@ public class AddVMDialog extends StatusDialog {
 		fVMArgs.doFillIntoGrid(parent, 3);
 		
 		Label l = new Label(parent, SWT.NONE);
-		l.setText(JREMessages.AddVMDialog_JRE_system_libraries__1); //$NON-NLS-1$
+		l.setText(JREMessages.AddVMDialog_JRE_system_libraries__1); 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		l.setLayoutData(gd);	
@@ -269,12 +269,12 @@ public class AddVMDialog extends StatusDialog {
 		String locationName= fJRERoot.getText();
 		IStatus s = null;
 		File file = null;
-		if (locationName.length() == 0) {//$NON-NLS-1$
-			s = new StatusInfo(IStatus.INFO, JREMessages.addVMDialog_enterLocation); //$NON-NLS-1$
+		if (locationName.length() == 0) {
+			s = new StatusInfo(IStatus.INFO, JREMessages.addVMDialog_enterLocation); 
 		} else {
 			file= new File(locationName);
 			if (!file.exists()) {
-				s = new StatusInfo(IStatus.ERROR, JREMessages.addVMDialog_locationNotExists); //$NON-NLS-1$
+				s = new StatusInfo(IStatus.ERROR, JREMessages.addVMDialog_locationNotExists); 
 			} else {
 				final IStatus[] temp = new IStatus[1];
 				final File tempFile = file; 
@@ -318,14 +318,14 @@ public class AddVMDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String name= fVMName.getText();
 		if (name == null || name.trim().length() == 0) {
-			status.setInfo(JREMessages.addVMDialog_enterName); //$NON-NLS-1$
+			status.setInfo(JREMessages.addVMDialog_enterName); 
 		} else {
 			if (fRequestor.isDuplicateName(name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
-				status.setError(JREMessages.addVMDialog_duplicateName); //$NON-NLS-1$
+				status.setError(JREMessages.addVMDialog_duplicateName); 
 			} else {
 				IStatus s = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
 				if (!s.isOK()) {
-					status.setError(MessageFormat.format(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()})); //$NON-NLS-1$
+					status.setError(MessageFormat.format(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()})); 
 				}
 			}
 		}
@@ -350,7 +350,7 @@ public class AddVMDialog extends StatusDialog {
 	private void browseForInstallDir() {
 		DirectoryDialog dialog= new DirectoryDialog(getShell());
 		dialog.setFilterPath(fJRERoot.getText());
-		dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message); //$NON-NLS-1$
+		dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message); 
 		String newPath= dialog.open();
 		if (newPath != null) {
 			fJRERoot.setText(newPath);

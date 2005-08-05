@@ -27,7 +27,7 @@ public class PushLong extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.PushLong_push__1 + fValue; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushLong_push__1 + fValue; 
 	}
 
 }

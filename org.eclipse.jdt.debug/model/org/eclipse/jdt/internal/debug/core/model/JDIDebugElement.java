@@ -232,7 +232,7 @@ public abstract class JDIDebugElement extends DebugElement implements IDisconnec
 	 * @return the unknown String
 	 */
 	protected String getUnknownMessage() {
-		return JDIDebugModelMessages.JDIDebugElement_unknown; //$NON-NLS-1$
+		return JDIDebugModelMessages.JDIDebugElement_unknown; 
 	}
 		
 	/**

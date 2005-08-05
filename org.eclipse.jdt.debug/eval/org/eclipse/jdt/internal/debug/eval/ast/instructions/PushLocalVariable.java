@@ -51,7 +51,7 @@ public class PushLocalVariable extends SimpleInstruction {
 			}
 		}
 
-		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.PushLocalVariable_Cannot_find_the_variable____1, new String[]{fName}), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.PushLocalVariable_Cannot_find_the_variable____1, new String[]{fName}), null)); 
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class PushLocalVariable extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.PushLocalVariable_push____0___2, new String[]{getName()}); //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.PushLocalVariable_push____0___2, new String[]{getName()}); 
 	}
 }
 

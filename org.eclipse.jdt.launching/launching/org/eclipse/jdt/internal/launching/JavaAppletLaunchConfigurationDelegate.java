@@ -111,7 +111,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		File tempFile = null;
 		try {
 			String name = getAppletMainTypeName(configuration);
-			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
+			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ 
 			writer = new FileWriter(tempFile);
 			writer.write("<html>\n"); //$NON-NLS-1$
 			writer.write("<body>\n"); //$NON-NLS-1$
@@ -123,9 +123,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 				writer.write("NAME =\"" + appletName + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			writer.write("width=\""); //$NON-NLS-1$
-			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200))); //$NON-NLS-1$
+			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200))); 
 			writer.write("\" height=\""); //$NON-NLS-1$
-			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200))); //$NON-NLS-1$
+			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200))); 
 			writer.write("\" >\n"); //$NON-NLS-1$
 			Map parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap());
 			if (parameters.size() != 0) {
@@ -314,13 +314,13 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			if (dir.isDirectory()) {
 				return dir;
 			} 
-			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
 		} else {
 			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (res instanceof IContainer && res.exists()) {
 				return res.getLocation().toFile();
 			} 
-			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
 		}
 		// cannot return null - an exception will be thrown
 		return null;		
@@ -334,7 +334,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		// Construct the HTML file and set its name as a program argument
 		File htmlFile = buildHTMLFile(configuration, workingDir);
 		if (htmlFile == null) {
-			abort(LaunchingMessages.JavaAppletLaunchConfigurationDelegate_Could_not_build_HTML_file_for_applet_launch_1, null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaAppletLaunchConfigurationDelegate_Could_not_build_HTML_file_for_applet_launch_1, null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); 
 		}			
 		// Add a debug listener if necessary 
 		if (fgLaunchToFileMap.isEmpty()) {

@@ -85,7 +85,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 			case EventRequestImpl.SUSPENDPOL_ALL_JDWP:
 				return EventRequest.SUSPEND_ALL;
 			default:
-				throw new InternalException(EventMessages.EventSetImpl_Invalid_suspend_policy_encountered___1 + fSuspendPolicy); //$NON-NLS-1$
+				throw new InternalException(EventMessages.EventSetImpl_Invalid_suspend_policy_encountered___1 + fSuspendPolicy); 
 		}
 	}
 	
@@ -103,7 +103,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 				virtualMachineImpl().resume();
 				break;
 			default:
-				throw new InternalException(EventMessages.EventSetImpl_Invalid_suspend_policy_encountered___1 + fSuspendPolicy); //$NON-NLS-1$
+				throw new InternalException(EventMessages.EventSetImpl_Invalid_suspend_policy_encountered___1 + fSuspendPolicy); 
 		}
 	}
 	
@@ -241,7 +241,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public boolean add(Object arg1) {
-		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); //$NON-NLS-1$
+		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); 
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public boolean addAll(Collection arg1) {
-		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); //$NON-NLS-1$
+		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); 
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public void clear() {
-		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); //$NON-NLS-1$
+		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); 
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public boolean remove(Object arg1) {
-		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); //$NON-NLS-1$
+		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); 
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public boolean removeAll(Collection arg1) {
-		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); //$NON-NLS-1$
+		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); 
 	}
 
 	/**
@@ -281,6 +281,6 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public boolean retainAll(Collection arg1) {
-		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); //$NON-NLS-1$
+		throw new UnsupportedOperationException(EventMessages.EventSetImpl_EventSets_are_unmodifiable_3); 
 	}
 }

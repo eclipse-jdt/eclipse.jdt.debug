@@ -274,12 +274,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
-		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) { //$NON-NLS-1$
+		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) { 
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
 	  				return new DefaultInformationControl(parent, SWT.NONE, 
 	  					new HTMLTextPresenter(true),
-				   		DebugUIMessages.JavaDebugHover_16); //$NON-NLS-1$
+				   		DebugUIMessages.JavaDebugHover_16); 
 			 	}
   			};
 		}

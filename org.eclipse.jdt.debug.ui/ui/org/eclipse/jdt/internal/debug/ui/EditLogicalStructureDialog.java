@@ -203,7 +203,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		if (logicalStructure.getQualifiedTypeName().length() == 0) {
 			setTitle(DebugUIMessages.EditLogicalStructureDialog_32);
 		} else {
-			setTitle(DebugUIMessages.EditLogicalStructureDialog_31); //$NON-NLS-1$
+			setTitle(DebugUIMessages.EditLogicalStructureDialog_31); 
 		}
 		fLogicalStructure= logicalStructure;
 	}
@@ -225,7 +225,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
-		fSubmission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		fSubmission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
 		commandSupport.addHandlerSubmission(fSubmission);	
 		
 		// big container
@@ -241,7 +241,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		typeNameDescriptionContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		
 		Label typeLabel= new Label(typeNameDescriptionContainer, SWT.NONE);
-		typeLabel.setText(DebugUIMessages.EditLogicalStructureDialog_0); //$NON-NLS-1$
+		typeLabel.setText(DebugUIMessages.EditLogicalStructureDialog_0); 
 		typeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
 		
 		// name text area
@@ -251,13 +251,13 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		
 		// browse button
 		fBrowseTypeButton= new Button(typeNameDescriptionContainer, SWT.PUSH);
-		fBrowseTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_1); //$NON-NLS-1$
-		fBrowseTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_25); //$NON-NLS-1$
+		fBrowseTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_1); 
+		fBrowseTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_25); 
 		setButtonLayoutData(fBrowseTypeButton);
 		fBrowseTypeButton.addListener(SWT.Selection, this);
 
 		Label descriptionLabel= new Label(typeNameDescriptionContainer, SWT.NONE);
-		descriptionLabel.setText(DebugUIMessages.EditLogicalStructureDialog_2); //$NON-NLS-1$
+		descriptionLabel.setText(DebugUIMessages.EditLogicalStructureDialog_2); 
 		descriptionLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
 		
 		// description text area
@@ -267,8 +267,8 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		
 		// isSubtype button
 		fSubTypeButton= new Button(typeNameDescriptionContainer, SWT.CHECK);
-		fSubTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_3); //$NON-NLS-1$
-		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26); //$NON-NLS-1$
+		fSubTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_3); 
+		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26); 
 		fSubTypeButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
 		// value/variable container
@@ -280,13 +280,13 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		// value button
 		fValueButton= new Button(radioContainer, SWT.RADIO);
-		fValueButton.setText(DebugUIMessages.EditLogicalStructureDialog_4); //$NON-NLS-1$
+		fValueButton.setText(DebugUIMessages.EditLogicalStructureDialog_4); 
 		fValueButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 		fValueButton.addListener(SWT.Selection, this);
 		
 		// variable button
 		fVariablesButton= new Button(radioContainer, SWT.RADIO);
-		fVariablesButton.setText(DebugUIMessages.EditLogicalStructureDialog_5); //$NON-NLS-1$
+		fVariablesButton.setText(DebugUIMessages.EditLogicalStructureDialog_5); 
 		fVariablesButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
 		// attribute list container
@@ -323,9 +323,9 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private void createCodeGroupWidgets(boolean isValue) {
         Font font= fCodeGroup.getFont();
 		if (isValue) {
-			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_9); //$NON-NLS-1$
+			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_9); 
 		} else {
-			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7); //$NON-NLS-1$
+			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7); 
 		
 			// if it's a variable, create the attribute name text area
 			Composite attributeNameContainer= new Composite(fCodeGroup, SWT.NONE);
@@ -335,7 +335,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			attributeNameContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 			
 			Label attributeNameLabel= new Label(attributeNameContainer, SWT.NONE);
-			attributeNameLabel.setText(DebugUIMessages.EditLogicalStructureDialog_8); //$NON-NLS-1$
+			attributeNameLabel.setText(DebugUIMessages.EditLogicalStructureDialog_8); 
 			attributeNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
             attributeNameLabel.setFont(font);
 			
@@ -347,7 +347,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		if (!isValue) {
 			Label attributeValueLabel= new Label(fCodeGroup, SWT.NONE);
-			attributeValueLabel.setText(DebugUIMessages.EditLogicalStructureDialog_9); //$NON-NLS-1$
+			attributeValueLabel.setText(DebugUIMessages.EditLogicalStructureDialog_9); 
 			attributeValueLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, true, false));
 	        attributeValueLabel.setFont(font);
 		}
@@ -412,32 +412,32 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		
 		// add attribute button
 		fAttributeAddButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeAddButton.setText(DebugUIMessages.EditLogicalStructureDialog_10); //$NON-NLS-1$
-		fAttributeAddButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_27); //$NON-NLS-1$
+		fAttributeAddButton.setText(DebugUIMessages.EditLogicalStructureDialog_10); 
+		fAttributeAddButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_27); 
         fAttributeAddButton.setFont(font);
 		setButtonLayoutData(fAttributeAddButton);
 		fAttributeAddButton.addListener(SWT.Selection, this);
 		
 		// remove attribute button
 		fAttributeRemoveButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeRemoveButton.setText(DebugUIMessages.EditLogicalStructureDialog_11); //$NON-NLS-1$
-		fAttributeRemoveButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_28); //$NON-NLS-1$
+		fAttributeRemoveButton.setText(DebugUIMessages.EditLogicalStructureDialog_11); 
+		fAttributeRemoveButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_28); 
         fAttributeRemoveButton.setFont(font);
 		setButtonLayoutData(fAttributeRemoveButton);
 		fAttributeRemoveButton.addListener(SWT.Selection, this);
 		
 		// attribute up button
 		fAttributeUpButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeUpButton.setText(DebugUIMessages.EditLogicalStructureDialog_12); //$NON-NLS-1$
-		fAttributeUpButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_29); //$NON-NLS-1$
+		fAttributeUpButton.setText(DebugUIMessages.EditLogicalStructureDialog_12); 
+		fAttributeUpButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_29); 
         fAttributeUpButton.setFont(font);
 		setButtonLayoutData(fAttributeUpButton);
 		fAttributeUpButton.addListener(SWT.Selection, this);
 		
 		// attribute down button
 		fAttributeDownButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeDownButton.setText(DebugUIMessages.EditLogicalStructureDialog_13); //$NON-NLS-1$
-		fAttributeDownButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_30); //$NON-NLS-1$
+		fAttributeDownButton.setText(DebugUIMessages.EditLogicalStructureDialog_13); 
+		fAttributeDownButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_30); 
         fAttributeDownButton.setFont(font);
 		setButtonLayoutData(fAttributeDownButton);
 		fAttributeDownButton.addListener(SWT.Selection, this);
@@ -498,7 +498,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	// code for add attribute button
 	private void addAttribute() {
-		String[] newAttribute= new String[] {DebugUIMessages.EditLogicalStructureDialog_14, DebugUIMessages.EditLogicalStructureDialog_15}; //$NON-NLS-1$ //$NON-NLS-2$
+		String[] newAttribute= new String[] {DebugUIMessages.EditLogicalStructureDialog_14, DebugUIMessages.EditLogicalStructureDialog_15}; // 
 		fAttributesContentProvider.add(newAttribute);
 		fAttributeListViewer.refresh();
 		fAttributeListViewer.setSelection(new StructuredSelection((Object)newAttribute));
@@ -668,30 +668,30 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	public void checkValues() {
 		StatusInfo status= new StatusInfo();
 		if (fQualifiedTypeNameText.getText().trim().length() == 0) {
-			status.setError(DebugUIMessages.EditLogicalStructureDialog_16); //$NON-NLS-1$
+			status.setError(DebugUIMessages.EditLogicalStructureDialog_16); 
 		} else if (fDescriptionText.getText().trim().length() == 0) {
-			status.setError(DebugUIMessages.EditLogicalStructureDialog_17); //$NON-NLS-1$
+			status.setError(DebugUIMessages.EditLogicalStructureDialog_17); 
 		} else if (fValueButton.getSelection() && fSnippetDocument.get().length() == 0) {
-			status.setError(DebugUIMessages.EditLogicalStructureDialog_18); //$NON-NLS-1$
+			status.setError(DebugUIMessages.EditLogicalStructureDialog_18); 
 		} else if (fVariablesButton.getSelection()) {
 			Object[] elements= fAttributesContentProvider.getElements(null);
 			boolean oneElementSelected= fCurrentAttributeSelection.size() == 1;
 			if (elements.length == 0) {
-				status.setError(DebugUIMessages.EditLogicalStructureDialog_19); //$NON-NLS-1$
+				status.setError(DebugUIMessages.EditLogicalStructureDialog_19); 
 			} else if (oneElementSelected && fAttributeNameText.getText().trim().length() == 0) {
-				status.setError(DebugUIMessages.EditLogicalStructureDialog_20); //$NON-NLS-1$
+				status.setError(DebugUIMessages.EditLogicalStructureDialog_20); 
 			} else if (oneElementSelected && fSnippetDocument.get().trim().length() == 0) {
-				status.setError(DebugUIMessages.EditLogicalStructureDialog_21); //$NON-NLS-1$
+				status.setError(DebugUIMessages.EditLogicalStructureDialog_21); 
 			} else {
 				for (int i= 0; i < elements.length; i++) {
 					String[] variable= (String[]) elements[i];
 					if (variable[0].trim().length() == 0) {
-						status.setError(DebugUIMessages.EditLogicalStructureDialog_22); //$NON-NLS-1$
+						status.setError(DebugUIMessages.EditLogicalStructureDialog_22); 
 						break;
 					}
 					if (variable[1].trim().length() == 0) {
 						if (!oneElementSelected || fCurrentAttributeSelection.getFirstElement() != variable) {
-							status.setError(MessageFormat.format(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]})); //$NON-NLS-1$
+							status.setError(MessageFormat.format(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]})); 
 							break;
 						}
 					}
@@ -700,7 +700,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		}
 		if (!status.isError()) {
 			if (fType == null && fTypeSearched) {
-				status.setWarning(DebugUIMessages.EditLogicalStructureDialog_24); //$NON-NLS-1$
+				status.setWarning(DebugUIMessages.EditLogicalStructureDialog_24); 
 			}
 		}
 		updateStatus(status);
@@ -717,14 +717,14 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_ALL_TYPES,
                 false, fQualifiedTypeNameText.getText());
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6; //$NON-NLS-1$
-			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7; //$NON-NLS-1$
+			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6; 
+			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7; 
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9); //$NON-NLS-1$
+		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8); 
+		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9); 
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

@@ -150,11 +150,11 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 
 		// Perform some checks for IllegalArgumentException.
 		if (!visibleMethods().contains(method))
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_1); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_1); 
 		if (method.argumentTypeNames().size() != arguments.size())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_2); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_2); 
 		if (method.isConstructor() || method.isStaticInitializer())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3); 
 
 		// check the type and the vm of the arguments. Convert the values if needed
 		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
@@ -220,11 +220,11 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		
 		// Perform some checks for IllegalArgumentException.
 		if (!methods().contains(method))
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_4); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_4); 
 		if (method.argumentTypeNames().size() != arguments.size())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_5); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_5); 
 		if (!method.isConstructor())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Method_is_not_a_constructor_6); //$NON-NLS-1$
+			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Method_is_not_a_constructor_6); 
 			
 		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
 

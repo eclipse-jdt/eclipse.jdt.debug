@@ -111,7 +111,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
 		changes.addAll(createChangesForProjectRename(javaProject, configs, projectName, newProjectName));
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
 		changes.addAll(createChangesForPackageRename(configs, packageFragment, newName));
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
 		changes.addAll(createChangesForPackageMove(configs, packageFragment, destination));
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
 		changes.addAll(createChangesForTypeChange(configs, type, newFullyQualifiedName, newProjectName));
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); //$NON-NLS-1$
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
 	}
 
 	/**
@@ -340,15 +340,15 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	 */
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
-			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); //$NON-NLS-1$
+			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); 
 		} 
 		if (fNewProjectName == null) {
-			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
+			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, new String[] {fLaunchConfiguration.getName()}); 
 		}
 		if (fNewMainTypeName == null) {
-			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
+			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, new String[] {fLaunchConfiguration.getName()}); 
 		}
-		return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, new String[] {fLaunchConfiguration.getName()}); 
 	}
 	
 	/* (non-Javadoc)
@@ -368,11 +368,11 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 				if (fOldProjectName.equals(projectName)) {
 					return new RefactoringStatus();
 				}
-				return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName})); //$NON-NLS-1$
+				return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName})); 
 			}
-			return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, new String[] {fLaunchConfiguration.getName(), fOldMainTypeName})); //$NON-NLS-1$
+			return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, new String[] {fLaunchConfiguration.getName(), fOldMainTypeName})); 
 		} 
-		return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()})); //$NON-NLS-1$
+		return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()})); 
 	}
 	
 	/* (non-Javadoc)

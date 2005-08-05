@@ -81,17 +81,17 @@ public class TcpipSpy extends Thread {
 				outputFile= args[3];
 			}
 		} catch (Exception e) {
-			out.println(TcpIpSpyMessages.TcpipSpy_usage__TcpipSpy__client_port___server_host___server_port____output_file___1); //$NON-NLS-1$
+			out.println(TcpIpSpyMessages.TcpipSpy_usage__TcpipSpy__client_port___server_host___server_port____output_file___1); 
 			System.exit(-1);
 		}
 
 		if (outputFile != null) {
 			File file= new File(outputFile);
-			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Writing_output_to__0__2, new String[] {file.getAbsolutePath()})); //$NON-NLS-1$
+			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Writing_output_to__0__2, new String[] {file.getAbsolutePath()})); 
 			try {
 				out= new VerbosePacketStream(new BufferedOutputStream(new FileOutputStream(file)));
 			} catch (FileNotFoundException e) {
-				out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Could_not_open__0____Using_stdout_instead_3, new String[] {file.getAbsolutePath()})); //$NON-NLS-1$
+				out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Could_not_open__0____Using_stdout_instead_3, new String[] {file.getAbsolutePath()})); 
 			}
 		}
 		out.println();
@@ -99,8 +99,8 @@ public class TcpipSpy extends Thread {
 			ServerSocket serverSock= new ServerSocket(inPort);
 			Socket inSock= serverSock.accept();
 			Socket outSock= new Socket(InetAddress.getByName(serverHost), outPort);
-			new TcpipSpy(false, inSock.getInputStream(), outSock.getOutputStream()).start(); //$NON-NLS-1$
-			new TcpipSpy(true, outSock.getInputStream(), inSock.getOutputStream()).start(); //$NON-NLS-1$
+			new TcpipSpy(false, inSock.getInputStream(), outSock.getOutputStream()).start(); 
+			new TcpipSpy(true, outSock.getInputStream(), inSock.getOutputStream()).start(); 
 		} catch (Exception e) {
 			out.println(e);
 		}
@@ -134,7 +134,7 @@ public class TcpipSpy extends Thread {
 		} catch (EOFException e) {
 		} catch (SocketException e) {
 		} catch (IOException e) {
-			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Caught_exception___0__5, new String[] {e.toString()})); //$NON-NLS-1$
+			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Caught_exception___0__5, new String[] {e.toString()})); 
 			e.printStackTrace(out);
 		} finally {
 			try {
@@ -175,7 +175,7 @@ public class TcpipSpy extends Thread {
 		} else {
 			command= getCommand(packet.getId());
 			if (command == null) {
-				throw new UnableToParseDataException(TcpIpSpyMessages.TcpIpSpy_This_packet_is_marked_as_reply__but_there_is_no_command_with_the_same_id__1, null); //$NON-NLS-1$
+				throw new UnableToParseDataException(TcpIpSpyMessages.TcpIpSpy_This_packet_is_marked_as_reply__but_there_is_no_command_with_the_same_id__1, null); 
 			}
 		}
 		return command.getCommand();

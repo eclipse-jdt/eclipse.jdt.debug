@@ -65,7 +65,7 @@ public class XorOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.XorOperator______operator_1; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.XorOperator______operator_1; 
 	}
 
 }

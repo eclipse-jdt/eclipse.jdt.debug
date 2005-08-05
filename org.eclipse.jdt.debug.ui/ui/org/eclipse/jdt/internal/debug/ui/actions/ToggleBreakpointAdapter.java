@@ -179,7 +179,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                     if (offset < start || offset > end) {
                                         // not in the inner type
                                         IStatusLineManager statusLine = editorPart.getEditorSite().getActionBars().getStatusLineManager();
-                                        statusLine.setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { type.getTypeQualifiedName() })); //$NON-NLS-1$
+                                        statusLine.setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { type.getTypeQualifiedName() })); 
                                         Display.getCurrent().beep();
                                         return Status.OK_STATUS;
                                     }
@@ -280,13 +280,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                 compilationUnit.accept(locator);
                                 String methodName = locator.getMethodName();
                                 if (methodName == null) {
-                                    report(ActionMessages.ManageMethodBreakpointActionDelegate_CantAdd, part); //$NON-NLS-1$
+                                    report(ActionMessages.ManageMethodBreakpointActionDelegate_CantAdd, part); 
                                     return Status.OK_STATUS;
                                 }
                                 String typeName = locator.getTypeName();
                                 String methodSignature = locator.getMethodSignature();
                                 if (methodSignature == null) {
-                                    report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); //$NON-NLS-1$
+                                    report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); 
                                     return Status.OK_STATUS;
                                 }
                                 // check if this method breakpoint already
@@ -310,7 +310,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     } else if (selection instanceof IStructuredSelection) {
                         IMethod[] members = getMethods((IStructuredSelection) selection);
                         if (members.length == 0) {
-                            report(ActionMessages.ToggleBreakpointAdapter_9, part); //$NON-NLS-1$
+                            report(ActionMessages.ToggleBreakpointAdapter_9, part); 
                             return Status.OK_STATUS;
                         }
                         for (int i = 0, length = members.length; i < length; i++) {
@@ -458,7 +458,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             compilationUnit.accept(locator);
                             String fieldName = locator.getFieldName();
                             if (fieldName == null) {
-                                report(ActionMessages.ManageWatchpointActionDelegate_CantAdd, part); //$NON-NLS-1$
+                                report(ActionMessages.ManageWatchpointActionDelegate_CantAdd, part); 
                                 return Status.OK_STATUS;
                             }
                             String typeName = locator.getTypeName();
@@ -482,7 +482,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     } else if (selection instanceof IStructuredSelection) {
                         IField[] members = getFields((IStructuredSelection) selection);
                         if (members.length == 0) {
-                            report(ActionMessages.ToggleBreakpointAdapter_10, part); //$NON-NLS-1$
+                            report(ActionMessages.ToggleBreakpointAdapter_10, part); 
                             return Status.OK_STATUS;
                         }
                         for (int i = 0, length = members.length; i < length; i++) {

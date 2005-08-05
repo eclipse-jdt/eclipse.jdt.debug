@@ -88,7 +88,7 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 	}
 	
 	protected void typeHierarchyError() {
-		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1); //$NON-NLS-1$
+		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1); 
 	}
 
 }
