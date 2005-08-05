@@ -15,8 +15,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -113,7 +113,7 @@ public class DisplayAction extends EvaluateAction {
      * TODO: illegal internal reference to IInternalDebugUIConstants
      */
     public static String trimDisplayResult(String result) {
-        int max = DebugUITools.getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+        int max = DebugUITools.getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
         if (max > 0 && result.length() > max) {
             result = result.substring(0, max) + "..."; //$NON-NLS-1$
         }

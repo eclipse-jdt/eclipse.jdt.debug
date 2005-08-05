@@ -29,8 +29,8 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -98,6 +98,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
 		fCacheMap= new HashMap();
 	}
 	
@@ -361,7 +362,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST) ||
-				property.equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
+				property.equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS) ||
+				property.equals(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
 			populateDetailFormattersMap();
 			fCacheMap.clear();
 			// If a Java stack frame is selected in the Debug view, fire a change event on
@@ -654,7 +656,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @return
 	 */
 	private static int getMaxDetailLength() {
-		return DebugUITools.getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+		return DebugUITools.getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
 	}
 	
 }
