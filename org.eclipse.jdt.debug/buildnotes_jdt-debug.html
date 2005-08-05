@@ -9,10 +9,41 @@
 </head>
 <body>
 
-<h1>
-Eclipse 3.2 Java Debug Build Notes&nbsp;<br>
-</h1>
-July 26, 2005
+<h1> Eclipse 3.2 Java Debug Build Notes&nbsp;</h1>
+<h2>Aug 8, 2005</h2>
+<h3>API Changes</h3>
+<ol>
+  <li> 
+    <h4>API contract changes to IJavaReferenceType</h4>
+  </li>
+  <blockquote> 
+    <h4><strong>What is affected:</strong> Clients that call <code>IJavaReferenceType.getClassLoaderObject()</code>.</h4>
+    <p><strong>Description:</strong> In Eclipse 3.1, the method <code>org.eclipse.jdt.debug.core.IJavaReferenceType.getClassLoaderObject()</code> 
+      was added to <code>IJavaReferenceType</code>. The method was not specified 
+      to return <code>null</code>, but could. In Eclipse 3.2, the specification 
+      has been updated to indicate that <code>null</code> is a valid return value. 
+      The behavior of the method has not changed, but callers should be aware 
+      that <code>null</code> can be returned and should add appropriate checks.</p>
+    <p><strong>Action required:</strong> Clients calling <code>IJavaReferenceType.getClassLoaderObject()</code> 
+      should be modified to handle <code>null</code> as a return value.</p>
+  </blockquote>
+</ol>
+<h3>Enhancements</h3>
+<ol>
+  <li>Evaluations in the Java debugger are now supported in the context of array 
+    objects. The user may select a variable in the Variables View that references 
+    an array and enter an expression in the details area using <code>this</code> 
+    to refer to the array - for example, <code>&quot;this.length</code>&quot;. 
+    Code assist also works for arrays. The API for evaluations has not changed 
+    although the behavior has. In releases prior to 3.2, <code>IAstEvaluationEngine</code> 
+    used to throw an exception when an evaluation was attempted for a receiver 
+    object that was an array. In 3.2, the evaluation proceeds.</li>
+</ol>
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105965">105965</a>: IJavaReferenceType.getClassLoaderObejct() 
+can return null&nbsp; 
+<h2>July 26, 2005 </h2>
 <h3>
 Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=103700">103700</a>: ClassCastException when evaluating assigment of array of interfaces<br>
