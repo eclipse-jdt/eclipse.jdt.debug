@@ -507,9 +507,9 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		setVMInstall(vm);
 		setVMInstallType(type);
 		if (vm != null) {
-			setHomeDirectory(vm.getInstallLocation());	
+			setHomeDirectory(vm.getInstallLocation());
+			fLibraryContentProvider.setLibraries(JavaRuntime.getLibraryLocations(getVMInstall()));
 		}
-		fLibraryContentProvider.setLibraries(JavaRuntime.getLibraryLocations(getVMInstall()));
 		update();
 	}
 	
@@ -531,7 +531,17 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 * Updates libraries based on settings
 	 */
 	public void update() {
-		LibraryLocation[] libs = fLibraryContentProvider.getLibraries();
+		LibraryLocation[] libs = null;
+		if (getVMInstall() == null) {
+			File homeDirectory = getHomeDirectory();
+			if (homeDirectory == null) {
+				libs = new LibraryLocation[0];
+			} else {
+				libs = getVMInstallType().getDefaultLibraryLocations(homeDirectory);
+			}
+		} else {
+			libs = fLibraryContentProvider.getLibraries();
+		}
 		fLibraryContentProvider.setLibraries(libs);
 		updateButtons();
 		IStatus status = new StatusInfo();
