@@ -460,12 +460,17 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 * The "default" button has been toggled
 	 */
 	protected void handleRestoreDefault() {
-		File installLocation = getVMInstall().getInstallLocation();
+		final IVMInstall vmInstall = getVMInstall();
 		LibraryLocation[] libs = null;
-		if (installLocation == null) {
+		if (vmInstall == null) {
 			libs = new LibraryLocation[0];
 		} else {
-			libs = getVMInstallType().getDefaultLibraryLocations(installLocation);
+			File installLocation = vmInstall.getInstallLocation();
+			if (installLocation == null) {
+				libs = new LibraryLocation[0];
+			} else {
+				libs = getVMInstallType().getDefaultLibraryLocations(installLocation);
+			}
 		}
 		fLibraryContentProvider.setLibraries(libs);
 		update();
