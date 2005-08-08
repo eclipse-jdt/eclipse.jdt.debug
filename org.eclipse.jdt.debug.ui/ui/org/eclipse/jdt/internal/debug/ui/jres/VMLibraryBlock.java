@@ -567,10 +567,12 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	
 	protected boolean isDefaultLocations() {
 		LibraryLocation[] libraryLocations = fLibraryContentProvider.getLibraries();
-		if (libraryLocations == null) {
+        IVMInstall install = getVMInstall();
+        
+		if (install == null || libraryLocations == null) {
 			return true;
 		}
-		File installLocation = getVMInstall().getInstallLocation();
+		File installLocation = install.getInstallLocation();
 		if (installLocation != null) {
 			LibraryLocation[] def = getVMInstallType().getDefaultLibraryLocations(installLocation);
 			if (def.length == libraryLocations.length) {
