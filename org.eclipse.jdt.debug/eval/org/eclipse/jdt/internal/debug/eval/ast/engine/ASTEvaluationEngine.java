@@ -182,12 +182,18 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				localTypesNames[i] = Signature.toString(locals[i].getGenericSignature()).replace('/', '.');
 			}
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
-			IJavaReferenceType receivingType;
-			if (frame.isStatic()) {
-				receivingType= frame.getReferenceType();
-			} else {
-				receivingType= (IJavaReferenceType) frame.getThis().getJavaType();
-			}
+			// Compile in context of declaring type to get proper visibility of locals and members.
+			// Compiling in context of receiving type potentially provides access to more members,
+			// but does not allow access to privates members in declaring type
+			IJavaReferenceType receivingType = frame.getReferenceType();
+			
+//			currently disabled - see bugs 99416 and 106492
+//			if (frame.isStatic()) {
+//				receivingType= frame.getReferenceType();
+//			} else {
+//				receivingType= (IJavaReferenceType) frame.getThis().getJavaType();
+//			}
+			
 			unit = parseCompilationUnit(mapper.getSource(receivingType, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
