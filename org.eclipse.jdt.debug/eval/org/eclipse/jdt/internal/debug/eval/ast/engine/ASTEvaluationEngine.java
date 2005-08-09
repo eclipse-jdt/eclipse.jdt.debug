@@ -237,12 +237,19 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		try {
 			IJavaProject javaProject = getJavaProject();
 			// replace all occurrences of 'this' with 'array_this'
-			String updatedSnippet = replaceThisReferences(snippet);
-			String[] localTypesNames= new String[]{arrayType.getName()};
+			snippet = replaceThisReferences(snippet);
+			String typeName = arrayType.getName();
+			String[] localTypesNames= new String[]{typeName};
 			String[] localVariables= new String[]{ArrayRuntimeContext.ARRAY_THIS_VARIABLE};
-			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, updatedSnippet);
+			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
 			
-			IJavaType[] javaTypes = getDebugTarget().getJavaTypes("java.lang.Object"); //$NON-NLS-1$
+			String recTypeName = "java.lang.Object"; //$NON-NLS-1$
+			int index = typeName.indexOf('$');
+			// if the argument is an inner type, compile in context of outer type so type is visible
+			if (index >= 0) {
+				recTypeName = typeName.substring(0, index);
+			}
+			IJavaType[] javaTypes = getDebugTarget().getJavaTypes(recTypeName);
 			if (javaTypes.length > 0) {
 				IJavaReferenceType recType = (IJavaReferenceType) javaTypes[0];
 				unit = parseCompilationUnit(mapper.getSource(recType, getJavaProject()).toCharArray(), mapper.getCompilationUnitName(), javaProject);
