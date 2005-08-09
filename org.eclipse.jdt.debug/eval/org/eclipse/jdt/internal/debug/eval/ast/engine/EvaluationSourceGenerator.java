@@ -180,15 +180,15 @@ public class EvaluationSourceGenerator {
 		return objectToEvaluationSourceMapper;
 	}
 	
-	public String getSource(IJavaReferenceType type, IJavaProject javaProject) throws DebugException {
+	public String getSource(IJavaReferenceType type, IJavaProject javaProject, boolean isStatic) throws DebugException {
 		if (fSource == null) {
 			String baseSource= getTypeSourceFromProject(type.getName(), javaProject);
 			int lineNumber= getLineNumber((JDIReferenceType)type);
 			if (baseSource != null && lineNumber != -1) {
-				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, false, javaProject);
+				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, isStatic, javaProject);
 			}
 			if (fSource == null) {
-				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, false);
+				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, isStatic);
 				createEvaluationSourceFromJDIObject(mapper);
 			}
 		}

@@ -194,7 +194,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 //				receivingType= (IJavaReferenceType) frame.getThis().getJavaType();
 //			}
 			
-			unit = parseCompilationUnit(mapper.getSource(receivingType, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			unit = parseCompilationUnit(mapper.getSource(receivingType, javaProject, frame.isStatic()).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
@@ -258,7 +258,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			IJavaType[] javaTypes = getDebugTarget().getJavaTypes(recTypeName);
 			if (javaTypes.length > 0) {
 				IJavaReferenceType recType = (IJavaReferenceType) javaTypes[0];
-				unit = parseCompilationUnit(mapper.getSource(recType, getJavaProject()).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+				unit = parseCompilationUnit(mapper.getSource(recType, getJavaProject(), false).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 			} else {
 				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, 
 						EvaluationEngineMessages.ASTEvaluationEngine_1, null);
@@ -305,7 +305,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		mapper = new EvaluationSourceGenerator(new String[0], new String[0], snippet);
 
 		try {
-			unit = parseCompilationUnit(mapper.getSource(type, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			unit = parseCompilationUnit(mapper.getSource(type, javaProject, false).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
