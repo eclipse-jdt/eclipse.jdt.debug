@@ -8,12 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.tests.targets;
 
-public class ArrayDetailTests {
+public class ArrayDetailTestsDef {
 
 	public static void main(String[] args) {
-		new ArrayDetailTests().test();
+		new ArrayDetailTestsDef().test();
 	}
 	
 	public class InnerType {
@@ -44,7 +43,7 @@ public class ArrayDetailTests {
 		Runnable[] runs = new Runnable[5];
 		String[] strings = new String[5];
 		int[] primitives = new int[5];
-		ArrayDetailTests[] outers = new ArrayDetailTests[5];
+		ArrayDetailTestsDef[] outers = new ArrayDetailTestsDef[5];
 		InnerType[] middle = new InnerType[5];
 		InnerType.SecondInnerType[] inners = new InnerType.SecondInnerType[5];
 		for (int i = 0; i < outers.length; i++) {
@@ -57,7 +56,7 @@ public class ArrayDetailTests {
 			};
 			strings[i] = Integer.toBinaryString(i);
 			primitives[i] = i;
-			outers[i] = new ArrayDetailTests();
+			outers[i] = new ArrayDetailTestsDef();
 			middle[i] = new InnerType();
 			inners[i] = middle[i].newObject();
 		}

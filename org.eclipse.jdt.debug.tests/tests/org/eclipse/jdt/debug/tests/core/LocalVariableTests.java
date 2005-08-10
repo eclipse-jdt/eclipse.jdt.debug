@@ -101,14 +101,20 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 		}		
 	}		
 	
-	protected void doArrayDetailTest(String varName, String expectedDetails) throws Exception {
-		String typeName = "org.eclipse.debug.tests.targets.ArrayDetailTests";
-		
-		ILineBreakpoint bp = createLineBreakpoint(56, typeName);		
+	protected void doArrayDetailTestNonDefPkg(String varName, String expectedDetails) throws Exception {
+		doArrayDetailTest(varName, expectedDetails, "org.eclipse.debug.tests.targets.ArrayDetailTests", 64);
+	}
+	
+	protected void doArrayDetailTestDefPkg(String varName, String expectedDetails) throws Exception {
+		doArrayDetailTest(varName, expectedDetails, "ArrayDetailTestsDef", 63);
+	}	
+	
+	protected void doArrayDetailTest(String varName, String expectedDetails, String mainName, int lineNumber) throws Exception {
+		ILineBreakpoint bp = createLineBreakpoint(lineNumber, mainName);		
 		IDebugModelPresentation presentation = DebugUITools.newDebugModelPresentation();
 		IJavaThread thread= null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp);
+			thread= launchToLineBreakpoint(mainName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget)frame.getDebugTarget();
@@ -129,7 +135,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}		
-	}
+	}	
 
 	public void detailComputed(IValue value, String result) {
 		synchronized (this) {
@@ -140,22 +146,50 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 	}
 	
 	public void testStringArrayDetails() throws Exception {
-		doArrayDetailTest("strings", "[0, 1, 10, 11, 100]");
+		doArrayDetailTestNonDefPkg("strings", "[0, 1, 10, 11, 100]");
 	}
 	
 	public void testIntArrayDetails() throws Exception {
-		doArrayDetailTest("primitives", "[0, 1, 2, 3, 4]");
+		doArrayDetailTestNonDefPkg("primitives", "[0, 1, 2, 3, 4]");
 	}
 	
 	public void testTopLevelTypeArrayDetails() throws Exception {
-		doArrayDetailTest("outers", "[OutermostObject, OutermostObject, OutermostObject, OutermostObject, OutermostObject]");
+		doArrayDetailTestNonDefPkg("outers", "[OutermostObject, OutermostObject, OutermostObject, OutermostObject, OutermostObject]");
 	}
 	
 	public void testInnerTypeDetails() throws Exception {
-		doArrayDetailTest("middle", "[anInnerObject, anInnerObject, anInnerObject, anInnerObject, anInnerObject]");
+		doArrayDetailTestNonDefPkg("middle", "[anInnerObject, anInnerObject, anInnerObject, anInnerObject, anInnerObject]");
 	}
 	
 	public void testNestedInnerTypeDetails() throws Exception {
-		doArrayDetailTest("inners", "[aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject]");
-	}	
+		doArrayDetailTestNonDefPkg("inners", "[aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject]");
+	}
+	
+	public void testInterfaceTypeDetails() throws Exception {
+		doArrayDetailTestNonDefPkg("runs", "[Runnable, Runnable, Runnable, Runnable, Runnable]");
+	}
+	
+	public void testStringArrayDetailsDefPkg() throws Exception {
+		doArrayDetailTestDefPkg("strings", "[0, 1, 10, 11, 100]");
+	}
+	
+	public void testIntArrayDetailsDefPkg() throws Exception {
+		doArrayDetailTestDefPkg("primitives", "[0, 1, 2, 3, 4]");
+	}
+	
+	public void testTopLevelTypeArrayDetailsDefPkg() throws Exception {
+		doArrayDetailTestDefPkg("outers", "[OutermostObject, OutermostObject, OutermostObject, OutermostObject, OutermostObject]");
+	}
+	
+	public void testInnerTypeDetailsDefPkg() throws Exception {
+		doArrayDetailTestDefPkg("middle", "[anInnerObject, anInnerObject, anInnerObject, anInnerObject, anInnerObject]");
+	}
+	
+	public void testNestedInnerTypeDetailsDefPkg() throws Exception {
+		doArrayDetailTestDefPkg("inners", "[aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject]");
+	}
+	
+	public void testInterfaceTypeDetailsDefPkg() throws Exception {
+		doArrayDetailTestDefPkg("runs", "[Runnable, Runnable, Runnable, Runnable, Runnable]");
+	}		
 }
