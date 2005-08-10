@@ -222,6 +222,11 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 		                }
 		                superClass= superClass.superclass();
 		            }
+	        	} else if (valueType instanceof InterfaceType) {
+	        		// an interface can be assigned to an object
+	                if (type.signature().equals("Ljava/lang/Object;")) { //$NON-NLS-1$
+	                    return;
+	                }
 	        	}
 	        } else if (type instanceof InterfaceType) {
 	        	if (valueType instanceof InterfaceType) {
