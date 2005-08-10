@@ -136,7 +136,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("StackTraces");
 		createLaunchConfiguration("ConsoleInput");
 		createLaunchConfiguration("PrintConcatenation");
-		createLaunchConfiguration("VariableDetails");  
+		createLaunchConfiguration("VariableDetails"); 
+		createLaunchConfiguration("org.eclipse.debug.tests.targets.ArrayDetailTests");
 	}
 	
 	/**

@@ -11,14 +11,20 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
-public class LocalVariableTests extends AbstractDebugTest {
+public class LocalVariableTests extends AbstractDebugTest implements IValueDetailListener {
+	
+	String fDetail = null;
 	
 	public LocalVariableTests(String name) {
 		super(name);
@@ -94,4 +100,62 @@ public class LocalVariableTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}		
+	
+	protected void doArrayDetailTest(String varName, String expectedDetails) throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.ArrayDetailTests";
+		
+		ILineBreakpoint bp = createLineBreakpoint(56, typeName);		
+		IDebugModelPresentation presentation = DebugUITools.newDebugModelPresentation();
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IJavaDebugTarget target = (IJavaDebugTarget)frame.getDebugTarget();
+			IVariable var = findVariable(frame, varName);
+			assertNotNull("Could not find variable " + varName, var);
+			IValue value = var.getValue();
+			
+			synchronized (this) {
+				fDetail = null;
+				presentation.computeDetail(value, this);
+				wait(DEFAULT_TIMEOUT);
+			}
+			assertNotNull("Details not computed", fDetail);
+			assertEquals(expectedDetails, fDetail);
+			
+		} finally {
+			presentation.dispose();
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
+	public void detailComputed(IValue value, String result) {
+		synchronized (this) {
+			fDetail = result;
+			notifyAll();
+		}
+		
+	}
+	
+	public void testStringArrayDetails() throws Exception {
+		doArrayDetailTest("strings", "[0, 1, 10, 11, 100]");
+	}
+	
+	public void testIntArrayDetails() throws Exception {
+		doArrayDetailTest("primitives", "[0, 1, 2, 3, 4]");
+	}
+	
+	public void testTopLevelTypeArrayDetails() throws Exception {
+		doArrayDetailTest("outers", "[OutermostObject, OutermostObject, OutermostObject, OutermostObject, OutermostObject]");
+	}
+	
+	public void testInnerTypeDetails() throws Exception {
+		doArrayDetailTest("middle", "[anInnerObject, anInnerObject, anInnerObject, anInnerObject, anInnerObject]");
+	}
+	
+	public void testNestedInnerTypeDetails() throws Exception {
+		doArrayDetailTest("inners", "[aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject, aSecondInnerObject]");
+	}	
 }
