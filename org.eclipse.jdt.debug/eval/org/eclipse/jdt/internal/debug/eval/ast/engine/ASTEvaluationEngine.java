@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -243,13 +244,21 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		try {
 			IJavaProject javaProject = getJavaProject();
 			// replace all occurrences of 'this' with 'array_this'
-			snippet = replaceThisReferences(snippet);
+			String newSnippet = replaceThisReferences(snippet);
 			String typeName = arrayType.getName();
 			String[] localTypesNames= new String[]{typeName};
 			String[] localVariables= new String[]{ArrayRuntimeContext.ARRAY_THIS_VARIABLE};
-			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
+			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, newSnippet);
+			
+			IJavaType componentType = arrayType.getComponentType();
+			while (componentType instanceof IJavaArrayType) {
+				componentType = ((IJavaArrayType)componentType).getComponentType();
+			}
 			
 			String recTypeName = "java.lang.Object"; //$NON-NLS-1$
+			if (componentType instanceof IJavaClassType) {
+				recTypeName = componentType.getName();
+			}			
 			int index = typeName.indexOf('$');
 			// if the argument is an inner type, compile in context of outer type so type is visible
 			if (index >= 0) {
