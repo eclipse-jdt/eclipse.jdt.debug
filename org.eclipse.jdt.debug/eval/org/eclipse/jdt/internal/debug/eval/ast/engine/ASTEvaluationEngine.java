@@ -243,22 +243,36 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		CompilationUnit unit = null;
 		try {
 			IJavaProject javaProject = getJavaProject();
-			// replace all occurrences of 'this' with 'array_this'
+			// replace all occurrences of 'this' with '_a_t'
 			String newSnippet = replaceThisReferences(snippet);
+			
+			int dimension = 1;
+			IJavaType componentType = arrayType.getComponentType();
+			while (componentType instanceof IJavaArrayType) {
+				componentType = ((IJavaArrayType)componentType).getComponentType();
+				dimension++;
+			}
+			
+			// Primitive arrays are evaluated in the context of Object.
+			// Arrays with a base component type of a class or interface are treated
+			// as Object arrays and evaluated in Object. 
+			String recTypeName = "java.lang.Object"; //$NON-NLS-1$
 			String typeName = arrayType.getName();
+			if (componentType instanceof IJavaReferenceType) {
+				StringBuffer buf = new StringBuffer();
+				buf.append("java.lang.Object"); //$NON-NLS-1$
+				for (int i = 0; i < dimension; i++) {
+					buf.append("[]"); //$NON-NLS-1$
+				}
+				typeName = buf.toString();
+			}
+			
+			
 			String[] localTypesNames= new String[]{typeName};
 			String[] localVariables= new String[]{ArrayRuntimeContext.ARRAY_THIS_VARIABLE};
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, newSnippet);
 			
-			IJavaType componentType = arrayType.getComponentType();
-			while (componentType instanceof IJavaArrayType) {
-				componentType = ((IJavaArrayType)componentType).getComponentType();
-			}
-			
-			String recTypeName = "java.lang.Object"; //$NON-NLS-1$
-			if (componentType instanceof IJavaClassType) {
-				recTypeName = componentType.getName();
-			}			
+						
 			int index = typeName.indexOf('$');
 			// if the argument is an inner type, compile in context of outer type so type is visible
 			if (index >= 0) {
