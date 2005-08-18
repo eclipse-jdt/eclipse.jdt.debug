@@ -107,19 +107,19 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		
 		group.setText(LauncherMessages.WorkingDirectoryBlock_12); 
 				
-		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fWorkingDirText.setLayoutData(gd);
-		fWorkingDirText.setFont(font);
-		fWorkingDirText.addModifyListener(fListener);
-		
 		fUseDefaultWorkingDirButton = new Button(group,SWT.CHECK);
 		fUseDefaultWorkingDirButton.setText(LauncherMessages.JavaArgumentsTab_Use_de_fault_working_directory_4); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
 		fUseDefaultWorkingDirButton.addSelectionListener(fListener);
+		
+		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fWorkingDirText.setLayoutData(gd);
+		fWorkingDirText.setFont(font);
+		fWorkingDirText.addModifyListener(fListener);
 		
 		Composite buttonComp = new Composite(group, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
