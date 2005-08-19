@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
+import java.io.File;
+
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -30,4 +32,29 @@ public class MacOSXVMInstall extends AbstractVMInstall {
 		
 		return null;
 	}
+
+    public String getJavaVersion() {
+        File installLocation= getInstallLocation();
+        if (installLocation != null) {
+            File executable= MacOSXVMInstallType.findJavaExecutable(installLocation);
+            if (executable != null) {
+                MacOSXVMInstallType installType= (MacOSXVMInstallType) getVMInstallType();        
+                String vmVersion= installType.getVMVersion(installLocation, executable);
+                // strip off extra info
+                StringBuffer version= new StringBuffer();
+                for (int i= 0; i < vmVersion.length(); i++) {
+                    char ch= vmVersion.charAt(i);
+                    if (Character.isDigit(ch) || ch == '.') {
+                        version.append(ch);
+                    } else {
+                        break;
+                    }
+                }
+                if (version.length() > 0) {
+                    return version.toString();
+                }
+            }
+        }
+        return null;
+    }
 }

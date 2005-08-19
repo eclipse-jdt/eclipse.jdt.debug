@@ -239,4 +239,11 @@ public class MacOSXVMInstallType extends StandardVMType {
 		// fall back
 		return super.getDefaultJavadocLocation(installLocation);
 	}
+
+	/*
+	 * Overridden to make it visible.
+	 */
+	protected String getVMVersion(File javaHome, File javaExecutable) {
+		return super.getVMVersion(javaHome, javaExecutable);
+	}
 }
