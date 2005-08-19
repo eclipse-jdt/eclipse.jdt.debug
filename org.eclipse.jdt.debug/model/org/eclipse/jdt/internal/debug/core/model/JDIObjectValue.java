@@ -267,10 +267,12 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 					}
 				}
 				if (enclosingThis != null) {
-					res= (JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, res.getUnderlyingObject())).getValue();
+				    JDIDebugTarget debugTarget = (JDIDebugTarget)getDebugTarget();
+				    JDIFieldVariable fieldVariable = new JDIFieldVariable(debugTarget, enclosingThis, res.getUnderlyingObject());
+				    res= (JDIObjectValue)fieldVariable.getValue();
 				} else {
-					// it is possible to return null
-					return null;
+				    // it is possible to return null
+				    return null;
 				}
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); 
