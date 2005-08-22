@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
@@ -110,7 +111,11 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		} else {
 			// case insensitive - should find the file
 			assertEquals("Expected 1 result", 1, objects.length);
-			assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
+			if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+				assertEquals("Wrong file", new File(container.getDirectory(), "oRg/eClIpSe/dEbUg/tEsTs/tArGeTs/INfInItELOop.jaVa"), ((LocalFileStorage)objects[0]).getFile());
+			} else {
+				assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
+			}
 		}
 	}		
 }
