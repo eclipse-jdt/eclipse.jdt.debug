@@ -18,9 +18,6 @@ public class DisplayMessages extends NLS {
 	public static String ClearDisplay_label;
 	public static String ClearDisplay_tooltip;
 
-	public static String DisplayCompletionProcessor_An_exception_occurred_during_code_completion_2;
-	public static String DisplayCompletionProcessor_Problems_during_completion_1;
-
 	public static String DisplayView_Co_ntent_Assist_Ctrl_Space_1;
 	public static String DisplayView_Content_Assist_2;
 	public static String DisplayView_Copy_description;
@@ -43,9 +40,6 @@ public class DisplayMessages extends NLS {
 	public static String find_replace_action_image;
 	public static String find_replace_action_description;
 	public static String JavaInspectExpression_0;
-	public static String DetailsCompletionProcessor_0;
-	public static String DetailsCompletionProcessor_1;
-	public static String DetailsCompletionProcessor_2;
 
 	static {
 		// load message values from bundle file

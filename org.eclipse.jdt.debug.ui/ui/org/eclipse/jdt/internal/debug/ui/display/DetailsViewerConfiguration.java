@@ -11,6 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.display;
 
 
+import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentValueContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 
 public class DetailsViewerConfiguration extends DisplayViewerConfiguration {
@@ -19,6 +21,6 @@ public class DetailsViewerConfiguration extends DisplayViewerConfiguration {
 	 * @see JDIViewerConfiguration#getContentAssistantProcessor()
 	 */
 	public IContentAssistProcessor getContentAssistantProcessor() {
-		return new DetailsCompletionProcessor();
+		return new JavaDebugContentAssistProcessor(new CurrentValueContext());
 	}
 }

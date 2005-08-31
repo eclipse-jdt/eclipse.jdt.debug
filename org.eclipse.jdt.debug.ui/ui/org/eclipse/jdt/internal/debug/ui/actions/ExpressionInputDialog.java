@@ -20,7 +20,8 @@ import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
-import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -73,7 +74,7 @@ public class ExpressionInputDialog extends Dialog {
     // Source viewer widgets
     protected Label fEvaluateLabel;
     protected JDISourceViewer fSourceViewer;
-    protected DisplayCompletionProcessor fCompletionProcessor;
+    protected IContentAssistProcessor fCompletionProcessor;
     protected IDocumentListener fDocumentListener;
     protected HandlerSubmission fSubmission;
     // Text for error reporting
@@ -276,9 +277,9 @@ public class ExpressionInputDialog extends Dialog {
 	 * Return the completion processor associated with this viewer.
 	 * @return DisplayConditionCompletionProcessor
 	 */
-	protected DisplayCompletionProcessor getCompletionProcessor() {
+	protected IContentAssistProcessor getCompletionProcessor() {
 		if (fCompletionProcessor == null) {
-			fCompletionProcessor= new DisplayCompletionProcessor();
+			fCompletionProcessor= new JavaDebugContentAssistProcessor(new CurrentFrameContext());
 		}
 		return fCompletionProcessor;
 	}

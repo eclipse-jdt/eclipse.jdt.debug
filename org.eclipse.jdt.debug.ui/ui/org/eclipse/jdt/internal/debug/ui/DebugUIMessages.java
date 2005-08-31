@@ -276,8 +276,6 @@ public class DebugUIMessages extends NLS {
 	public static String EditLogicalStructureDialog_29;
 	public static String EditLogicalStructureDialog_30;
 	public static String EditLogicalStructureDialog_31;
-	public static String BreakpointConditionCompletionProcessor_0;
-	public static String CodeSnippetCompletionProcessor_0;
 
 	static {
 		// load message values from bundle file

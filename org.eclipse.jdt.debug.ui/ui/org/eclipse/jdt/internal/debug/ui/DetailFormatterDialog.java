@@ -29,6 +29,9 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
@@ -75,7 +78,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 /**
  * Dialog for edit detail formatter.
  */
-public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCompletionProcessor.ITypeProvider {
+public class DetailFormatterDialog extends StatusDialog implements ITypeProvider {
 	
 	/**
 	 * The detail formatter to edit.
@@ -240,7 +243,7 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 		partitioner.connect(document);		
 		fSnippetViewer.configure(new DisplayViewerConfiguration() {
 			public IContentAssistProcessor getContentAssistantProcessor() {
-				return new CodeSnippetCompletionProcessor(DetailFormatterDialog.this);
+				return new JavaDebugContentAssistProcessor(new DynamicTypeContext(DetailFormatterDialog.this));
 			}
 		});
 		fSnippetViewer.setEditable(true);

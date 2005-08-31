@@ -13,6 +13,8 @@ package org.eclipse.jdt.internal.debug.ui.display;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
+import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
@@ -40,7 +42,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 	}
 
 	public IContentAssistProcessor getContentAssistantProcessor() {
-		return new DisplayCompletionProcessor();
+		return new JavaDebugContentAssistProcessor(new CurrentFrameContext());
 	}
 	
 	/* (non-Javadoc)

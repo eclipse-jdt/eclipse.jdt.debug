@@ -31,6 +31,9 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
+import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
@@ -82,7 +85,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  */
-public class EditLogicalStructureDialog extends StatusDialog implements Listener, ISelectionChangedListener, IDocumentListener, CodeSnippetCompletionProcessor.ITypeProvider {
+public class EditLogicalStructureDialog extends StatusDialog implements Listener, ISelectionChangedListener, IDocumentListener, ITypeProvider {
 
 	public class AttributesContentProvider implements IStructuredContentProvider {
 		
@@ -368,7 +371,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		if (fViewerConfiguration == null) {
 			fViewerConfiguration= new DisplayViewerConfiguration() {
 				public IContentAssistProcessor getContentAssistantProcessor() {
-					return new CodeSnippetCompletionProcessor(EditLogicalStructureDialog.this);
+					return new JavaDebugContentAssistProcessor(new DynamicTypeContext(EditLogicalStructureDialog.this));
 				}
 			};
 		}

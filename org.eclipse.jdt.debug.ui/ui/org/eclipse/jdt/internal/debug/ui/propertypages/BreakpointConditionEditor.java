@@ -18,10 +18,12 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.internal.debug.ui.BreakpointConditionCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
+import org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -54,7 +56,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 public class BreakpointConditionEditor {
 	
 	private JDISourceViewer fViewer;
-	private BreakpointConditionCompletionProcessor fCompletionProcessor;
+	private IContentAssistProcessor fCompletionProcessor;
 		
 	private boolean fIsValid;
 		
@@ -89,9 +91,41 @@ public class BreakpointConditionEditor {
 		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
 		document.setDocumentPartitioner(partitioner);
 		partitioner.connect(document);
+		
+		// we can only do code assist if there is an associated type
+		IJavaDebugContentAssistContext context = null;
+		IType type= BreakpointUtils.getType(fBreakpoint);
+		if (type == null) {
+			context = new TypeContext(null, -1);
+		} else {
+			try {	
+				String source= null;
+				ICompilationUnit compilationUnit= type.getCompilationUnit();
+				if (compilationUnit != null) {
+					source= compilationUnit.getSource();
+				} else {
+					IClassFile classFile= type.getClassFile();
+					if (classFile != null) {
+						source= classFile.getSource();
+					}
+				}
+				int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
+				int position= -1;
+				if (source != null && lineNumber != -1) {
+					try {
+						position= new Document(source).getLineOffset(lineNumber - 1);
+					} catch (BadLocationException e) {
+					}
+				}
+				context = new TypeContext(type, position);
+			} catch (CoreException e) {
+			}
+		}
+		fCompletionProcessor = new JavaDebugContentAssistProcessor(context);
+		
 		fViewer.configure(new DisplayViewerConfiguration() {
 			public IContentAssistProcessor getContentAssistantProcessor() {
-					return getCompletionProcessor();
+					return fCompletionProcessor;
 			}
 		});
 		fViewer.setEditable(true);
@@ -115,34 +149,6 @@ public class BreakpointConditionEditor {
             }
         };
 		fViewer.getDocument().addDocumentListener(fDocumentListener);
-		
-		// we can only do code assist if there is an associated type
-		IType type= BreakpointUtils.getType(fBreakpoint);
-		if (type != null) {
-			try {
-				getCompletionProcessor().setType(type);			
-				String source= null;
-				ICompilationUnit compilationUnit= type.getCompilationUnit();
-				if (compilationUnit != null) {
-					source= compilationUnit.getSource();
-				} else {
-					IClassFile classFile= type.getClassFile();
-					if (classFile != null) {
-						source= classFile.getSource();
-					}
-				}
-				int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
-				int position= -1;
-				if (source != null && lineNumber != -1) {
-					try {
-						position= new Document(source).getLineOffset(lineNumber - 1);
-					} catch (BadLocationException e) {
-					}
-				}
-				getCompletionProcessor().setPosition(position);
-			} catch (CoreException e) {
-			}
-		}
 			
 		gd= (GridData)fViewer.getControl().getLayoutData();
 		gd.heightHint= fPage.convertHeightInCharsToPixels(10);
@@ -184,17 +190,6 @@ public class BreakpointConditionEditor {
 				fPage.removeErrorMessage(fErrorMessage);
 			}
 		}
-	}
-		
-	/**
-	 * Return the completion processor associated with this viewer.
-	 * @return BreakPointConditionCompletionProcessor
-	 */
-	protected BreakpointConditionCompletionProcessor getCompletionProcessor() {
-		if (fCompletionProcessor == null) {
-			fCompletionProcessor= new BreakpointConditionCompletionProcessor(null);
-		}
-		return fCompletionProcessor;
 	}
 
 	/**

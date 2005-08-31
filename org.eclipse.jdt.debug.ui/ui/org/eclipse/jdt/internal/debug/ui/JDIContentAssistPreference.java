@@ -14,7 +14,7 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.Hashtable;
 
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -46,10 +46,10 @@ public class JDIContentAssistPreference {
 		return getColor(store, key, textTools.getColorManager());
 	}
 	
-	private static DisplayCompletionProcessor getDisplayProcessor(ContentAssistant assistant) {
+	private static JavaDebugContentAssistProcessor getDisplayProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
-		if (p instanceof DisplayCompletionProcessor)
-			return  (DisplayCompletionProcessor) p;
+		if (p instanceof JavaDebugContentAssistProcessor)
+			return  (JavaDebugContentAssistProcessor) p;
 		return null;
 	}
 	
@@ -61,7 +61,7 @@ public class JDIContentAssistPreference {
 	}
 	
 	private static void configureDisplayProcessor(ContentAssistant assistant, IPreferenceStore store) {
-		DisplayCompletionProcessor dcp= getDisplayProcessor(assistant);
+		JavaDebugContentAssistProcessor dcp= getDisplayProcessor(assistant);
 		if (dcp == null) {
 			return;
 		}
@@ -137,7 +137,7 @@ public class JDIContentAssistPreference {
 	
 	
 	private static void changeDisplayProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
-		DisplayCompletionProcessor dcp= getDisplayProcessor(assistant);
+		JavaDebugContentAssistProcessor dcp= getDisplayProcessor(assistant);
 		if (dcp == null) {
 			return;
 		}
