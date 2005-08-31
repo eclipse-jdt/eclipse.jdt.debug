@@ -11,13 +11,27 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaType;
 
+/**
+ * Opens the receiving type of a stack frame.
+ */
 public class OpenReceivingTypeAction extends OpenStackFrameAction {
 
-	protected String getTypeNameToOpen(IDebugElement frame) throws DebugException {
-		return ((IJavaStackFrame)frame).getReceivingTypeName();
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#getTypeToOpen(org.eclipse.debug.core.model.IDebugElement)
+	 */
+	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
+		if (element instanceof IJavaStackFrame) {
+			IJavaStackFrame frame = (IJavaStackFrame) element;
+			if (frame.isStatic()) {
+				return frame.getReferenceType();
+			}
+			return frame.getThis().getJavaType();
+		}
+		return null;
 	}
 }

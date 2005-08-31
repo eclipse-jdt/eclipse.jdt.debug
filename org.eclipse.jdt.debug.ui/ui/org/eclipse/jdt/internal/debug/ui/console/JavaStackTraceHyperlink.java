@@ -18,10 +18,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -121,39 +120,32 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @return the source element associated with the given type name,
 	 * or <code>null</code> if none
 	 */
-	protected Object getSourceElement(String typeName) {
-		ISourceLocator locator = getSourceLocator();
+	protected Object getSourceElement(String typeName) throws CoreException {
+		ILaunch launch = getLaunch();
 		Object result = null;
-		if (locator != null) {
-			result = OpenTypeAction.findSourceElement(typeName, locator);
+		if (launch != null) {
+			result = JavaDebugUtils.resolveSourceElement(typeName, getLaunch());
 		}
 		if (result == null) {
-			try {
-				// search for the type in the workspace
-				result = OpenTypeAction.findTypeInWorkspace(typeName);
-			} catch (JavaModelException e) {
-			}
+			// search for the type in the workspace
+			result = OpenTypeAction.findTypeInWorkspace(typeName);
 		}
 		return result;
 	}
 	
 	/**
-	 * Returns the source locator associated with this hyperlink, or
+	 * Returns the launch associated with this hyperlink, or
 	 *  <code>null</code> if none
 	 * 
-	 * @return the source locator associated with this hyperlink, or
+	 * @return the launch associated with this hyperlink, or
 	 *  <code>null</code> if none
 	 */
-	private ISourceLocator getSourceLocator() {
-		ISourceLocator sourceLocator = null;
+	private ILaunch getLaunch() {
 		IProcess process = (IProcess) getConsole().getAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS);
 		if (process != null) {
-		    ILaunch launch = process.getLaunch();
-			if (launch != null) {
-				sourceLocator = launch.getSourceLocator();
-			}  
+		    return process.getLaunch();
 		}
-		return sourceLocator;
+		return null;
 	}
 
 	/**

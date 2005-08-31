@@ -50,7 +50,7 @@ public class JavaDebugUtils {
      * @since 3.2
      */
     public static IType resolveDeclaringType(IJavaStackFrame frame) throws CoreException {
-        IJavaElement javaElement = resolveSourceElement(frame.getLaunch(), frame);
+        IJavaElement javaElement = resolveJavaElement(frame, frame.getLaunch());
         if (javaElement != null) {
         	return resolveType(frame.getDeclaringTypeName(), javaElement);
         }
@@ -66,7 +66,7 @@ public class JavaDebugUtils {
      * @exception CoreException if an exception occurrs during the resolution
      */
     public static IType resolveType(IJavaValue value) throws CoreException {
-        IJavaElement javaElement = resolveSourceElement(value.getLaunch(), value);
+        IJavaElement javaElement = resolveJavaElement(value, value.getLaunch());
         if (javaElement != null) {
         	return resolveType(value.getJavaType().getName(), javaElement);
         }
@@ -83,7 +83,7 @@ public class JavaDebugUtils {
      * @throws CoreException
      */
     public static IType resolveType(String qualifiedName, ILaunch context) throws CoreException {
-    	IJavaElement element = resolveSourceElement(context, generateSourceName(qualifiedName));
+    	IJavaElement element = resolveJavaElement(generateSourceName(qualifiedName), context);
     	if (element != null ) {
     		return resolveType(qualifiedName, element);
     	}
@@ -208,27 +208,16 @@ public class JavaDebugUtils {
     }
     
     /**
-     * Returns the Java source element corresponding to the given object or <code>null</code>
+     * Returns the Java element corresponding to the given object or <code>null</code>
      * if none, in the context of the given launch.
      * 
      * @param launch provides source locator
-     * @param object object to resolve source for
-     * @return corresponding source element or <code>null</code>
+     * @param object object to resolve Java model element for
+     * @return corresponding Java element or <code>null</code>
      * @throws CoreException
      */
-    private static IJavaElement resolveSourceElement(ILaunch launch, Object object) throws CoreException {
-    	ISourceLocator sourceLocator = launch.getSourceLocator();
-    	Object sourceElement = null;
-		if (sourceLocator instanceof ISourceLookupDirector) {
-			ISourceLookupDirector director = (ISourceLookupDirector) sourceLocator;
-			Object[] objects = director.findSourceElements(object);
-			if (objects.length > 0) {
-				 sourceElement = objects[0];
-			}
-		}
-		if (sourceElement != null) {
-			
-		}
+    private static IJavaElement resolveJavaElement(Object object, ILaunch launch) throws CoreException {
+    	Object sourceElement = resolveSourceElement(object, launch);
         IJavaElement javaElement = null;
         if (sourceElement instanceof IJavaElement) {
             javaElement = (IJavaElement) sourceElement;
@@ -245,7 +234,28 @@ public class JavaDebugUtils {
             return null;
         }
         return javaElement;
-    }    
+    }  
+    
+    /**
+     * Returns the source element corresponding to the given object or <code>null</code>
+     * if none, in the context of the given launch.
+     * 
+     * @param launch provides source locator
+     * @param object object to resolve source element for
+     * @return corresponding source element or <code>null</code>
+     * @throws CoreException
+     */
+    public static Object resolveSourceElement(Object object, ILaunch launch) throws CoreException {
+    	ISourceLocator sourceLocator = launch.getSourceLocator();
+		if (sourceLocator instanceof ISourceLookupDirector) {
+			ISourceLookupDirector director = (ISourceLookupDirector) sourceLocator;
+			Object[] objects = director.findSourceElements(object);
+			if (objects.length > 0) {
+				 return objects[0];
+			}
+		}
+		return null;
+    }      
 
     /**
      * Returns an array of simple type names that are

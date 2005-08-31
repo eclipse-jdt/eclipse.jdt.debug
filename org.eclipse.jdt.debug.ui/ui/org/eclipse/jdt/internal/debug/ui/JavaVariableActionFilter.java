@@ -23,7 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction;
-import org.eclipse.jdt.internal.debug.ui.actions.OpenVariableTypeAction;
 import org.eclipse.ui.IActionFilter;
 
 public class JavaVariableActionFilter implements IActionFilter {
@@ -84,7 +83,7 @@ public class JavaVariableActionFilter implements IActionFilter {
 		return !var.getReferenceTypeName().equals(value.getReferenceTypeName());
 	}
 	protected String getTypeNameToOpen(String refType) {
-		refType = OpenVariableTypeAction.removeArray(refType);
+		refType = JavaInspectExpressionActionFilter.removeArray(refType);
 		if (fgPrimitiveTypes.contains(refType)) {
 			return null;
 		}

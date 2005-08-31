@@ -60,7 +60,6 @@ public class ActionMessages extends NLS {
 	public static String ManageMethodBreakpointActionDelegate_CantAdd;
 
 	public static String ManageWatchpointActionDelegate_CantAdd;
-	public static String OpenTypeAction_2;
 
 	public static String MoveDownAction_M_ove_Down_1;
 	public static String MoveUpAction_Move_U_p_1;
@@ -171,4 +170,8 @@ public class ActionMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);
 	}
+
+	public static String OpenTypeAction_0;
+
+	public static String OpenTypeAction_1;
 }

@@ -11,19 +11,16 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -32,11 +29,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
-import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
+import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -55,47 +54,80 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		try {
 			while (itr.hasNext()) {
 				Object element= itr.next();
-				doAction(element);
+				Object sourceElement = resolveSourceElement(element);
+				if (sourceElement != null) {
+					openInEditor(sourceElement);
+				} else {
+					IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.OpenTypeAction_0, null);
+					throw new CoreException(status);
+				}
 			}
-		} catch(DebugException e) {
-			JDIDebugUIPlugin.log(e);
+		} catch(CoreException e) {
+			JDIDebugUIPlugin.errorDialog(ActionMessages.OpenTypeAction_1, e.getStatus());
 		}
 	}
 	
 	protected abstract IDebugElement getDebugElement(IAdaptable element);
 	
-	protected abstract String getTypeNameToOpen(IDebugElement element) throws DebugException;
+	/**
+	 * Returns the type to open based on the given selected debug element, or <code>null</code>.
+	 * 
+	 * @param element selected debug element
+	 * @return the type to open or <code>null</code> if none
+	 * @throws DebugException
+	 */
+	protected abstract IJavaType getTypeToOpen(IDebugElement element) throws CoreException;
 	
-	protected void doAction(Object e) throws DebugException {
+	/**
+	 * Resolves and returns the source element to open or <code>null</code> if none.
+	 * 
+	 * @param e selected element to resolve a source element for
+	 * @return the source element to open or <code>null</code> if none
+	 * @throws CoreException
+	 */
+	protected Object resolveSourceElement(Object e) throws CoreException {
+		Object source = null;
 		IAdaptable element= (IAdaptable) e;
 		IDebugElement dbgElement= getDebugElement(element);
 		if (dbgElement != null) {
-			Object sourceElement= getSourceElement(dbgElement);
-			if (sourceElement == null) {
-				try {
+			IJavaType type = getTypeToOpen(dbgElement);
+			while (type instanceof IJavaArrayType) {
+				type = ((IJavaArrayType)type).getComponentType();
+			}
+			if (type != null) {
+				source = JavaDebugUtils.resolveType(type.getName(), dbgElement.getLaunch());
+				if (source == null) {
 					//resort to looking through the workspace projects for the
 					//type as the source locators failed.
-					String typeName= getTypeNameToOpen(dbgElement);
-					sourceElement= findTypeInWorkspace(typeName);
-				} catch (CoreException x) {
-					JDIDebugUIPlugin.log(x);
+					source = findTypeInWorkspace(type.getName());
 				}
 			}
-			if (sourceElement != null) {
-				openInEditor(sourceElement);
-			}
 		}
+		return source;
 	}
 
-	protected void openInEditor(Object sourceElement) {
-		try {
+	protected void openInEditor(Object sourceElement) throws CoreException {
+		if (isHierarchy()) {
+			if (sourceElement instanceof IJavaElement) {
+				OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, getWorkbenchWindow());
+			} else {
+				typeHierarchyError();
+			}
+		} else {
 			IEditorPart part= EditorUtility.openInEditor(sourceElement);
 			if (part != null && sourceElement instanceof IJavaElement) {
 				EditorUtility.revealInEditor(part, ((IJavaElement)sourceElement));
 			}
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
 		}
+	}
+	
+	/**
+	 * Returns whether a type hierarchy should be opened.
+	 * 
+	 * @return whether a type hierarchy should be opened
+	 */
+	protected boolean isHierarchy() {
+		return false;
 	}
 	
 	/**
@@ -150,77 +182,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		return null;
 	}
 	
-	/**
-	 * Use the source locator to determine the correct source element
-	 */
-	protected Object getSourceElement(Object e) {
-		if (e instanceof IDebugElement) {
-			IDebugElement de= (IDebugElement)e;
-			String typeName = null;
-			try {
-				typeName = getTypeNameToOpen(de);
-				if (typeName != null) {
-					List list = ToggleBreakpointAdapter.searchForTypes(typeName, de.getLaunch());
-					if (!list.isEmpty()) {
-						return list.get(0);
-					}
-				}
-			} catch (CoreException ex) {
-				JDIDebugUIPlugin.errorDialog(ActionMessages.OpenTypeAction_2, ex.getStatus()); 
-			}	
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the source element for the given type using the specified
-	 * source locator, or <code>null</code> if none.
-	 * 
-	 * @param typeName fully qualified type name
-	 * @param locator source locator
-	 * @return the source element for the given type using the specified
-	 * source locator, or <code>null</code> if none
-	 */
-	public static Object findSourceElement(String typeName, ISourceLocator sourceLocator) {
-		
-		if (sourceLocator instanceof ISourceLookupDirector) {
-			ISourceLookupDirector director = (ISourceLookupDirector)sourceLocator;
-			String fileName = typeName.replace('.', File.separatorChar);
-			fileName = fileName + ".java"; //$NON-NLS-1$
-			Object object = director.getSourceElement(fileName);
-			if (object != null) {
-				// return the java element adapter if it exists
-				if (object instanceof IAdaptable) {
-					IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
-					if (element != null) {
-						return element;
-					}
-				}
-				return object;
-			}
-		}
-		// still support deprecated source locators for 'open type'
-		IJavaSourceLocation[] locations= null;
-		if (sourceLocator instanceof JavaUISourceLocator) {
-			JavaUISourceLocator javaSourceLocator= (JavaUISourceLocator)sourceLocator;
-			locations= javaSourceLocator.getSourceLocations();
-		} else if (sourceLocator instanceof JavaSourceLocator) {
-			JavaSourceLocator javaSourceLocator= (JavaSourceLocator)sourceLocator;
-			locations= javaSourceLocator.getSourceLocations();
-		}
-		if (locations != null) {
-			for (int i = 0; i < locations.length; i++) {
-				IJavaSourceLocation location = locations[i];
-				Object sourceElement = null;
-				try {
-					sourceElement = location.findSourceElement(typeName);
-				} catch (CoreException e) {
-				}
-				if (sourceElement != null) {
-					return sourceElement;
-				}
-			}
-		}
-		return null;		
-	}
+	protected void typeHierarchyError() {
+		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1); 
+	}	
 }

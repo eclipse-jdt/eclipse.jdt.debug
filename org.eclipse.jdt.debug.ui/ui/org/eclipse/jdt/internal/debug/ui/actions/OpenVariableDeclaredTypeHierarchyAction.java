@@ -10,29 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IWorkbenchPart;
-
+/**
+ * Opens the declared type hierarchy of a variable.
+ */
 public class OpenVariableDeclaredTypeHierarchyAction extends OpenVariableDeclaredTypeAction {
 	
-	private IWorkbenchPart fTargetPart;
-	
-	protected void openInEditor(Object sourceElement) {
-		if (sourceElement instanceof IJavaElement) {
-			OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, fTargetPart.getSite().getWorkbenchWindow());
-		} else {
-			typeHierarchyError();
-		}
-	}	
-	
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#isHierarchy()
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		super.setActivePart(action, targetPart);
-		fTargetPart= targetPart;
-	}
+	protected boolean isHierarchy() {
+		return true;
+	}	
 }

@@ -24,6 +24,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public abstract class ObjectActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
 	
@@ -86,9 +87,14 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
-	
-	protected void typeHierarchyError() {
-		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1); 
-	}
 
+	/**
+	 * Returns the workbench window this action is installed in, or <code>null</code>
+	 */
+	protected IWorkbenchWindow getWorkbenchWindow() {
+		if (fPart != null) {
+			return fPart.getSite().getWorkbenchWindow();
+		}
+		return null;
+	}
 }

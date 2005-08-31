@@ -10,43 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IWorkbenchPart;
-
-
+/**
+ * Opens the receiving type hierarchy of a stack frame.
+ */
 public class OpenReceivingTypeHierarchyAction extends OpenReceivingTypeAction {
 	
-	protected IWorkbenchPart fTargetPart;
-	
-	protected void doAction(Object e) throws DebugException {
-		IAdaptable element= (IAdaptable) e;
-		IDebugElement dbgElement= getDebugElement(element);
-		if (dbgElement != null) {
-			String typeName= getTypeNameToOpen(dbgElement);
-			try {
-				IType t= findTypeInWorkspace(typeName);
-				if (t != null) {
-					OpenTypeHierarchyUtil.open(t, fTargetPart.getSite().getWorkbenchWindow());
-				}
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
-			}
-		}
-	}
-	
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#isHierarchy()
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		super.setActivePart(action, targetPart);
-		fTargetPart= targetPart;
-	}
+	protected boolean isHierarchy() {
+		return true;
+	}	
 }

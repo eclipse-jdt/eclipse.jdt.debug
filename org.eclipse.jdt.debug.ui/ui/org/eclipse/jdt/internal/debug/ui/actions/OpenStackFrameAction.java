@@ -15,8 +15,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
+/**
+ * Action that opens a type associated with a selected stack frame.
+ */
 public abstract class OpenStackFrameAction extends OpenTypeAction {
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#getDebugElement(org.eclipse.core.runtime.IAdaptable)
+	 */
 	protected IDebugElement getDebugElement(IAdaptable element) {
 		return (IDebugElement)element.getAdapter(IJavaStackFrame.class);
 	}

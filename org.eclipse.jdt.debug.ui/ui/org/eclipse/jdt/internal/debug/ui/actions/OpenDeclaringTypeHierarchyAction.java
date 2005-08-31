@@ -10,30 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IWorkbenchPart;
-
+/**
+ * Opens the declaring type hierarchy of a stack frame.
+ */
 public class OpenDeclaringTypeHierarchyAction extends OpenDeclaringTypeAction {
-
-	protected IWorkbenchPart fTargetPart;
 	
-	protected void doAction(Object e) {
-		Object sourceElement= getSourceElement(e);
-		if (sourceElement instanceof IJavaElement) {
-			OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, fTargetPart.getSite().getWorkbenchWindow());
-		} else {
-			typeHierarchyError();
-		}
-	}
-	
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#isHierarchy()
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		super.setActivePart(action, targetPart);
-		fTargetPart= targetPart;
+	protected boolean isHierarchy() {
+		return true;
 	}
 }

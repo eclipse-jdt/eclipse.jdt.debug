@@ -11,19 +11,26 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-
+/**
+ * Opens the concrete type of variable - i.e. it's value's actual type.
+ */
 public class OpenVariableConcreteTypeAction extends OpenVariableTypeAction {
 
-	protected String getTypeNameToOpen(IDebugElement element) throws DebugException {
-		String refType= Signature.toString(((IJavaObject)((IJavaVariable)element).getValue()).getSignature()).replace('/', '.');
-		refType= removeArray(refType);
-		return refType;
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#getTypeToOpen(org.eclipse.debug.core.model.IDebugElement)
+	 */
+	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
+		if (element instanceof IJavaVariable) {
+			IJavaVariable variable = (IJavaVariable) element;
+			return ((IJavaValue)variable.getValue()).getJavaType();
+		}
+		return null;
 	}
 	
 }

@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,8 +28,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.jdt.core.Flags;
@@ -39,33 +35,25 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.corext.util.TypeInfo;
-import org.eclipse.jdt.internal.corext.util.TypeInfoRequestor;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -400,7 +388,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         return (IMethod[]) methods.toArray(new IMethod[methods.size()]);
     }
 
-    protected IField[] getFields(IStructuredSelection selection) {
+    protected IField[] getFields(IStructuredSelection selection) throws CoreException {
         if (selection.isEmpty()) {
             return new IField[0];
         }
@@ -759,103 +747,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
 
     /**
-     * Returns a list of matching types (IType - Java model) that correspond to
-     * the given type name in the context of the given launch.
-     */
-    protected static List searchForTypes(String typeName, ILaunch launch) {
-        List types = new ArrayList();
-        if (launch == null) {
-            return types;
-        }
-
-        ILaunchConfiguration configuration = launch.getLaunchConfiguration();
-        IJavaProject[] javaProjects = null;
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        if (configuration != null) {
-            // Launch configuration support
-            try {
-                String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-                if (projectName.length() != 0) {
-                    javaProjects = new IJavaProject[] { JavaCore.create(workspace.getRoot().getProject(projectName)) };
-                } else {
-                    IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-                    IProject project;
-                    List projectList = new ArrayList();
-                    for (int i = 0, numProjects = projects.length; i < numProjects; i++) {
-                        project = projects[i];
-                        if (project.isAccessible() && project.hasNature(JavaCore.NATURE_ID)) {
-                            projectList.add(JavaCore.create(project));
-                        }
-                    }
-                    javaProjects = new IJavaProject[projectList.size()];
-                    projectList.toArray(javaProjects);
-                }
-            } catch (CoreException e) {
-                JDIDebugUIPlugin.log(e);
-            }
-        }
-        if (javaProjects == null) {
-            return types;
-        }
-
-        SearchEngine engine = new SearchEngine();
-        IJavaSearchScope scope = SearchEngine.createJavaSearchScope(javaProjects, true);
-        ArrayList typeRefsFound = new ArrayList(3);
-        TypeInfoRequestor requestor = new TypeInfoRequestor(typeRefsFound);
-        try {
-            engine.searchAllTypeNames(getPackage(typeName), getTypeName(typeName), SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE, IJavaSearchConstants.TYPE, scope, requestor, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
-        } catch (JavaModelException x) {
-            JDIDebugUIPlugin.log(x);
-            return types;
-        }
-        Iterator iter = typeRefsFound.iterator();
-        TypeInfo typeInfo = null;
-        while (iter.hasNext()) {
-            typeInfo = (TypeInfo) iter.next();
-            try {
-                types.add(typeInfo.resolveType(scope));
-            } catch (JavaModelException jme) {
-                JDIDebugUIPlugin.log(jme);
-            }
-        }
-        return types;
-    }
-
-    /**
-     * Returns the package name of the given fully qualified type name. The
-     * package name is assumed to be the dot-separated prefix of the type name.
-     */
-    private static char[] getPackage(String fullyQualifiedName) {
-        int index = fullyQualifiedName.lastIndexOf('.');
-        if (index == -1) {
-            return new char[0];
-        }
-        return fullyQualifiedName.substring(0, index).toCharArray();
-    }
-
-    /**
-     * Returns a simple type name from the given fully qualified type name. The
-     * type name is assumed to be the last contiguous segment of the
-     * fullyQualifiedName not containing a '.' or '$'
-     */
-    private static char[] getTypeName(String fullyQualifiedName) {
-        int index = fullyQualifiedName.lastIndexOf('.');
-        String typeName = fullyQualifiedName;
-        if (index >= 0) {
-            typeName = fullyQualifiedName.substring(index + 1);
-        }
-        index = typeName.lastIndexOf('$');
-        if (index >= 0) {
-            typeName = typeName.substring(index + 1);
-        }
-        return typeName.toCharArray();
-    }
-
-    /**
      * Return the associated IField (Java model) for the given
      * IJavaFieldVariable (JDI model)
      */
-    private IField getField(IJavaFieldVariable variable) {
+    private IField getField(IJavaFieldVariable variable) throws CoreException {
         String varName = null;
         try {
             varName = variable.getName();
@@ -871,10 +766,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             JDIDebugUIPlugin.log(x);
             return null;
         }
-        List types = searchForTypes(declaringType, variable.getLaunch());
-        Iterator iter = types.iterator();
-        while (iter.hasNext()) {
-            IType type = (IType) iter.next();
+        IType type = JavaDebugUtils.resolveType(declaringType, variable.getLaunch());
+        if (type != null) {
             field = type.getField(varName);
             if (field.exists()) {
                 return field;

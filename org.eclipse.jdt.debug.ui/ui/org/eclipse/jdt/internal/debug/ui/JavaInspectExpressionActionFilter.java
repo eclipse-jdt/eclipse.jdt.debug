@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaObject;
-import org.eclipse.jdt.internal.debug.ui.actions.OpenVariableTypeAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.ui.IActionFilter;
 
@@ -66,12 +65,23 @@ public class JavaInspectExpressionActionFilter implements IActionFilter {
 		try {
 			IValue value = exp.getValue();
 			if (value != null) {
-				String refType = OpenVariableTypeAction.removeArray(value.getReferenceTypeName());
+				String refType = removeArray(value.getReferenceTypeName());
 				return fgPrimitiveTypes.contains(refType);
 			}
 		} catch (DebugException e) {
 		}
 		return false;
 	}
+	
+	public static String removeArray(String typeName) {
+		if (typeName == null) {
+			return null;
+		}
+		int index= typeName.indexOf('[');
+		if (index > 0) {
+			return typeName.substring(0, index);
+		}
+		return typeName;
+	}	
 
 }
