@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IField;
@@ -24,11 +25,15 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.jdt.ui.JavaUI;
@@ -126,16 +131,61 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		IJavaElement javaElement = resolve[i];
             		if (javaElement instanceof IField) {
             		    IField field = (IField)javaElement;
-            		    String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
-            		    typeSignature = typeSignature.replace('.', '/');
-            		    IJavaFieldVariable fieldVariable = null;
-            		    if (frame.isStatic()) {
-            		        fieldVariable = frame.getReferenceType().getField(field.getElementName());
+            		    IJavaVariable variable = null;
+            		    IJavaDebugTarget debugTarget = (IJavaDebugTarget)frame.getDebugTarget();
+            		    if (Flags.isStatic(field.getFlags())) {
+							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
+            		    	if (javaTypes != null) { 
+	            		    	for (int j = 0; j < javaTypes.length; j++) {
+									IJavaType type = javaTypes[j];
+									if (type instanceof IJavaReferenceType) {
+										IJavaReferenceType referenceType = (IJavaReferenceType) type;
+										variable = referenceType.getField(field.getElementName());
+									}
+									if (variable != null) {
+										break;
+									}
+								}
+            		    	}
+            		    	if (variable == null) {
+            		    		// the class is not loaded yet, but may be an in-lined primitive constant
+            		    		Object constant = field.getConstant();
+								if (constant != null) {
+									IJavaValue value = null;
+            		    			if (constant instanceof Integer) {
+										value = debugTarget.newValue(((Integer)constant).intValue());
+									} else if (constant instanceof Byte) {
+										value = debugTarget.newValue(((Byte)constant).byteValue());
+									} else if (constant instanceof Boolean) {
+										value = debugTarget.newValue(((Boolean)constant).booleanValue());
+									} else if (constant instanceof Character) {
+										value = debugTarget.newValue(((Character)constant).charValue());
+									} else if (constant instanceof Double) {
+										value = debugTarget.newValue(((Double)constant).doubleValue());
+									} else if (constant instanceof Float) {
+										value = debugTarget.newValue(((Float)constant).floatValue());
+									} else if (constant instanceof Long) {
+										value = debugTarget.newValue(((Long)constant).longValue());
+									} else if (constant instanceof Short) {
+										value = debugTarget.newValue(((Short)constant).shortValue());
+									} else if (constant instanceof String) {
+										value = debugTarget.newValue((String)constant);
+									}
+            		    			if (value != null) {
+            		    				variable = new JDIPlaceholderVariable(field.getElementName(), value);
+            		    			}
+            		    		}
+								if (variable == null) {
+									return null; // class not loaded yet and not a constant
+								}
+            		    	}
             		    } else {
-            		        fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
-            		    }
-            		    if (fieldVariable != null) {
-            		        return getVariableText(fieldVariable);
+            		    	String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
+                		    typeSignature = typeSignature.replace('.', '/');
+            		    	variable = frame.getThis().getField(field.getElementName(), typeSignature);
+            		    }            		    
+            		    if (variable != null) {
+            		        return getVariableText(variable);
             		    }
             			break;
             		}
@@ -260,12 +310,13 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		JDIModelPresentation presentation = new JDIModelPresentation();
 		
 		String[][] booleanPrefs= {{IJDIPreferencesConstants.PREF_SHOW_HEX, JDIModelPresentation.SHOW_HEX_VALUES},
-        {IJDIPreferencesConstants.PREF_SHOW_CHAR, JDIModelPresentation.SHOW_CHAR_VALUES},
-        {IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, JDIModelPresentation.SHOW_UNSIGNED_VALUES}};
-        String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
-        for (int i = 0; i < booleanPrefs.length; i++) {
-        	boolean preferenceValue = PrimitiveOptionsAction.getBooleanPreferenceValue(viewId, booleanPrefs[i][0]);
-    		presentation.setAttribute(booleanPrefs[i][1], (preferenceValue ? Boolean.TRUE : Boolean.FALSE));
+	    {IJDIPreferencesConstants.PREF_SHOW_CHAR, JDIModelPresentation.SHOW_CHAR_VALUES},
+	    {IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, JDIModelPresentation.SHOW_UNSIGNED_VALUES},
+	    {IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, JDIModelPresentation.DISPLAY_QUALIFIED_NAMES}};
+	    String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
+	    for (int i = 0; i < booleanPrefs.length; i++) {
+	    	boolean preferenceValue = PrimitiveOptionsAction.getBooleanPreferenceValue(viewId, booleanPrefs[i][0]);
+			presentation.setAttribute(booleanPrefs[i][1], (preferenceValue ? Boolean.TRUE : Boolean.FALSE));
 		}
 		return presentation;
 	}
