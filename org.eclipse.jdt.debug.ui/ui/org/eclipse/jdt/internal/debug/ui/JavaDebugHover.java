@@ -267,6 +267,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		String variableText= modelPresentation.getVariableText((IJavaVariable) variable);
 		buffer.append(replaceHTMLChars(variableText));
 		buffer.append("</pre></p>"); //$NON-NLS-1$
+		modelPresentation.dispose();
 		if (buffer.length() > 0) {
 			return buffer.toString();
 		}

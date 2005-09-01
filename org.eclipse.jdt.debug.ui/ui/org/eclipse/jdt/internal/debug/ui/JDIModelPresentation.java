@@ -154,7 +154,20 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	public JDIModelPresentation() {
 		super();
 	}
-    
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fJavaLabelProvider != null) {
+			fJavaLabelProvider.dispose();
+		}
+		fJavaElementImageRegistry = null;
+		fDebugImageRegistry = null;
+		fAttributes.clear();
+	}
+
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
