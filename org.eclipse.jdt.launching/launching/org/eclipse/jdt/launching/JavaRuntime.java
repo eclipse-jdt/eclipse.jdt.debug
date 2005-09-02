@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1543,6 +1544,17 @@ public final class JavaRuntime {
 			}
 			if (defaultVM != null) {
 				fgDefaultVMId = getCompositeIdFromVM(defaultVM);
+                // set compiler compliance based on default VM Java version level
+                if (defaultVM instanceof IVMInstall2) {
+                    String javaVersion = ((IVMInstall2)defaultVM).getJavaVersion();
+                    if (javaVersion != null && javaVersion.startsWith(JavaCore.VERSION_1_5)) {
+                        Hashtable defaultOptions = JavaCore.getDefaultOptions();
+                        defaultOptions.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+                        defaultOptions.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+                        defaultOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+                        JavaCore.setOptions(defaultOptions);
+                    }
+                }
 			}
 		}		
 	}
