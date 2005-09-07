@@ -11,6 +11,8 @@
 package org.eclipse.jdt.debug.tests;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -64,12 +66,15 @@ import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.console.IConsole;
@@ -542,7 +547,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param typeName type name
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String typeName) throws Exception {
-		return JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, null);
+		IResource breakpointResource = getBreakpointResource(typeName);
+		IJavaElement element = JavaCore.create(breakpointResource);
+		Map map = new HashMap();
+		if (element instanceof ICompilationUnit) {
+			ICompilationUnit compilationUnit = (ICompilationUnit) element;
+			Document document = new Document(compilationUnit.getSource());
+			IRegion region = document.getLineInformation(lineNumber);
+			IJavaElement elementAt = compilationUnit.getElementAt(region.getOffset());
+			if (elementAt != null) {
+				BreakpointUtils.addJavaBreakpointAttributes(map, elementAt);
+			}
+		}
+		return JDIDebugModel.createLineBreakpoint(breakpointResource, typeName, lineNumber, -1, -1, 0, true, map);
 	}
 	
 	/**
