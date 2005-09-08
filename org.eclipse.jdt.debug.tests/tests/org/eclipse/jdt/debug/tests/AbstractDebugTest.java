@@ -41,11 +41,17 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -547,20 +553,51 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param typeName type name
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String typeName) throws Exception {
-		IResource breakpointResource = getBreakpointResource(typeName);
-		IJavaElement element = JavaCore.create(breakpointResource);
-		Map map = new HashMap();
-		if (element instanceof ICompilationUnit) {
-			ICompilationUnit compilationUnit = (ICompilationUnit) element;
-			Document document = new Document(compilationUnit.getSource());
-			IRegion region = document.getLineInformation(lineNumber);
-			IJavaElement elementAt = compilationUnit.getElementAt(region.getOffset());
-			if (elementAt != null) {
-				BreakpointUtils.addJavaBreakpointAttributes(map, elementAt);
+		IType type = getType(typeName);
+		IJavaElement member = null;
+		if (type != null) {
+			IJavaElement sourceElement = null;
+			String source = null;
+			if (type.isBinary()) {
+				IClassFile classFile = type.getClassFile();
+				source = classFile.getSource();
+				sourceElement = classFile;
+			} else {
+				ICompilationUnit unit = type.getCompilationUnit();
+				source = unit.getSource();
+				sourceElement = unit;
+			}
+			// translate line number to offset
+			if (source != null) {
+				Document document = new Document(source);
+				IRegion region = document.getLineInformation(lineNumber);
+				if (sourceElement instanceof ICompilationUnit) {
+					member = ((ICompilationUnit)sourceElement).getElementAt(region.getOffset());
+				} else {
+					member = ((IClassFile)sourceElement).getElementAt(region.getOffset());
+				}
 			}
 		}
-		return JDIDebugModel.createLineBreakpoint(breakpointResource, typeName, lineNumber, -1, -1, 0, true, map);
+		Map map = getExtraBreakpointAttributes(member);
+		return JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, map);
 	}
+	
+	/**
+	 * Creates and returns a map of java element breakpoint attributes for a breakpoint on the
+	 * given java element, or <code>null</code> if none
+	 * 
+	 * @param element java element the breakpoint is associated with
+	 * @return map of breakpoint attributes or <code>null</code>
+	 * @throws Exception
+	 */
+	protected Map getExtraBreakpointAttributes(IJavaElement element) throws Exception {
+		if (element != null && element.exists()) {
+			Map map = new HashMap();
+			BreakpointUtils.addJavaBreakpointAttributes(map, element);
+			return map;
+		}
+		return null;
+	}	
 	
 	/**
 	 * Creates and returns a line breakpoint at the given line number in the type with the
@@ -618,13 +655,50 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 
 	 * @param typeNamePattern type name pattern
 	 * @param methodName method name
-	 * @param methodSignature method signature
+	 * @param methodSignature method signature or <code>null</code>
 	 * @param entry whether to break on entry
 	 * @param exit whether to break on exit
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String typeNamePattern, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
-		return JDIDebugModel.createMethodBreakpoint(getJavaProject().getProject(), typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, null);
+		IMethod method= null;
+		if (methodSignature != null && methodName != null) {
+			IType type = getType(typeNamePattern);
+			if (type != null ) {
+				method = type.getMethod(methodName, Signature.getParameterTypes(methodSignature));
+			}
+		}
+		Map map = getExtraBreakpointAttributes(method);
+		return JDIDebugModel.createMethodBreakpoint(getJavaProject().getProject(), typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
 	}	
+	
+	/**
+	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
+	 * 
+	 * @param typeName type on which to create the breakpoint
+	 * @return breakpoint
+	 * @throws Exception
+	 */
+	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String typeName) throws Exception {
+		IType type = getType(typeName);
+		int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
+		if (type.isInterface()) {
+			kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
+		}
+		Map map = getExtraBreakpointAttributes(type);
+		return JDIDebugModel.createClassPrepareBreakpoint(getBreakpointResource(typeName), typeName, kind, -1, -1, true, map);
+	}
+	
+	/**
+	 * Returns the Java model type from the test project with the given name or <code>null</code>
+	 * if none.
+	 * 
+	 * @param typeName
+	 * @return type or <code>null</code>
+	 * @throws Exception
+	 */
+	protected IType getType(String typeName) throws Exception {
+		return getJavaProject().findType(typeName);
+	}
 	
 	/**
 	 * Creates and returns an exception breakpoint
@@ -634,7 +708,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param uncaught whether to suspend in uncaught locations
 	 */	
 	protected IJavaExceptionBreakpoint createExceptionBreakpoint(String exName, boolean caught, boolean uncaught) throws Exception {
-		return JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(exName),exName, caught, uncaught, false, true, null);
+		IType type = getType(exName);
+		Map map = getExtraBreakpointAttributes(type);
+		return JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(exName),exName, caught, uncaught, false, true, map);
 	}
 	
 	/**
@@ -646,7 +722,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param modification whether to suspend on field modification
 	 */	
 	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
-		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(typeName), typeName, fieldName, -1, -1, -1, 0, true, null);
+		IType type = getType(typeName);
+		IField field = null;
+		if (type != null) {
+			field = type.getField(fieldName);
+		}
+		Map map = getExtraBreakpointAttributes(field);
+		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(typeName), typeName, fieldName, -1, -1, -1, 0, true, map);
 		wp.setAccess(access);
 		wp.setModification(modification);
 		return wp;
