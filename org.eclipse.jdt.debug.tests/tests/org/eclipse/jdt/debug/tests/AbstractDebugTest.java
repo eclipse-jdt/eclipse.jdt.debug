@@ -575,7 +575,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param lineNumber line number to create the breakpoint at
 	 * @param packageName fully qualified package name containing the type, example "a.b.c"
 	 * @param cuName simple name of compilation unit containing the type, example "Something.java"
-	 * @param typeName simple dot qualified type name, example "Something" or "NonPublic" or "Something.Inner"
+	 * @param typeName $ qualified type name, example "Something" or "NonPublic" or "Something$Inner"
 	 * @return line breakpoint
 	 * @throws Exception
 	 */
@@ -637,7 +637,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			IPackageFragment fragment = packageFragments[i];
 			if (fragment.getElementName().equals(packageName)) {
 				ICompilationUnit compilationUnit = fragment.getCompilationUnit(cuName);
-				String[] names = typeName.split("\\.");
+				String[] names = typeName.split("\\$");
 				IType type = compilationUnit.getType(names[0]);
 				for (int j = 1; j < names.length; j++) {
 					type = type.getType(names[j]);
@@ -744,8 +744,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
-	 * @param typeName dot qualified type name within compilation unit, example "Something" or
-	 *  "NonPublic" or "Something.Inner"
+	 * @param typeName $ qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something$Inner"
 	 * @param methodName method or <code>null</code> for all methods
 	 * @param methodSignature JLS method siganture or <code>null</code> for all methods with the given name
 	 * @param entry whether to break on entry
@@ -782,8 +782,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
-	 * @param typeName dot qualified type name within compilation unit, example "Something" or
-	 *  "NonPublic" or "Something.Inner"
+	 * @param typeName $ qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something$Inner"
 	 */	
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String packageName, String cuName, String typeName) throws Exception {
 		return createClassPrepareBreakpoint(getType(packageName, cuName, typeName));
@@ -869,8 +869,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
-	 * @param typeName dot qualified type name within compilation unit, example "Something" or
-	 *  "NonPublic" or "Something.Inner"
+	 * @param typeName $ qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something$Inner"
 	 * @param fieldName name of the field
 	 * @param access whether to suspend on access 
 	 * @param modification whether to suspend on modification
