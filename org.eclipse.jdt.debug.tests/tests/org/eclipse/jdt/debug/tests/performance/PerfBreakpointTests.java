@@ -239,7 +239,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
     
     private void createWatchpoints(IResource resource, String typeName, String[] fields) throws Exception {
         for(int i = 0; i < fields.length; i++) {
-            IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(typeName), typeName, fields[i], -1, -1, -1, 0, true, null);
+            IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(resource, typeName, fields[i], -1, -1, -1, 0, true, null);
             wp.setAccess(true);
             wp.setModification(true);
         }

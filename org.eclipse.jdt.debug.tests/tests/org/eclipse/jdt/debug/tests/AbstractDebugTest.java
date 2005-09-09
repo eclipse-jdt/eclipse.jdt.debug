@@ -47,6 +47,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -545,6 +546,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return resource;
 	}
 	
+	protected IResource getBreakpointResource(IType type) throws Exception {
+		if (type == null) {
+			return getJavaProject().getProject();
+		}
+		IResource resource = type.getCorrespondingResource();
+		if (resource == null) {
+			resource = getJavaProject().getProject();
+		}		
+		return resource;
+	}	
+	
 	/**
 	 * Creates and returns a line breakpoint at the given line number in the type with the
 	 * given name.
@@ -554,6 +566,33 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String typeName) throws Exception {
 		IType type = getType(typeName);
+		return createLineBreakpoint(type, lineNumber);
+	}
+	
+	/**
+	 * Creates a line breakpoint in the given type (may be a top level non public type)
+	 * 
+	 * @param lineNumber line number to create the breakpoint at
+	 * @param packageName fully qualified package name containing the type, example "a.b.c"
+	 * @param cuName simple name of compilation unit containing the type, example "Something.java"
+	 * @param typeName simple dot qualified type name, example "Something" or "NonPublic" or "Something.Inner"
+	 * @return line breakpoint
+	 * @throws Exception
+	 */
+	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String packageName, String cuName, String typeName) throws Exception {
+		IType type = getType(packageName, cuName, typeName);
+		return createLineBreakpoint(type, lineNumber);
+	}
+	
+	/**
+	 * Creates a line breakpoint in the given type at the given line number.
+	 * 
+	 * @param type type in which to install the breakpoint
+	 * @param lineNumber line number to install the breakpoint at
+	 * @return line breakpoint
+	 * @throws Exception
+	 */
+	protected IJavaLineBreakpoint createLineBreakpoint(IType type, int lineNumber) throws Exception {
 		IJavaElement member = null;
 		if (type != null) {
 			IJavaElement sourceElement = null;
@@ -579,7 +618,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		Map map = getExtraBreakpointAttributes(member);
-		return JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, map);
+		return JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, map);		
+	}
+	
+	/**
+	 * Returns the type in the test project based on the given name. The type name may refer to a 
+	 * top level non public type.
+	 * 
+	 * @param packageName package name, example "a.b.c"
+	 * @param cuName simple compilation unit name within the package, example "Something.java"
+	 * @param typeName simple dot qualified type name, example "Something" or "NonPublic" or "Something.Inner"
+	 * @return associated type or <code>null</code> if none
+	 * @throws Exception
+	 */
+	protected IType getType(String packageName, String cuName, String typeName) throws Exception {
+		IPackageFragment[] packageFragments = getJavaProject().getPackageFragments();
+		for (int i = 0; i < packageFragments.length; i++) {
+			IPackageFragment fragment = packageFragments[i];
+			if (fragment.getElementName().equals(packageName)) {
+				ICompilationUnit compilationUnit = fragment.getCompilationUnit(cuName);
+				String[] names = typeName.split("\\.");
+				IType type = compilationUnit.getType(names[0]);
+				for (int j = 1; j < names.length; j++) {
+					type = type.getType(names[j]);
+				}
+				if (type.exists()) {
+					return type;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -608,7 +676,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param condition condition
 	 */
 	protected IJavaLineBreakpoint createConditionalLineBreakpoint(int lineNumber, String typeName, String condition, boolean suspendOnTrue) throws Exception {
-		IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, null);
+		IJavaLineBreakpoint bp = createLineBreakpoint(lineNumber, typeName);
 		bp.setCondition(condition);
 		bp.setConditionEnabled(true);
 		bp.setConditionSuspendOnTrue(suspendOnTrue);
@@ -672,6 +740,33 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}	
 	
 	/**
+	 * Creates a method breakpoint in a fully specified type (potentially non public).
+	 * 
+	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
+	 * @param cuName simple compilation unit name within package, example "Something.java"
+	 * @param typeName dot qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something.Inner"
+	 * @param methodName method or <code>null</code> for all methods
+	 * @param methodSignature JLS method siganture or <code>null</code> for all methods with the given name
+	 * @param entry whether to break on entry
+	 * @param exit whether to break on exit
+	 * @return method breakpoint
+	 * @throws Exception
+	 */
+	protected IJavaMethodBreakpoint createMethodBreakpoint(String packageName, String cuName, String typeName, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
+		IType type = getType(packageName, cuName, typeName);
+		assertNotNull("did not find type to install breakpoint in", type);
+		IMethod method= null;
+		if (methodSignature != null && methodName != null) {
+			if (type != null ) {
+				method = type.getMethod(methodName, Signature.getParameterTypes(methodSignature));
+			}
+		}
+		Map map = getExtraBreakpointAttributes(method);
+		return JDIDebugModel.createMethodBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
+	}
+	
+	/**
 	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
 	 * 
 	 * @param typeName type on which to create the breakpoint
@@ -679,13 +774,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String typeName) throws Exception {
-		IType type = getType(typeName);
+		return createClassPrepareBreakpoint(getType(typeName));
+	}
+	
+	/**
+	 * Creates a class prepare breakpoint in a fully specified type (potentially non public).
+	 * 
+	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
+	 * @param cuName simple compilation unit name within package, example "Something.java"
+	 * @param typeName dot qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something.Inner"
+	 */	
+	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String packageName, String cuName, String typeName) throws Exception {
+		return createClassPrepareBreakpoint(getType(packageName, cuName, typeName));
+	}
+	
+	/**
+	 * Creates a class prepare breakpoint for the given type
+	 * 
+	 * @param type type
+	 * @return class prepare breakpoint
+	 * @throws Exception
+	 */
+	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(IType type) throws Exception {
+		assertNotNull("type not specified for class prepare breakpoint", type);
 		int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
 		if (type.isInterface()) {
 			kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
 		}
 		Map map = getExtraBreakpointAttributes(type);
-		return JDIDebugModel.createClassPrepareBreakpoint(getBreakpointResource(typeName), typeName, kind, -1, -1, true, map);
+		return JDIDebugModel.createClassPrepareBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), kind, -1, -1, true, map);		
 	}
 	
 	/**
@@ -710,7 +828,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaExceptionBreakpoint createExceptionBreakpoint(String exName, boolean caught, boolean uncaught) throws Exception {
 		IType type = getType(exName);
 		Map map = getExtraBreakpointAttributes(type);
-		return JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(exName),exName, caught, uncaught, false, true, map);
+		return JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(type),exName, caught, uncaught, false, true, map);
 	}
 	
 	/**
@@ -723,15 +841,43 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */	
 	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
 		IType type = getType(typeName);
-		IField field = null;
-		if (type != null) {
-			field = type.getField(fieldName);
-		}
+		return createWatchpoint(type, fieldName, access, modification);
+	}
+
+	/**
+	 * Creates a watchpoint on the specified field.
+	 * 
+	 * @param type type containing the field
+	 * @param fieldName name of the field
+	 * @param access whether to suspend on access
+	 * @param modification whether to suspend on modification
+	 * @return watchpoint
+	 * @throws Exception
+	 */
+	protected IJavaWatchpoint createWatchpoint(IType type, String fieldName, boolean access, boolean modification) throws Exception, CoreException {
+		assertNotNull("type not specified for watchpoint", type);
+		IField field = type.getField(fieldName);
 		Map map = getExtraBreakpointAttributes(field);
-		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(typeName), typeName, fieldName, -1, -1, -1, 0, true, map);
+		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(type), type.getFullyQualifiedName(), fieldName, -1, -1, -1, 0, true, map);
 		wp.setAccess(access);
 		wp.setModification(modification);
 		return wp;
+	}
+	
+	/**
+	 * Creates a watchpoint in a fully specified type (potentially non public).
+	 * 
+	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
+	 * @param cuName simple compilation unit name within package, example "Something.java"
+	 * @param typeName dot qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something.Inner"
+	 * @param fieldName name of the field
+	 * @param access whether to suspend on access 
+	 * @param modification whether to suspend on modification
+	 */		
+	protected IJavaWatchpoint createWatchpoint(String packageName, String cuName, String typeName, String fieldName, boolean access, boolean modification) throws Exception {
+		IType type = getType(packageName, cuName, typeName);
+		return createWatchpoint(type, fieldName, access, modification);
 	}
 		
 	/**
