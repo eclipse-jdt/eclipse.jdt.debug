@@ -46,9 +46,11 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
@@ -593,7 +595,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(IType type, int lineNumber) throws Exception {
-		IJavaElement member = null;
+		IMember member = null;
 		if (type != null) {
 			IJavaElement sourceElement = null;
 			String source = null;
@@ -611,9 +613,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				Document document = new Document(source);
 				IRegion region = document.getLineInformation(lineNumber);
 				if (sourceElement instanceof ICompilationUnit) {
-					member = ((ICompilationUnit)sourceElement).getElementAt(region.getOffset());
+					member = (IMember) ((ICompilationUnit)sourceElement).getElementAt(region.getOffset());
 				} else {
-					member = ((IClassFile)sourceElement).getElementAt(region.getOffset());
+					member = (IMember) ((IClassFile)sourceElement).getElementAt(region.getOffset());
 				}
 			}
 		}
@@ -658,10 +660,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return map of breakpoint attributes or <code>null</code>
 	 * @throws Exception
 	 */
-	protected Map getExtraBreakpointAttributes(IJavaElement element) throws Exception {
+	protected Map getExtraBreakpointAttributes(IMember element) throws Exception {
 		if (element != null && element.exists()) {
 			Map map = new HashMap();
-			BreakpointUtils.addJavaBreakpointAttributes(map, element);
+			ISourceRange sourceRange = element.getSourceRange();
+			int start = sourceRange.getOffset();
+			int end = start + sourceRange.getLength();
+			IType type = null;
+			if (element instanceof IType) {
+				type = (IType) element;
+			} else {
+				type = element.getDeclaringType();
+			}
+			BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(map, type, start, end);
 			return map;
 		}
 		return null;
