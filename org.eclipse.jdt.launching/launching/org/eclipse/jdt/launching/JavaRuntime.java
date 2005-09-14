@@ -1549,16 +1549,31 @@ public final class JavaRuntime {
                     String javaVersion = ((IVMInstall2)defaultVM).getJavaVersion();
                     if (javaVersion != null && javaVersion.startsWith(JavaCore.VERSION_1_5)) {
                         Hashtable defaultOptions = JavaCore.getDefaultOptions();
-                        defaultOptions.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-                        defaultOptions.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-                        defaultOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-                        defaultOptions.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-                        defaultOptions.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
-                        JavaCore.setOptions(defaultOptions);
+                        Hashtable options = JavaCore.getOptions();
+                        boolean isDefault =
+                        	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
+                        	equals(JavaCore.COMPILER_SOURCE, defaultOptions, options) &&
+                        	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, defaultOptions, options) &&
+                        	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, defaultOptions, options) &&
+                        	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, defaultOptions, options);
+                        // only update the compliance settings if they are default settings, otherwise the
+                        // settings have already been modified by a tool or user
+                        if (isDefault) {
+	                        defaultOptions.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+	                        defaultOptions.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+	                        defaultOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+	                        defaultOptions.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+	                        defaultOptions.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+	                        JavaCore.setOptions(defaultOptions);
+                        }
                     }
                 }
 			}
 		}		
+	}
+	
+	private static boolean equals(String optionName, Map defaultOptions, Map options) {
+		return defaultOptions.get(optionName).equals(options.get(optionName));
 	}
 	/**
 	 * Detects VM installations, and a default VM (if required). Saves the
