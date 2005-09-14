@@ -1559,12 +1559,12 @@ public final class JavaRuntime {
                         // only update the compliance settings if they are default settings, otherwise the
                         // settings have already been modified by a tool or user
                         if (isDefault) {
-	                        defaultOptions.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-	                        defaultOptions.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-	                        defaultOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-	                        defaultOptions.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-	                        defaultOptions.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
-	                        JavaCore.setOptions(defaultOptions);
+	                        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+                            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+                            options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+                            options.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+                            options.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+	                        JavaCore.setOptions(options);
                         }
                     }
                 }
