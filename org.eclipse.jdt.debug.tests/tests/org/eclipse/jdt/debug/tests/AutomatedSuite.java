@@ -75,6 +75,7 @@ import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
+import org.eclipse.jdt.debug.tests.ui.ImportBreakpointsTest;
 
 /**
  * Tests for integration and nightly builds.
@@ -112,8 +113,8 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(HitCountBreakpointsTests.class));
 		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
 		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
-		addTest(new TestSuite(PreLaunchBreakpointTest.class));
-		
+		addTest(new TestSuite(PreLaunchBreakpointTest.class)); 
+		addTest(new TestSuite(ImportBreakpointsTest.class));
 		addTest(new TestSuite(StepFilterTests.class));
 
 		addTest(new TestSuite(InstanceVariableTests.class));

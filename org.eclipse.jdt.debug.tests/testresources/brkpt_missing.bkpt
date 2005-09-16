@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<breakpoints>
+<breakpoint enabled="true" registered="true" persistant="true">
+<resource path="/brkpt/newpack/Newer.java" type="1"/>
+<marker type="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker" org.eclipse.jdt.debug.core.typeName="newpack.Newer" charStart="33">
+<attrib name="workingset_name" value="&lt;;#&gt;hj&lt;;#&gt;"/>
+<attrib name="charStart" value="33"/>
+<attrib name="charEnd" value="38"/>
+<attrib name="type" value="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="message" value="Breakpoint:Newer"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=brkpt/&lt;newpack{Newer.java[Newer"/>
+<attrib name="org.eclipse.jdt.debug.core.memberType" value="0"/>
+<attrib name="workingset_id" value="&lt;;#&gt;org.eclipse.debug.ui.breakpointWorkingSet&lt;;#&gt;"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" registered="true" persistant="true">
+<resource path="/brkpt/fdsfs.java" type="1"/>
+<marker type="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker" org.eclipse.jdt.debug.core.typeName="fdsfs" charStart="15">
+<attrib name="workingset_name" value="&lt;;#&gt;temp&lt;;#&gt;"/>
+<attrib name="charEnd" value="20"/>
+<attrib name="charStart" value="15"/>
+<attrib name="type" value="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="message" value="Breakpoint:fdsfs"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=brkpt/&lt;{fdsfs.java[fdsfs"/>
+<attrib name="org.eclipse.jdt.debug.core.memberType" value="0"/>
+<attrib name="workingset_id" value="&lt;;#&gt;org.eclipse.debug.ui.breakpointWorkingSet&lt;;#&gt;"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" registered="true" persistant="true">
+<resource path="/brkpt/fdsfs.java" type="1"/>
+<marker type="org.eclipse.jdt.debug.javaMethodBreakpointMarker" org.eclipse.jdt.debug.core.typeName="fdsfs" lineNumber="-1" charStart="34">
+<attrib name="workingset_name" value="&lt;;#&gt;hj&lt;;#&gt;"/>
+<attrib name="charEnd" value="39"/>
+<attrib name="org.eclipse.jdt.debug.core.methodName" value="&lt;init&gt;"/>
+<attrib name="type" value="org.eclipse.jdt.debug.javaMethodBreakpointMarker"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="message" value="Method breakpoint:fdsfs [entry] - fdsfs()"/>
+<attrib name="org.eclipse.jdt.debug.core.methodSignature" value="()V"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=brkpt/&lt;{fdsfs.java[fdsfs~fdsfs"/>
+<attrib name="org.eclipse.jdt.debug.core.exit" value="false"/>
+<attrib name="charStart" value="34"/>
+<attrib name="org.eclipse.jdt.debug.core.native" value="false"/>
+<attrib name="org.eclipse.jdt.debug.core.entry" value="true"/>
+<attrib name="workingset_id" value="&lt;;#&gt;org.eclipse.debug.ui.breakpointWorkingSet&lt;;#&gt;"/>
+</marker>
+</breakpoint>
+<breakpoint enabled="true" registered="true" persistant="true">
+<resource path="/brkpt/fdsfs.java" type="1"/>
+<marker type="org.eclipse.jdt.debug.javaMethodBreakpointMarker" org.eclipse.jdt.debug.core.typeName="fdsfs" lineNumber="-1" charStart="114">
+<attrib name="workingset_name" value="&lt;;#&gt;temp&lt;;#&gt;"/>
+<attrib name="charEnd" value="118"/>
+<attrib name="org.eclipse.jdt.debug.core.methodName" value="main"/>
+<attrib name="type" value="org.eclipse.jdt.debug.javaMethodBreakpointMarker"/>
+<attrib name="org.eclipse.debug.core.enabled" value="true"/>
+<attrib name="org.eclipse.debug.core.id" value="org.eclipse.jdt.debug"/>
+<attrib name="message" value="Method breakpoint:fdsfs [entry] - main(String[])"/>
+<attrib name="org.eclipse.jdt.debug.core.methodSignature" value="([Ljava/lang/String;)V"/>
+<attrib name="org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID" value="=brkpt/&lt;{fdsfs.java[fdsfs~main~\[QString;"/>
+<attrib name="org.eclipse.jdt.debug.core.exit" value="false"/>
+<attrib name="charStart" value="114"/>
+<attrib name="org.eclipse.jdt.debug.core.native" value="false"/>
+<attrib name="org.eclipse.jdt.debug.core.entry" value="true"/>
+<attrib name="workingset_id" value="&lt;;#&gt;org.eclipse.debug.ui.breakpointWorkingSet&lt;;#&gt;"/>
+</marker>
+</breakpoint>
+</breakpoints>
