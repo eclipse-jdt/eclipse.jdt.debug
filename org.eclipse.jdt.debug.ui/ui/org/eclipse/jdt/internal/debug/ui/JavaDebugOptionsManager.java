@@ -522,13 +522,19 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		if (breakpoint == getSuspendOnCompilationErrorBreakpoint()) {
-		    try {
-		        return getProblem(thread) != null ? SUSPEND : DONT_SUSPEND;
-		    } catch (DebugException e) {
-		        JDIDebugUIPlugin.log(e);
-		        // don't suspend if we can't determine if there is a problem
-		        return DONT_SUSPEND;
-		    }
+			IJavaExceptionBreakpoint exception = (IJavaExceptionBreakpoint) breakpoint;
+			if (exception.getExceptionTypeName().equals("java.lang.Error")) { //$NON-NLS-1$
+				// only lookup source if the exception actually is a java.lang.Error (which is used
+				// to indicate compilation errors by the Eclipse Java compiler).
+			    try {
+			        return getProblem(thread) != null ? SUSPEND : DONT_SUSPEND;
+			    } catch (DebugException e) {
+			        JDIDebugUIPlugin.log(e);
+			        // don't suspend if we can't determine if there is a problem
+			        return DONT_SUSPEND;
+			    }
+			}
+			return DONT_SUSPEND;
 		}
 		if (breakpoint == getSuspendOnUncaughtExceptionBreakpoint()) {
 			// the "uncaught" exceptions breakpoint subsumes the "compilation error" breakpoint
