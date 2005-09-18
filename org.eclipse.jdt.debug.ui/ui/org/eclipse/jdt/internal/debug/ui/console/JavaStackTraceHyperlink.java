@@ -245,6 +245,9 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             int lineOffset = lineInformation.getOffset();
 	        String line = document.get(lineOffset, lineInformation.getLength());
             int linkMiddle = line.indexOf(".java:"); //$NON-NLS-1$
+            while (linkMiddle < regionOffset && linkMiddle > -1) {
+                linkMiddle = line.indexOf(".java", linkMiddle+1); //$NON-NLS-1$
+            }
             int linkStart = line.lastIndexOf(' ', linkMiddle);
             int linkEnd = line.indexOf(')', linkMiddle);
             return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
