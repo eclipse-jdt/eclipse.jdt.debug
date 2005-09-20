@@ -1136,16 +1136,24 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return project.getPackageFragmentRoot(r).getPackageFragment(pkg).getCompilationUnit(name);
 	}
 	
-	/**
-	 * Wait for autobuild to occur
-	 */
-	public void waitForAutoBuild() {
-		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-		} catch (OperationCanceledException e) {
-		} catch (InterruptedException e) {
-		}
-	}	
+    /**
+     * Wait for builds to complete
+     */
+    public static void waitForBuild() {
+        boolean wasInterrupted = false;
+        do {
+            try {
+                Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+                Platform.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+                wasInterrupted = false;
+            } catch (OperationCanceledException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                wasInterrupted = true;
+            }
+        } while (wasInterrupted);
+    }	
+    
     
     protected IJavaVariable findVariable(IJavaStackFrame frame, String name) throws DebugException {
         IJavaVariable variable = frame.findVariable(name);

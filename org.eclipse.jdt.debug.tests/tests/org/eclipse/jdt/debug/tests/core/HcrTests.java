@@ -64,7 +64,7 @@ public class HcrTests extends AbstractDebugTest {
 				// save contents
 				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 				cu.commitWorkingCopy(false, null);
-				waitForAutoBuild();
+				waitForBuild();
 				waiter.waitForEvent();
 	
 				// should have dropped to frame 'one'

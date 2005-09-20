@@ -69,7 +69,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		IBuffer buffer = cu.getBuffer();
 		buffer.setContents(COMPILE_ERROR_CONTENTS);
 		cu.save(new NullProgressMonitor(), true);
-        waitForAutoBuild();
+        waitForBuild();
 		
 		IJavaThread javaThread = null;
 		try {
@@ -96,7 +96,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		IBuffer buffer = cu.getBuffer();
 		buffer.setContents(COMPILE_ERROR_CONTENTS);
 		cu.save(new NullProgressMonitor(), true);
-        waitForAutoBuild();
+        waitForBuild();
 		
 		IJavaDebugTarget debugTarget = null;
 		try {
