@@ -17,25 +17,21 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ExportOperation;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportOperation;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests the import operations of the breakpoint import export feature
  * 
  * @since 3.2
  */
-public class ImportBreakpointsTest extends AbstractDebugTest {
+public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 
 	/**
 	 * Default constructor
@@ -131,12 +127,10 @@ public class ImportBreakpointsTest extends AbstractDebugTest {
 		try {
 		//create the working set and add breakpoints to it
 			IBreakpointOrganizer bporg = BreakpointOrganizerManager.getDefault().getOrganizer("org.eclipse.debug.ui.breakpointWorkingSetOrganizer");
-			IWorkingSetManager wsmanager = PlatformUI.getWorkbench().getWorkingSetManager();
+			IWorkingSetManager wsmanager = getWorkingSetManager();
 			String typeName = "DropTests";
 			String setName = "ws_name";
-			IWorkingSet set = wsmanager.createWorkingSet(setName, new IAdaptable[] {});
-			set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
-			wsmanager.addWorkingSet(set);
+			IWorkingSet set = createSet(setName);
 			assertNotNull("workingset does not exist", wsmanager.getWorkingSet(setName));
 			WorkingSetCategory category = new WorkingSetCategory(set);
 			
@@ -193,22 +187,4 @@ public class ImportBreakpointsTest extends AbstractDebugTest {
 		}//end finally
 	}//end testBreakpointImportMissingResources
 	
-	/**
-	 * Creates a working set and sets the values
-	 * @param breakpoint the breakpoint to add to the workingset
-	 */
-	private void createWorkingSet(String setname, IAdaptable element) {
-		IWorkingSetManager wsmanager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSet set = wsmanager.getWorkingSet(setname);
-		if(set == null) {
-			set = wsmanager.createWorkingSet(setname, new IAdaptable[] {});
-			set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
-			wsmanager.addWorkingSet(set);
-		}//end if
-		IAdaptable[] elements = set.getElements();
-		IAdaptable[] newElements = new IAdaptable[elements.length + 1];
-		newElements[newElements.length-1] = (IBreakpoint)element;
-		System.arraycopy(elements, 0, newElements, 0, elements.length);
-		set.setElements(newElements);
-	}//end createWorkingSet
 }//end class
