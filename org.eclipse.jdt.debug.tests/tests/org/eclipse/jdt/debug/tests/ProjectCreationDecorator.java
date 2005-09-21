@@ -245,7 +245,19 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         IFolder folder = (IFolder) resource;
         IResource[] children = folder.members();
         assertTrue("output folder is empty", children.length>0);
-        
+
+        IProject project = fJavaProject.getProject();
+        IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+        int errors = 0;
+        for (int i = 0; i < markers.length; i++) {
+            IMarker marker = markers[i];
+            Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
+            if (severity != null && severity.intValue() >= IMarker.SEVERITY_ERROR) {
+                errors ++;
+            } 
+        }
+        assertTrue("Unexpected compile errors in project. Expected 1, found " + markers.length, errors==1);
+
         int classFiles = 0;
         for (int i = 0; i < children.length; i++) {
             IResource child = children[i];
@@ -260,16 +272,5 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         
         assertTrue("No class files exist", (classFiles>0));
         
-        IProject project = fJavaProject.getProject();
-        IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-        int errors = 0;
-        for (int i = 0; i < markers.length; i++) {
-            IMarker marker = markers[i];
-            Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-            if (severity != null && severity.intValue() >= IMarker.SEVERITY_ERROR) {
-                errors ++;
-            } 
-        }
-        assertTrue("Unexpected compile errors in project. Expected 1, found " + markers.length, errors==1);
     }
 }
