@@ -75,6 +75,7 @@ import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
+import org.eclipse.jdt.debug.tests.refactoring.MoveCompilationUnitTests;
 import org.eclipse.jdt.debug.tests.ui.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.ui.ImportBreakpointsTest;
 
@@ -164,6 +165,36 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MemoryRenderingTests.class));
 		addTest(new TestSuite(JavaLibraryPathTests.class));
 		addTest(new TestSuite(EnvironmentTests.class));
+		
+		// refactoring tests
+		addTest(new TestSuite(MoveCompilationUnitTests.class));
+		// most refactoring tests are disabled pending bug fixes in breakpoint refactoring
+//		addTest(new TestSuite(MoveNonPublicTypeUnitTests.class));
+//		addTest(new TestSuite(MoveInnerTypeUnitTests.class));
+//		addTest(new TestSuite(MovePublicTypeMethodUnitTests.class));
+//		addTest(new TestSuite(MoveNonPublicTypeMethodUnitTests.class));
+//		addTest(new TestSuite(MoveInnerTypeMethodUnitTests.class));
+//		addTest(new TestSuite(MoveFieldUnitTests.class));
+//		addTest(new TestSuite(MoveInnerTypeToNewFileUnitTests.class));
+//		addTest(new TestSuite(PushDownMethodUnitTests.class));
+//		addTest(new TestSuite(PushDownFieldUnitTests.class));
+//		addTest(new TestSuite(PullUpMethodUnitTests.class));
+//		addTest(new TestSuite(PullUpFieldUnitTests.class));
+//		addTest(new TestSuite(ExtractMethodUnitTests.class));
+//		addTest(new TestSuite(IntroduceParameterUnitTests.class));
+//		addTest(new TestSuite(ChangeMethodSignatureUnitTests.class));
+//		addTest(new TestSuite(ChangeAnonymousTypeMethodSignatureUnitTests.class));
+//		addTest(new TestSuite(ConvertPublicAnonymousTypeToNestedUnitTests.class));
+//		addTest(new TestSuite(ConvertInnerAnonymousTypeToNestedUnitTests.class));
+//		addTest(new TestSuite(ConvertNonPublicAnonymousTypeToNestedUnitTests.class));
+//		addTest(new TestSuite(RenameCompilationUnitUnitTests.class));
+//		addTest(new TestSuite(RenamePublicTypeUnitTests.class));
+//		addTest(new TestSuite(RenameInnerTypeUnitTests.class));
+//		addTest(new TestSuite(RenameNonPublicTypeUnitTests.class));
+//		addTest(new TestSuite(RenamePackageUnitTests.class));
+//		addTest(new TestSuite(RenameMethodUnitTests.class));
+//		addTest(new TestSuite(RenameFieldUnitTests.class));
+
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 		

@@ -1,0 +1,61 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package a.b.c;
+
+/**
+ *
+ */
+public class MoveeChild extends Movee{
+	
+	int aChildInt;
+
+	public void childsMethod() {
+		System.out.println("Child's Method!");
+		Object anon = new Object(){
+			int anAnonInt;
+			String anonTypeMethod()
+			{
+				return "Child's Anonymous Type Method";
+			}
+		};
+	}
+	
+	class InnerChildType{//all spiritual like!
+		int innerChildInt;
+		
+		public void innerChildsMethod() {
+			System.out.println("InnerChild's Method!");
+			Object anon = new Object(){
+				int anAnonInt;			
+				String anonTypeMethod()
+				{
+					return "InnerChild's Anonymous Type Method";
+				}
+			};
+		}	
+	}
+}
+
+class NonPublicChildType{
+	int nonPublicChildInt;
+
+	public void nonPublicChildsMethod() {
+		System.out.println("NonPublicChild's Method!");
+		Object anon = new Object(){
+			int anAnonInt;
+			String anonTypeMethod()
+			{
+				return "NonPublicChild's Anonymous Type Method";
+			}
+		};
+	}	
+
+}

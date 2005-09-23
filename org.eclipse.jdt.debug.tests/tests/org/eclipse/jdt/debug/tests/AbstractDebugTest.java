@@ -91,6 +91,8 @@ import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
+import sun.security.action.GetPropertyAction;
+
 
  
 /**
@@ -103,6 +105,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public IEvaluationResult fEvaluationResult;
 	
 	public static IJavaProject fJavaProject;
+	
+	protected static MemberParser fMemberParser = null;
 	
 	/**
 	 * The last relevent event set - for example, that caused
@@ -572,6 +576,28 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * 
+	 * @param lineNumber
+	 * @param root
+	 * @param packageName
+	 * @param cuName
+	 * @param fullTargetName
+	 * @return
+	 */
+	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String root, String packageName, String cuName, 
+			String fullTargetName) throws Exception{
+		IJavaProject javaProject = getJavaProject();
+		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
+		assertNotNull("did not find requested Compilation Unit", cunit);
+		IType targetType = (IType)(new MemberParser()).getDeepest(cunit,fullTargetName);
+		assertNotNull("did not find requested type", targetType);
+		assertTrue("did not find type to install breakpoint in", targetType.exists());
+		
+		return createLineBreakpoint(targetType, lineNumber);
+	}
+
+	
+	/**
 	 * Creates a line breakpoint in the given type (may be a top level non public type)
 	 * 
 	 * @param lineNumber line number to create the breakpoint at
@@ -776,7 +802,267 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Map map = getExtraBreakpointAttributes(method);
 		return JDIDebugModel.createMethodBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
 	}
+		
+
+	/**
+	 * Creates a MethodBreakPoint on the method specified at the given path. 
+	 * Syntax:
+	 * Type$InnerType$MethodNameAndSignature$AnonymousTypeDeclarationNumber$FieldName
+	 * eg:<code>
+	 * public class Foo{
+	 * 		class Inner
+	 * 		{
+	 * 			public void aMethod()
+	 * 			{
+	 * 				Object anon = new Object(){
+	 * 					int anIntField;
+	 * 					String anonTypeMethod() {return "an Example";}				
+	 * 				}
+	 * 			}
+	 * 		}
+	 * }</code>
+	 * Syntax to get the anonymous toString would be: Foo$Inner$aMethod()V$1$anonTypeMethod()QString
+	 * so, createMethodBreakpoint(packageName, cuName, "Foo$Inner$aMethod()V$1$anonTypeMethod()QString",true,false);
+	 */
+	protected IJavaMethodBreakpoint createMethodBreakpoint(String root, String packageName, String cuName, 
+									String fullTargetName, boolean entry, boolean exit) throws Exception {
+		
+		IJavaProject javaProject = getJavaProject();
+		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
+		assertNotNull("did not find requested Compilation Unit", cunit);
+		IMethod targetMethod = (IMethod)(new MemberParser()).getDeepest(cunit,fullTargetName);
+		assertNotNull("did not find requested method", targetMethod);
+		assertTrue("Given method does not exist", targetMethod.exists());
+		IType methodParent = (IType)targetMethod.getParent();//safe - method's only parent = Type
+		assertNotNull("did not find type to install breakpoint in", methodParent);
+				
+		Map map = getExtraBreakpointAttributes(targetMethod);
+		return JDIDebugModel.createMethodBreakpoint(getBreakpointResource(methodParent), methodParent.getFullyQualifiedName(),targetMethod.getElementName(), targetMethod.getSignature(), entry, exit,false, -1, -1, -1, 0, true, map);
+	}		
 	
+	/**
+	 * Contains methods to find an IMember within a given path subdivided by the '$' character. 
+	 * Syntax:
+	 * Type$InnerType$MethodNameAndSignature$AnonymousTypeDeclarationNumber$FieldName
+	 * eg:<code>
+	 * public class Foo{
+	 * 		class Inner
+	 * 		{
+	 * 			public void aMethod()
+	 * 			{
+	 * 				Object anon = new Object(){
+	 * 					int anIntField;
+	 * 					String anonTypeMethod() {return "an Example";}				
+	 * 				}
+	 * 			}
+	 * 		}
+	 * }</code>
+	 * Syntax to get anIntField would be: Foo$Inner$aMethod()V$1$anIntField
+	 * Syntax to get the anonymous toString would be: Foo$Inner$aMethod()V$1$anonTypeMethod()QString
+	 * In the case of local types, the listed syntax should be Count and then Name, like: CountName
+	 * eg:<code>1MyType</code>
+	 */
+	class MemberParser{
+		/**
+		 * @param cu the CompilationUnit containing the toplevel Type
+		 * @param target - the IMember target, listed in full Syntax, as noted in MemberParser 
+		 * eg: EnclosingType$InnerType
+		 * @return the Lowest level inner type specified in input
+		 */
+		public IMember getDeepest(ICompilationUnit cu, String target)
+		{
+			for(int i=0;i<target.length();i++)
+			{
+				if(target.charAt(i)=='$')
+				{//EnclosingType$InnerType$MoreInner
+					String tail = target.substring(i+1);
+					IType enclosure = cu.getType(target.substring(0, i));
+					if(enclosure.exists())
+						return getDeepest(enclosure,tail);
+				}
+			}
+			//has no inner type
+			return cu.getType(target);
+			
+		}
+		
+		/**
+		 * Helper method for getLowestType (ICompilationUnit cu, String input)
+		 * @param top name of enclosing Type
+		 * @param tail the typename, possibly including inner type, 
+		 * separated by $. 
+		 * eg: EnclosingType$InnerType
+		 * @return the designated type, or null if type not found.
+		 */
+		protected IMember getDeepest(IMember top, String tail) {
+			
+			if(tail==null || tail.length()==0 )
+				return top;
+			
+			if(!top.exists())
+				return null;
+			
+			//check if there are more nested elements
+			String head=null;
+			for(int i=0;i<tail.length();i++)
+			{
+				if(tail.charAt(i)=='$')//nested Item?
+				{//Enclosing$Inner$MoreInner
+					head = tail.substring(0,i);
+					tail = tail.substring(i+1);	
+					break;//found next item
+				}
+			}
+			if(head==null)//we are at last item to parse
+			{//swap Members
+				head = tail;
+				tail = null;
+			}
+			
+			if(top instanceof IType)
+				return getNextFromType(top, head, tail);
+			else 
+				if(top instanceof IMethod)
+					return getNextFromMethod(top, head, tail);
+				else
+					if(top instanceof IField)
+						return getNextFromField(top, head, tail);
+			//else there is a problem!
+			return getDeepest(top,tail);			
+		}
+
+		/**
+		 * @param top the field in which to search
+		 * @param head the next member to find
+		 * @param tail the remaining members to find
+		 * @return the next member down contained by the given Field
+		 */
+		protected IMember getNextFromField(IMember top, String head, String tail) {
+			IField current = (IField)top;
+			
+			IType type = current.getType(getLocalTypeName(head),getLocalTypeOccurrence(head));
+			if(type.exists())	
+				return getDeepest(type,tail);
+			//else
+			return null;//something failed.								
+		}
+
+		/**
+		 * @param top the member in which to search
+		 * @param head the next member to find
+		 * @param tail the remaining members to find
+		 * @return the next member down contained by the given Method
+		 */
+		protected IMember getNextFromMethod(IMember top, String head, String tail) {
+			//must be a local or anonymous type
+			IMethod current = (IMethod)top;
+										
+			//is next part a Type?
+			IType type = current.getType(getLocalTypeName(head), getLocalTypeOccurrence(head));
+			if(type.exists())	
+				return getDeepest(type,tail);
+			//else
+			return null;
+		}
+
+		/**
+		 * @param top the member in which to search
+		 * @param head the next member to find
+		 * @param tail the remaining members to find
+		 * @return the next member down contained by the given Type
+		 */
+		protected IMember getNextFromType(IMember top, String head, String tail) {
+			IType current = (IType)top;
+			
+			//is next part a Type?
+			IMember next = current.getType(head);
+			if(next.exists())	
+				return getDeepest(next,tail);
+			//else, is next part a Field?
+			next = current.getField(head);
+			if(next.exists())
+				return getDeepest(next,tail);
+			//else, is next part a Method?
+			next = current.getMethod(getName(head),getSignature(head));
+			if(next.exists())
+				return getDeepest(next,tail);
+			//else
+				return null;//something failed.
+		}
+		
+		/**
+		 * @param head the string to parse for a name
+		 * @return the name in the type, given in the format "Occurance#Type"
+		 * e.g. head = "1Type";
+		 */
+		protected String getLocalTypeName(String head) {
+			for(int i=0;i<head.length();i++)
+			{
+				if(!Character.isDigit(head.charAt(i)))
+				{
+					return head.substring(i);
+				}
+				
+			}
+			return "";//entire thing is a number
+		}
+
+		/**
+		 * @param head the string to parse for an occurance
+		 * @return the name in the type, given in the format "Occurance#Type"
+		 * e.g. head = "1Type";
+		 */
+		protected int getLocalTypeOccurrence(String head) {
+			for(int i=0;i<head.length();i++)
+			{
+				if(!Character.isDigit(head.charAt(i)))
+					return Integer.parseInt(head.substring(0, i));
+			}
+			return Integer.parseInt(head);//entire thing is a number
+		}
+
+		/**
+		 * @param head name of method w/ signature at the end
+		 * @return simply the ParameterTypeSignature, using format:
+		 * methodNameSignature.
+		 * e.g.  head = "someMethod()V"
+		 */
+		protected String[] getSignature(String head) {
+			for(int i=0;i<head.length();i++)
+			{
+				if(head.charAt(i)=='(')//nested Item?
+					return Signature.getParameterTypes(head.substring(i));
+			}
+				return null;
+		}
+
+		/**
+		 * @param head name of method w/ signature at the end
+		 * @return simply the name of the given method, using format:
+		 * methodNameSignature.
+		 * e.g.  head = "someMethod()V"
+		 */
+		protected String getName(String head) {
+			for(int i=0;i<head.length();i++)
+			{
+				if(head.charAt(i)=='(')//nested Item?
+					return head.substring(0,i);
+			}
+				return null;
+		}
+		
+	}
+	
+	/**
+	 * @param cu the Compilation where the target resides
+	 * @param target the fullname of the target, as per MemberParser syntax
+	 * @return the requested Member
+	 */
+	protected IMember getMember(ICompilationUnit cu, String target)
+	{
+		IMember toReturn = (new MemberParser()).getDeepest(cu,target);
+		return toReturn;
+	}
 	/**
 	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
 	 * 
@@ -787,6 +1073,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String typeName) throws Exception {
 		return createClassPrepareBreakpoint(getType(typeName));
 	}
+	
+	/**
+	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
+	 * 
+	 * @param typeName type on which to create the breakpoint
+	 * @return breakpoint
+	 * @throws Exception
+	 */
+	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String root,
+			String packageName, String cuName, String fullTargetName) throws Exception {
+		ICompilationUnit cunit = getCompilationUnit(getJavaProject(), root, packageName, cuName);
+		IType type = (IType)getMember(cunit,fullTargetName);
+		assertTrue("Target type not found", type.exists());
+		return createClassPrepareBreakpoint(type);
+	}	
 	
 	/**
 	 * Creates a class prepare breakpoint in a fully specified type (potentially non public).
@@ -830,6 +1131,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * Creates and returns a watchpoint
+	 * 
+	 * @param typeNmae type name
+	 * @param fieldName field name
+	 * @param access whether to suspend on field access
+	 * @param modification whether to suspend on field modification
+	 */	
+	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
+		IType type = getType(typeName);
+		return createWatchpoint(type, fieldName, access, modification);
+	}
+	
+	/**
 	 * Creates and returns an exception breakpoint
 	 * 
 	 * @param exName exception name
@@ -850,11 +1164,73 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param access whether to suspend on field access
 	 * @param modification whether to suspend on field modification
 	 */	
-	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
+/*	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
 		IType type = getType(typeName);
 		return createWatchpoint(type, fieldName, access, modification);
-	}
+	}*/
 
+
+	/**
+	 * Creates a WatchPoint on the field specified at the given path.
+	 * Will create watchpoints on fields within anonymous types, inner types,
+	 * local (non-public) types, and public types.  
+	 * @param root
+	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
+	 * @param cuName simple compilation unit name within package, example "Something.java"
+	 * @param fullTargetName - see below
+	 * @param access whether to suspend on access 
+	 * @param modification whether to suspend on modification
+	 * @return a watchpoint
+	 * @throws Exception
+	 * @throws CoreException
+	 * 
+	 * @see
+	 * </code>
+	 * Syntax example:
+	 * Type$InnerType$MethodNameAndSignature$AnonymousTypeDeclarationNumber$FieldName
+	 * eg:<code>
+	 * public class Foo{
+	 * 		class Inner
+	 * 		{
+	 * 			public void aMethod()
+	 * 			{
+	 * 				Object anon = new Object(){
+	 * 					int anIntField;
+	 * 					String anonTypeMethod() {return "an Example";}				
+	 * 				}
+	 * 			}
+	 * 		}
+	 * }</code>
+	 * To get the anonymous toString, syntax of fullTargetName would be: <code>Foo$Inner$aMethod()V$1$anIntField</code> 
+	 */
+	protected IJavaWatchpoint createNestedTypeWatchPoint(String root, String packageName, String cuName, 
+			String fullTargetName, boolean access, boolean modification) throws Exception, CoreException {
+		
+		ICompilationUnit cunit = getCompilationUnit(getJavaProject(), root, packageName, cuName);
+		IField field = (IField)getMember(cunit,fullTargetName);
+		assertNotNull("Path to field is not valid", field);
+		assertTrue("Field is not valid", field.exists());
+		IType type = (IType)field.getParent();
+		return createWatchpoint(type, field.getElementName(), access, modification);
+	}
+	
+
+	/**
+	 * Creates a watchpoint in a fully specified type (potentially non public).
+	 * 
+	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
+	 * @param cuName simple compilation unit name within package, example "Something.java"
+	 * @param typeName $ qualified type name within compilation unit, example "Something" or
+	 *  "NonPublic" or "Something$Inner"
+	 * @param fieldName name of the field
+	 * @param access whether to suspend on access 
+	 * @param modification whether to suspend on modification
+	 */		
+	protected IJavaWatchpoint createWatchpoint(String packageName, String cuName, String typeName, String fieldName, boolean access, boolean modification) throws Exception {
+		IType type = getType(packageName, cuName, typeName);
+		return createWatchpoint(type, fieldName, access, modification);
+	}
+	
 	/**
 	 * Creates a watchpoint on the specified field.
 	 * 
@@ -873,23 +1249,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		wp.setAccess(access);
 		wp.setModification(modification);
 		return wp;
-	}
-	
-	/**
-	 * Creates a watchpoint in a fully specified type (potentially non public).
-	 * 
-	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
-	 * @param cuName simple compilation unit name within package, example "Something.java"
-	 * @param typeName $ qualified type name within compilation unit, example "Something" or
-	 *  "NonPublic" or "Something$Inner"
-	 * @param fieldName name of the field
-	 * @param access whether to suspend on access 
-	 * @param modification whether to suspend on modification
-	 */		
-	protected IJavaWatchpoint createWatchpoint(String packageName, String cuName, String typeName, String fieldName, boolean access, boolean modification) throws Exception {
-		IType type = getType(packageName, cuName, typeName);
-		return createWatchpoint(type, fieldName, access, modification);
-	}
+	}	
 		
 	/**
 	 * Terminates the given thread and removes its launch
