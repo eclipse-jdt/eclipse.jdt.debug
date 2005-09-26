@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -157,7 +156,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
 			doc.appendChild(node);
 			node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
-			return JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return LaunchingPlugin.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
 		} catch (ParserConfigurationException e) {

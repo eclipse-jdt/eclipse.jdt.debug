@@ -204,7 +204,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 	}
 
-	private IClasspathEntry createLibraryEntry(IPath sourcePath, IPath rootPath, String path) throws CoreException {
+	private IClasspathEntry createLibraryEntry(IPath sourcePath, IPath rootPath, String path) {
 		Path p = new Path(path);
 		if (!p.isAbsolute())
 		{
@@ -300,7 +300,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			node.setAttribute("javaProject", getJavaProject().getElementName()); //$NON-NLS-1$
 		}
 		try {
-			return JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return LaunchingPlugin.serializeDocument(doc);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
 			throw new CoreException(status);

@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -317,7 +316,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				node.setAttribute("rootPath", getRootPath().toString()); //$NON-NLS-1$
 			}
 		
-			return JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return LaunchingPlugin.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
 		} catch (ParserConfigurationException e) {

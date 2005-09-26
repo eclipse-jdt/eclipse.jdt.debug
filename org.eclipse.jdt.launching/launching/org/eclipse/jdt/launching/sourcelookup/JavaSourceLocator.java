@@ -47,7 +47,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -391,7 +390,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				node.appendChild(child);
 			}
 		
-			return JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return LaunchingPlugin.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); 
 		} catch (ParserConfigurationException e) {

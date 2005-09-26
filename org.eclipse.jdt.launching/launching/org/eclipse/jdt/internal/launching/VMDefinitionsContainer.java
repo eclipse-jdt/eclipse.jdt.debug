@@ -262,7 +262,7 @@ public class VMDefinitionsContainer {
 		}
 		
 		// Serialize the Document and return the resulting String
-		return JavaLaunchConfigurationUtils.serializeDocument(doc);
+		return LaunchingPlugin.serializeDocument(doc);
 	}
 	
 	/**

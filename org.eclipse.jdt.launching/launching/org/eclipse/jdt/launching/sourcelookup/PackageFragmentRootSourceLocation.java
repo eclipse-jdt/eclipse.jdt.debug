@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -132,7 +131,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 				handle = getPackageFragmentRoot().getHandleIdentifier();
 			}
 			node.setAttribute("handleId", handle); //$NON-NLS-1$
-			return JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return LaunchingPlugin.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
 		} catch (ParserConfigurationException e) {

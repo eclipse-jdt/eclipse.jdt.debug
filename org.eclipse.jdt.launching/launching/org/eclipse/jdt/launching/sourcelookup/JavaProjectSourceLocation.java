@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -163,7 +162,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
 			doc.appendChild(node);
 			node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
-			return JavaLaunchConfigurationUtils.serializeDocument(doc);
+			return LaunchingPlugin.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(MessageFormat.format(LaunchingMessages.JavaProjectSourceLocation_Unable_to_create_memento_for_Java_project_source_location__0__1, new String[] {getJavaProject().getElementName()}), e); 
 		} catch (ParserConfigurationException e) {

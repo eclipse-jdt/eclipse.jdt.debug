@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,7 +31,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -741,7 +747,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 		
 		// Serialize the Document and return the resulting String
-		return JavaLaunchConfigurationUtils.serializeDocument(doc);
+		return LaunchingPlugin.serializeDocument(doc);
 	}	
 	
 	/**
@@ -947,6 +953,28 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 	}
 	
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with platform line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 */
+	public static String serializeDocument(Document doc) throws IOException, TransformerException {
+		ByteArrayOutputStream s= new ByteArrayOutputStream();
+		
+		TransformerFactory factory= TransformerFactory.newInstance();
+		Transformer transformer= factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		
+		DOMSource source= new DOMSource(doc);
+		StreamResult outputTarget= new StreamResult(s);
+		transformer.transform(source, outputTarget);
+		
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+
 	/**
 	 * Returns a shared XML parser.
 	 * 
