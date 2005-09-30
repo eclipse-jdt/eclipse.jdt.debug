@@ -15,6 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.console.TextConsole;
 
 /**
@@ -54,4 +57,32 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
         throw new CoreException(status);
 	}
 
+    protected String getLinkText() throws CoreException {
+        try {
+            IRegion region = getConsole().getRegion(this);
+            IDocument document = getConsole().getDocument();
+            int regionOffset = region.getOffset();
+            int lineNumber = document.getLineOfOffset(regionOffset);
+            IRegion lineInformation = document.getLineInformation(lineNumber);
+            int lineOffset = lineInformation.getOffset();
+            String line = document.get(lineOffset, lineInformation.getLength());
+            int linkMiddle = line.indexOf("(Native"); //$NON-NLS-1$
+            while (linkMiddle < regionOffset && linkMiddle > -1) {
+                int mid = line.indexOf("(Native", linkMiddle+1); //$NON-NLS-1$
+                if (mid >= 0) 
+                    linkMiddle = mid;
+                else 
+                    break;
+            }
+            int linkStart = line.lastIndexOf(' ', linkMiddle);
+            int linkEnd = line.indexOf(')', linkMiddle);
+            return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
+        } catch (BadLocationException e) {
+            IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); 
+            throw new CoreException(status);
+        }       
+
+    }
+
+    
 }
