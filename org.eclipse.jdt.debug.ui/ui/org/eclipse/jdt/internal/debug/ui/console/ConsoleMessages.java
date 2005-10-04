@@ -29,4 +29,8 @@ public class ConsoleMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);
 	}
+
+    public static String JavaStackTraceHyperlink_0;
+
+    public static String JavaStackTraceHyperlink_1;
 }

@@ -69,8 +69,9 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			String typeName;
             int lineNumber;
             try {
-                typeName = getTypeName();
-                lineNumber = getLineNumber();
+                String linkText = getLinkText();
+                typeName = getTypeName(linkText);
+                lineNumber = getLineNumber(linkText);
             } catch (CoreException e1) {
                 ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Error, ConsoleMessages.JavaStackTraceHyperlink_Error, e1.getStatus()); 
                 return;
@@ -97,6 +98,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 								IRegion line = document.getLineInformation(lineNumber);
 								textEditor.selectAndReveal(line.getOffset(), line.getLength());
 							} catch (BadLocationException e) {
+                                MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_0, MessageFormat.format("{0}{1}{2}", new String[] {(lineNumber+1)+"", ConsoleMessages.JavaStackTraceHyperlink_1, typeName}));  //$NON-NLS-2$ //$NON-NLS-1$
 							}
 							provider.disconnect(editorInput);
 						}
@@ -105,7 +107,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				}
 			}
 			// did not find source
-			MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName})); // 
+			MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));  
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(ConsoleMessages.JavaStackTraceHyperlink_An_exception_occurred_while_following_link__3, e); 
 			return;
@@ -154,8 +156,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @return fully qualified type name
 	 * @exception CoreException if unable to parse the type name
 	 */
-	protected String getTypeName() throws CoreException {
-        String linkText = getLinkText();
+	protected String getTypeName(String linkText) throws CoreException {
         int start = linkText.indexOf('(');
         int end = linkText.indexOf(')');
         if (start >= 0 && end > start) {
@@ -201,8 +202,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * 
 	 * @exception CoreException if unable to parse the number
 	 */
-	protected int getLineNumber() throws CoreException {
-		String linkText = getLinkText();
+	protected int getLineNumber(String linkText) throws CoreException {
 		int index = linkText.lastIndexOf(':');
 		if (index >= 0) {
 			String numText = linkText.substring(index + 1);
@@ -237,23 +237,20 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	protected String getLinkText() throws CoreException {
 	    try {
+            IDocument document = getConsole().getDocument();
 	        IRegion region = getConsole().getRegion(this);
-	        IDocument document = getConsole().getDocument();
             int regionOffset = region.getOffset();
+            
 	        int lineNumber = document.getLineOfOffset(regionOffset);
 	        IRegion lineInformation = document.getLineInformation(lineNumber);
             int lineOffset = lineInformation.getOffset();
 	        String line = document.get(lineOffset, lineInformation.getLength());
-            int linkMiddle = line.indexOf(".java:"); //$NON-NLS-1$
-            while (linkMiddle < regionOffset && linkMiddle > -1) {
-                int mid = line.indexOf(".java", linkMiddle+1); //$NON-NLS-1$
-                if (mid >= 0) 
-                    linkMiddle = mid;
-                else 
-                    break;
-            }
-            int linkStart = line.lastIndexOf(' ', linkMiddle);
-            int linkEnd = line.indexOf(')', linkMiddle);
+            
+            int regionOffsetInLine = regionOffset - lineOffset;
+
+            int linkEnd = line.indexOf(')', regionOffsetInLine);
+            int linkStart = Math.max(line.lastIndexOf(' ', regionOffsetInLine), 0);
+            
             return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
 		} catch (BadLocationException e) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); 
