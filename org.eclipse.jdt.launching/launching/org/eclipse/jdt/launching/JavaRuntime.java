@@ -1430,6 +1430,7 @@ public final class JavaRuntime {
 			javadocLocations= new URL[dflts.length];
 			for (int i = 0; i < dflts.length; i++) {
 				libraryPaths[i]= dflts[i].getSystemLibraryPath();
+				javadocLocations[i]= dflts[i].getJavadocLocation();
 				if (!libraryPaths[i].toFile().isFile()) {
 					libraryPaths[i]= Path.EMPTY;
 				}
