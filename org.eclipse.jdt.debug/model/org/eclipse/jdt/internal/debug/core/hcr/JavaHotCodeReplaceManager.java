@@ -501,9 +501,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * we don't log these exceptions.
 	 */
 	private boolean shouldLogHCRException(DebugException exception) {
-	    return !(exception.getStatus().getException() instanceof IncompatibleThreadStateException) ||
-	    	exception.getStatus().getCode() == IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE ||
-	    	exception.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED;
+	    return !(exception.getStatus().getException() instanceof IncompatibleThreadStateException ||
+	    		 exception.getStatus().getCode() == IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE ||
+	    		 exception.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED);
 	}
 
 	/**
