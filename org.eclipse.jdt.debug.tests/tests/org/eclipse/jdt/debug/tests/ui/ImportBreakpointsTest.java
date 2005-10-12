@@ -65,6 +65,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			ImportOperation op2 = new ImportOperation(file, true, true);
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
+			file.delete();
 		} //end try
 		finally {
 			removeAllBreakpoints();
@@ -96,6 +97,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			ImportOperation op2 = new ImportOperation(file, true, true);
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
+			file.delete();
 		}//end try 
 		finally {
 			removeAllBreakpoints();
@@ -163,6 +165,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertNotNull("Import did not create working set", set);
 			assertEquals("workingset does not contain 6 breakpoints", 6, set.getElements().length);
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
+			file.delete();
 		}//end try
 		finally {
 			removeAllBreakpoints();
