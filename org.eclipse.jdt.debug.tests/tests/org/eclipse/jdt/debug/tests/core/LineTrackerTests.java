@@ -62,6 +62,19 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
         fStarted = false;
         fStopped = false;
     }
+    
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        // delete references and gc to free memory.
+        fConsole = null;
+        fLines = null;
+        fLinesRead.clear();
+        fLinesRead = null;
+        
+        System.gc();
+    }   
+    
+    
 	public void testSimpleLineCounter() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
 		fTarget = null;
@@ -273,6 +286,5 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        removeAllBreakpoints();
 	        terminateAndRemove(fTarget);
 	    }
-	}	
-
+	}
 }
