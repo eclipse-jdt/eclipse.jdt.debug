@@ -265,9 +265,21 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
      * @see org.eclipse.jdt.launching.IVMInstall#setVMArgs(java.lang.String)
      */
     public void setVMArgs(String vmArgs) {
-        fVMArgs = vmArgs; 
+        if (fVMArgs == null) {
+            if (vmArgs == null) {
+                // No change
+                return;
+            }
+        } else if (fVMArgs.equals(vmArgs)) {
+    		// No change
+    		return;
+    	}
+        PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_VM_ARGUMENTS, fVMArgs, vmArgs);
+        fVMArgs = vmArgs;
+		if (fNotify) {
+			JavaRuntime.fireVMChanged(event);		
+		}
     }	
-    
     
     /* (non-Javadoc)
      * Subclasses should override.

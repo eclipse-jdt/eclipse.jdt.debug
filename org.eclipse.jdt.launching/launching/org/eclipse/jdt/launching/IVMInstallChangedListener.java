@@ -48,7 +48,15 @@ public interface IVMInstallChangedListener {
 	 * with a VM install has changed.
 	 */
 	public static final String PROPERTY_JAVADOC_LOCATION = LaunchingPlugin.getUniqueIdentifier() + ".PROPERTY_JAVADOC_LOCATION"; //$NON-NLS-1$
-			
+
+	/**
+	 * Property constant indicating the VM arguments associated
+	 * with a VM install has changed.
+     * 
+     * @since 3.2
+	 */
+	public static final String PROPERTY_VM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".PROPERTY_VM_ARGUMENTS"; //$NON-NLS-1$
+
 	/**
 	 * Notification that the workspace default VM install
 	 * has changed.
