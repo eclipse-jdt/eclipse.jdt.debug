@@ -19,12 +19,12 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 
 /**
  * ResourceExtender provides propertyTester(s) for IResource types
@@ -34,6 +34,7 @@ public class JavaElementPropertyTester extends PropertyTester {
 
 	private static final String PROPERTY_IS_APPLET= "isApplet";	 //$NON-NLS-1$
 	private static final String PROPERTY_HAS_MAIN_TYPE= "hasMainType";	 //$NON-NLS-1$
+	private final String APPLET_TYPE = "java.applet.Applet"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.properties.IPropertyEvaluator#test(java.lang.Object, java.lang.String, java.lang.String)
@@ -72,15 +73,17 @@ public class JavaElementPropertyTester extends PropertyTester {
 	private boolean isApplet(IJavaElement element) {
         try {
             IType type = getType(element);
-            IType[] allSuperTypes = JavaModelUtil.getAllSuperTypes(type, new NullProgressMonitor());
-            for (int i = 0; i < allSuperTypes.length; i++) {
-                IType superType = allSuperTypes[i];
-                if (superType.getFullyQualifiedName().equals("java.applet.Applet")) { //$NON-NLS-1$
-                    return true;
-                }
-            }
-        } catch (JavaModelException e) {
-        }
+            if(type != null) {
+            	//bug fix: 112455
+            	IType[] stypes = type.newSupertypeHierarchy(new NullProgressMonitor()).getAllSuperclasses(type);
+	            for (int i = 0; i < stypes.length; i++) {
+	                if (stypes[i].getFullyQualifiedName().equals(APPLET_TYPE)) {
+	                    return true;
+	                }//end if
+	            }//end for
+            }//end if
+        }//end try 
+        catch (JavaModelException e) {}
         return false;
 	}
 	
@@ -92,11 +95,16 @@ public class JavaElementPropertyTester extends PropertyTester {
 	private boolean hasMain(IJavaElement element) {
 		try {
             IType mainType = getType(element);
-			if (mainType != null && mainType.exists() && JavaModelUtil.hasMainMethod(mainType)) {
-				return true;
-			}
-		} catch (JavaModelException e) {
-		}
+			if (mainType != null && mainType.exists()) { 
+				IMethod[] methods = mainType.getMethods();
+				for (int i= 0; i < methods.length; i++) {
+					if (methods[i].isMainMethod()) {
+						return true;
+					}//end if
+				}//end for
+			}//end if
+		}//end try 
+		catch (JavaModelException e) {}
 		return false;
 	}
     
