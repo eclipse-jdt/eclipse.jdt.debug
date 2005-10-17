@@ -2,17 +2,7 @@
 <projectDescription>
 	<name>org.eclipse.jdt.launching.macosx</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.debug.core</project>
-		<project>org.eclipse.jdt.core</project>
-		<project>org.eclipse.jdt.debug</project>
-		<project>org.eclipse.jdt.launching</project>
-		<project>org.eclipse.jdt.ui</project>
-		<project>org.eclipse.jface</project>
-		<project>org.eclipse.ui</project>
-	</projects>
+	<projects></projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
