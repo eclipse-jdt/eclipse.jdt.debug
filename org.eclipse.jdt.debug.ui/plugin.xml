@@ -1825,12 +1825,13 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                   <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
                    <adapt type="org.eclipse.jdt.core.IJavaElement"/>
                    <instanceof value="org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput"/>
                  </or>
-                 <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
+                 <test
+                       args="main, ([QString;)V, 9"
+                       property="org.eclipse.jdt.debug.hasMethod"/>
                </iterate>
              </with>
            </enablement>
@@ -1861,12 +1862,16 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+       <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
 				   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-				   <instanceof value="org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput"/>
+       <test
+             property="org.eclipse.jdt.debug.matchesPattern"
+             value="*.java"/>
                  </or>
-                 <test property="org.eclipse.jdt.debug.ui.isApplet"/>
+                 <test
+                       args="java.applet.Applet"
+                       property="org.eclipse.jdt.debug.hasSuperClass"
+                       value="java.applet.Applet"/>
                </iterate>
              </with>
            </enablement>

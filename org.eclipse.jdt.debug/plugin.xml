@@ -260,6 +260,12 @@
             class="org.eclipse.jdt.internal.debug.core.JavaDebugPropertyTester"
             id="org.eclipse.jdt.debug.PropertyTester">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.jdt.internal.debug.core.JavaLaunchableTester"
+            id="org.eclipse.jdt.debug.JavaLaunchableTester"
+            namespace="org.eclipse.jdt.debug"
+            properties="hasMethod, hasSuperClass, hasLibraryRef, hasSwtOnBuildPath, hasItemOnBuildPath, matchesJavaFileExtension, matchesContentType, hasProjectNature, implementsInterface"
+            type="org.eclipse.core.runtime.IAdaptable"/>            
    </extension>
    
   	<extension point="org.eclipse.core.runtime.preferences">
