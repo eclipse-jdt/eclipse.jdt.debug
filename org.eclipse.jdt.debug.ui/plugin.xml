@@ -1829,9 +1829,14 @@
                    <adapt type="org.eclipse.jdt.core.IJavaElement"/>
                    <instanceof value="org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput"/>
                  </or>
-                 <test
-                       args="main, ([QString;)V, 9"
+                 <or>
+	                 <test
+                       args="main, ([QString;)V"
                        property="org.eclipse.jdt.debug.hasMethod"/>
+                     <test
+                       args="main, ([Ljava/lang/String;)V"
+                       property="org.eclipse.jdt.debug.hasMethod"/>
+                 </or>
                </iterate>
              </with>
            </enablement>
@@ -1864,12 +1869,8 @@
                  <or>
        <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
 				   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-       <test
-             property="org.eclipse.jdt.debug.matchesPattern"
-             value="*.java"/>
                  </or>
                  <test
-                       args="java.applet.Applet"
                        property="org.eclipse.jdt.debug.hasSuperClass"
                        value="java.applet.Applet"/>
                </iterate>

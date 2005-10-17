@@ -105,10 +105,10 @@ public class JavaLaunchableTester extends PropertyTester {
 		}//end if
 		else if(PROPERTY_HAS_METHOD.equals(property)) {
 			//check to ensure arguments are correct length
-			if(args.length != 3) {
+			if(args.length != 2) {
 				return false;
 			}//end if
-			return hasMethod(element, (String)args[0], (String)args[1], ((Integer)args[2]));
+			return hasMethod(element, (String)args[0], (String)args[1]);
 		}//end if
 		else if(PROPERTY_HAS_SUPERCLASS.equals(property)) {
 			return hasSuperClass(element, (String)expectedValue);
@@ -148,16 +148,15 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * @param element the element to check for the method 
 	 * @param name the name of the method
 	 * @param signature the signature of the method
-	 * @param flags an Integer representing the combination of the flags on the method
 	 * @return true if the method is found in the element, false otherwise
 	 */
-	private boolean hasMethod(IJavaElement element, String name, String signature, Integer flags) {
+	private boolean hasMethod(IJavaElement element, String name, String signature) {
 		try {
             IType type = getType(element);
 			if (type != null && type.exists()) {
 				IMethod[] methods = type.getMethods();
 				for (int i= 0; i < methods.length; i++) {
-					if(name.equals(methods[i].getElementName()) & signature.equals(methods[i].getSignature()) & (flags.intValue() == methods[i].getFlags())) {
+					if(name.equals(methods[i].getElementName()) && signature.equals(methods[i].getSignature())) {
 						return true;
 					}//end if
 				}//end for
