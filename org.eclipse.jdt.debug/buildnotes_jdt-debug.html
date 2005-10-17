@@ -17,6 +17,36 @@
     notification for VM arguments via a property change event. A new property 
     identifier, <code>PROPERTY_VM_ARGUMENTS</code>, has been added to indicate 
     VM arguments have changed.</li>
+  <li>Property tests have been added to the core Java debug plug-in (org.eclipse.jdt.debug), 
+    to support launch short enablement expressions. By pushing common property 
+    tests down to the core Java debug plug-in, more launch shortcut enablement 
+    expressions will run even though their plug-in may noe be loaded (as the Java 
+    debug plug-in is loaded earlier on), resulting in fewew choices in the run/debug 
+    cascade menus. Property tests have been added for the following. 
+    <ul>
+      <li>hasMethod - accepts two arguments: method name and method signature 
+        in JLS format, for example &quot;main, ([QString;)V&quot; or &quot;main, 
+        ([Ljava/lang/String;)V&quot;</li>
+      <li>hasSuperClass - expected value specifies fully qualified type name of 
+        a super class (does not consider interfaces)</li>
+      <li>hasImport - expected value specifies fully name of import to match in 
+        JSL format, for example &quot;java.io.File&quot; or &quot;java.io.*&quot;. 
+        Only works on compilation units.</li>
+      <li>hasSwtOnBuildPath - whether the associated element's build path contains 
+        a reference to &quot;swt.jar&quot; or the &quot;org.eclipse.swt&quot; 
+        plug-in</li>
+      <li>hasItemOnBuildPath - expected value specifies a substring to match. 
+        Returns true when the associated element's build path contains an entry 
+        containing the given substring.</li>
+      <li>matchesJavaFileExtension - returns true if the associated element has 
+        a resource adapter that has a .class or .java file extension.</li>
+      <li>matchesContentType - expected value describes a content type as desribed 
+        by the IContentTypeManager</li>
+      <li>hasProjectNature - expected value is a project nature</li>
+      <li>implementsInterface - expected value is a fully qualified name of an 
+        interface </li>
+    </ul>
+  </li>
 </ol>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112455">112455</a>: Change JavaElementPropertyTester to not use JavaModelUtil.getAllSuperTypes<br>

@@ -52,7 +52,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	/**
 	 * name for the HAS_LIBRARY_REF property
 	 */
-	private static final String PROPERTY_HAS_LIBRARY_REF = "hasLibraryRef"; //$NON-NLS-1$
+	private static final String PROPERTY_HAS_LIBRARY_REF = "hasImport"; //$NON-NLS-1$
 	
 	/**
 	 * name for the PROPERTY_HAS_ITEM_ON_BUILD_PATH property
@@ -176,7 +176,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		try {
 			IType type = getType(element);
 			if(type != null) {
-				IType[] stypes = type.newSupertypeHierarchy(new NullProgressMonitor()).getAllSupertypes(type);
+				IType[] stypes = type.newSupertypeHierarchy(new NullProgressMonitor()).getAllSuperclasses(type);
 				for(int i = 0; i < stypes.length; i++) {
 					if(stypes[i].getFullyQualifiedName().equals(qname) || stypes[i].getElementName().equals(qname)) {
 						return true;
@@ -222,7 +222,7 @@ public class JavaLaunchableTester extends PropertyTester {
 			if(type != null) {
 				ICompilationUnit cunit = type.getCompilationUnit();
 				if(cunit != null) {
-					return (cunit.getImport(pname) != null);
+					return (cunit.getImport(pname).exists());
 				}//end if
 			}//end if
 		}//end try
