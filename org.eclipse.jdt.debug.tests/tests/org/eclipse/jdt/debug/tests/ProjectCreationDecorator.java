@@ -92,7 +92,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         // add rt.jar
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         assertNotNull("No default JRE", vm);
-        JavaProjectHelper.addVariableEntry(fJavaProject, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+        JavaProjectHelper.addContainerEntry(fJavaProject, new Path(JavaRuntime.JRE_CONTAINER));
         pro = fJavaProject.getProject();
 
         // add A.jar
@@ -184,7 +184,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         // add rt.jar
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         assertNotNull("No default JRE", vm);
-        JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+        JavaProjectHelper.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
     }
 
     /**

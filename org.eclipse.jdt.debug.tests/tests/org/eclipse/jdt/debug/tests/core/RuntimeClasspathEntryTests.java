@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -43,15 +44,8 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 	}
 	
 	public void testJRELIBVariableEntry() throws Exception {
-		IClasspathEntry[] cp = getJavaProject().getRawClasspath();
-		IClasspathEntry cpe = null;
-		for (int i = 0; i < cp.length; i++) {
-			if (cp[i].getEntryKind() == IClasspathEntry.CPE_VARIABLE && cp[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
-				cpe = cp[i];
-				break;
-			}
-		}
-		assertNotNull("Did not find a variable entry", cpe);
+		IClasspathEntry cpe = JavaCore.newVariableEntry(new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+
 		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(JavaRuntime.JRELIB_VARIABLE));
 		entry.setSourceAttachmentPath(cpe.getSourceAttachmentPath());
 		entry.setSourceAttachmentRootPath(cpe.getSourceAttachmentRootPath());

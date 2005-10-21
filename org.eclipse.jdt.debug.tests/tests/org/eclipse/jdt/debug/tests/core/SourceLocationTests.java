@@ -157,25 +157,38 @@ public class SourceLocationTests extends AbstractDebugTest {
 		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
-			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
-				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRE_CONTAINER))) {
 					lib = cpes[i];
 					break;
 				}
 			}
 		}
-		assertNotNull("Could not find JRE_LIB entry", lib);
+		assertNotNull("Could not find JRE_CONTAINER entry", lib);
 		
 		IPackageFragmentRoot[] roots = getJavaProject().findPackageFragmentRoots(lib);
-		assertEquals("Should be one root for JRE_LIB", roots.length, 1);
-		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(roots[0]);
+		Object source = null;
+		for (int i = 0; i < roots.length; i++) {
+			IPackageFragmentRoot root = roots[i];
+			IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
+			source = location.findSourceElement("java.lang.Object");
+			if (source != null) {
+				break;
+			}
+		}
 		
-		Object source = location.findSourceElement("java.lang.Object");
 		assertTrue("Did not find source for 'Object'", source instanceof IClassFile);
 		IClassFile cf = (IClassFile)source;
 		assertEquals("Did not find source for 'Object'", "Object.class", cf.getElementName());
 		
-		source = location.findSourceElement("java.util.Vector$1");
+		for (int i = 0; i < roots.length; i++) {
+			IPackageFragmentRoot root = roots[i];
+			IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
+			source = location.findSourceElement("java.util.Vector$1");
+			if (source != null) {
+				break;
+			}
+		}		
 		assertTrue("Did not find source for 'Vector$1'", source instanceof IClassFile);
 		cf = (IClassFile)source;
 		assertEquals("Did not find source for 'Vector$1'", "Vector$1.class", cf.getElementName());
@@ -185,20 +198,26 @@ public class SourceLocationTests extends AbstractDebugTest {
 		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
-			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
-				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRE_CONTAINER))) {
 					lib = cpes[i];
 					break;
 				}
 			}
 		}
-		assertNotNull("Could not find JRE_LIB entry", lib);
+		assertNotNull("Could not find JRE_CONTAINER entry", lib);
 		
 		IPackageFragmentRoot[] roots = getJavaProject().findPackageFragmentRoots(lib);
-		assertEquals("Should be one root for JRE_LIB", roots.length, 1);
-		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(roots[0]);
+		Object source = null;
+		for (int i = 0; i < roots.length; i++) {
+			IPackageFragmentRoot root = roots[i];
+			IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
+			source = location.findSourceElement("xyz.abc.Object");
+			if (source != null) {
+				break;
+			}
+		}
 		
-		Object source = location.findSourceElement("xyz.abc.Object");
 		assertNull("Should not find source", source);
 
 	}	

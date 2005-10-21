@@ -248,6 +248,10 @@ public class JavaProjectHelper {
 		return null;
 	}
 	
+	public static void addContainerEntry(IJavaProject project, IPath container) throws JavaModelException {
+		IClasspathEntry cpe = JavaCore.newContainerEntry(container, false);
+		addToClasspath(project, cpe);
+	}
 	
 	/**
 	 * Adds a required project entry.
