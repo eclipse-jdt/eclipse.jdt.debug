@@ -197,4 +197,10 @@ public class LauncherMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LauncherMessages.class);
 	}
+
+	public static String WorkingDirectoryBlock_18;
+
+	public static String WorkingDirectoryBlock_19;
+
+	public static String WorkingDirectoryBlock_20;
 }

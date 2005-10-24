@@ -251,7 +251,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		// do nothing when activated
+		fWorkingDirectoryBlock.initializeFrom(workingCopy);
 	}
 
 	/* (non-Javadoc)

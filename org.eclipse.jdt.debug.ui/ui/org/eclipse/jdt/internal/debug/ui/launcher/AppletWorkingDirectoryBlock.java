@@ -21,7 +21,8 @@ public class AppletWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	protected void setDefaultWorkingDir() {
 		String outputDir = JavaRuntime.getProjectOutputDirectory(getLaunchConfiguration());
 		if (outputDir != null) {
-			fWorkingDirText.setText(outputDir);
+			//bug 29565
+			setOtherWorkingDirectoryText(outputDir);
 		} else {
 			super.setDefaultWorkingDir();
 		}		
