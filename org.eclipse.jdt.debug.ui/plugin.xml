@@ -1831,10 +1831,10 @@
                  </or>
                  <or>
 	                 <test
-                       args="main, ([QString;)V"
+                       args="main, ([QString;)V, 9"
                        property="org.eclipse.jdt.debug.hasMethod"/>
                      <test
-                       args="main, ([Ljava/lang/String;)V"
+                       args="main, ([Ljava/lang/String;)V, 9"
                        property="org.eclipse.jdt.debug.hasMethod"/>
                  </or>
                </iterate>

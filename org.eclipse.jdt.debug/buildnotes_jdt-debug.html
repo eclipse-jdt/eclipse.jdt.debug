@@ -24,13 +24,19 @@
     debug plug-in is loaded earlier on), resulting in fewew choices in the run/debug 
     cascade menus. Property tests have been added for the following. 
     <ul>
-      <li>hasMethod - accepts two arguments: method name and method signature 
-        in JLS format, for example &quot;main, ([QString;)V&quot; or &quot;main, 
-        ([Ljava/lang/String;)V&quot;</li>
+      <li>hasMethod
+        <ul>
+          <li>requires two arguments: method name and method signature in JLS 
+            format, for example &quot;<code>main, ([QString;)V</code>&quot; or 
+            &quot;<code>main, ([Ljava/lang/String;)V</code>&quot;</li>
+          <li>third argument is optional: method modifiers as an integer bit mask 
+            based on <code>org.eclipse.jdt.core.util.IModifierConstants</code></li>
+        </ul>
+      </li>
       <li>hasSuperClass - expected value specifies fully qualified type name of 
         a super class (does not consider interfaces)</li>
       <li>hasImport - expected value specifies fully name of import to match in 
-        JSL format, for example &quot;java.io.File&quot; or &quot;java.io.*&quot;. 
+        JSL format, for example &quot;<code>java.io.File</code>&quot; or &quot;<code>java.io.*</code>&quot;. 
         Only works on compilation units.</li>
       <li>hasSwtOnBuildPath - whether the associated element's build path contains 
         a reference to &quot;swt.jar&quot; or the &quot;org.eclipse.swt&quot; 
@@ -41,7 +47,7 @@
       <li>matchesJavaFileExtension - returns true if the associated element has 
         a resource adapter that has a .class or .java file extension.</li>
       <li>matchesContentType - expected value describes a content type as desribed 
-        by the IContentTypeManager</li>
+        by the <code>IContentTypeManager</code></li>
       <li>hasProjectNature - expected value is a project nature</li>
       <li>implementsInterface - expected value is a fully qualified name of an 
         interface </li>
