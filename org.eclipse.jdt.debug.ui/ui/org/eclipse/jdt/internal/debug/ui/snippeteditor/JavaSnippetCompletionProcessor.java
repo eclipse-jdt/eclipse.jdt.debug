@@ -13,15 +13,16 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  
 import java.util.Arrays;
 
+import org.eclipse.jdt.core.CompletionContext;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
-import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
 import org.eclipse.jdt.ui.text.java.CompletionProposalCollector;
+import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -101,6 +102,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			setErrorMessage(null);
 			try {
 				fCollector = new CompletionProposalCollector(fEditor.getJavaProject());
+				fCollector.acceptContext(new CompletionContext());
 				fEditor.codeComplete(fCollector);
 			} catch (JavaModelException x) {
 				Shell shell= viewer.getTextWidget().getShell();
