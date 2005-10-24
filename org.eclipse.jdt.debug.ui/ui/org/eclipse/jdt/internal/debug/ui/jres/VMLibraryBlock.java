@@ -537,15 +537,11 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 */
 	public void update() {
 		LibraryLocation[] libs = null;
-		if (getVMInstall() == null) {
-			File homeDirectory = getHomeDirectory();
-			if (homeDirectory == null) {
-				libs = new LibraryLocation[0];
-			} else {
-				libs = getVMInstallType().getDefaultLibraryLocations(homeDirectory);
-			}
+		File homeDirectory = getHomeDirectory();
+		if (homeDirectory == null) {
+			libs = new LibraryLocation[0];
 		} else {
-			libs = fLibraryContentProvider.getLibraries();
+			libs = getVMInstallType().getDefaultLibraryLocations(homeDirectory);
 		}
 		fLibraryContentProvider.setLibraries(libs);
 		updateButtons();
