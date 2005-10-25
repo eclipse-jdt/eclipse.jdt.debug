@@ -14,10 +14,8 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
-import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -29,6 +27,7 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BidiSegmentEvent;
@@ -53,6 +52,8 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	private Font fFont;
 	private Color fBackgroundColor;
 	private Color fForegroundColor;
+	private IPreferenceStore fStore;
+	private DisplayViewerConfiguration fConfiguration;
 
 	public JDISourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		super(parent, ruler, styles);
@@ -66,9 +67,6 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 				}
 			}
 		});
-		updateViewerFont();
-		updateViewerColors();
-		getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
 	/**
@@ -222,16 +220,6 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	}
 	
 	/**
-	 * Returns the preference store used to configure this source viewer.
-	 * The JDISourceViewer uses the Java UI preferences.
-	 * 
-	 * @return the Java UI preferences
-	 */
-	protected IPreferenceStore getPreferenceStore() {
-		return PreferenceConstants.getPreferenceStore();
-	}
-	
-	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
@@ -248,19 +236,14 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND.equals(property) ||	AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)) {
 			updateViewerColors();
 		}
-		if (affectsTextPresentation(event)) {
-			invalidateTextPresentation();
+		if (fConfiguration != null) {
+			if (fConfiguration.affectsTextPresentation(event)) {
+				fConfiguration.handlePropertyChangeEvent(event);
+				invalidateTextPresentation();
+			}
 		}
 	}
 	
-	/**
-	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
-	 */
-	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
-		return textTools.affectsBehavior(event);
-	}
-
 	/**
 	 * Returns the current content assistant.
 	 * 
@@ -342,6 +325,36 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			getForegroundColor().dispose();
 			setForegroundColor(null);
 		}
-		getPreferenceStore().removePropertyChangeListener(this);
+		if (fStore != null) {
+			fStore.removePropertyChangeListener(this);
+			fStore = null;
+		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
+	 */
+	public void configure(SourceViewerConfiguration configuration) {
+		super.configure(configuration);
+		if (fStore != null) {
+			fStore.removePropertyChangeListener(this);
+			fStore = null;
+		}
+		if (configuration instanceof DisplayViewerConfiguration) {
+			fConfiguration = (DisplayViewerConfiguration) configuration;
+			fStore = fConfiguration.getTextPreferenceStore();
+			fStore.addPropertyChangeListener(this);
+		}
+		updateViewerFont();
+		updateViewerColors();		
+	}
+
+	/**
+	 * Returns the preference store used to configure this source viewer or
+	 * <code>null</code> if none;
+	 */
+	private IPreferenceStore getPreferenceStore() {
+		return fStore;
+	}
+	
 }

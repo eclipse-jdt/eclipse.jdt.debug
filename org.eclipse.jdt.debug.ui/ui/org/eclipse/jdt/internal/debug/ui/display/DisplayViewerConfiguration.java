@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.display;
 
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -37,8 +37,19 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 		
 	public DisplayViewerConfiguration() {
 		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), 
-				new ChainedPreferenceStore(new IPreferenceStore[] {PreferenceConstants.getPreferenceStore(), EditorsUI.getPreferenceStore()}),
+				new ChainedPreferenceStore(new IPreferenceStore[] {
+						PreferenceConstants.getPreferenceStore(),
+						EditorsUI.getPreferenceStore()}),
 				null, null);
+	}
+	
+	/**
+	 * Returns the preference store this source viewer configuration is associated with.
+	 * 
+	 * @return
+	 */
+	public IPreferenceStore getTextPreferenceStore() {
+		return fPreferenceStore;
 	}
 
 	public IContentAssistProcessor getContentAssistantProcessor() {
@@ -79,7 +90,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 					int length = doc.getLineLength(lineNum);
 					viewer.setSelectedRange(start, length);
 				} catch (BadLocationException e) {
-					DebugUIPlugin.log(e);
+					JDIDebugUIPlugin.log(e);
 				}
 			}
 		};

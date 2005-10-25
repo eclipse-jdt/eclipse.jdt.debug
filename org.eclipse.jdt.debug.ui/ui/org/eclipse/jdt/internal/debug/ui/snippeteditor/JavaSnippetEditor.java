@@ -77,6 +77,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -99,6 +100,7 @@ import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
@@ -248,8 +250,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		fSnippetStateListeners= new ArrayList(4);
 		IPreferenceStore store = new ChainedPreferenceStore(new IPreferenceStore[] {
 				PreferenceConstants.getPreferenceStore(),
-				EditorsUI.getPreferenceStore(),
-				JavaPlugin.getDefault().getPreferenceStore()});
+				EditorsUI.getPreferenceStore()});
 		setPreferenceStore(store);
 		setEditorContextMenuId("#JavaSnippetEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$
@@ -1129,14 +1130,21 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		JDISourceViewer isv= (JDISourceViewer) getSourceViewer();
-			if (isv != null) {
-				IContentAssistant assistant= isv.getContentAssistant();
-				if (assistant instanceof ContentAssistant) {
-					JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
-				}				
-				
-				super.handlePreferenceStoreChanged(event);
+		if (isv != null) {
+			IContentAssistant assistant= isv.getContentAssistant();
+			if (assistant instanceof ContentAssistant) {
+				JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
 			}
+			SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+			if (configuration instanceof JavaSourceViewerConfiguration) {
+				JavaSourceViewerConfiguration jsv = (JavaSourceViewerConfiguration) configuration;
+				if (jsv.affectsTextPresentation(event)) {
+					jsv.handlePropertyChangeEvent(event);
+					isv.invalidateTextPresentation();
+				}
+			}
+			super.handlePreferenceStoreChanged(event);
+		}
 	}
 	
 	protected IJavaThread getThread() {

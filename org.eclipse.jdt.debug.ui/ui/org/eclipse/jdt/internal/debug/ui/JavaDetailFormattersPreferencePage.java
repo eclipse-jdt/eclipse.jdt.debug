@@ -15,16 +15,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -65,7 +64,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	private Button fAddFormatterButton;
 	private Button fRemoveFormatterButton;
 	private Button fEditFormatterButton;
-	private SourceViewer fCodeViewer;
+	private JDISourceViewer fCodeViewer;
 	private Label fTableLabel;
 	
 	private FormatterListViewerContentProvider fFormatViewerContentProvider;
@@ -259,19 +258,16 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	}
 	
 	public void createSourceViewer(Composite container) {
-		fCodeViewer= new SourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		fCodeViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();
 		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
 		document.setDocumentPartitioner(partitioner);
 		partitioner.connect(document);		
-		fCodeViewer.configure(new JavaSourceViewerConfiguration(tools.getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null));
+		fCodeViewer.configure(new DisplayViewerConfiguration());
 		fCodeViewer.setEditable(false);
 		fCodeViewer.setDocument(document);
-		fCodeViewer.getTextWidget().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-	
-		fCodeViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 		
 		Control control= fCodeViewer.getControl();
 		GridData gd= new GridData(GridData.FILL_BOTH);
@@ -344,6 +340,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
         JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_SHOW_DETAILS, value);
         
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
+		fCodeViewer.dispose();
 		return true;
 	}
 	
@@ -471,4 +468,12 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
+	 */
+	public boolean performCancel() {
+		fCodeViewer.dispose();
+		return super.performCancel();
+	}	
 }

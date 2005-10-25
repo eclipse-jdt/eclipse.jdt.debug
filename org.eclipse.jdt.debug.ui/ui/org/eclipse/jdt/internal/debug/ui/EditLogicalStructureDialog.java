@@ -39,7 +39,6 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -367,7 +366,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
 		fSnippetDocument.setDocumentPartitioner(partitioner);
 		partitioner.connect(fSnippetDocument);
-		fSnippetViewer.configure(new JavaSourceViewerConfiguration(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null));
 		if (fViewerConfiguration == null) {
 			fViewerConfiguration= new DisplayViewerConfiguration() {
 				public IContentAssistProcessor getContentAssistantProcessor() {

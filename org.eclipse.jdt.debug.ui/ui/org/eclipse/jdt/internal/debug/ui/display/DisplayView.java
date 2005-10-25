@@ -447,6 +447,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		if (fSourceViewer != null) {
 			fSourceViewer.dispose();
+			fSourceViewer = null;
 		}
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();

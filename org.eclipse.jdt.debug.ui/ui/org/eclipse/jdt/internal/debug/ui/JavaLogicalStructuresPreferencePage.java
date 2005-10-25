@@ -17,15 +17,13 @@ import java.util.List;
 
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -227,7 +225,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         new ColumnWeightData(70),
         new ColumnWeightData(30),
     };
-    private SourceViewer fCodeViewer;
+    private JDISourceViewer fCodeViewer;
 
 	public JavaLogicalStructuresPreferencePage() {
 		super(DebugUIMessages.JavaLogicalStructuresPreferencePage_0); 
@@ -265,19 +263,16 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         label.setText(DebugUIMessages.JavaLogicalStructuresPreferencePage_12); 
         label.setFont(parent.getFont());
         
-        fCodeViewer= new SourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        fCodeViewer= new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
         JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
         IDocument document= new Document();
         IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
         document.setDocumentPartitioner(partitioner);
         partitioner.connect(document);      
-        fCodeViewer.configure(new JavaSourceViewerConfiguration(tools.getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null));
+        fCodeViewer.configure(new DisplayViewerConfiguration());
         fCodeViewer.setEditable(false);
         fCodeViewer.setDocument(document);
-        fCodeViewer.getTextWidget().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-    
-        fCodeViewer.getTextWidget().setFont(JFaceResources.getTextFont());
         
         Control control= fCodeViewer.getControl();
         GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -525,7 +520,18 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 */
 	public boolean performOk() {
 		fLogicalStructuresContentProvider.saveUserDefinedJavaLogicalStructures();
+		fCodeViewer.dispose();
 		return super.performOk();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
+	 */
+	public boolean performCancel() {
+		fCodeViewer.dispose();
+		return super.performCancel();
+	}
+	
+	
 	
 }
