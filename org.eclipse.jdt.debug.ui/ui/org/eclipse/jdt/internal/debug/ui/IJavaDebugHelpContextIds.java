@@ -27,7 +27,7 @@ public interface IJavaDebugHelpContextIds {
 
 	// view parts
 	public static final String DISPLAY_VIEW= PREFIX + "display_view_context"; //$NON-NLS-1$
-	public static final String MONITORS_VIEW= PREFIX + "monitors_view_context"; //$NON-NLS-1$
+	public static final String STACK_TRACE_CONSOLE = PREFIX + "stack_trace_console_context"; //$NON-NLS-1$
 
 	//dialogs
 	public static final String EDIT_JRE_DIALOG= PREFIX + "edit_jre_dialog_context"; //$NON-NLS-1$

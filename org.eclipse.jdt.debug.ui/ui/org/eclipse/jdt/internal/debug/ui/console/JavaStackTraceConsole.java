@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
@@ -139,4 +140,13 @@ public class JavaStackTraceConsole extends TextConsole {
         }
 
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
+	 */
+	public String getHelpContextId() {
+		return IJavaDebugHelpContextIds.STACK_TRACE_CONSOLE;
+	}
+    
+    
 }
