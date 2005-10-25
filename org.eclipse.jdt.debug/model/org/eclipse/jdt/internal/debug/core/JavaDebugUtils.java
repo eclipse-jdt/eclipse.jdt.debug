@@ -127,7 +127,10 @@ public class JavaDebugUtils {
 				}
 			} else {
 				if (object instanceof IJavaValue) {
-					typeName = ((IJavaValue)object).getJavaType().getName();
+					IJavaType javaType = ((IJavaValue)object).getJavaType();
+					if (javaType != null) {
+						typeName = javaType.getName();
+					}
 				} else if (object instanceof IJavaType) {
 					typeName = ((IJavaType)object).getName();
 				}
