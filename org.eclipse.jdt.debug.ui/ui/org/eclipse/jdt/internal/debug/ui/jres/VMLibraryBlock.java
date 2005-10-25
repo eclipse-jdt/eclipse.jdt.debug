@@ -459,13 +459,13 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	/**
 	 * The "default" button has been toggled
 	 */
-	protected void handleRestoreDefault() {
+	public void restoreDefaultLibraries() {
 		final IVMInstall vmInstall = getVMInstall();
 		LibraryLocation[] libs = null;
 		if (vmInstall == null) {
 			libs = new LibraryLocation[0];
 		} else {
-			File installLocation = vmInstall.getInstallLocation();
+			File installLocation = getHomeDirectory();
 			if (installLocation == null) {
 				libs = new LibraryLocation[0];
 			} else {
@@ -518,6 +518,8 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		update();
 	}
 	
+	
+	
 	/**
 	 * Sets the home directory of the VM Install the user has chosen
 	 */
@@ -533,17 +535,9 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	}
 	
 	/**
-	 * Updates libraries based on settings
+	 * Updates buttons and status based on current libraries
 	 */
 	public void update() {
-		LibraryLocation[] libs = null;
-		File homeDirectory = getHomeDirectory();
-		if (homeDirectory == null) {
-			libs = new LibraryLocation[0];
-		} else {
-			libs = getVMInstallType().getDefaultLibraryLocations(homeDirectory);
-		}
-		fLibraryContentProvider.setLibraries(libs);
 		updateButtons();
 		IStatus status = new StatusInfo();
 		if (fLibraryContentProvider.getLibraries().length == 0) { // && !isDefaultSystemLibrary()) {
@@ -640,8 +634,9 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		} else if (source == fEditButton) {
 			edit((IStructuredSelection) fLibraryViewer.getSelection());
 		} else if (source == fDefaultButton) {
-			handleRestoreDefault();
+			restoreDefaultLibraries();
 		}
+		update();
 	}
 
 	/* (non-Javadoc)

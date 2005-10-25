@@ -295,7 +295,7 @@ public class AddVMDialog extends StatusDialog {
 		} else {
 			fLibraryBlock.setHomeDirectory(null);
 		}
-		fLibraryBlock.update();
+		fLibraryBlock.restoreDefaultLibraries();
 		detectJavadocLocation();
 		return s;
 	}
