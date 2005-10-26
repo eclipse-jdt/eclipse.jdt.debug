@@ -91,7 +91,10 @@ public class CurrentFrameContext extends TypeContext {
      */
     protected IJavaStackFrame getStackFrame() {
         IAdaptable debugContext = DebugUITools.getDebugContext();
-        IJavaStackFrame frame = (IJavaStackFrame) debugContext.getAdapter(IJavaStackFrame.class);
+        IJavaStackFrame frame = null;
+        if (debugContext != null) {
+        	frame = (IJavaStackFrame) debugContext.getAdapter(IJavaStackFrame.class);
+        }
         return frame;
     }
 
