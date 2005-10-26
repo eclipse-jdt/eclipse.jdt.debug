@@ -2324,7 +2324,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} 
 		if (adapter == IJavaStackFrame.class) {
 			try {
-				return (IJavaStackFrame)getTopStackFrame();
+				return getTopStackFrame();
 			} catch (DebugException e) {
 				// do nothing if not able to get frame
 			} 
