@@ -124,15 +124,15 @@ public class BreakpointPackageRenameParticipant extends RenameParticipant {
 						destType = destType.getType(typeNames[j]);
 					}
 					if (javaBreakpoint instanceof IJavaWatchpoint) {
-						changes.add(new WatchpointTypeChange((IJavaWatchpoint) javaBreakpoint, destType));
+						changes.add(new WatchpointTypeChange((IJavaWatchpoint) javaBreakpoint, destType, breakpointType));
 					} else if (javaBreakpoint instanceof IJavaClassPrepareBreakpoint) {
-						changes.add(new ClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) javaBreakpoint, destType));
+						changes.add(new ClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) javaBreakpoint, destType, breakpointType));
 					} else if (javaBreakpoint instanceof IJavaMethodBreakpoint) {
-						changes.add(new MethodBreakpointTypeChange((IJavaMethodBreakpoint) breakpoint, destType));
+						changes.add(new MethodBreakpointTypeChange((IJavaMethodBreakpoint) breakpoint, destType, breakpointType));
 					} else if (javaBreakpoint instanceof IJavaExceptionBreakpoint) {
-						changes.add(new ExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) javaBreakpoint, destType));
+						changes.add(new ExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) javaBreakpoint, destType, breakpointType));
 					} else if (javaBreakpoint instanceof IJavaLineBreakpoint) {
-						changes.add(new LineBreakpointTypeChange((IJavaLineBreakpoint) javaBreakpoint, destType));
+						changes.add(new LineBreakpointTypeChange((IJavaLineBreakpoint) javaBreakpoint, destType, breakpointType));
 					}
 				}
 			}

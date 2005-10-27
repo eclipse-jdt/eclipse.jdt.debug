@@ -29,12 +29,13 @@ import org.eclipse.ltk.core.refactoring.Change;
  */
 public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChange {
 	
-	private IType fDestType;
+	private IType fDestType, fOriginalType;
 	private int fStart, fEnd;
 
-	public ClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint breakpoint, IType destType) throws CoreException {
+	public ClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint breakpoint, IType destType, IType originalType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
+		fOriginalType = originalType;
 		fStart = breakpoint.getMarker().getAttribute(IMarker.CHAR_START, -1);
 		fEnd = breakpoint.getMarker().getAttribute(IMarker.CHAR_END, -1);	}
 
@@ -63,8 +64,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		// TODO: undo
-		return null;
+		return new ClassPrepareBreakpointTypeChange(breakpoint, fOriginalType, fDestType);
 	}
 
 }

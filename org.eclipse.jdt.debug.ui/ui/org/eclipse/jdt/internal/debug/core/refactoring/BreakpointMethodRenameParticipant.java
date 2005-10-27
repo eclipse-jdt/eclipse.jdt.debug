@@ -102,7 +102,7 @@ public class BreakpointMethodRenameParticipant extends RenameParticipant {
 				IType breakpointType = BreakpointUtils.getType(methodBreakpoint);
 				if (breakpointType != null && originalMethod.getDeclaringType().equals(breakpointType)) {
 					IMethod destMethod = originalMethod.getDeclaringType().getMethod(destMethodName, originalMethod.getParameterTypes());
-					changes.add(new MethodBreakpointMethodChange(methodBreakpoint, destMethod));
+					changes.add(new MethodBreakpointMethodChange(methodBreakpoint, destMethod, originalMethod));
 				}
 			}
 		}

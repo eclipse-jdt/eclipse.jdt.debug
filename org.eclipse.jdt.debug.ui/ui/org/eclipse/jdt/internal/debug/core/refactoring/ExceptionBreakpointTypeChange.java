@@ -29,10 +29,12 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 	
 	private IType fDestType;
+	private IType fOriginalType;
 	
-	public ExceptionBreakpointTypeChange(IJavaExceptionBreakpoint breakpoint, IType destType) throws CoreException {
+	public ExceptionBreakpointTypeChange(IJavaExceptionBreakpoint breakpoint, IType destType, IType originalType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
+		fOriginalType = originalType;
 	}
 
 	/* (non-Javadoc)
@@ -59,8 +61,7 @@ public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		// TODO: undo
-		return null;		
+		return new ExceptionBreakpointTypeChange(breakpoint, fOriginalType, fDestType);
 	}
 
 }

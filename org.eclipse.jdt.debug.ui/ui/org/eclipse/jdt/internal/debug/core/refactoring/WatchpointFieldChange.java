@@ -28,11 +28,12 @@ import org.eclipse.ltk.core.refactoring.Change;
  */
 public class WatchpointFieldChange extends WatchpointChange {
 	
-	private IField fDestField;
+	private IField fDestField, fOriginalField;
 	
-	public WatchpointFieldChange(IJavaWatchpoint watchpoint, IField destField) throws CoreException {
+	public WatchpointFieldChange(IJavaWatchpoint watchpoint, IField destField, IField originalField) throws CoreException {
 		super(watchpoint);
 		fDestField = destField;
+		fOriginalField = originalField;
 	}
 
 	/* (non-Javadoc)
@@ -61,8 +62,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		// TODO: undo
-		return null;
+		return new WatchpointFieldChange(breakpoint, fOriginalField, fDestField);
 	}
 
 }
