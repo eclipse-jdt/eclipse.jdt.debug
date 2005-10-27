@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
+
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -39,36 +39,7 @@ public class RenamePackageUnitTests extends AbstractDebugTest{
 
 	protected void cleanTestFiles() throws Exception
 	{
-		//ensure proper packages
-		//cleanup new Package
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
-		IPackageFragment fragment = root.getPackageFragment("renamedPackage");
-		if(fragment.exists())
-			fragment.delete(true, new NullProgressMonitor());	
-		
-		fragment = root.getPackageFragment("a.b.c");
-		if(!fragment.exists())
-			root.createPackageFragment("a.b.c", true, new NullProgressMonitor());
-		
-				
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);		
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup child
-		target = getJavaProject().getProject().getFile("src/a/b/c/MoveeChild.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/MoveeChildSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 
 	protected final void performRefactor(final Refactoring refactoring) throws Exception {
@@ -317,8 +288,8 @@ public class RenamePackageUnitTests extends AbstractDebugTest{
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1",
 					targetLineage = "renamedPackage"+"."+"NonPublicChildType$1";
-	
-			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
+			
+				runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
 	}//end testBreakPoint		
 	
 	public void testNonPublicAnonymousTypeLineBreakpoint() throws Exception {
@@ -413,7 +384,7 @@ public class RenamePackageUnitTests extends AbstractDebugTest{
 		pack = "a.b.c",
 		cunit = "MoveeChild.java",
 		fullTargetName = "MoveeChild$childsMethod()V$1",
-		targetLineage = "MoveeChild$1";
+		targetLineage = "renamedPackage"+"."+"MoveeChild$1";
 		int lineNumber = 26;
 		
 		runLineBreakpointTest(src, pack, cunit, fullTargetName, targetLineage, lineNumber);
@@ -456,7 +427,7 @@ public void testPublicLineBreakpoint() throws Exception {
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild",
-					targetLineage = "MoveeChild";
+					targetLineage = "renamedPackage"+"."+"MoveeChild";
 			int lineNumber = 21;
 			
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, targetLineage, lineNumber);

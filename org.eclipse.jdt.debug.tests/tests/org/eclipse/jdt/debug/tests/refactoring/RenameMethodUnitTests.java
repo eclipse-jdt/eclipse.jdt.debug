@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -19,7 +18,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
@@ -38,36 +36,7 @@ public class RenameMethodUnitTests extends AbstractDebugTest{
 
 	protected void cleanTestFiles() throws Exception
 	{
-		//ensure proper packages
-		//cleanup new Package
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
-		IPackageFragment fragment = root.getPackageFragment("renamedPackage");
-		if(fragment.exists())
-			fragment.delete(true, new NullProgressMonitor());	
-		
-		fragment = root.getPackageFragment("a.b.c");
-		if(!fragment.exists())
-			root.createPackageFragment("a.b.c", true, new NullProgressMonitor());
-		
-				
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);		
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup child
-		target = getJavaProject().getProject().getFile("src/a/b/c/MoveeChild.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/MoveeChildSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 
 	protected final void performRefactor(final Refactoring refactoring) throws Exception {

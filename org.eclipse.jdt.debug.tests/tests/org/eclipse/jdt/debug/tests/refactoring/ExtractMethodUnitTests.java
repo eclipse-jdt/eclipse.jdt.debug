@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -145,24 +144,7 @@ public class ExtractMethodUnitTests extends AbstractDebugTest{
 	
 	protected void cleanTestFiles() throws Exception
 	{
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);		
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/b/c/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup source
-		target = getJavaProject().getProject().getFile("src/a/b/c/MoveeChild.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/b/c/MoveeChildSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 	
 }

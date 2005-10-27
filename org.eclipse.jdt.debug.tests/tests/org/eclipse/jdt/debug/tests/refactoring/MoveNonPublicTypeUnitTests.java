@@ -11,14 +11,13 @@
 
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -47,7 +46,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IType type = cunit.getType("NonPublicType");
@@ -74,7 +73,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */	
 	public void testMethodBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IType type = cunit.getType("NonPublicType");
@@ -100,7 +99,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */		
 	public void testWatchPointBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IType type = cunit.getType("NonPublicType");		
@@ -127,7 +126,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */			
 	public void testClassLoadBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IType type = cunit.getType("NonPublicType");		
@@ -196,21 +195,8 @@ public class MoveNonPublicTypeUnitTests extends AbstractDebugTest {
 	 * Replaces the Movee.java file with a clean copy with which to continue tests 
 	 * from a src file.
 	 */
-	protected void cleanFile() throws Exception
+	protected void cleanTestFiles() throws Exception
 	{
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/b/c/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		target = getJavaProject().getProject().getFile("src/a/b/MoveeRecipient.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/b/c/MoveeRecipientSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 }

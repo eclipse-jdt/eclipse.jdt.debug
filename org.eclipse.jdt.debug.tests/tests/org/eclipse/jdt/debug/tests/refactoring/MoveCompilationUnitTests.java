@@ -13,7 +13,6 @@ package org.eclipse.jdt.debug.tests.refactoring;
 
 import java.util.HashMap;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -49,7 +48,7 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		try {
@@ -81,7 +80,7 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */	
 	public void testMethodBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 				
@@ -114,7 +113,7 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */		
 	public void testWatchPointBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 				
@@ -146,7 +145,7 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */			
 	public void testClassLoadBreakPoint() throws Exception {
-		cleanFile();
+		cleanTestFiles();
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 				
@@ -194,17 +193,8 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 	 * Replaces the Movee.java file with a clean copy with which to continue tests 
 	 * from a src file.
 	 */
-	protected void cleanFile() throws Exception
+	protected void cleanTestFiles() throws Exception
 	{
-		//delete all old copies of the target file
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");
-		if(target.exists())
-			target.delete(false, false, null);
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/b/c/MoveeSource");
-		source.copy(target.getFullPath(), false, null );
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 }

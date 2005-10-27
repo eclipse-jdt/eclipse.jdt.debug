@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -41,29 +40,7 @@ public class RenamePublicTypeUnitTests extends AbstractDebugTest{
 
 	protected void cleanTestFiles() throws Exception
 	{
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);		
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/b/c/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup child
-		target = getJavaProject().getProject().getFile("src/a/b/c/MoveeChild.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/b/c/MoveeChildSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup any renames
-		target = getJavaProject().getProject().getFile("src/a/b/c/RenamedType.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 
 	protected final void performRefactor(final Refactoring refactoring) throws Exception {
@@ -108,21 +85,21 @@ public class RenamePublicTypeUnitTests extends AbstractDebugTest{
 	/**
 	 * Creates an exception breakpoint and adds a filter. Refactors & checks 
 	 * if the filter changed appropriately w/ the refactor.
-	 * @param src
-	 * @param pack
+	 * @param src name of src file
+	 * @param pack 
 	 * @param cunit
 	 * @param targetName
-	 * @param targetLineage
+	 * @param exceptionName TODO
 	 * @throws Exception
 	 */
-	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String targetLineage) throws Exception {
+	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String exceptionName) throws Exception {
 		cleanTestFiles();		
-		String newTypeName = "RenamedType",
+		String newTypeName = pack + "."+ "RenamedType",
 		fullTargetName = pack + "."+ targetName;
 		try {
 			//create breakpoint to test
-			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(fullTargetName, true, true);
-			breakpoint.setExclusionFilters(new String[] {fullTargetName});
+			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(exceptionName, true, true);
+			
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, targetName);
 			performRefactor(ref);
@@ -130,8 +107,8 @@ public class RenamePublicTypeUnitTests extends AbstractDebugTest{
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			breakpoint = (IJavaExceptionBreakpoint) breakpoints[0];
+			assertEquals("breakpoint attached to wrong type", exceptionName, breakpoint.getTypeName());
 			assertTrue("Breakpoint Marker has ceased existing",breakpoint.getMarker().exists());
-			assertEquals("Filter paths not changed.", pack+"."+newTypeName, breakpoint.getExclusionFilters()[0]);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -306,9 +283,10 @@ public class RenamePublicTypeUnitTests extends AbstractDebugTest{
 		String 	src = "src", 
 				pack = "a.b.c",
 				cunit = "MoveeChild.java",
-				targetName = "MoveeChild",
-				newName = pack+"."+"RenamedType";
-		runExceptionBreakpointTest(src, pack, cunit, targetName, newName);
+				typeName = "MoveeChild",
+				newName = pack+"."+"RenamedType",
+				exceptionName = "java.lang.NullPointerException";
+		runExceptionBreakpointTest(src, pack, cunit, typeName, exceptionName);
 }//end testBreakPoint		
 
 

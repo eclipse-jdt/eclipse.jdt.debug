@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -41,29 +40,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractDebugTest{
 
 	protected void cleanTestFiles() throws Exception
 	{
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);		
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/b/c/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup child
-		target = getJavaProject().getProject().getFile("src/a/b/c/MoveeChild.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/b/c/MoveeChildSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup any renames
-		target = getJavaProject().getProject().getFile("src/a/b/c/RenamedType.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
+		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 
 	protected final void performRefactor(final Refactoring refactoring) throws Exception {
@@ -305,7 +282,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractDebugTest{
 		try {
 			//create breakpoint to test
 			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(fullTargetName, true, true);
-			breakpoint.setExclusionFilters(new String[] {fullTargetName});
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, targetName);
 			performRefactor(ref);
@@ -313,8 +289,8 @@ public class RenameNonPublicTypeUnitTests extends AbstractDebugTest{
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			breakpoint = (IJavaExceptionBreakpoint) breakpoints[0];
+			assertEquals("breakpoint attached to wrong type", pack+"."+newTypeName, breakpoint.getTypeName());
 			assertTrue("Breakpoint Marker has ceased existing",breakpoint.getMarker().exists());
-			assertEquals("Filter paths not changed.", pack+"."+newTypeName, breakpoint.getExclusionFilters()[0]);
 		} catch (Exception e) {
 			throw e;
 		} finally {

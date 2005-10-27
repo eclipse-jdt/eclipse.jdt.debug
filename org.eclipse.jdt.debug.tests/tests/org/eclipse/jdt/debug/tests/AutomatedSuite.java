@@ -76,6 +76,13 @@ import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.refactoring.MoveCompilationUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenameCompilationUnitUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenameFieldUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenameInnerTypeUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenameMethodUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenameNonPublicTypeUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenamePackageUnitTests;
+import org.eclipse.jdt.debug.tests.refactoring.RenamePublicTypeUnitTests;
 import org.eclipse.jdt.debug.tests.ui.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.ui.ImportBreakpointsTest;
 
@@ -165,9 +172,19 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MemoryRenderingTests.class));
 		addTest(new TestSuite(JavaLibraryPathTests.class));
 		addTest(new TestSuite(EnvironmentTests.class));
-		
+	
 		// refactoring tests
 		addTest(new TestSuite(MoveCompilationUnitTests.class));
+		addTest(new TestSuite(RenameFieldUnitTests.class));
+		addTest(new TestSuite(RenamePackageUnitTests.class));
+		addTest(new TestSuite(RenamePublicTypeUnitTests.class));
+		addTest(new TestSuite(RenameInnerTypeUnitTests.class));
+		addTest(new TestSuite(RenameNonPublicTypeUnitTests.class));
+		addTest(new TestSuite(RenameCompilationUnitUnitTests.class));
+		addTest(new TestSuite(RenameMethodUnitTests.class));
+		
+		//TODO: project rename
+		//TODO: package move
 		// most refactoring tests are disabled pending bug fixes in breakpoint refactoring
 //		addTest(new TestSuite(MoveNonPublicTypeUnitTests.class));
 //		addTest(new TestSuite(MoveInnerTypeUnitTests.class));
@@ -187,14 +204,7 @@ public class AutomatedSuite extends DebugSuite {
 //		addTest(new TestSuite(ConvertPublicAnonymousTypeToNestedUnitTests.class));
 //		addTest(new TestSuite(ConvertInnerAnonymousTypeToNestedUnitTests.class));
 //		addTest(new TestSuite(ConvertNonPublicAnonymousTypeToNestedUnitTests.class));
-//		addTest(new TestSuite(RenameCompilationUnitUnitTests.class));
-//		addTest(new TestSuite(RenamePublicTypeUnitTests.class));
-//		addTest(new TestSuite(RenameInnerTypeUnitTests.class));
-//		addTest(new TestSuite(RenameNonPublicTypeUnitTests.class));
-//		addTest(new TestSuite(RenamePackageUnitTests.class));
-//		addTest(new TestSuite(RenameMethodUnitTests.class));
-//		addTest(new TestSuite(RenameFieldUnitTests.class));
-
+		
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 		
