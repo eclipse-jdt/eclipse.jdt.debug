@@ -58,13 +58,6 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	private int fHitCount;
 	
 	/**
-	 * Create changes for each breakpoint which needs to be updated for this IType rename.
-	 */
-	public static Change createChangesForTypeRename(IType type, String newName) throws CoreException {
-		return createChangesForTypeChange(type, newName, TYPE_RENAME);
-	}
-	
-	/**
 	 * Create changes for each breakpoint which needs to be updated for this IType move.
 	 */
 	public static Change createChangesForTypeMove(IType type, Object destination) throws CoreException {
@@ -88,13 +81,6 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			}
 		}
 		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.JavaBreakpointTypeChange_0); 
-	}
-	
-	/**
-	 * Create a change for each breakpoint which needs to be updated for this IPackageFragment rename.
-	 */
-	public static Change createChangesForPackageRename(IPackageFragment packageFragment, String newName) throws CoreException {
-		return createChangesForPackageChange(packageFragment, newName, PACKAGE_RENAME);
 	}
 
 	/**

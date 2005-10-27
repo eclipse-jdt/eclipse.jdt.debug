@@ -15,12 +15,8 @@ public class RefactoringMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.core.refactoring.RefactoringMessages";//$NON-NLS-1$
 
 	public static String JavaBreakpointITypeMoveParticipant_0;
-	public static String JavaMethodBreakpointIMethodRenameParticipant_0;
-	public static String JavaWatchpointIFieldRenameParticipant_0;
-	public static String JavaBreakpointITypeRenameParticipant_0;
 	public static String JavaBreakpointIJavaProjectRenameParticipant_0;
 	public static String JavaBreakpointIPackageFragmentMoveParticipant_0;
-	public static String JavaBreakpointIPackageFragmentRenameParticipant_0;
 	public static String LaunchConfigurationIJavaProjectRenameParticipant_0;
 	public static String LaunchConfigurationIPackageFragmentRenameParticipant_0;
 	public static String LaunchConfigurationIPackageFragmentMoveParticipant_0;
@@ -35,10 +31,6 @@ public class RefactoringMessages extends NLS {
 	public static String LaunchConfigurationProjectMainTypeChange_6;
 	public static String LaunchConfigurationProjectMainTypeChange_7;
 
-	public static String JavaWatchpointFieldNameChange_1;
-	public static String JavaWatchpointFieldNameChange_2;
-	public static String JavaMethodBreakpointMethodNameChange_0;
-	public static String JavaMethodBreakpointMethodNameChange_1;
 	public static String JavaLineBreakpointTypeChange_1;
 	public static String JavaLineBreakpointTypeChange_0;
 	public static String JavaMethodBreakpointTypeChange_1;
@@ -55,4 +47,34 @@ public class RefactoringMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringMessages.class);
 	}
+
+	public static String WatchpointTypeChange_0;
+
+	public static String LineBreakpointTypeChange_0;
+
+	public static String ExceptionBreakpointTypeChange_0;
+
+	public static String ClassPrepareBreakpointTypeChange_0;
+
+	public static String BreakpointTypeRenameParticipant_0;
+
+	public static String BreakpointTypeRenameParticipant_1;
+
+	public static String MethodBreakpointTypeChange_0;
+
+	public static String BreakpointPackageRenameParticipant_0;
+
+	public static String BreakpointPackageRenameParticipant_1;
+
+	public static String BreakpointFieldRenameParticipant_0;
+
+	public static String BreakpointFieldRenameParticipant_1;
+
+	public static String WatchpointFieldChange_0;
+
+	public static String BreakpointMethodRenameParticipant_0;
+
+	public static String BreakpointMethodRenameParticipant_1;
+
+	public static String MethodBreakpointMethodChange_0;
 }

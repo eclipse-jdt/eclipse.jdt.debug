@@ -2162,7 +2162,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-      		class="org.eclipse.jdt.internal.debug.core.refactoring.JavaWatchpointIFieldRenameParticipant"
+      		class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointFieldRenameParticipant"
       		name="%JavaWatchpointIFieldRenameParticipant.name"
       		id="org.eclipse.jdt.debug.refractoring.javaWatchpointIFieldRename">
          <enablement>
@@ -2177,7 +2177,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-               class="org.eclipse.jdt.internal.debug.core.refactoring.JavaMethodBreakpointIMethodRenameParticipant"
+               class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMethodRenameParticipant"
                name="%JavaMethodBreakpointIMethodRenameParticipant.name"
                id="org.eclipse.jdt.debug.refractoring.javaMethodBreakpointIMethodRename">
          <enablement>
@@ -2192,7 +2192,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeRenameParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointTypeRenameParticipant"
             name="%JavaBreakpointITypeRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
          <enablement>
@@ -2222,7 +2222,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointIPackageFragmentRenameParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointPackageRenameParticipant"
             name="%JavaBreakpointIPackageFragmentRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointIPackageFragmentRename">
          <enablement>
