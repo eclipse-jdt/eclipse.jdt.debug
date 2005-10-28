@@ -2119,7 +2119,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeRenameParticipant"
             name="%LaunchConfigurationITypeRenameParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeRename"> 
+            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.typeRename"> 
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2134,7 +2134,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationIJavaProjectRenameParticipant"
             name="%LaunchConfigurationIJavaProjectRenameParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfigurationIJavaProjectRename">
+            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.projectRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2149,7 +2149,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
       		class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationIPackageFragmentRenameParticipant"
       		name="%LaunchConfigurationIPackageFragmentRenameParticipant.name"
-      		id="org.eclipse.jdt.debug.refractoring.launchConfigurationIPackageFragmentRename">
+      		id="org.eclipse.jdt.debug.refractoring.launchConfiguration.packageRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2164,7 +2164,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
       		class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameFieldParticipant"
       		name="%JavaWatchpointIFieldRenameParticipant.name"
-      		id="org.eclipse.jdt.debug.refractoring.javaWatchpointIFieldRename">
+      		id="org.eclipse.jdt.debug.refractoring.breakpoint.fieldRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2179,7 +2179,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
                class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameMethodParticipant"
                name="%JavaMethodBreakpointIMethodRenameParticipant.name"
-               id="org.eclipse.jdt.debug.refractoring.javaMethodBreakpointIMethodRename">
+               id="org.eclipse.jdt.debug.refractoring.breakpoint.methodRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2194,7 +2194,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameTypeParticipant"
             name="%JavaBreakpointITypeRenameParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
+            id="org.eclipse.jdt.debug.refactoring.breakpoint.typeRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2209,7 +2209,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameProjectParticipant"
             name="%JavaBreakpointIJavaProjectRenameParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.javaBreakpointIJavaProjectRename">
+            id="org.eclipse.jdt.debug.refactoring.breakpoint.projectRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2224,7 +2224,7 @@ M4 = Platform-specific fourth key
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenamePackageParticipant"
             name="%JavaBreakpointIPackageFragmentRenameParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.javaBreakpointIPackageFragmentRename">
+            id="org.eclipse.jdt.debug.refactoring.breakpoint.packageRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2241,7 +2241,7 @@ M4 = Platform-specific fourth key
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeMoveParticipant"
             name="%LaunchConfigurationITypeMoveParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
+            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.typeMove">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2256,7 +2256,7 @@ M4 = Platform-specific fourth key
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationIPackageFragmentMoveParticipant"
             name="%LaunchConfigurationIPackageFragmentMoveParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfigurationIPackageFragmentMove">
+            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.packageMove">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2271,7 +2271,7 @@ M4 = Platform-specific fourth key
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMoveTypeParticipant"
             name="%JavaBreakpointITypeMoveParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
+            id="org.eclipse.jdt.debug.refactoring.breakpoint.typeMove">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -2286,7 +2286,7 @@ M4 = Platform-specific fourth key
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMovePackageParticipant"
             name="%JavaBreakpointIPackageFragmentMoveParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfigurationIPackageFragmentMove">
+            id="org.eclipse.jdt.debug.refactoring.breakpoint.packageMove">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
