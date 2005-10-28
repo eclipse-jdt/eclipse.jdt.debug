@@ -62,7 +62,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		return new WatchpointFieldChange(breakpoint, fOriginalField, fDestField);
+		return new DeleteBreakpointChange(breakpoint);
 	}
 
 }

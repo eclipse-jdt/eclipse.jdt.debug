@@ -65,7 +65,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		return new MethodBreakpointMethodChange(breakpoint, fOriginalMethod, fDestMethod);
+		return new DeleteBreakpointChange(breakpoint);
 	}
 
 }

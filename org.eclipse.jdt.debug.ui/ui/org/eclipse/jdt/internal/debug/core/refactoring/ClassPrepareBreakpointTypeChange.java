@@ -64,7 +64,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		return new ClassPrepareBreakpointTypeChange(breakpoint, fOriginalType, fDestType);
+		return new DeleteBreakpointChange(breakpoint);
 	}
 
 }

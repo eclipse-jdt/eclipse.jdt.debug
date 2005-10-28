@@ -77,4 +77,6 @@ public class RefactoringMessages extends NLS {
 	public static String BreakpointMethodRenameParticipant_1;
 
 	public static String MethodBreakpointMethodChange_0;
+
+	public static String DeleteBreakpointChange_0;
 }

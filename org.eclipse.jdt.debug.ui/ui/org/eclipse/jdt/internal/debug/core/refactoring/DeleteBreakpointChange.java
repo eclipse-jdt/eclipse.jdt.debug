@@ -10,59 +10,40 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.NullChange;
 
 /**
+ * A change to delete a breakpoint. Currently used for undo.
+ * When undoing a refactoring, the "target/original" resource does
+ * not exist in time to create a marker on it, and thus the operation
+ * cannot be undone. Instead, we delete breakpoints on undo.
+ * 
  * @since 3.2
  *
  */
-public class LineBreakpointTypeChange extends LineBreakpointChange {
+public class DeleteBreakpointChange extends BreakpointChange {
 	
-	private IType fDestType;
-	private IType fOriginalType;
-	
-	public LineBreakpointTypeChange(IJavaLineBreakpoint breakpoint, IType destType, IType originalType) throws CoreException {
+	public DeleteBreakpointChange(IJavaBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);
-		fDestType = destType;
-		fOriginalType = originalType;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.LineBreakpointTypeChange_0;
+		return RefactoringMessages.DeleteBreakpointChange_0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
-		Map map = new HashMap();
-		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);
-		IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(
-				resource,
-				fDestType.getFullyQualifiedName(),
-				getLineNumber(),
-				getCharStart(), 
-				getCharEnd(),
-				0, 
-				true, 
-				map);
-		apply(breakpoint);
 		getOriginalBreakpoint().delete();
-		return new DeleteBreakpointChange(breakpoint);
+		return new NullChange();
 	}
 
 }
