@@ -56,25 +56,13 @@ public class RefactoringMessages extends NLS {
 
 	public static String ClassPrepareBreakpointTypeChange_0;
 
-	public static String BreakpointTypeRenameParticipant_0;
+	public static String BreakpointRenameParticipant_0;
 
-	public static String BreakpointTypeRenameParticipant_1;
+	public static String BreakpointRenameParticipant_1;
 
 	public static String MethodBreakpointTypeChange_0;
 
-	public static String BreakpointPackageRenameParticipant_0;
-
-	public static String BreakpointPackageRenameParticipant_1;
-
-	public static String BreakpointFieldRenameParticipant_0;
-
-	public static String BreakpointFieldRenameParticipant_1;
-
 	public static String WatchpointFieldChange_0;
-
-	public static String BreakpointMethodRenameParticipant_0;
-
-	public static String BreakpointMethodRenameParticipant_1;
 
 	public static String MethodBreakpointMethodChange_0;
 

@@ -2207,7 +2207,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointIJavaProjectRenameParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointProjectRenameParticipant"
             name="%JavaBreakpointIJavaProjectRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointIJavaProjectRename">
          <enablement>

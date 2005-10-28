@@ -10,103 +10,44 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
  * Breakpoint participant for package rename.
  * 
  * @since 3.2
  */
-public class BreakpointPackageRenameParticipant extends RenameParticipant {
-
-	/**
-	 * Type being renamed
-	 */
-	private IPackageFragment fPackage;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-	 */
-	protected boolean initialize(Object element) {
-		if (element instanceof IPackageFragment) {
-			fPackage = (IPackageFragment) element;
-		} else {
-			return false;
-		}
-		return true;
-	}
+public class BreakpointPackageRenameParticipant extends BreakpointRenameParticipant {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
+	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
-	public String getName() {
-		return RefactoringMessages.BreakpointPackageRenameParticipant_0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
-	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
-		return new RefactoringStatus();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		Change[] changes = gatherChanges(fPackage, getArguments().getNewName());
-		if (changes.length > 1) {
-			return new CompositeChange(RefactoringMessages.BreakpointPackageRenameParticipant_1, changes);
-		} else if (changes.length == 1) {
-			return changes[0];
-		}
-		return null;
+	protected boolean accepts(IJavaElement element) {
+		return element instanceof IPackageFragment;
 	}
 	
-	/**
-	 * Returns all breakpoint changes required by renaming the given pacakge.
-	 * <p>
-	 * When a package is renamed, all breakpoints contained within the package
-	 * and subpcakges are affacted.
-	 * </p>
-	 * @return require changes
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
-	protected Change[] gatherChanges(IPackageFragment originalPackage, String destPackageName) throws CoreException {
-		List changes = new ArrayList();
+	protected void gatherChanges(IMarker[] markers, List changes, String destPackageName) throws CoreException, OperationCanceledException {
+		IPackageFragment originalPackage = (IPackageFragment) getOriginalElement();
 		String originalPackageName = originalPackage.getElementName();
 		IPackageFragmentRoot root = (IPackageFragmentRoot)originalPackage.getParent();
-		IResource resource = originalPackage.getResource();
-		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];
-			IBreakpoint breakpoint = manager.getBreakpoint(marker);
+			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;
 				IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
@@ -123,21 +64,10 @@ public class BreakpointPackageRenameParticipant extends RenameParticipant {
 					for (int j = 1; j < typeNames.length; j++) {
 						destType = destType.getType(typeNames[j]);
 					}
-					if (javaBreakpoint instanceof IJavaWatchpoint) {
-						changes.add(new WatchpointTypeChange((IJavaWatchpoint) javaBreakpoint, destType, breakpointType));
-					} else if (javaBreakpoint instanceof IJavaClassPrepareBreakpoint) {
-						changes.add(new ClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) javaBreakpoint, destType, breakpointType));
-					} else if (javaBreakpoint instanceof IJavaMethodBreakpoint) {
-						changes.add(new MethodBreakpointTypeChange((IJavaMethodBreakpoint) breakpoint, destType, breakpointType));
-					} else if (javaBreakpoint instanceof IJavaExceptionBreakpoint) {
-						changes.add(new ExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) javaBreakpoint, destType, breakpointType));
-					} else if (javaBreakpoint instanceof IJavaLineBreakpoint) {
-						changes.add(new LineBreakpointTypeChange((IJavaLineBreakpoint) javaBreakpoint, destType, breakpointType));
-					}
+					changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
 				}
 			}
 		}
-		return (Change[]) changes.toArray(new Change[changes.size()]);
-	}		
-	
+	}
+
 }

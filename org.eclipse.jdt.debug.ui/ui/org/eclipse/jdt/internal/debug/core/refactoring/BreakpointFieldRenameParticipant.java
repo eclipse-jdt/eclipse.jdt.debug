@@ -10,93 +10,40 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
  * Breakpoint participant for field rename.
  * 
  * @since 3.2
  */
-public class BreakpointFieldRenameParticipant extends RenameParticipant {
-
-	/**
-	 * Field being renamed
-	 */
-	private IField fField;
+public class BreakpointFieldRenameParticipant extends BreakpointRenameParticipant {
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
+	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
-	protected boolean initialize(Object element) {
-		if (element instanceof IField) {
-			fField = (IField) element;
-		} else {
-			return false;
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-	 */
-	public String getName() {
-		return RefactoringMessages.BreakpointFieldRenameParticipant_0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
-	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
-		return new RefactoringStatus();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		Change[] changes = gatherChanges(fField, getArguments().getNewName());
-		if (changes.length > 1) {
-			return new CompositeChange(RefactoringMessages.BreakpointFieldRenameParticipant_1, changes);
-		} else if (changes.length == 1) {
-			return changes[0];
-		}
-		return null;
+	protected boolean accepts(IJavaElement element) {
+		return element instanceof IField;
 	}
 	
-	/**
-	 * Returns all breakpoint changes required by renaming the given field.
-	 *
-	 * @return require changes
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
-	protected Change[] gatherChanges(IField originalField, String destFieldName) throws CoreException {
-		ICompilationUnit originalCU = originalField.getCompilationUnit();
-		List changes = new ArrayList();
-		IResource resource = originalCU.getResource();
-		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_ZERO);
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+	protected void gatherChanges(IMarker[] markers, List changes, String destFieldName) throws CoreException, OperationCanceledException {
+		IField originalField = (IField) getOriginalElement();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];
-			IBreakpoint breakpoint = manager.getBreakpoint(marker);
+			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaWatchpoint) {
 				IJavaWatchpoint watchpoint = (IJavaWatchpoint) breakpoint;
 				IType breakpointType = BreakpointUtils.getType(watchpoint);
@@ -106,7 +53,7 @@ public class BreakpointFieldRenameParticipant extends RenameParticipant {
 				}
 			}
 		}
-		return (Change[]) changes.toArray(new Change[changes.size()]);
-	}		
+	}
+
 
 }
