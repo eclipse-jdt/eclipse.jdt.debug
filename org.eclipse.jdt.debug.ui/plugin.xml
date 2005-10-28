@@ -2162,7 +2162,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-      		class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointFieldRenameParticipant"
+      		class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameFieldParticipant"
       		name="%JavaWatchpointIFieldRenameParticipant.name"
       		id="org.eclipse.jdt.debug.refractoring.javaWatchpointIFieldRename">
          <enablement>
@@ -2177,7 +2177,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-               class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMethodRenameParticipant"
+               class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameMethodParticipant"
                name="%JavaMethodBreakpointIMethodRenameParticipant.name"
                id="org.eclipse.jdt.debug.refractoring.javaMethodBreakpointIMethodRename">
          <enablement>
@@ -2192,7 +2192,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointTypeRenameParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameTypeParticipant"
             name="%JavaBreakpointITypeRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
          <enablement>
@@ -2207,7 +2207,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointProjectRenameParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameProjectParticipant"
             name="%JavaBreakpointIJavaProjectRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointIJavaProjectRename">
          <enablement>
@@ -2222,7 +2222,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointPackageRenameParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenamePackageParticipant"
             name="%JavaBreakpointIPackageFragmentRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointIPackageFragmentRename">
          <enablement>
@@ -2269,7 +2269,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </moveParticipant>
       <moveParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeMoveParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMoveTypeParticipant"
             name="%JavaBreakpointITypeMoveParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
          <enablement>
@@ -2284,7 +2284,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </moveParticipant>
       <moveParticipant
-            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointIPackageFragmentMoveParticipant"
+            class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMovePackageParticipant"
             name="%JavaBreakpointIPackageFragmentMoveParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationIPackageFragmentMove">
          <enablement>

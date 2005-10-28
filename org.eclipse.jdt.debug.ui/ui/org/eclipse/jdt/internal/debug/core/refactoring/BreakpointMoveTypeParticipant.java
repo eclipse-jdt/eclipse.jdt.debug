@@ -18,60 +18,48 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 
 /**
- * Breakpoint participant for type rename.
+ * Breakpoint participant for type move.
  * 
  * @since 3.2
  */
-public class BreakpointTypeRenameParticipant extends BreakpointRenameParticipant {
+public class BreakpointMoveTypeParticipant extends BreakpointMoveParticipant {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
 	protected boolean accepts(IJavaElement element) {
-		return element instanceof IType;
+		return element instanceof IType && getArguments().getDestination() instanceof IPackageFragment;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
+	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMoveParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List)
 	 */
-	protected void gatherChanges(IMarker[] markers, List changes, String simpleDestName) throws CoreException, OperationCanceledException {
+	protected void gatherChanges(IMarker[] markers, List changes) throws CoreException, OperationCanceledException {
 		IType originalType = (IType) getOriginalElement();
-		ICompilationUnit originalCU = originalType.getCompilationUnit();
-		ICompilationUnit destCU = null;
-		IJavaElement affectedContainer = null;
-		if (originalType.isMember() || !(originalCU.findPrimaryType().equals(originalType))) {
-			destCU = originalCU;
-			affectedContainer = originalType;
-		} else if (originalCU.findPrimaryType().equals(originalType)) {
-			destCU = originalType.getPackageFragment().getCompilationUnit(simpleDestName + ".java"); //$NON-NLS-1$
-			affectedContainer = originalCU;
-		}
+		IPackageFragment destPackage = (IPackageFragment) getDestination();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;
 				IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
-				if (breakpointType != null && isContained(affectedContainer, breakpointType)) {
-					IType destType = null;
-					String[] names = breakpointType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
-					if (isContained(originalType, breakpointType)) {
-						String[] oldNames = originalType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
-						names[oldNames.length - 1] = simpleDestName;
-					}
-					destType = destCU.getType(names[0]);
-					for (int j = 1; j < names.length; j++) {
-						destType = destType.getType(names[j]);
+				if (breakpointType != null && isContained(originalType, breakpointType)) {
+					ICompilationUnit cu = destPackage.getCompilationUnit(breakpointType.getCompilationUnit().getElementName());
+					String[] typeNames = breakpointType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
+					IType destType = cu.getType(typeNames[0]);
+					for (int j = 1; j < typeNames.length; j++) {
+						destType = destType.getType(typeNames[j]);
 					}
 					changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
 				}
 			}
 		}
 	}
-
+	
 }

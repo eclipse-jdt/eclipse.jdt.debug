@@ -19,10 +19,8 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
@@ -95,60 +93,6 @@ public class MoveInnerTypeMethodUnitTests extends AbstractDebugTest {
 		}		
 	}
 	
-	/**
-	 * Tests if a WatchPointBreakPoint was moved appropriately.
-	 * @throws Exception
-	 */		
-	public void testWatchPointBreakPoint() throws Exception {
-		cleanTestFiles();
-		IJavaProject javaProject = getJavaProject();
-		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-		IJavaElement type = cunit.getType("Movee").getType("InnerType").getMethods()[0];
-			
-		try {
-			//create a watchPoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee$InnerType", "innerTypeInt", true, true);
-			
-			refactor(javaProject, type);		
-			
-			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
-			assertEquals("wrong number of watchpoints", 1, breakPoints .length);
-			IJavaWatchpoint watchPoint = (IJavaWatchpoint) breakPoints [0];
-			assertEquals("wrong type name", "a.b.c.Movee$InnerType", watchPoint.getTypeName());
-			assertEquals("breakpoint attached to wrong field", "innerTypeInt", watchPoint.getFieldName());
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			removeAllBreakpoints();
-		}			
-	}
-	
-	/**
-	 * Tests if a ClassLoadBreakPoint was moved appropriately.
-	 * @throws Exception
-	 */			
-	public void testClassLoadBreakPoint() throws Exception {
-		cleanTestFiles();
-		IJavaProject javaProject = getJavaProject();
-		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-		IJavaElement type = cunit.getType("Movee").getType("InnerType").getMethods()[0];
-		
-		try {
-			//create a classLoad breakpoint to test
-			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint("a.b.c.Movee$InnerType");
-			
-			refactor(javaProject, type);	
-			
-			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
-			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
-			IJavaClassPrepareBreakpoint classPrepareBreakpoint = (IJavaClassPrepareBreakpoint) breakpoints[0];
-			assertEquals("wrong type name", "a.b.c.Movee$InnerType", classPrepareBreakpoint.getTypeName());
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			removeAllBreakpoints();
-		}				
-	}
 	///////////////////////////////////////////////////////////////////////////////////
 	/** Sets up a refactoring and executes it.
 	 * @param javaProject

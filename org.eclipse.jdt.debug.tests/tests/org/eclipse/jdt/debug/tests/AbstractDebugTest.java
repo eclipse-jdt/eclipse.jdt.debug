@@ -765,14 +765,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String typeNamePattern, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IMethod method= null;
+		IResource resource = getJavaProject().getProject();
 		if (methodSignature != null && methodName != null) {
 			IType type = getType(typeNamePattern);
 			if (type != null ) {
+				resource = getBreakpointResource(type);
 				method = type.getMethod(methodName, Signature.getParameterTypes(methodSignature));
 			}
 		}
 		Map map = getExtraBreakpointAttributes(method);
-		return JDIDebugModel.createMethodBreakpoint(getJavaProject().getProject(), typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
+		return JDIDebugModel.createMethodBreakpoint(resource, typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
 	}	
 	
 	/**

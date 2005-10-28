@@ -27,7 +27,7 @@ import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
  * 
  * @since 3.2
  */
-public class BreakpointMethodRenameParticipant extends BreakpointRenameParticipant {
+public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipant {
 
 	
 	/* (non-Javadoc)
