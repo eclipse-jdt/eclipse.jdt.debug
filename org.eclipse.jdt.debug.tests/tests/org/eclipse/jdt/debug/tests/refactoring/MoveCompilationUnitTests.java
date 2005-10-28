@@ -43,6 +43,26 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 	public MoveCompilationUnitTests(String name) {
 		super(name);
 	}
+	
+	/**
+	 * Performs a move refactoring.
+	 * 
+	 * @param element element to move
+	 * @param destination destination of move
+	 * @throws Exception
+	 */
+	protected void move(IJavaElement element, IJavaElement destination) throws Exception {
+		JavaMoveProcessor processor= JavaMoveProcessor.create(
+				new IResource[0], 
+				new IJavaElement[] {element}); 
+		processor.setDestination(destination);
+		processor.setReorgQueries(new MockReorgQueries());
+		if(processor.canUpdateReferences()) {
+			processor.setUpdateReferences(true);
+		}
+		executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);			
+	}
+	
 	/**
 	 * Tests if a LineBreakPoint was moved appropriately.
 	 * @throws Exception
@@ -55,14 +75,8 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 			int lineNumber = 21;
 			//create lineBreakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee");
-			JavaMoveProcessor processor= JavaMoveProcessor.create(
-				new IResource[0], 
-				new IJavaElement[] {cunit});
-			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
-			processor.setDestination(destination);
-			processor.setReorgQueries(new MockReorgQueries());
-			processor.setUpdateReferences(true);
-			executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);	
+			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null);
+			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaLineBreakpoint lineBreakpoint = (IJavaLineBreakpoint) breakpoints[0];
@@ -87,15 +101,8 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 		try {
 			//create an EntryMethod Breakpoint to test
 			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
-			JavaMoveProcessor processor= JavaMoveProcessor.create(
-				new IResource[0], 
-				new IJavaElement[] {cunit});
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
-			processor.setDestination(destination);
-			processor.setReorgQueries(new MockReorgQueries());
-			if(processor.canUpdateReferences())
-				processor.setUpdateReferences(true);
-			executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);	
+			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) breakpoints[0];
@@ -120,14 +127,8 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 		try {
 			//create a watchPoint to test
 			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee", "anInt", true, true);
-			JavaMoveProcessor processor= JavaMoveProcessor.create(
-				new IResource[0], 
-				new IJavaElement[] {cunit});
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
-			processor.setDestination(destination);
-			processor.setReorgQueries(new MockReorgQueries());
-			processor.setUpdateReferences(true);
-			executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);	
+			move(cunit, destination);	
 			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of watchpoints", 1, breakPoints .length);
 			IJavaWatchpoint watchPoint = (IJavaWatchpoint) breakPoints [0];
@@ -154,15 +155,8 @@ public class MoveCompilationUnitTests extends AbstractDebugTest {
 			java.util.Map map = new HashMap();
 			IResource projResource = javaProject.getResource();
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint("a.b.c.Movee");
-		
-			JavaMoveProcessor processor= JavaMoveProcessor.create(
-				new IResource[0], 
-				new IJavaElement[] {cunit});
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
-			processor.setDestination(destination);
-			processor.setReorgQueries(new MockReorgQueries());
-			processor.setUpdateReferences(true);
-			executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);	
+			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaClassPrepareBreakpoint classPrepareBreakpoint = (IJavaClassPrepareBreakpoint) breakpoints[0];
