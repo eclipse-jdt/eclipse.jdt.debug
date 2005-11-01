@@ -39,11 +39,13 @@ public class CurrentValueContext extends CurrentFrameContext {
     		// no object selected, use the frame
     		return super.getType();
     	}
+    	IType type = null;
     	if (value instanceof IJavaArray) {
     		// completion in context of Object
-    		return JavaDebugUtils.resolveType("java.lang.Object", value.getLaunch()); //$NON-NLS-1$
+    		type = JavaDebugUtils.resolveType("java.lang.Object", value.getLaunch()); //$NON-NLS-1$
+    	} else {
+    		type = JavaDebugUtils.resolveType(value);
     	}
-    	IType type = JavaDebugUtils.resolveType(value);
     	if (type == null) {
     		unableToResolveType();
     	}
