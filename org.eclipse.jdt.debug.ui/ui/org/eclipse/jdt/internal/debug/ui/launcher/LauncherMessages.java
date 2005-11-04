@@ -15,26 +15,21 @@ import org.eclipse.osgi.util.NLS;
 public class LauncherMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages";//$NON-NLS-1$
 
+	public static String JavaArgumentsTab_5;
 	public static String JavaArgumentsTab__Arguments_16;
 	public static String JavaArgumentsTab__Program_arguments__5;
 	public static String JavaArgumentsTab_Exception_occurred_reading_configuration___15;
-	public static String JavaArgumentsTab_Use_de_fault_working_directory_4;
 	public static String JavaArgumentsTab_VM_ar_guments__6;
 	public static String RuntimeClasspathAdvancedDialog_6;
 	public static String RuntimeClasspathAdvancedDialog_7;
 
 	public static String VMArgumentsBlock_VM_Arguments;
+	public static String VMArgumentsBlock_4;
 
 	public static String JavaConnectTab__Allow_termination_of_remote_VM_6;
-	public static String JavaConnectTab__Browse_3;
-
-	public static String JavaConnectTab__Project__2;
-	public static String JavaConnectTab_Choose_a_project_to_constrain_the_search_for_main_types_11;
 	public static String JavaConnectTab_Conn_ect_20;
 	public static String JavaConnectTab_Connect_ion_Type__7;
-
 	public static String JavaConnectTab_Project_does_not_exist_14;
-	public static String JavaConnectTab_Project_selection_10;
 	public static String JavaConnectTab_Connection_Properties_1;
 	public static String JavaConnectTab_Unable_to_display_connection_arguments__2;
 	public static String JavaConnectTab__is_invalid__5;
@@ -49,17 +44,12 @@ public class LauncherMessages extends NLS {
 	public static String JavaJRETab_8;
 	public static String JavaJRETab_9;
 
-	public static String JavaMainTab__Browse_3;
 	public static String JavaMainTab__Main_19;
-	public static String JavaMainTab__Project__2;
-	public static String JavaMainTab_Choose_a__project_to_constrain_the_search_for_main_types__14;
 	public static String JavaMainTab_Choose_a_main__type_to_launch__12;
 	public static String JavaMainTab_Choose_Main_Type_11;
 	public static String JavaMainTab_E_xt__jars_6;
 	public static String JavaMainTab_Main_cla_ss__4;
 	public static String JavaMainTab_Main_type_not_specified_16;
-	public static String JavaMainTab_Project_Selection_13;
-	public static String JavaMainTab_Searc_h_5;
 	public static String JavaMainTab_St_op_in_main_1;
 	public static String JavaMainTab_19;
 	public static String JavaMainTab_20;
@@ -104,7 +94,12 @@ public class LauncherMessages extends NLS {
 	public static String WorkingDirectoryBlock_Working_Directory_8;
 	public static String WorkingDirectoryBlock_10;
 	public static String WorkingDirectoryBlock_12;
-
+	public static String WorkingDirectoryBlock_17;
+	public static String WorkingDirectoryBlock_1;
+	public static String WorkingDirectoryBlock_18;
+	public static String WorkingDirectoryBlock_19;
+	public static String WorkingDirectoryBlock_20;
+	
 	public static String SourceLookupBlock_Source_1;
 	public static String SourceLookupBlock__Source_Lookup_Path__1;
 	public static String SourceLookupBlock__Search_for_duplicate_source_files_on_path_1;
@@ -116,6 +111,12 @@ public class LauncherMessages extends NLS {
 	public static String RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2;
 	public static String RuntimeClasspathEntryLabelProvider_Invalid_path;
 
+	public static String AbstractJavaMainTab_0;
+	public static String AbstractJavaMainTab_1;
+	public static String AbstractJavaMainTab_2;
+	public static String AbstractJavaMainTab_4;
+	public static String AbstractJavaMainTab_3;
+	
 	public static String appletlauncher_argumenttab_widthlabel_text;
 	public static String appletlauncher_argumenttab_heightlabel_text;
 	public static String appletlauncher_argumenttab_namelabel_text;
@@ -136,14 +137,9 @@ public class LauncherMessages extends NLS {
 	public static String appletlauncher_argumenttab_parameterscolumn_value_text;
 	public static String appletlauncher_argumenttab_name;
 
-	public static String appletlauncher_maintab_projectlabel_name;
-	public static String appletlauncher_maintab_browselabel_name;
 	public static String appletlauncher_maintab_mainclasslabel_name;
-	public static String appletlauncher_maintab_searchlabel_name;
 	public static String appletlauncher_maintab_selection_applet_dialog_title;
 	public static String appletlauncher_maintab_selection_applet_dialog_message;
-	public static String appletlauncher_maintab_selection_project_dialog_title;
-	public static String appletlauncher_maintab_selection_project_dialog_message;
 	public static String appletlauncher_maintab_project_error_doesnotexist;
 	public static String appletlauncher_maintab_type_error_doesnotexist;
 	public static String appletlauncher_maintab_name;
@@ -187,20 +183,11 @@ public class LauncherMessages extends NLS {
 	public static String JavaApplicationLaunchShortcut_Error_Launching_1;
 	public static String JavaApplicationLaunchShortcut_Exception;
 	public static String AppletSelectionDialog_Searching____1;
-
-	public static String VMArgumentsBlock_4;
-	public static String JavaArgumentsTab_5;
-	public static String WorkingDirectoryBlock_17;
-	public static String WorkingDirectoryBlock_1;
-
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LauncherMessages.class);
 	}
 
-	public static String WorkingDirectoryBlock_18;
 
-	public static String WorkingDirectoryBlock_19;
-
-	public static String WorkingDirectoryBlock_20;
 }

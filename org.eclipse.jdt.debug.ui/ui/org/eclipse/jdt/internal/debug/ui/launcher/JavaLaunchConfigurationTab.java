@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
@@ -31,6 +32,12 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements IEntriesChangedListener {
 		
+	/**
+	 * make the java tabs aware of the launch config they are working on
+	 * @since 3.2
+	 */
+	private ILaunchConfiguration fLaunchConfig;
+	
 	/**
 	 * Returns the current Java element context from which to initialize
 	 * default settings, or <code>null</code> if none.
@@ -67,6 +74,27 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * returns the launch configuration that this tab was initialized from within the 
+	 * initializeFrom method
+	 * 
+	 * @return the associated launch config or null if there is none
+	 * @since 3.2
+	 */
+	protected ILaunchConfiguration getCurrentLaunchConfiguration() {
+		return fLaunchConfig;
+	}
+	
+	/**
+	 * sets the current parent config that this tab is editing part of
+	 * 
+	 * @param config the parent config
+	 * @since 3.2
+	 */
+	protected void setCurrentLaunchConfiguration(ILaunchConfiguration config) {
+		fLaunchConfig = config;
 	}
 	
 	/**

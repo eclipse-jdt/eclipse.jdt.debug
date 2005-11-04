@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
- 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
@@ -23,12 +22,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -37,32 +33,22 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
+import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainTypeSelectionDialog;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
@@ -71,48 +57,11 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
- * @since 2.0
+ * @since 3.2
  */
 
-public class JavaMainTab extends JavaLaunchConfigurationTab {
-		
-	// Project UI widgets
-	protected Text fProjText;
-	protected Button fProjButton;
+public class JavaMainTab extends SharedJavaMainTab {
 
-	// Main class UI widgets
-	protected Text fMainText;
-	protected Button fSearchButton;
-	protected Button fSearchExternalJarsCheckButton;
-	protected Button fConsiderInheritedMainButton;
-	protected Button fStopInMainCheckButton;
-			
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
-	/**
-	 * A listener which handles widget change events for the controls
-	 * in this tab.
-	 */
-	private class WidgetListener implements ModifyListener, SelectionListener {
-		public void modifyText(ModifyEvent e) {
-			updateLaunchConfigurationDialog();
-		}
-		public void widgetSelected(SelectionEvent e) {
-			Object source = e.getSource();
-			if (source == fProjButton) {
-				handleProjectButtonSelected();
-			} else if (source == fSearchButton) {
-				handleSearchButtonSelected();
-			} else {
-				updateLaunchConfigurationDialog();
-			}
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-	}
-
-	private WidgetListener fListener = new WidgetListener();
-	
 	/**
 	 * Boolean launch configuration attribute indicating that external jars (on
 	 * the runtime classpath) should be searched when looking for a main type.
@@ -121,7 +70,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * @since 2.1
 	 */
 	public static final String ATTR_INCLUDE_EXTERNAL_JARS = IJavaDebugUIConstants.PLUGIN_ID + ".INCLUDE_EXTERNAL_JARS"; //$NON-NLS-1$
-	
 	/**
 	 * Boolean launch configuration attribute indicating whether types inheriting
 	 * a main method should be considerd when searching for a main type.
@@ -130,13 +78,18 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * @since 3.0
 	 */
 	public static final String ATTR_CONSIDER_INHERITED_MAIN = IJavaDebugUIConstants.PLUGIN_ID + ".CONSIDER_INHERITED_MAIN"; //$NON-NLS-1$	
+	// UI widgets
+	private Button fSearchExternalJarsCheckButton;
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
+	private Button fConsiderInheritedMainButton;
+	
+	private Button fStopInMainCheckButton;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
@@ -144,184 +97,43 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		topLayout.verticalSpacing = 0;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
-		
 		createProjectEditor(comp);
 		createVerticalSpacer(comp, 1);
-		createMainTypeEditor(comp);
-		createVerticalSpacer(comp, 1);
-		
-		fStopInMainCheckButton = createCheckButton(comp, LauncherMessages.JavaMainTab_St_op_in_main_1); 
+		fSearchExternalJarsCheckButton = createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6); 
 		GridData gd = new GridData();
-		fStopInMainCheckButton.setLayoutData(gd);
-		fStopInMainCheckButton.addSelectionListener(fListener);		
-		
-	}
-		
-	/**
-	 * Creates the widgets for specifying a main type.
-	 * 
-	 * @param parent the parent composite
-	 */
-	private void createMainTypeEditor(Composite parent) {
-		Font font= parent.getFont();
-		Group mainGroup= new Group(parent, SWT.NONE);
-		mainGroup.setText(LauncherMessages.JavaMainTab_Main_cla_ss__4); 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		mainGroup.setLayoutData(gd);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		mainGroup.setLayout(layout);
-		mainGroup.setFont(font);
-
-		fMainText = new Text(mainGroup, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fMainText.setLayoutData(gd);
-		fMainText.setFont(font);
-		fMainText.addModifyListener(fListener);
-		
-		fSearchButton = createPushButton(mainGroup,LauncherMessages.JavaMainTab_Searc_h_5, null); 
-		fSearchButton.addSelectionListener(fListener);
-		
-		fSearchExternalJarsCheckButton = createCheckButton(mainGroup, LauncherMessages.JavaMainTab_E_xt__jars_6); 
-		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fSearchExternalJarsCheckButton.setLayoutData(gd);
-		fSearchExternalJarsCheckButton.addSelectionListener(fListener);
-
-		fConsiderInheritedMainButton = createCheckButton(mainGroup, LauncherMessages.JavaMainTab_22); 
+		fSearchExternalJarsCheckButton.addSelectionListener(getDefaultListener());
+		fConsiderInheritedMainButton = createCheckButton(parent, LauncherMessages.JavaMainTab_22); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fConsiderInheritedMainButton.setLayoutData(gd);
-		fConsiderInheritedMainButton.addSelectionListener(fListener);
+		fConsiderInheritedMainButton.addSelectionListener(getDefaultListener());
+		fStopInMainCheckButton = createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1); 
+		gd = new GridData();
+		fStopInMainCheckButton.setLayoutData(gd);
+		fStopInMainCheckButton.addSelectionListener(getDefaultListener());
+		createMainTypeEditor(comp, LauncherMessages.JavaMainTab_Main_cla_ss__4, new Button[] {fSearchExternalJarsCheckButton, fConsiderInheritedMainButton, fStopInMainCheckButton});
 	}
-	
-	/**
-	 * Creates the widgets for specifying a main type.
-	 * 
-	 * @param parent the parent composite
-	 */
-	private void createProjectEditor(Composite parent) {
-		Font font= parent.getFont();
-		Group group= new Group(parent, SWT.NONE);
-		group.setText(LauncherMessages.JavaMainTab__Project__2); 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setFont(font);
 
-		fProjText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fProjText.setLayoutData(gd);
-		fProjText.setFont(font);
-		fProjText.addModifyListener(fListener);
-		
-		fProjButton = createPushButton(group, LauncherMessages.JavaMainTab__Browse_3, null); 
-		fProjButton.addSelectionListener(fListener);
-	}	
-
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
-	public void initializeFrom(ILaunchConfiguration config) {
-		updateProjectFromConfig(config);
-		updateMainTypeFromConfig(config);
-		updateStopInMainFromConfig(config);
-		updateInheritedMainsFromConfig(config);
-		updateExternalJars(config);
+	public Image getImage() {
+		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	}
 	
-	protected void updateProjectFromConfig(ILaunchConfiguration config) {
-		String projectName = ""; //$NON-NLS-1$
-		try {
-			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
-		fProjText.setText(projectName);
-	}
-	
-	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
-		String mainTypeName = ""; //$NON-NLS-1$
-		try {
-			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);	
-		}	
-		fMainText.setText(mainTypeName);	
-	}
-	
-	protected void updateStopInMainFromConfig(ILaunchConfiguration configuration) {
-		boolean stop = false;
-		try {
-			stop = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, false);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		fStopInMainCheckButton.setSelection(stop);
-	}
-	
-	protected void updateInheritedMainsFromConfig(ILaunchConfiguration configuration) {
-		boolean inherit = false;
-		try {
-			inherit = configuration.getAttribute(ATTR_CONSIDER_INHERITED_MAIN, false);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		fConsiderInheritedMainButton.setSelection(inherit);
-	}	
-	
-	protected void updateExternalJars(ILaunchConfiguration configuration) {
-		boolean search = false;
-		try {
-			search = configuration.getAttribute(ATTR_INCLUDE_EXTERNAL_JARS, false);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		fSearchExternalJarsCheckButton.setSelection(search);
-	}	
-		
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
-	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText().trim());
-		
-		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
-		if (fStopInMainCheckButton.getSelection()) {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
-		} else {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, (String)null);
-		}
-		
-		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
-		if (fSearchExternalJarsCheckButton.getSelection()) {
-			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, true);
-		} else {
-			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, (String)null);
-		}
-		
-		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
-		if (fConsiderInheritedMainButton.getSelection()) {
-			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, true);
-		} else {
-			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, (String)null);
-		}		
+	public String getName() {
+		return LauncherMessages.JavaMainTab__Main_19;
 	}
-			
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {
-	}
-			
+	
 	/**
 	 * Show a dialog that lists all main types
 	 */
 	protected void handleSearchButtonSelected() {
-		
 		IJavaProject javaProject = getJavaProject();
 		IJavaElement[] elements = null;
 		if ((javaProject == null) || !javaProject.exists()) {
@@ -330,132 +142,67 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			if (model != null) {
 				try {
 					elements = model.getJavaProjects();
-				} catch (JavaModelException e) {
-				}
-			}
-		} else {
+				}//end try 
+				catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}
+			}//end if
+		}//end if 
+		else {
 			elements = new IJavaElement[]{javaProject};
-		}		
+		}//end else		
 		if (elements == null) {
 			elements = new IJavaElement[]{};
-		}
+		}//end if
 		int constraints = IJavaSearchScope.SOURCES;
 		if (fSearchExternalJarsCheckButton.getSelection()) {
 			constraints |= IJavaSearchScope.APPLICATION_LIBRARIES;
 			constraints |= IJavaSearchScope.SYSTEM_LIBRARIES;
-		}		
+		}//end if	
 		IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, constraints);
-		
 		MainMethodSearchEngine engine = new MainMethodSearchEngine();
 		IType[] types = null;
 		try {
 			types = engine.searchMainMethods(getLaunchConfigurationDialog(), searchScope, fConsiderInheritedMainButton.getSelection());
-		} catch (InvocationTargetException e) {
+		}//end try 
+		catch (InvocationTargetException e) {
 			setErrorMessage(e.getMessage());
 			return;
-		} catch (InterruptedException e) {
+		}//end catch 
+		catch (InterruptedException e) {
 			setErrorMessage(e.getMessage());
 			return;
-		}
-		
-		Shell shell = getShell();
-		SelectionDialog dialog = new MainTypeSelectionDialog(shell, types); 
+		}//end catch
+		SelectionDialog dialog = new MainTypeSelectionDialog(getShell(), types); 
 		dialog.setTitle(LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
 		dialog.setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12); 
 		if (dialog.open() == Window.CANCEL) {
 			return;
-		}
-		
-		Object[] results = dialog.getResult();
-		if ((results == null) || (results.length < 1)) {
-			return;
-		}		
+		}//end if
+		Object[] results = dialog.getResult();	
 		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
 			javaProject = type.getJavaProject();
 			fProjText.setText(javaProject.getElementName());
-		}
-	}
-		
-	/**
-	 * Show a dialog that lets the user select a project.  This in turn provides
-	 * context for the main type, allowing the user to key a main type name, or
-	 * constraining the search for main types to the specified project.
-	 */
-	protected void handleProjectButtonSelected() {
-		IJavaProject project = chooseJavaProject();
-		if (project == null) {
-			return;
-		}
-		
-		String projectName = project.getElementName();
-		fProjText.setText(projectName);		
-	}
+		}//end if
+	}	
 	
-	/**
-	 * Realize a Java Project selection dialog and return the first selected project,
-	 * or null if there was none.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	protected IJavaProject chooseJavaProject() {
-		IJavaProject[] projects;
-		try {
-			projects= JavaCore.create(getWorkspaceRoot()).getJavaProjects();
-		} catch (JavaModelException e) {
-			JDIDebugUIPlugin.log(e);
-			projects= new IJavaProject[0];
-		}
-		
-		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle(LauncherMessages.JavaMainTab_Project_Selection_13); 
-		dialog.setMessage(LauncherMessages.JavaMainTab_Choose_a__project_to_constrain_the_search_for_main_types__14); 
-		dialog.setElements(projects);
-		
-		IJavaProject javaProject = getJavaProject();
-		if (javaProject != null) {
-			dialog.setInitialSelections(new Object[] { javaProject });
-		}
-		if (dialog.open() == Window.OK) {			
-			return (IJavaProject) dialog.getFirstResult();
-		}			
-		return null;		
-	}
-	
-	/**
-	 * Return the IJavaProject corresponding to the project name in the project name
-	 * text field, or null if the text does not match a project name.
-	 */
-	protected IJavaProject getJavaProject() {
-		String projectName = fProjText.getText().trim();
-		if (projectName.length() < 1) {
-			return null;
-		}
-		return getJavaModel().getJavaProject(projectName);		
-	}
-	
-	/**
-	 * Convenience method to get the workspace root.
-	 */
-	private IWorkspaceRoot getWorkspaceRoot() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-	
-	/**
-	 * Convenience method to get access to the java model.
-	 */
-	private IJavaModel getJavaModel() {
-		return JavaCore.create(getWorkspaceRoot());
-	}
+	public void initializeFrom(ILaunchConfiguration config) {
+		super.initializeFrom(config);
+		updateMainTypeFromConfig(config);
+		updateStopInMainFromConfig(config);
+		updateInheritedMainsFromConfig(config);
+		updateExternalJars(config);
+	}	
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
-		
 		setErrorMessage(null);
 		setMessage(null);
-		
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -465,110 +212,108 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 				if (!project.exists()) {
 					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_20, new String[] {name})); 
 					return false;
-				}
+				}//end if
 				if (!project.isOpen()) {
 					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_21, new String[] {name})); 
 					return false;
-				}
-			} else {
+				}//end if
+			}//end if 
+			else {
 				setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
 				return false;
-			}
-		}
-
+			}//end else
+		}//end if
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.JavaMainTab_Main_type_not_specified_16); 
 			return false;
-		}
-		
+		}//end if
 		return true;
 	}
-
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+			
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText().trim());
+		
+		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
+		if (fStopInMainCheckButton.getSelection()) {
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
+		}//end if 
+		else {
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, (String)null);
+		}//end else
+		
+		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
+		if (fSearchExternalJarsCheckButton.getSelection()) {
+			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, true);
+		}//end if 
+		else {
+			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, (String)null);
+		}//end else
+		
+		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
+		if (fConsiderInheritedMainButton.getSelection()) {
+			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, true);
+		}//end if 
+		else {
+			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, (String)null);
+		}//end else		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement javaElement = getContext();
 		if (javaElement != null) {
 			initializeJavaProject(javaElement, config);
-		} else {
-			// We set empty attributes for project & main type so that when one config is
-			// compared to another, the existence of empty attributes doesn't cause an
-			// incorrect result (the performApply() method can result in empty values
-			// for these attributes being set on a config if there is nothing in the
-			// corresponding text boxes)
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-		}
+		}//end if 
+		else {
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
+		}//end else
 		initializeMainTypeAndName(javaElement, config);
 	}
-
+	
 	/**
-	 * Set the main type & name attributes on the working copy based on the IJavaElement
+	 * updates the external jars attribute from the specified launch config
+	 * @param config the config to load from
 	 */
-	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
-		String name= null;
-		if (javaElement instanceof IMember) {
-			IMember member = (IMember)javaElement;
-			if (member.isBinary()) {
-				javaElement = member.getClassFile();
-			} else {
-				javaElement = member.getCompilationUnit();
-			}
-		}
-		if (javaElement instanceof ICompilationUnit || javaElement instanceof IClassFile) {
-			try {
-				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(new IJavaElement[]{javaElement}, false);
-				MainMethodSearchEngine engine = new MainMethodSearchEngine();
-				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);				
-				if (types != null && (types.length > 0)) {
-					// Simply grab the first main type found in the searched element
-					name = types[0].getFullyQualifiedName();
-				}
-			} catch (InterruptedException ie) {
-			} catch (InvocationTargetException ite) {
-			}
-		}
-		if (name == null) {
-			name= ""; //$NON-NLS-1$
-		}
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
-		if (name.length() > 0) {
-			int index = name.lastIndexOf('.');
-			if (index > 0) {
-				name = name.substring(index + 1);
-			}		
-			name = getLaunchConfigurationDialog().generateName(name);
-			config.rename(name);
-		}
+	private void updateExternalJars(ILaunchConfiguration config) {
+		boolean search = false;
+		try {
+			search = config.getAttribute(ATTR_INCLUDE_EXTERNAL_JARS, false);
+		}//end try 
+		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
+		fSearchExternalJarsCheckButton.setSelection(search);
 	}
 
 	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
+	 * update the inherited mains attribute from the specified launch config
+	 * @param config the config to load from
 	 */
-	public String getName() {
-		return LauncherMessages.JavaMainTab__Main_19; 
+	private void updateInheritedMainsFromConfig(ILaunchConfiguration config) {
+		boolean inherit = false;
+		try {
+			inherit = config.getAttribute(ATTR_CONSIDER_INHERITED_MAIN, false);
+		}//end try 
+		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
+		fConsiderInheritedMainButton.setSelection(inherit);
 	}
 
 	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 * updates the stop in main attribute from the specified launch config
+	 * @param config the config to load the stop in main attribute from
 	 */
-	public Image getImage() {
-		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
+	private void updateStopInMainFromConfig(ILaunchConfiguration config) {
+		boolean stop = false;
+		try {
+			stop = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, false);
+		}//end try 
+		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
+		fStopInMainCheckButton.setSelection(stop);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
-	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		// do nothing when activated
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
-	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
-		// do nothing when deactivated
-	}
-}
-
+}//end class
