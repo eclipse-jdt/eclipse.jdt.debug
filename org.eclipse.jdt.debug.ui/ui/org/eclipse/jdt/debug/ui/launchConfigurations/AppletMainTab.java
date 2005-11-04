@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -17,14 +19,18 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.AppletSelectionDialog;
-import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
+import org.eclipse.jdt.internal.debug.ui.launcher.AppletLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
@@ -40,6 +46,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This tab appears for java applet launch configurations and allows the user to edit
@@ -138,10 +145,45 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 * Show a dialog that lists all main types
 	 */
 	protected void handleSearchButtonSelected() {
-		IJavaProject javaProject = getJavaProject();		
-		AppletSelectionDialog dialog = new AppletSelectionDialog(getShell(), getLaunchConfigurationDialog(), javaProject);
+		IJavaElement[] scope= null;
+		IJavaProject project = getJavaProject();
+		if (scope == null) {
+			try {
+				scope = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+			}//end try 
+			catch (JavaModelException e) {
+				setErrorMessage(e.getMessage());
+				return;
+			}//end catch
+		}//end if 
+		else {
+			scope = new IJavaElement[]{project};
+		}//end else
+		IType[] types = null;
+		try {
+			types = AppletLaunchConfigurationUtils.findApplets(getLaunchConfigurationDialog(), scope);
+		} 
+		catch (InterruptedException e) {return;} 
+		catch (InvocationTargetException e) {
+			setErrorMessage(e.getTargetException().getMessage());
+			return;
+		}//end catch
+		SelectionDialog dialog = null;
+		try {
+			dialog = JavaUI.createTypeDialog(
+					getShell(),
+					getLaunchConfigurationDialog(),
+					SearchEngine.createJavaSearchScope(types),
+					IJavaElementSearchConstants.CONSIDER_CLASSES, 
+					false,
+					"**"); //$NON-NLS-1$
+		}//end try 
+		catch (JavaModelException e) {
+			setErrorMessage(e.getMessage());
+			return;
+		}//end catch
 		dialog.setTitle(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_title); 
-		dialog.setMessage(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_message); 
+ 		dialog.setMessage(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_message); 
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}//end if
@@ -149,8 +191,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		IType type= (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
-			javaProject= type.getJavaProject();
-			fProjText.setText(javaProject.getElementName());
+			fProjText.setText(type.getJavaProject().getElementName());
 		}//end if
 	}
 

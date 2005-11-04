@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -33,11 +32,11 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
-import org.eclipse.jdt.internal.debug.ui.launcher.MainTypeSelectionDialog;
+import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
@@ -78,11 +77,10 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * @since 3.0
 	 */
 	public static final String ATTR_CONSIDER_INHERITED_MAIN = IJavaDebugUIConstants.PLUGIN_ID + ".CONSIDER_INHERITED_MAIN"; //$NON-NLS-1$	
+	
 	// UI widgets
 	private Button fSearchExternalJarsCheckButton;
-	
 	private Button fConsiderInheritedMainButton;
-	
 	private Button fStopInMainCheckButton;
 
 	/* (non-Javadoc)
@@ -134,11 +132,10 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * Show a dialog that lists all main types
 	 */
 	protected void handleSearchButtonSelected() {
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject project = getJavaProject();
 		IJavaElement[] elements = null;
-		if ((javaProject == null) || !javaProject.exists()) {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IJavaModel model = JavaCore.create(root);
+		if ((project == null) || !project.exists()) {
+			IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 			if (model != null) {
 				try {
 					elements = model.getJavaProjects();
@@ -147,7 +144,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 			}//end if
 		}//end if 
 		else {
-			elements = new IJavaElement[]{javaProject};
+			elements = new IJavaElement[]{project};
 		}//end else		
 		if (elements == null) {
 			elements = new IJavaElement[]{};
@@ -171,7 +168,19 @@ public class JavaMainTab extends SharedJavaMainTab {
 			setErrorMessage(e.getMessage());
 			return;
 		}//end catch
-		SelectionDialog dialog = new MainTypeSelectionDialog(getShell(), types); 
+		SelectionDialog dialog = null;
+		try {
+			dialog = JavaUI.createTypeDialog(
+						getShell(),
+						getLaunchConfigurationDialog(),
+						SearchEngine.createJavaSearchScope(types),
+						IJavaElementSearchConstants.CONSIDER_CLASSES, 
+						false,
+						"**"); //$NON-NLS-1$
+		} catch (JavaModelException e) {
+			setErrorMessage(e.getMessage());
+			return;
+			}//end catch
 		dialog.setTitle(LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
 		dialog.setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12); 
 		if (dialog.open() == Window.CANCEL) {
@@ -181,8 +190,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
-			javaProject = type.getJavaProject();
-			fProjText.setText(javaProject.getElementName());
+			fProjText.setText(type.getJavaProject().getElementName());
 		}//end if
 	}	
 	

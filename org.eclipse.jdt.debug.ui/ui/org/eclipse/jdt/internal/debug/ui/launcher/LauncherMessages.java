@@ -77,17 +77,6 @@ public class LauncherMessages extends NLS {
 
 	public static String JavaSourceLookupTab_Source_1;
 
-	public static String JavaApplicationAction_Type_Selection_Debug;
-	public static String JavaApplicationAction_Type_Selection_Run;
-	public static String JavaApplicationAction_Launch_failed_7;
-	public static String JavaApplicationAction_Launch_Configuration_Selection_1;
-	public static String JavaApplicationAction_Choose_a_launch_configuration_to_debug_2;
-	public static String JavaApplicationAction_Choose_a_launch_configuration_to_run_3;
-
-	public static String MainTypeSelectionDialog_Choose_a_type;
-	public static String MainTypeSelectionDialog_Matching_types;
-	public static String MainTypeSelectionDialog_Qualifier;
-
 	public static String WorkingDirectoryBlock_4;
 	public static String WorkingDirectoryBlock_7;
 	public static String WorkingDirectoryBlock_0;
@@ -151,13 +140,6 @@ public class LauncherMessages extends NLS {
 	public static String appletlauncher_search_dialog_error_noapplets;
 	public static String appletlauncher_search_task_inprogress;
 
-	public static String appletlauncher_selection_type_dialog_title;
-	public static String appletlauncher_selection_type_dialog_message_debug;
-	public static String appletlauncher_selection_type_dialog_message_run;
-	public static String appletlauncher_selection_configuration_dialog_title;
-	public static String appletlauncher_selection_configuration_dialog_message_debug;
-	public static String appletlauncher_selection_configuration_dialog_message_run;
-
 	public static String AppletParametersTab__optional_applet_instance_name__1;
 	public static String AppletMainTab_1;
 	public static String AppletMainTab_2;
@@ -178,12 +160,19 @@ public class LauncherMessages extends NLS {
 	public static String SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4;
 	public static String SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5;
 
-	public static String JavaApplicationLaunchShortcut_The_active_editor_does_not_contain_a_main_type__1;
-	public static String JavaApplicationLaunchShortcut_The_selection_does_not_contain_a_main_type__2;
-	public static String JavaApplicationLaunchShortcut_Error_Launching_1;
-	public static String JavaApplicationLaunchShortcut_Exception;
 	public static String AppletSelectionDialog_Searching____1;
 	
+	public static String JavaAppletLaunchShortcut_0;
+	public static String JavaAppletLaunchShortcut_1;
+	public static String JavaAppletLaunchShortcut_2;
+	public static String JavaApplicationLaunchShortcut_0;
+	public static String JavaApplicationLaunchShortcut_1;
+	public static String JavaApplicationLaunchShortcut_2;
+	public static String JavaLaunchShortcut_0;
+	public static String JavaLaunchShortcut_1;
+	public static String JavaLaunchShortcut_2;
+	public static String JavaLaunchShortcut_3;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LauncherMessages.class);
