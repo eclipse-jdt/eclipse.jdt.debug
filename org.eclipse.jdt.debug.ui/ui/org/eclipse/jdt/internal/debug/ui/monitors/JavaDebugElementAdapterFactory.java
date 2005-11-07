@@ -11,8 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.viewers.IAsynchronousTreeContentAdapter;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
  * Adapter factory that generates workbench adapters for java debug elements to
@@ -20,11 +22,11 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  */
 public class JavaDebugElementAdapterFactory implements IAdapterFactory {
     
-    private static IAsynchronousTreeContentAdapter fgThreadAdapter;
-    private static IAsynchronousTreeContentAdapter fgContendedMonitorAdapter;
-    private static IAsynchronousTreeContentAdapter fgOwnedMonitorAdapter;
-    private static IAsynchronousTreeContentAdapter fgOwningThreadAdapter;
-    private static IAsynchronousTreeContentAdapter fgWaitingThreadAdapter;
+    private static IWorkbenchAdapter fgThreadAdapter;
+    private static IWorkbenchAdapter fgContendedMonitorAdapter;
+    private static IWorkbenchAdapter fgOwnedMonitorAdapter;
+    private static IWorkbenchAdapter fgOwningThreadAdapter;
+    private static IWorkbenchAdapter fgWaitingThreadAdapter;
     
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -50,28 +52,28 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 
     private Object getWaitingThreadAdapter() {
         if (fgWaitingThreadAdapter == null) {
-            fgWaitingThreadAdapter = new AsyncJavaWaitingThreadAdapter();
+            fgWaitingThreadAdapter = new DeferredJavaWaitingThread();
         }
         return fgWaitingThreadAdapter;
     }
 
     private Object getOwningThreadAdapter() {
         if (fgOwningThreadAdapter == null) {
-            fgOwningThreadAdapter = new AsyncJavaOwningThreadAdapter();
+            fgOwningThreadAdapter = new DeferredJavaOwningThread();
         }
         return fgOwningThreadAdapter;
     }
 
-    private IAsynchronousTreeContentAdapter getOwnedMonitorAdapater() {
+    private IWorkbenchAdapter getOwnedMonitorAdapater() {
         if (fgOwnedMonitorAdapter == null) {
-            fgOwnedMonitorAdapter = new AsyncJavaOwnedMonitorAdapter();
+            fgOwnedMonitorAdapter = new DeferredJavaOwnedMonitor();
         }
         return fgOwnedMonitorAdapter;
     }
 
-    private IAsynchronousTreeContentAdapter getContendedMonitorAdapter() {
+    private IWorkbenchAdapter getContendedMonitorAdapter() {
         if (fgContendedMonitorAdapter == null) {
-            fgContendedMonitorAdapter = new AsyncJavaContendedMonitorAdapter();
+            fgContendedMonitorAdapter = new DeferredJavaContendedMonitor();
         }
         return fgContendedMonitorAdapter;
     }
@@ -80,12 +82,12 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
     public Class[] getAdapterList() {
-        return new Class[] {IAsynchronousTreeContentAdapter.class};
+        return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class};
     }
 	
-	private IAsynchronousTreeContentAdapter getThreadAdapter() {
+	private IWorkbenchAdapter getThreadAdapter() {
 	    if (fgThreadAdapter == null) {
-	        fgThreadAdapter = new AsyncJavaThreadAdapter();
+	        fgThreadAdapter = new DeferredJavaThread();
 	    }
 	    return fgThreadAdapter;
 	}
