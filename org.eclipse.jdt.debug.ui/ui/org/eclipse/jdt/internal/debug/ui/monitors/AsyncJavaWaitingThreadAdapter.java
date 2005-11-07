@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
 
-/**
- * Workbench adapter for a waiting thread
- */
-public class DeferredJavaWaitingThread extends DeferredMonitorElement {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(Object parent) {
-        return ((JavaWaitingThread)parent).getOwnedMonitors();
-    }
+public class AsyncJavaWaitingThreadAdapter extends AsyncMonitorAdapter {
+	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
+		return ((JavaWaitingThread)parent).getOwnedMonitors();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-     */
-    public Object getParent(Object element) {
-        return ((JavaWaitingThread)element).getParent();
-    }
+	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
+		JavaWaitingThread thread = (JavaWaitingThread) element;
+		return thread.getOwnedMonitors().length > 0;
+	}
 }

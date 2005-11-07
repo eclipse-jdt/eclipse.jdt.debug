@@ -81,11 +81,16 @@ public class ImageDescriptorRegistry {
 	}
 	
 	private void hookDisplay() {
-		fDisplay.disposeExec(new Runnable() {
+		fDisplay.asyncExec(new Runnable() {
 			public void run() {
-				dispose();
-			}	
+			fDisplay.disposeExec(new Runnable() {
+				public void run() {
+					dispose();
+				}	
+			});			
+			}
 		});
+
 	}
 }
 
