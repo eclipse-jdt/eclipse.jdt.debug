@@ -39,4 +39,4 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.core.runtime,
  org.eclipse.ltk.core.refactoring,
  org.eclipse.ui.console
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

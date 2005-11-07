@@ -37,4 +37,4 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.jdt.core,
  org.eclipse.core.runtime,
  org.eclipse.core.expressions
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
