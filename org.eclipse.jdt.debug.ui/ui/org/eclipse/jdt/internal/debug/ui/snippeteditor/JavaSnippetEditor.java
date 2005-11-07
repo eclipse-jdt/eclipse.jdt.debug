@@ -40,11 +40,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.views.expression.ExpressionInformationControl;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -87,24 +87,15 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -803,44 +794,12 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	}
 	
 	private void showExpression(final JavaInspectExpression expression) {
-		Runnable r = new Runnable() {
-			public void run() {
-			    fInfoPresenter = new InformationPresenter(new IInformationControlCreator() {
-			        public IInformationControl createInformationControl(Shell parent) {
-			            IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
-			            ExpressionInformationControl control = new ExpressionInformationControl(page, expression, PopupInspectAction.ACTION_DEFININIITION_ID);
-                        control.addDisposeListener(new DisposeListener() {
-                            public void widgetDisposed(DisposeEvent e) {
-                                fInfoPresenter.uninstall();
-                                fInfoPresenter = null;
-                            }
-                        });
-			            return control;
-			        }
-			    });
-
-				IInformationProvider provider = new IInformationProvider() {
-					public IRegion getSubject(ITextViewer textViewer, int offset) {
-						return new Region(fSnippetStart, fSnippetEnd-fSnippetStart);
-					}
-					public String getInformation(ITextViewer textViewer, IRegion subject) {
-						return "nothing"; //$NON-NLS-1$
-					}
-					
-				};
-
-				try {
-				    String contentType = TextUtilities.getContentType(getSourceViewer().getDocument(), fInfoPresenter.getDocumentPartitioning(), fSnippetStart, true);
-				    fInfoPresenter.setInformationProvider(provider, contentType);
-				    fInfoPresenter.install(getSourceViewer());
-				    fInfoPresenter.showInformation();
-				} catch (BadLocationException e) {
-					return;
-				}
-				
-			}
-		};
-		async(r);
+	    Runnable r = new Runnable() {
+	        public void run() {
+	            new InspectPopupDialog(getShell(), getSourceViewer(), PopupInspectAction.ACTION_DEFININIITION_ID, expression).open();
+	        }
+	    };
+	    async(r);
 	}
     
 	
