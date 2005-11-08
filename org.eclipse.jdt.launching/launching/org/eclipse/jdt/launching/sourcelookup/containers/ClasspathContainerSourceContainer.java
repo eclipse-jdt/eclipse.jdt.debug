@@ -33,6 +33,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * 
  * @since 3.0
  */
+
 public class ClasspathContainerSourceContainer extends CompositeSourceContainer {
 	
 	/**
