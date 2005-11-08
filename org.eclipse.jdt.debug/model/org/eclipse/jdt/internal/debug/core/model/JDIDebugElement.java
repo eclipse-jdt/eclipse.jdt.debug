@@ -197,6 +197,9 @@ public abstract class JDIDebugElement extends DebugElement implements IDisconnec
 	 * exception.
 	 */
 	protected void throwDebugException(String message, int code, Throwable exception) throws DebugException {
+		if(exception instanceof VMDisconnectedException) {
+			disconnected();
+		}
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 			code, message, exception));
 	}

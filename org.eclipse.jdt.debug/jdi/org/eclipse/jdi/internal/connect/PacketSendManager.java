@@ -51,11 +51,11 @@ public class PacketSendManager extends PacketManager {
 		while (!VMIsDisconnected()) {
 			try {
 				sendAvailablePackets();
-			} catch (InterruptedException e) {
-			} catch (InterruptedIOException e) {
-			} catch (IOException e) {
-				disconnectVM(e);
-			}
+			}//end try
+			//in each case if the remote VM fails, or has been interrupted, disconnect and force a clean up, don't wait for it to happen
+			catch (InterruptedException e) {disconnectVM();} 
+			catch (InterruptedIOException e) {disconnectVM(e);} 
+			catch (IOException e) {disconnectVM(e);}
 		}
 	}
 	
@@ -67,22 +67,23 @@ public class PacketSendManager extends PacketManager {
 			String message;
 			if (getDisconnectException() == null) {
 				message= ConnectMessages.PacketSendManager_Got_IOException_from_Virtual_Machine_1; 
-			} else {
+			}//end if 
+			else {
 				String exMessage = getDisconnectException().getMessage();
 				if (exMessage == null) {
 					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1, new String[] {getDisconnectException().getClass().getName()}); 
-				} else {
+				}//end if 
+				else {
 					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1, new String[] {getDisconnectException().getClass().getName(), exMessage}); 
-				}
-			}
+				}//end else
+			}//end else
 			throw new VMDisconnectedException(message);
 		}
 		
 		synchronized(fOutgoingPackets) {
-			// Add packet to list of packets to send.
+		// Add packet to list of packets to send.
 			fOutgoingPackets.add(packet);
-			
-			// Notify PacketSendThread that data is available.
+		// Notify PacketSendThread that data is available.
 			fOutgoingPackets.notifyAll();
 		}
 	}
@@ -93,12 +94,12 @@ public class PacketSendManager extends PacketManager {
 	private void sendAvailablePackets() throws InterruptedException, IOException {
 	    LinkedList packetsToSend = new LinkedList();
 	    synchronized (fOutgoingPackets) {
-			while (fOutgoingPackets.size() == 0)
+			while (fOutgoingPackets.size() == 0) {
 				fOutgoingPackets.wait();
-			
+			}//end while
 			packetsToSend.addAll(fOutgoingPackets);
 			fOutgoingPackets.clear();
-        }
+        }//end sync
 
 		// Put available packets on Output Stream.
 		while (packetsToSend.size() > 0) {
