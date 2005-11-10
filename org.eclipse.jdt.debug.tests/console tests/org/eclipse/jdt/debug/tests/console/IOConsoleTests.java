@@ -26,6 +26,7 @@ import org.eclipse.ui.console.TextConsole;
 public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchListener {
     
     private int fMatchCount;
+    private boolean fDisconnected = false;
 
     public IOConsoleTests(String name) {
         super(name);
@@ -42,7 +43,14 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
             stream.print("one foo bar");
             stream.println();
             stream.print("two foo bar");
-            Thread.sleep(1500); // ensure the console doc gets updated
+            
+            long endTime = System.currentTimeMillis() + 1500;
+            while (!fDisconnected && System.currentTimeMillis() < endTime) {
+                synchronized(this) {
+                    wait(500);
+                }
+            }
+            
             assertEquals("Should be two foo's", 2, fMatchCount);
         } finally {
             consoleManager.removeConsoles(new IConsole[]{console});
@@ -67,7 +75,7 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
-    public void matchFound(PatternMatchEvent event) {
+    public synchronized void matchFound(PatternMatchEvent event) {
         fMatchCount++;
     }
 
@@ -87,7 +95,9 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
      */
-    public void disconnect() {
+    public synchronized void disconnect() {
+        fDisconnected = true;
+        notifyAll();
     }
 
 }
