@@ -42,7 +42,7 @@ public class BundleBuilder implements BundleAttributes {
 		File app_dir= new File(tmp_dir, app_dir_name);
 		if (app_dir.exists())
 			deleteDir(app_dir);
-		app_dir= createDir(tmp_dir, app_dir_name, false);	//$NON-NLS-1$
+		app_dir= createDir(tmp_dir, app_dir_name, false);
 		
 		File contents_dir= createDir(app_dir, "Contents", false);	//$NON-NLS-1$
 		createPkgInfo(contents_dir);

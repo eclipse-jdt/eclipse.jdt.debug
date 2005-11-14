@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.launching.macosx;
 import java.io.File;
 
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -36,7 +37,7 @@ public class MacOSXVMInstall extends AbstractVMInstall {
     public String getJavaVersion() {
         File installLocation= getInstallLocation();
         if (installLocation != null) {
-            File executable= MacOSXVMInstallType.findJavaExecutable(installLocation);
+            File executable= StandardVMType.findJavaExecutable(installLocation);
             if (executable != null) {
                 MacOSXVMInstallType installType= (MacOSXVMInstallType) getVMInstallType();        
                 String vmVersion= installType.getVMVersion(installLocation, executable);

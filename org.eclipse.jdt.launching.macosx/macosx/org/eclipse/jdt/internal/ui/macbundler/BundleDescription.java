@@ -18,7 +18,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.commands.util.ListenerList;
 
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.IJavaProject;
@@ -134,7 +134,7 @@ class BundleDescription implements BundleAttributes {
 		try {
 			String[] classpath= lcd.getClasspath(lc);
 			for (int i= 0; i < classpath.length; i++)
-				addResource(new ResourceInfo(classpath[i]), true); //$NON-NLS-1$
+				addResource(new ResourceInfo(classpath[i]), true);
 		} catch (CoreException e) {
 			//
 		}
@@ -187,7 +187,7 @@ class BundleDescription implements BundleAttributes {
 		
 		if (launcher == null) {
 			setValue(JVMVERSION, "1.4*"); //$NON-NLS-1$
-			launcher= STUB;	//$NON-NLS-1$			
+			launcher= STUB;		
 		}
 		setValue(LAUNCHER, launcher);
 
@@ -226,7 +226,7 @@ class BundleDescription implements BundleAttributes {
 				try {
 					String name= dlls[j].getCanonicalPath();
 					if (name.endsWith(".jnilib")) //$NON-NLS-1$
-						addResource(new ResourceInfo(name), false); //$NON-NLS-1$
+						addResource(new ResourceInfo(name), false);
 				} catch (IOException e) {
 					// NeedWork Auto-generated catch block
 					e.printStackTrace();

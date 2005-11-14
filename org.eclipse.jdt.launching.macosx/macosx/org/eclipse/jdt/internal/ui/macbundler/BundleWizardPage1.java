@@ -126,7 +126,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				hookField(fJVMVersion, JVMVERSION);
 				createLabel(c8, "      ", GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
 				createLabel(c8, Util.getString("page1.useSWT.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
-				fUseSWT= createButton(c8, SWT.CHECK, null); //$NON-NLS-1$
+				fUseSWT= createButton(c8, SWT.CHECK, null);
 				hookButton(fUseSWT, USES_SWT);
 			
 			createLabel(g6, Util.getString("page1.appIcon.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
@@ -159,7 +159,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		if (fJVMVersion != null)
 			fJVMVersion.setText(fBundleDescription.get(JVMVERSION, "")); //$NON-NLS-1$
 		if (fUseSWT != null)
-			fUseSWT.setSelection(fBundleDescription.get(USES_SWT, false)); //$NON-NLS-1$
+			fUseSWT.setSelection(fBundleDescription.get(USES_SWT, false));
 	}
 	
 	public boolean isPageComplete() {
