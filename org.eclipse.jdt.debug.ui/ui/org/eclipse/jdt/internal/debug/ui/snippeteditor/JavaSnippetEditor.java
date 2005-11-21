@@ -90,7 +90,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -167,8 +166,6 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	private String fResult;
 
-    private InformationPresenter fInfoPresenter;
-	
 	/**
 	 * A thread that waits to have a 
 	 * thread to perform an evaluation in.

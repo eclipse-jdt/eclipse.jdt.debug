@@ -59,11 +59,11 @@ public class PopupDisplayAction extends DisplayAction {
             IWorkbench workbench = PlatformUI.getWorkbench();
             IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
             TriggerSequence[] bindings = bindingService.getActiveBindingsFor(ACTION_DEFINITION_ID);
+            String infoText = null;
             if (bindings.length > 0) {
-                String infoText = MessageFormat.format(ActionMessages.PopupDisplayAction_1, new String[] { bindings[0].format(), ActionMessages.PopupDisplayAction_2 });
-                setInfoText(infoText);
+                 infoText = MessageFormat.format(ActionMessages.PopupDisplayAction_1, new String[] { bindings[0].format(), ActionMessages.PopupDisplayAction_2 });
             }
-            return null;
+            return infoText;
         }
 
         protected String getCommandId() {

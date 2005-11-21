@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -125,8 +126,22 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(getDebugTarget())) {
-				DebugPlugin.getDefault().getExpressionManager().removeExpression(this);
+			switch (event.getKind()) {
+				case DebugEvent.TERMINATE:
+					if (event.getSource().equals(getDebugTarget())) {
+						DebugPlugin.getDefault().getExpressionManager().removeExpression(this);
+					}
+					break;
+				case DebugEvent.SUSPEND:
+					if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+						if (event.getSource() instanceof IDebugElement) {
+							IDebugElement source = (IDebugElement) event.getSource();
+							if (source.getDebugTarget().equals(getDebugTarget())) {
+								DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT)});
+							}
+						}
+					}
+					break;
 			}
 		}
 	}

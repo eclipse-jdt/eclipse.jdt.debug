@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +48,11 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
+import org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor;
+import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread;
+import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -284,6 +290,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fBreakpointAdapterFactory, IJavaBreakpoint.class);
         IAdapterFactory typeFactory = new JavaBreakpointTypeAdapterFactory();
         manager.registerAdapters(typeFactory, IJavaBreakpoint.class);
+        
+        IAdapterFactory monitorFactory = new JavaDebugElementAdapterFactory();
+        manager.registerAdapters(monitorFactory, IJavaThread.class);
+        manager.registerAdapters(monitorFactory, JavaContendedMonitor.class);
+        manager.registerAdapters(monitorFactory, JavaOwnedMonitor.class);
+        manager.registerAdapters(monitorFactory, JavaOwningThread.class);
+        manager.registerAdapters(monitorFactory, JavaWaitingThread.class);
 		
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
