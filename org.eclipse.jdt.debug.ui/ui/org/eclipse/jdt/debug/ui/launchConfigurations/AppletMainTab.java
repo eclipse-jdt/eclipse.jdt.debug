@@ -49,7 +49,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
- * This tab appears for java applet launch configurations and allows the user to edit
+ * This tab appears for Java applet launch configurations and allows the user to edit
  * attributes such as the applet class to launch and its owning project, if any.
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
