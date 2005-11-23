@@ -69,7 +69,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 			updateLaunchConfigurationDialog();
 		}//end else
 	}//end widgetSelected
-}//end provate class
+}//end private class
 	
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	//Project UI widgets
@@ -193,7 +193,9 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		}//end try 
-		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
+		catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}
 		fProjText.setText(projectName);
 	}
 	

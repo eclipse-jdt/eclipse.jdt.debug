@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Text;
  * Provides general widgets and methods for a Java type launch configuration 
  * 'Main' tab. 
  * This class provides shared functionality for those main tabs which have a 'main type' field on them;
- * such as a main method for a local java app, or an applet for java applets
+ * such as a main method for a local Java app, or an applet for Java applets
  * 
  * @since 3.2
  */
