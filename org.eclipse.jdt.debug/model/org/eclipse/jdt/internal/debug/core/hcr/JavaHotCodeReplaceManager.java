@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -49,7 +50,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelMarker;
@@ -97,7 +97,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * The list of <code>IJavaHotCodeReplaceListeners</code> which this hot code replace 
 	 * manager will notify about hot code replace attempts.
 	 */
-	private ListenerList fHotCodeReplaceListeners= new ListenerList(1);
+	private ListenerList fHotCodeReplaceListeners= new ListenerList();
 	
 	/**
 	 * The lists of hot swap targets which support HCR and those which don't
@@ -193,7 +193,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWorkspace().removeResourceChangeListener(this);
-		fHotCodeReplaceListeners.removeAll();
+		fHotCodeReplaceListeners = new ListenerList();
 		fHotSwapTargets= null;
 		fNoHotSwapTargets= null;
 	}

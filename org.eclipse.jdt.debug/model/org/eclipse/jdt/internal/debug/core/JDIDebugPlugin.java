@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.core;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
@@ -21,7 +22,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Message;
@@ -161,7 +161,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		JavaHotCodeReplaceManager.getDefault().startup();
-		fBreakpointListeners = new ListenerList(5);
+		fBreakpointListeners = new ListenerList();
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 	}
 	

@@ -15,13 +15,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.IEntriesChangedListener;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,7 +41,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/**
 	 * Entry changed listeners
 	 */
-	private ListenerList fListeners = new ListenerList(3);
+	private ListenerList fListeners = new ListenerList();
 	
 	private IClasspathEntry fCurrentParent= null;
 		

@@ -14,9 +14,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,7 +41,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/**
 	 * Entry changed listeners
 	 */
-	private ListenerList fListeners = new ListenerList(3);
+	private ListenerList fListeners = new ListenerList();
 	
 	/**
 	 * The runtime classpath entries displayed in this viewer
