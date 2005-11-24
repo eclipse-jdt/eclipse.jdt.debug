@@ -123,6 +123,14 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS= "classpathProviders";	 //$NON-NLS-1$		
+	
+	/**
+	 * Simple identifier constant (value <code>"executionEnvironments"</code>) for the
+	 * execution environments extension point.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String EXTENSION_POINT_EXECUTION_ENVIRONMENTS= "executionEnvironments";	 //$NON-NLS-1$	
 		
 	/**
 	 * Classpath container used for a project's JRE

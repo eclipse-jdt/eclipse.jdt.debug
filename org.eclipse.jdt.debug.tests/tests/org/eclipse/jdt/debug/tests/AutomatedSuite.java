@@ -34,6 +34,7 @@ import org.eclipse.jdt.debug.tests.core.DirectorySourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.EnvironmentTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.ExecutionEnvironmentTests;
 import org.eclipse.jdt.debug.tests.core.ExternalArchiveSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.FolderSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.HcrTests;
@@ -172,6 +173,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MemoryRenderingTests.class));
 		addTest(new TestSuite(JavaLibraryPathTests.class));
 		addTest(new TestSuite(EnvironmentTests.class));
+		addTest(new TestSuite(ExecutionEnvironmentTests.class));
 	
 		// refactoring tests
 		addTest(new TestSuite(MoveCompilationUnitTests.class));

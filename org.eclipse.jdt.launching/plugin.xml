@@ -9,6 +9,7 @@
    <extension-point id="runtimeClasspathEntries" name="%runtimeClasspathEntries" schema="schema/runtimeClasspathEntries.exsd"/>
    <extension-point id="vmConnectors" name="%vmConnectors" schema="schema/vmConnectors.exsd"/>
    <extension-point id="vmInstallTypes" name="%vmInstallTypes" schema="schema/vmInstallTypes.exsd"/>
+   <extension-point id="executionEnvironments" name="%executionEnvironments" schema="schema/executionEnvironments.exsd"/>
 
 <!-- Extensions -->
    <extension

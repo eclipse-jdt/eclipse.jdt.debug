@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jdt.internal.launching;x-internal:=true,
  org.eclipse.jdt.launching,
+ org.eclipse.jdt.launching.environments,
  org.eclipse.jdt.launching.sourcelookup,
  org.eclipse.jdt.launching.sourcelookup.containers
 Require-Bundle: org.eclipse.core.resources,

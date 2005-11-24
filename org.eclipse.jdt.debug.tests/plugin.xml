@@ -260,5 +260,15 @@
             class="org.eclipse.jdt.debug.testplugin.TestClasspathContainerInitializer"
             id="org.eclipse.jdt.debug.tests.TestClasspathContainer"/>
    </extension>
+   <extension
+         point="org.eclipse.jdt.launching.executionEnvironments">
+      <environment
+            description="Java 2 Platform, Standard Edition 1.4.x"
+            id="org.eclipse.jdt.debug.tests.environment.j2se14x"
+            name="J2SE 1.4.x"/>
+      <analyzer
+            class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE14x"
+            id="org.eclipse.jdt.debug.tests.analyzer.j2se14x"/>
+   </extension>
 
 </plugin>
