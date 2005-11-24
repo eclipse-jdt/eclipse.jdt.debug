@@ -1823,22 +1823,18 @@
            <enablement>
              <with variable="selection">
                <count value="1"/>
-               <iterate>
-                 <or>
-                   <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
-                   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-                   <instanceof value="org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput"/>
-                 </or>
-                 <or>
-	                 <test
-                       args="main, ([QString;)V, 9"
-                       property="org.eclipse.jdt.debug.hasMethod"/>
+               <iterate operator="and">
+                  <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
+                  <or>
                      <test
-                       args="main, ([Ljava/lang/String;)V, 9"
-                       property="org.eclipse.jdt.debug.hasMethod"/>
-                 </or>
+                           args="main, ([Ljava/lang/String;)V, 9"
+                           property="org.eclipse.jdt.debug.hasMethod"/>
+                     <test
+                           args="main, ([QString;)V, 9"
+                           property="org.eclipse.jdt.debug.hasMethod"/>
+                  </or>
                </iterate>
-             </with>
+               </with>
            </enablement>
   		 </contextualLaunch>
          <perspective
@@ -1864,17 +1860,14 @@
          <contextualLaunch>
            <enablement>
              <with variable="selection">
-               <count value="1"/>
-               <iterate>
-                 <or>
-       <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
-				   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-                 </or>
-                 <test
-                       property="org.eclipse.jdt.debug.hasSuperClass"
-                       value="java.applet.Applet"/>
-               </iterate>
-             </with>
+             <count value="1"/>
+               <iterate operator="and">
+                <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
+                <test
+                      property="org.eclipse.jdt.debug.hasSuperClass"
+                      value="java.applet.Applet"/>
+                </iterate>
+           	</with>
            </enablement>
   		 </contextualLaunch>
          <perspective

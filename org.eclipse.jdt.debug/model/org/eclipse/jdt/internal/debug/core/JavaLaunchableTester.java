@@ -12,15 +12,13 @@
 package org.eclipse.jdt.internal.debug.core;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -32,7 +30,6 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 
 /**
  * Generalized property tester class to determine enablement of context launching menu artifacts
@@ -49,25 +46,11 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * name for the IS_SUBCLASS property
 	 */
 	private static final String PROPERTY_HAS_SUPERCLASS = "hasSuperClass"; //$NON-NLS-1$
-	/**
-	 * name for the HAS_LIBRARY_REF property
-	 */
-	private static final String PROPERTY_HAS_LIBRARY_REF = "hasImport"; //$NON-NLS-1$
-	
-	/**
-	 * name for the PROPERTY_HAS_ITEM_ON_BUILD_PATH property
-	 */
-	private static final String PROPERTY_HAS_ITEM_ON_BUILD_PATH = "hasItemOnBuildPath"; //$NON-NLS-1$
 
 	/**
 	 * name for the PROPERTY_MATCHES_EXTENSION property
 	 */
 	private static final String PROPERTY_MATCHES_EXTENSION = "matchesJavaFileExtension"; //$NON-NLS-1$
-	
-	/**
-	 * name for the PROPERTY_MATCHES_CONTENT
-	 */
-	private static final String PROPERTY_MATCHES_CONTENT = "matchesContentType"; //$NON-NLS-1$
 	
 	/**
 	 * name for the PROPERTY_PROJECT_NATURE property
@@ -80,73 +63,38 @@ public class JavaLaunchableTester extends PropertyTester {
 	private static final String PROPERTY_IMPLEMENTS_INTERFACE = "implementsInterface"; //$NON-NLS-1$
 	
 	/**
-	 * name for the PROPERTY_HAS_SWT_ON_BUILD_PATH property
+	 * name for the PROPERTY_HAS_SWT_ON_PATH property
 	 */
-	private static final String PROPERTY_HAS_SWT_ON_BUILD_PATH = "hasSwtOnBuildPath"; //$NON-NLS-1$
+	private static final String PROPERTY_HAS_ITEM_ON_PATH = "hasItemOnBuildPath"; //$NON-NLS-1$
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
+	/**
+	 * name for the PROPERTY_HAS_ALL_ITEMS_ON_PATH property
 	 */
-	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		IJavaElement element = null;
-		if (receiver instanceof IAdaptable) {
-			element = (IJavaElement) ((IAdaptable)receiver).getAdapter(IJavaElement.class);
-			if(element != null) {
-				if(!element.exists()) {
-					return false;
-				}//end if
-			}//end if
-		}//end if
-		if(element instanceof IPackageFragmentRoot || element instanceof IPackageFragment || element instanceof IJavaProject) {
-			return true;
-		}//end if
-		if(PROPERTY_HAS_LIBRARY_REF.equals(property)) {
-			return hasLibraryRef(element, (String)expectedValue);
-		}//end if
-		else if(PROPERTY_HAS_METHOD.equals(property)) {
-			//check to ensure arguments are correct length - 3rd argument (modifiers) is optional
-			Integer modifiers = null;
-			if (args.length == 2) {
-				modifiers = null;
-			} else if (args.length == 3) {
-				modifiers = (Integer)args[2];
-			} else {
-				return false;
-			}//end if
-			return hasMethod(element, (String)args[0], (String)args[1], modifiers);
-		}//end if
-		else if(PROPERTY_HAS_SUPERCLASS.equals(property)) {
-			return hasSuperClass(element, (String)expectedValue);
-		}//end if
-		else if(PROPERTY_HAS_ITEM_ON_BUILD_PATH.equals(property)) {
-			return hasItemOnBuildPath(element, (String)expectedValue);
-		}//end if
-		else if(PROPERTY_HAS_SWT_ON_BUILD_PATH.equals(property)) {
-			return hasSwtOnBuildPath(element);
-		}//end if
-		else if(PROPERTY_MATCHES_EXTENSION.equals(property)) {
-			IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
-			if(resource != null) {
-				return matchesJavaFileExtension(resource);
-			}//end if
-		}//end if
-		else if(PROPERTY_MATCHES_CONTENT.equals(property)) {
-			IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
-			if(resource != null) {
-				return matchesContentType(resource, (String)expectedValue);
-			}//end if
-		}//end if
-		else if(PROPERTY_PROJECT_NATURE.equals(property)) {
-			IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
-			if(resource != null) {
-				return hasProjectNature(resource, (String)expectedValue);
-			}//end if
-		}//end if
-		else if(PROPERTY_IMPLEMENTS_INTERFACE.equals(property)) {
-			return implementsInterface(element, (String)expectedValue);
-		}//end if
-		return false;
-	}//end test
+	private static final String PROPERTY_HAS_ALL_ITEMS_ON_PATH = "hasAllItemsOnBuildPath"; //$NON-NLS-1$
+
+	
+	/**
+	 * gets the type of the IJavaElement
+	 * @param element the element to inspect
+	 * @return the type
+	 * @throws JavaModelException
+	 */
+	private IType getType(IJavaElement element) throws JavaModelException {
+        IType type = null;
+        if (element instanceof ICompilationUnit) {
+            type= ((ICompilationUnit) element).findPrimaryType();
+        }
+        else if (element instanceof IClassFile) {
+            type = ((IClassFile)element).getType();
+        }
+        else if (element instanceof IType) {
+            type = (IType) element;
+        }
+        else if (element instanceof IMember) {
+            type = ((IMember)element).getDeclaringType();
+        }
+        return type;
+    }
 	
 	/**
 	 * Determines is the java elements contains the specified method, described with its name and signature
@@ -166,13 +114,33 @@ public class JavaLaunchableTester extends PropertyTester {
 						if (flags == null || (flags.intValue() == methods[i].getFlags())) {
 							return true;
 						}
-					}//end if
-				}//end for
-			}//end if
-		}//end try 
+					}
+				}
+			}
+		}
 		catch (JavaModelException e) {}
 		return false;
-	}//end hasMethod
+	}
+	
+	/**
+     * determines if the project selected has the specified nature
+     * @param resource the resource to get the project for
+     * @param ntype the specified nature type
+     * @return true if the specified nature matches the project, false otherwise
+     */
+    private boolean hasProjectNature(IJavaElement element, String ntype) {
+    	try {
+	    	if(element != null) {
+	    		IResource resource = element.getResource();
+	    		if(resource != null) {
+		            IProject proj = resource.getProject();
+		            return proj.isAccessible() && proj.hasNature(ntype);
+	    		}
+    		}
+	    	return false;
+        }
+    	catch (CoreException e) {return false;}
+    }
 	
 	/**
 	 * Determines if the element has qname as a parent class
@@ -188,13 +156,87 @@ public class JavaLaunchableTester extends PropertyTester {
 				for(int i = 0; i < stypes.length; i++) {
 					if(stypes[i].getFullyQualifiedName().equals(qname) || stypes[i].getElementName().equals(qname)) {
 						return true;
-					}//end if
-				}//end for
-			}//end if
-		}//end try
+					}
+				}
+			} 
+		}
 		catch(JavaModelException e) {}
+		return false; 
+	}
+	
+	/**
+	 * Determines if an item or list of items are found on the buildpath. 
+	 * Once any one single items matches though, the method returns true, this method is intended 
+	 * to be used in OR like situations, where we do not care if all of the items are on the build path, only that one
+	 * of them is.
+	 * 
+	 * @param element the element whose build path should be checked
+	 * @param args the value(s) to search for on the build path
+	 * @return true if any one of the args is found on the build path
+	 */
+	private boolean hasItemOnBuildPath(IJavaElement element, Object[] args) {
+		try {
+			if(element != null && args != null) {
+				IJavaProject project = element.getJavaProject();
+	            if(project != null && project.exists()) {
+	                IClasspathEntry[] entries = project.getResolvedClasspath(true);
+	                for(int i = 0; i < entries.length; i++) {
+	                    IPath path = entries[i].getPath();
+	                    String spath = path.toPortableString();
+	                    for(int j = 0; j < args.length; j++) {
+	                    	if(spath.lastIndexOf((String)args[j]) != -1) {
+	                    		return true;
+	                    	}
+	                    }
+	                }
+	            }
+			}
+		}
+		catch(JavaModelException e) {DebugPlugin.log(e);}
 		return false;
-	}//end isSubclass
+	}
+	
+	/**
+	 * Determines if all item from the list of items are found on the buildpath. 
+	 * Once any one single items matches FALSE, the method returns false, this method is intended 
+	 * to be used in AND like situations, where we want to ensure all of the items are on the build path.
+	 * 
+	 * @param element the element whose build path should be checked
+	 * @param args the value(s) to search for on the build path
+	 * @return true if all of the args are found on the build path
+	 */
+	private boolean hasAllItemsOnBuildPath(IJavaElement element, Object[] args) {
+		boolean value = true; //optimistic
+		try {
+			if(element != null && args != null) {
+				IJavaProject project = element.getJavaProject();
+	            if(project != null && project.exists()) {
+	                IClasspathEntry[] entries = project.getResolvedClasspath(true);
+	                IPath path = null;
+	                String spath = null;
+	                for(int i = 0; i < args.length; i++) {
+	                	boolean val = false;
+	                    for(int j = 0; j < entries.length; j++) {
+	                    	path = entries[j].getPath();
+		                    spath = path.toPortableString();
+	                    	if(spath.lastIndexOf((String)args[i]) != -1) {
+	                    		val = true;
+	                    	}
+	                    }
+	                    value &= val;
+	                }
+	            }
+	            else {
+	            	value = false;
+	            }
+			}
+			else {
+				value = false;
+			}
+		}
+		catch(JavaModelException e) {DebugPlugin.log(e);}
+		return value;
+	}
 	
 	/**
 	 * determines if the element implements a given interface
@@ -210,157 +252,75 @@ public class JavaLaunchableTester extends PropertyTester {
 				for(int i = 0; i < itypes.length; i++) {
 					if(itypes[i].getFullyQualifiedName().equals(qname)) {
 						return true;
-					}//end if
-				}//end for
-			}//end if
-		}//end try
+					}
+				} 
+			}
+		}
 		catch(JavaModelException e) {}
 		return false;
-	}//end implementsInterface
-	
-	/**
-	 * Determines if the element has pname as a reference (import)
-	 * @param element the element to search for the reference
-	 * @param pname the fully qualified package name
-	 * @return true if the package is referenced, false otherwise
-	 */
-	private boolean hasLibraryRef(IJavaElement element, String pname) {
-		try {
-			IType type = getType(element);
-			if(type != null) {
-				ICompilationUnit cunit = type.getCompilationUnit();
-				if(cunit != null) {
-					return (cunit.getImport(pname).exists());
-				}//end if
-			}//end if
-		}//end try
-		catch(JavaModelException e) {}
-		return false;
-	}//end hasLibraryRef
-
-	/**
-	 * determines if the SWT libraries are included in the build path
-	 * @param element the element whose project is checked to determine if the the SWT library is present
-	 * @return true if any of the SWT libraries are present, false otherwise
-	 */
-	private boolean hasSwtOnBuildPath(IJavaElement element) {
-	    try {
-	        if (element != null) {
-	            IJavaProject project = element.getJavaProject();
-	            if(project != null) {
-	                IClasspathEntry[] entries = project.getResolvedClasspath(true);
-	                for(int i = 0; i < entries.length; i++) {
-	                    IPath path = entries[i].getPath();
-	                    String spath = path.toPortableString();
-	                    if((spath.lastIndexOf("swt.jar") != -1) || (spath.lastIndexOf("org.eclipse.swt") != -1)){ //$NON-NLS-1$ //$NON-NLS-2$
-	                        return true;
-	                    }//end if
-	                }//end for
-	            }//end if
-	        }
-	    }//end try
-	    catch (JavaModelException e) {}
-	    return false;
-	}//end hasSwtOnBuildPath
-	
-	/**
-	 * determines if the pattern is included on the build path
-	 * @param element the element whose project is checked to determine if the pattern is present on its build path
-	 * @param pattern the pattern to search path enetries for
-	 * @return true if the pattern is present, false otherwise
-	 */
-	private boolean hasItemOnBuildPath(IJavaElement element, String pattern) {
-	    try {
-	        if (element != null) {
-	            IJavaProject project = element.getJavaProject();
-	            if(project != null) {
-	                IClasspathEntry[] entries = project.getResolvedClasspath(true);
-	                for(int i = 0; i < entries.length; i++) {
-	                    IPath path = entries[i].getPath();
-	                    if(path.toPortableString().lastIndexOf(pattern) != -1){
-	                        return true;
-	                    }//end if
-	                }//end for
-	            }//end if
-	        }
-	    }//end try
-	    catch (JavaModelException e) {}
-	    return false;
 	}
-	
-	/**
+
+    /**
 	 * matches the file extension to see if the resource is a java class or source file
 	 * @param resource the resource 
 	 * @return true if the resource has a java associated file extension, false otherwise
 	 */
-	private boolean matchesJavaFileExtension(IResource resource) {
-		String extension = resource.getFileExtension();
-		if(extension != null) {
-			return extension.equals("java") || extension.equals("class");  //$NON-NLS-1$//$NON-NLS-2$
-		}//end if
+	private boolean matchesJavaFileExtension(IJavaElement element) {
+		if(element != null) {
+			IResource resource = element.getResource();
+			if(resource != null) {
+				String extension = resource.getFileExtension();
+				if(extension != null) {
+					return extension.equals("java") || extension.equals("class");  //$NON-NLS-1$//$NON-NLS-2$
+				}
+			}
+		}
         return false;
-	}//end matchesJavaFileExtension
-	
-	/**
-     * Returns whether or not the given file's content type matches the
-     * specified content type.
-     * 
-     * Content types are looked up in the content type registry.
-     * 
-     * @return whether or not the given resource has the given content type
-     */
-    private boolean matchesContentType(IResource resource, String ctype) {
-        if ((resource instanceof IFile) & resource.exists()) {
-	        IFile file = (IFile) resource;
-	        IContentDescription description;
-	        try {
-	            description = file.getContentDescription();
-	        }//end try 
-	        catch (CoreException e) {return false;}
-	        if (description != null) {
-	            IContentType type = description.getContentType();
-	            return type != null && ctype.equals(type.getId());
-	        }//end if
-        }//end if
-        return false;
-    }//end matchesContentType
+	}
     
-    /**
-     * determines if the project selected has the specified nature
-     * @param resource the resource to get the project for
-     * @param ntype the specified nature type
-     * @return true if the specified nature matches the project, false otherwise
-     */
-    private boolean hasProjectNature(IResource resource, String ntype) {
-    	try {
-            IProject proj = resource.getProject();
-            return proj.isAccessible() && proj.hasNature(ntype);
-        }//end try 
-    	catch (CoreException e) {return false;}
-    }//end projectNature
-    
-	/**
-	 * gets the type of the IJavaElement
-	 * @param element the element to inspect
-	 * @return the type
-	 * @throws JavaModelException
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
-	private IType getType(IJavaElement element) throws JavaModelException {
-        IType type = null;
-        if (element instanceof ICompilationUnit) {
-            ICompilationUnit cu = (ICompilationUnit) element;
-            type= cu.getType(Signature.getQualifier(cu.getElementName()));
-        }//end if 
-        else if (element instanceof IClassFile) {
-                type = ((IClassFile)element).getType();
-        }//end if 
-        else if (element instanceof IType) {
-            type = (IType) element;
-        }//end if 
-        else if (element instanceof IMember) {
-            type = ((IMember)element).getDeclaringType();
-        }//end if
-        return type;
-    }//end getType
-	
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		IJavaElement element = null;
+		if (receiver instanceof IAdaptable) {
+			element = (IJavaElement) ((IAdaptable)receiver).getAdapter(IJavaElement.class);
+			if(element != null) {
+				if(!element.exists()) {
+					return false;
+				}
+			}
+		}
+		if(element instanceof IPackageFragmentRoot || element instanceof IPackageFragment || element instanceof IJavaProject) {
+			if(property.equals(PROPERTY_PROJECT_NATURE)) {
+				return hasProjectNature(element, (String)expectedValue);
+			}
+			return true;
+		}
+		if(PROPERTY_MATCHES_EXTENSION.equals(property)) {
+			return matchesJavaFileExtension(element);
+		}
+		if(PROPERTY_HAS_METHOD.equals(property)) {
+			if (args.length == 3) {
+				return hasMethod(element, (String)args[0], (String)args[1], (Integer)args[2]);
+			}
+			return false;
+		}
+		if(PROPERTY_HAS_ITEM_ON_PATH.equals(property)) {
+			return hasItemOnBuildPath(element, args);
+		}
+		if(PROPERTY_HAS_ALL_ITEMS_ON_PATH.equals(property)) {
+			return hasAllItemsOnBuildPath(element, args);
+		}
+		if(PROPERTY_HAS_SUPERCLASS.equals(property)) {
+			return hasSuperClass(element, (String)expectedValue);
+		}
+		if(PROPERTY_PROJECT_NATURE.equals(property)) {
+			return hasProjectNature(element, (String)expectedValue);
+		}
+		if(PROPERTY_IMPLEMENTS_INTERFACE.equals(property)) {
+			return implementsInterface(element, (String)expectedValue);
+		}
+		return false;
+	}
 }//end class
