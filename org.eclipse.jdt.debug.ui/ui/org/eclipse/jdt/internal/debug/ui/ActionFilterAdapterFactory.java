@@ -34,14 +34,15 @@ import org.eclipse.ui.IActionFilter;
 		if (adapterType == IActionFilter.class) {
 			if (obj instanceof IJavaThread) {
 				return new JavaThreadActionFilter();
-			} else if (obj instanceof IJavaStackFrame) {
+			} 
+			else if (obj instanceof IJavaStackFrame) {
 				return new JavaStackFrameActionFilter();
-			} else if (obj instanceof IJavaVariable) {
-				return new JavaVariableActionFilter();
-			} else if (obj instanceof IMethod) {
+			} 
+			else if (obj instanceof IMethod) {
 				return new MethodActionFilter();
-			} else if (obj instanceof JavaInspectExpression) {
-				return new JavaInspectExpressionActionFilter();
+			} 
+			else if((obj instanceof IJavaVariable) || (obj instanceof JavaInspectExpression)) {
+				return new JavaVarActionFilter();
 			}
 		}
 		return null;
