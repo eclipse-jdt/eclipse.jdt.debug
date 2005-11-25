@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 
 /**
  * Contributed analyzer.
@@ -27,7 +28,7 @@ class Analyzer implements IExecutionEnvironmentAnalyzer {
 	
 	private IConfigurationElement fElement;
 	
-	private IExecutionEnvironmentAnalyzer fDelegate;
+	private IExecutionEnvironmentAnalyzerDelegate fDelegate;
 	
 	Analyzer(IConfigurationElement element) {
 		fElement = element;
@@ -46,11 +47,18 @@ class Analyzer implements IExecutionEnvironmentAnalyzer {
 	 * @return analyzer
 	 * @throws CoreException
 	 */
-	private IExecutionEnvironmentAnalyzer getDelegate() throws CoreException {
+	private IExecutionEnvironmentAnalyzerDelegate getDelegate() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (IExecutionEnvironmentAnalyzer) fElement.createExecutableExtension("class");  //$NON-NLS-1$
+			fDelegate = (IExecutionEnvironmentAnalyzerDelegate) fElement.createExecutableExtension("class");  //$NON-NLS-1$
 		}
 		return fDelegate;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer#getId()
+	 */
+	public String getId() {
+		return fElement.getAttribute("id"); //$NON-NLS-1$
 	}
 
 }

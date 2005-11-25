@@ -90,7 +90,7 @@
                   a fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate"/>
                </appInfo>
             </annotation>
          </attribute>

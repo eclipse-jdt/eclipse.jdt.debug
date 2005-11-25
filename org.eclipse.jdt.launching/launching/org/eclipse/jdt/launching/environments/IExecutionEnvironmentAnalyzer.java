@@ -10,31 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.launching.IVMInstall;
 
 /**
  * Analyzes vm installs for compatibility with execution environments.
- * <p>
- * An execution environment analyzer is contributed in plug-in XML via
- * the <code>org.eclipse.jdt.launching.executionEnvironments</code> 
- * extension point.
- * </p>
+ *
  * @since 3.2
+ * @see IExecutionEnvironmentAnalyzerDelegate
  */
-public interface IExecutionEnvironmentAnalyzer {
+public interface IExecutionEnvironmentAnalyzer extends IExecutionEnvironmentAnalyzerDelegate {
 	
 	/**
-	 * Analyzes the given vm install and returns a collection of execution
-	 * environments compatible with it or an empty collection if none.
+	 * Returns the unique identifier for this analyzer.
 	 * 
-	 * @param vm vm install to analyze
-	 * @param monitor progress monitor
-	 * @return execution environments compatible with the specified vm install,
-	 *  possibly empty
-	 * @throws CoreException if an exception occurrs analyzing the vm install
+	 * @return analyzer identifier
 	 */
-	public IExecutionEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException;
+	public String getId();
 
 }

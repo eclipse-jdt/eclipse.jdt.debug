@@ -16,13 +16,13 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironments;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 
 /**
  * @since 3.2
  * 
  */
-public class AnalyzerJ2SE14x implements IExecutionEnvironmentAnalyzer {
+public class AnalyzerJ2SE14x implements IExecutionEnvironmentAnalyzerDelegate {
 
 	/*
 	 * (non-Javadoc)
