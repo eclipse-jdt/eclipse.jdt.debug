@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.ExecutionEnvironments;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
 /**
  * Tests for execution environments
@@ -28,7 +26,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 	}
 	
 	public void testGetEnvironments() throws Exception {
-		IExecutionEnvironment[] executionEnvironments = ExecutionEnvironments.getExecutionEnvironments();
+		IExecutionEnvironment[] executionEnvironments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		assertTrue("Should be at least one environment", executionEnvironments.length > 0);
 		for (int i = 0; i < executionEnvironments.length; i++) {
 			IExecutionEnvironment environment = executionEnvironments[i];
@@ -39,21 +37,15 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertTrue("Did not find test environment org.eclipse.jdt.debug.tests.environment.j2se14x", false);
 	}
 	
-	public void testGetAnalyzers() throws Exception {
-		IExecutionEnvironmentAnalyzer[] analyzers = ExecutionEnvironments.getAnalyzers();
-		assertTrue("Should be at least one analyzer", analyzers.length > 0);
-	}	
-	
 	public void testAnalyze() throws Exception {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		IExecutionEnvironment[] environments = ExecutionEnvironments.analyze(vm, new NullProgressMonitor());
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		
+		IExecutionEnvironment[] environments = manager.getEnvironments(vm);
 		assertTrue("Should be at least one environmet", environments.length > 0);
 		
-		environments = ExecutionEnvironments.getEnvironments(vm);
-		assertTrue("Should be at least one environmet", environments.length > 0);
-		
-		IExecutionEnvironment environment = ExecutionEnvironments.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
-		IVMInstall[] installs = ExecutionEnvironments.getVMInstalls(environment);
+		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
+		IVMInstall[] installs = manager.getVMInstalls(environment);
 		assertTrue("Should be at least one vm install for the environment", installs.length > 0);
 		for (int i = 0; i < installs.length; i++) {
 			IVMInstall install = installs[i];

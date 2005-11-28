@@ -70,6 +70,8 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
+import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -2113,6 +2115,16 @@ public final class JavaRuntime {
 			return value.split("\\|"); //$NON-NLS-1$
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the execution environments manager.
+	 * 
+	 * @return execution environments manager
+	 * @since 3.2
+	 */
+	public static IExecutionEnvironmentsManager getExecutionEnvironmentsManager() {
+		return EnvironmentsManager.getDefault();
 	}
 
 }

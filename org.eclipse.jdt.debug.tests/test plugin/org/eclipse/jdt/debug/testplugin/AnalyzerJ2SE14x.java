@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
-import org.eclipse.jdt.launching.environments.ExecutionEnvironments;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 
@@ -35,7 +35,7 @@ public class AnalyzerJ2SE14x implements IExecutionEnvironmentAnalyzerDelegate {
 			IVMInstall2 vm2 = (IVMInstall2) vm;
 			String javaVersion = vm2.getJavaVersion();
 			if (javaVersion.startsWith("1.4")) {
-				return new IExecutionEnvironment[] { ExecutionEnvironments
+				return new IExecutionEnvironment[] { JavaRuntime.getExecutionEnvironmentsManager()
 						.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x") };
 			}
 		}

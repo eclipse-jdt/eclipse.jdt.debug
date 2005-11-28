@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 
 /**
@@ -24,7 +23,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDeleg
  * @since 3.2
  *
  */
-class Analyzer implements IExecutionEnvironmentAnalyzer {
+class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
 	private IConfigurationElement fElement;
 	
@@ -54,8 +53,9 @@ class Analyzer implements IExecutionEnvironmentAnalyzer {
 		return fDelegate;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer#getId()
+	/**
+	 * Returns the id of this delegate
+	 * @return id
 	 */
 	public String getId() {
 		return fElement.getAttribute("id"); //$NON-NLS-1$
