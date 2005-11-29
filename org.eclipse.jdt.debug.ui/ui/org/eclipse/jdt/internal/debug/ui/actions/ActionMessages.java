@@ -30,13 +30,6 @@ public class ActionMessages extends NLS {
 	public static String DisplayAction_result_pattern;
 	public static String DisplayAction_type_name_pattern;
 
-	public static String EnableDisableBreakpointRulerAction__Disable_Breakpoint_4;
-	public static String EnableDisableBreakpointRulerAction__Enable_Breakpoint_1;
-	public static String EnableDisableBreakpointRulerAction__Enable_Breakpoint_5;
-	public static String EnableDisableBreakpointRulerAction_0;
-	public static String EnableDisableBreakpointRulerAction_Enabling_disabling_breakpoints_2;
-	public static String EnableDisableBreakpointRulerAction_Exceptions_occurred_enabling_disabling_the_breakpoint_3;
-
 	public static String Evaluate_error_message_direct_exception;
 	public static String Evaluate_error_message_exception_pattern;
 	public static String Evaluate_error_message_src_context;
