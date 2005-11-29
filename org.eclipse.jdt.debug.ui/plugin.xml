@@ -1194,8 +1194,8 @@
          <action
                label="%JavaBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
-               menubarPath="debug"
+               class="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+               menubarPath="group.properties"
                id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
@@ -1219,8 +1219,8 @@
          <action
                label="%JavaBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
-               menubarPath="debug"
+               class="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+               menubarPath="group.properties"
                id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
          </action>
          <action

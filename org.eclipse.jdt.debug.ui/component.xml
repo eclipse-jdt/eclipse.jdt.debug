@@ -12,6 +12,10 @@
  	<type name="JavaUISourceLocator" subclass="false" />
  </package>
  
+ <package name="org.eclipse.jdt.debug.ui.actions">
+ 	<type name="JavaBreakpointPropertiesRulerActionDelegate" subclass="false" instantiate="false"/>
+ </package> 
+ 
  <package name="org.eclipse.jdt.debug.ui.launchConfigurations">
  	<type name="AppletArgumentsTab" subclass="false" instantiate="true"/>
  	<type name="AppletMainTab" subclass="false" instantiate="true"/>
