@@ -1490,9 +1490,14 @@
             objectClass="org.eclipse.jdt.core.IMethod"
             id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
          <visibility>
-         	<not>
-               <objectState name="MethodActionFilter" value="isAbstract"/>
-            </not>
+            <and>						
+	            	   <not>
+	                  <objectState name="MemberActionFilter" value="isAbstract"/>
+	               </not>
+	               <not>
+   	               <objectState name="MemberActionFilter" value="isRemote"/>
+   	            </not>
+	            </and>
          </visibility>
          <action
                label="%manageMethodBreakpointAction.label"
@@ -1506,6 +1511,11 @@
       <objectContribution
             objectClass="org.eclipse.jdt.core.IField"
             id="org.eclipse.jdt.debug.ui.WatchpointActions">
+         <visibility>
+            	   <not>
+   	               <objectState name="MemberActionFilter" value="isRemote"/>
+   	            </not>
+         </visibility>            
          <action
                label="%manageWatchpointAction.label"
                helpContextId="manage_watchpoint_action_context"
@@ -1518,6 +1528,11 @@
       <objectContribution
             objectClass="org.eclipse.jdt.core.IType"
             id="org.eclipse.jdt.debug.ui.TypeActions">
+         <visibility>
+            	   <not>
+   	               <objectState name="MemberActionFilter" value="isRemote"/>
+   	            </not>
+         </visibility>                
          <action
                label="%toggleClassPrepareAction.label"
                helpContextId="toggle_class_prepare_action_context"

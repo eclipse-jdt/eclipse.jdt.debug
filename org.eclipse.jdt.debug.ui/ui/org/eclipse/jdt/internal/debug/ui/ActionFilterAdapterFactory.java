@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
  
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -38,8 +38,8 @@ import org.eclipse.ui.IActionFilter;
 			else if (obj instanceof IJavaStackFrame) {
 				return new JavaStackFrameActionFilter();
 			} 
-			else if (obj instanceof IMethod) {
-				return new MethodActionFilter();
+			else if (obj instanceof IMember) {
+				return new MemberActionFilter();
 			} 
 			else if((obj instanceof IJavaVariable) || (obj instanceof JavaInspectExpression)) {
 				return new JavaVarActionFilter();

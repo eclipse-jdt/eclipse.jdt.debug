@@ -35,7 +35,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -279,7 +279,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		fActionFilterAdapterFactory= new ActionFilterAdapterFactory();
-		manager.registerAdapters(fActionFilterAdapterFactory, IMethod.class);
+		manager.registerAdapters(fActionFilterAdapterFactory, IMember.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaVariable.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaStackFrame.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaThread.class);

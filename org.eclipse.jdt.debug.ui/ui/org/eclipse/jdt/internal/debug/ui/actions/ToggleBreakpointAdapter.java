@@ -242,6 +242,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      ISelection)
      */
     public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
+    	if (isRemote(part, selection)) {
+    		return false;
+    	}    	
         return selection instanceof ITextSelection;
     }
 
@@ -322,7 +325,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                     // resolve the type names
                                     methodSignature = resolveMethodSignature(type, methodSignature);
                                     if (methodSignature == null) {
-                                        return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Source method signature could not be resolved", null); //$NON-NLS-1$
+                                    	report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); 
+                                        return Status.OK_STATUS;
                                     }
                                 }
                                 createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method), type.getFullyQualifiedName(), methodName, methodSignature, true, false, false, -1, start, end, 0, true, attributes);
@@ -381,11 +385,40 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
+    	if (isRemote(part, selection)) {
+    		return false;
+    	}
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) selection;
             return getMethods(ss).length > 0;
         }
         return selection instanceof ITextSelection;
+    }
+    
+    /**
+     * Returns whether the given part/selection is remote (viewing a repsitory)
+     * 
+     * @param part
+     * @param selection
+     * @return
+     */
+    protected boolean isRemote(IWorkbenchPart part, ISelection selection) {
+    	if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			Object element = ss.getFirstElement();
+			if (element instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable) element;
+				IJavaElement javaElement = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+				return javaElement == null || !javaElement.getJavaProject().getProject().exists();
+			}
+		}
+    	if (part instanceof IEditorPart) {
+    		IEditorPart editorPart = (IEditorPart)part;
+    		IEditorInput input = editorPart.getEditorInput();
+    		IJavaElement element = (IJavaElement) input.getAdapter(IJavaElement.class);
+    		return element == null;
+    	} 
+    	return false;
     }
 
     protected IMethod[] getMethods(IStructuredSelection selection) {
@@ -397,8 +430,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         while (iterator.hasNext()) {
             Object thing = iterator.next();
             try {
-                if (thing instanceof IMethod && !Flags.isAbstract(((IMethod) thing).getFlags())) {
-                    methods.add(thing);
+                if (thing instanceof IMethod) {
+                	IMethod method = (IMethod) thing;
+                	if (!Flags.isAbstract(method.getFlags())) {
+                		methods.add(method);
+                	}
                 }
             } catch (JavaModelException e) {
             }
@@ -716,6 +752,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
+    	if (isRemote(part, selection)) {
+    		return false;
+    	}
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) selection;
             return isFields(ss);
@@ -845,6 +884,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
+    	if (isRemote(part, selection)) {
+    		return false;
+    	}    	
         return canToggleLineBreakpoints(part, selection);
     }
 }

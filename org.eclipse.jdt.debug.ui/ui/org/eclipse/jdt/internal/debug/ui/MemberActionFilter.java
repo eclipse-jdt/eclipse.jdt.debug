@@ -12,26 +12,29 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IActionFilter;
 
-public class MethodActionFilter implements IActionFilter {
+public class MemberActionFilter implements IActionFilter {
 
 	/**
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(Object, String, String)
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
-		if (name.equals("MethodActionFilter") //$NON-NLS-1$
-			&& value.equals("isAbstract")) { //$NON-NLS-1$
-			if (target instanceof IMethod) {
-				IMethod method = (IMethod) target;
-				try {
-					return Flags.isAbstract(method.getFlags());
-				} catch (JavaModelException e) {
-					JDIDebugUIPlugin.log(e);
+		if (name.equals("MemberActionFilter")) { //$NON-NLS-1$
+			if (target instanceof IMember) {
+				IMember member = (IMember) target;
+				if (value.equals("isAbstract")) { //$NON-NLS-1$
+					try {
+						return Flags.isAbstract(member.getFlags());
+					} catch (JavaModelException e) {
+						JDIDebugUIPlugin.log(e);
+					}
 				}
-				
+				if (value.equals("isRemote")) { //$NON-NLS-1$
+					return !member.getJavaProject().getProject().exists();
+				}
 			}
 		}
 		return false;
