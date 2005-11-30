@@ -11,6 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.ui.actions.RulerBreakpointAction;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,14 +28,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * the attibutes of a Java Breakpoint from the ruler popup menu of a 
  * text editor.
  */
-public class JavaBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {
+public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction {
+	
+	private IBreakpoint fBreakpoint;
 
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
 	public JavaBreakpointPropertiesRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
-		setInfo(info);
-		setTextEditor(editor);
+		super(editor, info);
 		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1); 
 	}
 	/**
@@ -42,7 +45,7 @@ public class JavaBreakpointPropertiesRulerAction extends AbstractBreakpointRuler
 	public void run() {
 		if (getBreakpoint() != null) {
 			PropertyDialogAction action= 
-				new PropertyDialogAction(getTextEditor().getEditorSite().getShell(), new ISelectionProvider() {
+				new PropertyDialogAction(getEditor().getEditorSite(), new ISelectionProvider() {
 					public void addSelectionChangedListener(ISelectionChangedListener listener) {
 					}
 					public ISelection getSelection() {
@@ -61,12 +64,11 @@ public class JavaBreakpointPropertiesRulerAction extends AbstractBreakpointRuler
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		setBreakpoint(determineBreakpoint());
-		if (getBreakpoint() == null || !(getBreakpoint() instanceof IJavaBreakpoint)) {
-			setBreakpoint(null);
-			setEnabled(false);
-			return;
+		fBreakpoint = null;
+		IBreakpoint breakpoint = getBreakpoint();
+		if (breakpoint != null && (breakpoint instanceof IJavaBreakpoint)) {
+			fBreakpoint = breakpoint;
 		}
-		setEnabled(true);
+		setEnabled(fBreakpoint != null);
 	}
 }
