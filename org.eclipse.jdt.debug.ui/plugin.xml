@@ -36,7 +36,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%JavaSnippetEditor.label"
-            icon="icons/full/obj16/jsbook_obj.gif"
+            icon="$nl$/icons/full/obj16/jsbook_obj.gif"
             extensions="jpage"
             contributorClass="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorActionContributor"
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor"
@@ -84,7 +84,7 @@
          <action
 	           definitionId="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
                label="%classPrepareAction.label"
-               icon="icons/full/obj16/class_obj.gif"
+               icon="$nl$/icons/full/obj16/class_obj.gif"
                helpContextId="add_class_prepare_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddClassPrepareBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -93,7 +93,7 @@
          <action
                definitionId="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
                label="%exceptionAction.accel.label"
-               icon="icons/full/elcl16/exc_catch.gif"
+               icon="$nl$/icons/full/elcl16/exc_catch.gif"
                helpContextId="add_exception_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
@@ -121,12 +121,12 @@
          </action>
          <action
                id="org.eclipse.jdt.debug.ui.actions.Execute"
-               hoverIcon="icons/full/etool16/run_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/run_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
-               disabledIcon="icons/full/dtool16/run_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/run_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                label="%Execute.label"
                helpContextId="execute_action_context"
                menubarPath="org.eclipse.ui.run/jdtGroup">
@@ -150,11 +150,11 @@
          </action>
          <action
                id="org.eclipse.jdt.debug.ui.actions.Display"
-               hoverIcon="icons/full/etool16/disp_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/disp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
-               disabledIcon="icons/full/dtool16/disp_sbook.gif"
-               icon="icons/full/etool16/disp_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                label="%Display.label"
                helpContextId="display_action_context"
                menubarPath="org.eclipse.ui.run/jdtGroup">
@@ -178,11 +178,11 @@
          </action>
          <action
                id="org.eclipse.jdt.debug.ui.actions.Inspect"
-               hoverIcon="icons/full/etool16/insp_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/insp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
-               disabledIcon="icons/full/dtool16/insp_sbook.gif"
-               icon="icons/full/etool16/insp_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                label="%Inspect.label"
                helpContextId="inspect_action_context"
                menubarPath="org.eclipse.ui.run/jdtGroup">
@@ -211,11 +211,11 @@
          </action>
          <action
                id="org.eclipse.jdt.debug.ui.Watch"
-               hoverIcon="icons/full/etool16/watch_exp.gif"
+               hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-               disabledIcon="icons/full/dtool16/watch_exp.gif"
+               disabledIcon="$nl$/icons/full/dtool16/watch_exp.gif"
                enablesFor="+"
-               icon="icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
                label="%Watch.label"
                helpContextId="watch_action_context"
                menubarPath="org.eclipse.ui.run/jdtGroup">
@@ -242,7 +242,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%displayViewName"
-            icon="icons/full/etool16/disp_sbook.gif"
+            icon="$nl$/icons/full/etool16/disp_sbook.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.jdt.internal.debug.ui.display.DisplayView"
             id="org.eclipse.jdt.debug.ui.DisplayView">
@@ -358,7 +358,7 @@
             id="org.eclipse.jdt.debug.JavaBreakpointActions">
          <action
                label="%hitCount.label"
-               icon="icons/full/elcl16/sethitcount_co.gif"
+               icon="$nl$/icons/full/elcl16/sethitcount_co.gif"
                helpContextId="hit_count_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
                menubarPath="emptyBreakpointGroup"
@@ -367,7 +367,7 @@
          </action>
          <action
                label="%suspendPolicy.label"
-               icon="icons/full/elcl16/suspend_co.gif"
+               icon="$nl$/icons/full/elcl16/suspend_co.gif"
                helpContextId="breakpoint_suspend_policy_toggle_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointSuspendPolicyToggleAction"
                menubarPath="emptyBreakpointGroup"
@@ -481,7 +481,7 @@
          </visibility>
          <action
                label="%Execute.label"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
 			   definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -494,7 +494,7 @@
          </action>
          <action
                label="%Display.label"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
@@ -507,7 +507,7 @@
          </action>
          <action
                label="%Inspect.label"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
@@ -530,7 +530,7 @@
          </visibility>
          <action
                label="%Execute.label"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -557,7 +557,7 @@
          </action>
          <action
                label="%Display.label"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
@@ -584,7 +584,7 @@
          </action>
          <action
                label="%Inspect.label"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
@@ -663,7 +663,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-               icon="icons/full/obj16/package_obj.gif"
+               icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
                menubarPath="javaActions"
@@ -673,7 +673,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowStatic"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
-               icon="icons/full/elcl16/static_co.gif"
+               icon="$nl$/icons/full/elcl16/static_co.gif"
                helpContextId="show_static_action_context"
                label="%showStaticAction.label"
                menubarPath="javaActions"
@@ -683,7 +683,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowConstants"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
-               icon="icons/full/elcl16/constant_co.gif"
+               icon="$nl$/icons/full/elcl16/constant_co.gif"
                helpContextId="show_constants_action_context"
                label="%showConstantsAction.label"
                menubarPath="javaActions"
@@ -714,7 +714,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-               icon="icons/full/obj16/package_obj.gif"
+               icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
                menubarPath="javaActions"
@@ -724,7 +724,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowStatic"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
-               icon="icons/full/elcl16/static_co.gif"
+               icon="$nl$/icons/full/elcl16/static_co.gif"
                helpContextId="show_static_action_context"
                label="%showStaticAction.label"
                menubarPath="javaActions"
@@ -734,7 +734,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowConstants"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
-               icon="icons/full/elcl16/constant_co.gif"
+               icon="$nl$/icons/full/elcl16/constant_co.gif"
                helpContextId="show_constants_action_context"
                label="%showConstantsAction.label"
                menubarPath="javaActions"
@@ -747,10 +747,10 @@
          <action
                id="org.eclipse.jdt.debug.ui.actions.AddException"
                toolbarPath="javaExceptions"
-               hoverIcon="icons/full/elcl16/exc_catch.gif"
+               hoverIcon="$nl$/icons/full/elcl16/exc_catch.gif"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
-               disabledIcon="icons/full/dlcl16/exc_catch.gif"
-               icon="icons/full/elcl16/exc_catch.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/exc_catch.gif"
+               icon="$nl$/icons/full/elcl16/exc_catch.gif"
                helpContextId="add_exception_action_context"
                label="%exceptionAction.label"
                tooltip="%exceptionAction.tooltip">
@@ -759,7 +759,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.breakpointViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-               icon="icons/full/obj16/package_obj.gif"
+               icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
                menubarPath="javaActions"
@@ -773,7 +773,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.launchViewActions.ShowQualified"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-               icon="icons/full/obj16/package_obj.gif"
+               icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
                menubarPath="javaActions"
@@ -783,7 +783,7 @@
                style="toggle"
                id="org.eclipse.jdt.debug.ui.launchViewActions.ShowSystemThreads"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowSystemThreadsAction"
-               icon="icons/full/obj16/thread_obj.gif"
+               icon="$nl$/icons/full/obj16/thread_obj.gif"
                helpContextId="show_system_threads_context"
                label="%showSystemThreads.label"
                menubarPath="javaActions"
@@ -792,7 +792,7 @@
   <action
         helpContextId="show_monitor_thread_info_context"
         label="%showMonitorThreadInfo.label"
-        icon="icons/full/obj16/thread_and_monitor_obj.gif"
+        icon="$nl$/icons/full/obj16/thread_and_monitor_obj.gif"
         tooltip="%showMonitorThreadInfo.tooltip"
         class="org.eclipse.jdt.internal.debug.ui.actions.ShowMonitorThreadInformation"
         style="toggle"
@@ -805,11 +805,11 @@
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.displayViewToolbar.Execute"
-               hoverIcon="icons/full/etool16/run_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/run_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-               disabledIcon="icons/full/dtool16/run_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/run_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                label="%Execute.label"
                tooltip="%Execute.tooltip">
@@ -834,11 +834,11 @@
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display"
-               hoverIcon="icons/full/etool16/disp_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/disp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
-               disabledIcon="icons/full/dtool16/disp_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/disp_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                label="%Display.label"
                tooltip="%Display.tooltip">
@@ -863,11 +863,11 @@
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect"
-               hoverIcon="icons/full/etool16/insp_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/insp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
-               disabledIcon="icons/full/dtool16/insp_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/insp_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                label="%Inspect.label"
                tooltip="%Inspect.tooltip">
@@ -1121,7 +1121,7 @@
             id="org.eclipse.jdt.debug.ui.JavaVariableActions">
          <action
                label="%Inspect.label"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="variable_inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
@@ -1150,7 +1150,7 @@
             id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions">
          <action
                label="%Execute.label"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -1163,7 +1163,7 @@
          </action>
          <action
                label="%Display.label"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
@@ -1176,7 +1176,7 @@
          </action>
          <action
                label="%Inspect.label"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
@@ -1282,7 +1282,7 @@
          </action>
          <action
                label="%Execute.label"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -1303,7 +1303,7 @@
          </action>
          <action
                label="%Display.label"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
@@ -1323,7 +1323,7 @@
          </action>
          <action
                label="%Inspect.label"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
@@ -1343,7 +1343,7 @@
          </action>
          <action
                label="%Watch.label"
-               icon="icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
                helpContextId="watch_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
                menubarPath="additions"
@@ -1406,7 +1406,7 @@
          </action>         
          <action
                label="%Execute.label"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -1427,7 +1427,7 @@
          </action>
          <action
                label="%Display.label"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
@@ -1447,7 +1447,7 @@
          </action>
          <action
                label="%Inspect.label"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
@@ -1467,7 +1467,7 @@
          </action>
          <action
                label="%Watch.label"
-               icon="icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
                helpContextId="watch_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
                menubarPath="additions"
@@ -1584,11 +1584,11 @@
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.SnippetExecute"
-               hoverIcon="icons/full/etool16/run_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/run_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-               disabledIcon="icons/full/dtool16/run_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/run_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/run_sbook.gif"
+               icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                label="%Execute.label"
                tooltip="%Execute.tooltip">
@@ -1599,11 +1599,11 @@
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.SnippetDisplay"
-               hoverIcon="icons/full/etool16/disp_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/disp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
-               disabledIcon="icons/full/dtool16/disp_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/disp_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/disp_sbook.gif"
+               icon="$nl$/icons/full/etool16/disp_sbook.gif"
                helpContextId="display_action_context"
                label="%Display.label"
                tooltip="%Display.tooltip">
@@ -1614,11 +1614,11 @@
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.SnippetInspect"
-               hoverIcon="icons/full/etool16/insp_sbook.gif"
+               hoverIcon="$nl$/icons/full/etool16/insp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
-               disabledIcon="icons/full/dtool16/insp_sbook.gif"
+               disabledIcon="$nl$/icons/full/dtool16/insp_sbook.gif"
                enablesFor="+"
-               icon="icons/full/etool16/insp_sbook.gif"
+               icon="$nl$/icons/full/etool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
                label="%Inspect.label"
                tooltip="%Inspect.tooltip">
@@ -1715,17 +1715,17 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/full/etool16/java_app.gif"
+            icon="$nl$/icons/full/etool16/java_app.gif"
             configTypeID="org.eclipse.jdt.launching.localJavaApplication"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.localJavaApplication">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/full/etool16/java_attach.gif"
+            icon="$nl$/icons/full/etool16/java_attach.gif"
             configTypeID="org.eclipse.jdt.launching.remoteJavaApplication"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.remoteJavaApplication">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/full/etool16/java_applet.gif"
+            icon="$nl$/icons/full/etool16/java_applet.gif"
             configTypeID="org.eclipse.jdt.launching.javaApplet"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.javaApplet">
       </launchConfigurationTypeImage>
@@ -1814,7 +1814,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             label="%JavaApplicationShortcut.label"
-            icon="icons/full/etool16/java_app.gif"
+            icon="$nl$/icons/full/etool16/java_app.gif"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
             modes="run, debug"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
@@ -1850,7 +1850,7 @@
       </shortcut>
       <shortcut
             label="%AppletShortcut.label"
-            icon="icons/full/etool16/java_applet.gif"
+            icon="$nl$/icons/full/etool16/java_applet.gif"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
             modes="run, debug"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
@@ -2326,24 +2326,24 @@ M4 = Platform-specific fourth key
       <sourceContainerPresentation
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.classpathVariable"
             browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.ClasspathVariableSourceContainerBrowser"
-            icon="icons/full/obj16/envvar_obj.gif"
+            icon="$nl$/icons/full/obj16/envvar_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathVariable">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.ClasspathContainerSourceContainerBrowser"
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.classpathContainer"
-            icon="icons/full/obj16/library_obj.gif"
+            icon="$nl$/icons/full/obj16/library_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathContainer">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.JavaProjectSourceContainerBrowser"
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.javaProject"
-            icon="icons/full/obj16/prj_obj.gif"
+            icon="$nl$/icons/full/obj16/prj_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.javaProject">
       </sourceContainerPresentation>      
       <sourceContainerPresentation
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
-            icon="icons/full/obj16/jar_obj.gif"
+            icon="$nl$/icons/full/obj16/jar_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.packageFragmentRoot">
       </sourceContainerPresentation>      
    </extension>
@@ -2448,7 +2448,7 @@ M4 = Platform-specific fourth key
       </category>
       <wizard
             name="%NewJavaScrapbookPage.label"
-            icon="icons/full/etool16/newsbook_wiz.gif"
+            icon="$nl$/icons/full/etool16/newsbook_wiz.gif"
             category="org.eclipse.jdt.ui.java/org.eclipse.jdt.debug.ui.java"
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.NewSnippetFileCreationWizard"
             id="org.eclipse.jdt.debug.ui.snippetEditor.NewSnippetFileCreationWizard">
@@ -2629,7 +2629,7 @@ M4 = Platform-specific fourth key
  <extension
        point="org.eclipse.ui.preferenceTransfer">
     <transfer
-          icon="icons/full/obj16/library_obj.gif"
+          icon="$nl$/icons/full/obj16/library_obj.gif"
           id="org.eclipse.jdt.debug.ui.transfer.jres"
           name="%preference.transfer.jres">
        <mapping scope="instance">

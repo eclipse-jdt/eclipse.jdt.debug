@@ -601,6 +601,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		for (Iterator iterator = compilationUnit.imports().iterator(); iterator.hasNext();) {
 			ImportDeclaration importDeclaration = (ImportDeclaration) iterator.next();
 			source.append("import "); //$NON-NLS-1$
+            if (importDeclaration.isStatic()) {
+                source.append("static "); //$NON-NLS-1$
+            }
 			source.append(getQualifiedIdentifier(importDeclaration.getName()));
 			if (importDeclaration.isOnDemand()) {
 				source.append(".*"); //$NON-NLS-1$

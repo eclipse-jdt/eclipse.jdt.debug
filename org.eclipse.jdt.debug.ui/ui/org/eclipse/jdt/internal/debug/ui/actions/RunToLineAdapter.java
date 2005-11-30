@@ -38,7 +38,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -51,56 +50,59 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
-		IEditorPart editorPart = (IEditorPart)part;
-		IEditorInput input = editorPart.getEditorInput();
+		ITextEditor textEditor = getTextEditor(part);
 		String errorMessage = null;
-		if (input == null) {
-			errorMessage = ActionMessages.RunToLineAdapter_0; //$NON-NLS-1$
+		if (textEditor == null) {
+			errorMessage = ActionMessages.RunToLineAdapter_1;
 		} else {
-			final ITextEditor textEditor = (ITextEditor)editorPart;
-			final IDocument document= textEditor.getDocumentProvider().getDocument(input);
-			if (document == null) {
-				errorMessage = ActionMessages.RunToLineAdapter_1; //$NON-NLS-1$
+			IEditorInput input = textEditor.getEditorInput();
+			if (input == null) {
+				errorMessage = ActionMessages.RunToLineAdapter_0; //$NON-NLS-1$
 			} else {
-				final int[] validLine = new int[1];
-				final String[] typeName = new String[1];
-				final int[] lineNumber = new int[1];
-				final ITextSelection textSelection = (ITextSelection) selection;
-				Runnable r = new Runnable() {
-					public void run() {
-						lineNumber[0] = textSelection.getStartLine() + 1;
-						ASTParser parser = ASTParser.newParser(AST.JLS3);
-						parser.setSource(document.get().toCharArray());
-						CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
-						ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
-						compilationUnit.accept(locator);
-						validLine[0]= locator.getLineLocation();		
-						typeName[0]= locator.getFullyQualifiedTypeName();
-					}
-				};
-				BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), r);
-				if (validLine[0] == lineNumber[0]) {
-					IBreakpoint breakpoint= null;
-					Map attributes = new HashMap(4);
-					BreakpointUtils.addRunToLineAttributes(attributes);
-					breakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
-					errorMessage = ActionMessages.RunToLineAdapter_2; //$NON-NLS-1$
-					if (target instanceof IAdaptable) {
-						IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
-						if (debugTarget != null) {
-                            RunToLineHandler handler = new RunToLineHandler(debugTarget, target, breakpoint);
-                            handler.run(new NullProgressMonitor());
-							return;
-						}
-					}
+				final IDocument document= textEditor.getDocumentProvider().getDocument(input);
+				if (document == null) {
+					errorMessage = ActionMessages.RunToLineAdapter_1; //$NON-NLS-1$
 				} else {
-					// invalid line
-					if (textSelection.getLength() > 0) {
-						errorMessage = ActionMessages.RunToLineAdapter_3; //$NON-NLS-1$
+					final int[] validLine = new int[1];
+					final String[] typeName = new String[1];
+					final int[] lineNumber = new int[1];
+					final ITextSelection textSelection = (ITextSelection) selection;
+					Runnable r = new Runnable() {
+						public void run() {
+							lineNumber[0] = textSelection.getStartLine() + 1;
+							ASTParser parser = ASTParser.newParser(AST.JLS3);
+							parser.setSource(document.get().toCharArray());
+							CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
+							ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
+							compilationUnit.accept(locator);
+							validLine[0]= locator.getLineLocation();		
+							typeName[0]= locator.getFullyQualifiedTypeName();
+						}
+					};
+					BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), r);
+					if (validLine[0] == lineNumber[0]) {
+						IBreakpoint breakpoint= null;
+						Map attributes = new HashMap(4);
+						BreakpointUtils.addRunToLineAttributes(attributes);
+						breakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
+						errorMessage = ActionMessages.RunToLineAdapter_2; //$NON-NLS-1$
+						if (target instanceof IAdaptable) {
+							IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
+							if (debugTarget != null) {
+	                            RunToLineHandler handler = new RunToLineHandler(debugTarget, target, breakpoint);
+	                            handler.run(new NullProgressMonitor());
+								return;
+							}
+						}
 					} else {
-						errorMessage = ActionMessages.RunToLineAdapter_4; //$NON-NLS-1$
+						// invalid line
+						if (textSelection.getLength() > 0) {
+							errorMessage = ActionMessages.RunToLineAdapter_3; //$NON-NLS-1$
+						} else {
+							errorMessage = ActionMessages.RunToLineAdapter_4; //$NON-NLS-1$
+						}
+	
 					}
-
 				}
 			}
 		}
@@ -119,4 +121,19 @@ public class RunToLineAdapter implements IRunToLineTarget {
         }
 		return false;
 	}
+	
+    /**
+     * Returns the text editor associated with the given part or <code>null</code>
+     * if none. In case of a multi-page editor, this method should be used to retrieve
+     * the correct editor to perform the breakpoint operation on.
+     * 
+     * @param part workbench part
+     * @return text editor part or <code>null</code>
+     */
+    protected ITextEditor getTextEditor(IWorkbenchPart part) {
+    	if (part instanceof ITextEditor) {
+    		return (ITextEditor) part;
+    	}
+    	return (ITextEditor) part.getAdapter(ITextEditor.class);
+    }	
 }
