@@ -10,26 +10,31 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
+import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.DefineSystemLibraryQuickFix;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,7 +59,9 @@ import org.eclipse.swt.widgets.Shell;
  * check state changes.
  * </p>
  */
-public class JREsComboBlock implements ISelectionProvider {
+public class JREsComboBlock {
+	
+	public static final String PROPERTY_JRE = "PROPERTY_JRE"; //$NON-NLS-1$
 	
 	/**
 	 * This block's control
@@ -75,14 +82,9 @@ public class JREsComboBlock implements ISelectionProvider {
 	private Button fManageButton;
 		
 	/**
-	 * Selection listeners (checked JRE changes)
+	 * JRE change listeners
 	 */
-	private ListenerList fSelectionListeners = new ListenerList();
-	
-	/**
-	 * Previous selection
-	 */
-	private ISelection fPrevSelection = new StructuredSelection();
+	private ListenerList fListeners = new ListenerList();
 	
 	/**
 	 * Default JRE descriptor or <code>null</code> if none.
@@ -108,57 +110,40 @@ public class JREsComboBlock implements ISelectionProvider {
 	 * The title used for the JRE block
 	 */
 	private String fTitle = null;
-			
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	
+	/**
+	 * Selected JRE profile radio button
 	 */
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		fSelectionListeners.add(listener);
-	}
+	private Button fProfileButton = null;
+	
+	/**
+	 * Combo box of JRE profiles
+	 */
+	private Combo fProfileCombo = null;
+	
+	private List fProfiles = new ArrayList();
+	
+	private IStatus fStatus = OK_STATUS;
+	
+	private static IStatus OK_STATUS = new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
-	public ISelection getSelection() {
-		IVMInstall vm = getJRE();
-		if (vm == null) {
-			return new StructuredSelection();
-		}
-		return new StructuredSelection(vm);
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		fListeners.add(listener);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		fSelectionListeners.remove(listener);
+	
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		fListeners.remove(listener);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
-	public void setSelection(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			if (!selection.equals(fPrevSelection)) {
-				fPrevSelection = selection;
-				if (selection.isEmpty()) {
-					fCombo.setText(""); //$NON-NLS-1$
-					fCombo.select(-1);
-					// need to do this to clear the old text
-					fCombo.setItems(new String[]{});
-					fillWithWorkspaceJREs();
-				} else {
-					Object jre = ((IStructuredSelection)selection).getFirstElement();
-					int index = fVMs.indexOf(jre);
-					if (index >= 0) {
-						fCombo.select(index);		
-					}
-				}
-				fireSelectionChanged();
-			}
+	
+	private void firePropertyChange() {
+		PropertyChangeEvent event = new PropertyChangeEvent(this, PROPERTY_JRE, null, getPath());
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+			listener.propertyChange(event);
 		}
 	}
-
+	
 	/**
 	 * Creates this block's control in the given control.
 	 * 
@@ -195,6 +180,8 @@ public class JREsComboBlock implements ISelectionProvider {
 				public void widgetSelected(SelectionEvent e) {
 					if (fDefaultButton.getSelection()) {
 						setUseDefaultJRE();
+						setStatus(OK_STATUS);
+						firePropertyChange();
 					}
 				}
 			});
@@ -214,11 +201,16 @@ public class JREsComboBlock implements ISelectionProvider {
 			public void widgetSelected(SelectionEvent e) {
 				if (fSpecificButton.getSelection()) {
 					fCombo.setEnabled(true);
-					fManageButton.setEnabled(true);
 					if (fCombo.getText().length() == 0 && !fVMs.isEmpty()) {
 						fCombo.select(0);
 					}
-					fireSelectionChanged();
+					if (fVMs.isEmpty()) {
+						setError(JREMessages.JREsComboBlock_0);
+					} else {
+						setStatus(OK_STATUS);
+					}					
+					fProfileCombo.setEnabled(false);
+					firePropertyChange();
 				}
 			}
 		});
@@ -235,61 +227,82 @@ public class JREsComboBlock implements ISelectionProvider {
 		
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setJRE(getJRE());
+				firePropertyChange();
 			}
 		});
 				
 		fManageButton = createPushButton(group, JREMessages.JREsComboBlock_2); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				IVMInstall oldSelection = getJRE();
-				int oldIndex = -1;
-				if (oldSelection != null) {
-					oldIndex = fVMs.indexOf(oldSelection);
-				}
+				IVMInstall prevJRE = getJRE();
+				IExecutionEnvironment prevEnv = getEnvironment();
 				DefineSystemLibraryQuickFix fix = new DefineSystemLibraryQuickFix();
 				fix.run(null);
 				fillWithWorkspaceJREs();
-				int newIndex = -1;
-				if (oldSelection != null) {
-					newIndex = fVMs.indexOf(oldSelection);
-				}
-				if (newIndex != oldIndex) {
-					// clear the old selection so that a selection changed is fired
-					fPrevSelection = null;
-				}
+				fillWithWorkspaceProfiles();
+				restoreCombo(fVMs, prevJRE, fCombo);
+				restoreCombo(fProfiles, prevEnv, fProfileCombo);
 				// update text
 				setDefaultJREDescriptor(fDefaultDescriptor);
 				if (isDefaultJRE()) {
 					// reset in case default has changed
 					setUseDefaultJRE();
-				} else {
-					// restore selection
-					if (newIndex >= 0) {
-						fCombo.select(newIndex);
-					} else {
-						// select the first JRE
-						fCombo.select(0);
-					}
-					setJRE(getJRE());
 				}
+				setPath(getPath());
+				firePropertyChange();
 			}
 		});
 		
 		fillWithWorkspaceJREs();
+		
+		fProfileButton = new Button(group, SWT.RADIO);
+		fProfileButton.setText(JREMessages.JREsComboBlock_4);
+		fProfileButton.setFont(font);
+		fProfileButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fProfileButton.getSelection()) {
+					fCombo.setEnabled(false);
+					if (fProfileCombo.getText().length() == 0 && !fProfiles.isEmpty()) {
+						fProfileCombo.select(0);
+					}
+					fProfileCombo.setEnabled(true);
+					if (fProfiles.isEmpty()) {
+						setError(JREMessages.JREsComboBlock_5);
+					} else {
+						setStatus(OK_STATUS);
+					}
+					firePropertyChange();
+				}
+			}
+		});		
+		
+		
+		fProfileCombo = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fProfileCombo.setFont(font);
+		data= new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 1;
+		fProfileCombo.setLayoutData(data);
+		
+		fProfileCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				//setJREProfile(getJREProfile());
+			}
+		});		
+		
+		fillWithWorkspaceProfiles();
 	}
 	
-	/**
-	 * Fire current selection
-	 */
-	private void fireSelectionChanged() {
-		SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
-		Object[] listeners = fSelectionListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
-			listener.selectionChanged(event);
-		}	
-	}	
+	private void restoreCombo(List elements, Object element, Combo combo) {
+		int index = -1;
+		if (element != null) {
+			index = elements.indexOf(element);
+		}
+		if (index >= 0) {
+			combo.select(index);
+		} else {
+			combo.select(0);
+		}
+	}
 	
 	protected Button createPushButton(Composite parent, String label) {
 		return SWTUtil.createPushButton(parent, label, null);
@@ -336,35 +349,45 @@ public class JREsComboBlock implements ISelectionProvider {
 		fCombo.setItems(names);
 	}
 	
-	/**
-	 * Returns the JREs currently being displayed in this block
-	 * 
-	 * @return JREs currently being displayed in this block
-	 */
-	public IVMInstall[] getJREs() {
-		return (IVMInstall[])fVMs.toArray(new IVMInstall[fVMs.size()]);
-	}
-	
 	protected Shell getShell() {
 		return getControl().getShell();
 	}
 
 	/**
-	 * Sets the selected JRE, or <code>null</code>
+	 * Selects a specific JRE based on type/name.
 	 * 
-	 * @param vm JRE or <code>null</code>
+	 * @param vm JRE
 	 */
-	public void setJRE(IVMInstall vm) {
+	private void selectJRE(IVMInstall vm) {
 		fSpecificButton.setSelection(true);
 		fDefaultButton.setSelection(false);
+		fProfileButton.setSelection(false);
 		fCombo.setEnabled(true);
-		fManageButton.setEnabled(true);
-		if (vm == null) {
-			setSelection(new StructuredSelection());	
-		} else {
-			setSelection(new StructuredSelection(vm));
+		fProfileCombo.setEnabled(false);
+		int index = fVMs.indexOf(vm);
+		if (index >= 0) {
+			fCombo.select(index);		
 		}
+		firePropertyChange();
 	}
+	
+	/**
+	 * Selects a JRE based environment.
+	 * 
+	 * @param env environment or <code>null</code>
+	 */
+	private void selectEnvironment(IExecutionEnvironment env) {
+		fSpecificButton.setSelection(false);
+		fDefaultButton.setSelection(false);
+		fCombo.setEnabled(false);
+		fProfileButton.setSelection(true);
+		fProfileCombo.setEnabled(true);
+		int index = fProfiles.indexOf(env);
+		if (index >= 0) {
+			fProfileCombo.select(index);		
+		}
+		firePropertyChange();
+	}	
 	
 	/**
 	 * Returns the selected JRE or <code>null</code> if none.
@@ -378,6 +401,19 @@ public class JREsComboBlock implements ISelectionProvider {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the selected Environment or <code>null</code> if none.
+	 * 
+	 * @return the selected Environment or <code>null</code> if none
+	 */
+	private IExecutionEnvironment getEnvironment() {
+		int index = fProfileCombo.getSelectionIndex();
+		if (index >= 0) {
+			return (IExecutionEnvironment)fProfiles.get(index);
+		}
+		return null;
+	}	
 	
 	/**
 	 * Populates the JRE table with existing JREs defined in the workspace.
@@ -396,6 +432,39 @@ public class JREsComboBlock implements ISelectionProvider {
 		}
 		setJREs(standins);	
 	}
+	
+	/**
+	 * Populates the JRE profile combo with profiles defined in the workspace.
+	 */
+	protected void fillWithWorkspaceProfiles() {
+		fProfiles.clear();
+		IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+		for (int i = 0; i < environments.length; i++) {
+			fProfiles.add(environments[i]);
+		}
+		// sort by name
+		Collections.sort(fProfiles, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				IExecutionEnvironment left = (IExecutionEnvironment)o1;
+				IExecutionEnvironment right = (IExecutionEnvironment)o2;
+				return left.getName().compareToIgnoreCase(right.getName());
+			}
+
+			public boolean equals(Object obj) {
+				return obj == this;
+			}
+		});
+		// now make an array of names
+		String[] names = new String[fProfiles.size()];
+		Iterator iter = fProfiles.iterator();
+		int i = 0;
+		while (iter.hasNext()) {
+			IExecutionEnvironment env = (IExecutionEnvironment)iter.next();
+			names[i] = env.getName();
+			i++;
+		}
+		fProfileCombo.setItems(names);
+	}	
 	
 	/**
 	 * Sets the Default JRE Descriptor for this block.
@@ -448,10 +517,10 @@ public class JREsComboBlock implements ISelectionProvider {
 		if (fDefaultDescriptor != null) {
 			fDefaultButton.setSelection(true);
 			fSpecificButton.setSelection(false);
+			fProfileButton.setSelection(false);
 			fCombo.setEnabled(false);
-			fManageButton.setEnabled(false);
-			fPrevSelection = null;
-			fireSelectionChanged();
+			fProfileCombo.setEnabled(false);
+			firePropertyChange();
 		}
 	}
 	
@@ -471,4 +540,104 @@ public class JREsComboBlock implements ISelectionProvider {
 		setDefaultJREDescriptor(fDefaultDescriptor);
 	}
 	
+	/**
+	 * Returns a classpath conatiner path identifying the selected JRE.
+	 * 
+	 * @return classpath container path or <code>null</code>
+	 * @since 3.2
+	 */
+	public IPath getPath() {
+		if (fProfileButton.getSelection()) {
+			int index = fProfileCombo.getSelectionIndex();
+			if (index >= 0) {
+				IExecutionEnvironment env = (IExecutionEnvironment) fProfiles.get(index);
+				return JavaRuntime.newJREContainerPath(env);
+			}
+			return null;
+		}
+		if (fSpecificButton.getSelection()) {
+			int index = fCombo.getSelectionIndex();
+			if (index >= 0) {
+				IVMInstall vm = (IVMInstall) fVMs.get(index);
+				return JavaRuntime.newJREContainerPath(vm);
+			}
+			return null;
+		}
+		return JavaRuntime.newDefaultJREContainerPath();
+	}
+	
+	/**
+	 * Sets the selection based on the given container path and returns
+	 * a status indicating if the selection was successful.
+	 * 
+	 * @param containerPath
+	 * @return status 
+	 */
+	public void setPath(IPath containerPath) {
+		setStatus(OK_STATUS);
+		if (JavaRuntime.newDefaultJREContainerPath().equals(containerPath)) {
+			setUseDefaultJRE();
+		} else {
+			String envId = JavaRuntime.getExecutionEnvironmentId(containerPath);
+			if (envId != null) {
+				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+				IExecutionEnvironment environment = manager.getEnvironment(envId);
+				if (environment == null) {
+					setError(MessageFormat.format(JREMessages.JREsComboBlock_6, new String[]{envId}));
+				} else {
+					selectEnvironment(environment);
+					IVMInstall[] installs = manager.getVMInstalls(environment);
+					if (installs.length == 0) {
+						setError(MessageFormat.format(JREMessages.JREsComboBlock_7, new String[]{environment.getName()}));
+					}
+				}
+			} else {
+				IVMInstall install = JavaRuntime.getVMInstall(containerPath);
+				if (install == null) {
+					String installTypeId = JavaRuntime.getVMInstallTypeId(containerPath);
+					if (installTypeId == null) {
+						setError(JREMessages.JREsComboBlock_8);
+					} else {
+						IVMInstallType installType = JavaRuntime.getVMInstallType(installTypeId);
+						if (installType == null) {
+							setError(MessageFormat.format(JREMessages.JREsComboBlock_9, new String[]{installTypeId}));
+						} else {
+							String installName = JavaRuntime.getVMInstallName(containerPath);
+							if (installName == null) {
+								setError(MessageFormat.format(JREMessages.JREsComboBlock_10, new String[]{installType.getName()}));
+							} else {
+								setError(MessageFormat.format(JREMessages.JREsComboBlock_11, new String[]{installName, installType.getName()}));
+							}
+						}
+					}
+				} else {
+					selectJRE(install);
+					File location = install.getInstallLocation();
+					if (location == null) {
+						setError(JREMessages.JREsComboBlock_12); 
+					} else if (!location.exists()) {
+						setError(JREMessages.JREsComboBlock_13); 
+					}							
+				}
+			}
+		}
+	}
+	
+	private void setError(String message) {
+		setStatus(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(),
+				IJavaDebugUIConstants.INTERNAL_ERROR, message, null));		
+	}
+	
+	/**
+	 * Returns the status of the JRE selection.
+	 * 
+	 * @return status
+	 */
+	public IStatus getStatus() {
+		return fStatus;
+	}
+	
+	private void setStatus(IStatus status) {
+		fStatus = status;
+	}
 }

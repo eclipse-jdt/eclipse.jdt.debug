@@ -12,14 +12,13 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -53,14 +52,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#finish()
 	 */
 	public boolean finish() {
-		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-		if (!fJREBlock.isDefaultJRE()) {
-			IVMInstall vm = fJREBlock.getJRE();
-			if (vm != null) {
-				path = path.append(vm.getVMInstallType().getId());
-				path = path.append(vm.getName());
-			}
-		}
+		IPath path = fJREBlock.getPath();
 		fSelection = JavaCore.newContainerEntry(path);		
 		return true;
 	}
@@ -85,35 +77,15 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 */
 	protected void initializeFromSelection() {
 		if (getControl() != null) {
-			String typeId = null;
-			String name = null;	
 			if (fSelection == null) {
 				fJREBlock.setUseDefaultJRE();
-				return;
-			}
-			IPath path = fSelection.getPath();
-			if (path.segmentCount() > 1) {
-				typeId = path.segment(1);
-				name = path.segment(2);
 			} else {
-				fJREBlock.setUseDefaultJRE();
-				return;
-			}
-			IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-			for (int i = 0; i < types.length; i++) {
-				IVMInstallType type = types[i];
-				if (type.getId().equals(typeId)) {
-					IVMInstall[] installs = type.getVMInstalls();
-					for (int j = 0; j < installs.length; j++) {
-						IVMInstall install = installs[j];
-						if (install.getName().equals(name)) {
-							fJREBlock.setJRE(install);
-							return;
-						}
-					}
+				fJREBlock.setPath(fSelection.getPath());
+				IStatus status = fJREBlock.getStatus();
+				if (!status.isOK()) {
+					setErrorMessage(status.getMessage());
 				}
 			}
-			fJREBlock.setUseDefaultJRE();
 		}
 	}
 	
@@ -133,7 +105,17 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		fJREBlock.createControl(composite);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJREBlock.getControl().setLayoutData(gd);
-		setControl(composite);	
+		setControl(composite);
+		fJREBlock.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				IStatus status = fJREBlock.getStatus();
+				if (status.isOK()) {
+					setErrorMessage(null);
+				} else {
+					setErrorMessage(status.getMessage());
+				}
+			}
+		});
 		
 		setTitle(JREMessages.JREContainerWizardPage_JRE_System_Library_1); 
 		setMessage(JREMessages.JREContainerWizardPage_Select_the_JRE_used_to_build_this_project__4); 

@@ -22,7 +22,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -30,7 +30,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 /**
  * Resolves for JRELIB_VARIABLE and JRE_CONTAINER
  */
-public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver {
+public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver2 {
 
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
@@ -176,6 +176,27 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 				break;
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2#isVMInstallReference(org.eclipse.jdt.core.IClasspathEntry)
+	 */
+	public boolean isVMInstallReference(IClasspathEntry entry) {
+		switch (entry.getEntryKind()) {
+			case IClasspathEntry.CPE_VARIABLE:
+				if (entry.getPath().segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
+					return true;
+				}
+				break;
+			case IClasspathEntry.CPE_CONTAINER:
+				if (entry.getPath().segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+					return true;
+				}
+				break;
+			default:
+				break;
+		}
+		return false;
 	}
 
 }

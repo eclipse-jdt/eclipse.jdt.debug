@@ -17,8 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -38,43 +36,32 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 		if (useDefault) {
 			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
+			IRuntimeClasspathEntry jreEntry = JavaRuntime.computeJREEntry(configuration);
 			if (proj == null) {
-				//no project - use JRE's default libraries
-				return new IRuntimeClasspathEntry[]{computeJRELibraryEntry(configuration)};				
+				//no project - use default libraries
+				if (jreEntry == null) {
+					return new IRuntimeClasspathEntry[0];
+				}
+				return new IRuntimeClasspathEntry[]{jreEntry};				
 			}
 			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
-			// replace JRE with config's JRE if different
-			IVMInstall projJRE = JavaRuntime.getVMInstall(proj);
-			IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
-			if (configJRE.equals(projJRE)) {
-				return entries;
-			}
-			for (int i = 0; i < entries.length; i++) {
-				IRuntimeClasspathEntry entry = entries[i];
-				switch (entry.getType()) {
-					case IRuntimeClasspathEntry.CONTAINER:
-						if (entry.getPath().segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-							entries[i] = computeJRELibraryEntry(configuration);
+			// replace project JRE with config's JRE
+			IRuntimeClasspathEntry projEntry = JavaRuntime.computeJREEntry(proj);
+			if (jreEntry != null && projEntry != null) {
+				if (!jreEntry.equals(projEntry)) {
+					for (int i = 0; i < entries.length; i++) {
+						IRuntimeClasspathEntry entry = entries[i];
+						if (entry.equals(projEntry)) {
+							entries[i] = jreEntry;
 							return entries;
 						}
-					case IRuntimeClasspathEntry.VARIABLE:
-						if (entry.getPath().segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
-							entries[i] = computeJRELibraryEntry(configuration);
-							return entries;
-						}
+					}
 				}
 			}
 			return entries;
 		}
 		// recover persisted classpath
 		return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
-	}
-
-	private IRuntimeClasspathEntry computeJRELibraryEntry(ILaunchConfiguration configuration) throws CoreException {
-		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
-		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-		path = path.append(vm.getVMInstallType().getId()).append(vm.getName());
-		return JavaRuntime.newRuntimeContainerClasspathEntry(path, IRuntimeClasspathEntry.STANDARD_CLASSES);
 	}
 
 	/* (non-Javadoc)

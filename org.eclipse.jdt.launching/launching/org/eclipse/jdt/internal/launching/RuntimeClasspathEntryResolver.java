@@ -18,12 +18,13 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2;
 import org.eclipse.jdt.launching.IVMInstall;
 
 /**
  * Proxy to a runtime classpath entry resolver extension.
  */
-public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver {
+public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver2 {
 
 	private IConfigurationElement fConfigurationElement;
 	
@@ -87,6 +88,23 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
 		return getResolver().resolveRuntimeClasspathEntry(entry, project);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2#isVMInstallReference(org.eclipse.jdt.core.IClasspathEntry)
+	 */
+	public boolean isVMInstallReference(IClasspathEntry entry) {
+		try {
+			IRuntimeClasspathEntryResolver resolver = getResolver();
+			if (resolver instanceof IRuntimeClasspathEntryResolver2) {
+				IRuntimeClasspathEntryResolver2 resolver2 = (IRuntimeClasspathEntryResolver2) resolver;
+				return resolver2.isVMInstallReference(entry);
+			} else {
+				return resolver.resolveVMInstall(entry) != null;
+			}
+		} catch (CoreException e) {
+			return false;
+		}
 	}
 
 }

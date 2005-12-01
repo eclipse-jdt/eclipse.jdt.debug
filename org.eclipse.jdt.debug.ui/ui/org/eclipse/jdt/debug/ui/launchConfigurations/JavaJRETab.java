@@ -11,12 +11,15 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
  
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -30,12 +33,11 @@ import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -59,11 +61,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	// JRE Block
 	protected JREsComboBlock fJREBlock;
 	
-	// unknown JRE
-	protected String fUnknownVMType;
-	protected String fUnknownVMName;
-	protected boolean fOkToClearUnknownVM = true;
-
 	// Dynamic JRE UI widgets
 	protected ILaunchConfigurationTab fDynamicTab;
 	protected Composite fDynamicTabHolder;
@@ -76,8 +73,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	protected boolean fIsInitializing = false;
 	
 	// Selection changed listener (checked JRE)
-	private ISelectionChangedListener fCheckListener = new ISelectionChangedListener() {
-		public void selectionChanged(SelectionChangedEvent event) {
+	private IPropertyChangeListener fCheckListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
 			handleSelectedJREChanged();
 		}
 	};
@@ -91,7 +88,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	public void dispose() {
 		super.dispose();
 		if (fJREBlock != null) {
-			fJREBlock.removeSelectionChangedListener(fCheckListener);
+			fJREBlock.removePropertyChangeListener(fCheckListener);
 		}
 	}
 
@@ -118,7 +115,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		fJREBlock.setSpecificJREDescriptor(getSpecificJREDescriptor());
 		fJREBlock.createControl(topComp);
 		Control control = fJREBlock.getControl();
-		fJREBlock.addSelectionChangedListener(fCheckListener);
+		fJREBlock.addPropertyChangeListener(fCheckListener);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		control.setLayoutData(gd);
 		
@@ -168,11 +165,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fIsInitializing = true;
 		getControl().setRedraw(false);
-		fOkToClearUnknownVM = false;
-		if (getLaunchConfiguration() != null && !configuration.equals(getLaunchConfiguration())) {
-			fUnknownVMName = null;
-			fUnknownVMType = null;
-		}
 		setLaunchConfiguration(configuration);
 		updateJREFromConfig(configuration);
 		fJREBlock.setDefaultJREDescriptor(getDefaultJREDescriptor());
@@ -180,7 +172,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		if (dynamicTab != null) {
 			dynamicTab.initializeFrom(configuration);
 		}		
-		fOkToClearUnknownVM = true;
 		getControl().setRedraw(true);
 		fIsInitializing = false;
 	}
@@ -189,36 +180,23 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if (fUnknownVMName == null) {
-				
-			IVMInstall vm = null;
-			boolean vmExists = true;
-			if (!fJREBlock.isDefaultJRE()) {
-				vm = fJREBlock.getJRE();
-				vmExists = vm != null;
+		if (fJREBlock.isDefaultJRE()) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+		} else {
+			IPath containerPath = fJREBlock.getPath();
+			String portablePath = null;
+			if (containerPath != null) {
+				portablePath = containerPath.toPortableString();
 			}
-		
-			// Set the name & type ID attribute values
-			if (vmExists) {
-				// A null vm means the default VM was selected, in which case we want
-				// to set null attribute values.  Otherwise, retrieve the name & type ID.
-				String vmName = null;
-				String vmTypeID = null;
-				if (vm != null) {
-					vmName = vm.getName();
-					vmTypeID = vm.getVMInstallType().getId();
-				}				
-				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
-				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-			
-				// Handle any attributes in the VM-specific area
-				ILaunchConfigurationTab dynamicTab = getDynamicTab();
-				if (dynamicTab == null) {
-					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
-				} else {
-					dynamicTab.performApply(configuration);
-				}
-			}
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, portablePath);
+		}
+	
+		// Handle any attributes in the VM-specific area
+		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		if (dynamicTab == null) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+		} else {
+			dynamicTab.performApply(configuration);
 		}
 	}
 
@@ -230,29 +208,11 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		
-		if (fUnknownVMName != null) {
-			setErrorMessage(MessageFormat.format(LauncherMessages.JavaJRETab_Configuration_specifies_undefined_JRE____0__1, new String[]{fUnknownVMName}));			 
+		IStatus status = fJREBlock.getStatus();
+		if (!status.isOK()) {
+			setErrorMessage(status.getMessage());			 
 			return false;
 		}
-		
-		// Don't do any validation if the default VM was chosen
-		IVMInstall vm = fJREBlock.getJRE();
-		if (vm == null) {
-			if (!fJREBlock.isDefaultJRE()) {
-				setErrorMessage(LauncherMessages.JavaJRETab_JRE_not_specified_38); 
-				return false;
-			}			
-		} else {
-			File location = vm.getInstallLocation();
-			if (location == null) {
-				setErrorMessage(LauncherMessages.JavaJRETab_JRE_home_directory_not_specified_36); 
-				return false;
-			}
-			if (!location.exists()) {
-				setErrorMessage(LauncherMessages.JavaJRETab_JRE_home_directory_does_not_exist_37); 
-				return false;
-			}			
-		}		
 
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
@@ -276,6 +236,15 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	}	
 
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
+		try {
+			String path = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+			if (path != null) {
+				fJREBlock.setPath(Path.fromPortableString(path));
+				return;
+			}
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
 		String vmName = null;
 		String vmTypeID = null;
 		try {
@@ -291,11 +260,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	 * Notification that the user changed the selection in the JRE combo box.
 	 */
 	protected void handleSelectedJREChanged() {
-		if (fOkToClearUnknownVM) {
-			fUnknownVMName = null;
-			fUnknownVMType = null;
-		}
-		
 		loadDynamicJREArea();
 		
 		// always set the newly created area with defaults
@@ -339,24 +303,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		if (typeID == null) {
 			fJREBlock.setUseDefaultJRE();
 		} else {
-			IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-			for (int i = 0; i < types.length; i++) {
-				IVMInstallType type = types[i];
-				if (type.getId().equals(typeID)) {
-					IVMInstall[] installs = type.getVMInstalls();
-					for (int j = 0; j < installs.length; j++) {
-						IVMInstall install = installs[j];
-						if (install.getName().equals(vmName)) {
-							fJREBlock.setJRE(install);
-							return;
-						}
-						
-					}
-					break;
-				}
-			}
-			fUnknownVMName = vmName;
-			fJREBlock.setJRE(null);
+			fJREBlock.setPath(JavaRuntime.newJREContainerPath(typeID, vmName));
 		}
 	}
 	
@@ -366,10 +313,13 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	 */
 	protected ILaunchConfigurationTab getTabForCurrentJRE() {
 		if (!fJREBlock.isDefaultJRE()) {
-			IVMInstall vm = fJREBlock.getJRE();
-			if (vm != null) {
-				String vmInstallTypeID = vm.getVMInstallType().getId();
-				return JDIDebugUIPlugin.getDefault().getVMInstallTypePage(vmInstallTypeID);
+			IPath path = fJREBlock.getPath();
+			if (path != null && JavaRuntime.getExecutionEnvironmentId(path) == null) {
+				IVMInstall vm = fJREBlock.getJRE();
+				if (vm != null) {
+					String vmInstallTypeID = vm.getVMInstallType().getId();
+					return JDIDebugUIPlugin.getDefault().getVMInstallTypePage(vmInstallTypeID);
+				}
 			}
 		}		
 		return null;

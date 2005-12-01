@@ -60,6 +60,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
+import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -71,6 +72,7 @@ import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -151,7 +153,14 @@ public final class JavaRuntime {
 	 *  shared in a projects classpath file, so teams must agree on JRE naming
 	 * 	conventions.</li>
 	 * </ol>
-	 * 
+	 * <p>
+	 * Since 3.2, the path may also identify an execution environment as follows:
+	 * <ol>
+	 * <li>Execution environment extension point name
+	 * (value <code>executionEnvironments</code>)</li>
+	 * <li>Identifier of a contributed execution environment</li>
+	 * </ol>
+	 * </p>
 	 * @since 2.0
 	 */
 	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER"; //$NON-NLS-1$
@@ -1193,6 +1202,8 @@ public final class JavaRuntime {
 	 * Returns the VM install for the given launch configuration.
 	 * The VM install is determined in the following prioritized way:
 	 * <ol>
+	 * <li>The VM install is explicitly specified on the lanuch configuration
+	 *  via the <code>ATTR_JRE_CONTAINER_PATH</code> attribute (since 3.2).</li>
 	 * <li>The VM install is explicitly specified on the launch configuration
 	 * 	via the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_ID</code>
 	 *  attributes.</li>
@@ -1208,41 +1219,70 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		if (type == null) {
-			IJavaProject proj = getJavaProject(configuration);
-			if (proj != null) {
-				IVMInstall vm = getVMInstall(proj);
-				if (vm != null) {
-					return vm;
+		String jreAttr = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+		if (jreAttr == null) {
+			String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			if (type == null) {
+				IJavaProject proj = getJavaProject(configuration);
+				if (proj != null) {
+					IVMInstall vm = getVMInstall(proj);
+					if (vm != null) {
+						return vm;
+					}
 				}
+			} else {
+				String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
+				return resolveVM(type, name, configuration);
 			}
 		} else {
-			IVMInstallType vt = getVMInstallType(type);
-			if (vt == null) {
-				// error type does not exist
-				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, new String[] {type}), null); 
-			}
-			IVMInstall vm = null;
-			// look for a name
-			String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
-			if (name == null) {
-				// error - type specified without a specific install (could be an old config that specified a VM ID)
-				// log the error, but choose the default VM.
-				IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.JavaRuntime_VM_not_fully_specified_in_launch_configuration__0____missing_VM_name__Reverting_to_default_VM__1, new String[] {configuration.getName()}), null); 
-				LaunchingPlugin.log(status);
-				return getDefaultVMInstall();
-			} 
-			vm = vt.findVMInstallByName(name);
-			if (vm == null) {
-				// error - install not found
-				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, new String[] {vt.getName(), name}), null);					 
+			IPath jrePath = Path.fromPortableString(jreAttr);
+			IClasspathEntry entry = JavaCore.newContainerEntry(jrePath);
+			IRuntimeClasspathEntryResolver2 resolver = getVariableResolver(jrePath.segment(0));
+			if (resolver != null) {
+				return resolver.resolveVMInstall(entry);
 			} else {
-				return vm;
+				resolver = getContainerResolver(jrePath.segment(0));
+				if (resolver != null) {
+					return resolver.resolveVMInstall(entry);
+				}
 			}
 		}
 		
 		return getDefaultVMInstall();
+	}
+	/**
+	 * Returns the VM of the given type with the specified name.
+	 *  
+	 * @param type vm type identifier
+	 * @param name vm name
+	 * @return vm install
+	 * @exception CoreException if unable to resolve
+	 * @since 3.2
+	 */
+	private static IVMInstall resolveVM(String type, String name, ILaunchConfiguration configuration) throws CoreException {
+		IVMInstallType vt = getVMInstallType(type);
+		if (vt == null) {
+			// error type does not exist
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, new String[] {type}), null); 
+		}
+		IVMInstall vm = null;
+		// look for a name
+		if (name == null) {
+			// error - type specified without a specific install (could be an old config that specified a VM ID)
+			// log the error, but choose the default VM.
+			IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.JavaRuntime_VM_not_fully_specified_in_launch_configuration__0____missing_VM_name__Reverting_to_default_VM__1, new String[] {configuration.getName()}), null); 
+			LaunchingPlugin.log(status);
+			return getDefaultVMInstall();
+		} 
+		vm = vt.findVMInstallByName(name);
+		if (vm == null) {
+			// error - install not found
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, new String[] {vt.getName(), name}), null);					 
+		} else {
+			return vm;
+		}
+		// won't reach here
+		return null;
 	}
 	
 	/**
@@ -1633,8 +1673,248 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IClasspathEntry getDefaultJREContainerEntry() {
-		return JavaCore.newContainerEntry(new Path(JRE_CONTAINER));
+		return JavaCore.newContainerEntry(newDefaultJREContainerPath());
 	}	
+	
+	/**
+	 * Returns a path for the JRE classpath container identifying the 
+	 * default VM install.
+	 * 
+	 * @return classpath container path
+	 * @since 3.2
+	 */	
+	public static IPath newDefaultJREContainerPath() {
+		return new Path(JRE_CONTAINER);
+	}
+	
+	/**
+	 * Returns a path for the JRE classpath container identifying the 
+	 * specified VM install by type and name.
+	 * 
+	 * @param vm vm install
+	 * @return classpath container path
+	 * @since 3.2
+	 */
+	public static IPath newJREContainerPath(IVMInstall vm) {
+		return newJREContainerPath(vm.getVMInstallType().getId(), vm.getName());
+	}
+	
+	/**
+	 * Returns a path for the JRE classpath container identifying the 
+	 * specified VM install by type and name.
+	 * 
+	 * @param typeId vm install type identifier
+	 * @param name vm install name
+	 * @return classpath container path
+	 * @since 3.2
+	 */	
+	public static IPath newJREContainerPath(String typeId, String name) {
+		IPath path = newDefaultJREContainerPath();
+		path = path.append(typeId);
+		path = path.append(name);
+		return path;		
+	}
+	
+	/**
+	 * Returns a path for the JRE classpath container identifying the 
+	 * specified execution environment.
+	 * 
+	 * @param environment execution environment
+	 * @return classpath container path
+	 * @since 3.2
+	 */
+	public static IPath newJREContainerPath(IExecutionEnvironment environment) {
+		IPath path = newDefaultJREContainerPath();
+		path = path.append(EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
+		path = path.append(environment.getId());
+		return path;
+	}	
+	
+	/**
+	 * Returns the JRE referecend by the specified JRE classpath container
+	 * path or <code>null</code> if none.
+	 *  
+	 * @param jreContainerPath
+	 * @return
+	 * @since 3.2
+	 */
+	public static IVMInstall getVMInstall(IPath jreContainerPath) {
+		return JREContainerInitializer.resolveVM(jreContainerPath);
+	}
+	
+	/**
+	 * Returns the identifier of the VM install type referecend by the
+	 * given JRE classpath container path, or <code>null</code> if none.
+	 * 
+	 * @param jreContainerPath
+	 * @return vm install type identifier or <code>null</code>
+	 * @since 3.2
+	 */
+	public static String getVMInstallTypeId(IPath jreContainerPath) {
+		if (JREContainerInitializer.isExecutionEnvironment(jreContainerPath)) {
+			return null;
+		}
+		return JREContainerInitializer.getVMTypeId(jreContainerPath);
+	}
+
+	/**
+	 * Returns the name of the VM install referecend by the
+	 * given JRE classpath container path, or <code>null</code> if none.
+	 * 
+	 * @param jreContainerPath
+	 * @return vm name or <code>null</code>
+	 * @since 3.2
+	 */
+	public static String getVMInstallName(IPath jreContainerPath) {
+		if (JREContainerInitializer.isExecutionEnvironment(jreContainerPath)) {
+			return null;
+		}
+		return JREContainerInitializer.getVMName(jreContainerPath);
+	}
+	
+	/**
+	 * Returns the execution environment identifier in the folloing JRE
+	 * classpath container path, or <code>null</code> if none.
+	 *  
+	 * @param jreContainerPath classpath container path
+	 * @return execution environmetn identifier or <code>null</code>
+	 * @since 3.2
+	 */
+	public static String getExecutionEnvironmentId(IPath jreContainerPath) {
+		if (JREContainerInitializer.isExecutionEnvironment(jreContainerPath)) {
+			return JREContainerInitializer.getExecutionEnvironmentId(jreContainerPath);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a runtime classpath entry identifying the JRE to use when launching the specified
+	 * configuration or <code>null</code> if none is specified. The entry returned represents a
+	 * either a classpath variable or classpath container that resolves to a JRE.
+	 * <p>
+	 * The entry is resolved as follows:
+	 * <ol>
+	 * <li>If the <code>ATTR_JRE_CONTAINER_PATH</code> is present, it is used to create
+	 *  a classpath container refering to a JRE.</li>
+	 * <li>Next, if the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_NAME</code>
+	 * attributes are present, they are used to create a classpath container.</li>
+	 * <li>When none of the above attributes are specified, a default entry is
+	 * created which refers to the JRE referenced by the build path of the configuration's
+	 * associated Java project. This could be a classpath variable or classpath container.</li>
+	 * <li>When there is no Java project associated with a configuration, the workspace
+	 * default JRE is used to create a container path.</li>
+	 * </ol>
+	 * </p>
+	 * @param configuration
+	 * @return classpath container path identifying a JRE or <code>null</code>
+	 * @exception org.eclipse.core.runtime.CoreException if an exception occurrs retrieving
+	 *  attributes from the specified launch configuration
+	 * @since 3.2
+	 */
+	public static IRuntimeClasspathEntry computeJREEntry(ILaunchConfiguration configuration) throws CoreException {
+		String jreAttr = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+		IPath containerPath = null;
+		if (jreAttr == null) {
+			String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			if (type == null) {
+				// default JRE for the launch configuration
+				IJavaProject proj = getJavaProject(configuration);
+				if (proj == null) {
+					containerPath = newDefaultJREContainerPath();
+				} else {
+					return computeJREEntry(proj);
+				}
+			} else {
+				String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
+				if (name != null) {
+					containerPath = newDefaultJREContainerPath().append(type).append(name);
+				}
+			}
+		} else {
+			containerPath = Path.fromPortableString(jreAttr);
+		}
+		if (containerPath != null) {
+			return newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.STANDARD_CLASSES);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a runtime classpath entry identifying the JRE referenced by the specified
+	 * project, or <code>null</code> if none. The entry returned represents a either a
+	 * classpath variable or classpath container that resolves to a JRE.
+	 * 
+	 * @param project Java project
+	 * @return JRE runtime classpath entry or <code>null</code>
+	 * @exception org.eclipse.core.runtime.CoreException if an exception occurrs
+	 * 	accessing the project's classpath
+	 * @since 3.2
+	 */
+	public static IRuntimeClasspathEntry computeJREEntry(IJavaProject project) throws CoreException {
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		IRuntimeClasspathEntryResolver2 resolver = null;
+		for (int i = 0; i < rawClasspath.length; i++) {
+			IClasspathEntry entry = rawClasspath[i];
+			switch (entry.getEntryKind()) {
+				case IClasspathEntry.CPE_VARIABLE:
+					resolver = getVariableResolver(entry.getPath().segment(0));
+					if (resolver != null) {
+						if (resolver.isVMInstallReference(entry)) {
+							return newRuntimeClasspathEntry(entry);
+						}
+					}					
+					break;
+				case IClasspathEntry.CPE_CONTAINER:
+					resolver = getContainerResolver(entry.getPath().segment(0));
+					if (resolver != null) {
+						if (resolver.isVMInstallReference(entry)) {
+							IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+							if (container != null) {
+								switch (container.getKind()) {
+									case IClasspathContainer.K_APPLICATION:
+										break;
+									case IClasspathContainer.K_DEFAULT_SYSTEM:
+										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
+									case IClasspathContainer.K_SYSTEM:
+										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+								}
+							}
+						}
+					}
+					break;
+			}
+			
+		}
+		return null;
+	}	
+	
+	/**
+	 * Returns whether the given runtime classpath entry refers to a vm install.
+	 * 
+	 * @param entry
+	 * @return whether the given runtime classpath entry refers to a vm install
+	 * @since 3.2
+	 */
+	public static boolean isVMInstallReference(IRuntimeClasspathEntry entry) {
+		IClasspathEntry classpathEntry = entry.getClasspathEntry();
+		if (classpathEntry != null) {
+			switch (classpathEntry.getEntryKind()) {
+				case IClasspathEntry.CPE_VARIABLE:
+					IRuntimeClasspathEntryResolver2 resolver = getVariableResolver(classpathEntry.getPath().segment(0));
+					if (resolver != null) {
+						return resolver.isVMInstallReference(classpathEntry);
+					}
+					break;					
+				case IClasspathEntry.CPE_CONTAINER:
+					resolver = getContainerResolver(classpathEntry.getPath().segment(0));
+					if (resolver != null) {
+						return resolver.isVMInstallReference(classpathEntry);
+					}
+					break;
+				}
+		}
+		return false;
+	}
 	
 	/**
 	 * Returns the VM connector defined with the specified identifier,
@@ -1782,8 +2062,8 @@ public final class JavaRuntime {
 	 * @return the resolver registered for the given variable, or
 	 * <code>null</code> if none
 	 */
-	private static IRuntimeClasspathEntryResolver getVariableResolver(String variableName) {
-		return (IRuntimeClasspathEntryResolver)getVariableResolvers().get(variableName);
+	private static IRuntimeClasspathEntryResolver2 getVariableResolver(String variableName) {
+		return (IRuntimeClasspathEntryResolver2)getVariableResolvers().get(variableName);
 	}
 	
 	/**
@@ -1794,8 +2074,8 @@ public final class JavaRuntime {
 	 * @return the resolver registered for the given container id, or
 	 * <code>null</code> if none
 	 */	
-	private static IRuntimeClasspathEntryResolver getContainerResolver(String containerId) {
-		return (IRuntimeClasspathEntryResolver)getContainerResolvers().get(containerId);
+	private static IRuntimeClasspathEntryResolver2 getContainerResolver(String containerId) {
+		return (IRuntimeClasspathEntryResolver2)getContainerResolvers().get(containerId);
 	}
 	
 	/**

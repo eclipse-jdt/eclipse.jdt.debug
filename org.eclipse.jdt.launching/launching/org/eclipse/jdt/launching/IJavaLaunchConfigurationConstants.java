@@ -102,10 +102,26 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_WORKING_DIRECTORY = LaunchingPlugin.getUniqueIdentifier() + ".WORKING_DIRECTORY";	 //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. The value is a path identifying the JRE used
+	 * when launching a local VM. The path is a classpath container corresponding
+	 * to the <code>JavaRuntime.JRE_CONTAINER</code> classpath container.
+	 * <p>
+	 * When unspecified the default JRE for a launch configuration is used (which is the
+	 * JRE associated with the project being launched, or the workspace default JRE when
+	 * no project is associated with a configuration). The default JRE classpath container
+	 * refers explicitly to the workspace default JRE.
+	 * </p>
+	 * @since 3.2
+	 */
+	public static final String ATTR_JRE_CONTAINER_PATH = JavaRuntime.JRE_CONTAINER;
+	
+	/**
 	 * Launch configuration attribute key. The value is a name of a VM install
 	 * to use when launching a local VM. This attribute must be qualified
 	 * by a VM install type, via the <code>ATTR_VM_INSTALL_TYPE</code>
 	 * attribute. When unspecified, the default VM is used.
+	 * 
+	 * @deprecated use <code>ATTR_JRE_CONATAINER_PATH</code>
 	 */
 	public static final String ATTR_VM_INSTALL_NAME = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_NAME"; //$NON-NLS-1$
 		
@@ -115,6 +131,8 @@ public interface IJavaLaunchConfigurationConstants {
 	 * specify the VM to use when launching a local Java application.
 	 * The associated VM install name is specified via the attribute
 	 * <code>ATTR_VM_INSTALL_NAME</code>.
+	 * 
+	 * @deprecated use <code>ATTR_JRE_CONATAINER_PATH</code>
 	 */
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	

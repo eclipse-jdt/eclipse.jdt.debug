@@ -38,7 +38,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -305,12 +304,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			IRuntimeClasspathEntry entry = entries[index++];
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES
 					|| entry.getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES) {
-				int entryKind = entry.getClasspathEntry().getEntryKind();
-				String segment0 = entry.getPath().segment(0);
-				if (entryKind == IClasspathEntry.CPE_CONTAINER
-						&& JavaRuntime.JRE_CONTAINER.equals(segment0)
-						|| entryKind == IClasspathEntry.CPE_VARIABLE
-						&& JavaRuntime.JRELIB_VARIABLE.equals(segment0)) {
+				if (JavaRuntime.isVMInstallReference(entry)) {
 					jreContainerFound = true;
 				} else {
 					bootEntriesPrepend.add(entry);

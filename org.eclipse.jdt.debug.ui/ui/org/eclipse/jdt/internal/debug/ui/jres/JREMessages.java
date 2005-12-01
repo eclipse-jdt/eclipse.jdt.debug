@@ -87,4 +87,26 @@ public class JREMessages extends NLS {
 	public static String VMLibraryBlock_9;
 
 	public static String VMLibraryBlock_10;
+
+	public static String JREsComboBlock_0;
+
+	public static String JREsComboBlock_4;
+
+	public static String JREsComboBlock_5;
+
+	public static String JREsComboBlock_6;
+
+	public static String JREsComboBlock_7;
+
+	public static String JREsComboBlock_8;
+
+	public static String JREsComboBlock_9;
+
+	public static String JREsComboBlock_10;
+
+	public static String JREsComboBlock_11;
+
+	public static String JREsComboBlock_12;
+
+	public static String JREsComboBlock_13;
 }

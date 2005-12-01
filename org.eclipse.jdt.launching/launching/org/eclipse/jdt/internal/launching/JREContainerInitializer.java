@@ -33,6 +33,8 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
 /**
  * Resolves a container for a JRE classpath container entry.
@@ -64,17 +66,51 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		IVMInstall vm = null;
 		if (containerPath.segmentCount() > 1) {
 			// specific JRE
-			String vmTypeId = getVMTypeId(containerPath);
-			String vmName = getVMName(containerPath);
-			IVMInstallType vmType = JavaRuntime.getVMInstallType(vmTypeId);
-			if (vmType != null) {
-				vm = vmType.findVMInstallByName(vmName);
+			if (isExecutionEnvironment(containerPath)) {
+				String id = getExecutionEnvironmentId(containerPath);
+				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+				IExecutionEnvironment environment = manager.getEnvironment(id);
+				if (environment != null) {
+					IVMInstall[] installs = manager.getVMInstalls(environment);
+					if (installs.length > 0) {
+						// TODO: this is where we might need to let a preference identify the default
+						// vm for an EE
+						vm = installs[0];
+					}
+				}
+			} else {
+				String vmTypeId = getVMTypeId(containerPath);
+				String vmName = getVMName(containerPath);
+				IVMInstallType vmType = JavaRuntime.getVMInstallType(vmTypeId);
+				if (vmType != null) {
+					vm = vmType.findVMInstallByName(vmName);
+				}
 			}
 		} else {
 			// workspace default JRE
 			vm = JavaRuntime.getDefaultVMInstall();
 		}		
 		return vm;
+	}
+	
+	/**
+	 * Returns the segment from the path containing the execution environment id.
+	 * 
+	 * @param path container path
+	 * @return ee id
+	 */
+	public static String getExecutionEnvironmentId(IPath path) {
+		return path.segment(2);
+	}
+	
+	/**
+	 * Returns whether the given path identifies a vm by exeuction environment.
+	 * 
+	 * @param path
+	 * @return whether the given path identifies a vm by exeuction environment
+	 */
+	public static boolean isExecutionEnvironment(IPath path) {
+		return JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(1));
 	}
 	
 	/**
