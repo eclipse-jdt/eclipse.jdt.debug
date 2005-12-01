@@ -473,7 +473,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && isAvailable() && !isPerformingHotCodeReplace();
+		return (isSuspended() || hasSuspendedThreads())
+		    && isAvailable() && !isPerformingHotCodeReplace();
+	}
+
+	/**
+	 * Returns whether this target has any threads which are suspended.
+	 * @return true if any thread is suspended, false otherwise
+	 * @since 3.2
+	 */
+	private boolean hasSuspendedThreads() {
+		Iterator it = getThreadIterator();
+		while(it.hasNext()){
+			IThread thread = (IThread)it.next();
+			if(thread.isSuspended())
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -1045,7 +1061,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * is <code>true</code>.
 	 */
 	protected void resume(boolean fireNotification) throws DebugException {
-		if (!isSuspended() || !isAvailable()) {
+		if ((!isSuspended() && !hasSuspendedThreads()) 
+			|| !isAvailable()) {
 			return;
 		}
 		try {
