@@ -134,7 +134,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractDebugTest{
 		
 		IMethod method = type.getMethod(methodName, Signature.getParameterTypes(methodSig));
 						
-		ChangeSignatureRefactoring ref= ChangeSignatureRefactoring.create(method);
+		ChangeSignatureRefactoring ref= new ChangeSignatureRefactoring(method);
 		//configure the ref a little more here!
 		ref.setNewMethodName("changedMethod");
 		ref.setNewReturnTypeName("Object");

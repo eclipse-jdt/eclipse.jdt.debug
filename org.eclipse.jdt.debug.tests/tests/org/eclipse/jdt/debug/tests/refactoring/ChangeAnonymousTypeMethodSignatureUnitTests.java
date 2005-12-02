@@ -72,7 +72,7 @@ public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractDebugTe
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMethod method = (IMethod)(getMember(cunit,fullTargetName));
 		
-		ChangeSignatureRefactoring ref= ChangeSignatureRefactoring.create(method);
+        ChangeSignatureRefactoring ref = new ChangeSignatureRefactoring(method);
 		//configure the ref a little more here!
 		ref.setNewMethodName("changedMethod");
 		ref.setNewReturnTypeName("Object");
