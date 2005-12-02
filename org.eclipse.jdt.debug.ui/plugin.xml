@@ -1726,6 +1726,11 @@
             name="%javaLogicalStruturePref.name">
          <keywordReference id="org.eclipse.jdt.debug.ui.logicalStructures"/>
       </page>
+      <page
+            category="org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.jres.JREProfilesPreferencePage"
+            id="org.eclipse.jdt.debug.ui.jreProfiles"
+            name="%JreProfilesPage.name"/>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -2639,6 +2644,7 @@ M4 = Platform-specific fourth key
        <mapping scope="instance">
           <entry node="org.eclipse.jdt.launching">
              <key name="org.eclipse.jdt.launching.PREF_VM_XML"/>
+             <key name="org.eclipse.jdt.launching.PREF_DEFAULT_ENVIRONMENTS_XML"/>
           </entry>
        </mapping>
        <description>%preference.transfer.jres.description

@@ -30,4 +30,6 @@ public class EnvironmentMessages extends NLS {
 	public static String Environments_0;
 
 	public static String Environments_1;
+
+	public static String EnvironmentsManager_0;
 }

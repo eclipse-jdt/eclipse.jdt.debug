@@ -15,13 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.jres.JREsLabelProvider;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
@@ -29,24 +26,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * Superclass of for JRE resolution errors.
  */
 public abstract class JREResolution implements IMarkerResolution {
-	
-	class JRELabelProvider extends LabelProvider {
-		
-		/**
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
-		public Image getImage(Object element) {
-            return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
-		public String getText(Object element) {
-			return ((IVMInstall)element).getName();
-		}
-
-	}
 	
 	/**
 	 * Prompts the user to choose a JRE for the given project.
@@ -57,7 +36,7 @@ public abstract class JREResolution implements IMarkerResolution {
 	 * @return selected VM or <code>null</code>
 	 */
 	protected IVMInstall chooseVMInstall(String title, String message) {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), new JRELabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), new JREsLabelProvider());
 		dialog.setElements(getAllVMs());
 		dialog.setTitle(title);
 		dialog.setMessage(message);

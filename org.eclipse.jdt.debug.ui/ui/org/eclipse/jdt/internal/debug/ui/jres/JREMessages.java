@@ -109,4 +109,14 @@ public class JREMessages extends NLS {
 	public static String JREsComboBlock_12;
 
 	public static String JREsComboBlock_13;
+
+	public static String JREProfilesPreferencePage_0;
+
+	public static String JREProfilesPreferencePage_1;
+
+	public static String JREProfilesPreferencePage_2;
+
+	public static String JREProfilesPreferencePage_3;
+
+	public static String JREProfilesPreferencePage_4;
 }

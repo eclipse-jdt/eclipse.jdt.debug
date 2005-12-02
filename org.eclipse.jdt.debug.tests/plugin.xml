@@ -269,6 +269,13 @@
       <analyzer
             class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE14x"
             id="org.eclipse.jdt.debug.tests.analyzer.j2se14x"/>
+      <environment
+            description="Java 2 Platform, Standard Edition 1.3.x"
+            id="org.eclipse.jdt.debug.tests.environment.j2se13x"
+            name="J2SE 1.3.x"/>
+      <analyzer
+            class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE13x"
+            id="org.eclipse.jdt.debug.tests.analyzer.j2se13x"/>
    </extension>
 
 </plugin>
