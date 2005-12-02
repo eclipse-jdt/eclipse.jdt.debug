@@ -375,7 +375,7 @@
                id="org.eclipse.jdt.debug.ui.actions.SuspendPolicy">
          </action>
          <action
-               label="%breakpointPropertiesAction.label"
+               label="%JavaBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
                menubarPath="additions"

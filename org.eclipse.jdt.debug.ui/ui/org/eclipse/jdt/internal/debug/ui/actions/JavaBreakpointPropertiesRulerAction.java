@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.IUpdate;
 
 
 /**
@@ -28,7 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * the attibutes of a Java Breakpoint from the ruler popup menu of a 
  * text editor.
  */
-public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction {
+public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction implements IUpdate {
 	
 	private IBreakpoint fBreakpoint;
 
