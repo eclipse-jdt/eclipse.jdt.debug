@@ -108,6 +108,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private Button fAddButton;
 	private Button fRemoveButton;
 	private Button fEditButton;
+	private Button fCopyButton;
 	private Button fSearchButton;	
 	
 	// column weights
@@ -350,6 +351,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});
 		
+		fCopyButton = createPushButton(buttons, JREMessages.InstalledJREsBlock_16); 
+		fCopyButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event evt) {
+				copyVM();
+			}
+		});
+		
 		fRemoveButton= createPushButton(buttons, JREMessages.InstalledJREsBlock_5); 
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
@@ -380,6 +388,33 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fAddButton.setEnabled(JavaRuntime.getVMInstallTypes().length > 0);
 	}
 	
+	/**
+	 * Adds a duplicate of the selected VM to the block 
+	 * @since 3.2
+	 */
+	protected void copyVM() {
+		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
+		Iterator it = selection.iterator();
+		List newEntries = new ArrayList();
+		while(it.hasNext()){
+			IVMInstall selectedVM = (IVMInstall)it.next();
+			
+			//duplicate & add vm
+			VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
+			standin.setName(MessageFormat.format(JREMessages.InstalledJREsBlock_17, new String[]{selectedVM.getName()}));
+
+			AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), standin);
+			dialog.setTitle(JREMessages.InstalledJREsBlock_18); 
+			if (dialog.open() != Window.OK) {
+				return;
+			}				
+			newEntries.add(standin);
+		}
+		fVMs.addAll(newEntries);
+		fVMList.refresh();
+		fVMList.setSelection(new StructuredSelection(newEntries.toArray()));
+	}
+
 	/**
 	 * Fire current selection
 	 */
@@ -464,6 +499,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void enableButtons() {
 		int selectionCount= ((IStructuredSelection)fVMList.getSelection()).size();
 		fEditButton.setEnabled(selectionCount == 1);
+		fCopyButton.setEnabled(selectionCount > 0);
 		fRemoveButton.setEnabled(selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount());
 	}	
 	

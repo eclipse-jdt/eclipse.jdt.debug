@@ -50,6 +50,19 @@ public class VMStandin extends AbstractVMInstall {
 	}
 	
 	/**
+	 * Constructs a copy of the specified VM with the given identifier.
+	 * 
+	 * @param sourceVM
+	 * @param id
+	 * @since 3.2
+	 */
+	public VMStandin(IVMInstall sourceVM, String id) {
+		super(sourceVM.getVMInstallType(), id);
+		init(sourceVM);
+		
+	}
+	
+	/**
 	 * Construct a <code>VMStandin</code> instance based on the specified <code>IVMInstall</code>.
 	 * Changes to this standin will not be reflected in the 'real' VM until <code>convertToRealVM</code>
 	 * is called.
@@ -58,6 +71,16 @@ public class VMStandin extends AbstractVMInstall {
 	 */
 	public VMStandin(IVMInstall realVM) {
 		this (realVM.getVMInstallType(), realVM.getId());
+		init(realVM);
+	}
+
+	/**
+	 * Initializes the settings of this standin based on the settings in the given
+	 * VM install.
+	 * 
+	 * @param realVM VM to copy settings from
+	 */
+	private void init(IVMInstall realVM) {
 		setName(realVM.getName());
 		setInstallLocation(realVM.getInstallLocation());
 		setLibraryLocations(realVM.getLibraryLocations());
