@@ -604,7 +604,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 					int line = frame.getLineNumber();
 					for (int i = 0; i < markers.length; i++) {
 						IMarker marker = markers[i];
-						if (marker.getAttribute(IMarker.LINE_NUMBER, -1) == line) {
+						if (marker.getAttribute(IMarker.LINE_NUMBER, -1) == line && marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
 							return marker;
 						}
 					}
