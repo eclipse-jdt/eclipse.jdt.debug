@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
@@ -25,15 +26,14 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -53,7 +53,7 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -161,7 +161,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 							evaluationListener, DebugEvent.EVALUATION_IMPLICIT, false);
 					return;
 				}
-			} catch (DebugException e) {
+			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 				return;
 			}
@@ -173,45 +173,29 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 	}
 	
-	private IJavaProject getJavaProject(IJavaObject javaValue, IJavaThread thread) throws DebugException {
+	private IJavaProject getJavaProject(IJavaObject javaValue, IJavaThread thread) throws CoreException {
 
-		
-		ISourceLocator locator= javaValue.getLaunch().getSourceLocator();
-		if (locator == null) {
+		IType type = JavaDebugUtils.resolveType(javaValue);
+		if (type != null) {
+			return type.getJavaProject();
+		}
+		IStackFrame stackFrame= null;
+		IJavaDebugTarget target = (IJavaDebugTarget)javaValue.getDebugTarget().getAdapter(IJavaDebugTarget.class);
+		if (target != null) {
+			stackFrame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
+			if (stackFrame == null || !stackFrame.getDebugTarget().equals(target)) {
+				stackFrame= thread.getTopStackFrame();
+				if (stackFrame != null && !stackFrame.getDebugTarget().equals(target)) {
+					stackFrame= null;
+				}
+			}
+		}
+		if (stackFrame == null) {
 			return null;
 		}
-		Object sourceElement= null;
-		if (locator instanceof ISourceLookupDirector) {
-			IJavaReferenceType type= (IJavaReferenceType)javaValue.getJavaType();
-			if (type instanceof JDIReferenceType) {
-				String[] sourcePaths= ((JDIReferenceType) type).getSourcePaths(null);
-				if (sourcePaths.length > 0) {
-					sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
-				}
-			}
-			if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-				sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
-			}
-		}
-		if (sourceElement == null) {
-			IStackFrame stackFrame= null;
-			IJavaDebugTarget target = (IJavaDebugTarget)javaValue.getDebugTarget().getAdapter(IJavaDebugTarget.class);
-			if (target != null) {
-				stackFrame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
-				if (stackFrame == null || !stackFrame.getDebugTarget().equals(target)) {
-					stackFrame= thread.getTopStackFrame();
-					if (stackFrame != null && !stackFrame.getDebugTarget().equals(target)) {
-						stackFrame= null;
-					}
-				}
-			}
-			if (stackFrame == null) {
-				return null;
-			}
-			sourceElement = locator.getSourceElement(stackFrame);
-			if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-				sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
-			}
+		Object sourceElement = JavaDebugUtils.resolveSourceElement(stackFrame, stackFrame.getLaunch());
+		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
 		}
 		IJavaProject project= null;
 		if (sourceElement instanceof IJavaElement) {
@@ -307,7 +291,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * 
 	 * The code snippet is compiled in the context of the given object.
 	 */
-	private Expression getCompiledExpression(IJavaObject javaObject, IJavaDebugTarget debugTarget, IJavaThread thread) throws DebugException {
+	private Expression getCompiledExpression(IJavaObject javaObject, IJavaDebugTarget debugTarget, IJavaThread thread) throws CoreException {
 		IJavaType type= javaObject.getJavaType();
 		String typeName= type.getName();
 		Key key= new Key(typeName, debugTarget);

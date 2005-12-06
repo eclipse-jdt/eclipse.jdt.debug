@@ -47,14 +47,14 @@ public class JDIInterfaceType extends JDIReferenceType implements IJavaInterface
 			while (iterator.hasNext()) {
 				ClassType classType = (ClassType) iterator.next();
 				if (classType != null) {
-					javaClassTypeList.add(JDIType.createType(getDebugTarget(), classType));
+					javaClassTypeList.add(JDIType.createType(getJavaDebugTarget(), classType));
 				}				
 			}
 			IJavaClassType[] javaClassTypeArray = new IJavaClassType[javaClassTypeList.size()];
 			javaClassTypeArray = (IJavaClassType[]) javaClassTypeList.toArray(javaClassTypeArray);
 			return javaClassTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
 		}
 		return new IJavaClassType[0];
 	}
@@ -70,14 +70,14 @@ public class JDIInterfaceType extends JDIReferenceType implements IJavaInterface
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = (InterfaceType) iterator.next();
 				if (interfaceType != null) {
-					javaInterfaceTypeList.add(JDIType.createType(getDebugTarget(), interfaceType));
+					javaInterfaceTypeList.add(JDIType.createType(getJavaDebugTarget(), interfaceType));
 				}				
 			}
 			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
 			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
 			return javaInterfaceTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
 		}
 		return new IJavaInterfaceType[0];
 	}
@@ -93,14 +93,14 @@ public class JDIInterfaceType extends JDIReferenceType implements IJavaInterface
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = (InterfaceType) iterator.next();
 				if (interfaceType != null) {
-					javaInterfaceTypeList.add(JDIType.createType(getDebugTarget(), interfaceType));
+					javaInterfaceTypeList.add(JDIType.createType(getJavaDebugTarget(), interfaceType));
 				}				
 			}
 			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
 			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
 			return javaInterfaceTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
 		}
 		return new IJavaInterfaceType[0];
 	}

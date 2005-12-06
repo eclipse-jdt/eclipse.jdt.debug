@@ -134,7 +134,7 @@ public class BreakpointLocationVerifierJob extends Job {
 				String unitName = null;
 				if (fType == null) {
 					String name = fResource.getName();
-					if (name.endsWith(".java")) { //$NON-NLS-1$
+					if (JavaCore.isJavaLikeFileName(name)) {
 						unitName = name;
 					}
 				} else {

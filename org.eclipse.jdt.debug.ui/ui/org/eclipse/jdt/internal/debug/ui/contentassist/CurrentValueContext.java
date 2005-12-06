@@ -17,7 +17,9 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaArray;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
@@ -42,7 +44,10 @@ public class CurrentValueContext extends CurrentFrameContext {
     	IType type = null;
     	if (value instanceof IJavaArray) {
     		// completion in context of Object
-    		type = JavaDebugUtils.resolveType("java.lang.Object", value.getLaunch()); //$NON-NLS-1$
+    		IJavaType[] types = ((IJavaDebugTarget)value.getDebugTarget()).getJavaTypes("java.lang.Object"); //$NON-NLS-1$
+    		if (types.length > 0) {
+    			type = JavaDebugUtils.resolveType(types[0]);  
+    		}
     	} else {
     		type = JavaDebugUtils.resolveType(value);
     	}

@@ -41,9 +41,9 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 	public IJavaArray newInstance(int size) throws DebugException {
 		try {
 			ArrayReference ar = ((ArrayType)getUnderlyingType()).newInstance(size);
-			return (IJavaArray)JDIValue.createValue(getDebugTarget(), ar);
+			return (IJavaArray)JDIValue.createValue(getJavaDebugTarget(), ar);
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_creating_new_instance_of_array, new String[] {e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_creating_new_instance_of_array, new String[] {e.toString()}), e); 
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
@@ -56,11 +56,11 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 	public IJavaType getComponentType() throws DebugException {
 		try {
 			Type type = ((ArrayType)getUnderlyingType()).componentType();
-			return JDIType.createType(getDebugTarget(), type);
+			return JDIType.createType(getJavaDebugTarget(), type);
 		} catch (ClassNotLoadedException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_retrieving_component_type_of_array, new String[] {e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_retrieving_component_type_of_array, new String[] {e.toString()}), e); 
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_retrieving_component_type_of_array, new String[] {e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_retrieving_component_type_of_array, new String[] {e.toString()}), e); 
 		}
 		// execution will not reach this line as
 		// an exception will be thrown

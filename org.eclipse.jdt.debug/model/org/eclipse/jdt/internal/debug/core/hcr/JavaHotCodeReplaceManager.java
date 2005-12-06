@@ -69,6 +69,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -1117,32 +1118,25 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		 */
 		private IResource getSourceFile(IJavaProject project, String qualifiedName, String sourceAttribute) {
 			String name = null;
-			if (sourceAttribute == null) { 
-				int nestedIndex= qualifiedName.indexOf('$');
-				if (nestedIndex != -1) {
-					// Trim nested type suffix
-					name= qualifiedName.substring(0, nestedIndex);
-				}
-				name= name + ".java"; //$NON-NLS-1$
-			} else {
-				int i = qualifiedName.lastIndexOf('/');
-				if (i > 0) {
-					name = qualifiedName.substring(0, i + 1);
-					name = name + sourceAttribute;
-				} else {
-					name = sourceAttribute;
-				}
-			}
-			ICompilationUnit unit= null;
+			IJavaElement element = null;
 			try {
-				unit= (ICompilationUnit)project.findElement(new Path(name));
-				if (unit != null) {
-					try {
-						return unit.getCorrespondingResource();
-					} catch (JavaModelException e) {
+				if (sourceAttribute == null) { 
+					element = JavaDebugUtils.findElement(qualifiedName, project);
+				} else {
+					int i = qualifiedName.lastIndexOf('/');
+					if (i > 0) {
+						name = qualifiedName.substring(0, i + 1);
+						name = name + sourceAttribute;
+					} else {
+						name = sourceAttribute;
 					}
+					element = project.findElement(new Path(name));
 				}
-			} catch (JavaModelException exception) {
+				if (element instanceof ICompilationUnit) {
+					ICompilationUnit cu = (ICompilationUnit) element;
+					return cu.getCorrespondingResource();
+				}
+			} catch (CoreException e) {
 			}
 			return null;
 		}

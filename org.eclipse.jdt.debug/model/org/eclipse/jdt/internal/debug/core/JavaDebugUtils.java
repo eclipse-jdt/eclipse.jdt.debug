@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -24,8 +26,10 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -74,21 +78,20 @@ public class JavaDebugUtils {
     }   
     
     /**
-     * Resolves and returns the type with the given name in the given context,
-     * or <code>null</code> if none.
+     * Resolves and returns the Java model type associcated with the given
+     * Java debug type, or <code>null</code> if none.
      * 
-     * @param qualifiedName fully qaulified type name
-     * @param context launch to resolve in
-     * @return type or <code>null</code>
+     * @param type Java debug model type
+     * @return Java model type or <code>null</code>
      * @throws CoreException
      */
-    public static IType resolveType(String qualifiedName, ILaunch context) throws CoreException {
-    	IJavaElement element = resolveJavaElement(generateSourceName(qualifiedName), context);
+    public static IType resolveType(IJavaType type) throws CoreException {
+    	IJavaElement element = resolveJavaElement(type, type.getLaunch());
     	if (element != null ) {
-    		return resolveType(qualifiedName, element);
+    		return resolveType(type.getName(), element);
     	}
     	return null;
-    }
+    }    
     
 	/**
 	 * Returns the source name associated with the given object, or <code>null</code>
@@ -127,11 +130,17 @@ public class JavaDebugUtils {
 				}
 			} else {
 				if (object instanceof IJavaValue) {
-					IJavaType javaType = ((IJavaValue)object).getJavaType();
-					if (javaType != null) {
-						typeName = javaType.getName();
+					// look at its type
+					object = ((IJavaValue)object).getJavaType();
+				}
+				if (object instanceof IJavaReferenceType) {
+					IJavaReferenceType refType = (IJavaReferenceType)object;
+					String[] sourcePaths = refType.getSourcePaths(null);
+					if (sourcePaths != null && sourcePaths.length > 0) {
+						return sourcePaths[0];
 					}
-				} else if (object instanceof IJavaType) {
+				}
+				if (object instanceof IJavaType) {
 					typeName = ((IJavaType)object).getName();
 				}
 			}
@@ -284,4 +293,31 @@ public class JavaDebugUtils {
         list.add(typeName);
         return (String[])list.toArray(new String[list.size()]); 
     } 
+    
+    /**
+     * Returns the class file or comiplation unit containing the given fully qualified name in the 
+     * specified project. All reqistered java like file extensions are considered.
+     * 
+     * @param qualifiedTypeName fully qualified type name
+     * @param project project to search in
+     * @return class file or compilation unit or <code>null</code>
+     */
+    public static IJavaElement findElement(String qualifiedTypeName, IJavaProject project) throws CoreException{
+    	String[] javaLikeExtensions = JavaCore.getJavaLikeExtensions();
+    	String path = qualifiedTypeName;
+		int pos = path.indexOf('$');
+		if (pos != -1) {
+			path= path.substring(0, pos);
+		}
+		path = path.replace('.', IPath.SEPARATOR);
+		path += "."; //$NON-NLS-1$    	
+    	for (int i = 0; i < javaLikeExtensions.length; i++) {
+			String ext = javaLikeExtensions[i];
+			IJavaElement element = project.findElement(new Path(path + ext));
+			if (element != null) {
+				return element;
+			}
+		}
+    	return null;
+    }
 }

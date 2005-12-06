@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
 import com.sun.jdi.AbsentInformationException;
@@ -180,9 +181,9 @@ public class EvaluationSourceGenerator {
 		return objectToEvaluationSourceMapper;
 	}
 	
-	public String getSource(IJavaReferenceType type, IJavaProject javaProject, boolean isStatic) throws DebugException {
+	public String getSource(IJavaReferenceType type, IJavaProject javaProject, boolean isStatic) throws CoreException {
 		if (fSource == null) {
-			String baseSource= getTypeSourceFromProject(type.getName(), javaProject);
+			String baseSource= getTypeSourceFromProject(type, javaProject);
 			int lineNumber= getLineNumber((JDIReferenceType)type);
 			if (baseSource != null && lineNumber != -1) {
 				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, isStatic, javaProject);
@@ -215,32 +216,36 @@ public class EvaluationSourceGenerator {
 		fSource= source;
 	}
 
-	private String getTypeSourceFromProject(String typeName, IJavaProject javaProject) throws DebugException {
-		String path = typeName;
-		int pos = path.indexOf('$');
-		if (pos != -1) {
-			path= path.substring(0, pos);
-		}
-		pos++;
-		path = path.replace('.', IPath.SEPARATOR);
-		path+= ".java";			 //$NON-NLS-1$
-		IPath sourcePath =  new Path(path);
-		
+	private String getTypeSourceFromProject(IJavaReferenceType type, IJavaProject javaProject) throws CoreException {
+		String[] sourcePaths = type.getSourcePaths(null);
+		IJavaElement element = null;
+		if (sourcePaths != null && sourcePaths.length > 0) {
+			element = javaProject.findElement(new Path(sourcePaths[0]));
+		} else {
+			// must guess at source name when debug attribute not present
+			element = JavaDebugUtils.findElement(type.getName(), javaProject);
+		}	
+		return resolveSource(element);
+	}
+	
+	/**
+	 * Returns source for the given class file or compilation unit
+	 * or <code>null</code> if none.
+	 *  
+	 * @param element Java element or <code>null</code> 
+	 */
+	private String resolveSource(IJavaElement element) throws DebugException {
 		String source= null;
 		try {
-			IJavaElement result = javaProject.findElement(sourcePath);
-			if (result != null) {
-				if (result instanceof IClassFile) {
-					source = ((IClassFile)result).getSource();
-				} else if (result instanceof ICompilationUnit) {
-					source = ((ICompilationUnit)result).getSource();
-				}
+			if (element instanceof IClassFile) {
+				source = ((IClassFile)element).getSource();
+			} else if (element instanceof ICompilationUnit) {
+				source = ((ICompilationUnit)element).getSource();
 			}
 		} catch (JavaModelException e) {
 			throw new DebugException(e.getStatus());
 		}
-		
-		return source;	
+		return source;			
 	}
 
 }

@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
@@ -79,9 +80,13 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 					}
 					break;
 				case IPackageFragmentRoot.K_SOURCE:
-					ICompilationUnit unit = fragment.getCompilationUnit(typeName + ".java"); //$NON-NLS-1$
-					if (unit.exists()) {
-						return new Object[]{unit};
+					String[] extensions = JavaCore.getJavaLikeExtensions();
+					for (int i = 0; i < extensions.length; i++) {
+						String ext = extensions[i];
+						ICompilationUnit unit = fragment.getCompilationUnit(typeName + '.' + ext);
+						if (unit.exists()) {
+							return new Object[]{unit};
+						}	
 					}
 					break;
 			}

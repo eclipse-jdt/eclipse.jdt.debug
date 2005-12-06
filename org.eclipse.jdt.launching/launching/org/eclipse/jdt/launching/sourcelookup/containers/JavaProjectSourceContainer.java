@@ -12,6 +12,7 @@ package org.eclipse.jdt.launching.sourcelookup.containers;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -25,6 +26,7 @@ import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
@@ -45,6 +47,20 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	private ISourceContainer[] fSourceFolders;
 	// Generic project container
 	private ISourceContainer[] fOthers;
+	
+	private static String[] fgJavaExtensions = null;
+	
+	/**
+	 * init java file extensions
+	 */
+	static {
+		String[] extensions = JavaCore.getJavaLikeExtensions();
+		fgJavaExtensions = new String[extensions.length];
+		for (int i = 0; i < extensions.length; i++) {
+			String ext = extensions[i];
+			fgJavaExtensions[i] = '.' + ext;
+		}
+	}
 	
 	/**
 	 * Unique identifier for Java project source container type
@@ -103,7 +119,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 				}
 			}
 		}
-		// cache the Java source folders to search for ".java" files in
+		// cache the Java source folders to search for java like files in
 		fSourceFolders = (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
 		ISourceContainer theProject = new ProjectSourceContainer(fProject.getProject(), false);
 		fOthers = new ISourceContainer[] {theProject};
@@ -132,7 +148,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		// force container initialzation
 		getSourceContainers();
 		
-		if (name.endsWith(".java")) { //$NON-NLS-1$
+		if (isJavaLikeFileName(name)) {
 			// only look in source folders
 			Object[] objects = findSourceElements(name, fSourceFolders);
 			List filtered = null;
@@ -155,12 +171,22 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 			}
 			return filtered.toArray();			
 		} 
-		// look elsewhere if non a ".java" file
+		// look elsewhere if not a java like file
 		return findSourceElements(name, fOthers);
 	}
 	public void dispose() {
 		fSourceFolders = null;
 		fOthers = null;
 		super.dispose();
+	}
+	
+	private boolean isJavaLikeFileName(String name) {
+		for (int i = 0; i < fgJavaExtensions.length; i++) {
+			String ext = fgJavaExtensions[i];
+			if (name.endsWith(ext)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

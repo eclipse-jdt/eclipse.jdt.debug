@@ -28,17 +28,12 @@ import com.sun.jdi.Type;
 /**
  * A type of an object or primitive data type in a debug target.
  */
-public class JDIType implements IJavaType {
+public class JDIType extends JDIDebugElement implements IJavaType {
 	
 	/**
 	 * Underlying type on target VM
 	 */
 	private Type fType;
-	
-	/**
-	 * The debug target this type originated from
-	 */
-	private JDIDebugTarget fDebugTarget;
 	
 	/**
 	 * Constructs a new type based on the specified underlying
@@ -48,7 +43,7 @@ public class JDIType implements IJavaType {
 	 * @param type underlying type on the target VM
 	 */
 	protected JDIType(JDIDebugTarget target, Type type) {
-		setDebugTarget(target);
+		super(target);
 		setUnderlyingType(type);
 	}
     
@@ -114,31 +109,11 @@ public class JDIType implements IJavaType {
 		try {
 			return getUnderlyingType().signature();
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIType_exception_while_retrieving_signature, new String[] {e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIType_exception_while_retrieving_signature, new String[] {e.toString()}), e); 
 			// execution will not reach this line as
 			// #targetRequestFailed will throw an exception
 			return null;
 		}
-	}
-
-	/**
-	 * Returns the debug target this type originated from.
-	 * 
-	 * @return the debug target this type originated
-	 * 	from
-	 */
-	protected JDIDebugTarget getDebugTarget() {
-		return fDebugTarget;
-	}
-
-	/**
-	 * Sets the debug target this type originated from.
-	 * 
-	 * @param debugTarget the debug targe this type originated
-	 * 	from
-	 */
-	protected void setDebugTarget(JDIDebugTarget debugTarget) {
-		fDebugTarget = debugTarget;
 	}
 
 	/**
@@ -173,7 +148,7 @@ public class JDIType implements IJavaType {
 		try {
 			return getUnderlyingType().name();
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIType_exception_while_retrieving_type_name, new String[]{e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIType_exception_while_retrieving_type_name, new String[]{e.toString()}), e); 
 		}
 		// execution will not fall through as an exception
 		// will be thrown by the catch block

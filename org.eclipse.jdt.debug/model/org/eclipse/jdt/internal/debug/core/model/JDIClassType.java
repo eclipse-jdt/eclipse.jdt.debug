@@ -55,17 +55,17 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 			try {
 				List methods = clazz.methodsByName("<init>", signature); //$NON-NLS-1$
 				if (methods.isEmpty()) {
-					getDebugTarget().requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_Type_does_not_implement_cosntructor, new String[]{signature}), null); 
+					requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_Type_does_not_implement_cosntructor, new String[]{signature}), null); 
 				} else {
 					method = (Method)methods.get(0);
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_performing_method_lookup_for_constructor, new String[] {e.toString(), signature}), e); 
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_performing_method_lookup_for_constructor, new String[] {e.toString(), signature}), e); 
 			}
 			ObjectReference result = javaThread.newInstance(clazz, method, arguments);
-			return (IJavaObject)JDIValue.createValue(getDebugTarget(), result);
+			return (IJavaObject)JDIValue.createValue(getJavaDebugTarget(), result);
 		}
-		getDebugTarget().requestFailed(JDIDebugModelMessages.JDIClassType_Type_is_not_a_class_type, null); 
+		requestFailed(JDIDebugModelMessages.JDIClassType_Type_is_not_a_class_type, null); 
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
 		return null;
@@ -83,17 +83,17 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 			try {
 				List methods = clazz.methodsByName(selector, signature);
 				if (methods.isEmpty()) {
-					getDebugTarget().requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_Type_does_not_implement_selector, new String[] {selector, signature}), null); 
+					requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_Type_does_not_implement_selector, new String[] {selector, signature}), null); 
 				} else {
 					method = (Method)methods.get(0);
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_performing_method_lookup_for_selector, new String[] {e.toString(), selector, signature}), e); 
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_performing_method_lookup_for_selector, new String[] {e.toString(), selector, signature}), e); 
 			}
 			Value result = javaThread.invokeMethod(clazz, null, method, arguments, false);
-			return JDIValue.createValue(getDebugTarget(), result);
+			return JDIValue.createValue(getJavaDebugTarget(), result);
 		}
-		getDebugTarget().requestFailed(JDIDebugModelMessages.JDIClassType_Type_is_not_a_class_type, null); 
+		requestFailed(JDIDebugModelMessages.JDIClassType_Type_is_not_a_class_type, null); 
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
 		return null;
@@ -127,10 +127,10 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		try {
 			ClassType superclazz = ((ClassType)getUnderlyingType()).superclass();
 			if (superclazz != null) {
-				return (IJavaClassType)JDIType.createType(getDebugTarget(), superclazz);
+				return (IJavaClassType)JDIType.createType(getJavaDebugTarget(), superclazz);
 			}
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {e.toString()}), e); 
 		}
 		// it is possible to return null
 		return null;
@@ -147,14 +147,14 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = (InterfaceType) iterator.next();
 				if (interfaceType != null) {
-					javaInterfaceTypeList.add(JDIType.createType(getDebugTarget(), interfaceType));
+					javaInterfaceTypeList.add(JDIType.createType(getJavaDebugTarget(), interfaceType));
 				}				
 			}
 			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
 			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
 			return javaInterfaceTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
 		}
 		return new IJavaInterfaceType[0];
 	}
@@ -170,14 +170,14 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = (InterfaceType) iterator.next();
 				if (interfaceType != null) {
-					javaInterfaceTypeList.add(JDIType.createType(getDebugTarget(), interfaceType));
+					javaInterfaceTypeList.add(JDIType.createType(getJavaDebugTarget(), interfaceType));
 				}				
 			}
 			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
 			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
 			return javaInterfaceTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); 
 		}
 		return new IJavaInterfaceType[0];
 	}

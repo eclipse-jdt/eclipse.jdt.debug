@@ -88,10 +88,10 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 			ReferenceType type = (ReferenceType)getUnderlyingType();
 			Field field = type.fieldByName(name);
 			if (field != null && field.isStatic()) {
-				return new JDIFieldVariable(getDebugTarget(), field, type);
+				return new JDIFieldVariable(getJavaDebugTarget(), field, type);
 			}			
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_field, new String[] {e.toString(), name}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_field, new String[] {e.toString(), name}), e); 
 		}
 		// it is possible to return null		
 		return null;
@@ -103,9 +103,9 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	public IJavaClassObject getClassObject() throws DebugException {
 		try {
 			ReferenceType type= (ReferenceType)getUnderlyingType();
-			return (IJavaClassObject)JDIValue.createValue(getDebugTarget(), type.classObject());
+			return (IJavaClassObject)JDIValue.createValue(getJavaDebugTarget(), type.classObject());
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_class_object, new String[] {e.toString()}), e); 
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_class_object, new String[] {e.toString()}), e); 
 		}
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
@@ -128,7 +128,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 					i++;
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_2, e); 
+				targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_2, e); 
 			}			
 		}			
 		return fAllFields;
@@ -150,25 +150,54 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 					i++;
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_3, e); 
+				targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_3, e); 
 			}			
 		}
 		return fDeclaredFields;
 	}
 	
-	/**
-	 * Return the source paths for the given stratum.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getSourcePaths(java.lang.String)
 	 */
-	public String[] getSourcePaths(String stratum) {
+	public String[] getSourcePaths(String stratum) throws DebugException {
 		try {
 			List sourcePaths= getReferenceType().sourcePaths(stratum);
 			return (String[]) sourcePaths.toArray(new String[sourcePaths.size()]);
 		} catch (AbsentInformationException e) {
-			return new String[0];
+		} catch (RuntimeException e) {
+			requestFailed(JDIDebugModelMessages.JDIReferenceType_4, e, DebugException.TARGET_REQUEST_FAILED);
 		}
+		return null;
 	}
 
     /* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getSourceName()
+	 */
+	public String getSourceName() throws DebugException {
+		try {
+			return getReferenceType().sourceName();
+		} catch (AbsentInformationException e) {
+		} catch (RuntimeException e) {
+			requestFailed(JDIDebugModelMessages.JDIReferenceType_4, e, DebugException.TARGET_REQUEST_FAILED);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getSourceNames(java.lang.String)
+	 */
+	public String[] getSourceNames(String stratum) throws DebugException {
+		try {
+			List sourceNames= getReferenceType().sourceNames(stratum);
+			return (String[]) sourceNames.toArray(new String[sourceNames.size()]);
+		} catch (AbsentInformationException e) {
+		} catch (RuntimeException e) {
+			requestFailed(JDIDebugModelMessages.JDIReferenceType_4, e, DebugException.TARGET_REQUEST_FAILED);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getClassLoaderObject()
      */
     public IJavaObject getClassLoaderObject() throws DebugException {
@@ -176,10 +205,10 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
             ReferenceType type= (ReferenceType)getUnderlyingType();
             ClassLoaderReference classLoader = type.classLoader();
             if (classLoader != null) {
-            	return (IJavaObject)JDIValue.createValue(getDebugTarget(), classLoader);
+            	return (IJavaObject)JDIValue.createValue(getJavaDebugTarget(), classLoader);
             }
         } catch (RuntimeException e) {
-            getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIReferenceType_0, new String[] {e.toString()}), e); 
+            targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIReferenceType_0, new String[] {e.toString()}), e); 
         }
         return null;
     }

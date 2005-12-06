@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
@@ -52,7 +53,6 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
@@ -522,9 +522,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		try {
 			if (locator instanceof ISourceLookupDirector && !stackFrame.isStatic()) {
 				IJavaType thisType = stackFrame.getThis().getJavaType();
-				if (thisType instanceof JDIReferenceType) {
-					String[] sourcePaths= ((JDIReferenceType) thisType).getSourcePaths(null);
-					if (sourcePaths.length > 0) {
+				if (thisType instanceof IJavaReferenceType) {
+					String[] sourcePaths= ((IJavaReferenceType) thisType).getSourcePaths(null);
+					if (sourcePaths != null && sourcePaths.length > 0) {
 						sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
 					}
 				}

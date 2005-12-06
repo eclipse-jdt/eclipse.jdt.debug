@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClassFile;
@@ -37,6 +36,7 @@ import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -88,9 +88,8 @@ public class AppletLaunchConfigurationUtils {
 	/**
 	 * Find the specified (fully-qualified) type name in the specified java project.
 	 */
-	public static IType findType(IJavaProject javaProject, String mainTypeName) throws JavaModelException {
-		String pathStr= mainTypeName.replace('.', '/') + ".java"; //$NON-NLS-1$
-		IJavaElement javaElement= javaProject.findElement(new Path(pathStr));
+	public static IType findType(IJavaProject javaProject, String mainTypeName) throws CoreException {
+		IJavaElement javaElement= JavaDebugUtils.findElement(mainTypeName, javaProject);
 		if (javaElement == null) {
 			return null;
 		} else if (javaElement instanceof IType) {

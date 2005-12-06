@@ -46,7 +46,6 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
 public class JavaLogicalStructure implements ILogicalStructureType {
 
@@ -240,11 +239,9 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			ISourceLocator locator= javaValue.getLaunch().getSourceLocator();
 			Object sourceElement= null;
 			if (locator instanceof ISourceLookupDirector) {
-				if (type instanceof JDIReferenceType) {
-					String[] sourcePaths= ((JDIReferenceType) type).getSourcePaths(null);
-					if (sourcePaths.length > 0) {
-						sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
-					}
+				String[] sourcePaths= type.getSourcePaths(null);
+				if (sourcePaths != null && sourcePaths.length > 0) {
+					sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
 				}
 				if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
 					sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);

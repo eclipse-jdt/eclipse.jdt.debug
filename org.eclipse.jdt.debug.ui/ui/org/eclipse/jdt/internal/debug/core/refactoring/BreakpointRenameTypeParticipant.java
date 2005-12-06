@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -48,7 +49,13 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
 			destCU = originalCU;
 			affectedContainer = originalType;
 		} else if (originalCU.findPrimaryType().equals(originalType)) {
-			destCU = originalType.getPackageFragment().getCompilationUnit(simpleDestName + ".java"); //$NON-NLS-1$
+			String ext = ".java"; //$NON-NLS-1$
+			// assume extension is same as original
+			IResource res = originalCU.getResource();
+			if (res != null) {
+				ext = '.' + res.getFileExtension();
+			}
+			destCU = originalType.getPackageFragment().getCompilationUnit(simpleDestName + ext);
 			affectedContainer = originalCU;
 		}
 		for (int i = 0; i < markers.length; i++) {

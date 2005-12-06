@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.core.IClassFile;
@@ -27,7 +26,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -95,7 +93,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 				type = ((IJavaArrayType)type).getComponentType();
 			}
 			if (type != null) {
-				source = JavaDebugUtils.resolveType(type.getName(), dbgElement.getLaunch());
+				source = JavaDebugUtils.resolveType(type);
 				if (source == null) {
 					//resort to looking through the workspace projects for the
 					//type as the source locators failed.
@@ -138,7 +136,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * @return type or <code>null</code>
 	 * @throws JavaModelException
 	 */
-	public static IType findTypeInWorkspace(String typeName) throws JavaModelException {
+	public static IType findTypeInWorkspace(String typeName) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IJavaProject[] projects= JavaCore.create(root).getJavaProjects();
 		for (int i= 0; i < projects.length; i++) {
@@ -157,26 +155,12 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * @return The type found, or <code>null<code> if no type found
 	 * The method does not find inner types. Waiting for a Java Core solution
 	 */	
-	private static IType findType(IJavaProject jproject, String fullyQualifiedName) throws JavaModelException {
-		
-		String pathStr= fullyQualifiedName.replace('.', '/') + ".java"; //$NON-NLS-1$
-		IJavaElement jelement= jproject.findElement(new Path(pathStr));
-		if (jelement == null) {
-			// try to find it as inner type
-			String qualifier= Signature.getQualifier(fullyQualifiedName);
-			if (qualifier.length() > 0) {
-				IType type= findType(jproject, qualifier); // recursive!
-				if (type != null) {
-					IType res= type.getType(Signature.getSimpleName(fullyQualifiedName));
-					if (res.exists()) {
-						return res;
-					}
-				}
-			}
-		} else if (jelement.getElementType() == IJavaElement.COMPILATION_UNIT) {
+	private static IType findType(IJavaProject jproject, String fullyQualifiedName) throws CoreException {
+		IJavaElement jelement= JavaDebugUtils.findElement(fullyQualifiedName, jproject);
+		if (jelement instanceof ICompilationUnit) {
 			String simpleName= Signature.getSimpleName(fullyQualifiedName);
 			return ((ICompilationUnit) jelement).getType(simpleName);
-		} else if (jelement.getElementType() == IJavaElement.CLASS_FILE) {
+		} else if (jelement instanceof IClassFile) {
 			return ((IClassFile) jelement).getType();
 		}
 		return null;

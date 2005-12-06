@@ -107,5 +107,38 @@ public interface IJavaReferenceType extends IJavaType {
 	 * @since 3.1
 	 */
     public String getGenericSignature() throws DebugException;
+    
+    /**
+     * Returns the unqualified name of the source file corresponding to this type,
+     * or <code>null</code> if source name debug attribute is not present.
+     * The source name returned is based on this target's default stratum. 
+     * 
+     * @return unqualified source file name or <code>null</code>
+     * @throws DebugException if an exception occurrs retrieving the source name
+     * @since 3.2
+     */
+    public String getSourceName() throws DebugException;
+    
+    /**
+     * Returns the unqualified names of the source files corresponding to this type in
+     * the specified stratum, or <code>null</code> if the source name debug attribute is
+     * not present. 
+     * 
+     * @return unqualified source file names or <code>null</code>
+     * @throws DebugException if an exception occurrs retrieving the source name
+     * @since 3.2
+     */    
+    public String[] getSourceNames(String stratum) throws DebugException;
+    
+    /**
+     * Returns the qualified names of the source files corresponding to this type in
+     * the specified stratum, or <code>null</code> if the source name debug attribute is
+     * not present. 
+     * 
+     * @return qualified source file names or <code>null</code>
+     * @throws DebugException if an exception occurrs retrieving the source name
+     * @since 3.2
+     */       
+    public String[] getSourcePaths(String stratum) throws DebugException;
 	
 }

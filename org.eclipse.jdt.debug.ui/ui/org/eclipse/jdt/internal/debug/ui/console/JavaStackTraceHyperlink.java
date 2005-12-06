@@ -20,6 +20,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
@@ -167,10 +168,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             
             // get File name (w/o .java)
             String typeName = linkText.substring(start + 1, end - 2);
-            int index = typeName.indexOf(".java"); //$NON-NLS-1$
-            if (index >= 0) {
-                typeName = typeName.substring(0, index);
-            }
+            typeName = JavaCore.removeJavaLikeExtension(typeName);
 
             String qualifier = linkText.substring(0, start);
             // remove the method name

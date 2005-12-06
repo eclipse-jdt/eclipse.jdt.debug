@@ -51,6 +51,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
@@ -865,14 +866,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             return null;
         }
         IField field;
-        String declaringType = null;
-        try {
-            declaringType = variable.getDeclaringType().getName();
-        } catch (DebugException x) {
-            JDIDebugUIPlugin.log(x);
-            return null;
-        }
-        IType type = JavaDebugUtils.resolveType(declaringType, variable.getLaunch());
+        IJavaType declaringType = variable.getDeclaringType(); 
+        IType type = JavaDebugUtils.resolveType(declaringType);
         if (type != null) {
             field = type.getField(varName);
             if (field.exists()) {
