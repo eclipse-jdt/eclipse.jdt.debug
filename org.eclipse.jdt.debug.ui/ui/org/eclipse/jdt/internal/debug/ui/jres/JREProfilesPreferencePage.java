@@ -168,7 +168,11 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 			public void selectionChanged(SelectionChangedEvent event) {
 				IExecutionEnvironment env = (IExecutionEnvironment) ((IStructuredSelection)event.getSelection()).getFirstElement();
 				fJREsViewer.setInput(env);
-				fDescription.setText(env.getDescription());
+				String description = env.getDescription();
+				if (description == null) {
+					description = ""; //$NON-NLS-1$
+				}
+				fDescription.setText(description);
 				IVMInstall jre = (IVMInstall) fDefaults.get(env);
 				if (jre != null) {
 					fJREsViewer.setCheckedElements(new Object[]{jre});
