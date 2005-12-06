@@ -393,28 +393,50 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @since 3.2
 	 */
 	protected void copyVM() {
-		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
-		Iterator it = selection.iterator();
-		List newEntries = new ArrayList();
-		while(it.hasNext()){
-			IVMInstall selectedVM = (IVMInstall)it.next();
-			
-			//duplicate & add vm
-			VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
-			standin.setName(MessageFormat.format(JREMessages.InstalledJREsBlock_17, new String[]{selectedVM.getName()}));
+        IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
+        Iterator it = selection.iterator();
 
-			AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), standin);
-			dialog.setTitle(JREMessages.InstalledJREsBlock_18); 
-			if (dialog.open() != Window.OK) {
-				return;
-			}				
-			newEntries.add(standin);
-		}
-		fVMs.addAll(newEntries);
-		fVMList.refresh();
-		fVMList.setSelection(new StructuredSelection(newEntries.toArray()));
-	}
+        ArrayList newEntries = new ArrayList();
+        while (it.hasNext()) {
+            IVMInstall selectedVM = (IVMInstall) it.next();
 
+            // duplicate & add vm
+            VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
+            standin.setName(generateName(selectedVM.getName()));
+            AddVMDialog dialog = new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), standin);
+            dialog.setTitle(JREMessages.InstalledJREsBlock_18);
+            if (dialog.open() != Window.OK) {
+                return;
+            }
+            newEntries.add(standin);
+            fVMs.add(standin);
+        }
+        fVMList.refresh();
+        fVMList.setSelection(new StructuredSelection(newEntries.toArray()));
+    }
+
+	/**
+	 * Compares the given name against current names and adds the appropriate numerical 
+	 * suffix to ensure that it is unique.
+	 * @param name the name with which to ensure uniqueness 
+	 * @return the unique version of the given name
+	 * @since 3.2
+	 */
+	public String generateName(String name){
+            if (!isDuplicateName(name)) {
+                return name;
+            }
+            
+            if (name.matches(".*\\(\\d\\)")) { //$NON-NLS-1$
+                char digit = name.charAt(name.length()-2);
+                int numericValue = Character.getNumericValue(digit);
+                String newName = name.substring(0, name.length()-2) + (numericValue+1) + ")"; //$NON-NLS-1$
+                return generateName(newName);
+            } else {
+                return generateName(name + " (1)"); //$NON-NLS-1$
+            }
+        }
+	
 	/**
 	 * Fire current selection
 	 */
