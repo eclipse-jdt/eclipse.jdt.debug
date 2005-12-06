@@ -2572,34 +2572,6 @@ M4 = Platform-specific fourth key
 		<initializer class="org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer"/>
 	</extension>
 	
-	<!-- Workbench adapters for monitor information -->
-	<extension point="org.eclipse.core.runtime.adapters">
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor">
-            <adapter type="org.eclipse.debug.internal.ui.treeviewer.IPresentationAdapter"/>
-         </factory>
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread">
-            <adapter type="org.eclipse.debug.internal.ui.treeviewer.IPresentationAdapter"/>
-         </factory>
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor">
-			<adapter type="org.eclipse.debug.internal.ui.treeviewer.IPresentationAdapter"/>
-         </factory>
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
-            adaptableType="org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread">
-            <adapter type="org.eclipse.debug.internal.ui.treeviewer.IPresentationAdapter"/>
-         </factory>
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory" 
-            adaptableType="org.eclipse.jdt.debug.core.IJavaThread">
-<adapter type="org.eclipse.debug.internal.ui.treeviewer.IPresentationAdapter"/>
-         </factory>                  
-    </extension>
  <extension
        point="org.eclipse.ui.themes">
     <colorDefinition
