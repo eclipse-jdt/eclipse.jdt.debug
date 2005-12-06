@@ -363,12 +363,14 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 	 */
 	public synchronized void vmAdded(IVMInstall vm) {
-		try {
-			// TODO: progress?
-			List list = analyze(vm, new NullProgressMonitor());
-			fCompatibleEnvironments.put(vm, list);
-		} catch (CoreException e) {
-			LaunchingPlugin.log(e);
+		if (fCompatibleEnvironments != null) {
+			try {
+				// TODO: progress?
+				List list = analyze(vm, new NullProgressMonitor());
+				fCompatibleEnvironments.put(vm, list);
+			} catch (CoreException e) {
+				LaunchingPlugin.log(e);
+			}
 		}
 	}
 
