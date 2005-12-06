@@ -93,7 +93,6 @@ public class LauncherMessages extends NLS {
 	public static String RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3;
 	public static String RuntimeClasspathAdvancedDialog_Select_an_advanced_option__1;
 
-	public static String RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2;
 	public static String RuntimeClasspathEntryLabelProvider_Invalid_path;
 
 	public static String AbstractJavaMainTab_0;

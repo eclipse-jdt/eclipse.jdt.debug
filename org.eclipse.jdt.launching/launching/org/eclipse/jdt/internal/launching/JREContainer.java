@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -145,11 +146,14 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		StringBuffer desc = new StringBuffer(LaunchingMessages.JREContainer_JRE_System_Library_1); 
-		desc.append(" ["); //$NON-NLS-1$
-		desc.append(fVMInstall.getName());
-		desc.append("]"); //$NON-NLS-1$
-		return desc.toString();
+		String environmentId = JavaRuntime.getExecutionEnvironmentId(getPath());
+		String tag = null;
+		if (environmentId == null) {
+			tag = fVMInstall.getName();
+		} else {
+			tag = environmentId;
+		}
+		return MessageFormat.format(LaunchingMessages.JREContainer_JRE_System_Library_1, new String[]{tag});
 	}
 
 	/**

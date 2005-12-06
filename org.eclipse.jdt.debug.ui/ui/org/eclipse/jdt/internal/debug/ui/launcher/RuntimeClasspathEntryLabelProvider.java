@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
 import org.eclipse.jdt.internal.launching.JREContainer;
-import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -178,11 +177,6 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				path = entry.getPath();
 				if (fLaunchConfiguration != null) {
 					try {
-						if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))) {
-							// default JRE - resolve the name for the launch config, rather than using the "workspace" default description
-							IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfiguration);
-							return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_JRE_System_Library___0___2, new String[]{vm.getName()}); 
-						}
 						IJavaProject project = null;
 						try {
 							project = JavaRuntime.getJavaProject(fLaunchConfiguration);
@@ -190,7 +184,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						}
 						if (project == null) {
 							if (path.segmentCount() > 0 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-								IVMInstall vm = JREContainerInitializer.resolveVM(path);
+								IVMInstall vm = JavaRuntime.getVMInstall(path);
 								if (vm != null) {
 									JREContainer container = new JREContainer(vm, path);
 									return container.getDescription();
