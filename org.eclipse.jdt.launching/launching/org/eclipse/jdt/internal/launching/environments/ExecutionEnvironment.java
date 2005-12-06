@@ -34,13 +34,6 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getName()
-	 */
-	public String getName() {
-		return fElement.getAttribute("name"); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getDescription()
 	 */
 	public String getDescription() {

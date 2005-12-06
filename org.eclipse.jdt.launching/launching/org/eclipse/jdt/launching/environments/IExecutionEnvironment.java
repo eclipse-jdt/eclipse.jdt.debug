@@ -29,13 +29,6 @@ public interface IExecutionEnvironment {
 	 * @return unique identifier of this execution environment
 	 */
 	public String getId();
-
-	/**
-	 * Returns a human-readable name for this environment.
-	 * 
-	 * @return name of this environment
-	 */
-	public String getName();
 	
 	/**
 	 * Returns a brief human-readable description of this environment.

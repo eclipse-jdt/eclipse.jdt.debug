@@ -33,6 +33,6 @@ public class ExecutionEnvironmentsLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		return ((IExecutionEnvironment)element).getName();
+		return ((IExecutionEnvironment)element).getId();
 	}
 }

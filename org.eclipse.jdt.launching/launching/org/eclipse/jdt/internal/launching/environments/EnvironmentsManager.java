@@ -398,7 +398,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		initializeCompatibilities();
 		if (!isCompatible(vm, environment)) {
 			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, 
-					MessageFormat.format(EnvironmentMessages.EnvironmentsManager_0, new String[]{environment.getName()}), null);
+					MessageFormat.format(EnvironmentMessages.EnvironmentsManager_0, new String[]{environment.getId()}), null);
 			throw new CoreException(status);
 		}
 		fDefaultVMs.put(environment, vm);

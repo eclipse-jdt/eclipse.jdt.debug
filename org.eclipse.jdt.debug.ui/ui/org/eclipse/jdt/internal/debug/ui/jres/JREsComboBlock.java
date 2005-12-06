@@ -447,7 +447,7 @@ public class JREsComboBlock {
 			public int compare(Object o1, Object o2) {
 				IExecutionEnvironment left = (IExecutionEnvironment)o1;
 				IExecutionEnvironment right = (IExecutionEnvironment)o2;
-				return left.getName().compareToIgnoreCase(right.getName());
+				return left.getId().compareToIgnoreCase(right.getId());
 			}
 
 			public boolean equals(Object obj) {
@@ -460,7 +460,7 @@ public class JREsComboBlock {
 		int i = 0;
 		while (iter.hasNext()) {
 			IExecutionEnvironment env = (IExecutionEnvironment)iter.next();
-			names[i] = env.getName();
+			names[i] = env.getId();
 			i++;
 		}
 		fProfileCombo.setItems(names);
@@ -588,7 +588,7 @@ public class JREsComboBlock {
 					selectEnvironment(environment);
 					IVMInstall[] installs = manager.getVMInstalls(environment);
 					if (installs.length == 0) {
-						setError(MessageFormat.format(JREMessages.JREsComboBlock_7, new String[]{environment.getName()}));
+						setError(MessageFormat.format(JREMessages.JREsComboBlock_7, new String[]{environment.getId()}));
 					}
 				}
 			} else {
