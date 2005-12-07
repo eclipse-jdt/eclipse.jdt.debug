@@ -33,6 +33,12 @@
  	<type name="VMRunnerConfiguration" subclass="false" />
  	<type name="VMStandin" subclass="false" />
  </package>
+ <package name="org.eclipse.jdt.launching.environments">
+ 	<type name="CompatibleEnvironment" subclass="false" />
+ 	<type name="IExecutionEnvironment.java" implement="false" />
+ 	<type name="IExecutionEnvironmentAnalyzerDelegate" />
+ 	<type name="IExecutionEnvironmentsManager" implement="false" />
+ </package>
  <package name="org.eclipse.jdt.launching.sourcelookup">
  	<type name="ArchiveSourceLocation" subclass="false" />
  	<type name="DirectorySourceLocation" subclass="false" />
