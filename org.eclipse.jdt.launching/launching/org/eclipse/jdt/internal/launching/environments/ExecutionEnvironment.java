@@ -107,6 +107,9 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	}
 
 	void add(IVMInstall vm, boolean strictlyCompatible) {
+		if (fCompatibleVMs.contains(vm)) {
+			return;
+		}
 		fCompatibleVMs.add(vm);
 		if (strictlyCompatible) {
 			fStrictlyCompatible.add(vm);
