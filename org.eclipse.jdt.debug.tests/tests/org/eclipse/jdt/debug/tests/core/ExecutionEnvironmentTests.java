@@ -40,12 +40,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 	public void testAnalyze() throws Exception {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		
-		IExecutionEnvironment[] environments = manager.getEnvironments(vm);
-		assertTrue("Should be at least one environmet", environments.length > 0);
-		
+				
 		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
-		IVMInstall[] installs = manager.getVMInstalls(environment);
+		assertNotNull("Missing environment j2se14x", environment);
+		IVMInstall[] installs = environment.getCompatibleVMs();
 		assertTrue("Should be at least one vm install for the environment", installs.length > 0);
 		for (int i = 0; i < installs.length; i++) {
 			IVMInstall install = installs[i];

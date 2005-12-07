@@ -26,15 +26,14 @@ import org.eclipse.jdt.launching.IVMInstall;
 public interface IExecutionEnvironmentAnalyzerDelegate {
 	
 	/**
-	 * Analyzes the given vm install and returns a collection of execution
-	 * environments compatible with it or an empty collection if none.
+	 * Analyzes the given vm install and returns a collection of compatible
+	 * execution environments, possibly empty.
 	 * 
 	 * @param vm vm install to analyze
 	 * @param monitor progress monitor
-	 * @return execution environments compatible with the specified vm install,
-	 *  possibly empty
+	 * @return compatible execution environments, possibly empty
 	 * @throws CoreException if an exception occurrs analyzing the vm install
 	 */
-	public IExecutionEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException;
+	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException;
 
 }

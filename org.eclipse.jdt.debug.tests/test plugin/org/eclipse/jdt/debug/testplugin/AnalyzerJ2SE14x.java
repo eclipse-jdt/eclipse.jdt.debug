@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 
@@ -30,16 +31,20 @@ public class AnalyzerJ2SE14x implements IExecutionEnvironmentAnalyzerDelegate {
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer#analyze(org.eclipse.jdt.launching.IVMInstall,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IExecutionEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
+	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		if (vm instanceof IVMInstall2) {
 			IVMInstall2 vm2 = (IVMInstall2) vm;
 			String javaVersion = vm2.getJavaVersion();
+			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager()
+			.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
 			if (javaVersion.startsWith("1.4")) {
-				return new IExecutionEnvironment[] { JavaRuntime.getExecutionEnvironmentsManager()
-						.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x") };
+				return new CompatibleEnvironment[] { new CompatibleEnvironment(environment, true) };
 			}
+			if (javaVersion.startsWith("1.5")) {
+				return new CompatibleEnvironment[] { new CompatibleEnvironment(environment, false)};
+			}			
 		}
-		return new IExecutionEnvironment[0];
+		return new CompatibleEnvironment[0];
 	}
 
 }

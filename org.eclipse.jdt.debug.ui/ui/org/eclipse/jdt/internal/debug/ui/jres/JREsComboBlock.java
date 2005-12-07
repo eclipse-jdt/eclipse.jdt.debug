@@ -586,7 +586,7 @@ public class JREsComboBlock {
 					setError(MessageFormat.format(JREMessages.JREsComboBlock_6, new String[]{envId}));
 				} else {
 					selectEnvironment(environment);
-					IVMInstall[] installs = manager.getVMInstalls(environment);
+					IVMInstall[] installs = environment.getCompatibleVMs();
 					if (installs.length == 0) {
 						setError(MessageFormat.format(JREMessages.JREsComboBlock_7, new String[]{environment.getId()}));
 					}

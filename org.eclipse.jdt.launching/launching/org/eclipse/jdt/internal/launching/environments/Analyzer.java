@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 
 /**
@@ -36,8 +36,13 @@ class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer#analyze(org.eclipse.jdt.launching.IVMInstall, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IExecutionEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
-		return getDelegate().analyze(vm, monitor);
+	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
+		try {
+			return getDelegate().analyze(vm, monitor);
+		} catch (AbstractMethodError e) {
+			// TODO: remove once PDE catches up with API changes
+			return new CompatibleEnvironment[0];
+		}
 	}
 
 	/**

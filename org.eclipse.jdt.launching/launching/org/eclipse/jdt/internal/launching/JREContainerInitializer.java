@@ -71,11 +71,19 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment environment = manager.getEnvironment(id);
 				if (environment != null) {
-					vm = manager.getDefaultVMInstall(environment);
+					vm = environment.getDefaultVM();
 					if (vm == null) {
-						IVMInstall[] installs = manager.getVMInstalls(environment);
-						if (installs.length > 0) {
-							// take the first is there is no default
+						IVMInstall[] installs = environment.getCompatibleVMs();
+						// take the first strictly compatible vm if there is no default
+						for (int i = 0; i < installs.length; i++) {
+							IVMInstall install = installs[i];
+							if (environment.isStrictlyCompatible(install)) {
+								vm = install;
+								break;
+							}
+						}
+						// use the first vm failing that
+						if (vm == null && installs.length > 0) {
 							vm = installs[0];
 						}
 					}

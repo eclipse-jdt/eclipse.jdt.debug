@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -66,7 +65,7 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return JavaRuntime.getExecutionEnvironmentsManager().getVMInstalls((IExecutionEnvironment)inputElement);
+			return ((IExecutionEnvironment)inputElement).getCompatibleVMs();
 		}
 
 		/* (non-Javadoc)
@@ -110,7 +109,7 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 		IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
 		for (int i = 0; i < environments.length; i++) {
 			IExecutionEnvironment environment = environments[i];
-			IVMInstall install = manager.getDefaultVMInstall(environment);
+			IVMInstall install = environment.getDefaultVM();
 			if (install != null) {
 				fDefaults.put(environment, install);
 			}
@@ -176,6 +175,8 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 				IVMInstall jre = (IVMInstall) fDefaults.get(env);
 				if (jre != null) {
 					fJREsViewer.setCheckedElements(new Object[]{jre});
+				} else {
+					fJREsViewer.setCheckedElements(new Object[0]);
 				}
 			}
 		});
@@ -205,12 +206,7 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 		for (int i = 0; i < environments.length; i++) {
 			IExecutionEnvironment environment = environments[i];
 			IVMInstall vm = (IVMInstall) fDefaults.get(environment);
-			try {
-				manager.setDefaultVMInstall(environment, vm);
-			} catch (CoreException e) {
-				setErrorMessage(e.getMessage());
-				return false;
-			}
+			environment.setDefaultVM(vm);
 		}
 		return super.performOk();
 	}	
