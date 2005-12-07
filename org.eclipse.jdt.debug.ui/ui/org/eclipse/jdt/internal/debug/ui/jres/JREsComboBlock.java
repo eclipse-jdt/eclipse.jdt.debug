@@ -114,14 +114,17 @@ public class JREsComboBlock {
 	/**
 	 * Selected JRE profile radio button
 	 */
-	private Button fProfileButton = null;
+	private Button fEnvironmentsButton = null;
 	
 	/**
 	 * Combo box of JRE profiles
 	 */
-	private Combo fProfileCombo = null;
+	private Combo fEnvironmentsCombo = null;
 	
-	private List fProfiles = new ArrayList();
+	/**
+	 * List of exeuction environments
+	 */
+	private List fEnvironments = new ArrayList();
 	
 	private IStatus fStatus = OK_STATUS;
 	
@@ -209,7 +212,7 @@ public class JREsComboBlock {
 					} else {
 						setStatus(OK_STATUS);
 					}					
-					fProfileCombo.setEnabled(false);
+					fEnvironmentsCombo.setEnabled(false);
 					firePropertyChange();
 				}
 			}
@@ -241,7 +244,7 @@ public class JREsComboBlock {
 				fillWithWorkspaceJREs();
 				fillWithWorkspaceProfiles();
 				restoreCombo(fVMs, prevJRE, fCombo);
-				restoreCombo(fProfiles, prevEnv, fProfileCombo);
+				restoreCombo(fEnvironments, prevEnv, fEnvironmentsCombo);
 				// update text
 				setDefaultJREDescriptor(fDefaultDescriptor);
 				if (isDefaultJRE()) {
@@ -255,18 +258,18 @@ public class JREsComboBlock {
 		
 		fillWithWorkspaceJREs();
 		
-		fProfileButton = new Button(group, SWT.RADIO);
-		fProfileButton.setText(JREMessages.JREsComboBlock_4);
-		fProfileButton.setFont(font);
-		fProfileButton.addSelectionListener(new SelectionAdapter() {
+		fEnvironmentsButton = new Button(group, SWT.RADIO);
+		fEnvironmentsButton.setText(JREMessages.JREsComboBlock_4);
+		fEnvironmentsButton.setFont(font);
+		fEnvironmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (fProfileButton.getSelection()) {
+				if (fEnvironmentsButton.getSelection()) {
 					fCombo.setEnabled(false);
-					if (fProfileCombo.getText().length() == 0 && !fProfiles.isEmpty()) {
-						fProfileCombo.select(0);
+					if (fEnvironmentsCombo.getText().length() == 0 && !fEnvironments.isEmpty()) {
+						fEnvironmentsCombo.select(0);
 					}
-					fProfileCombo.setEnabled(true);
-					if (fProfiles.isEmpty()) {
+					fEnvironmentsCombo.setEnabled(true);
+					if (fEnvironments.isEmpty()) {
 						setError(JREMessages.JREsComboBlock_5);
 					} else {
 						setStatus(OK_STATUS);
@@ -277,15 +280,16 @@ public class JREsComboBlock {
 		});		
 		
 		
-		fProfileCombo = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
-		fProfileCombo.setFont(font);
+		fEnvironmentsCombo = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fEnvironmentsCombo.setFont(font);
 		data= new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 1;
-		fProfileCombo.setLayoutData(data);
+		fEnvironmentsCombo.setLayoutData(data);
 		
-		fProfileCombo.addSelectionListener(new SelectionAdapter() {
+		fEnvironmentsCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				//setJREProfile(getJREProfile());
+				setPath(JavaRuntime.newJREContainerPath(getEnvironment()));
+				firePropertyChange();
 			}
 		});		
 		
@@ -361,9 +365,9 @@ public class JREsComboBlock {
 	private void selectJRE(IVMInstall vm) {
 		fSpecificButton.setSelection(true);
 		fDefaultButton.setSelection(false);
-		fProfileButton.setSelection(false);
+		fEnvironmentsButton.setSelection(false);
 		fCombo.setEnabled(true);
-		fProfileCombo.setEnabled(false);
+		fEnvironmentsCombo.setEnabled(false);
 		int index = fVMs.indexOf(vm);
 		if (index >= 0) {
 			fCombo.select(index);		
@@ -380,11 +384,11 @@ public class JREsComboBlock {
 		fSpecificButton.setSelection(false);
 		fDefaultButton.setSelection(false);
 		fCombo.setEnabled(false);
-		fProfileButton.setSelection(true);
-		fProfileCombo.setEnabled(true);
-		int index = fProfiles.indexOf(env);
+		fEnvironmentsButton.setSelection(true);
+		fEnvironmentsCombo.setEnabled(true);
+		int index = fEnvironments.indexOf(env);
 		if (index >= 0) {
-			fProfileCombo.select(index);		
+			fEnvironmentsCombo.select(index);		
 		}
 		firePropertyChange();
 	}	
@@ -408,9 +412,9 @@ public class JREsComboBlock {
 	 * @return the selected Environment or <code>null</code> if none
 	 */
 	private IExecutionEnvironment getEnvironment() {
-		int index = fProfileCombo.getSelectionIndex();
+		int index = fEnvironmentsCombo.getSelectionIndex();
 		if (index >= 0) {
-			return (IExecutionEnvironment)fProfiles.get(index);
+			return (IExecutionEnvironment)fEnvironments.get(index);
 		}
 		return null;
 	}	
@@ -437,13 +441,13 @@ public class JREsComboBlock {
 	 * Populates the JRE profile combo with profiles defined in the workspace.
 	 */
 	protected void fillWithWorkspaceProfiles() {
-		fProfiles.clear();
+		fEnvironments.clear();
 		IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		for (int i = 0; i < environments.length; i++) {
-			fProfiles.add(environments[i]);
+			fEnvironments.add(environments[i]);
 		}
 		// sort by name
-		Collections.sort(fProfiles, new Comparator() {
+		Collections.sort(fEnvironments, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				IExecutionEnvironment left = (IExecutionEnvironment)o1;
 				IExecutionEnvironment right = (IExecutionEnvironment)o2;
@@ -455,15 +459,15 @@ public class JREsComboBlock {
 			}
 		});
 		// now make an array of names
-		String[] names = new String[fProfiles.size()];
-		Iterator iter = fProfiles.iterator();
+		String[] names = new String[fEnvironments.size()];
+		Iterator iter = fEnvironments.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			IExecutionEnvironment env = (IExecutionEnvironment)iter.next();
 			names[i] = env.getId();
 			i++;
 		}
-		fProfileCombo.setItems(names);
+		fEnvironmentsCombo.setItems(names);
 	}	
 	
 	/**
@@ -517,9 +521,9 @@ public class JREsComboBlock {
 		if (fDefaultDescriptor != null) {
 			fDefaultButton.setSelection(true);
 			fSpecificButton.setSelection(false);
-			fProfileButton.setSelection(false);
+			fEnvironmentsButton.setSelection(false);
 			fCombo.setEnabled(false);
-			fProfileCombo.setEnabled(false);
+			fEnvironmentsCombo.setEnabled(false);
 			firePropertyChange();
 		}
 	}
@@ -547,10 +551,10 @@ public class JREsComboBlock {
 	 * @since 3.2
 	 */
 	public IPath getPath() {
-		if (fProfileButton.getSelection()) {
-			int index = fProfileCombo.getSelectionIndex();
+		if (fEnvironmentsButton.getSelection()) {
+			int index = fEnvironmentsCombo.getSelectionIndex();
 			if (index >= 0) {
-				IExecutionEnvironment env = (IExecutionEnvironment) fProfiles.get(index);
+				IExecutionEnvironment env = (IExecutionEnvironment) fEnvironments.get(index);
 				return JavaRuntime.newJREContainerPath(env);
 			}
 			return null;

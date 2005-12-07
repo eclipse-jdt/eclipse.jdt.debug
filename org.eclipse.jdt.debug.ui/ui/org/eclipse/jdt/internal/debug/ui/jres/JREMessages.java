@@ -121,4 +121,8 @@ public class JREMessages extends NLS {
 	public static String JREProfilesPreferencePage_3;
 
 	public static String JREProfilesPreferencePage_4;
+
+	public static String JREsEnvironmentLabelProvider_0;
+
+	public static String JREsEnvironmentLabelProvider_1;
 }

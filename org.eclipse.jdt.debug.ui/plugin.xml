@@ -1728,7 +1728,7 @@
       </page>
       <page
             category="org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"
-            class="org.eclipse.jdt.internal.debug.ui.jres.JREProfilesPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.jres.ExecutionEnvironmentsPreferencePage"
             id="org.eclipse.jdt.debug.ui.jreProfiles"
             name="%JreProfilesPage.name"/>
    </extension>
