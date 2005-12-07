@@ -34,6 +34,7 @@
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.test.performance"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
+      <import plugin="org.eclipse.jdt.core.manipulation"/>
    </requires>
 
 
