@@ -48,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.2
  */
-public class JREProfilesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class ExecutionEnvironmentsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private TableViewer fProfilesViewer;
 	private CheckboxTableViewer fJREsViewer;
@@ -82,7 +82,7 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 		
 	}
 															
-	public JREProfilesPreferencePage() {
+	public ExecutionEnvironmentsPreferencePage() {
 		super();
 		// only used when page is shown programatically
 		setTitle(JREMessages.JREProfilesPreferencePage_0);	 
@@ -150,8 +150,12 @@ public class JREProfilesPreferencePage extends PreferencePage implements IWorkbe
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fJREsViewer = new CheckboxTableViewer(table);
 		fJREsViewer.setContentProvider(new JREsContentProvider());
-		fJREsViewer.setLabelProvider(new JREsLabelProvider());
-		fJREsViewer.setSorter(new ViewerSorter());
+		fJREsViewer.setLabelProvider(new JREsEnvironmentLabelProvider(new JREsEnvironmentLabelProvider.IExecutionEnvironmentProvider() {		
+			public IExecutionEnvironment getEnvironment() {
+				return (IExecutionEnvironment) fJREsViewer.getInput();
+			}
+		}));
+		fJREsViewer.setSorter(new JREsEnvironmentSorter());
 		
 		label = new Label(container, SWT.NONE);
 		label.setFont(ancestor.getFont());

@@ -1730,7 +1730,9 @@
             category="org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.jres.ExecutionEnvironmentsPreferencePage"
             id="org.eclipse.jdt.debug.ui.jreProfiles"
-            name="%JreProfilesPage.name"/>
+            name="%JreProfilesPage.name">
+         <keywordReference id="%preferenceKeywords.executionEnvironments"/>
+      </page>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
