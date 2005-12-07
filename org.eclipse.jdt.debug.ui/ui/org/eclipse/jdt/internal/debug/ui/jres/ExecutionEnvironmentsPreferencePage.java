@@ -126,18 +126,19 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		container.setLayoutData(gd);
 		container.setFont(ancestor.getFont());
 		
-		Label label = new Label(container, SWT.NONE);
+		Composite eeContainer = new Composite(container, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginWidth = 0;
+		eeContainer.setLayout(layout);
+		eeContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label label = new Label(eeContainer, SWT.NONE);
 		label.setFont(ancestor.getFont());
 		label.setText(JREMessages.JREProfilesPreferencePage_2);
 		label.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 		
-		label = new Label(container, SWT.NONE);
-		label.setFont(ancestor.getFont());
-		label.setText(JREMessages.JREProfilesPreferencePage_3);
-		label.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-		
-		Table table= new Table(container, SWT.BORDER | SWT.SINGLE);
-		table.setLayout(new GridLayout());
+		Table table= new Table(eeContainer, SWT.BORDER | SWT.SINGLE);
+		table.setLayout(layout);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fProfilesViewer = new TableViewer(table);
 		fProfilesViewer.setContentProvider(new ArrayContentProvider());
@@ -145,8 +146,19 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fProfilesViewer.setSorter(new ViewerSorter());
 		fProfilesViewer.setInput(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments());
 		
-		table= new Table(container, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
-		table.setLayout(new GridLayout());
+		Composite jreContainer = new Composite(container, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginWidth = 0;
+		jreContainer.setLayout(layout);
+		jreContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		label = new Label(jreContainer, SWT.NONE);
+		label.setFont(ancestor.getFont());
+		label.setText(JREMessages.JREProfilesPreferencePage_3);
+		label.setLayoutData(new GridData(SWT.FILL, 0, true, false));
+	
+		table= new Table(jreContainer, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
+		table.setLayout(layout);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fJREsViewer = new CheckboxTableViewer(table);
 		fJREsViewer.setContentProvider(new JREsContentProvider());
