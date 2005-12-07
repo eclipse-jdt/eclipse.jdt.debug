@@ -20,14 +20,13 @@ import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.JavaContentAssistInvocationContext;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.TemplateContextType;
-import org.eclipse.swt.graphics.Point;
 
 /**
  * Completion processor for the Java debugger. This completion processor
@@ -126,7 +125,8 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 				localVariableTypeNames[i] = locals[1][i].toCharArray();
 			}
 			
-			configureResultCollector(project, viewer, documentOffset);
+			ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();
+			configureResultCollector(project, selection);	
 			
 			int[] localModifiers= new int[localVariableNames.length];
 			Arrays.fill(localModifiers, 0);
@@ -173,13 +173,10 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 	/**
 	 * Configures the display result collection for the current code assist session
 	 */
-	private void configureResultCollector(IJavaProject project, ITextViewer viewer, int invocationOffset) {
+	private void configureResultCollector(IJavaProject project, ITextSelection selection) {
 		fCollector = new JavaDebugCompletionProposalCollector(project);
-		Point selectedRange= viewer.getSelectedRange();
-		JavaContentAssistInvocationContext context= new JavaContentAssistInvocationContext(viewer, invocationOffset);
-		fCollector.setInvocationContext(context);
-		if (selectedRange.y != 0) {
-			fCollector.setReplacementLength(selectedRange.y);
+		if (selection.getLength() != 0) {
+			fCollector.setReplacementLength(selection.getLength());
 		} 
 	}
 	
