@@ -427,10 +427,12 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
                 return name;
             }
             
-            if (name.matches(".*\\(\\d\\)")) { //$NON-NLS-1$
-                char digit = name.charAt(name.length()-2);
-                int numericValue = Character.getNumericValue(digit);
-                String newName = name.substring(0, name.length()-2) + (numericValue+1) + ")"; //$NON-NLS-1$
+            if (name.matches(".*\\(\\d*\\)")) { //$NON-NLS-1$
+                int start = name.lastIndexOf('(');
+                int end = name.lastIndexOf(')');
+                String stringInt = name.substring(start+1, end);
+                int numericValue = Integer.parseInt(stringInt);
+                String newName = name.substring(0, start+1) + (numericValue+1) + ")"; //$NON-NLS-1$
                 return generateName(newName);
             } else {
                 return generateName(name + " (1)"); //$NON-NLS-1$
