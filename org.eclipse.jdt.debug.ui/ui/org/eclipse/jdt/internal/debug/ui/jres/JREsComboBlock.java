@@ -26,13 +26,13 @@ import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
-import org.eclipse.jdt.internal.debug.ui.launcher.DefineSystemLibraryQuickFix;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -120,6 +120,8 @@ public class JREsComboBlock {
 	 * Combo box of JRE profiles
 	 */
 	private Combo fEnvironmentsCombo = null;
+	
+	private Button fManageEnvironmentsButton = null;
 	
 	/**
 	 * List of exeuction environments
@@ -237,22 +239,8 @@ public class JREsComboBlock {
 		fManageButton = createPushButton(group, JREMessages.JREsComboBlock_2); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				IVMInstall prevJRE = getJRE();
-				IExecutionEnvironment prevEnv = getEnvironment();
-				DefineSystemLibraryQuickFix fix = new DefineSystemLibraryQuickFix();
-				fix.run(null);
-				fillWithWorkspaceJREs();
-				fillWithWorkspaceProfiles();
-				restoreCombo(fVMs, prevJRE, fCombo);
-				restoreCombo(fEnvironments, prevEnv, fEnvironmentsCombo);
-				// update text
-				setDefaultJREDescriptor(fDefaultDescriptor);
-				if (isDefaultJRE()) {
-					// reset in case default has changed
-					setUseDefaultJRE();
-				}
-				setPath(getPath());
-				firePropertyChange();
+				IPreferencePage page = new JREsPreferencePage();
+				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page); //$NON-NLS-1$
 			}
 		});
 		
@@ -293,7 +281,39 @@ public class JREsComboBlock {
 			}
 		});		
 		
+		fManageEnvironmentsButton = createPushButton(group, JREMessages.JREsComboBlock_14);
+		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				IPreferencePage page = new ExecutionEnvironmentsPreferencePage();
+				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles", page); //$NON-NLS-1$
+			}
+		});		
+		
 		fillWithWorkspaceProfiles();
+	}
+	
+	/**
+	 * Opens the given preference page, and updates when closed.
+	 * 
+	 * @param id pref page id
+	 * @param page pref page
+	 */
+	private void showPrefPage(String id, IPreferencePage page) {
+		IVMInstall prevJRE = getJRE();
+		IExecutionEnvironment prevEnv = getEnvironment();
+		JDIDebugUIPlugin.showPreferencePage(id, page); //$NON-NLS-1$
+		fillWithWorkspaceJREs();
+		fillWithWorkspaceProfiles();
+		restoreCombo(fVMs, prevJRE, fCombo);
+		restoreCombo(fEnvironments, prevEnv, fEnvironmentsCombo);
+		// update text
+		setDefaultJREDescriptor(fDefaultDescriptor);
+		if (isDefaultJRE()) {
+			// reset in case default has changed
+			setUseDefaultJRE();
+		}
+		setPath(getPath());
+		firePropertyChange();		
 	}
 	
 	private void restoreCombo(List elements, Object element, Combo combo) {

@@ -58,7 +58,13 @@ import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -483,5 +489,27 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		return fUtilPresentation;
 	}
+	
+	/**
+	 * Displays the given preference page.
+	 * 
+	 * @param id pref page id
+	 * @param page pref page
+	 */
+	public static void showPreferencePage(String id, IPreferencePage page) {
+		final IPreferenceNode targetNode = new PreferenceNode(id, page);
+		
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
+		final boolean [] result = new boolean[] { false };
+		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				result[0]= (dialog.open() == Window.OK);
+			}
+		});		
+	}	
 }
 

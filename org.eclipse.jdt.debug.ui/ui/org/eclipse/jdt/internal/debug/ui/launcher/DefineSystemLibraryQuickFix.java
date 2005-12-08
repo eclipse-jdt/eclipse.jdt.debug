@@ -14,13 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage;
-import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IMarkerResolution;
 
 /**
@@ -37,7 +31,7 @@ public class DefineSystemLibraryQuickFix implements IMarkerResolution {
 	 */
 	public void run(IMarker marker) {
 		IPreferencePage page = new JREsPreferencePage();
-		showPreferencePage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page);	 //$NON-NLS-1$
+		JDIDebugUIPlugin.showPreferencePage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page);	 //$NON-NLS-1$
 	}
 	
 	/**
@@ -47,19 +41,5 @@ public class DefineSystemLibraryQuickFix implements IMarkerResolution {
 		return LauncherMessages.DefineSystemLibraryQuickFix_Create_a_system_library_definition_2; 
 	}
 
-	protected void showPreferencePage(String id, IPreferencePage page) {
-		final IPreferenceNode targetNode = new PreferenceNode(id, page);
-		
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
-		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				result[0]= (dialog.open() == Window.OK);
-			}
-		});		
-	}
+
 }

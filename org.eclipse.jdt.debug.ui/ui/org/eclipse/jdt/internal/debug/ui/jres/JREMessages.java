@@ -125,4 +125,6 @@ public class JREMessages extends NLS {
 	public static String JREsEnvironmentLabelProvider_0;
 
 	public static String JREsEnvironmentLabelProvider_1;
+
+	public static String JREsComboBlock_14;
 }
