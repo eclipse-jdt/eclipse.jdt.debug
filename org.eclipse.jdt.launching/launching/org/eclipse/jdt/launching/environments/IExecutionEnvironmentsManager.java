@@ -14,7 +14,9 @@ package org.eclipse.jdt.launching.environments;
 /**
  * Manager for execution environments. The singleton manager is available
  * via <code>JavaRuntime.getExecutionEnvironmentsManager()</code>.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface IExecutionEnvironmentsManager {

@@ -21,6 +21,9 @@ import org.eclipse.jdt.launching.IVMInstall;
  * the <code>org.eclipse.jdt.launching.executionEnvironments</code> 
  * extension point.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface IExecutionEnvironmentAnalyzerDelegate {

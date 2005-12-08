@@ -13,14 +13,20 @@ package org.eclipse.jdt.launching.environments;
 import org.eclipse.jdt.launching.IVMInstall;
 
 /**
- * An execution environment describes the version and or capabilities of
- * a Java runtime environment or <code>IVMInstall</code>.
+ * An execution environment describes represents capabilities of
+ * a Java runtime environment (<code>IVMInstall</code>).
  * <p>
  * An execution environment is contributed in plug-in XML via the
  * <code>org.eclipse.jdt.launching.executionEnvironments</code> extension
  * point.
  * </p>
+ * <p>
+ * This interface is not intended to be implemented. Clients contributing
+ * execution environments may provide and implement execution environment
+ * analyzer delegates.
+ * </p>
  * @since 3.2
+ * @see IExecutionEnvironmentAnalyzerDelegate
  */
 public interface IExecutionEnvironment {
 	
