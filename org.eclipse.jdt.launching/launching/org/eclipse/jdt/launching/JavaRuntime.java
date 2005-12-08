@@ -1735,7 +1735,8 @@ public final class JavaRuntime {
 	 * path or <code>null</code> if none.
 	 *  
 	 * @param jreContainerPath
-	 * @return
+	 * @return JRE referecend by the specified JRE classpath container
+	 *  path or <code>null</code>
 	 * @since 3.2
 	 */
 	public static IVMInstall getVMInstall(IPath jreContainerPath) {
