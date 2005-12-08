@@ -29,7 +29,6 @@ public class MemberActionFilter implements IActionFilter {
 					try {
 						return Flags.isAbstract(member.getFlags());
 					} catch (JavaModelException e) {
-						JDIDebugUIPlugin.log(e);
 					}
 				}
 				if (value.equals("isRemote")) { //$NON-NLS-1$
