@@ -110,7 +110,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @return ee id
 	 */
 	public static String getExecutionEnvironmentId(IPath path) {
-		return path.segment(2);
+		return path.removeFirstSegments(2).toString();
 	}
 	
 	/**
