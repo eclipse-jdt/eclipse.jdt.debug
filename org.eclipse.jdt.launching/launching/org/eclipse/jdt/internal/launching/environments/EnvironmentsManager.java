@@ -329,9 +329,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 	 */
 	public synchronized void vmRemoved(IVMInstall vm) {
-		ExecutionEnvironment[] environments = (ExecutionEnvironment[]) getExecutionEnvironments();
+		IExecutionEnvironment[] environments = getExecutionEnvironments();
 		for (int i = 0; i < environments.length; i++) {
-			ExecutionEnvironment environment = environments[i];
+			ExecutionEnvironment environment = (ExecutionEnvironment) environments[i];
 			environment.remove(vm);
 		}
 	}
