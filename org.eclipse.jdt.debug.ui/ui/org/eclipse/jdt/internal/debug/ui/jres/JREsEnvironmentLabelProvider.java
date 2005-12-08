@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.resource.JFaceResources;
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Decorates JREs to emphasize those that are strictly compatible with an environment.
@@ -90,7 +92,8 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 					FontData data = fontData[i];
 					data.setStyle(SWT.BOLD);
 				}
-	            fFont = new Font(defaultFont.getDevice(), fontData);
+                Display display = JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay();
+	            fFont = new Font(display, fontData);
 			}
 			return fFont;
 		} else {
