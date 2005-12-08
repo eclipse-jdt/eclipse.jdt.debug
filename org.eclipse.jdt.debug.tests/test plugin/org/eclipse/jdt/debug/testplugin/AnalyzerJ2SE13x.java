@@ -35,6 +35,7 @@ public class AnalyzerJ2SE13x implements IExecutionEnvironmentAnalyzerDelegate {
 		if (vm instanceof IVMInstall2) {
 			IVMInstall2 vm2 = (IVMInstall2) vm;
 			String javaVersion = vm2.getJavaVersion();
+            if (javaVersion != null) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager()
 				.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se13x");
 			if (javaVersion.startsWith("1.3")) {				
@@ -45,7 +46,8 @@ public class AnalyzerJ2SE13x implements IExecutionEnvironmentAnalyzerDelegate {
 			}
 			if (javaVersion.startsWith("1.5")) {
 				return new CompatibleEnvironment[] { new CompatibleEnvironment(environment, false)};
-			}						
+			}
+            }
 		}
 		return new CompatibleEnvironment[0];
 	}
