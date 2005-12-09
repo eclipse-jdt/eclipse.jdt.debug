@@ -73,7 +73,7 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		IProject[] projects = getProjectsForCandidate(candidate);
 		ArrayList mappings = new ArrayList();
 		for(int i = 0; i < projects.length; i++) {
-			if(projects[i].exists() & !mappings.contains(projects[i])) {
+			if(!mappings.contains(projects[i])) {
 				mappings.add(projects[i]);
 			}
 		}
