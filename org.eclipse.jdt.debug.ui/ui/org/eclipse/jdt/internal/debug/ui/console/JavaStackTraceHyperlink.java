@@ -159,7 +159,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	protected String getTypeName(String linkText) throws CoreException {
         int start = linkText.indexOf('(');
-        int end = linkText.indexOf(')');
+        int end = linkText.indexOf(':');
         if (start >= 0 && end > start) {
             //linkText could be something like packageA.TypeB(TypeA.java:45)
             //need to look in packageA.TypeA for line 45 since TypeB is defined
@@ -167,7 +167,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             //Inner classes can be ignored because we're using file and line number
             
             // get File name (w/o .java)
-            String typeName = linkText.substring(start + 1, end - 2);
+            String typeName = linkText.substring(start + 1, end);
             typeName = JavaCore.removeJavaLikeExtension(typeName);
 
             String qualifier = linkText.substring(0, start);
@@ -247,7 +247,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             int regionOffsetInLine = regionOffset - lineOffset;
 
             int linkEnd = line.indexOf(')', regionOffsetInLine);
-            int linkStart = Math.max(line.lastIndexOf(' ', regionOffsetInLine), 0);
+            int linkStart = line.lastIndexOf(' ', regionOffsetInLine);
             
             return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
 		} catch (BadLocationException e) {
