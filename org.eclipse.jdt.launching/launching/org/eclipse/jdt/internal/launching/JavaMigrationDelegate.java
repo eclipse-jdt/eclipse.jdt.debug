@@ -59,7 +59,8 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		if(candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING).equals(EMPTY_STRING)) {
 			return false;
 		}
-		if(candidate.getMappedResources().length > 0) {
+		IResource[] mappedResources = candidate.getMappedResources();
+		if(mappedResources != null && mappedResources.length > 0) {
 			return false;
 		}
 		return true;
