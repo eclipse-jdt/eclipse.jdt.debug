@@ -277,9 +277,23 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
         return false;
 	}
-    
-	/* (non-Javadoc)
+
+	/**
+	 * Method runs the tests defined from extension points for Run As... and Debug As... menu items.
+	 * Currently this test optimisitically considers everything not a source file. In this context we 
+	 * consider an optimistic approach to mean that the test will always return true.
+	 * 
+	 * There are many reasons for the optimistic choice some of them are outlined below.
+	 * <ul>
+	 * <li>Performance (in terms of time neede to display menu) cannot be preserved. To know what to allow
+	 * in any one of the menus we would have to search all of the children of the container to determine what it contains
+	 * and what can be launched by what.</li>
+	 * <li>If inspection of children of containers were done, a user might want to choose a different launch type, even though our tests
+	 * filter it out.</li>
+	 * </ul>
 	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
+	 * @since 3.2
+	 * @return true if the specified tests pass, or the context is a container, false otherwise
 	 */
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		IJavaElement element = null;
