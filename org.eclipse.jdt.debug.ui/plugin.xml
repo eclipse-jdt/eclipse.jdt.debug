@@ -2210,6 +2210,7 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameTypeParticipant"
             name="%JavaBreakpointITypeRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.breakpoint.typeRename">
+            <param name="handlesSimilarDeclarations" value="false"/>
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
