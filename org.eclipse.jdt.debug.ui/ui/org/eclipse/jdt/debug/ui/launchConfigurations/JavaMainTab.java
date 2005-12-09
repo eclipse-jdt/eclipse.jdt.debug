@@ -245,6 +245,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText().trim());
+		mapResources(config);
 		
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
 		if (fStopInMainCheckButton.getSelection()) {

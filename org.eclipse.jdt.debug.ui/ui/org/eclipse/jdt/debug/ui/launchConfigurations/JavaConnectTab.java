@@ -295,6 +295,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, fAllowTerminateButton.getSelection());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, getSelectedConnector().getIdentifier());
+		mapResources(config);
 		Map attrMap = new HashMap(fFieldEditorMap.size());
 		Iterator keys = fFieldEditorMap.keySet().iterator();
 		while (keys.hasNext()) {

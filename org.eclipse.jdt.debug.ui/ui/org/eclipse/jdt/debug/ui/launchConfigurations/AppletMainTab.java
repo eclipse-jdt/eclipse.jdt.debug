@@ -284,6 +284,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText());
+		mapResources(config);
 		performApplyAppletViewerClassName(config);		
 	}
 	

@@ -11,10 +11,12 @@
 
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -198,5 +200,19 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		}
 		fProjText.setText(projectName);
 	}
+	
+	/**
+	 * Maps the config to associdated java project.
+	 * 
+	 * @param config
+	 */
+	protected void mapResources(ILaunchConfigurationWorkingCopy config)  {
+		IJavaProject javaProject = getJavaProject();
+		IResource[] resources = null;
+		if (javaProject != null) {
+			resources = new IResource[]{javaProject.getProject()};
+		}
+		config.setMappedResources(resources);
+	}	
 	
 }//end class
