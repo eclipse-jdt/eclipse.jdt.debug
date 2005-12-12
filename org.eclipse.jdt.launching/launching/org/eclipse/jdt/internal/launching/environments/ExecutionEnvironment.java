@@ -16,8 +16,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 
 /**
@@ -104,6 +115,42 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		}
 		fDefault = vm;
 		EnvironmentsManager.getDefault().updateDefaultVMs();
+		// update classpath containers
+		rebindClasspathContainers();
+	}
+
+	/** 
+	 * Updates Java projects referencing this environment, if any.
+	 */
+	private void rebindClasspathContainers() {
+		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+		if (model != null) {
+			try {
+				List updates = new ArrayList();
+				IJavaProject[] javaProjects = model.getJavaProjects();
+				IPath path = JavaRuntime.newJREContainerPath(this);
+				for (int i = 0; i < javaProjects.length; i++) {
+					IJavaProject project = javaProjects[i];
+					IClasspathEntry[] rawClasspath = project.getRawClasspath();
+					for (int j = 0; j < rawClasspath.length; j++) {
+						IClasspathEntry entry = rawClasspath[j];
+						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+							if (entry.getPath().equals(path)) {
+								updates.add(project);
+							}
+						}
+					}
+				}
+				if (!updates.isEmpty()) {
+					JavaCore.setClasspathContainer(path, 
+							(IJavaProject[]) updates.toArray(new IJavaProject[updates.size()]),
+							new IClasspathContainer[updates.size()],
+							new NullProgressMonitor());
+				}
+			} catch (JavaModelException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
 	}
 
 	void add(IVMInstall vm, boolean strictlyCompatible) {
