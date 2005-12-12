@@ -86,6 +86,7 @@ import org.eclipse.jdt.debug.tests.refactoring.RenamePackageUnitTests;
 import org.eclipse.jdt.debug.tests.refactoring.RenamePublicTypeUnitTests;
 import org.eclipse.jdt.debug.tests.ui.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.ui.ImportBreakpointsTest;
+import org.eclipse.jdt.debug.tests.ui.MigrationDelegateTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -95,6 +96,7 @@ public class AutomatedSuite extends DebugSuite {
 	/**
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
+	 * @return the test
 	 */
 	public static Test suite() {
 		return new AutomatedSuite();
@@ -125,6 +127,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
 		addTest(new TestSuite(PreLaunchBreakpointTest.class)); 
 		addTest(new TestSuite(ImportBreakpointsTest.class));
+		addTest(new TestSuite(MigrationDelegateTests.class));
 		addTest(new TestSuite(BreakpointWorkingSetTests.class));
 		addTest(new TestSuite(StepFilterTests.class));
 
@@ -184,7 +187,6 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RenameNonPublicTypeUnitTests.class));
 		addTest(new TestSuite(RenameCompilationUnitUnitTests.class));
 		addTest(new TestSuite(RenameMethodUnitTests.class));
-		
 		//TODO: project rename
 		//TODO: package move
 		// most refactoring tests are disabled pending bug fixes in breakpoint refactoring

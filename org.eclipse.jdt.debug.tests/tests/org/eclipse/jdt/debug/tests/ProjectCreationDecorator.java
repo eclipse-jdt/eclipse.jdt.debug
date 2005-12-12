@@ -188,22 +188,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
     }
 
     /**
-     * Creates a shared launch configuration for the type with the given name.
-     */
-    protected void createLaunchConfiguration(String mainTypeName) throws Exception {
-        ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-        ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), mainTypeName);
-        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
-        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
-        // use 'java' instead of 'javaw' to launch tests (javaw is problematic
-        // on JDK1.4.2)
-        Map map = new HashMap(1);
-        map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
-        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
-        config.doSave();
-    }
-
-    /**
      * Set up preferences that need to be changed for the tests
      */
     public void testSetPreferences() {
