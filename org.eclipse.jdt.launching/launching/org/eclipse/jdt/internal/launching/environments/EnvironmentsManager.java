@@ -36,6 +36,7 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -313,6 +314,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 */
 	public synchronized void vmChanged(PropertyChangeEvent event) {
 		IVMInstall vm = (IVMInstall) event.getSource();
+		if (vm instanceof VMStandin) {
+			return;
+		}
 		vmRemoved(vm);
 		vmAdded(vm);
 	}
@@ -322,6 +326,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 */
 	public synchronized void vmAdded(IVMInstall vm) {
 		// TODO: progress reporting?
+		if (vm instanceof VMStandin) {
+			return;
+		}
 		analyze(vm, new NullProgressMonitor());
 	}
 
@@ -329,6 +336,9 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 	 */
 	public synchronized void vmRemoved(IVMInstall vm) {
+		if (vm instanceof VMStandin) {
+			return;
+		}
 		IExecutionEnvironment[] environments = getExecutionEnvironments();
 		for (int i = 0; i < environments.length; i++) {
 			ExecutionEnvironment environment = (ExecutionEnvironment) environments[i];
