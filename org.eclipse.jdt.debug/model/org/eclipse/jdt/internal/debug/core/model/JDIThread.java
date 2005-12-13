@@ -260,7 +260,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} 
 		
 		try {
-			setRunning(!getUnderlyingThread().isSuspended());
+			boolean suspended = getUnderlyingThread().isSuspended();
+			if (suspended) {
+				// Unless we're at a breakpoint, set status to running. The thread state
+				// will be properly updated to suspended in the case that a breakpoint
+				// is hit. Otherwise this is likely just a transient suspend state (for
+				// example, a breakpoint is handling a class prepare event quietly).
+				// See bug 120385
+				suspended = getBreakpoints().length > 0;
+			}
+			setRunning(!suspended);
 		} catch (VMDisconnectedException e) {
 			disconnected();
 			return;
@@ -291,7 +300,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
 	 */
-	public IBreakpoint[] getBreakpoints() {
+	public synchronized IBreakpoint[] getBreakpoints() {
 		return (IBreakpoint[])fCurrentBreakpoints.toArray(new IBreakpoint[fCurrentBreakpoints.size()]);
 	}
 
