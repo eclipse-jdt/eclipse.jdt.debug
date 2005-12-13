@@ -217,12 +217,12 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getDescription(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
 	public String getDescription(IPath containerPath, IJavaProject project) {
-		if (containerPath.segmentCount() == 3) {
-			StringBuffer desc = new StringBuffer(LaunchingMessages.JREContainer_JRE_System_Library_1); 
-			desc.append(" ["); //$NON-NLS-1$
-			desc.append(containerPath.segment(2));
-			desc.append("]"); //$NON-NLS-1$
-			return desc.toString();
+		String tag = getExecutionEnvironmentId(containerPath);
+		if (tag == null && containerPath.segmentCount() > 2) {
+			tag = getVMName(containerPath);
+		}
+		if (tag != null) {
+			return MessageFormat.format(LaunchingMessages.JREContainer_JRE_System_Library_1, new String[]{tag});
 		} 
 		return LaunchingMessages.JREContainerInitializer_Default_System_Library_1; 
 	}
