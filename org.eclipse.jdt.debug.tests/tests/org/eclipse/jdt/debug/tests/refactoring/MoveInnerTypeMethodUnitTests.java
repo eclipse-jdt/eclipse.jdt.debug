@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
@@ -34,7 +33,7 @@ import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
  * A set of tests which moves a CompilationUnit and verifies if 
  * various breakpoints associated with that C.U. were moved. 
  */
-public class MoveInnerTypeMethodUnitTests extends AbstractDebugTest {
+public class MoveInnerTypeMethodUnitTests extends AbstractRefactoringDebugTest {
 
 	public MoveInnerTypeMethodUnitTests(String name) {
 		super(name);
@@ -136,13 +135,5 @@ public class MoveInnerTypeMethodUnitTests extends AbstractDebugTest {
 
 		//RefactoringCore.getUndoManager().flush();
 	}
-		
-	/**
-	 * Replaces the Movee.java file with a clean copy with which to continue tests 
-	 * from a src file.
-	 */
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
+
 }

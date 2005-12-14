@@ -19,14 +19,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class PushDownMethodUnitTests extends AbstractDebugTest{
+public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 
 	public PushDownMethodUnitTests(String name) {
 		super(name);
@@ -101,10 +100,5 @@ public class PushDownMethodUnitTests extends AbstractDebugTest{
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
-	
+
 }

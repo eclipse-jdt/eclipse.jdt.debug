@@ -16,7 +16,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.code.IntroduceParameterRefactoring;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -26,7 +25,7 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class IntroduceParameterUnitTests extends AbstractDebugTest{
+public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 
 	public IntroduceParameterUnitTests(String name) {
 		super(name);
@@ -137,10 +136,5 @@ public class IntroduceParameterUnitTests extends AbstractDebugTest{
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
 	
 }

@@ -17,14 +17,13 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class PushDownFieldUnitTests extends AbstractDebugTest{
+public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 
 	public PushDownFieldUnitTests(String name) {
 		super(name);
@@ -74,10 +73,5 @@ public class PushDownFieldUnitTests extends AbstractDebugTest{
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
-	
+
 }

@@ -20,14 +20,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.structure.ChangeSignatureRefactoring;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class ChangeMethodSignatureUnitTests extends AbstractDebugTest{
+public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest {
 
 	public ChangeMethodSignatureUnitTests(String name) {
 		super(name);
@@ -205,10 +204,5 @@ public class ChangeMethodSignatureUnitTests extends AbstractDebugTest{
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
 	
 }

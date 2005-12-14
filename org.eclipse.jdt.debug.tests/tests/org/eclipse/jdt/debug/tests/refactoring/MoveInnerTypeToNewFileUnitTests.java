@@ -19,7 +19,6 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.structure.MoveInnerToTopRefactoring;
 import org.eclipse.jdt.internal.ui.preferences.JavaPreferencesSettings;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
@@ -27,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class MoveInnerTypeToNewFileUnitTests extends AbstractDebugTest{
+public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTest {
 
 	private static final Class clazz= MoveInnerTypeToNewFileUnitTests.class;
 	private static final String REFACTORING_PATH= "MoveInnerToTopLevel/";
@@ -147,11 +146,6 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractDebugTest{
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
 	
 }
 

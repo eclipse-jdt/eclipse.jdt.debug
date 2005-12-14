@@ -21,14 +21,13 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.code.ConvertAnonymousToNestedRefactoring;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractDebugTest{
+public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefactoringDebugTest {
 
 	public ConvertNonPublicAnonymousTypeToNestedUnitTests(String name) {
 		super(name);
@@ -194,10 +193,5 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractDebu
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
 	
 }

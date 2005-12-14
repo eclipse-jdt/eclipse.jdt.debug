@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -22,14 +21,13 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.code.ConvertAnonymousToNestedRefactoring;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractDebugTest{
+public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactoringDebugTest {
 
 	public ConvertInnerAnonymousTypeToNestedUnitTests(String name) {
 		super(name);
@@ -194,27 +192,5 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractDebugTes
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		//cleanup Movee
-		IFile target = getJavaProject().getProject().getFile("src/a/b/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);		
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile("src/a/b/c/MoveeSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-		
-		//cleanup child
-		target = getJavaProject().getProject().getFile("src/a/b/c/MoveeChild.java");//move up a dir
-		if(target.exists())
-			target.delete(false, false, null);
-		//get original source & replace old result
-		source = getJavaProject().getProject().getFile("src/a/b/c/MoveeChildSource");//no .java - it's a bin
-		source.copy(target.getFullPath(), false, null );
-	}
 	
 }

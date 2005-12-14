@@ -18,14 +18,13 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.structure.ChangeSignatureRefactoring;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractDebugTest{
+public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractRefactoringDebugTest {
 
 	public ChangeAnonymousTypeMethodSignatureUnitTests(String name) {
 		super(name);
@@ -96,10 +95,5 @@ public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractDebugTe
 		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
 		waitForBuild();
 	}	
-	
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
-	}
 	
 }

@@ -22,7 +22,6 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameTypeProcessor;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
@@ -31,16 +30,10 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
-public class RenamePublicTypeUnitTests extends AbstractDebugTest{
+public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 
 	public RenamePublicTypeUnitTests(String name) {
 		super(name);
-	}
-
-
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 
 	protected final void performRefactor(final Refactoring refactoring) throws Exception {

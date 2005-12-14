@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameNonVirtualMethodProcessor;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
@@ -28,15 +27,10 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
-public class RenameMethodUnitTests extends AbstractDebugTest{
+public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 
 	public RenameMethodUnitTests(String name) {
 		super(name);
-	}
-
-	protected void cleanTestFiles() throws Exception
-	{
-		new FileCleaner(null).cleanTestFiles();//ensure proper packages
 	}
 
 	protected final void performRefactor(final Refactoring refactoring) throws Exception {
