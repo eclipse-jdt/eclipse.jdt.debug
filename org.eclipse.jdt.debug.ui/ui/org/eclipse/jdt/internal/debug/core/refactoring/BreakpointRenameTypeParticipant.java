@@ -45,10 +45,11 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
 		ICompilationUnit originalCU = originalType.getCompilationUnit();
 		ICompilationUnit destCU = null;
 		IJavaElement affectedContainer = null;
-		if (originalType.isMember() || !(originalCU.findPrimaryType().equals(originalType))) {
+		IType primaryType = originalCU.findPrimaryType();
+		if (originalType.isMember() || primaryType==null || !primaryType.equals(originalType)) {
 			destCU = originalCU;
 			affectedContainer = originalType;
-		} else if (originalCU.findPrimaryType().equals(originalType)) {
+		} else if (primaryType.equals(originalType)) {
 			String ext = ".java"; //$NON-NLS-1$
 			// assume extension is same as original
 			IResource res = originalCU.getResource();
