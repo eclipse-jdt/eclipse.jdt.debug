@@ -18,6 +18,8 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -37,7 +39,7 @@ public class CurrentValueContext extends CurrentFrameContext {
      */
     public IType getType() throws CoreException {
     	IJavaValue value = resolveValue();
-    	if (value == null) {
+    	if (value == null || value instanceof IJavaPrimitiveValue) {
     		// no object selected, use the frame
     		return super.getType();
     	}
@@ -113,6 +115,8 @@ public class CurrentValueContext extends CurrentFrameContext {
 		if (value instanceof IJavaArray) {
 			// do a song and dance to fake 'this' as an array receiver
 			return new String[][]{new String[] {ArrayRuntimeContext.ARRAY_THIS_VARIABLE}, new String[] {value.getJavaType().getName()}};
+		} else if (value instanceof IJavaObject) {
+			return new String[][]{};
 		}
 		return super.getLocalVariables();
 	}
@@ -126,6 +130,17 @@ public class CurrentValueContext extends CurrentFrameContext {
 			return ASTEvaluationEngine.replaceThisReferences(snippet);
 		}
 		return super.getSnippet(snippet);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext#isStatic()
+	 */
+	public boolean isStatic() throws CoreException {
+		IJavaValue value = resolveValue();
+		if (value instanceof IJavaObject) {
+			return false;
+		}
+		return super.isStatic();
 	}
 
     
