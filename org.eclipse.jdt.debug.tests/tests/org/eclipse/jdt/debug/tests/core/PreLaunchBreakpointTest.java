@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
+import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,41 +28,26 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class PreLaunchBreakpointTest extends AbstractDebugTest {
 	
-	private boolean debugAdded = false;
-	private boolean runRemoved = false;
-	
-	ILaunchConfiguration configuration;
-	String sourceName;
-	
 	public PreLaunchBreakpointTest(String name) {
 		super(name);
-		sourceName = name;
 	}
 	
-	public void testRunModeLaunchWithBreakpoints() {
+	public void testRunModeLaunchWithBreakpoints() throws Exception {
 		String typeName = "Breakpoints";		
 		
-		configuration = getLaunchConfiguration(typeName);
-		getLaunchManager().addLaunchListener(new MyListener());
+		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		
 		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.ALWAYS);
-		
+		IJavaThread thread = null;
 		try {
-			createTargetPatternBreakpoint(77, sourceName);
-			
-			DebugUITools.buildAndLaunch(configuration, ILaunchManager.RUN_MODE, new NullProgressMonitor());
-			
-			synchronized (this) {
-				if (!debugAdded) {
-					try {
-						wait();
-					} catch (InterruptedException e) {
-					}
-				}
-			}
-			assertFalse("RUN_MODE Launch should never have been added", runRemoved);
-			assertTrue("DEBUG_MODE Launch should have been added", debugAdded);
+			createLineBreakpoint(52, typeName);
+			DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
+			waiter.setTimeout(DEFAULT_TIMEOUT);
+			ILaunch launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+			Object suspendee= waiter.waitForEvent();
+			assertTrue("Program did not suspend", suspendee instanceof IJavaThread);
+			thread = (IJavaThread) suspendee;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,44 +55,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 			removeAllBreakpoints();
 			//this must get done... other tests might fail.
 			preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
-		}
-	}
-	
-	private class MyListener implements ILaunchesListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-		 */
-		public void launchesRemoved(ILaunch[] launches) {
-			synchronized (PreLaunchBreakpointTest.this) {
-				for (int i = 0; i < launches.length; i++) {
-					ILaunchConfiguration goneAway = launches[i].getLaunchConfiguration();
-					if (goneAway.equals(configuration) && launches[i].getLaunchMode().equals(ILaunchManager.RUN_MODE)) {
-						runRemoved = true;
-						PreLaunchBreakpointTest.this.notify();
-					}
-				}
-			}
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-		 */
-		public void launchesAdded(ILaunch[] launches) {
-			synchronized (PreLaunchBreakpointTest.this) {
-				for (int i = 0; i < launches.length; i++) {
-					ILaunchConfiguration newLC = launches[i].getLaunchConfiguration();
-					if (newLC.equals(configuration) && launches[i].getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
-						debugAdded = true;
-						PreLaunchBreakpointTest.this.notify();
-					}
-				}
-			}
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-		 */
-		public void launchesChanged(ILaunch[] launches) {
+			terminateAndRemove(thread);
 		}
 	}
 }
