@@ -11,8 +11,6 @@
 package org.eclipse.jdt.debug.tests;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -27,8 +25,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -40,13 +36,14 @@ import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -72,7 +69,13 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
             public void run() {
                 IWorkbench workbench = PlatformUI.getWorkbench();
                 IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
-                workbench.getActiveWorkbenchWindow().getActivePage().setPerspective(descriptor);
+                IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+				activePage.setPerspective(descriptor);
+				// hide variables and breakpoints view to reduce simaltaneous conflicting requests on debug targets
+                IViewReference ref = activePage.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
+                activePage.hideView(ref);
+                ref = activePage.findViewReference(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+                activePage.hideView(ref);
             }
         });
     }
