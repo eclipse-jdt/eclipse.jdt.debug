@@ -252,17 +252,15 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
 		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstall#getVMArgs()
-	 */
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.launching.IVMInstall2#getVMArgs()
+     */
     public String getVMArgs() {
         return fVMArgs;
     }
     
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jdt.launching.IVMInstall#setVMArgs(java.lang.String)
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.launching.IVMInstall2#setVMArgs(java.lang.String)
      */
     public void setVMArgs(String vmArgs) {
         if (fVMArgs == null) {
@@ -283,7 +281,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
     
     /* (non-Javadoc)
      * Subclasses should override.
-     * @see org.eclipse.jdt.launching.IVMInstall#getJavaVersion()
+     * @see org.eclipse.jdt.launching.IVMInstall2#getJavaVersion()
      */
     public String getJavaVersion() {
         return null;
