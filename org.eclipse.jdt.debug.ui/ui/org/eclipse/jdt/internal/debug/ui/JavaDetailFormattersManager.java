@@ -162,7 +162,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					return;
 				}
 			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
+				listener.detailComputed(value, e.toString());
 				return;
 			}
 		}
