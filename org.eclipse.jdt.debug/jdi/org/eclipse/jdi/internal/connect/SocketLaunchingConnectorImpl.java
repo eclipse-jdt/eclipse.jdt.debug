@@ -13,6 +13,7 @@ package org.eclipse.jdi.internal.connect;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.net.ServerSocket;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -142,7 +143,8 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		// Note that port number zero means that a free port is chosen.
 		SocketListeningConnectorImpl listenConnector = new SocketListeningConnectorImpl(virtualMachineManager());
 		Map args = listenConnector.defaultArguments();
-		((Connector.IntegerArgument)args.get("port")).setValue(0); //$NON-NLS-1$
+		int port = findFreePort();
+		((Connector.IntegerArgument)args.get("port")).setValue(port); //$NON-NLS-1$
 		((Connector.IntegerArgument)args.get("timeout")).setValue(ACCEPT_TIMEOUT); //$NON-NLS-1$
 		listenConnector.startListening(args);
 		
@@ -177,4 +179,27 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		virtualMachine.setLaunchedProcess(proc);
 		return virtualMachine;
 	}
+	
+	/**
+	 * Returns a free port number on localhost, or -1 if unable to find a free port.
+	 * 
+	 * @return a free port number on localhost, or -1 if unable to find a free port
+	 * @since 3.2
+	 */
+	public static int findFreePort() {
+		ServerSocket socket= null;
+		try {
+			socket= new ServerSocket(0);
+			return socket.getLocalPort();
+		} catch (IOException e) { 
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return -1;		
+	}		
 }

@@ -103,11 +103,11 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 */
 	public String startListening(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
-		String result = ConnectMessages.SocketListeningConnectorImpl_ListeningConnector_Socket_Port + fPort; 
+		String result = Integer.toString(fPort); 
 		try {
 			((SocketTransportImpl)fTransport).startListening(fPort);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalConnectorArgumentsException(e.getMessage(), "port"); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketListeningConnectorImpl_ListeningConnector_Socket_Port, "port"); //$NON-NLS-1$
 		}
 		return result;
 	}
