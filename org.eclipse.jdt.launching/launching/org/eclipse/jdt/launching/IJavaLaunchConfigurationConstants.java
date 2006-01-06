@@ -121,7 +121,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * by a VM install type, via the <code>ATTR_VM_INSTALL_TYPE</code>
 	 * attribute. When unspecified, the default VM is used.
 	 * 
-	 * @deprecated use <code>ATTR_JRE_CONATAINER_PATH</code>
+	 * @deprecated use <code>ATTR_JRE_CONTAINER_PATH</code>
 	 */
 	public static final String ATTR_VM_INSTALL_NAME = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_NAME"; //$NON-NLS-1$
 		
@@ -132,7 +132,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * The associated VM install name is specified via the attribute
 	 * <code>ATTR_VM_INSTALL_NAME</code>.
 	 * 
-	 * @deprecated use <code>ATTR_JRE_CONATAINER_PATH</code>
+	 * @deprecated use <code>ATTR_JRE_CONTAINER_PATH</code>
 	 */
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	
