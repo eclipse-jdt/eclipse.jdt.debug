@@ -672,11 +672,17 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			throws CoreException {
 		IPath path = getWorkingDirectoryPath(configuration);
 		if (path == null) {
-			// default working dir is the project if this config has a project
-			IJavaProject jp = getJavaProject(configuration);
-			if (jp != null) {
-				IProject p = jp.getProject();
-				return p.getLocation().toFile();
+			File dir = getDefaultWorkingDirectory(configuration);
+			if (dir != null) {
+				if (!dir.isDirectory()) {
+					abort(
+							MessageFormat.format(
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
+									new String[]{path.toString()}),
+									null,
+									IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
+				}
+				return dir;
 			}
 		} else {
 			if (path.isAbsolute()) {
@@ -954,6 +960,26 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			if (paths.length > 0) {
 				return paths;
 			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the default working directory for the given launch configuration,
+	 * or <code>null</code> if none. Subclasses may override as neccessary.
+	 * 
+	 * @param configuration
+	 * @return default working directory or <code>null</code> if none
+	 * @throws CoreException if an exception occurrs computing the default working
+	 * 	 directory
+	 * @since 3.2
+	 */
+	protected File getDefaultWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		// default working dir is the project if this config has a project
+		IJavaProject jp = getJavaProject(configuration);
+		if (jp != null) {
+			IProject p = jp.getProject();
+			return p.getLocation().toFile();
 		}
 		return null;
 	}

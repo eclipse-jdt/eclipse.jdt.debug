@@ -19,16 +19,13 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
@@ -291,42 +288,6 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#verifyWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
-		IPath path = getWorkingDirectoryPath(configuration);
-		if (path == null) {
-			// default working dir for applets is the project's output directory
-			String outputDir = JavaRuntime.getProjectOutputDirectory(configuration);
-			if (outputDir == null) {
-				// if no project attribute, default to eclipse directory
-				return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
-			}
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(outputDir);
-			if (resource == null || !resource.exists()) {
-				//default to eclipse directory
-				return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
-			}
-			return resource.getLocation().toFile(); 
-		} 
-		if (path.isAbsolute()) {
-			File dir = new File(path.toOSString());
-			if (dir.isDirectory()) {
-				return dir;
-			} 
-			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
-		} else {
-			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			if (res instanceof IContainer && res.exists()) {
-				return res.getLocation().toFile();
-			} 
-			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
-		}
-		// cannot return null - an exception will be thrown
-		return null;		
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
@@ -374,4 +335,24 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	protected String getAppletMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		return super.getMainTypeName(configuration);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getDefaultWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	protected File getDefaultWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		// default working dir for applets is the project's output directory
+		String outputDir = JavaRuntime.getProjectOutputDirectory(configuration);
+		if (outputDir == null) {
+			// if no project attribute, default to eclipse directory
+			return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
+		}
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(outputDir);
+		if (resource == null || !resource.exists()) {
+			//default to eclipse directory
+			return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
+		}
+		return resource.getLocation().toFile(); 
+	}
+	
+	
 }

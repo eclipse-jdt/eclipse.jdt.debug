@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.JavaRuntime;
 
  
@@ -21,8 +22,8 @@ public class AppletWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	protected void setDefaultWorkingDir() {
 		String outputDir = JavaRuntime.getProjectOutputDirectory(getLaunchConfiguration());
 		if (outputDir != null) {
-			//bug 29565
-			setOtherWorkingDirectoryText(outputDir);
+			outputDir = new Path(outputDir).makeRelative().toOSString();
+			setDefaultWorkingDirectoryText("${workspace_loc:"  + outputDir + "}");  //$NON-NLS-1$//$NON-NLS-2$
 		} else {
 			super.setDefaultWorkingDir();
 		}		
