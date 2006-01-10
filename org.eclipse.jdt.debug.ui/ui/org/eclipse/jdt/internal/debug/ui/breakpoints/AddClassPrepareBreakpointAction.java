@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -36,11 +34,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -99,29 +93,16 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	                            JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), finalKind, finalStart, finalEnd, true, map);
 	                            return Status.OK_STATUS;
 	                        } catch (CoreException e) {
-	                            JDIDebugUIPlugin.log(e);
+	                            return e.getStatus();
 	                        }
-	                        return Status.CANCEL_STATUS;
 	                    }
 	
 	                }.schedule();
 	            }
 	        }
-	        Runnable r = new Runnable() {
-	            public void run() {
-	                IViewPart part = JDIDebugUIPlugin.getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-	                if (part instanceof IDebugView) {
-	                    Viewer viewer = ((IDebugView) part).getViewer();
-	                    if (viewer instanceof StructuredViewer) {
-	                        StructuredViewer sv = (StructuredViewer) viewer;
-	                        sv.setSelection(new StructuredSelection(selection), true);
-	                    }
-	                }
-	            }
-	        };
-	        JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
-	    	}
-    	catch(CoreException e) {JDIDebugUIPlugin.log(e);}
+	    } catch(CoreException e) {
+	    	JDIDebugUIPlugin.errorDialog(BreakpointMessages.AddClassPrepareBreakpointAction_3, e.getStatus());
+	    }
     }
     
     /* (non-Javadoc)
