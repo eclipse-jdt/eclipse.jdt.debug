@@ -11,17 +11,43 @@
 package org.eclipse.jdt.launching;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 /**
  * Abstract implementation of a VM install.
  * <p>
  * Clients implementing VM installs must subclass this class.
  * </p>
  */
-public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
+public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMInstall3 {
 
 	private IVMInstallType fType;
 	private String fId;
@@ -32,6 +58,44 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
 	private String fVMArgs;
 	// whether change events should be fired
 	private boolean fNotify = true;
+	
+	private class PropertiesEventListener implements IDebugEventSetListener {
+		
+		private IProcess fProcess;
+		private ILaunch fLaunch;
+		private Object fLock;
+		
+		PropertiesEventListener(ILaunch launch, Object lock) {
+			fLaunch = launch;
+			fLock = lock;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+		 */
+		public void handleDebugEvents(DebugEvent[] events) {
+			for (int i = 0; i < events.length; i++) {
+				DebugEvent event = events[i];
+				if (event.getSource() instanceof IProcess) {
+					IProcess process = (IProcess) event.getSource();
+					if (fLaunch.equals(process.getLaunch())) {
+						if (event.getKind() == DebugEvent.TERMINATE) {
+							synchronized (fLock) {
+								fProcess = process;
+								fLock.notifyAll();
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		
+		public IProcess getProcess() {
+			return fProcess;
+		}
+		
+	}
 	
 	/**
 	 * Constructs a new VM install.
@@ -286,4 +350,108 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2 {
     public String getJavaVersion() {
         return null;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall3#evaluateSystemProperties(java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public Map evaluateSystemProperties(String[] properties, IProgressMonitor monitor) throws CoreException {
+		//locate the launching support jar - it contains the main program to run
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		Map map = new HashMap();
+		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
+		if (file.exists()) {
+			VMRunnerConfiguration config = new VMRunnerConfiguration("org.eclipse.jdt.internal.launching.support.SystemProperties", new String[]{file.getAbsolutePath()}); //$NON-NLS-1$
+			IVMRunner runner = getVMRunner(ILaunchManager.RUN_MODE);
+			if (runner == null) {
+				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			}
+			config.setProgramArguments(properties);
+			Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
+			Object lock = new Object();
+			PropertiesEventListener listener = new PropertiesEventListener(launch, lock);
+			DebugPlugin.getDefault().addDebugEventListener(listener);
+			if (monitor.isCanceled()) {
+				return map;
+			}
+			monitor.beginTask(LaunchingMessages.AbstractVMInstall_1, 2);
+			runner.run(config, launch, monitor);
+			try {
+				synchronized (lock) {
+					if (listener.getProcess() == null) {
+						try {
+							lock.wait(JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT));
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+			} finally {
+				if (!launch.isTerminated()) {
+					launch.terminate();
+				}
+			}
+			monitor.worked(1);
+			IProcess process = listener.getProcess();
+			if (process == null) {
+				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			}
+			if (monitor.isCanceled()) {
+				return map;
+			}
+			monitor.subTask(LaunchingMessages.AbstractVMInstall_3);
+			IStreamsProxy streamsProxy = process.getStreamsProxy();
+			String text = null;
+			if (streamsProxy != null) {
+				text = streamsProxy.getOutputStreamMonitor().getContents();
+			}
+			if (text != null && text.length() > 0) {
+				try {
+					DocumentBuilder parser = LaunchingPlugin.getParser();
+					Document document = parser.parse(new ByteArrayInputStream(text.getBytes()));
+					Element envs = document.getDocumentElement();
+					NodeList list = envs.getChildNodes();
+					int length = list.getLength();
+					for (int i = 0; i < length; ++i) {
+						Node node = list.item(i);
+						short type = node.getNodeType();
+						if (type == Node.ELEMENT_NODE) {
+							Element element = (Element) node;
+							if (element.getNodeName().equals("property")) { //$NON-NLS-1$
+								String name = element.getAttribute("name"); //$NON-NLS-1$
+								String value = element.getAttribute("value"); //$NON-NLS-1$
+								map.put(name, value);
+							}
+						}
+					}			
+				} catch (SAXException e) {
+					abort(LaunchingMessages.AbstractVMInstall_4, e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				} catch (IOException e) {
+					abort(LaunchingMessages.AbstractVMInstall_4, e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				}
+			} else {
+				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			}
+			monitor.worked(1);
+			monitor.done();
+		}
+		return map;
+	}
+	
+	/**
+	 * Throws a core exception with an error status object built from the given
+	 * message, lower level exception, and error code.
+	 * 
+	 * @param message the status message
+	 * @param exception lower level exception associated with the error, or
+	 *            <code>null</code> if none
+	 * @param code error code
+	 * @throws CoreException the "abort" core exception
+	 * @since 3.2
+	 */
+	protected void abort(String message, Throwable exception, int code) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin
+				.getUniqueIdentifier(), code, message, exception));
+	}	
+    
 }

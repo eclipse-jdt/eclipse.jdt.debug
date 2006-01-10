@@ -188,4 +188,13 @@ public class LaunchingMessages extends NLS {
 	}
 
     public static String SocketAttachConnector_0;
+
+	public static String AbstractVMInstall_0;
+
+	public static String AbstractVMInstall_1;
+
+	public static String AbstractVMInstall_3;
+
+	public static String AbstractVMInstall_4;
+
 }
