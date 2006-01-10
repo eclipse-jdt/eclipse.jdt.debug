@@ -120,7 +120,7 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 		IDocument sourceCUnit = new Document(cunit.getSource());
 		IRegion lineInfo = sourceCUnit.getLineInformation(lineNumber-1);//-1 Document considers lineNumber different than createBreakpoint 
 						
-		ExtractMethodRefactoring ref= ExtractMethodRefactoring.create(cunit,lineInfo.getOffset(), lineInfo.getLength());
+		ExtractMethodRefactoring ref= new ExtractMethodRefactoring(cunit,lineInfo.getOffset(), lineInfo.getLength());
 		
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())

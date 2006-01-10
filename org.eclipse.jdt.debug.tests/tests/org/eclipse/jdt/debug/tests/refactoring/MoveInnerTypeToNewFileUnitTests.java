@@ -133,7 +133,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IType clas= parentClas.getType(className);
 		
-		MoveInnerToTopRefactoring ref= MoveInnerToTopRefactoring.create(clas, JavaPreferencesSettings.getCodeGenerationSettings(clas.getJavaProject()));
+		MoveInnerToTopRefactoring ref= new MoveInnerToTopRefactoring(clas, JavaPreferencesSettings.getCodeGenerationSettings(clas.getJavaProject()));
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;

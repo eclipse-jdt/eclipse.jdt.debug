@@ -93,7 +93,7 @@ public class PullUpMethodUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= cunit.getType(parentClassName);
 		IMethod clas= parentClas.getMethod(className, Signature.getParameterTypes("()V"));;
 		
-		PullUpRefactoring ref= PullUpRefactoring.create(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
+		PullUpRefactoring ref= new PullUpRefactoring(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
 		ref.setMethodsToDelete(new IMethod[] {clas});
 		ITypeHierarchy hierarchy = parentClas.newSupertypeHierarchy(new NullProgressMonitor());
 		IType inheritedType[] = hierarchy.getAllSupertypes(parentClas);

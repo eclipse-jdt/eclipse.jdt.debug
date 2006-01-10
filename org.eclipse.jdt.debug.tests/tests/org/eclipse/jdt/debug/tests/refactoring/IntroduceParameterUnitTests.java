@@ -116,7 +116,7 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 		int allowanceForBrackets = 4;
 		int itemOffset = lineInfo.getOffset() + lineInfo.getLength() - allowanceForBrackets; 
 						
-		IntroduceParameterRefactoring ref= IntroduceParameterRefactoring.create(cunit,itemOffset, 0);//0, no length
+		IntroduceParameterRefactoring ref= new IntroduceParameterRefactoring(cunit,itemOffset, 0);//0, no length
 		
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())

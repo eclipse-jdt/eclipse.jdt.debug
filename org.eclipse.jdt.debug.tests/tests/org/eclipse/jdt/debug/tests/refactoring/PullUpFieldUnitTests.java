@@ -65,7 +65,7 @@ public class PullUpFieldUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= cunit.getType(parentClassName);
 		IField clas= parentClas.getField(className);
 		
-		PullUpRefactoring ref= PullUpRefactoring.create(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
+		PullUpRefactoring ref= new PullUpRefactoring(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
 		
 		ITypeHierarchy hierarchy = parentClas.newSupertypeHierarchy(new NullProgressMonitor());
 		IType inheritedType[] = hierarchy.getAllSupertypes(parentClas);

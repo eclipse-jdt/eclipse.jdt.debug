@@ -87,7 +87,7 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IMethod clas= parentClas.getMethod(className, Signature.getParameterTypes("()V"));;
 		
-		PushDownRefactoring ref= PushDownRefactoring.create(new IMethod[] {clas});
+		PushDownRefactoring ref= new PushDownRefactoring(new IMethod[] {clas});
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;

@@ -168,7 +168,7 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 		ISourceRange typeInfo = type.getSourceRange();
 		int target = typeInfo.getOffset(); 
 		
-		ConvertAnonymousToNestedRefactoring ref= ConvertAnonymousToNestedRefactoring.create(cunit, target, 0);
+		ConvertAnonymousToNestedRefactoring ref= new ConvertAnonymousToNestedRefactoring(cunit, target, 0);
 		//configure the ref a little more here!
 		ref.setClassName("ThisWillBeErased");//must have *A* name...			
 		

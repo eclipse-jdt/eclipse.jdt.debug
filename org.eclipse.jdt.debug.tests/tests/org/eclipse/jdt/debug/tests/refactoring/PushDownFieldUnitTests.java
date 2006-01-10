@@ -60,7 +60,7 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IField clas= parentClas.getField("anInt");
 		
-		PushDownRefactoring ref= PushDownRefactoring.create(new IField[] {clas});
+		PushDownRefactoring ref= new PushDownRefactoring(new IField[] {clas});
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;
