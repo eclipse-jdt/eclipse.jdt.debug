@@ -19,9 +19,6 @@ public class BreakpointMessages extends NLS {
 
 	public static String AddExceptionDialog_15;
 	public static String AddExceptionDialog_16;
-	public static String AddExceptionDialog_17;
-	public static String AddExceptionDialog_21;
-	public static String AddExceptionDialog_0;
 
 	public static String AddClassPrepareBreakpointAction_0;
 	public static String AddClassPrepareBreakpointAction_1;
@@ -32,4 +29,8 @@ public class BreakpointMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, BreakpointMessages.class);
 	}
+
+	public static String AddExceptionDialogExtension_0;
+
+	public static String AddExceptionAction_2;
 }
