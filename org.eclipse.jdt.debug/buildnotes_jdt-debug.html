@@ -11,6 +11,12 @@
 <h1> Eclipse 3.2 Java Debug Build Notes&nbsp;</h1>
 
 <h2>January 17, 2006</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>New, optional API for IVMInstall. VM installs may optionally implement IVMInstall3, 
+    providing access to system properties. A default implementation has been provided 
+    in AbstractVMInstall.</li>
+</ul>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=115150">115150</a>: Exception and Class load breakpoint should use new type selection dialog<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105573">105573</a>: suspend at uncaught exception shows compiler warning<br>
