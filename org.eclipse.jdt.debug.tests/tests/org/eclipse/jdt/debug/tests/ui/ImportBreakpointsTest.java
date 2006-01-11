@@ -12,16 +12,18 @@
 package org.eclipse.jdt.debug.tests.ui;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.internal.ui.importexport.breakpoints.ExportOperation;
-import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportOperation;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
+import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
+import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -56,13 +58,13 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
 			Path path = new Path("exbkptA.bkpt");
 			assertNotNull("Invalid path", path);
-			ExportOperation op = new ExportOperation(breakpoints.toArray(), path, true);
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
 			op.run(new NullProgressMonitor());
 			removeAllBreakpoints();
 			File file = path.toFile();
 			assertNotNull(file);
 			assertEquals(true, file.exists());
-			ImportOperation op2 = new ImportOperation(file, true, true);
+			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(path.toOSString(), true, true);
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			file.delete();
@@ -89,12 +91,12 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
 			Path path = new Path("exbkptB.bkpt");
 			assertNotNull("Invalid path", path);
-			ExportOperation op = new ExportOperation(breakpoints.toArray(), path, true);
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
 			op.run(new NullProgressMonitor());
 			File file = path.toFile();
 			assertNotNull(file);
 			assertEquals(true, file.exists());
-			ImportOperation op2 = new ImportOperation(file, true, true);
+			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(path.toOSString(), true, true);
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			file.delete();
@@ -111,9 +113,14 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportBadFilename() throws Exception {
 		try {
-			ImportOperation op = new ImportOperation(new Path("Badpath").toFile(), true, true);
-			op.run(new NullProgressMonitor());
-			assertEquals("should be no breakpoints", 0, getBreakpointManager().getBreakpoints().length);
+			ImportBreakpointsOperation op = new ImportBreakpointsOperation("Badpath", true, true);
+			try {
+				op.run(new NullProgressMonitor());
+			} catch (InvocationTargetException e) {
+				assertEquals("should be no breakpoints", 0, getBreakpointManager().getBreakpoints().length);
+				return;
+			}
+			assertTrue("Import should have failed with exception", false);
 		}//end try
 		finally {
 			removeAllBreakpoints();
@@ -146,7 +153,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertEquals("manager does not have 6 breakpoints", getBreakpointManager().getBreakpoints().length, 6);
 			Path path = new Path("exbkptC.bkpt");
 			assertNotNull("Invalid path", path);
-			ExportOperation op = new ExportOperation(getBreakpointManager().getBreakpoints(), path, true);
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation(getBreakpointManager().getBreakpoints(), path.toOSString());
 			op.run(new NullProgressMonitor());
 		
 			//remove bps and working set and do the import
@@ -159,7 +166,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			File file = path.toFile();
 			assertNotNull(file);
 			assertEquals(true, file.exists());
-			ImportOperation op2 = new ImportOperation(file, true, true);
+			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(path.toOSString(), true, true);
 			op2.run(new NullProgressMonitor());
 			set = wsmanager.getWorkingSet(setName);
 			assertNotNull("Import did not create working set", set);
@@ -181,7 +188,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/brkpt_missing.bkpt"));
 			assertNotNull(file);
 			assertEquals(true, file.exists());
-			ImportOperation op = new ImportOperation(file, true, true);
+			ImportBreakpointsOperation op = new ImportBreakpointsOperation(file.getCanonicalPath(), true, true);
 			op.run(new NullProgressMonitor());
 			assertEquals("should be no breakpoints imported", 0, getBreakpointManager().getBreakpoints().length);
 		}//end try 
