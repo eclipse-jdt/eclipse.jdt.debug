@@ -15,8 +15,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -390,21 +388,20 @@ public class VMDefinitionsContainer {
 
 		// Wrapper the stream for efficient parsing
 		InputStream stream= new BufferedInputStream(inputStream);
-		Reader reader= new InputStreamReader(stream);
 
 		// Do the parsing and obtain the top-level node
 		Element config= null;		
 		try {
 			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-			config = parser.parse(new InputSource(reader)).getDocumentElement();
+			config = parser.parse(new InputSource(stream)).getDocumentElement();
 		} catch (SAXException e) {
 			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); 
 		} catch (ParserConfigurationException e) {
-			reader.close();
+			stream.close();
 			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); 
 		} finally {
-			reader.close();
+			stream.close();
 		}
 		
 		// If the top-level node wasn't what we expected, bail out
