@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,11 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -171,25 +171,6 @@ public class CreateStepFilterDialog extends StatusDialog {
 	protected String getDialogSettingsSectionName() {
 		return IJavaDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
-		if (initialLocation != null) {
-			return initialLocation;
-		}
-		return super.getInitialLocation(initialSize);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		Point size = super.getInitialSize();
-		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
@@ -199,9 +180,20 @@ public class CreateStepFilterDialog extends StatusDialog {
 			filterValid = false;
 			filter = null;
 		}
-		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 		return super.close();
 	}
+	
+	 /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+         if (section == null) {
+             section = settings.addNewSection(getDialogSettingsSectionName());
+         } 
+         return section;
+    }
 
 	protected void okPressed() {
 		okClicked = true;

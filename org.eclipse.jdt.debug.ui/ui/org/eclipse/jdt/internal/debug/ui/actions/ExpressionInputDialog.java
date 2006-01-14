@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
-import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
@@ -27,6 +26,7 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.Document;
@@ -39,9 +39,6 @@ import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -79,8 +76,6 @@ public class ExpressionInputDialog extends Dialog {
     protected HandlerSubmission fSubmission;
     // Text for error reporting
     protected Text fErrorText;
-    
-    private boolean fShellResized= false;
     
     /**
      * @param parentShell
@@ -335,15 +330,6 @@ public class ExpressionInputDialog extends Dialog {
     protected void dispose() {
         disposeSourceViewer();
     }
-    
-    /**
-     * Persists the current dialog dimensions in the dialog settings
-     */
-    protected void persistDialogSize() {
-        if (fShellResized) {
-        	DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
-        }
-    }
 
     /**
      * Disposes the source viewer and all associated widgetry.
@@ -382,13 +368,6 @@ public class ExpressionInputDialog extends Dialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(ActionMessages.ExpressionInputDialog_2); 
-        newShell.addControlListener(new ControlListener() {
-            public void controlMoved(ControlEvent e) {
-            }
-            public void controlResized(ControlEvent e) {
-                fShellResized= true;
-            }
-        });
     }
     
     /**
@@ -406,29 +385,21 @@ public class ExpressionInputDialog extends Dialog {
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close() {
-    	persistDialogSize();
         dispose();
         return super.close();
     }
     
     /* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
-	protected Point getInitialLocation(Point initialSize) {
-		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
-		if (initialLocation != null) {
-			return initialLocation;
-		}
-		return super.getInitialLocation(initialSize);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		Point size = super.getInitialSize();
-		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
-	}
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+    	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
+         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+         if (section == null) {
+             section = settings.addNewSection(getDialogSettingsSectionName());
+         } 
+         return section;
+    }
 	
 	protected String getDialogSettingsSectionName() {
 		return "EXPRESSION_INPUT_DIALOG"; //$NON-NLS-1$
