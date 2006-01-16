@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,6 +39,7 @@ public class JavaAppletLaunchShortcut extends JavaLaunchShortcut {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, AppletParametersTab.DEFAULT_APPLET_WIDTH);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, AppletParametersTab.DEFAULT_APPLET_HEIGHT);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
+			wc.setMappedResources(new IResource[] {type.getJavaProject().getProject()});
 			config = wc.doSave();		
 		} catch (CoreException ce) {
 			reportErorr(ce);			
