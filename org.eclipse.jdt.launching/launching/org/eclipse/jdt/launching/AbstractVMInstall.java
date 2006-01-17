@@ -34,6 +34,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.w3c.dom.Document;
@@ -362,7 +363,23 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		Map map = new HashMap();
 		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
 		if (file.exists()) {
-			VMRunnerConfiguration config = new VMRunnerConfiguration("org.eclipse.jdt.internal.launching.support.SystemProperties", new String[]{file.getAbsolutePath()}); //$NON-NLS-1$
+			String javaVersion = getJavaVersion();
+			boolean hasXMLSupport = false;
+			if (javaVersion != null) {
+				hasXMLSupport = true;
+				if (javaVersion.startsWith(JavaCore.VERSION_1_1) ||
+						javaVersion.startsWith(JavaCore.VERSION_1_2) ||
+						javaVersion.startsWith(JavaCore.VERSION_1_3)) {
+					hasXMLSupport = false;
+				}
+			}
+			String mainType = null;
+			if (hasXMLSupport) {
+				mainType = "org.eclipse.jdt.internal.launching.support.SystemProperties"; //$NON-NLS-1$
+			} else {
+				mainType = "org.eclipse.jdt.internal.launching.support.LegacySystemProperties"; //$NON-NLS-1$
+			}
+			VMRunnerConfiguration config = new VMRunnerConfiguration(mainType, new String[]{file.getAbsolutePath()});
 			IVMRunner runner = getVMRunner(ILaunchManager.RUN_MODE);
 			if (runner == null) {
 				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);

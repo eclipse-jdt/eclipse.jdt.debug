@@ -35,7 +35,7 @@ public class SystemProperties {
 
 	public static void main(String[] args) {
 		try {
-			Document doc = netDocument();
+			Document doc = newDocument();
 			Element properties = doc.createElement("systemProperties");    //$NON-NLS-1$
 			doc.appendChild(properties);
 			for (int i = 0; i < args.length; i++) {
@@ -61,7 +61,7 @@ public class SystemProperties {
 	 * @return document
 	 * @throws ParserConfigurationException if an exception occurs creating the document builder
 	 */
-	private static Document netDocument() throws ParserConfigurationException {
+	private static Document newDocument() throws ParserConfigurationException {
 		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
 		Document doc= docBuilder.newDocument();
