@@ -186,21 +186,23 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/**
 	 * Initializes compatibility settings.
 	 */
-	synchronized void initializeCompatibilities() {
-		if (!fInitializedCompatibilities) {
-			fInitializedCompatibilities = true;
-			IVMInstallType[] installTypes = JavaRuntime.getVMInstallTypes();
-			for (int i = 0; i < installTypes.length; i++) {
-				IVMInstallType type = installTypes[i];
-				IVMInstall[] installs = type.getVMInstalls();
-				for (int j = 0; j < installs.length; j++) {
-					IVMInstall install = installs[j];
-					// TODO: progress reporting?
-					analyze(install, new NullProgressMonitor());
-				}
-			}
-			initializeDefaultVMs();
-		}
+	void initializeCompatibilities() {
+	    if (!fInitializedCompatibilities) {
+	        fInitializedCompatibilities = true;
+	        IVMInstallType[] installTypes = JavaRuntime.getVMInstallTypes();
+	        synchronized (this) {
+	            for (int i = 0; i < installTypes.length; i++) {
+	                IVMInstallType type = installTypes[i];
+	                IVMInstall[] installs = type.getVMInstalls();
+	                for (int j = 0; j < installs.length; j++) {
+	                    IVMInstall install = installs[j];
+	                    // TODO: progress reporting?
+	                    analyze(install, new NullProgressMonitor());
+	                }
+	            }
+	            initializeDefaultVMs();
+	        }
+	    }
 	}
 	
 	/**
