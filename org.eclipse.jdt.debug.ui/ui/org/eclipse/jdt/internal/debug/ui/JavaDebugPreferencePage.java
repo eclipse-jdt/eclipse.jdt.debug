@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,23 +154,21 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		spacingComposite.setLayoutData(data);
 		spacingComposite.setFont(font);
 		
-		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		int minValue;
-		
-		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, spacingComposite); 
-		fTimeoutText.setPreferenceStore(store);
+        Preferences coreStore= JDIDebugModel.getPreferences();
+        Preferences runtimeStore= JavaRuntime.getPreferences();
+		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, spacingComposite);
 		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		minValue= store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+		minValue= coreStore.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
 		fTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fTimeoutText.load();
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, spacingComposite); 
-		fConnectionTimeoutText.setPreferenceStore(store);
 		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		minValue= store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+		minValue= runtimeStore.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
 		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
 		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fConnectionTimeoutText.load();
