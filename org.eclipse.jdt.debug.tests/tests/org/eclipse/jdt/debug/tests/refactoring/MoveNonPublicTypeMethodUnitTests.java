@@ -22,6 +22,8 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgPolicyFactory;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -110,9 +112,10 @@ public class MoveNonPublicTypeMethodUnitTests extends AbstractRefactoringDebugTe
 	 * @throws JavaModelException
 	 */
 	protected JavaMoveProcessor setupRefactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException {
-		JavaMoveProcessor processor= JavaMoveProcessor.create(
-			new IResource[0], 
-			new IJavaElement[] {type});
+		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
+				new IResource[0], 
+				new IJavaElement[] {type});
+		JavaMoveProcessor processor= new JavaMoveProcessor(movePolicy);
 		IJavaElement destination= getPackageFragmentRoot(javaProject, "src").getPackageFragment("a.b").getCompilationUnit("MoveeRecipient.java"); 
 		processor.setDestination(destination);
 		processor.setReorgQueries(new MockReorgQueries());

@@ -25,6 +25,8 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgPolicyFactory;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -51,9 +53,10 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void move(IJavaElement element, IJavaElement destination) throws Exception {
-		JavaMoveProcessor processor= JavaMoveProcessor.create(
+		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
 				new IResource[0], 
-				new IJavaElement[] {element}); 
+				new IJavaElement[] {element});
+		JavaMoveProcessor processor= new JavaMoveProcessor(movePolicy);
 		processor.setDestination(destination);
 		processor.setReorgQueries(new MockReorgQueries());
 		if(processor.canUpdateReferences()) {
