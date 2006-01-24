@@ -2513,8 +2513,8 @@ M4 = Platform-specific fourth key
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            regex="\(\S*\.java:\S*\)"
-            qualifier="java:"
+            regex="\(\S*${java_extensions_regex}\S*\)"
+            qualifier="${java_extensions_regex}"
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
          <enablement>
             <or>
@@ -2615,6 +2615,14 @@ M4 = Platform-specific fourth key
        <description>%preference.transfer.jres.description
        </description>
     </transfer>
+ </extension>
+ <extension
+       point="org.eclipse.core.variables.dynamicVariables">
+    <variable
+          description="%javaLikeExtensions.description"
+          name="java_extensions_regex"
+          resolver="org.eclipse.jdt.internal.debug.ui.console.JavaLikeExtensionsResolver"
+          supportsArgument="false"/>
  </extension>	
     
 </plugin>
