@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.viewers.IAsynchronousTreeContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.IAsynchronousContentAdapter;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
@@ -20,11 +20,11 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  */
 public class JavaDebugElementAdapterFactory implements IAdapterFactory {
     
-    private static IAsynchronousTreeContentAdapter fgThreadAdapter;
-    private static IAsynchronousTreeContentAdapter fgContendedMonitorAdapter;
-    private static IAsynchronousTreeContentAdapter fgOwnedMonitorAdapter;
-    private static IAsynchronousTreeContentAdapter fgOwningThreadAdapter;
-    private static IAsynchronousTreeContentAdapter fgWaitingThreadAdapter;
+    private static IAsynchronousContentAdapter fgThreadAdapter;
+    private static IAsynchronousContentAdapter fgContendedMonitorAdapter;
+    private static IAsynchronousContentAdapter fgOwnedMonitorAdapter;
+    private static IAsynchronousContentAdapter fgOwningThreadAdapter;
+    private static IAsynchronousContentAdapter fgWaitingThreadAdapter;
     
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -62,14 +62,14 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
         return fgOwningThreadAdapter;
     }
 
-    private IAsynchronousTreeContentAdapter getOwnedMonitorAdapater() {
+    private IAsynchronousContentAdapter getOwnedMonitorAdapater() {
         if (fgOwnedMonitorAdapter == null) {
             fgOwnedMonitorAdapter = new AsyncJavaOwnedMonitorAdapter();
         }
         return fgOwnedMonitorAdapter;
     }
 
-    private IAsynchronousTreeContentAdapter getContendedMonitorAdapter() {
+    private IAsynchronousContentAdapter getContendedMonitorAdapter() {
         if (fgContendedMonitorAdapter == null) {
             fgContendedMonitorAdapter = new AsyncJavaContendedMonitorAdapter();
         }
@@ -80,10 +80,10 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
     public Class[] getAdapterList() {
-        return new Class[] {IAsynchronousTreeContentAdapter.class};
+        return new Class[] {IAsynchronousContentAdapter.class};
     }
 	
-	private IAsynchronousTreeContentAdapter getThreadAdapter() {
+	private IAsynchronousContentAdapter getThreadAdapter() {
 	    if (fgThreadAdapter == null) {
 	        fgThreadAdapter = new AsyncJavaThreadAdapter();
 	    }
