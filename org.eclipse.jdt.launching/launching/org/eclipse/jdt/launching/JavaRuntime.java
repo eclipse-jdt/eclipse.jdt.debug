@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -134,7 +135,15 @@ public final class JavaRuntime {
 	 * 
 	 * @since 3.2
 	 */
-	public static final String EXTENSION_POINT_EXECUTION_ENVIRONMENTS= "executionEnvironments";	 //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_EXECUTION_ENVIRONMENTS= "executionEnvironments";	 //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"vmInstalls"</code>) for the
+	 * VM installs extension point.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String EXTENSION_POINT_VM_INSTALLS = "vmInstalls";	 //$NON-NLS-1$		
 		
 	/**
 	 * Classpath container used for a project's JRE
@@ -270,6 +279,11 @@ public final class JavaRuntime {
 	 */
 	private static ThreadLocal fgProjects = new ThreadLocal();
 	
+    /**
+     *  Set of ids of vms contributed via vmInstalls extension point.
+     */
+    private static Set fgContributedVMs = new HashSet();
+    
 	/**
 	 * This class contains only static methods, and is not intended
 	 * to be instantiated.
@@ -1441,7 +1455,147 @@ public final class JavaRuntime {
 				detectAndSaveVMDefinitions();
 			}			
 		}
+		
+		loadVMInstalls();
 	}
+	
+	/**
+	 * Loads contributed VM installs
+	 * @since 3.2
+	 */
+	private static void loadVMInstalls() {
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_VM_INSTALLS);
+		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configs.length; i++) {
+			IConfigurationElement element = configs[i];
+			try {
+				if ("vmInstall".equals(element.getName())) { //$NON-NLS-1$
+					String vmType = element.getAttribute("vmInstallType"); //$NON-NLS-1$
+					if (vmType == null) {
+						abort(MessageFormat.format("Missing required vmInstallType attribute for vmInstall contributed by {0}",
+								new String[]{element.getNamespace()}), null);
+					}
+					String id = element.getAttribute("id"); //$NON-NLS-1$
+					if (id == null) {
+						abort(MessageFormat.format("Missing required id attribute for vmInstall contributed by {0}",
+								new String[]{element.getNamespace()}), null);
+					}
+					IVMInstallType installType = getVMInstallType(vmType);
+					if (installType == null) {
+						abort(MessageFormat.format("vmInstall {0} contributed by {1} references undefined VM install type {2}",
+								new String[]{id, element.getNamespace(), vmType}), null);
+					}
+					IVMInstall install = installType.findVMInstall(id);
+					if (install == null) {
+						// only load/create if first time we've seen this VM install
+						String name = element.getAttribute("name"); //$NON-NLS-1$
+						if (name == null) {
+							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute name",
+									new String[]{id, element.getNamespace()}), null);
+						}
+						String home = element.getAttribute("home"); //$NON-NLS-1$
+						if (home == null) {
+							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute home",
+									new String[]{id, element.getNamespace()}), null);
+						}		
+						String javadoc = element.getAttribute("javadocURL"); //$NON-NLS-1$
+						String vmArgs = element.getAttribute("vmArgs"); //$NON-NLS-1$
+						VMStandin standin = new VMStandin(installType, id);
+						standin.setName(name);
+						home = substitute(home);
+						File homeDir = new File(home);
+                        if (homeDir.exists()) {
+                            try {
+                                home = homeDir.getCanonicalPath();
+                            } catch (IOException e) {
+                            }
+                        }
+                        standin.setInstallLocation(new File(home));
+						if (javadoc != null) {
+							try {
+								standin.setJavadocLocation(new URL(javadoc));
+							} catch (MalformedURLException e) {
+								abort(MessageFormat.format("Illegal javadocURL attribute for vmInstall {0} contributed by {1}",
+										new String[]{id, element.getNamespace()}), e);
+							}
+						}
+						if (vmArgs != null) {
+							standin.setVMArgs(vmArgs);
+						}
+                        IConfigurationElement[] libraries = element.getChildren("library"); //$NON-NLS-1$
+                        LibraryLocation[] locations = null;
+                        if (libraries.length > 0) {
+                            locations = new LibraryLocation[libraries.length];
+                            for (int j = 0; j < libraries.length; j++) {
+                                IConfigurationElement library = libraries[j];
+                                String libPathStr = library.getAttribute("path"); //$NON-NLS-1$
+                                if (libPathStr == null) {
+                                    abort(MessageFormat.format("library for vmInstall {0} contributed by {1} missing required attribute libPath",
+                                            new String[]{id, element.getNamespace()}), null);
+                                }
+                                String sourcePathStr = library.getAttribute("sourcePath"); //$NON-NLS-1$
+                                String packageRootStr = library.getAttribute("packageRootPath"); //$NON-NLS-1$
+                                String javadocOverride = library.getAttribute("javadocURL"); //$NON-NLS-1$
+                                URL url = null;
+                                if (javadocOverride != null) {
+                                    try {
+                                        url = new URL(javadocOverride);
+                                    } catch (MalformedURLException e) {
+                                        abort(MessageFormat.format("Illegal javadocURL attribute specified for library {0} for vmInstall {1} contributed by {2}"
+                                                ,new String[]{libPathStr, id, element.getNamespace()}), e);
+                                    }
+                                }
+                                IPath homePath = new Path(home);
+                                IPath libPath = homePath.append(substitute(libPathStr));
+                                IPath sourcePath = Path.EMPTY;
+                                if (sourcePathStr != null) {
+                                    sourcePath = homePath.append(substitute(sourcePathStr));
+                                }
+                                IPath packageRootPath = Path.EMPTY;
+                                if (packageRootStr != null) {
+                                    packageRootPath = new Path(substitute(packageRootStr));
+                                }
+                                locations[i] = new LibraryLocation(libPath, sourcePath, packageRootPath, url);
+                            }
+                        }
+                        standin.setLibraryLocations(locations);
+                        standin.convertToRealVM();
+					}
+                    fgContributedVMs.add(id);
+				} else {
+					abort(MessageFormat.format("Illegal element {0} in vmInstalls extension contributed by {1}",
+							new String[]{element.getName(), element.getNamespace()}), null);
+				}
+			} catch (CoreException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
+	}
+    
+    /**
+     * Performs string substitution on the given expression.
+     * 
+     * @param expression
+     * @return expression after string substitution 
+     * @throws CoreException
+     * @since 3.2
+     */
+    private static String substitute(String expression) throws CoreException {
+        return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(expression);
+    }
+    
+    /**
+     * Returns whether the VM install with the specified id was contributed via
+     * the vmInstalls extension point.
+     * 
+     * @param id vm id
+     * @return whether the vm install was contributed via extension point
+     * @since 3.2
+     */
+    public static boolean isContributedVMInstall(String id) {
+        getVMInstallTypes(); // ensure VMs are initilaized
+        return fgContributedVMs.contains(id);
+    }
 	
 	/**
 	 * For each VMStandin object in the specified VM container, convert it into a 'real' VM.
@@ -1473,6 +1627,7 @@ public final class JavaRuntime {
 		URL[] javadocLocations;
 		LibraryLocation[] locations= vm.getLibraryLocations();
 		if (locations == null) {
+            URL defJavaDocLocation = vm.getJavadocLocation(); 
 			LibraryLocation[] dflts= vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 			libraryPaths = new IPath[dflts.length];
 			sourcePaths = new IPath[dflts.length];
@@ -1480,7 +1635,11 @@ public final class JavaRuntime {
 			javadocLocations= new URL[dflts.length];
 			for (int i = 0; i < dflts.length; i++) {
 				libraryPaths[i]= dflts[i].getSystemLibraryPath();
-				javadocLocations[i]= dflts[i].getJavadocLocation();
+                if (defJavaDocLocation == null) {
+                    javadocLocations[i]= dflts[i].getJavadocLocation();
+                } else {
+                    javadocLocations[i]= defJavaDocLocation;
+                }
 				if (!libraryPaths[i].toFile().isFile()) {
 					libraryPaths[i]= Path.EMPTY;
 				}
