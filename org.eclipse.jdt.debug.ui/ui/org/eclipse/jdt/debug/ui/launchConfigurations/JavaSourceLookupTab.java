@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -45,7 +44,7 @@ import org.eclipse.ui.PlatformUI;
  *  <code>org.eclipse.debug.ui.sourcelookup.SourceLookupTab</code>.
  */
 
-public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
+public class JavaSourceLookupTab extends JavaLaunchTab {
 
 	protected SourceLookupBlock fSourceLookupBlock;
 	

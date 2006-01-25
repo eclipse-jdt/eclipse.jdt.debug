@@ -234,7 +234,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		super.initializeFrom(config);
 		updateAllowTerminateFromConfig(config);
 		updateConnectionFromConfig(config);
-		setCurrentLaunchConfiguration(config);
 	}
 	
 	/**

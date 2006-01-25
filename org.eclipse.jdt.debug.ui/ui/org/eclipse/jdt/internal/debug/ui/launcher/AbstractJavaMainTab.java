@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -48,7 +49,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * 
  * @since 3.2
  */
-public abstract class AbstractJavaMainTab extends JavaLaunchConfigurationTab {
+public abstract class AbstractJavaMainTab extends JavaLaunchTab {
 
 /**
  * A listener which handles widget change events for the controls
@@ -183,7 +184,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
-		setCurrentLaunchConfiguration(config);
+		super.initializeFrom(config);
 	}
 	
 	/**

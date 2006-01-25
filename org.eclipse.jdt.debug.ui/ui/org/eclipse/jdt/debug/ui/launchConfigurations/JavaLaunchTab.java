@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui.launchConfigurations;
 
  
 import org.eclipse.core.resources.IProject;
@@ -29,20 +29,23 @@ import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Common function for Java launch configuration tabs.
+ * <p>
+ * Clients may subclass this class.
+ * </p>
+ * @since 3.2
  */
-public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements IEntriesChangedListener {
+public abstract class JavaLaunchTab extends AbstractLaunchConfigurationTab {
 		
 	/**
-	 * make the java tabs aware of the launch config they are working on
-	 * @since 3.2
+	 * Config being modified
 	 */
 	private ILaunchConfiguration fLaunchConfig;
 	
 	/**
-	 * Returns the current Java element context from which to initialize
-	 * default settings, or <code>null</code> if none.
+	 * Returns the current Java element context in the active workbench page
+	 * or <code>null</code> if none.
 	 * 
-	 * @return Java element context.
+	 * @return current Java element in the active page or <code>null</code>
 	 */
 	protected IJavaElement getContext() {
 		IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
@@ -77,28 +80,29 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 	}
 	
 	/**
-	 * returns the launch configuration that this tab was initialized from within the 
-	 * initializeFrom method
+	 * Returns the launch configuration this tab was initialized from.
 	 * 
-	 * @return the associated launch config or null if there is none
-	 * @since 3.2
+	 * @return launch configuration this tab was initialized from
 	 */
 	protected ILaunchConfiguration getCurrentLaunchConfiguration() {
 		return fLaunchConfig;
 	}
 	
 	/**
-	 * sets the current parent config that this tab is editing part of
+	 * Sets the launch configuration this tab was initialized from
 	 * 
-	 * @param config the parent config
-	 * @since 3.2
+	 * @param config launch configuration this tab was initialized from
 	 */
-	protected void setCurrentLaunchConfiguration(ILaunchConfiguration config) {
+	private void setCurrentLaunchConfiguration(ILaunchConfiguration config) {
 		fLaunchConfig = config;
 	}
 	
 	/**
-	 * Set the java project attribute based on the IJavaElement.
+	 * Sets the Java project attribute on the given working copy to the Java project
+	 * assocaited with the given Java element.
+	 * 
+	 * @param javaElement Java model element this tab is associated with
+	 * @param config configuration on which to set the Java project attribute
 	 */
 	protected void initializeJavaProject(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		IJavaProject javaProject = javaElement.getJavaProject();
@@ -109,12 +113,14 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
 	}	
 	
-	/**
-	 * @see IEntriesChangedListener#entriesChanged(RuntimeClasspathViewer)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 * 
+	 * Subclasses may override this method and should call super.initializeFrom(...).
 	 */
-	public void entriesChanged(IClasspathViewer viewer) {
-		setDirty(true);
-		updateLaunchConfigurationDialog();
-	}
+	public void initializeFrom(ILaunchConfiguration config) {
+		setCurrentLaunchConfiguration(config);
+	}	
+	
 }
 

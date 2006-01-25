@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -49,7 +50,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * A control for setting the working directory associated with a launch
  * configuration.
  */
-public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
+public class WorkingDirectoryBlock extends JavaLaunchTab {
 			
 	// Local directory
 	private Button fWorkspaceButton;

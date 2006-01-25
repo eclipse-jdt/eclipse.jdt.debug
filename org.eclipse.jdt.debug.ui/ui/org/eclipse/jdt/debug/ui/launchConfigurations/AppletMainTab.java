@@ -235,7 +235,6 @@ public class AppletMainTab extends SharedJavaMainTab {
 		super.initializeFrom(config);
 		updateMainTypeFromConfig(config);
 		updateAppletViewerClassNameFromConfig(config);
-		setCurrentLaunchConfiguration(config);
 	}
 
 	/**

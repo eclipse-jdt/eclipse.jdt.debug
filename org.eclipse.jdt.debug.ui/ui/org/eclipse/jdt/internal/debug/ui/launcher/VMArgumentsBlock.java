@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -34,7 +35,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Editor for VM arguments of a Java launch configuration.
  */
-public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
+public class VMArgumentsBlock extends JavaLaunchTab {
 
 	// VM arguments widgets
 	protected Text fVMArgumentsText;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -47,7 +48,7 @@ import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathModel;
 import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.classpath.RuntimeClasspathViewer;
-import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
+import org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaClasspathTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -72,7 +73,7 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  * @since 2.0
  */
-public class JavaClasspathTab extends JavaLaunchConfigurationTab {
+public class JavaClasspathTab extends AbstractJavaClasspathTab {
 
 	protected RuntimeClasspathViewer fClasspathViewer;
 	private ClasspathModel fModel;
