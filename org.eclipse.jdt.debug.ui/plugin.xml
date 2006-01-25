@@ -1854,6 +1854,9 @@
                      <test
                            args="main, ([QString;)V, 9"
                            property="org.eclipse.jdt.debug.hasMethod"/>
+                     <test
+                           args="main, ([QString;)V, 137"
+                           property="org.eclipse.jdt.debug.hasMethod"/>
                   </or>
                </iterate>
                </with>
