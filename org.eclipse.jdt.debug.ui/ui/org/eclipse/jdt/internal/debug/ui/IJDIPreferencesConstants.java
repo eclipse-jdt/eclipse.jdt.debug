@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,11 +163,18 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_SHOW_SYSTEM_THREADS = IJavaDebugUIConstants.PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean preference indicating whether the monitor and thread info should be displayed in the debug launch view.
+	 * Boolean preference indicating whether the monitor and thread info should be displayed in the debug view.
 	 * 
 	 * @since 3.1
 	 */	
 	public static final String PREF_SHOW_MONITOR_THREAD_INFO = IJavaDebugUIConstants.PLUGIN_ID + ".show_monitor_thread_info"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference indicating whether thread groups should be displayed in the debug view.
+	 * 
+	 * @since 3.2
+	 */	
+	public static final String PREF_SHOW_THREAD_GROUPS = IJavaDebugUIConstants.PLUGIN_ID + ".show_monitor_thread_info"; //$NON-NLS-1$	
 	
 	/**
 	 * String preference indication when and where variable details should appear.

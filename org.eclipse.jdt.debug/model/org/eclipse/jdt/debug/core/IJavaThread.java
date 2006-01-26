@@ -240,4 +240,13 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @see java.lang.Thread#stop(java.lang.Throwable)
 	 */
 	public void stop(IJavaObject exception) throws DebugException;
+	
+	/**
+	 * Returns the thread group this thread belongs to or <code>null</code> if none.
+	 * 
+	 * @return thread group or <code>null</code>
+	 * @throws DebugException
+	 * @since 3.2
+	 */
+	public IJavaThreadGroup getThreadGroup() throws DebugException;
 }

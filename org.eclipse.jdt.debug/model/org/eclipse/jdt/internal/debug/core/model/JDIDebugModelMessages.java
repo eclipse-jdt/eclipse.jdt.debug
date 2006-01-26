@@ -179,4 +179,16 @@ public class JDIDebugModelMessages extends NLS {
 
 	public static String JDIReferenceType_4;
 
+	public static String JDIThreadGroup_0;
+
+	public static String JDIThreadGroup_1;
+
+	public static String JDIThreadGroup_2;
+
+	public static String JDIThreadGroup_3;
+
+	public static String JDIThreadGroup_4;
+
+	public static String JDIThreadGroup_5;
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,13 @@ import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 /**
  * Toggle to display the thread and monitor information in the debug view.
  */
-public class ShowMonitorThreadInformation extends ToggleBooleanPreferenceAction {
+public class ShowThreadGroups extends ToggleBooleanPreferenceAction {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
-		return IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO;
+		return IJDIPreferencesConstants.PREF_SHOW_THREAD_GROUPS;
 	}
+
 }

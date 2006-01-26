@@ -150,7 +150,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 			int nrThreadGroups = readInt("nr thread groups", replyData); //$NON-NLS-1$
 			result.childThreadGroups = new ArrayList(nrThreadGroups);
 			for (int i = 0; i < nrThreadGroups; i++)
-				result.childThreads.add(ThreadGroupReferenceImpl.read(this, replyData));
+				result.childThreadGroups.add(ThreadGroupReferenceImpl.read(this, replyData));
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);

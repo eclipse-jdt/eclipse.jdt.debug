@@ -37,6 +37,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
@@ -239,6 +240,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				throw (ObjectCollectedException)underlyingException;
 			}		
 			logError(e);
+		}
+		
+		try {
+			ThreadGroupReference group = getUnderlyingThreadGroup();
+			// might already be terminated
+			if (group != null) {
+				getJavaDebugTarget().addThreadGroup(group);
+			}
+		} catch (DebugException e1) {
 		}
 
 		// state
@@ -2491,6 +2501,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (InvalidTypeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stoping_thread, new String[] {e.toString()}), e); 
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getThreadGroup()
+	 */
+	public IJavaThreadGroup getThreadGroup() throws DebugException {
+		ThreadGroupReference group = getUnderlyingThreadGroup();
+		if (group != null) {
+			return getJavaDebugTarget().findThreadGroup(group);
+		}
+		return null;
 	}
 	
 }

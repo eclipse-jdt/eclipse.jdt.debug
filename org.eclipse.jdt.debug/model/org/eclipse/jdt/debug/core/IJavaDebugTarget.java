@@ -358,4 +358,23 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * @since 3.0
 	 */
 	public String getDefaultStratum();
+	
+	/**
+	 * Returns the top level thread groups in this target. Top level thread groups
+	 * do not have a parent.
+	 * 
+	 * @return top level thread groups
+	 * @throws DebugException
+	 * @since 3.2
+	 */
+	public IJavaThreadGroup[] getRootThreadGroups() throws DebugException;
+	
+	/**
+	 * Returns all thread groups in this target.
+	 * 
+	 * @return all thread groups in this target
+	 * @throws DebugException
+	 * @since 3.2
+	 */
+	public IJavaThreadGroup[] getAllThreadGroups() throws DebugException;
 }

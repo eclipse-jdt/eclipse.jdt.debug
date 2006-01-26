@@ -769,6 +769,16 @@
       <viewContribution
             targetID="org.eclipse.debug.ui.DebugView"
             id="org.eclipse.jdt.debug.ui.LaunchViewActions">
+		<action
+               style="toggle"
+               id="org.eclipse.jdt.debug.ui.launchViewActions.ShowThreadGroups"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowThreadGroups"
+               icon="$nl$/icons/full/obj16/threadgroup_obj.gif"
+               helpContextId="show_thread_groups_action_context"
+               label="%showThreadGroupsAction.label"
+               menubarPath="javaActions"
+               tooltip="%showThreadGroupsAction.tooltip">
+         </action>            
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.launchViewActions.ShowQualified"
@@ -796,7 +806,7 @@
         tooltip="%showMonitorThreadInfo.tooltip"
         class="org.eclipse.jdt.internal.debug.ui.actions.ShowMonitorThreadInformation"
         style="toggle"
-        menubarPath="javaAction"
+        menubarPath="javaActions"
         id="org.eclipse.jdt.debug.ui.launchViewActions.ShowMonitorThreadInfo"/>         
       </viewContribution>
       <viewContribution

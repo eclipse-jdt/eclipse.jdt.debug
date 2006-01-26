@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -58,6 +59,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.VMDisconnectedException;
@@ -85,6 +87,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * is removed from the list.
 	 */
 	private ArrayList fThreads;
+	
+	/**
+	 * List of thread groups in this target.
+	 */
+	private ArrayList fGroups;
+	
 	/**
 	 * Associated system process, or <code>null</code> if not available.
 	 */
@@ -247,6 +255,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setName(name);
 		setBreakpoints(new ArrayList(5));
 		setThreadList(new ArrayList(5));
+		fGroups = new ArrayList(5);
 		setOutOfSynchTypes(new ArrayList(0));
 		setHCROccurred(false);
 		initialize();
@@ -2250,4 +2259,58 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
     public IDebugTarget getDebugTarget() {
         return this;
     }
+    
+    void addThreadGroup(ThreadGroupReference group) {
+    	synchronized (fGroups) {
+    		if (findThreadGroup(group) == null) {
+    			JDIThreadGroup modelGroup = new JDIThreadGroup(this, group);
+        		fGroups.add(modelGroup);
+        		// TODO: create event?
+    		}
+		}
+    }
+    
+    JDIThreadGroup findThreadGroup(ThreadGroupReference group) {
+    	synchronized (fGroups) {
+    		Iterator groups = fGroups.iterator();
+    		while (groups.hasNext()) {
+    			JDIThreadGroup modelGroup = (JDIThreadGroup) groups.next();
+    			if (modelGroup.getUnderlyingThreadGroup().equals(group)) {
+    				return modelGroup;
+    			}
+    		}
+    	}
+    	return null;
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getThreadGroups()
+	 */
+	public IJavaThreadGroup[] getRootThreadGroups() throws DebugException {
+		try {
+			List groups = getVM().topLevelThreadGroups();
+			List modelGroups = new ArrayList(groups.size());
+			Iterator iterator = groups.iterator();
+			while (iterator.hasNext()) {
+				ThreadGroupReference ref = (ThreadGroupReference) iterator.next();
+				JDIThreadGroup group = findThreadGroup(ref);
+				if (group != null) {
+					modelGroups.add(group);
+				}
+			}
+			return (IJavaThreadGroup[]) modelGroups.toArray(new IJavaThreadGroup[modelGroups.size()]);
+		} catch (RuntimeException e) {
+			targetRequestFailed("Error retrieving top level thraed groups", e);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getAllThreadGroups()
+	 */
+	public IJavaThreadGroup[] getAllThreadGroups() throws DebugException {
+		synchronized (fGroups) {
+			return (IJavaThreadGroup[]) fGroups.toArray(new IJavaThreadGroup[fGroups.size()]);
+		}
+	}
 }

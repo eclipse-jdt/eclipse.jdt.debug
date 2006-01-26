@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStepFilters;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
@@ -69,6 +70,9 @@ public abstract class JDIDebugElement extends DebugElement implements IDisconnec
 			return getDebugTarget();
 		}
 		if (adapter == IDebugTarget.class) {
+			return getDebugTarget();
+		}
+		if (adapter == ITerminate.class) {
 			return getDebugTarget();
 		}
 		return super.getAdapter(adapter);
