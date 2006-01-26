@@ -13,10 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -25,34 +22,25 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -71,298 +59,6 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 * dialog.
 	 */
 	protected static final String LAST_PATH_SETTING = "LAST_PATH_SETTING"; //$NON-NLS-1$
-	
-	public class SubElement {
-		
-		public static final int JAVADOC_URL= 1;
-		public static final int SOURCE_PATH= 2;
-		
-		private LibraryLocation fParent;
-		private int fType;
-
-		public SubElement(LibraryLocation parent, int type) {
-			fParent= parent;
-			fType= type;
-		}
-		
-		public LibraryLocation getParent() {
-			return fParent;
-		}
-		
-		public int getType() {
-			return fType;
-		}
-	}
-	
-	public class LibraryLabelProvider extends LabelProvider {
-
-		private ImageDescriptorRegistry fRegistry= JavaPlugin.getImageDescriptorRegistry();
-
-		public Image getImage(Object element) {
-			if (element instanceof LibraryLocation) {
-				LibraryLocation library= (LibraryLocation) element;
-				IPath sourcePath= library.getSystemLibrarySourcePath();
-				String key = null;
-				if (sourcePath != null && !Path.EMPTY.equals(sourcePath)) {
-                    key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
-				} else {
-					key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
-				}
-				return JavaUI.getSharedImages().getImage(key);
-			} else if (element instanceof SubElement) {
-				if (((SubElement)element).getType() == SubElement.SOURCE_PATH) {
-					return fRegistry.get(JavaPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB); // todo: change image
-				}
-				return fRegistry.get(JavaPluginImages.DESC_OBJS_JAVADOC_LOCATION_ATTRIB); // todo: change image
-			}
-			return null;
-		}
-
-		public String getText(Object element) {
-			if (element instanceof LibraryLocation) {
-				return ((LibraryLocation)element).getSystemLibraryPath().toOSString();
-			} else if (element instanceof SubElement) {
-				SubElement subElement= (SubElement) element;
-				StringBuffer text= new StringBuffer();
-				if (subElement.getType() == SubElement.SOURCE_PATH) {
-					text.append(JREMessages.VMLibraryBlock_0);
-					IPath systemLibrarySourcePath= subElement.getParent().getSystemLibrarySourcePath();
-					if (systemLibrarySourcePath != null && !Path.EMPTY.equals(systemLibrarySourcePath)) {
-						text.append(systemLibrarySourcePath.toOSString());
-					} else {
-						text.append(JREMessages.VMLibraryBlock_1);
-					}
-				} else {
-					text.append(JREMessages.VMLibraryBlock_2);
-					URL javadocLocation= subElement.getParent().getJavadocLocation();
-					if (javadocLocation != null) {
-						text.append(javadocLocation.toExternalForm());
-					} else {
-						text.append(JREMessages.VMLibraryBlock_1);
-					}
-				}
-				return text.toString();
-			}
-			return null;
-		}
-
-	}
-	public class LibraryContentProvider implements ITreeContentProvider {
-		
-		private HashMap fChildren= new HashMap();
-
-		private LibraryLocation[] fLibraries= new LibraryLocation[0];
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			return fLibraries;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
-		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof LibraryLocation) {
-				LibraryLocation libraryLocation= (LibraryLocation) parentElement;
-				Object[] children= (Object[])fChildren.get(libraryLocation);
-				if (children == null) {
-					children= new Object[] {new SubElement(libraryLocation, SubElement.SOURCE_PATH), new SubElement(libraryLocation, SubElement.JAVADOC_URL)};
-					fChildren.put(libraryLocation, children);
-				}
-				return children;
-			}
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
-		public Object getParent(Object element) {
-			if (element instanceof SubElement) {
-				return ((SubElement)element).getParent();
-			}
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
-		public boolean hasChildren(Object element) {
-			return element instanceof LibraryLocation;
-		}
-
-		public void setLibraries(LibraryLocation[] libs) {
-			fLibraries= libs;
-			fLibraryViewer.refresh();
-		}
-
-		public LibraryLocation[] getLibraries() {
-			return fLibraries;
-		}
-
-		/**
-		 * Returns the list of libraries in the given selection. SubElements
-		 * are replaced by their parent libraries.
-		 */
-		private Set getSelectedLibraries(IStructuredSelection selection) {
-			Set libraries= new HashSet();
-			for (Iterator iter= selection.iterator(); iter.hasNext();) {
-				Object element= iter.next();
-				if (element instanceof LibraryLocation) {
-					libraries.add(element);
-				} else if (element instanceof SubElement) {
-					libraries.add(((SubElement)element).getParent());
-				}
-			}
-			return libraries;
-		}
-
-		/**
-		 * Move the libraries of the given selection up.
-		 */
-		public void up(IStructuredSelection selection) {
-			Set libraries= getSelectedLibraries(selection);
-			for (int i= 0; i < fLibraries.length - 1; i++) {
-				if (libraries.contains(fLibraries[i + 1])) {
-					LibraryLocation temp= fLibraries[i];
-					fLibraries[i]= fLibraries[i + 1];
-					fLibraries[i + 1]= temp;
-				}
-			}
-			fLibraryViewer.refresh();
-			fLibraryViewer.setSelection(selection);
-		}
-
-		/**
-		 * Move the libraries of the given selection down.
-		 */
-		public void down(IStructuredSelection selection) {
-			Set libraries= getSelectedLibraries(selection);
-			for (int i= fLibraries.length - 1; i > 0; i--) {
-				if (libraries.contains(fLibraries[i - 1])) {
-					LibraryLocation temp= fLibraries[i];
-					fLibraries[i]= fLibraries[i - 1];
-					fLibraries[i - 1]= temp;
-				}
-			}
-			fLibraryViewer.refresh();
-			fLibraryViewer.setSelection(selection);
-		}
-
-		/**
-		 * Remove the libraries contained in the given selection.
-		 */
-		public void remove(IStructuredSelection selection) {
-			Set libraries= getSelectedLibraries(selection);
-			LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length - libraries.size()];
-			int k= 0;
-			for (int i= 0; i < fLibraries.length; i++) {
-				if (!libraries.contains(fLibraries[i])) {
-					newLibraries[k++]= fLibraries[i];
-				}
-			}
-			fLibraries= newLibraries;
-			fLibraryViewer.refresh();
-		}
-
-		/**
-		 * Add the given libraries before the selection, or after the existing libraries
-		 * if the selection is empty.
-		 */
-		public void add(LibraryLocation[] libs, IStructuredSelection selection) {
-			LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length + libs.length];
-			if (selection.isEmpty()) {
-				System.arraycopy(fLibraries, 0, newLibraries, 0, fLibraries.length);
-				System.arraycopy(libs, 0, newLibraries, fLibraries.length, libs.length);
-			} else {
-				Object element= selection.getFirstElement();
-				LibraryLocation firstLib;
-				if (element instanceof LibraryLocation) {
-					firstLib= (LibraryLocation) element;
-				} else {
-					firstLib= ((SubElement) element).getParent();
-				}
-				int i= 0;
-				while (i < fLibraries.length && fLibraries[i] != firstLib) {
-					newLibraries[i]= fLibraries[i++];
-				}
-				System.arraycopy(libs, 0, newLibraries, i, libs.length);
-				System.arraycopy(fLibraries, i, newLibraries, i + libs.length, fLibraries.length - i);
-			}
-			fLibraries= newLibraries;
-			fLibraryViewer.refresh();
-			fLibraryViewer.setSelection(new StructuredSelection(libs), true);
-		}
-
-		/**
-		 * Set the given URL as the javadoc location for the libraries contained in
-		 * the given selection.
-		 */
-		public void setJavadoc(URL javadocLocation, IStructuredSelection selection) {
-			Set libraries= getSelectedLibraries(selection);
-			LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length];
-			Object[] newSelection= new Object[libraries.size()];
-			int j= 0;
-			for (int i= 0; i < fLibraries.length; i++) {
-				LibraryLocation library= fLibraries[i];
-				if (libraries.contains(library)) {
-					LibraryLocation lib= new LibraryLocation(library.getSystemLibraryPath(), library.getSystemLibrarySourcePath(), library.getPackageRootPath(), javadocLocation);
-					newSelection[j++]= getChildren(lib)[1];
-					newLibraries[i]= lib;
-				} else {
-					newLibraries[i]= library;
-				}
-			}
-			fLibraries= newLibraries;
-			fLibraryViewer.refresh();
-			fLibraryViewer.setSelection(new StructuredSelection(newSelection));
-		}
-
-		/**
-		 * Set the given paths as the source info for the libraries contained in
-		 * the given selection.
-		 */
-		public void setSourcePath(IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IStructuredSelection selection) {
-			Set libraries= getSelectedLibraries(selection);
-			LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length];
-			Object[] newSelection= new Object[libraries.size()];
-			int j= 0;
-			for (int i= 0; i < fLibraries.length; i++) {
-				LibraryLocation library= fLibraries[i];
-				if (libraries.contains(library)) {
-					if (sourceAttachmentPath == null) {
-						sourceAttachmentPath = Path.EMPTY;
-					}
-					if (sourceAttachmentRootPath == null) {
-						sourceAttachmentRootPath = Path.EMPTY;
-					}
-					LibraryLocation lib= new LibraryLocation(library.getSystemLibraryPath(), sourceAttachmentPath, sourceAttachmentRootPath, library.getJavadocLocation());
-					newSelection[j++]= getChildren(lib)[1];
-					newLibraries[i]= lib;
-				} else {
-					newLibraries[i]= library;
-				}
-			}
-			fLibraries= newLibraries;
-			fLibraryViewer.refresh();
-			fLibraryViewer.setSelection(new StructuredSelection(newSelection));
-		}
-		
-	}
 	
 	protected IVMInstall fVmInstall;
 	protected IVMInstallType fVmInstallType;

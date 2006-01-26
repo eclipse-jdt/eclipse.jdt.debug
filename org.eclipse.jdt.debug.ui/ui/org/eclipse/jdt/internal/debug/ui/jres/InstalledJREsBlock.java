@@ -165,6 +165,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				IVMInstall vm= (IVMInstall)element;
 				switch(columnIndex) {
 					case 0:
+						if (isContributed(vm)) {
+							return MessageFormat.format(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
+						}
 						return vm.getName();
 					case 1:
 						return vm.getInstallLocation().getAbsolutePath();
@@ -521,11 +524,28 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 		
 	private void enableButtons() {
-		int selectionCount= ((IStructuredSelection)fVMList.getSelection()).size();
+		IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
+		int selectionCount= selection.size();
 		fEditButton.setEnabled(selectionCount == 1);
 		fCopyButton.setEnabled(selectionCount > 0);
-		fRemoveButton.setEnabled(selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount());
+		if (selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount()) {
+			Iterator iterator = selection.iterator();
+			while (iterator.hasNext()) {
+				IVMInstall install = (IVMInstall)iterator.next();
+				if (isContributed(install)) {
+					fRemoveButton.setEnabled(false);
+					return;
+				}
+			}
+			fRemoveButton.setEnabled(true);
+		} else {
+			fRemoveButton.setEnabled(false);
+		}
 	}	
+	
+	private boolean isContributed(IVMInstall install) {
+		return JavaRuntime.isContributedVMInstall(install.getId());
+	}
 	
 	protected Button createPushButton(Composite parent, String label) {
 		return SWTUtil.createPushButton(parent, label, null);
@@ -676,12 +696,17 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		if (vm == null) {
 			return;
 		}
-		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), vm);
-		dialog.setTitle(JREMessages.InstalledJREsBlock_8); 
-		if (dialog.open() != Window.OK) {
-			return;
+		if (isContributed(vm)) {
+			VMDetailsDialog dialog= new VMDetailsDialog(getShell(), vm);
+			dialog.open();
+		} else {
+			AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), vm);
+			dialog.setTitle(JREMessages.InstalledJREsBlock_8); 
+			if (dialog.open() != Window.OK) {
+				return;
+			}
+			fVMList.refresh(vm);
 		}
-		fVMList.refresh(vm);
 	}
 	
 	private void removeVMs() {

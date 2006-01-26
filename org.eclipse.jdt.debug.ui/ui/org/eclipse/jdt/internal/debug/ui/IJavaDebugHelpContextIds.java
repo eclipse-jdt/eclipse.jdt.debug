@@ -31,6 +31,7 @@ public interface IJavaDebugHelpContextIds {
 
 	//dialogs
 	public static final String EDIT_JRE_DIALOG= PREFIX + "edit_jre_dialog_context"; //$NON-NLS-1$
+	public static final String JRE_DETAILS_DIALOG= PREFIX + "jre_details_dialog_context"; //$NON-NLS-1$
 	public static final String MAIN_TYPE_SELECTION_DIALOG= PREFIX + "main_type_selection_dialog_context"; //$NON-NLS-1$
 	public static final String PRIMITIVE_DISPLAY_OPTIONS_DIALOG= PREFIX + "primitive_options_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_DETAIL_FORMATTER_DIALOG= PREFIX + "edit_detail_formatter_dialog_context"; //$NON-NLS-1$

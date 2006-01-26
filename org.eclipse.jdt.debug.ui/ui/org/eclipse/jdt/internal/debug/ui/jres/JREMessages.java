@@ -127,4 +127,8 @@ public class JREMessages extends NLS {
 	public static String JREsEnvironmentLabelProvider_1;
 
 	public static String JREsComboBlock_14;
+
+	public static String InstalledJREsBlock_19;
+
+	public static String VMDetailsDialog_0;
 }
