@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PullUpRefactoring;
+import org.eclipse.jdt.internal.corext.refactoring.structure.PullUpRefactoringProcessor;
 import org.eclipse.jdt.internal.ui.preferences.JavaPreferencesSettings;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
@@ -93,11 +94,13 @@ public class PullUpMethodUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= cunit.getType(parentClassName);
 		IMethod clas= parentClas.getMethod(className, Signature.getParameterTypes("()V"));;
 		
-		PullUpRefactoring ref= new PullUpRefactoring(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
-		ref.setMethodsToDelete(new IMethod[] {clas});
+        PullUpRefactoringProcessor processor = new PullUpRefactoringProcessor(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
+		processor.setMethodsToDelete(new IMethod[] {clas});
 		ITypeHierarchy hierarchy = parentClas.newSupertypeHierarchy(new NullProgressMonitor());
 		IType inheritedType[] = hierarchy.getAllSupertypes(parentClas);
-		ref.setTargetClass(inheritedType[0]);
+        processor.setTargetClass(inheritedType[0]);
+        
+        PullUpRefactoring ref= new PullUpRefactoring(processor);
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;

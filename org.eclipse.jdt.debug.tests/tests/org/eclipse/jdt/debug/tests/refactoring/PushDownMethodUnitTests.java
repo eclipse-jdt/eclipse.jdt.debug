@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring;
+import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -87,7 +88,8 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IMethod clas= parentClas.getMethod(className, Signature.getParameterTypes("()V"));;
 		
-		PushDownRefactoring ref= new PushDownRefactoring(new IMethod[] {clas});
+        PushDownRefactoringProcessor processor = new PushDownRefactoringProcessor(new IMethod[] {clas});
+		PushDownRefactoring ref= new PushDownRefactoring(processor);
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;

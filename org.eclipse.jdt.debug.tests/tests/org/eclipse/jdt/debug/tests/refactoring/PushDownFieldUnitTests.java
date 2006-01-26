@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring;
+import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -60,7 +61,8 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IField clas= parentClas.getField("anInt");
 		
-		PushDownRefactoring ref= new PushDownRefactoring(new IField[] {clas});
+        PushDownRefactoringProcessor processor = new PushDownRefactoringProcessor(new IField[] {clas});
+		PushDownRefactoring ref= new PushDownRefactoring(processor);
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;

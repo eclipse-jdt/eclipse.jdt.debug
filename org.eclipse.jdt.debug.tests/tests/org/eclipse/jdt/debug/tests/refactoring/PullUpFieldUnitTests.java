@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PullUpRefactoring;
+import org.eclipse.jdt.internal.corext.refactoring.structure.PullUpRefactoringProcessor;
 import org.eclipse.jdt.internal.ui.preferences.JavaPreferencesSettings;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
@@ -65,12 +66,13 @@ public class PullUpFieldUnitTests extends AbstractRefactoringDebugTest {
 		IType parentClas= cunit.getType(parentClassName);
 		IField clas= parentClas.getField(className);
 		
-		PullUpRefactoring ref= new PullUpRefactoring(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
-		
+        PullUpRefactoringProcessor processor = new PullUpRefactoringProcessor(new IMember[] {clas},JavaPreferencesSettings.getCodeGenerationSettings(javaProject));
 		ITypeHierarchy hierarchy = parentClas.newSupertypeHierarchy(new NullProgressMonitor());
 		IType inheritedType[] = hierarchy.getAllSupertypes(parentClas);
-		ref.setTargetClass(inheritedType[0]);
-		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
+        processor.setTargetClass(inheritedType[0]);
+		
+        PullUpRefactoring ref= new PullUpRefactoring(processor);
+        RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;
 	}
