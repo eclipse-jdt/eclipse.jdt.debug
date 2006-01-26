@@ -1506,11 +1506,18 @@ public final class JavaRuntime {
 						File homeDir = new File(home);
                         if (homeDir.exists()) {
                             try {
+                            	// adjust for relative path names
                                 home = homeDir.getCanonicalPath();
+                                homeDir = new File(home);
                             } catch (IOException e) {
                             }
                         }
-                        standin.setInstallLocation(new File(home));
+                        IStatus status = installType.validateInstallLocation(homeDir);
+                        if (!status.isOK()) {
+                        	abort(MessageFormat.format("Illegal install location {0} for vmInstall {1} contributed by {2}: {3}",
+                        			new String[]{home, id, element.getNamespace(), status.getMessage()}), null);
+                        }
+                        standin.setInstallLocation(homeDir);
 						if (javadoc != null) {
 							try {
 								standin.setJavadocLocation(new URL(javadoc));
