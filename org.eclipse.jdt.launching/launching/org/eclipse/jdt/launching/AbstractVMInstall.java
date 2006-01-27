@@ -26,10 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
@@ -59,40 +55,6 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private String fVMArgs;
 	// whether change events should be fired
 	private boolean fNotify = true;
-	
-	private class PropertiesEventListener implements IDebugEventSetListener {
-		
-		private ILaunch fLaunch;
-		private Object fLock;
-		
-		PropertiesEventListener(ILaunch launch, Object lock) {
-			fLaunch = launch;
-			fLock = lock;
-			DebugPlugin.getDefault().addDebugEventListener(this);
-		}
-
-		public boolean isTerminated() {
-			synchronized (fLock) {
-				return fLaunch.isTerminated();
-			}
-		}
-		
-		public void dispose() {
-			DebugPlugin.getDefault().removeDebugEventListener(this);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-		 */
-		public void handleDebugEvents(DebugEvent[] events) {
-			synchronized (fLock) {
-				if (fLaunch.isTerminated()) {
-					fLock.notifyAll();
-				}
-			}
-		}
-		
-	}
 	
 	/**
 	 * Constructs a new VM install.
@@ -382,8 +344,6 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			}
 			config.setProgramArguments(properties);
 			Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
-			Object lock = new Object();
-			PropertiesEventListener listener = new PropertiesEventListener(launch, lock);
 			if (monitor.isCanceled()) {
 				return map;
 			}
@@ -395,16 +355,19 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			}
 			IProcess process = processes[0];
 			try {
-				synchronized (lock) {
-					if (!listener.isTerminated()) {
-						try {
-							lock.wait(JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT));
-						} catch (InterruptedException e) {
+				int total = 0;
+				int max = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+				while (!process.isTerminated()) {
+					try {
+						if (total > max) {
+							break;
 						}
+						Thread.sleep(50);
+						total+=50;
+					} catch (InterruptedException e) {
 					}
 				}
 			} finally {
-				listener.dispose();
 				if (!launch.isTerminated()) {
 					launch.terminate();
 				}
