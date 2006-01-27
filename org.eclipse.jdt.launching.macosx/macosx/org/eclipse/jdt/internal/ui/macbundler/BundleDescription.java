@@ -18,7 +18,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.util.*;
-import org.eclipse.core.commands.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.IJavaProject;
