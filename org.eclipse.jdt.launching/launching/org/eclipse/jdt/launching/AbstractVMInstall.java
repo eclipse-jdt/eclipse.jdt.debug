@@ -62,38 +62,34 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	
 	private class PropertiesEventListener implements IDebugEventSetListener {
 		
-		private IProcess fProcess;
 		private ILaunch fLaunch;
 		private Object fLock;
 		
 		PropertiesEventListener(ILaunch launch, Object lock) {
 			fLaunch = launch;
 			fLock = lock;
+			DebugPlugin.getDefault().addDebugEventListener(this);
+		}
+
+		public boolean isTerminated() {
+			synchronized (fLock) {
+				return fLaunch.isTerminated();
+			}
+		}
+		
+		public void dispose() {
+			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 		 */
 		public void handleDebugEvents(DebugEvent[] events) {
-			for (int i = 0; i < events.length; i++) {
-				DebugEvent event = events[i];
-				if (event.getSource() instanceof IProcess) {
-					IProcess process = (IProcess) event.getSource();
-					if (fLaunch.equals(process.getLaunch())) {
-						if (event.getKind() == DebugEvent.TERMINATE) {
-							synchronized (fLock) {
-								fProcess = process;
-								fLock.notifyAll();
-							}
-						}
-					}
+			synchronized (fLock) {
+				if (fLaunch.isTerminated()) {
+					fLock.notifyAll();
 				}
 			}
-			
-		}
-		
-		public IProcess getProcess() {
-			return fProcess;
 		}
 		
 	}
@@ -388,15 +384,19 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
 			Object lock = new Object();
 			PropertiesEventListener listener = new PropertiesEventListener(launch, lock);
-			DebugPlugin.getDefault().addDebugEventListener(listener);
 			if (monitor.isCanceled()) {
 				return map;
 			}
 			monitor.beginTask(LaunchingMessages.AbstractVMInstall_1, 2);
 			runner.run(config, launch, monitor);
+			IProcess[] processes = launch.getProcesses();
+			if (processes.length != 1) {
+				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			}
+			IProcess process = processes[0];
 			try {
 				synchronized (lock) {
-					if (listener.getProcess() == null) {
+					if (!listener.isTerminated()) {
 						try {
 							lock.wait(JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT));
 						} catch (InterruptedException e) {
@@ -404,18 +404,16 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 					}
 				}
 			} finally {
+				listener.dispose();
 				if (!launch.isTerminated()) {
 					launch.terminate();
 				}
 			}
 			monitor.worked(1);
-			IProcess process = listener.getProcess();
-			if (process == null) {
-				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-			}
 			if (monitor.isCanceled()) {
 				return map;
 			}
+			
 			monitor.subTask(LaunchingMessages.AbstractVMInstall_3);
 			IStreamsProxy streamsProxy = process.getStreamsProxy();
 			String text = null;
