@@ -236,9 +236,9 @@ public final class JavaRuntime {
 	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
 	 * Variable substitution is performed on the string prior to constructing
 	 * a path from the string.
-	 * If the resulting <code>IPath</code> is a relative path, it is interpretted
+	 * If the resulting <code>IPath</code> is a relative path, it is interpreted
 	 * as relative to the workspace location. If the path is absolute, it is 
-	 * interpretted as an absolute path in the local file system.
+	 * interpreted as an absolute path in the local file system.
 	 * </p>
 	 * @since 3.1
 	 * @see org.eclipse.jdt.core.IClasspathAttribute
@@ -513,7 +513,7 @@ public final class JavaRuntime {
 	/** 
 	 * Returns a String that uniquely identifies the specified VM across all VM types.
 	 * 
-	 * @param vm the instance of IVMInstallType to be indentified
+	 * @param vm the instance of IVMInstallType to be identified
 	 * 
 	 * @since 2.1
 	 */
@@ -528,7 +528,7 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Return the VM corrseponding to the specified composite Id.  The id uniquely
+	 * Return the VM corresponding to the specified composite Id.  The id uniquely
 	 * identifies a VM across all vm types.  
 	 * 
 	 * @param idString the composite id that specifies an instance of IVMInstall
@@ -718,7 +718,7 @@ public final class JavaRuntime {
 	}	
 			
 	/**
-	 * Computes and returns the default unresolved runtime claspath for the
+	 * Computes and returns the default unresolved runtime classpath for the
 	 * given project.
 	 * 
 	 * @return runtime classpath entries
@@ -839,7 +839,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * launch configuration. If the entry is of kind
-	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and contanier
+	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and container
 	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
 	 * and the associated Java project specifies non-default output locations,
 	 * the corresponding output locations are returned. Otherwise, the given
@@ -1009,7 +1009,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * Java project. If the entry is of kind
-	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and contanier
+	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and container
 	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
 	 * and the associated Java project specifies non-default output locations,
 	 * the corresponding output locations are returned. Otherwise, the given
@@ -1216,13 +1216,13 @@ public final class JavaRuntime {
 	 * Returns the VM install for the given launch configuration.
 	 * The VM install is determined in the following prioritized way:
 	 * <ol>
-	 * <li>The VM install is explicitly specified on the lanuch configuration
+	 * <li>The VM install is explicitly specified on the launch configuration
 	 *  via the <code>ATTR_JRE_CONTAINER_PATH</code> attribute (since 3.2).</li>
 	 * <li>The VM install is explicitly specified on the launch configuration
 	 * 	via the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_ID</code>
 	 *  attributes.</li>
 	 * <li>If no explicit VM install is specified, the VM install associated with
-	 * 	the launch confiugration's project is returned.</li>
+	 * 	the launch configuration's project is returned.</li>
 	 * <li>If no project is specified, or the project does not specify a custom
 	 * 	VM install, the workspace default VM install is returned.</li>
 	 * </ol>
@@ -1600,7 +1600,7 @@ public final class JavaRuntime {
      * @since 3.2
      */
     public static boolean isContributedVMInstall(String id) {
-        getVMInstallTypes(); // ensure VMs are initilaized
+        getVMInstallTypes(); // ensure VMs are initialized
         return fgContributedVMs.contains(id);
     }
 	
@@ -1897,11 +1897,11 @@ public final class JavaRuntime {
 	}	
 	
 	/**
-	 * Returns the JRE referecend by the specified JRE classpath container
+	 * Returns the JRE referenced by the specified JRE classpath container
 	 * path or <code>null</code> if none.
 	 *  
 	 * @param jreContainerPath
-	 * @return JRE referecend by the specified JRE classpath container
+	 * @return JRE referenced by the specified JRE classpath container
 	 *  path or <code>null</code>
 	 * @since 3.2
 	 */
@@ -1925,7 +1925,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns the name of the VM install referecend by the
+	 * Returns the name of the VM install referenced by the
 	 * given JRE classpath container path, or <code>null</code> if none.
 	 * 
 	 * @param jreContainerPath
@@ -1940,11 +1940,11 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Returns the execution environment identifier in the folloing JRE
+	 * Returns the execution environment identifier in the following JRE
 	 * classpath container path, or <code>null</code> if none.
 	 *  
 	 * @param jreContainerPath classpath container path
-	 * @return execution environmetn identifier or <code>null</code>
+	 * @return execution environment identifier or <code>null</code>
 	 * @since 3.2
 	 */
 	public static String getExecutionEnvironmentId(IPath jreContainerPath) {
@@ -1962,7 +1962,7 @@ public final class JavaRuntime {
 	 * The entry is resolved as follows:
 	 * <ol>
 	 * <li>If the <code>ATTR_JRE_CONTAINER_PATH</code> is present, it is used to create
-	 *  a classpath container refering to a JRE.</li>
+	 *  a classpath container referring to a JRE.</li>
 	 * <li>Next, if the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_NAME</code>
 	 * attributes are present, they are used to create a classpath container.</li>
 	 * <li>When none of the above attributes are specified, a default entry is
@@ -1974,7 +1974,7 @@ public final class JavaRuntime {
 	 * </p>
 	 * @param configuration
 	 * @return classpath container path identifying a JRE or <code>null</code>
-	 * @exception org.eclipse.core.runtime.CoreException if an exception occurrs retrieving
+	 * @exception org.eclipse.core.runtime.CoreException if an exception occurs retrieving
 	 *  attributes from the specified launch configuration
 	 * @since 3.2
 	 */
@@ -2013,7 +2013,7 @@ public final class JavaRuntime {
 	 * 
 	 * @param project Java project
 	 * @return JRE runtime classpath entry or <code>null</code>
-	 * @exception org.eclipse.core.runtime.CoreException if an exception occurrs
+	 * @exception org.eclipse.core.runtime.CoreException if an exception occurs
 	 * 	accessing the project's classpath
 	 * @since 3.2
 	 */
@@ -2127,7 +2127,7 @@ public final class JavaRuntime {
 	/**
 	 * Registers the given resolver for the specified variable.
 	 * 
-	 * @param resolver runtime classpathe entry resolver
+	 * @param resolver runtime classpath entry resolver
 	 * @param variableName variable name to register for
 	 * @since 2.0
 	 */
@@ -2139,7 +2139,7 @@ public final class JavaRuntime {
 	/**
 	 * Registers the given resolver for the specified container.
 	 * 
-	 * @param resolver runtime classpathe entry resolver
+	 * @param resolver runtime classpath entry resolver
 	 * @param containerIdentifier identifier of the classpath container to register for
 	 * @since 2.0
 	 */
@@ -2250,7 +2250,7 @@ public final class JavaRuntime {
 	 * entry type.
 	 * 
 	 * @param typeId the id of the contributed classpath entry
-	 * @return the resolver registered for the given clsspath entry
+	 * @return the resolver registered for the given classpath entry
 	 */	
 	private static IRuntimeClasspathEntryResolver getContributedResolver(String typeId) {
 		IRuntimeClasspathEntryResolver resolver = (IRuntimeClasspathEntryResolver)getEntryResolvers().get(typeId);
@@ -2520,7 +2520,7 @@ public final class JavaRuntime {
 	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
 	 * Variable substitution is performed on each string before a path is constructed
 	 * from a string.
-	 * @return a claspath attribute with the name <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>
+	 * @return a classpath attribute with the name <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>
 	 * and an value encoded to the specified paths.
 	 * @since 3.1
 	 */
