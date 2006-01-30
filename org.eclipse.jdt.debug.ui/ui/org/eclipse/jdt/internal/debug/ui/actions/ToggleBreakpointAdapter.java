@@ -57,6 +57,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.LocalFileStorageEditorInput;
+import org.eclipse.jdt.internal.debug.ui.ZipEntryStorageEditorInput;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -71,6 +73,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -416,7 +419,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if (editor != null) {
     		IEditorInput input = editor.getEditorInput();
     		IJavaElement element = (IJavaElement) input.getAdapter(IJavaElement.class);
-    		return element == null;
+    		if (element == null) {
+    			// try to determine remote vs local but not in the workspace
+    			if (input instanceof LocalFileStorageEditorInput ||
+    				input instanceof ZipEntryStorageEditorInput) {
+					return false;
+				}
+    			ILocationProvider provider = (ILocationProvider) input.getAdapter(ILocationProvider.class);
+    			if (provider != null && provider.getPath(input) != null) {
+    				return false;
+    			}
+    		}
+    		return true;
     	} 
     	return false;
     }
