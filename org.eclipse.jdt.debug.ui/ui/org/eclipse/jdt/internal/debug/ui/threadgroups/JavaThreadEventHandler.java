@@ -40,8 +40,8 @@ public class JavaThreadEventHandler extends ThreadEventHandler {
 	
 	protected ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
 		if (JavaDebugTargetContentAdapter.isShowThreadGroups()) {
-			delta = delta.addNode(thread.getLaunch(), IModelDelta.NOCHANGE);
-			delta = delta.addNode(thread.getDebugTarget(), IModelDelta.NOCHANGE);
+			delta = delta.addNode(thread.getLaunch(), IModelDelta.NO_CHANGE);
+			delta = delta.addNode(thread.getDebugTarget(), IModelDelta.NO_CHANGE);
 			List groups = new ArrayList();
 			IJavaThread javaThread = (IJavaThread) thread;
 			try {
@@ -56,7 +56,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler {
 			}
 			Iterator iterator = groups.iterator();
 			while (iterator.hasNext()) {
-				delta = delta.addNode(iterator.next(), IModelDelta.NOCHANGE);
+				delta = delta.addNode(iterator.next(), IModelDelta.NO_CHANGE);
 			}
 			return delta;
 		} else {
