@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
+import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler;
