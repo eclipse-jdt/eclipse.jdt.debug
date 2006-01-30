@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.threadgroups;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 
@@ -26,7 +26,7 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 	private static IAsynchronousLabelAdapter fgThreadGroupLabelAdapter = new JavaThreadGroupLabelAdapter();
 	private static IAsynchronousContentAdapter fgThreadGroupTreeAdapter = new JavaThreadGroupContentAdapter();
 	private static IAsynchronousContentAdapter fgTargetTreeAdapter = new JavaDebugTargetContentAdapter();
-	private static IModelProxyFactory fgJavaModelProxyFactory = new JavaModelProxyFactory();
+	private static IModelProxyFactoryAdapter fgJavaModelProxyFactory = new JavaModelProxyFactory();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -45,7 +45,7 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 				return fgTargetTreeAdapter;
 			}
 		}
-		if (adapterType.equals(IModelProxyFactory.class)) {
+		if (adapterType.equals(IModelProxyFactoryAdapter.class)) {
 			if (adaptableObject instanceof IJavaDebugTarget) {
 				return fgJavaModelProxyFactory;
 			}
@@ -57,7 +57,7 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class, IModelProxyFactory.class};
+		return new Class[]{IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class, IModelProxyFactoryAdapter.class};
 	}
 
 }
