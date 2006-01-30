@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetTreeContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
@@ -23,7 +23,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
  * 
  * @since 3.2
  */
-public class AsynchDebugTargetTreeContentAdapter extends DebugTargetTreeContentAdapter {
+public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)

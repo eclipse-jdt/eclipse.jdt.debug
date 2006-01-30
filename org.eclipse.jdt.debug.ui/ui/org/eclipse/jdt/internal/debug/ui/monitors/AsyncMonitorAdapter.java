@@ -1,6 +1,6 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
-import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;

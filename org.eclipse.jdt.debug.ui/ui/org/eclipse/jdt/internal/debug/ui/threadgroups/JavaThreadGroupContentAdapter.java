@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaThreadGroup;
  * 
  * @since 3.2
  */
-public class AsyncThreadGroupTreeContentAdapter extends AsynchronousContentAdapter {
+public class JavaThreadGroupContentAdapter extends AsynchronousContentAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)

@@ -11,9 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.viewers.IAsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactory;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 
@@ -23,9 +23,9 @@ import org.eclipse.jdt.debug.core.IJavaThreadGroup;
  */
 public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 	
-	private static IAsynchronousLabelAdapter fgThreadGroupLabelAdapter = new AsyncThreadGroupLabelAdapter();
-	private static IAsynchronousContentAdapter fgThreadGroupTreeAdapter = new AsyncThreadGroupTreeContentAdapter();
-	private static IAsynchronousContentAdapter fgTargetTreeAdapter = new AsynchDebugTargetTreeContentAdapter();
+	private static IAsynchronousLabelAdapter fgThreadGroupLabelAdapter = new JavaThreadGroupLabelAdapter();
+	private static IAsynchronousContentAdapter fgThreadGroupTreeAdapter = new JavaThreadGroupContentAdapter();
+	private static IAsynchronousContentAdapter fgTargetTreeAdapter = new JavaDebugTargetContentAdapter();
 	private static IModelProxyFactory fgJavaModelProxyFactory = new JavaModelProxyFactory();
 
 	/* (non-Javadoc)
