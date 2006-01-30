@@ -289,9 +289,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                 // exist. If yes, remove it, else create one
                                 IJavaMethodBreakpoint existing = getMethodBreakpoint(typeName, methodName, methodSignature);
                                 if (existing == null) {
-                                	removeBreakpoint(existing, true);
-                                } else {
                                 	createMethodBreakpoint(getResource((IEditorPart) part), typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
+                                } else {
+                                	removeBreakpoint(existing, true);
                                 }
                             }
                         }
@@ -429,6 +429,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     			if (provider != null && provider.getPath(input) != null) {
     				return false;
     			}
+    		} else {
+    			return false;
     		}
     		return true;
     	} 
