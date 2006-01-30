@@ -52,7 +52,7 @@ public class PopupDisplayAction extends DisplayAction {
 
     private class DisplayPopup extends DebugPopup {
         public DisplayPopup(Shell shell, ITextViewer viewer) {
-            super(shell, viewer);
+            super(shell, getPopupAnchor(viewer));
         }
 
         protected String getInfoText() {

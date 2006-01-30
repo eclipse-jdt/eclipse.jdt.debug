@@ -68,6 +68,7 @@ import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 import org.eclipse.jdt.internal.debug.ui.actions.DisplayAction;
+import org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction;
 import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -793,7 +794,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private void showExpression(final JavaInspectExpression expression) {
 	    Runnable r = new Runnable() {
 	        public void run() {
-	            new InspectPopupDialog(getShell(), getSourceViewer(), PopupInspectAction.ACTION_DEFININIITION_ID, expression).open();
+	            new InspectPopupDialog(getShell(), EvaluateAction.getPopupAnchor(getSourceViewer()), PopupInspectAction.ACTION_DEFININIITION_ID, expression).open();
 	        }
 	    };
 	    async(r);

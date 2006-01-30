@@ -54,7 +54,7 @@ public class PopupInspectAction extends InspectAction {
     }
 
     protected void showPopup() {
-        DebugPopup displayPopup = new InspectPopupDialog(getShell(), viewer, ACTION_DEFININIITION_ID, expression);
+        DebugPopup displayPopup = new InspectPopupDialog(getShell(), getPopupAnchor(viewer), ACTION_DEFININIITION_ID, expression);
         displayPopup.open();
     }
 

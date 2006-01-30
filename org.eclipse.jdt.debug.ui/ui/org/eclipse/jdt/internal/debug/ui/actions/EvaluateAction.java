@@ -60,10 +60,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -781,5 +785,26 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 */
 	protected IRegion getRegion() {
 		return fRegion;
+	}
+	
+	/**
+	 * Computes an anchor point for a popup dialog on top of a text viewer.
+	 * 
+	 * @param viewer
+	 * @return desired anchor point
+	 */
+	public static Point getPopupAnchor(ITextViewer viewer) {
+		StyledText textWidget = viewer.getTextWidget();
+        Point docRange = textWidget.getSelectionRange();
+        int midOffset = docRange.x + (docRange.y / 2);
+        Point point = textWidget.getLocationAtOffset(midOffset);
+        point = textWidget.toDisplay(point);
+
+        GC gc = new GC(textWidget);
+        gc.setFont(textWidget.getFont());
+        int height = gc.getFontMetrics().getHeight();
+        gc.dispose();
+        point.y += height;
+        return point;
 	}
 }
