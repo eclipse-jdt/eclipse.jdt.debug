@@ -1858,7 +1858,7 @@
                <iterate>
                 <or>
                	  <and>
-               	     <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
+               	     <adapt type="org.eclipse.jdt.core.IJavaElement"/>
                	     <test property="org.eclipse.jdt.debug.hasMain"/>
                	  </and>
                	  <and>
@@ -1897,7 +1897,7 @@
                <iterate>
                	<or>
                	  <and>
-               	     <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
+               	     <adapt type="org.eclipse.jdt.core.IJavaElement"/>
                	     <test property="org.eclipse.jdt.debug.extendsClass" args="java.applet.Applet"/>
                	  </and>
                	  <and>
