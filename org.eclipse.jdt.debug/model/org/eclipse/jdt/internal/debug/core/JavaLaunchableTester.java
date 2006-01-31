@@ -11,15 +11,21 @@
 
 package org.eclipse.jdt.internal.debug.core;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -28,6 +34,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 /**
@@ -65,7 +72,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	/**
 	 * name for the PROPERTY_HAS_SWT_ON_PATH property
 	 */
-	private static final String PROPERTY_HAS_ITEM_ON_PATH = "hasItemOnBuildPath"; //$NON-NLS-1$
+	private static final String PROPERTY_BUILDPATH_REFERENCE = "buildpathReference"; //$NON-NLS-1$
 	
 	/**
 	 * gets the type of the IJavaElement
@@ -165,24 +172,49 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * @return true if any one of the args is found on the build path
 	 */
 	private boolean hasItemOnBuildPath(IJavaElement element, Object[] args) {
+		if(element != null && args != null) {
+			IJavaProject project = element.getJavaProject();
+			Set searched = new HashSet();
+			searched.add(project);
+			return hasItemsOnBuildPath(project, searched, args);
+		}
+		return false;
+	}
+	
+	private boolean hasItemsOnBuildPath(IJavaProject project, Set searched, Object[] args) {
 		try {
-			if(element != null && args != null) {
-				IJavaProject project = element.getJavaProject();
-	            if(project != null && project.exists()) {
-	                IClasspathEntry[] entries = project.getResolvedClasspath(true);
-	                for(int i = 0; i < entries.length; i++) {
-	                    IPath path = entries[i].getPath();
-	                    String spath = path.toPortableString();
-	                    for(int j = 0; j < args.length; j++) {
-	                    	if(spath.lastIndexOf((String)args[j]) != -1) {
-	                    		return true;
-	                    	}
-	                    }
+			List projects = new ArrayList();
+	        if(project != null && project.exists()) {
+	            IClasspathEntry[] entries = project.getResolvedClasspath(true);
+	            for(int i = 0; i < entries.length; i++) {
+	                IClasspathEntry entry = entries[i];
+					IPath path = entry.getPath();
+	                String spath = path.toPortableString();
+	                for(int j = 0; j < args.length; j++) {
+	                	if(spath.lastIndexOf((String)args[j]) != -1) {
+	                		return true;
+	                	}
+	                }
+	                if (entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+	                	String name = entry.getPath().lastSegment();
+	                	IProject dep = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+	                	IJavaProject javaProject = JavaCore.create(dep);
+	                	if (!searched.contains(javaProject)) {
+	                		projects.add(javaProject);
+	                	}
 	                }
 	            }
-			}
-		}
-		catch(JavaModelException e) {DebugPlugin.log(e);}
+	        }
+	        // search referenced projects
+	        Iterator iterator = projects.iterator();
+	        while (iterator.hasNext()) {
+	        	IJavaProject jp = (IJavaProject) iterator.next();
+	        	searched.add(jp);
+	        	if (hasItemsOnBuildPath(jp, searched, args)) {
+	        		return true;
+	        	}
+	        }
+		} catch (JavaModelException e) {}
 		return false;
 	}
 	
@@ -247,7 +279,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		if(PROPERTY_HAS_MAIN.equals(property)) {
 			return hasMain(element);
 		}
-		if(PROPERTY_HAS_ITEM_ON_PATH.equals(property)) {
+		if(PROPERTY_BUILDPATH_REFERENCE.equals(property)) {
 			return hasItemOnBuildPath(element, args);
 		}
 		if(PROPERTY_EXTENDS_CLASS.equals(property)) {
