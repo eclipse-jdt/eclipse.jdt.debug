@@ -1855,19 +1855,17 @@
            <enablement>
              <with variable="selection">
                <count value="1"/>
-               <iterate operator="and">
-                  <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
-                  <or>
-                     <test
-                           args="main, ([Ljava/lang/String;)V, 9"
-                           property="org.eclipse.jdt.debug.hasMethod"/>
-                     <test
-                           args="main, ([QString;)V, 9"
-                           property="org.eclipse.jdt.debug.hasMethod"/>
-                     <test
-                           args="main, ([QString;)V, 137"
-                           property="org.eclipse.jdt.debug.hasMethod"/>
-                  </or>
+               <iterate>
+                <or>
+               	  <and>
+               	     <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
+               	     <test property="org.eclipse.jdt.debug.hasMain"/>
+               	  </and>
+               	  <and>
+               	     <test property="org.eclipse.jdt.debug.isContainer"/>
+               	     <test property="org.eclipse.jdt.debug.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  </and>
+               	</or>
                </iterate>
                </with>
            </enablement>
@@ -1896,12 +1894,18 @@
            <enablement>
              <with variable="selection">
              <count value="1"/>
-               <iterate operator="and">
-                <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
-                <test
-                      property="org.eclipse.jdt.debug.hasSuperClass"
-                      value="java.applet.Applet"/>
-                </iterate>
+               <iterate>
+               	<or>
+               	  <and>
+               	     <test property="org.eclipse.jdt.debug.matchesJavaFileExtension"/>
+               	     <test property="org.eclipse.jdt.debug.extendsClass" args="java.applet.Applet"/>
+               	  </and>
+               	  <and>
+               	     <test property="org.eclipse.jdt.debug.isContainer"/>
+               	     <test property="org.eclipse.jdt.debug.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  </and>
+               	 </or>
+               </iterate>
            	</with>
            </enablement>
   		 </contextualLaunch>
