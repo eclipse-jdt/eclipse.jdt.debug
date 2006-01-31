@@ -1857,10 +1857,7 @@
                <count value="1"/>
                <iterate>
                 <or>
-               	  <and>
-               	     <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-               	     <test property="org.eclipse.jdt.debug.hasMain"/>
-               	  </and>
+               	  <test property="org.eclipse.jdt.debug.hasMain"/>
                	  <and>
                	     <test property="org.eclipse.jdt.debug.isContainer"/>
                	     <test property="org.eclipse.jdt.debug.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
@@ -1896,10 +1893,7 @@
              <count value="1"/>
                <iterate>
                	<or>
-               	  <and>
-               	     <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-               	     <test property="org.eclipse.jdt.debug.extendsClass" args="java.applet.Applet"/>
-               	  </and>
+               	  <test property="org.eclipse.jdt.debug.extendsClass" args="java.applet.Applet"/>
                	  <and>
                	     <test property="org.eclipse.jdt.debug.isContainer"/>
                	     <test property="org.eclipse.jdt.debug.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>

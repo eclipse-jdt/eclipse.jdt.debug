@@ -46,11 +46,6 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * name for the "extends class" property
 	 */
 	private static final String PROPERTY_EXTENDS_CLASS = "extendsClass"; //$NON-NLS-1$
-
-	/**
-	 * name for the PROPERTY_MATCHES_EXTENSION property
-	 */
-	private static final String PROPERTY_MATCHES_EXTENSION = "matchesJavaFileExtension"; //$NON-NLS-1$
 	
 	/**
 	 * "is container" property
@@ -213,24 +208,6 @@ public class JavaLaunchableTester extends PropertyTester {
 		return false;
 	}
 
-    /**
-	 * matches the file extension to see if the resource is a java class or source file
-	 * @param resource the resource 
-	 * @return true if the resource has a java associated file extension, false otherwise
-	 */
-	private boolean matchesJavaFileExtension(IJavaElement element) {
-		if(element != null) {
-			IResource resource = element.getResource();
-			if(resource != null) {
-				String extension = resource.getFileExtension();
-				if(extension != null) {
-					return extension.equals("java") || extension.equals("class");  //$NON-NLS-1$//$NON-NLS-2$
-				}
-			}
-		}
-        return false;
-	}
-
 	/**
 	 * Method runs the tests defined from extension points for Run As... and Debug As... menu items.
 	 * Currently this test optimisitically considers everything not a source file. In this context we 
@@ -266,9 +243,6 @@ public class JavaLaunchableTester extends PropertyTester {
 					return false;
 				}
 			}
-		}
-		if(PROPERTY_MATCHES_EXTENSION.equals(property)) {
-			return matchesJavaFileExtension(element);
 		}
 		if(PROPERTY_HAS_MAIN.equals(property)) {
 			return hasMain(element);
