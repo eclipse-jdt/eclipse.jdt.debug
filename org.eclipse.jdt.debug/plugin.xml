@@ -264,7 +264,7 @@
             class="org.eclipse.jdt.internal.debug.core.JavaLaunchableTester"
             id="org.eclipse.jdt.debug.JavaLaunchableTester"
             namespace="org.eclipse.jdt.debug"
-            properties="hasMain, extendsClass, extendsInterface, isContainer, hasProjectNature, buildpathReference"
+            properties="hasMain, extendsClass, extendsInterface, hasMethod, isContainer, hasProjectNature, buildpathReference"
             type="org.eclipse.core.runtime.IAdaptable"/>            
    </extension>
    

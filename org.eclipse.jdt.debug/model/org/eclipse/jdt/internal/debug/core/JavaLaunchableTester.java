@@ -45,9 +45,14 @@ import org.eclipse.jdt.core.JavaModelException;
 public class JavaLaunchableTester extends PropertyTester {
 
 	/**
-	 * name for the HAS_METHOD property
+	 * name for the "has main" property
 	 */
 	private static final String PROPERTY_HAS_MAIN = "hasMain"; //$NON-NLS-1$
+	
+	/**
+	 * name for the "has method" property
+	 */
+	private static final String PROPERTY_HAS_METHOD = "hasMethod"; //$NON-NLS-1$	
 	
 	/**
 	 * name for the "extends class" property
@@ -118,6 +123,37 @@ public class JavaLaunchableTester extends PropertyTester {
 		catch (JavaModelException e) {}
 		return false;
 	}
+	
+	/**
+	 * Determines is the java element contains a specific method.
+	 * 
+	 * @param element the element to check for the method 
+	 * @param args first arg is method name, secondary args are parameter types signatures
+	 * @return true if the method is found in the element, false otherwise
+	 */
+	private boolean hasMethod(IJavaElement element, Object[] args) {
+		try {
+			if (args.length > 0) {
+	            IType type = getType(element);
+				if (type != null && type.exists()) {
+					String name = (String) args[0];
+					String[] parms = new String[args.length - 1];
+					for (int i = 1; i < args.length; i++) {
+						parms[i - 1] = (String) args[i];
+					}
+					IMethod candidate = type.getMethod(name, parms);
+					IMethod[] methods = type.getMethods();
+					for (int i= 0; i < methods.length; i++) {
+						if(methods[i].isSimilar(candidate)) {
+								return true;
+						}
+					}
+				}
+			}
+		}
+		catch (JavaModelException e) {}
+		return false;
+	}	
 	
 	/**
      * determines if the project selected has the specified nature
@@ -278,6 +314,9 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		if(PROPERTY_HAS_MAIN.equals(property)) {
 			return hasMain(element);
+		}
+		if (PROPERTY_HAS_METHOD.equals(property)) {
+			return hasMethod(element, args);
 		}
 		if(PROPERTY_BUILDPATH_REFERENCE.equals(property)) {
 			return hasItemOnBuildPath(element, args);
