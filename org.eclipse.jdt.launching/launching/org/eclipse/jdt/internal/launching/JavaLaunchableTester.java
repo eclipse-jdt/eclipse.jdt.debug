@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jdt.internal.debug.core;
+package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.expressions.PropertyTester;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -36,6 +39,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 /**
  * Generalized property tester class to determine enablement of context launching menu artifacts
@@ -78,7 +82,23 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * name for the PROPERTY_HAS_SWT_ON_PATH property
 	 */
 	private static final String PROPERTY_BUILDPATH_REFERENCE = "buildpathReference"; //$NON-NLS-1$
-	
+    
+    /**
+     * Map of modifier text to corresponding flag (Integer)
+     */
+    private static Map fgModifiers = new HashMap();
+    
+    static {
+        fgModifiers.put("public",       new Integer(Flags.AccPublic)); //$NON-NLS-1$
+        fgModifiers.put("protected",    new Integer(Flags.AccProtected)); //$NON-NLS-1$
+        fgModifiers.put("private",      new Integer(Flags.AccPrivate)); //$NON-NLS-1$
+        fgModifiers.put("static",       new Integer(Flags.AccStatic)); //$NON-NLS-1$
+        fgModifiers.put("final",        new Integer(Flags.AccFinal)); //$NON-NLS-1$
+        fgModifiers.put("synchronized", new Integer(Flags.AccSynchronized)); //$NON-NLS-1$
+        fgModifiers.put("abstract",     new Integer(Flags.AccAbstract)); //$NON-NLS-1$
+        fgModifiers.put("native",       new Integer(Flags.AccNative)); //$NON-NLS-1$
+    }
+    	
 	/**
 	 * gets the type of the IJavaElement
 	 * @param element the element to inspect
@@ -126,27 +146,52 @@ public class JavaLaunchableTester extends PropertyTester {
 	
 	/**
 	 * Determines is the java element contains a specific method.
-	 * 
+     * <p>
+     * The syntax for the property tester is of the form: methodname,
+     * signature, modifiers.
+	 * </p>
+     * <ol>
+     * <li>methodname - case sensitive method name, required. For example,
+     *  <code>toString</code>.</li>
+     * <li>signature - JLS style method signature, required. For example,
+     *  <code>(QString;)V</code>.</li>
+     * <li>modifiers - optional space seperated list of modifiers, for
+     *  example, <code>public static</code>.</li>
+     * </ol>
 	 * @param element the element to check for the method 
 	 * @param args first arg is method name, secondary args are parameter types signatures
 	 * @return true if the method is found in the element, false otherwise
 	 */
 	private boolean hasMethod(IJavaElement element, Object[] args) {
 		try {
-			if (args.length > 0) {
+			if (args.length > 1) {
 	            IType type = getType(element);
 				if (type != null && type.exists()) {
 					String name = (String) args[0];
-					String[] parms = new String[args.length - 1];
-					for (int i = 1; i < args.length; i++) {
-						parms[i - 1] = (String) args[i];
-					}
+					String signature = (String) args[1];
+                    String[] parms = Signature.getParameterTypes(signature);
+                    String returnType = Signature.getReturnType(signature);
 					IMethod candidate = type.getMethod(name, parms);
-					IMethod[] methods = type.getMethods();
-					for (int i= 0; i < methods.length; i++) {
-						if(methods[i].isSimilar(candidate)) {
-								return true;
-						}
+					if (candidate.exists()) {
+                        // check return type
+                        if (candidate.getReturnType().equals(returnType)) {
+                            // check modifiers
+                            if (args.length > 2) {
+                                String modifierText = (String) args[2];
+                                String[] modifiers = modifierText.split(" "); //$NON-NLS-1$
+                                int flags = 0;
+                                for (int j = 0; j < modifiers.length; j++) {
+                                    String modifier = modifiers[j];
+                                    Integer flag = (Integer) fgModifiers.get(modifier);
+                                    if (flag != null) {
+                                        flags = flags | flag.intValue();
+                                    }
+                                }
+                                if (candidate.getFlags() == flags) {
+                                    return true;
+                                }
+                            }
+                        }
 					}
 				}
 			}

@@ -1857,10 +1857,10 @@
                <count value="1"/>
                <iterate>
                 <or>
-               	  <test property="org.eclipse.jdt.debug.hasMain"/>
+               	  <test property="org.eclipse.jdt.launching.hasMain"/>
                	  <and>
-               	     <test property="org.eclipse.jdt.debug.isContainer"/>
-               	     <test property="org.eclipse.jdt.debug.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	     <test property="org.eclipse.jdt.launching.isContainer"/>
+               	     <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
                	  </and>
                	</or>
                </iterate>
@@ -1893,10 +1893,10 @@
              <count value="1"/>
                <iterate>
                	<or>
-               	  <test property="org.eclipse.jdt.debug.extendsClass" args="java.applet.Applet"/>
+               	  <test property="org.eclipse.jdt.launching.extendsClass" args="java.applet.Applet"/>
                	  <and>
-               	     <test property="org.eclipse.jdt.debug.isContainer"/>
-               	     <test property="org.eclipse.jdt.debug.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	     <test property="org.eclipse.jdt.launching.isContainer"/>
+               	     <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
                	  </and>
                	 </or>
                </iterate>
