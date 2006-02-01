@@ -168,5 +168,4 @@ public class ActionMessages extends NLS {
 
 	public static String OpenTypeAction_1;
 
-    public static String PopupDisplayAction_1;
 }

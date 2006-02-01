@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import java.text.MessageFormat;
-
 import org.eclipse.debug.ui.DebugPopup;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayView;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -26,10 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.keys.IBindingService;
 
 public class PopupDisplayAction extends DisplayAction {
 
@@ -52,25 +46,14 @@ public class PopupDisplayAction extends DisplayAction {
 
     private class DisplayPopup extends DebugPopup {
         public DisplayPopup(Shell shell, ITextViewer viewer) {
-            super(shell, getPopupAnchor(viewer));
+            super(shell, getPopupAnchor(viewer), ACTION_DEFINITION_ID);
         }
 
-        protected String getInfoText() {
-            IWorkbench workbench = PlatformUI.getWorkbench();
-            IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
-            TriggerSequence[] bindings = bindingService.getActiveBindingsFor(ACTION_DEFINITION_ID);
-            String infoText = null;
-            if (bindings.length > 0) {
-                 infoText = MessageFormat.format(ActionMessages.PopupDisplayAction_1, new String[] { bindings[0].format(), ActionMessages.PopupDisplayAction_2 });
-            }
-            return infoText;
-        }
+        protected String getActionText() {
+			return ActionMessages.PopupDisplayAction_2;
+		}
 
-        protected String getCommandId() {
-            return ACTION_DEFINITION_ID;
-        }
-
-        protected void persist() {
+		protected void persist() {
             IDataDisplay directDisplay = getDirectDataDisplay();
             Display display = JDIDebugUIPlugin.getStandardDisplay();
 
