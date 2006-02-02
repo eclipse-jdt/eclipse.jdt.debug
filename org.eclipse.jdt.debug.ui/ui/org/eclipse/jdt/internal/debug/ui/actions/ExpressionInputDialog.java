@@ -22,7 +22,7 @@ import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -33,7 +33,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -170,11 +169,9 @@ public class ExpressionInputDialog extends Dialog {
      * Initializes the source viewer. This method is based on code in BreakpointConditionEditor.
      */
     private void configureSourceViewer() {
-        JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
-		IDocument document= new Document();
-		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-		document.setDocumentPartitioner(partitioner);
-		partitioner.connect(document);
+        JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
+        IDocument document= new Document();
+        tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		fSourceViewer.configure(new DisplayViewerConfiguration() {
 			public IContentAssistProcessor getContentAssistantProcessor() {
 				return getCompletionProcessor();

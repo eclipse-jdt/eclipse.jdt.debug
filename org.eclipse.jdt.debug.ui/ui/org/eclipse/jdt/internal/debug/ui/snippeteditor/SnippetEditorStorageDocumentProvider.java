@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.ui.editors.text.StorageDocumentProvider;
 
 /**
@@ -27,10 +27,8 @@ public class SnippetEditorStorageDocumentProvider extends StorageDocumentProvide
 	 */
 	protected void setupDocument(Object element, IDocument document) {
 		if (document != null) {
-			JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
-			IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-			partitioner.connect(document);
-			document.setDocumentPartitioner(partitioner);
+			JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
+			tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		}
 	}
 }

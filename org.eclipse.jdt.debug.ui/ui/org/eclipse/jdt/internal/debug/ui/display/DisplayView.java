@@ -25,7 +25,7 @@ import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -38,7 +38,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -189,10 +188,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		} else {
 			doc= new Document();
 		}
-		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
-		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-		partitioner.connect(doc);
-		doc.setDocumentPartitioner(partitioner);
+		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
+		tools.setupJavaDocumentPartitioner(doc, IJavaPartitions.JAVA_PARTITIONING);
 		fDocumentListener= new IDocumentListener() {
 			/**
 			 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)

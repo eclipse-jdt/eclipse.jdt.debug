@@ -35,17 +35,16 @@ import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -358,14 +357,12 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fSnippetViewer= new JDISourceViewer(fCodeGroup,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 		fSnippetViewer.setInput(this);
 	
-		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
+		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		if (fSnippetDocument == null) {
 			fSnippetDocument= new Document();
 			fSnippetDocument.addDocumentListener(this);
 		}
-		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-		fSnippetDocument.setDocumentPartitioner(partitioner);
-		partitioner.connect(fSnippetDocument);
+		tools.setupJavaDocumentPartitioner(fSnippetDocument, IJavaPartitions.JAVA_PARTITIONING);
 		if (fViewerConfiguration == null) {
 			fViewerConfiguration= new DisplayViewerConfiguration() {
 				public IContentAssistProcessor getContentAssistantProcessor() {

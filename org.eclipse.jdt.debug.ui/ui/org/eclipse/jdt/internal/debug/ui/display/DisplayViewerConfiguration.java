@@ -15,7 +15,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -36,7 +35,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 		
 	public DisplayViewerConfiguration() {
-		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), 
+		super(JDIDebugUIPlugin.getDefault().getJavaTextTools().getColorManager(), 
 				new ChainedPreferenceStore(new IPreferenceStore[] {
 						PreferenceConstants.getPreferenceStore(),
 						EditorsUI.getPreferenceStore()}),

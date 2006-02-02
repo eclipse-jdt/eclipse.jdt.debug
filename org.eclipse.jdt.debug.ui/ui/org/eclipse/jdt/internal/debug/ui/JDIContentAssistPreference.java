@@ -16,7 +16,6 @@ import java.util.Hashtable;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -42,7 +41,7 @@ public class JDIContentAssistPreference {
 	}
 	
 	private static Color getColor(IPreferenceStore store, String key) {
-		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
+		JavaTextTools textTools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		return getColor(store, key, textTools.getColorManager());
 	}
 	

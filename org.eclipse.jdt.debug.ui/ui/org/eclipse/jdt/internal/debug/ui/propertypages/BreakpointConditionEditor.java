@@ -25,7 +25,7 @@ import org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistCo
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
@@ -34,7 +34,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -86,11 +85,9 @@ public class BreakpointConditionEditor {
 		fViewer= new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fViewer.setInput(parent);
 		
-		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
+		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();
-		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-		document.setDocumentPartitioner(partitioner);
-		partitioner.connect(document);
+		tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		
 		// we can only do code assist if there is an associated type
 		IJavaDebugContentAssistContext context = null;

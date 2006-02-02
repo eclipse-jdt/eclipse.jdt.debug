@@ -18,12 +18,11 @@ import java.util.List;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -265,11 +264,9 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         
         fCodeViewer= new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
-        JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
+        JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
         IDocument document= new Document();
-        IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-        document.setDocumentPartitioner(partitioner);
-        partitioner.connect(document);      
+        tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
         fCodeViewer.configure(new DisplayViewerConfiguration());
         fCodeViewer.setEditable(false);
         fCodeViewer.setDocument(document);

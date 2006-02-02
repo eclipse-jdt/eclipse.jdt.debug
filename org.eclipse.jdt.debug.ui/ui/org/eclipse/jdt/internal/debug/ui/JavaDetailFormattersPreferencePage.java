@@ -17,13 +17,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -260,11 +259,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	public void createSourceViewer(Composite container) {
 		fCodeViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
-		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
+		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();
-		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
-		document.setDocumentPartitioner(partitioner);
-		partitioner.connect(document);		
+		tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		fCodeViewer.configure(new DisplayViewerConfiguration());
 		fCodeViewer.setEditable(false);
 		fCodeViewer.setDocument(document);

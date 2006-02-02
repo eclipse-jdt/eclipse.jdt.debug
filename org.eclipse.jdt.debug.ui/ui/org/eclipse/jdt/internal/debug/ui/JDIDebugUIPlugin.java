@@ -59,6 +59,8 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvid
 import org.eclipse.jdt.internal.debug.ui.threadgroups.JavaDebugElementLabelAdapterFactory;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -120,6 +122,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	private boolean fShuttingDown= false;
 
+	/**
+	 * Singleton text tools for debug plug-in.
+	 */
+	private JavaTextTools fTextTools = null;
+	
 	/**
 	 * @see Plugin()
 	 */
@@ -332,6 +339,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			if (fUtilPresentation != null) {
 				fUtilPresentation.dispose();
 			} 
+			if (fTextTools != null) {
+				fTextTools.dispose();
+			}
 		} finally {
 			super.stop(context);
 		}
@@ -517,5 +527,17 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			}
 		});		
 	}	
+	
+	/**
+	 * Returns the text tools used by this plug-in
+	 * 
+	 * @return
+	 */
+	public JavaTextTools getJavaTextTools() {
+		if (fTextTools == null) {
+			fTextTools = new JavaTextTools(PreferenceConstants.getPreferenceStore());
+		}
+		return fTextTools;
+	}
 }
 

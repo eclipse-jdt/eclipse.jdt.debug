@@ -71,7 +71,6 @@ import org.eclipse.jdt.internal.debug.ui.actions.DisplayAction;
 import org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction;
 import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -235,7 +234,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
-		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JavaPlugin.getDefault().getJavaTextTools(), this));		
+		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), this));		
 		fSnippetStateListeners= new ArrayList(4);
 		IPreferenceStore store = new ChainedPreferenceStore(new IPreferenceStore[] {
 				PreferenceConstants.getPreferenceStore(),
@@ -1078,7 +1077,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
+		JavaTextTools textTools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		return textTools.affectsBehavior(event);
 	}
 	
