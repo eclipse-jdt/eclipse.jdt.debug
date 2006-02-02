@@ -48,6 +48,9 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		int lineNumber= locator.getLineLocation();		
 		assertEquals("Wrong line number", expectedLineNumber, lineNumber);
 		String typeName= locator.getFullyQualifiedTypeName();
+		if (typeName != null) {
+			typeName = typeName.replaceAll("\\$", ".");
+		}
         if (lineNumber == -1) {
             assertEquals("Wrong type name", null, typeName);
         } else {
@@ -69,7 +72,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testLineInInnerType() throws Exception {
-		testLocation(25, 25, "BreakpointsLocation$InnerClass");
+		testLocation(25, 25, "BreakpointsLocation.InnerClass");
 	}
 	
 	public void testLineInAnnonymousType() throws Exception {
