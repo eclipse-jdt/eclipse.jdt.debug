@@ -41,7 +41,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 */
 	public void init(IViewPart view) {
 		fView = view;
-		fAction.setChecked(getPreferenceValue(view));
+		fAction.setChecked(getPreferenceValue());
 		run(fAction);
 	}
 
@@ -105,16 +105,14 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * @param part
 	 * @return boolean
 	 */
-	protected boolean getPreferenceValue(IViewPart part) {
-		String baseKey = getPreferenceKey();
-		String viewKey = part.getSite().getId();
-		String compositeKey = viewKey + "." + baseKey; //$NON-NLS-1$
+	protected boolean getPreferenceValue() {
+		String key = getCompositeKey();
 		IPreferenceStore store = getPreferenceStore();
 		boolean value = false;
-		if (store.contains(compositeKey)) {
-			value = store.getBoolean(compositeKey);
+		if (store.contains(key)) {
+			value = store.getBoolean(key);
 		} else {
-			value = store.getBoolean(baseKey);
+			value = store.getBoolean(getPreferenceKey());
 		}
 		return value;		
 	}
@@ -126,6 +124,18 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 */
 	protected abstract String getPreferenceKey(); 
 
+	/**
+	 * Returns the key used by this action to store its preference value/setting.
+	 * Based on a base key (suffix) and part id (prefix).
+	 *  
+	 * @return preference store key
+	 */
+	protected String getCompositeKey() {
+		String baseKey = getPreferenceKey();
+		String viewKey = getView().getSite().getId();
+		return viewKey + "." + baseKey; //$NON-NLS-1$
+	}
+	
 	protected IViewPart getView() {
 		return fView;
 	}

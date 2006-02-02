@@ -25,7 +25,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -64,7 +64,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		fJavaMonitors= new HashMap();
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(this);
-		fIsEnabled= preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO);
+		fIsEnabled= preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
 		if (fIsEnabled) {
 			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
@@ -282,7 +282,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
+		if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
 			fIsEnabled= ((Boolean)event.getNewValue()).booleanValue();
 			if (fIsEnabled) {
 				DebugPlugin.getDefault().addDebugEventListener(this);

@@ -39,7 +39,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler {
 	}
 	
 	protected ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
-		if (JavaDebugTargetContentAdapter.isShowThreadGroups()) {
+		if (JavaDebugTargetContentAdapter.isShowThreadGroups(getModelProxy().getPresentationContext())) {
 			delta = delta.addNode(thread.getLaunch(), IModelDelta.NO_CHANGE);
 			delta = delta.addNode(thread.getDebugTarget(), IModelDelta.NO_CHANGE);
 			List groups = new ArrayList();

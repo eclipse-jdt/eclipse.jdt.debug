@@ -39,7 +39,7 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 		BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				IPreferenceStore store = getPreferenceStore();
-				store.setValue(getPreferenceKey(), getValue());			
+				store.setValue(getCompositeKey(), getValue());			
 				viewer.refresh();
 			}
 		});

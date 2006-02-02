@@ -12,7 +12,9 @@ package org.eclipse.jdt.debug.ui;
 
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.monitors.ThreadMonitorManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Utilities for the Java debugger.
@@ -56,5 +58,16 @@ public class JavaDebugUtils {
      */    
     public static IDebugElement getContendedMonitor(IThread thread) {
         return ThreadMonitorManager.getDefault().getContendedMonitor(thread);
+    }
+    
+	/**
+	 * Returns the preference store for the Java Debug UI plug-in.
+	 *
+	 * @return preference store
+	 * @since 3.2
+	 */
+    public static IPreferenceStore getPreferenceStore()
+    {
+    	return JDIDebugUIPlugin.getDefault().getPreferenceStore();
     }
 }

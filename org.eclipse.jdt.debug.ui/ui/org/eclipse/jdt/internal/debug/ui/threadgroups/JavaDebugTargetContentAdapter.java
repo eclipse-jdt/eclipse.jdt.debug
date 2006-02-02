@@ -11,11 +11,12 @@
 package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
@@ -31,7 +32,7 @@ public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
-			if (isShowThreadGroups()) {
+			if (isShowThreadGroups(context)) {
 				if (parent instanceof IJavaDebugTarget) {
 					IJavaDebugTarget target = (IJavaDebugTarget) parent;
 					return target.getRootThreadGroups();
@@ -46,8 +47,13 @@ public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
 	 * 
 	 * @return whether thread groups are being displayed
 	 */
-	protected static boolean isShowThreadGroups() {
-		return JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IJDIPreferencesConstants.PREF_SHOW_THREAD_GROUPS);
+	protected static boolean isShowThreadGroups(IPresentationContext context) {
+		String compositeKey = context.getPart().getSite().getId() + "." + IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS;		 //$NON-NLS-1$
+		Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
+		if (pluginPreferences.contains(compositeKey)) {
+			return pluginPreferences.getBoolean(compositeKey);
+		}
+		return pluginPreferences.getBoolean(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS);
 	}
 
 }

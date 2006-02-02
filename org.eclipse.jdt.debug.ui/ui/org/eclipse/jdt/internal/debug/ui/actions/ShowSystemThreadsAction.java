@@ -15,7 +15,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -31,7 +31,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ThreadFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
-		return IJDIPreferencesConstants.PREF_SHOW_SYSTEM_THREADS;
+		return IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS;
 	}
 
 	/* (non-Javadoc)

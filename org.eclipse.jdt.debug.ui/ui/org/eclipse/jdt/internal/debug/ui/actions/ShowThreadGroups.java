@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 
 /**
  * Toggle to display the thread and monitor information in the debug view.
@@ -21,7 +21,7 @@ public class ShowThreadGroups extends ToggleBooleanPreferenceAction {
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
-		return IJDIPreferencesConstants.PREF_SHOW_THREAD_GROUPS;
+		return IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS;
 	}
 
 }

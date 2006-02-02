@@ -60,4 +60,31 @@ public interface IJavaDebugUIConstants {
 	 * Status code indicating an unexpected internal error (value <code>150</code>).
 	 */
 	public static final int INTERNAL_ERROR = 150;
+
+	/**
+	 * Boolean preference indicating whether the monitor and thread info should be displayed in the debug view.
+	 * A view may override this preference, and if so, stores its preference, prefixed by view id.
+	 *  
+	 * @since 3.2
+	 */	
+	public static final String PREF_SHOW_MONITOR_THREAD_INFO = PLUGIN_ID + ".show_monitor_thread_info"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference indicating whether system threads should appear visible in the debug view.
+	 * A view may override this preference, and if so, stores its preference, prefixed by view id.
+	 * 
+	 * @since 3.2
+	 */	
+	public static final String PREF_SHOW_SYSTEM_THREADS = PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference indicating whether thread groups should be displayed in the debug view.
+	 * A view may override this preference, and if so, stores its preference, prefixed by view id.
+	 * 
+	 * @since 3.2
+	 */	
+	public static final String PREF_SHOW_THREAD_GROUPS = PLUGIN_ID + ".show_thread_group_info"; //$NON-NLS-1$	
+	
+	
+	
 }

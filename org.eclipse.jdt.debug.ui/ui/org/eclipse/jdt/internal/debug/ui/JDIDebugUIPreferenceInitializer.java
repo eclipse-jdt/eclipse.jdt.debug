@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -47,8 +48,8 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_DETAILS, IJDIPreferencesConstants.DETAIL_PANE);
 		
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_SYSTEM_THREADS, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_THREAD_GROUPS, false);
+		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS, false);
+		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
+		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS, false);
 	}
 }
