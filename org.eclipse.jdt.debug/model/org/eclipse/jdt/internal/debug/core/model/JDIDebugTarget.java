@@ -199,7 +199,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private static final int STEP_FILTERS_ENABLED = 0x001;
 	
 	/**
-	 * Step filter bit mask - indicates if sythetic methods are filtered.
+	 * Step filter bit mask - indicates if synthetic methods are filtered.
 	 */	
 	private static final int FILTER_SYNTHETICS = 0x002;
 	
@@ -1451,7 +1451,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * The JDIDebugPlugin is shutting down.
 	 * Shutdown the event dispatcher and do local
-	 * cleaup.
+	 * cleanup.
 	 */
 	public void shutdown() {
 		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
@@ -1862,7 +1862,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	class CleanUpJob extends Job {
 
 		/**
-		 * Contructs a job to cleanup a hanging target.
+		 * Constructs a job to cleanup a hanging target.
 		 */
 		public CleanUpJob() {
 			super(JDIDebugModelMessages.JDIDebugTarget_0);
@@ -1922,7 +1922,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public IMemoryBlock getMemoryBlock(long startAddress, long length)
 		throws DebugException {
 			notSupported(JDIDebugModelMessages.JDIDebugTarget_does_not_support_storage_retrieval); 
-			// this line will not be excecuted as #notSupported(String)
+			// this line will not be executed as #notSupported(String)
 			// will throw an exception
 			return null;
 	}
@@ -2108,10 +2108,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	
 	/**
 	 * Returns an evaluation engine for the given project, creating
-	 * one if neccessary.
+	 * one if necessary.
 	 * 
 	 * @param project java project
-	 * @return evalaution engine
+	 * @return evaluation engine
 	 */
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project) {
 		if (fEngines == null) {
@@ -2300,7 +2300,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 			return (IJavaThreadGroup[]) modelGroups.toArray(new IJavaThreadGroup[modelGroups.size()]);
 		} catch (RuntimeException e) {
-			targetRequestFailed("Error retrieving top level thraed groups", e);
+			targetRequestFailed(JDIDebugModelMessages.JDIDebugTarget_1, e);
 		}
 		return null;
 	}
