@@ -124,7 +124,7 @@ public class JREsComboBlock {
 	private Button fManageEnvironmentsButton = null;
 	
 	/**
-	 * List of exeuction environments
+	 * List of execution environments
 	 */
 	private List fEnvironments = new ArrayList();
 	
@@ -301,7 +301,7 @@ public class JREsComboBlock {
 	private void showPrefPage(String id, IPreferencePage page) {
 		IVMInstall prevJRE = getJRE();
 		IExecutionEnvironment prevEnv = getEnvironment();
-		JDIDebugUIPlugin.showPreferencePage(id, page); //$NON-NLS-1$
+		JDIDebugUIPlugin.showPreferencePage(id, page);
 		fillWithWorkspaceJREs();
 		fillWithWorkspaceProfiles();
 		restoreCombo(fVMs, prevJRE, fCombo);
@@ -565,7 +565,7 @@ public class JREsComboBlock {
 	}
 	
 	/**
-	 * Returns a classpath conatiner path identifying the selected JRE.
+	 * Returns a classpath container path identifying the selected JRE.
 	 * 
 	 * @return classpath container path or <code>null</code>
 	 * @since 3.2
