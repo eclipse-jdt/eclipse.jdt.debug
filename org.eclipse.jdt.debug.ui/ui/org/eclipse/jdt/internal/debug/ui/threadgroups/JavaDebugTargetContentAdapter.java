@@ -26,10 +26,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
  */
 public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
-	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
+    protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
 			if (isShowThreadGroups(context)) {

@@ -28,9 +28,10 @@ public abstract class AsyncMonitorAdapter extends AsynchronousContentAdapter imp
 	    return fDisplayMonitors;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#supportsPartId(java.lang.String)
+     */
 	protected boolean supportsPartId(String id) {
 		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id);
 	}	

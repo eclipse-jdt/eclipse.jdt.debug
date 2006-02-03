@@ -24,10 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaThreadGroup;
  */
 public class JavaThreadGroupContentAdapter extends AsynchronousContentAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
-	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
+    protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		if (parent instanceof IJavaThreadGroup) {
 			IJavaThreadGroup group = (IJavaThreadGroup) parent;
 			IJavaThreadGroup[] threadGroups = group.getThreadGroups();
@@ -47,9 +44,6 @@ public class JavaThreadGroupContentAdapter extends AsynchronousContentAdapter {
 		return EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IJavaThreadGroup) {
 			IJavaThreadGroup group = (IJavaThreadGroup) element;
@@ -58,9 +52,6 @@ public class JavaThreadGroupContentAdapter extends AsynchronousContentAdapter {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#supportsPartId(java.lang.String)
-	 */
 	protected boolean supportsPartId(String id) {
 		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id);
 	}
