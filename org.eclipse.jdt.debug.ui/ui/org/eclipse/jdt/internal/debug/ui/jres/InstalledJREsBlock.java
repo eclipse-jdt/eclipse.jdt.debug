@@ -50,21 +50,16 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -110,14 +105,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private Button fEditButton;
 	private Button fCopyButton;
 	private Button fSearchButton;	
-	
-	// column weights
-	private float fWeight1 = 1/3F;
-	private float fWeight2 = 1/3F;
-	
-	// ignore column re-sizing when the table is being resized
-	private boolean fResizingTable = false; 
-	
+    
 	// index of column used for sorting
 	private int fSortColumn = 0;
 	
@@ -130,6 +118,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Previous selection
 	 */
 	private ISelection fPrevSelection = new StructuredSelection();
+
+    private Table fTable;
 			
 	// Make sure that VMStandin ids are unique if multiple calls to System.currentTimeMillis()
 	// happen very quickly
@@ -138,18 +128,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/** 
 	 * Content provider to show a list of JREs
 	 */ 
-	class JREsContentProvider implements IStructuredContentProvider {	
-	
+	class JREsContentProvider implements IStructuredContentProvider {		
 		public Object[] getElements(Object input) {
 			return fVMs.toArray();
 		}
-
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-
 		public void dispose() {
 		}
-	
 	}
 	
 	/**
@@ -259,19 +245,17 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		tableLabel.setLayoutData(data);
 		tableLabel.setFont(font);
 				
-		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		fTable= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		
 		data= new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(data);
-		table.setFont(font);
+        data.widthHint = 450;
+		fTable.setLayoutData(data);
+		fTable.setFont(font);
 				
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);		
+		fTable.setHeaderVisible(true);
+		fTable.setLinesVisible(true);		
 
-		TableLayout tableLayout= new TableLayout();
-		table.setLayout(tableLayout);
-
-		TableColumn column1= new TableColumn(table, SWT.NULL);
+		TableColumn column1= new TableColumn(fTable, SWT.NULL);
 		column1.setText(JREMessages.InstalledJREsBlock_0); 
 		column1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -279,23 +263,23 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});
 	
-		TableColumn column2= new TableColumn(table, SWT.NULL);
+		TableColumn column2= new TableColumn(fTable, SWT.NULL);
 		column2.setText(JREMessages.InstalledJREsBlock_1); 
 		column2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
 			}
 		});
-		
-		TableColumn column3= new TableColumn(table, SWT.NULL);
+        
+		TableColumn column3= new TableColumn(fTable, SWT.NULL);
 		column3.setText(JREMessages.InstalledJREsBlock_2); 
 		column3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
 			}
 		});
-		
-		fVMList= new CheckboxTableViewer(table);			
+
+		fVMList= new CheckboxTableViewer(fTable);			
 		fVMList.setLabelProvider(new VMLabelProvider());
 		fVMList.setContentProvider(new JREsContentProvider());
 		// by default, sort by name
@@ -324,7 +308,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				}
 			}
 		});
-		table.addKeyListener(new KeyAdapter() {
+		fTable.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					removeVMs();
@@ -383,8 +367,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				search();
 			}
 		});		
-		
-		configureTableResizing(parent, buttons, table, column1, column2, column3);
 		
 		fillWithWorkspaceJREs();
 		enableButtons();
@@ -549,81 +531,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	
 	protected Button createPushButton(Composite parent, String label) {
 		return SWTUtil.createPushButton(parent, label, null);
-	}
-	
-	/**
-	 * Correctly resizes the table so no phantom columns appear
-	 */
-	protected void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3) {
-		parent.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				resizeTable(parent, buttons, table, column1, column2, column3);
-			}
-		}); 
-		table.addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event event) {
-				table.removeListener(SWT.Paint, this);
-				resizeTable(parent, buttons, table, column1, column2, column3);
-			}
-		});
-		column1.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (column1.getWidth() > 0 && !fResizingTable) {
-					fWeight1 = getColumnWeight(0);
-				}
-			}
-		});
-		column2.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (column2.getWidth() > 0 && !fResizingTable) {
-					fWeight2 = getColumnWeight(1);
-				}
-			}
-		});
 	}	
-
-	private void resizeTable(Composite parent, Composite buttons, Table table, TableColumn column1, TableColumn column2, TableColumn column3) {
-		fResizingTable = true;
-		int parentWidth = -1;
-		int parentHeight = -1;
-		if (parent.isVisible()) {
-			Rectangle area = parent.getClientArea();
-			parentWidth = area.width;
-			parentHeight = area.height;
-		} else {
-			Point parentSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			parentWidth = parentSize.x;
-			parentHeight = parentSize.y;
-		}
-		Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		int width = parentWidth - 2 * table.getBorderWidth();
-		if (preferredSize.y > parentHeight) {
-			// Subtract the scrollbar width from the total column width
-			// if a vertical scrollbar will be required
-			Point vBarSize = table.getVerticalBar().getSize();
-			width -= vBarSize.x;
-		}
-		width-= buttons.getSize().x;
-		Point oldSize = table.getSize();
-		if (oldSize.x > width) {
-			// table is getting smaller so make the columns
-			// smaller first and then resize the table to
-			// match the client area width
-			column1.setWidth(Math.round(width * fWeight1));
-			column2.setWidth(Math.round(width * fWeight2));
-			column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
-			table.setSize(width, parentHeight);
-		} else {
-			// table is getting bigger so make the table
-			// bigger first and then make the columns wider
-			// to match the client area width
-			table.setSize(width, parentHeight);
-			column1.setWidth(Math.round(width * fWeight1));
-			column2.setWidth(Math.round(width * fWeight2));
-			column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
-		 }
-		 fResizingTable = false;		
-	}
 	
 	/**
 	 * Returns this block's control
@@ -933,21 +841,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param qualifier key qualifier
 	 */
 	public void saveColumnSettings(IDialogSettings settings, String qualifier) {
-		for (int i = 0; i < 2; i++) {
-			//persist the first 2 column weights
-			settings.put(qualifier + ".column" + i, getColumnWeight(i));	 //$NON-NLS-1$
+        int columnCount = fTable.getColumnCount();
+		for (int i = 0; i < columnCount; i++) {
+			settings.put(qualifier + ".columnWidth" + i, fTable.getColumn(i).getWidth());	 //$NON-NLS-1$
 		}
 		settings.put(qualifier + ".sortColumn", fSortColumn); //$NON-NLS-1$
-	}
-	
-	private float getColumnWeight(int col) {
-		Table table = fVMList.getTable();
-		int tableWidth = table.getSize().x;
-		int columnWidth= table.getColumn(col).getWidth();
-		if (tableWidth > columnWidth) {
-			return ((float)columnWidth) / tableWidth;
-		}
-		return 1/3F;
 	}
 	
 	/**
@@ -958,9 +856,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param qualifier key to restore settings from
 	 */
 	public void restoreColumnSettings(IDialogSettings settings, String qualifier) {
-		fWeight1 = restoreColumnWeight(settings, qualifier, 0);
-		fWeight2 = restoreColumnWeight(settings, qualifier, 1);
 		fVMList.getTable().layout(true);
+        restoreColumnWidths(settings, qualifier);
 		try {
 			fSortColumn = settings.getInt(qualifier + ".sortColumn"); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
@@ -979,13 +876,21 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 	}
 	
-	private float restoreColumnWeight(IDialogSettings settings, String qualifier, int col) {		
-		try {
-			return settings.getFloat(qualifier + ".column" + col); //$NON-NLS-1$
-		} catch (NumberFormatException e) {
-			return 1/3F;
-		}
-
+	private void restoreColumnWidths(IDialogSettings settings, String qualifier) {
+        int columnCount = fTable.getColumnCount();
+        for (int i = 0; i < columnCount; i++) {
+            int width = -1;
+            
+            try {
+                width = settings.getInt(qualifier + ".columnWidth" + i); //$NON-NLS-1$
+            } catch (NumberFormatException e) {}
+            
+            if (width <= 0) {
+                fTable.getColumn(i).pack();
+            } else {
+                fTable.getColumn(i).setWidth(width);
+            }
+        }
 	}
 	
 	/**
