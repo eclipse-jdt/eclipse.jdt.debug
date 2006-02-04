@@ -256,11 +256,11 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/**
 	 * Returns the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
-	 * folder is the root of the arhcive
+	 * folder is the root of the archive
 	 * 
 	 * @return the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
-	 * folder is the root of the arhcive
+	 * folder is the root of the archive
 	 */
 	public IPath getRootPath() {
 		return fRootPath;

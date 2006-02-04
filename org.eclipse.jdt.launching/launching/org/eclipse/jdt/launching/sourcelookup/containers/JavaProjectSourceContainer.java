@@ -145,7 +145,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
-		// force container initialzation
+		// force container initialization
 		getSourceContainers();
 		
 		if (isJavaLikeFileName(name)) {

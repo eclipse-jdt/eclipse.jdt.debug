@@ -22,7 +22,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * Computes a default source lookup path for Java applications.
  * The source path provider associated with a launch configuration is consulted
  * to compute a source lookup path. The source path provider is determined
- * by the <code>ATTR_SOURCE_PATH_PROVIDER</code> launch configration attribute,
+ * by the <code>ATTR_SOURCE_PATH_PROVIDER</code> launch configuration attribute,
  * which defaults to the <code>StandardSourcePathProvider</code> when unspecified.
  * The source path provider computes a collection of <code>IRuntimeClasspathEntry</code>'s
  * which are translated to source containers (<code>ISourceContainer</code>).

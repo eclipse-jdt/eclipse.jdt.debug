@@ -222,7 +222,7 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is 
-	 * a map. Keys in the map correpsond to arguments names
+	 * a map. Keys in the map correspond to arguments names
 	 * returned by <code>IVMConnector#getDefaultArguments()</code>.
 	 * Values are strings corresponding to the values to use when
 	 * establishing a connection to a remote VM.
@@ -272,7 +272,7 @@ public interface IJavaLaunchConfigurationConstants {
 	
 	/**
 	 * Attribute key for a VM specific argument. Value is an array
-	 * of strings desribing paths in the local file system that
+	 * of strings describing paths in the local file system that
 	 * should be prepended to the bootpath, or <code>null</code>
 	 * if none. The value is computed dynamically at launch time
 	 * and placed in the VM specific arguments map by the Java 
@@ -284,7 +284,7 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Attribute key for a VM specific argument. Value is an array
-	 * of strings desribing paths in the local file system that
+	 * of strings describing paths in the local file system that
 	 * should be placed on the bootpath explicitly, or <code>null</code>
 	 * if none. The value is computed dynamically at launch time
 	 * and placed in the VM specific arguments map by the Java 
@@ -296,7 +296,7 @@ public interface IJavaLaunchConfigurationConstants {
 	
 	/**
 	 * Attribute key for a VM specific argument. Value is an array
-	 * of strings desribing paths in the local file system that
+	 * of strings describing paths in the local file system that
 	 * should be appended to the bootpath, or <code>null</code>
 	 * if none. The value is computed dynamically at launch time
 	 * and placed in the VM specific arguments map by the Java 

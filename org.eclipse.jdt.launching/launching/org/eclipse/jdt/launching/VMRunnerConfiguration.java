@@ -118,10 +118,10 @@ public class VMRunnerConfiguration {
 	 * In release 3.0, support has been added for appending and prepending the
 	 * boot classpath. Generally an <code>IVMRunner</code> should use the prepend,
 	 * main, and append boot classpaths provided. However, in the case that an
-	 * <code>IVMRunner</code> does not support these options, a complete boothpath
+	 * <code>IVMRunner</code> does not support these options, a complete bootpath
 	 * should also be specified.
 	 * </p>
-	 * @param bootClassPath The boot classpath. An emptry array indicates an empty
+	 * @param bootClassPath The boot classpath. An empty array indicates an empty
 	 *  bootpath and <code>null</code> indicates a default bootpath.
 	 */
 	public void setBootClassPath(String[] bootClassPath) {
@@ -159,7 +159,7 @@ public class VMRunnerConfiguration {
 	
 	/**
 	 * Returns the boot classpath. An empty array indicates an empty
-	 * bootpath and <code>null</code> indicates a default bootpah.
+	 * bootpath and <code>null</code> indicates a default bootpath.
 	 * <p>
 	 * In 3.0, support has been added for prepending and appending to the
 	 * boot classpath. The new attributes are stored in the VM specific
@@ -171,8 +171,8 @@ public class VMRunnerConfiguration {
 	 * <li>ATTR_BOOTPATH</li>
 	 * </ul>
 	 * </p>
-	 * @return The boot classpath. An emptry array indicates an empty
-	 *  bootpath and <code>null</code> indicates a default bootpah.
+	 * @return The boot classpath. An empty array indicates an empty
+	 *  bootpath and <code>null</code> indicates a default bootpath.
 	 * @see #setBootClassPath(String[])
 	 * @see IJavaLaunchConfigurationConstants
 	 */
@@ -245,7 +245,7 @@ public class VMRunnerConfiguration {
 	 * Sets whether the VM is resumed on startup when launched in
 	 * debug mode. Has no effect when not in debug mode.
 	 *  
-	 * @param resume whehter to resume the VM on startup
+	 * @param resume whether to resume the VM on startup
 	 * @since 3.0
 	 */
 	public void setResumeOnStartup(boolean resume) {
@@ -253,7 +253,7 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
-	 * Returns whether the VM is resumed on startup when lanched
+	 * Returns whether the VM is resumed on startup when launched
 	 * in debug mode. Has no effect when no in debug mode. Default
 	 * value is <code>true</code> for backwards compatibility.
 	 * 

@@ -53,7 +53,7 @@ public interface IVMConnector {
 	 * @param arguments Argument map to use in establishing a connection. The keys of
 	 * 	the map are strings corresponding to the names of arguments returned by this
 	 * 	connector's <code>getDefaultAgruments()</code> method. The values of the map
-	 * 	are strings corresponding to the (String) values of the asscoiated
+	 * 	are strings corresponding to the (String) values of the associated
 	 *  <code>com.sun.jdi.connect.Connector.Argument</code>s to use.
 	 * @param monitor progress monitor
 	 * @param launch launch to contribute debug target(s) and/or process(es) to
@@ -69,9 +69,9 @@ public interface IVMConnector {
 	public String getName();
 	
 	/**
-	 * Returns a unique indentifier for this kind of connector.
+	 * Returns a unique identifier for this kind of connector.
 	 * 
-	 * @return a unique indentifier for this kind of connector
+	 * @return a unique identifier for this kind of connector
 	 */
 	public String getIdentifier();
 	

@@ -35,7 +35,7 @@ public interface IExecutionEnvironmentAnalyzerDelegate {
 	 * @param vm vm install to analyze
 	 * @param monitor progress monitor
 	 * @return compatible execution environments, possibly empty
-	 * @throws CoreException if an exception occurrs analyzing the vm install
+	 * @throws CoreException if an exception occurs analyzing the vm install
 	 */
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException;
 

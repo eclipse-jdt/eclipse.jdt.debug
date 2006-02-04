@@ -133,7 +133,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			}
 		}
 		
-		// only add external entires with the same location once
+		// only add external entries with the same location once
 		HashMap external = new HashMap();
 		ArrayList list = new ArrayList();
 		// compute the default locations for each project, and add unique ones
@@ -480,7 +480,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	}
 	
 	/**
-	 * Returns source locations that are associted with the given runtime classpath
+	 * Returns source locations that are associated with the given runtime classpath
 	 * entries.
 	 */
 	private static IJavaSourceLocation[] getSourceLocations(IRuntimeClasspathEntry[] entries) {

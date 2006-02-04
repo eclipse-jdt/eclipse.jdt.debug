@@ -30,7 +30,7 @@ public class SocketUtil {
 	 * Returns a free port number on the specified host within the given range,
 	 * or -1 if none found.
 	 * 
-	 * @param host name or IP addres of host on which to find a free port
+	 * @param host name or IP address of host on which to find a free port
 	 * @param searchFrom the port number from which to start searching 
 	 * @param searchTo the port number at which to stop searching
 	 * @return a free port in the specified range, or -1 of none found

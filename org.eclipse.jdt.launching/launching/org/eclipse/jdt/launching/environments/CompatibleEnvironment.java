@@ -61,7 +61,7 @@ public class CompatibleEnvironment {
 	 * <code>false</code> indicates that the analyzed vm install represents more a superset of
 	 * the environment.
 	 * 
-	 * @return whether the analyzed vm install is strictly contained within the environmetn
+	 * @return whether the analyzed vm install is strictly contained within the environment
 	 */
 	public boolean isStrictlyCompatbile() {
 		return fIsStrictlyCompatible;

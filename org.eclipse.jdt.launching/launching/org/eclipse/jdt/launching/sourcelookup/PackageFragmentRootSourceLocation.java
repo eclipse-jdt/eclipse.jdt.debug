@@ -60,7 +60,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PackageFragmentRootSourceLocation extends PlatformObject implements IJavaSourceLocation {
 	
 	/**
-	 * Associatd package framgment root 
+	 * Associated package fragment root 
 	 */
 	private IPackageFragmentRoot fRoot = null;
 	
