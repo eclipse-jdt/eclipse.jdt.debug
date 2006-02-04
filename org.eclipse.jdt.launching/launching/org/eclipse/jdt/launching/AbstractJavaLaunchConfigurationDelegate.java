@@ -63,7 +63,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		extends
 			LaunchConfigurationDelegate implements IDebugEventSetListener {
 	/**
-	 * A list of prequisite projects ordered by their build order.
+	 * A list of prerequisite projects ordered by their build order.
 	 */
 	private IProject[] fOrderedProjects;
 	/**
@@ -234,7 +234,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @param configuration
 	 *            launch configuration
 	 * @return the bootpath specified by the given launch configuration. An
-	 *         empty bootpath is specfied by an empty array, and
+	 *         empty bootpath is specified by an empty array, and
 	 *         <code>null</code> represents a default boothpath.
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
@@ -348,7 +348,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			if (libraryLocations != null) {
 				// determine if explicit bootpath should be used
 				if (!JRERuntimeClasspathEntryResolver.isSameArchives(libraryLocations, install.getVMInstallType().getDefaultLibraryLocations(install.getInstallLocation()))) {
-					// non-default JRE libaries - use explicit bootpath only
+					// non-default JRE libraries - use explicit bootpath only
 					String[] bootpath = new String[bootEntriesPrep.length
 							+ libraryLocations.length + bootEntriesApp.length];
 					if (bootEntriesPrep.length > 0) {
@@ -509,7 +509,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		String args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arguments);
 		int libraryPath = args.indexOf("-Djava.library.path"); //$NON-NLS-1$
 		if (libraryPath < 0) {
-			// if a library path is alread specified, do not override
+			// if a library path is already specified, do not override
 			String[] javaLibraryPath = getJavaLibraryPath(configuration);
 			if (javaLibraryPath != null && javaLibraryPath.length > 0) {
 				StringBuffer path = new StringBuffer(args);
@@ -678,7 +678,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 					abort(
 							MessageFormat.format(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
-									new String[]{path.toString()}),
+									new String[]{dir.toString()}),
 									null,
 									IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
 				}
@@ -966,11 +966,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	
 	/**
 	 * Returns the default working directory for the given launch configuration,
-	 * or <code>null</code> if none. Subclasses may override as neccessary.
+	 * or <code>null</code> if none. Subclasses may override as necessary.
 	 * 
 	 * @param configuration
 	 * @return default working directory or <code>null</code> if none
-	 * @throws CoreException if an exception occurrs computing the default working
+	 * @throws CoreException if an exception occurs computing the default working
 	 * 	 directory
 	 * @since 3.2
 	 */
