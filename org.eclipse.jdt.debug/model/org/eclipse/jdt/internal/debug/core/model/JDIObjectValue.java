@@ -163,7 +163,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 					break;
 				}
 			}
-			return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
+            
+            if (enclosingThis != null)
+                return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); 
 		}
