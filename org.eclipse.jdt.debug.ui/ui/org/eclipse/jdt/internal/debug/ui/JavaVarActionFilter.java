@@ -156,7 +156,7 @@ public class JavaVarActionFilter implements IActionFilter {
 				else if (name.equals("JavaLogicalStructureFilter") && value.equals("canEditLogicalStructure")) {  //$NON-NLS-1$ //$NON-NLS-2$
                     return varValue instanceof JavaStructureErrorValue || EditVariableLogicalStructureAction.getLogicalStructure(varValue) != null;
                 }
-			} catch (DebugException e) {JDIDebugUIPlugin.log(e);}	
+			} catch (DebugException e) {}	
 		}
 		else if (target instanceof JavaInspectExpression) {
 			JavaInspectExpression exp = (JavaInspectExpression) target;
@@ -168,7 +168,7 @@ public class JavaVarActionFilter implements IActionFilter {
 					IValue varValue= exp.getValue();
 					return (varValue instanceof IJavaObject) && (JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType()));
 				} 
-				catch (DebugException exception) {JDIDebugUIPlugin.log(exception);}
+				catch (DebugException exception) {}
 			}
 		}
 		return false;
