@@ -38,8 +38,9 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 		final StructuredViewer viewer = getStructuredViewer();
 		BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
+				// note, this uses the pref key, not the composite key - the prefs are global, not view specific.
 				IPreferenceStore store = getPreferenceStore();
-				store.setValue(getCompositeKey(), getValue());			
+				store.setValue(getPreferenceKey(), getValue());			
 				viewer.refresh();
 			}
 		});

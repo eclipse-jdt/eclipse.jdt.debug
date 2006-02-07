@@ -29,7 +29,7 @@ public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
     protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getPart().getSite().getId();
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
-			if (isShowThreadGroups(context)) {
+			if (isShowThreadGroups()) {
 				if (parent instanceof IJavaDebugTarget) {
 					IJavaDebugTarget target = (IJavaDebugTarget) parent;
 					return target.getRootThreadGroups();
@@ -40,16 +40,12 @@ public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
 	}
 	
 	/**
-	 * Returns whether thread groups are being displayed.
+	 * Returns whether thread groups are being displayed (in the debug view)
 	 * 
 	 * @return whether thread groups are being displayed
 	 */
-	protected static boolean isShowThreadGroups(IPresentationContext context) {
-		String compositeKey = context.getPart().getSite().getId() + "." + IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS;		 //$NON-NLS-1$
+	protected static boolean isShowThreadGroups() {
 		Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
-		if (pluginPreferences.contains(compositeKey)) {
-			return pluginPreferences.getBoolean(compositeKey);
-		}
 		return pluginPreferences.getBoolean(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS);
 	}
 

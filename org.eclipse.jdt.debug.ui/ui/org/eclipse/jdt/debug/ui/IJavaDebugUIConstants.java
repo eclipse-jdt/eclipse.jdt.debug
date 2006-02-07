@@ -71,7 +71,6 @@ public interface IJavaDebugUIConstants {
 
 	/**
 	 * Boolean preference indicating whether system threads should appear visible in the debug view.
-	 * A view may override this preference, and if so, stores its preference, prefixed by view id.
 	 * 
 	 * @since 3.2
 	 */	
@@ -79,7 +78,6 @@ public interface IJavaDebugUIConstants {
 
 	/**
 	 * Boolean preference indicating whether thread groups should be displayed in the debug view.
-	 * A view may override this preference, and if so, stores its preference, prefixed by view id.
 	 * 
 	 * @since 3.2
 	 */	
