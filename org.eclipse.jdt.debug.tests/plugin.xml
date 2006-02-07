@@ -278,5 +278,28 @@
             class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE13x"
             id="org.eclipse.jdt.debug.tests.analyzer.j2se13x"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.jdt.debug.testplugin.ContextView"
+			id="org.eclipse.jdt.debug.tests.context.view.one"
+            name="Java Debug Context View 1"/>
+      <view
+            class="org.eclipse.jdt.debug.testplugin.ContextView"
+            id="org.eclipse.jdt.debug.tests.context.view.two"
+            name="Java Debug Context View 2"/>
+   </extension>
+  <extension
+        point="org.eclipse.debug.ui.contextViewBindings">
+     <contextViewBinding
+            viewId="org.eclipse.jdt.debug.tests.context.view.one"
+            contextId="org.eclipse.jdt.debug.ui.debugging">
+     </contextViewBinding>
+     <contextViewBinding
+            viewId="org.eclipse.jdt.debug.tests.context.view.two"
+            contextId="org.eclipse.jdt.debug.ui.debugging"
+            autoClose="true">
+     </contextViewBinding>
+  </extension>   
 
 </plugin>

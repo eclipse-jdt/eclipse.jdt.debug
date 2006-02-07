@@ -87,6 +87,7 @@ import org.eclipse.jdt.debug.tests.refactoring.RenamePublicTypeUnitTests;
 import org.eclipse.jdt.debug.tests.ui.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.ui.ImportBreakpointsTest;
 import org.eclipse.jdt.debug.tests.ui.MigrationDelegateTests;
+import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -211,6 +212,9 @@ public class AutomatedSuite extends DebugSuite {
 		
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
+		
+		// and these tests modify UI layout
+		addTest(new TestSuite(ViewMangementTests.class));
 		
 		
 	}
