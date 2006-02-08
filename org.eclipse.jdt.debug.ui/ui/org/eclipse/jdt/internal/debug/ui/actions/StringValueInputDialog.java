@@ -153,16 +153,19 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * to reflect the user's selection.
      */
     private void handleRadioSelectionChanged() {
-        fUseLiteralValue= fTextButton.getSelection();
-        if (fUseLiteralValue) {
-            disposeSourceViewer();
-            createTextViewer();
-        } else {
-            // Evaluation button selected
-            disposeTextViewer();
-            createSourceViewer();
+        boolean literal = fTextButton.getSelection();
+        if (literal != fUseLiteralValue) {
+			fUseLiteralValue= literal;
+	        if (fUseLiteralValue) {
+	            disposeSourceViewer();
+	            createTextViewer();
+	        } else {
+	            // Evaluation button selected
+	            disposeTextViewer();
+	            createSourceViewer();
+	        }
+	        fInputArea.layout(true, true);
         }
-        fInputArea.layout(true, true);
     }
     
     /**
