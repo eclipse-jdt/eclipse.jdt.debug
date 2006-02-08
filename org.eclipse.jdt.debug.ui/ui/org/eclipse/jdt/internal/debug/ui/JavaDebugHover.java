@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -125,8 +126,14 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		    if (codeAssist == null) {
 		        return getRemoteHoverInfo(frame, textViewer, hoverRegion);
 		    }
+            
+            IJavaElement[] resolve = null;
             try {
-            	IJavaElement[] resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
+                resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
+            } catch (JavaModelException e1) {
+                resolve = new IJavaElement[0];
+            }
+            try {
             	for (int i = 0; i < resolve.length; i++) {
             		IJavaElement javaElement = resolve[i];
             		if (javaElement instanceof IField) {
