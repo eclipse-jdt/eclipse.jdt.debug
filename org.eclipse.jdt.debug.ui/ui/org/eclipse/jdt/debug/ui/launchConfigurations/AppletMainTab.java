@@ -147,7 +147,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	protected void handleSearchButtonSelected() {
 		IJavaElement[] scope= null;
 		IJavaProject project = getJavaProject();
-		if (scope == null) {
+		if (project == null) {
 			try {
 				scope = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 			}//end try 
