@@ -351,7 +351,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		URL defaultJavadocLocation = getDefaultJavadocLocation(installLocation);
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
-			if (extDir != null && extDir.exists() && extDir.isDirectory()) {
+			if (extDir.exists() && extDir.isDirectory()) {
 				String[] names = extDir.list();
 				for (int j = 0; j < names.length; j++) {
 					String name = names[j];
