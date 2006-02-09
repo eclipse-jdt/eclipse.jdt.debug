@@ -162,7 +162,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				}
 			} catch (CoreException e) {
 				config = null;
-				wc = null;
 				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_retrieve_scrapbook_runtime_settings._Settings_will_revert_to_default._1"), e); //$NON-NLS-1$
 			}
 			
