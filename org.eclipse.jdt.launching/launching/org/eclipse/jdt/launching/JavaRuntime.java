@@ -1703,16 +1703,14 @@ public final class JavaRuntime {
 				// Create a standin for the detected VM and add it to the result collector
 				String vmID = String.valueOf(unique);
 				detectedVMStandin = new VMStandin(vmType, vmID);
-				if (detectedVMStandin != null) {
-					detectedVMStandin.setInstallLocation(detectedLocation);
-					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
-					if (vmType instanceof AbstractVMInstallType) {
-						AbstractVMInstallType abs = (AbstractVMInstallType)vmType;
-						URL url = abs.getDefaultJavadocLocation(detectedLocation);
-						detectedVMStandin.setJavadocLocation(url);						
-					}
-				}				
-			}
+				detectedVMStandin.setInstallLocation(detectedLocation);
+				detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
+				if (vmType instanceof AbstractVMInstallType) {
+				    AbstractVMInstallType abs = (AbstractVMInstallType)vmType;
+				    URL url = abs.getDefaultJavadocLocation(detectedLocation);
+				    detectedVMStandin.setJavadocLocation(url);						
+				}
+			}				
 		}
 		return detectedVMStandin;
 	}
