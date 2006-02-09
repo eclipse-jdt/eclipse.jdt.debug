@@ -22,16 +22,20 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
+ * Provides a rename participant for java projects with respect to launch configurations
  */
 public class LaunchConfigurationIJavaProjectRenameParticipant extends RenameParticipant {
 
+	/**
+	 * the project to rename
+	 */
 	private IJavaProject fJavaProject;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
 	protected boolean initialize(Object element) {
-		fJavaProject= (IJavaProject) element;
+		fJavaProject = (IJavaProject) element;
 		return true;
 	}
 	
@@ -53,6 +57,6 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return LaunchConfigurationProjectMainTypeChange.createChangesForProjectRename(fJavaProject, getArguments().getNewName());
+		return JDTDebugRefactoringUtil.createChangesForProjectRename(fJavaProject, getArguments().getNewName());
 	}
 }

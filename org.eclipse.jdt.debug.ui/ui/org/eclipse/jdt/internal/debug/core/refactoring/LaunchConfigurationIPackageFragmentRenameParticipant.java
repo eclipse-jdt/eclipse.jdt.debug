@@ -51,6 +51,6 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return LaunchConfigurationProjectMainTypeChange.createChangesForPackageRename(fPackageFragment, getArguments().getNewName());
+		return JDTDebugRefactoringUtil.createChangesForPackageRename(fPackageFragment, getArguments().getNewName());
 	}
 }

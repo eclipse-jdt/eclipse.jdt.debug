@@ -51,6 +51,6 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return LaunchConfigurationProjectMainTypeChange.createChangesForTypeRename(fType, getArguments().getNewName());
+		return JDTDebugRefactoringUtil.createChangesForTypeRename(fType, getArguments().getNewName());
 	}
 }

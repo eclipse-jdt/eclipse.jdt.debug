@@ -65,7 +65,7 @@ public class LaunchConfigurationIPackageFragmentMoveParticipant extends MovePart
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		return LaunchConfigurationProjectMainTypeChange.createChangesForPackageMove(fPackageFragment, fDestination);
+		return JDTDebugRefactoringUtil.createChangesForPackageMove(fPackageFragment, fDestination);
 	}
 
 }
