@@ -80,8 +80,10 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		}
 		if (filter == null) {
 			viewer.addFilter(this);
+		} else {
+			// only refresh is removing - adding will refresh automatically
+			viewer.refresh();
 		}
-		viewer.refresh();
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 		store.setValue(key, action.isChecked());
