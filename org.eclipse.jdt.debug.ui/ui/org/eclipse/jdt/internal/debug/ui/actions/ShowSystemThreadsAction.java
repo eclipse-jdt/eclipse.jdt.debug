@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -38,17 +39,33 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (!getValue() && (element instanceof IJavaThread)) {
-			try {
-				IJavaThread thread = (IJavaThread) element;
-				// Show only non-system threads and suspended threads.
-				return !thread.isSystemThread() || thread.isSuspended();
-			} catch (DebugException e) {
-			}
-		}
-		return true;
+	    if (!getValue()) {
+            
+            IJavaThread thread = getJavaThread(element);
+
+	        if (thread != null) {
+	            try {
+	                // Show only non-system threads and suspended threads.
+	                return !thread.isSystemThread() || thread.isSuspended();
+	            } catch (DebugException e) {
+	            }
+	        }
+	    }
+	    return true;
 	}
-	/* (non-Javadoc)
+    
+	private IJavaThread getJavaThread(Object element) {
+	    IJavaThread thread = null;
+
+	    if (element instanceof IJavaThread)
+	        thread = (IJavaThread) element;
+	    else if (element instanceof IAdaptable) 
+	        thread = (IJavaThread) ((IAdaptable)element).getAdapter(IJavaThread.class);
+
+	    return thread;
+	}
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init(IViewPart view) {
@@ -89,8 +106,8 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	}
 	
 	private void refresh(Object source, final boolean select) {
-		if (source instanceof IJavaThread) {
-			final IJavaThread thread = (IJavaThread)source;
+        final IJavaThread thread = getJavaThread(source);
+        if (thread != null) {
 			try {
 				if (thread.isSystemThread()) {
 					Runnable r = new Runnable() {
