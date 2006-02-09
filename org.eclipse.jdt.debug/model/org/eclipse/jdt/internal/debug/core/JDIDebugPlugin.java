@@ -13,9 +13,9 @@ package org.eclipse.jdt.internal.debug.core;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugException;
@@ -402,7 +402,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			Object[] listeners = fBreakpointListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
 				fListener = (IJavaBreakpointListener)listeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}
 			fTarget = null;
 			fBreakpoint = null;
@@ -462,7 +462,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			Object[] listeners = fBreakpointListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
 				fListener = (IJavaBreakpointListener)listeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}
 			dispose();
 			// install if any listener voted to install, or if no one voted to not install
@@ -510,7 +510,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 			fSuspend = IJavaBreakpointListener.DONT_CARE;
 			for (int i = 0; i < listeners.length; i++) {
 				fListener = (IJavaBreakpointListener)listeners[i];
-				Platform.run(this);
+                SafeRunner.run(this);
 			}
 			fThread = null;
 			fBreakpoint = null;
@@ -528,7 +528,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * 
 	 * @param project java project
 	 * @param target the debug target
-	 * @return evalaution engine
+	 * @return evaluation engine
 	 */
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
 		return fEvaluationEngineManager.getEvaluationEngine(project, target);
