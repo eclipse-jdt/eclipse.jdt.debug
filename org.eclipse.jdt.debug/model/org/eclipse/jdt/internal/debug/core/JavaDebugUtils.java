@@ -115,18 +115,16 @@ public class JavaDebugUtils {
 		String typeName = null;
 		try {
 			if (frame != null) {
-				if (frame != null) {
-					if (frame.isObsolete()) {
-						return null;
-					}
-					String sourceName = frame.getSourcePath();
-					// TODO: this may break fix to bug 21518
-					if (sourceName == null) {
-						// no debug attributes, guess at source name
-						typeName = frame.getDeclaringTypeName();
-					} else {
-						return sourceName;
-					}
+				if (frame.isObsolete()) {
+					return null;
+				}
+				String sourceName = frame.getSourcePath();
+				// TODO: this may break fix to bug 21518
+				if (sourceName == null) {
+					// no debug attributes, guess at source name
+					typeName = frame.getDeclaringTypeName();
+				} else {
+					return sourceName;
 				}
 			} else {
 				if (object instanceof IJavaValue) {
