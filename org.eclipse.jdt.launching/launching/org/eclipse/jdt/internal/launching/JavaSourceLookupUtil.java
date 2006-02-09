@@ -76,7 +76,7 @@ public class JavaSourceLookupUtil {
 							} else {
 								container = new ExternalArchiveSourceContainer(path, true);
 							}
-							if (container != null && !containers.contains(container)) {
+							if (!containers.contains(container)) {
 								containers.add(container);
 							}
 						}
