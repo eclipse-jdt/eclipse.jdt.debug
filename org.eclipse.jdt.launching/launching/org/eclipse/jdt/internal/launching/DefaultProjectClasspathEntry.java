@@ -118,7 +118,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		List classpathEntries = new ArrayList(5);
 		List expanding = new ArrayList(5);
 		expandProject(entry, classpathEntries, expanding);
-		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
+		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			Object e = classpathEntries.get(i);
 			if (e instanceof IClasspathEntry) {
