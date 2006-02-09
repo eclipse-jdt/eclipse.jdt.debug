@@ -269,30 +269,28 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     ITextEditor textEditor = getTextEditor(part);
                     if (textEditor != null && selection instanceof ITextSelection) {
                         ITextSelection textSelection = (ITextSelection) selection;
-                        if (selection != null) {
-							CompilationUnit compilationUnit = parseCompilationUnit(textEditor);
-                            if (compilationUnit != null) {
-                                BreakpointMethodLocator locator = new BreakpointMethodLocator(textSelection.getOffset());
-                                compilationUnit.accept(locator);
-                                String methodName = locator.getMethodName();
-                                if (methodName == null) {
-                                    report(ActionMessages.ManageMethodBreakpointActionDelegate_CantAdd, part); 
-                                    return Status.OK_STATUS;
-                                }
-                                String typeName = locator.getTypeName();
-                                String methodSignature = locator.getMethodSignature();
-                                if (methodSignature == null) {
-                                    report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); 
-                                    return Status.OK_STATUS;
-                                }
-                                // check if this method breakpoint already
-                                // exist. If yes, remove it, else create one
-                                IJavaMethodBreakpoint existing = getMethodBreakpoint(typeName, methodName, methodSignature);
-                                if (existing == null) {
-                                	createMethodBreakpoint(getResource((IEditorPart) part), typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
-                                } else {
-                                	removeBreakpoint(existing, true);
-                                }
+                        CompilationUnit compilationUnit = parseCompilationUnit(textEditor);
+                        if (compilationUnit != null) {
+                            BreakpointMethodLocator locator = new BreakpointMethodLocator(textSelection.getOffset());
+                            compilationUnit.accept(locator);
+                            String methodName = locator.getMethodName();
+                            if (methodName == null) {
+                                report(ActionMessages.ManageMethodBreakpointActionDelegate_CantAdd, part); 
+                                return Status.OK_STATUS;
+                            }
+                            String typeName = locator.getTypeName();
+                            String methodSignature = locator.getMethodSignature();
+                            if (methodSignature == null) {
+                                report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); 
+                                return Status.OK_STATUS;
+                            }
+                            // check if this method breakpoint already
+                            // exist. If yes, remove it, else create one
+                            IJavaMethodBreakpoint existing = getMethodBreakpoint(typeName, methodName, methodSignature);
+                            if (existing == null) {
+                                createMethodBreakpoint(getResource((IEditorPart) part), typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
+                            } else {
+                                removeBreakpoint(existing, true);
                             }
                         }
                     } else if (selection instanceof IStructuredSelection) {
