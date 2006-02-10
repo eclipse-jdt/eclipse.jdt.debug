@@ -11,8 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.text.MessageFormat;
-import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -27,14 +29,15 @@ import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
@@ -47,19 +50,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * A dialog which prompts the user to enter an expression for
  * evaluation.
  */
-public class ExpressionInputDialog extends Dialog {
+public class ExpressionInputDialog extends TrayDialog {
 
     protected IJavaVariable fVariable;
     protected String fResult= null;
@@ -72,7 +71,9 @@ public class ExpressionInputDialog extends Dialog {
     protected JDISourceViewer fSourceViewer;
     protected IContentAssistProcessor fCompletionProcessor;
     protected IDocumentListener fDocumentListener;
-    protected HandlerSubmission fSubmission;
+    protected IHandlerService fService;
+    protected IHandlerActivation fActivation;
+//    protected HandlerSubmission fSubmission;
     // Text for error reporting
     protected Text fErrorText;
     
@@ -179,7 +180,7 @@ public class ExpressionInputDialog extends Dialog {
 		});
 		fSourceViewer.setEditable(true);
 		fSourceViewer.setDocument(document);
-		final IUndoManager undoManager= new DefaultUndoManager(10);
+		final IUndoManager undoManager= new TextViewerUndoManager(10);
 		fSourceViewer.setUndoManager(undoManager);
 		undoManager.connect(fSourceViewer);
 		
@@ -204,15 +205,14 @@ public class ExpressionInputDialog extends Dialog {
 		fSourceViewer.getDocument().addDocumentListener(fDocumentListener);
 		
 		IHandler handler = new AbstractHandler() {
-		    public Object execute(Map parameter) throws ExecutionException {
-		        fSourceViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-		        return null;
+			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+				 fSourceViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+				return null;
 			}
 		};
-		fSubmission = new HandlerSubmission(null, fSourceViewer.getControl().getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.addHandlerSubmission(fSubmission);
+		fService = (IHandlerService)workbench.getAdapter(IHandlerService.class);
+		fActivation = fService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
     }
     
     /**
@@ -332,11 +332,9 @@ public class ExpressionInputDialog extends Dialog {
      * Disposes the source viewer and all associated widgetry.
      */
     protected void disposeSourceViewer() {
-        if (fSubmission != null) {
-            IWorkbenchCommandSupport commandSupport = PlatformUI.getWorkbench().getCommandSupport();
-			commandSupport.removeHandlerSubmission(fSubmission);
-		    fSubmission= null;
-        }
+    	if(fActivation != null) {
+    		fService.deactivateHandler(fActivation);
+    	}
 		if (fSourceViewer != null) {
 	    	fSourceViewer.getDocument().removeDocumentListener(fDocumentListener);
 	    	fSourceViewer.getTextWidget().dispose();
