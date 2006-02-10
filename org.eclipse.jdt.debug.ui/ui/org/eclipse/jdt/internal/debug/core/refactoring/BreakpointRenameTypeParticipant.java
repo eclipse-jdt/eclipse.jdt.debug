@@ -79,8 +79,8 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
             if (breakpoint instanceof IJavaBreakpoint) {
                 IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;
                 IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
+                IType destType = null;
                 if (breakpointType != null && isContained(affectedContainer, breakpointType)) {
-                    IType destType = null;
                     String[] names = breakpointType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
                     if (isContained(originalType, breakpointType)) {
                         String[] oldNames = originalType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
                             IJavaElementMapper elementMapper = (IJavaElementMapper) processor2.getAdapter(IJavaElementMapper.class);
                             IJavaElement refactoredJavaElement = elementMapper.getRefactoredJavaElement(element);                            
                             String newName = refactoredJavaElement.getElementName();
-                            IField destField = breakpointType.getField(newName);
+                            IField destField = destType.getField(newName);
                             IField origField = breakpointType.getField(fieldName);
                             changes.add(new WatchpointFieldChange(watchpoint, destField, origField));
                         }
