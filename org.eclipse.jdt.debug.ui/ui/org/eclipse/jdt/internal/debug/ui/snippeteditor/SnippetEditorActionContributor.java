@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
  
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.ui.javaeditor.BasicEditorActionContributor;
+import org.eclipse.jdt.internal.ui.javaeditor.BasicCompilationUnitEditorActionContributor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * Contributions of the Java Snippet Editor to the Workbench's tool and menu bar.
  */
-public class SnippetEditorActionContributor extends BasicEditorActionContributor {
+public class SnippetEditorActionContributor extends BasicCompilationUnitEditorActionContributor {
  	
 	protected JavaSnippetEditor fSnippetEditor;
 	
