@@ -19,6 +19,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -210,6 +211,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 			}
 		});
 		
+		Dialog.applyDialogFont(ancestor);
 		return ancestor;
 	}
 			
