@@ -86,8 +86,8 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 	public Font getFont(Object element) {
 		if (isStrictlyCompatible(element)) {
 			if (fFont == null) {
-	            Font defaultFont = JFaceResources.getDefaultFont();
-				FontData[] fontData = defaultFont.getFontData();
+	            Font dialogFont = JFaceResources.getDialogFont();
+				FontData[] fontData = dialogFont.getFontData();
 	            for (int i = 0; i < fontData.length; i++) {
 					FontData data = fontData[i];
 					data.setStyle(SWT.BOLD);
