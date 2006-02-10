@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {    
-		ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
+		final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
         if (fNewConfigContainerName != null) {
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
             IWorkspaceRoot root = workspace.getRoot();
@@ -153,7 +153,9 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		if (fNewLaunchConfigurationName != null) {
 			wc.rename(fNewLaunchConfigurationName);
 		}
-		wc.doSave();
+		if (wc.isDirty()) {
+			fLaunchConfiguration = wc.doSave();
+		}
 		// create the undo change
 		return new LaunchConfigurationProjectMainTypeChange(wc, oldMainTypeName, oldProjectName);
 	}
