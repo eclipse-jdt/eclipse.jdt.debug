@@ -246,28 +246,6 @@ public class JDTDebugRefactoringUtil {
 	}
 	
 	/**
-	 * Returns all of the java type launch configuraitons that have a project type attribute
-	 * @return all of the java type launch configuraitons
-	 * @since 3.2
-	 */
-	protected static ILaunchConfiguration[] getJavaTypeLaunchConfigurations() {
-		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
-			String attrib = null;
-			ArrayList list = new ArrayList();
-			for(int i = 0; i < configs.length; i++) {
-				attrib =  configs[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-				if(attrib != null) {
-					list.add(configs[i]);
-				}
-			}
-			return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
-		}
-		catch(CoreException e) {JDIDebugPlugin.log(e);}
-		return new ILaunchConfiguration[0];
-	}
-	
-	/**
 	 * Returns a listing of configurations that have a specific project name attribute in them
 	 * @param pname the project attribute to compare against
 	 * @return the list of java type luanch configurationas that have the specified project attribute
@@ -275,7 +253,7 @@ public class JDTDebugRefactoringUtil {
 	 */
 	protected static ILaunchConfiguration[] getJavaTypeLaunchConfigurations(String pname) {
 		try {
-			ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations();
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 			ArrayList list = new ArrayList();
 			String attrib;
 			for(int i = 0; i < configs.length; i++) {
