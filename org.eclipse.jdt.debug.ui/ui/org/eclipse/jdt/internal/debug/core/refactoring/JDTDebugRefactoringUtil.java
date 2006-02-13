@@ -70,7 +70,7 @@ public class JDTDebugRefactoringUtil {
 	
 	/**
 	 * Returns a change for the given launch configuration if the launch configuration needs to
-	 * be updated for this IType change. It specificaly looks to see if the main type of the launch configuration
+	 * be updated for this IType change. It specifically looks to see if the main type of the launch configuration
 	 * is an inner type of the given IType.
 	 * @param config the launch configuration
 	 * @param type the type to check for
@@ -148,7 +148,7 @@ public class JDTDebugRefactoringUtil {
 	 * Provides a public mechanism for creating the <code>Change</code> for renaming a project
 	 * @param javaProject the project to rename
 	 * @param newProjectName the new name for the project
-	 * @return the Change for the project mrename
+	 * @return the Change for the project rename
 	 * @throws CoreException
 	 * @since 3.2
 	 */
@@ -248,7 +248,7 @@ public class JDTDebugRefactoringUtil {
 	/**
 	 * Returns a listing of configurations that have a specific project name attribute in them
 	 * @param pname the project attribute to compare against
-	 * @return the list of java type luanch configurationas that have the specified project attribute
+	 * @return the list of java type launch configurations that have the specified project attribute
 	 * @since 3.2
 	 */
 	protected static ILaunchConfiguration[] getJavaTypeLaunchConfigurations(String pname) {
