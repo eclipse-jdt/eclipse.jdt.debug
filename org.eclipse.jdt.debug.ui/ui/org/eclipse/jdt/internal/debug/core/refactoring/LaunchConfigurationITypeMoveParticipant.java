@@ -59,7 +59,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.LaunchConfigurationITypeMoveParticipant_0; 
+		return RefactoringMessages.LaunchConfigurationParticipant_0; 
 	}
 
 	/* (non-Javadoc)
