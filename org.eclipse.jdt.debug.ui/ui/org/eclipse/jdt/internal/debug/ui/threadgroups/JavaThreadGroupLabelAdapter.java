@@ -15,9 +15,8 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -29,7 +28,7 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class JavaThreadGroupLabelAdapter extends AsynchronousLabelAdapter {
 	
-	private static ImageDescriptor[] image = new ImageDescriptor[]{DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)};
+	private static ImageDescriptor[] image = new ImageDescriptor[]{JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_THREAD_GROUP)};
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousLabelAdapter#getLabels(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)

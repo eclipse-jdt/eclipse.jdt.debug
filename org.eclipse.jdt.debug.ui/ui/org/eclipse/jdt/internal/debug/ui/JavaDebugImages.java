@@ -79,6 +79,7 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_WATCHPOINT_TYPE = "IMG_OBJS_WATCHPOINT_TYPE";  //$NON-NLS-1$
 	public static final String IMG_OBJS_JSP_BRKPT_TYPE = "IMG_OBJS_JSP_BRKPT_TYPE";  //$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_BRKPT_TYPE = "IMG_OBJS_METHOD_BRKPT_TYPE";  //$NON-NLS-1$
+	public static final String IMG_OBJS_THREAD_GROUP = "IMG_OBJS_THREAD_GROUP";  //$NON-NLS-1$	
 	
 	public static final String IMG_OBJS_CLASSPATH = "IMG_OBJS_CLASSPATH"; //$NON-NLS-1$
 	
@@ -181,6 +182,7 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OVR_IN_DEADLOCK, T_OVR + "deadlock_ovr.gif");		//$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_CONTENDED_MONITOR, T_OBJ + "contended_monitor_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_OWNED_MONITOR, T_OBJ + "owned_monitor_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_THREAD_GROUP, T_OBJ + "threadgroup_obj.gif"); //$NON-NLS-1$
 				
 		declareRegistryImage(IMG_WIZBAN_NEWSCRAPPAGE, T_WIZBAN + "newsbook_wiz.gif");		//$NON-NLS-1$
 		declareRegistryImage(IMG_WIZBAN_LIBRARY, T_WIZBAN + "library_wiz.gif"); 	//$NON-NLS-1$
