@@ -31,8 +31,6 @@ public class PopupInspectAction extends InspectAction {
      * @see EvaluateAction#displayResult(IEvaluationResult)
      */
     protected void displayResult(final IEvaluationResult result) {
-        expression = new JavaInspectExpression(result);
-        
         IWorkbenchPart part = getTargetPart();
         viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
         if (viewer == null) {
@@ -43,6 +41,7 @@ public class PopupInspectAction extends InspectAction {
         if (viewer == null) {
             super.displayResult(result);
         } else {
+        	expression = new JavaInspectExpression(result);
             JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
                 public void run() {
                     showPopup();
