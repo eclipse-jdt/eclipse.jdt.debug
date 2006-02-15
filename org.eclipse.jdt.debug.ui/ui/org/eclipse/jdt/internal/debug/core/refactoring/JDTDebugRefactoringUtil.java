@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,8 +106,14 @@ public class JDTDebugRefactoringUtil {
 	public static Change createChangesForPackageMove(IPackageFragment pfragment, IPackageFragmentRoot destination) throws CoreException {
 		List changes = new ArrayList();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(pfragment.getJavaProject().getElementName());
+		String mtname = null;
 		for (int i= 0; i < configs.length; i++) {
-			changes.add(new LaunchConfigurationProjectMainTypeChange(configs[i], null, destination.getJavaProject().getElementName()));
+			mtname = configs[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+			if(mtname != null) {
+				if(mtname.lastIndexOf(pfragment.getElementName()) > -1) {
+					changes.add(new LaunchConfigurationProjectMainTypeChange(configs[i], null, destination.getJavaProject().getElementName()));
+				}
+			}
 		}
 		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
 	}
