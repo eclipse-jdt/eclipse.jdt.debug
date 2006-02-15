@@ -46,4 +46,9 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 		});
 	}
 
+	protected String getCompositeKey() {
+		return getPreferenceKey();
+	}
+
+	
 }
