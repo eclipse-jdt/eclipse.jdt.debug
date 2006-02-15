@@ -292,13 +292,14 @@
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">
      <contextViewBinding
-            viewId="org.eclipse.jdt.debug.tests.context.view.one"
-            contextId="org.eclipse.jdt.debug.ui.debugging">
+           autoClose="false"
+           contextId="org.eclipse.jdt.debug.ui.debugging"
+           viewId="org.eclipse.jdt.debug.tests.context.view.one">
      </contextViewBinding>
      <contextViewBinding
             viewId="org.eclipse.jdt.debug.tests.context.view.two"
             contextId="org.eclipse.jdt.debug.ui.debugging"
-            autoClose="true">
+            >
      </contextViewBinding>
   </extension>   
 
