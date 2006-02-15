@@ -49,7 +49,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	private IEvaluationResult fResult;
 
 	/**
-	 * Constucts a new inspect result for the given
+	 * Constructs a new inspect result for the given
 	 * expression and resulting value. Starts listening
 	 * to debug events such that this element will remove
 	 * itself from the expression manager when its debug
@@ -65,7 +65,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	}
 	
 	/**
-	 * Constucts a new inspect result for the given
+	 * Constructs a new inspect result for the given
 	 * evaluation result, which provides a snippet, value,
 	 * and error messages, if any.
 	 * 
