@@ -43,6 +43,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
@@ -332,7 +333,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * path.
 	 * 
 	 * @param javaInstallPath home location for a JRE
-	 * @param info the libary information, or <code>null</code> to remove
+	 * @param info the library information, or <code>null</code> to remove
 	 */
 	public static void setLibraryInfo(String javaInstallPath, LibraryInfo info) {
 		if (fgLibraryInfoMap == null) {
@@ -354,7 +355,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		try {
 			URL installURL =
 				new URL(getDefault().getBundle().getEntry("/"), path.toString()); //$NON-NLS-1$
-			URL localURL = Platform.asLocalURL(installURL);
+			URL localURL = FileLocator.toFileURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException ioe) {
 			return null;
@@ -936,7 +937,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * When a debug target or process terminates, close source arhives.
+	 * When a debug target or process terminates, close source archives.
 	 * Prevents file sharing violations.
 	 * 
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])

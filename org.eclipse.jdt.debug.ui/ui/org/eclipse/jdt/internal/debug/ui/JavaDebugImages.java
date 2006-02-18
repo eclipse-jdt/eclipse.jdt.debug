@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -216,7 +217,7 @@ public class JavaDebugImages {
         Bundle bundle = Platform.getBundle(JDIDebugUIPlugin.getUniqueIdentifier());
         URL url = null;
         if (bundle != null){
-            url = Platform.find(bundle, new Path(path));
+            url = FileLocator.find(bundle, new Path(path), null);
             desc = ImageDescriptor.createFromURL(url);
         }
         fgImageRegistry.put(key, desc);

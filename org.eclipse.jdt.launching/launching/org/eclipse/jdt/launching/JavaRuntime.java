@@ -1473,17 +1473,17 @@ public final class JavaRuntime {
 					String vmType = element.getAttribute("vmInstallType"); //$NON-NLS-1$
 					if (vmType == null) {
 						abort(MessageFormat.format("Missing required vmInstallType attribute for vmInstall contributed by {0}",
-								new String[]{element.getNamespace()}), null);
+								new String[]{element.getContributor().getName()}), null);
 					}
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
 						abort(MessageFormat.format("Missing required id attribute for vmInstall contributed by {0}",
-								new String[]{element.getNamespace()}), null);
+								new String[]{element.getContributor().getName()}), null);
 					}
 					IVMInstallType installType = getVMInstallType(vmType);
 					if (installType == null) {
 						abort(MessageFormat.format("vmInstall {0} contributed by {1} references undefined VM install type {2}",
-								new String[]{id, element.getNamespace(), vmType}), null);
+								new String[]{id, element.getContributor().getName(), vmType}), null);
 					}
 					IVMInstall install = installType.findVMInstall(id);
 					if (install == null) {
@@ -1491,12 +1491,12 @@ public final class JavaRuntime {
 						String name = element.getAttribute("name"); //$NON-NLS-1$
 						if (name == null) {
 							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute name",
-									new String[]{id, element.getNamespace()}), null);
+									new String[]{id, element.getContributor().getName()}), null);
 						}
 						String home = element.getAttribute("home"); //$NON-NLS-1$
 						if (home == null) {
 							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute home",
-									new String[]{id, element.getNamespace()}), null);
+									new String[]{id, element.getContributor().getName()}), null);
 						}		
 						String javadoc = element.getAttribute("javadocURL"); //$NON-NLS-1$
 						String vmArgs = element.getAttribute("vmArgs"); //$NON-NLS-1$
@@ -1515,7 +1515,7 @@ public final class JavaRuntime {
                         IStatus status = installType.validateInstallLocation(homeDir);
                         if (!status.isOK()) {
                         	abort(MessageFormat.format("Illegal install location {0} for vmInstall {1} contributed by {2}: {3}",
-                        			new String[]{home, id, element.getNamespace(), status.getMessage()}), null);
+                        			new String[]{home, id, element.getContributor().getName(), status.getMessage()}), null);
                         }
                         standin.setInstallLocation(homeDir);
 						if (javadoc != null) {
@@ -1523,7 +1523,7 @@ public final class JavaRuntime {
 								standin.setJavadocLocation(new URL(javadoc));
 							} catch (MalformedURLException e) {
 								abort(MessageFormat.format("Illegal javadocURL attribute for vmInstall {0} contributed by {1}",
-										new String[]{id, element.getNamespace()}), e);
+										new String[]{id, element.getContributor().getName()}), e);
 							}
 						}
 						if (vmArgs != null) {
@@ -1538,7 +1538,7 @@ public final class JavaRuntime {
                                 String libPathStr = library.getAttribute("path"); //$NON-NLS-1$
                                 if (libPathStr == null) {
                                     abort(MessageFormat.format("library for vmInstall {0} contributed by {1} missing required attribute libPath",
-                                            new String[]{id, element.getNamespace()}), null);
+                                            new String[]{id, element.getContributor().getName()}), null);
                                 }
                                 String sourcePathStr = library.getAttribute("sourcePath"); //$NON-NLS-1$
                                 String packageRootStr = library.getAttribute("packageRootPath"); //$NON-NLS-1$
@@ -1549,7 +1549,7 @@ public final class JavaRuntime {
                                         url = new URL(javadocOverride);
                                     } catch (MalformedURLException e) {
                                         abort(MessageFormat.format("Illegal javadocURL attribute specified for library {0} for vmInstall {1} contributed by {2}"
-                                                ,new String[]{libPathStr, id, element.getNamespace()}), e);
+                                                ,new String[]{libPathStr, id, element.getContributor().getName()}), e);
                                     }
                                 }
                                 IPath homePath = new Path(home);
@@ -1571,7 +1571,7 @@ public final class JavaRuntime {
                     fgContributedVMs.add(id);
 				} else {
 					abort(MessageFormat.format("Illegal element {0} in vmInstalls extension contributed by {1}",
-							new String[]{element.getName(), element.getNamespace()}), null);
+							new String[]{element.getName(), element.getContributor().getName()}), null);
 				}
 			} catch (CoreException e) {
 				LaunchingPlugin.log(e);
