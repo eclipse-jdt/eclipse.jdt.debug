@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * <li>a hit count</li>
  * <li>a suspend policy that determines if the entire VM or
  *   a single thread is suspended when hit</li>
- * <li>a thread filter to restrict a breakpoin to a specific
+ * <li>a thread filter to restrict a breakpoint to a specific
  *  thread within a VM</li>
  * <li>an installed property that indicates a breakpoint was successfully
  *  installed in a VM</li>
@@ -110,8 +110,8 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	
 	/**
 	 * Restricts this breakpoint to suspend only in the given thread
-	 * when encounterd in the given thread's target. A breakpoint can
-	 * only be resticted to one thread per target. Any previous
+	 * when encountered in the given thread's target. A breakpoint can
+	 * only be restricted to one thread per target. Any previous
 	 * thread filter for the same target is lost.
 	 * A thread filter is not persisted
 	 * across workbench invocations.
@@ -142,7 +142,7 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	/**
 	 * Returns all thread filters set on this breakpoint.
 	 * 
-	 * @return the threads that this breakpoint is resticted to
+	 * @return the threads that this breakpoint is restricted to
 	 * @exception CoreException if unable to determine this breakpoint's
 	 *  thread filters
 	 */
@@ -189,7 +189,7 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * Returns the current set of active instance filters.
 	 * 
 	 * @return the current set of active instance filters.
-	 * @exception CoreException if unable to retrive the list
+	 * @exception CoreException if unable to retrieve the list
 	 * @since 2.1
 	 */	
 	public IJavaObject[] getInstanceFilters() throws CoreException;

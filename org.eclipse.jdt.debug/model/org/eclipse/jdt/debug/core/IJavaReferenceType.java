@@ -53,7 +53,7 @@ public interface IJavaReferenceType extends IJavaType {
 	 * Returns a collection of strata available for this type.
 	 * 
 	 * @return a collection of strata available for this type
-	 * @throws DebugException if unable to retrive available strata
+	 * @throws DebugException if unable to retrieve available strata
 	 */
 	public String[] getAvailableStrata() throws DebugException;
 	
@@ -114,7 +114,7 @@ public interface IJavaReferenceType extends IJavaType {
      * The source name returned is based on this target's default stratum. 
      * 
      * @return unqualified source file name or <code>null</code>
-     * @throws DebugException if an exception occurrs retrieving the source name
+     * @throws DebugException if an exception occurs retrieving the source name
      * @since 3.2
      */
     public String getSourceName() throws DebugException;
@@ -125,7 +125,7 @@ public interface IJavaReferenceType extends IJavaType {
      * not present. 
      * 
      * @return unqualified source file names or <code>null</code>
-     * @throws DebugException if an exception occurrs retrieving the source name
+     * @throws DebugException if an exception occurs retrieving the source name
      * @since 3.2
      */    
     public String[] getSourceNames(String stratum) throws DebugException;
@@ -136,7 +136,7 @@ public interface IJavaReferenceType extends IJavaType {
      * not present. 
      * 
      * @return qualified source file names or <code>null</code>
-     * @throws DebugException if an exception occurrs retrieving the source name
+     * @throws DebugException if an exception occurs retrieving the source name
      * @since 3.2
      */       
     public String[] getSourcePaths(String stratum) throws DebugException;

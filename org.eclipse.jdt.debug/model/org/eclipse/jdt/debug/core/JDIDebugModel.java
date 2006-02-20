@@ -112,7 +112,7 @@ public class JDIDebugModel {
 	 *   the name will be retrieved from the underlying VM.
 	 * @param process the process to associate with the debug target,
 	 *   which will be returned from <code>IDebugTarget.getProcess</code>
-	 * @param allowTerminate whether the target will support termianation
+	 * @param allowTerminate whether the target will support termination
 	 * @param allowDisconnect whether the target will support disconnection
 	 * @return a debug target
 	 * @see org.eclipse.debug.core.model.ITerminate
@@ -132,7 +132,7 @@ public class JDIDebugModel {
 	 * support disconnection (<code>IDisconnect</code>). The resume
 	 * flag specifies if the target VM should be resumed on startup (has
 	 * no effect if the VM was already running when the connection to the
-	 * VM was esatbished). Launching the actual VM is a client responsibility.
+	 * VM was established). Launching the actual VM is a client responsibility.
 	 * The debug target is added to the given launch.
 	 *
 	 * @param launch the launch the new debug target will be contained in
@@ -142,7 +142,7 @@ public class JDIDebugModel {
 	 *   the name will be retrieved from the underlying VM.
 	 * @param process the process to associate with the debug target,
 	 *   which will be returned from <code>IDebugTarget.getProcess</code>
-	 * @param allowTerminate whether the target will support termianation
+	 * @param allowTerminate whether the target will support termination
 	 * @param allowDisconnect whether the target will support disconnection
 	 * @param resume whether the target is to be resumed on startup. Has
 	 *   no effect if the target was already running when the connection
@@ -486,7 +486,7 @@ public class JDIDebugModel {
 	 *  not suspend execution based on method name
 	 * @param methodSignature the signature of the method(s) this breakpoint suspends
 	 *  execution in, or <code>null</code> if this breakpoint does not
-	 *  suspend exectution based on method signature
+	 *  suspend execution based on method signature
 	 * @param entry whether this breakpoint causes execution to suspend
 	 *  on entry of methods
 	 * @param exit whether this breakpoint causes execution to suspend

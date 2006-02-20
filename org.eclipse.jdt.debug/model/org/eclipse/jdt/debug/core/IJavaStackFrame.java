@@ -385,7 +385,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	 * </ul>
 	 * @since 2.0
 	 * @deprecated Use <code>getReferenceType()</code> instead, as a method is not
-	 * 	restricted to occurr in a class. An interface may contain a synthetic
+	 * 	restricted to occur in a class. An interface may contain a synthetic
 	 * 	class initializer methods. Since 3.1, this method throws a 
 	 * 	<code>DebugException</code> when a stack frame's method is contained
 	 *  in an interface.

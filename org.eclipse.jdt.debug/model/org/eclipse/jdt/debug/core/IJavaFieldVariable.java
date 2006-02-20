@@ -48,7 +48,7 @@ public interface IJavaFieldVariable extends IJavaVariable {
 	/**
 	 * Returns the type that declares this variable.
 	 * 
-	 * @return the type that decalares this variable
+	 * @return the type that declares this variable
 	 */
 	public IJavaType getDeclaringType();	
 	

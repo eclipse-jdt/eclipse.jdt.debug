@@ -35,7 +35,7 @@ public interface IJavaObject extends IJavaValue {
 	 * @param selector the selector of the method to be invoked
 	 * @param signature the JNI style signature of the method to be invoked
 	 * @param args the arguments of the method, which can be
-	 * 	<code>null</code> or emtpy if there are none
+	 * 	<code>null</code> or empty if there are none
 	 * @param thread the thread in which to invoke the method
 	 * @param superSend <code>true</code> if the method lookup should 
 	 *  begin in this object's superclass
@@ -67,7 +67,7 @@ public interface IJavaObject extends IJavaValue {
 	 * @param selector the selector of the method to be invoked
 	 * @param signature the JNI style signature of the method to be invoked
 	 * @param args the arguments of the method, which can be
-	 * 	<code>null</code> or emtpy if there are none
+	 * 	<code>null</code> or empty if there are none
 	 * @param thread the thread in which to invoke the method
 	 * @param typeSignature the signature of the type in which the method
 	 *  is defined or <code>null</code> if the method should be invoked normally using

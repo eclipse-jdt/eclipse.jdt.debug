@@ -34,7 +34,7 @@ public interface IJavaClassType  extends IJavaReferenceType {
 	 * 
 	 * @param signature the JNI style signature of the method to be invoked
 	 * @param args the arguments of the constructor, which can be
-	 * 	<code>null</code> or emtpy if there are none
+	 * 	<code>null</code> or empty if there are none
 	 * @param thread the thread in which to invoke the constructor
 	 * @return the result of invoking the constructor
 	 * @exception DebugException if this method fails. Reasons include:<ul>
@@ -65,7 +65,7 @@ public interface IJavaClassType  extends IJavaReferenceType {
 	 * @param selector the selector of the method to be invoked
 	 * @param signature the JNI style signature of the method to be invoked
 	 * @param args the arguments of the method, which can be
-	 * 	<code>null</code> or emtpy if there are none
+	 * 	<code>null</code> or empty if there are none
 	 * @param thread the thread in which to invoke the method
 	 * @return the result of invoking the method
 	 * @exception DebugException if this method fails. Reasons include:<ul>

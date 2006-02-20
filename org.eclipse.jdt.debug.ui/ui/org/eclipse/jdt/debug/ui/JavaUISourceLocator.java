@@ -104,7 +104,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 
 	/**
 	 * Whether to find all source elements for a stack frame (in case of
-	 * dupliucates), or just the first match.
+	 * duplicates), or just the first match.
 	 */
 	private boolean fIsFindAllSourceElements = false;
 	

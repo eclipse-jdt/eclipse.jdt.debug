@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugException;
  * A runnable that represents one logical evaluation
  * to be run in a target thread. 
  * <p>
- * Clients are intended to imlpement this interface.
+ * Clients are intended to implement this interface.
  * </p>
  * 
  * @see org.eclipse.jdt.debug.core.IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int, boolean)

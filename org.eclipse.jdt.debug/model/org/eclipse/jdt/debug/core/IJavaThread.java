@@ -138,7 +138,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	IJavaVariable findVariable(String variableName) throws DebugException;
 	
 	/**
-	 * Invokes the given evaluation with the specfied progress
+	 * Invokes the given evaluation with the specified progress
 	 * monitor. This thread fires a resume event
 	 * when the evaluation begins, and a suspend event when the evaluation
 	 * completes or throws an exception. The events are given a detail
@@ -146,7 +146,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * <code>DebugEvent.EVALUATION</code> or
 	 * <code>DebugEvent.EVALUATION_IMPLICIT</code>).
 	 * 
-	 * @param evaluation the evalation to perform
+	 * @param evaluation the evaluation to perform
 	 * @param monitor progress monitor (may be <code>null</code>
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
@@ -161,7 +161,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Queues the given runnable with the list of runnables associated with this thread.
-	 * Runnables are executed asyncronously in a seperate thread. This method should be
+	 * Runnables are executed asynchronously in a separate thread. This method should be
 	 * used to execute any code which performs an operation like a method invocation.
 	 * 
 	 * @param runnable the runnable to execute.

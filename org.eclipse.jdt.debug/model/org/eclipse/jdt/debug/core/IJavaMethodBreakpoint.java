@@ -40,11 +40,11 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns the signature of the method(s) this breakpoint suspends
 	 * execution in, or <code>null</code> if this breakpoint does not
-	 * suspend exectution based on method signature.
+	 * suspend execution based on method signature.
 	 * 
 	 * @return the signature of the method(s) this breakpoint suspends
 	 * execution in, or <code>null</code> if this breakpoint does not
-	 * suspend exectution based on method signature
+	 * suspend execution based on method signature
 	 * @exception CoreException if unable to access the property from
 	 * 	this breakpoint's underlying marker
 	 */

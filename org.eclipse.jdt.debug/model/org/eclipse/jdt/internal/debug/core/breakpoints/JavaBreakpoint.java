@@ -85,7 +85,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Breakpoint attribute storing suspend policy code for 
 	 * this breakpoint.
 	 * (value <code>"org.eclipse.jdt.debug.core.suspendPolicy</code>).
-	 * This attribute is an <code>int</code> correspoinding
+	 * This attribute is an <code>int</code> corresponding
 	 * to <code>IJavaBreakpoint.SUSPEND_VM</code> or
 	 * <code>IJavaBreakpoint.SUSPEND_THREAD</code>.
 	 */
@@ -136,7 +136,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected static final IJavaObject[] fgEmptyInstanceFilters = new IJavaObject[0];
 	
 	/**
-	 * Propery identifier for a breakpoint object on an event request
+	 * Property identifier for a breakpoint object on an event request
 	 */
 	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
 	
@@ -192,7 +192,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		reqs.add(request);
 		target.addJDIEventListener(this, request);
-		// update the install attibute on the breakpoint
+		// update the install attribute on the breakpoint
 		if (!(request instanceof ClassPrepareRequest)) {
 			incrementInstallCount();
 			// notification 
@@ -311,7 +311,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Deletegates to the given thread to suspend, and
+	 * Delegates to the given thread to suspend, and
 	 * returns whether the thread suspended
 	 * It is possible that the thread will not suspend
 	 * as directed by a Java breakpoint listener.
@@ -605,7 +605,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Removes this breakpoint from the given tagret.
+	 * Removes this breakpoint from the given target.
 	 */
 	public void removeFromTarget(final JDIDebugTarget target) throws CoreException {
 		removeRequests(target);
@@ -642,7 +642,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void removeRequests(final JDIDebugTarget target) throws CoreException {
 		// removing was previously done is a workspace runnable, but that is
-		// not possible since it can be a resouce callback (marker deletion) that
+		// not possible since it can be a resource callback (marker deletion) that
 		// causes a breakpoint to be removed
 		ArrayList requests= (ArrayList)getRequests(target).clone();
 		// Iterate over a copy of the requests since this list of requests
@@ -883,7 +883,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Notifies listeners this breakpoint has been remvoed from the
+	 * Notifies listeners this breakpoint has been removed from the
 	 * given target.
 	 * 
 	 * @param target debug target
@@ -1075,7 +1075,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	/**
 	 * Change notification when there are no marker changes. If the marker
-	 * does not exist, do not fire a change notificaiton (the marker may not
+	 * does not exist, do not fire a change notification (the marker may not
 	 * exist if the associated project was closed).
 	 */
 	protected void fireChanged() {

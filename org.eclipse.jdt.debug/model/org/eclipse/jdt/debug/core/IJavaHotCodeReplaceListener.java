@@ -16,7 +16,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Notification of hot code replace failure and success. As resources are
  * modified in the workspace, targets that support hot code replace are
- * udpated with new class files.
+ * updated with new class files.
  * <p>
  * Clients may implement this interface
  * </p>
