@@ -11,19 +11,25 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.NameValuePairDialog;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -32,7 +38,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,7 +46,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
  
 /**
@@ -60,7 +64,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 	private Text fHeightText;
 	private Label fNameLabel;
 	private Text fNameText;
-	private Table fParametersTable;
 	private Button fParametersAddButton;
 	private Button fParametersRemoveButton;
 	private Button fParametersEditButton;
@@ -79,7 +82,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		 */
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
-			if (source == fParametersTable) {
+			if (source == fViewer.getTable() || source == fViewer) {
 				setParametersButtonsEnableState();
 			} else if (source == fParametersAddButton) {
 				handleParametersAddButtonSelected();
@@ -105,13 +108,16 @@ public class AppletParametersTab extends JavaLaunchTab {
 	 * The default value for the 'height' attribute.
 	 */
 	public static final int DEFAULT_APPLET_HEIGHT = 200;
+	
+	/**
+	 * The parameters table viewer
+	 */
+	private TableViewer fViewer;
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
-	public void createControl(Composite parent) {
-		Font font = parent.getFont();
-		
+	public void createControl(Composite parent) {		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
@@ -129,32 +135,26 @@ public class AppletParametersTab extends JavaLaunchTab {
 		
 		fWidthLabel= new Label(widthHeightNameComp, SWT.NONE);
 		fWidthLabel.setText(LauncherMessages.appletlauncher_argumenttab_widthlabel_text); 
-		fWidthLabel.setFont(font);
 		
 		fWidthText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWidthText.setLayoutData(gd);
-		fWidthText.setFont(font);
 		fWidthText.addModifyListener(fListener);
 
 		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
 		fNameLabel.setText(LauncherMessages.appletlauncher_argumenttab_namelabel_text); 
-		fNameLabel.setFont(font);
 		
 		fNameText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fNameText.setLayoutData(gd);
-		fNameText.setFont(font);
 		fNameText.addModifyListener(fListener);	
 
 		fHeightLabel= new Label(widthHeightNameComp, SWT.NONE);
 		fHeightLabel.setText(LauncherMessages.appletlauncher_argumenttab_heightlabel_text); 
-		fHeightLabel.setFont(font);
 		
 		fHeightText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fHeightText.setLayoutData(gd);
-		fHeightText.setFont(font);
 		fHeightText.addModifyListener(fListener);
 		
 		Label blank = new Label(widthHeightNameComp, SWT.NONE);
@@ -163,7 +163,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 		hint.setText(LauncherMessages.AppletParametersTab__optional_applet_instance_name__1); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		hint.setLayoutData(gd);
-		hint.setFont(font);
 				
 		createVerticalSpacer(comp);
 		
@@ -175,32 +174,30 @@ public class AppletParametersTab extends JavaLaunchTab {
 		parametersLayout.marginHeight = 0;
 		parametersLayout.marginWidth = 0;
 		parametersComp.setLayout(parametersLayout);
-		parametersComp.setFont(font);
 		
 		Label parameterLabel = new Label(parametersComp, SWT.NONE);
 		parameterLabel.setText(LauncherMessages.appletlauncher_argumenttab_parameterslabel_text); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		parameterLabel.setLayoutData(gd);
-		parameterLabel.setFont(font);
 		
-		fParametersTable = new Table(parametersComp, SWT.BORDER | SWT.MULTI);
-		fParametersTable.setData(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS);
-		TableLayout tableLayout = new TableLayout();
-		fParametersTable.setLayout(tableLayout);
-		fParametersTable.setFont(font);
+		
+		fViewer = new TableViewer(parametersComp);
+		Table parametersTable = fViewer.getTable();
 		gd = new GridData(GridData.FILL_BOTH);
-		fParametersTable.setLayoutData(gd);
-		TableColumn column1 = new TableColumn(this.fParametersTable, SWT.NONE);
-		column1.setText(LauncherMessages.appletlauncher_argumenttab_parameterscolumn_name_text); 
-		TableColumn column2 = new TableColumn(this.fParametersTable, SWT.NONE);
-		column2.setText(LauncherMessages.appletlauncher_argumenttab_parameterscolumn_value_text);		 
+		parametersTable.setLayoutData(gd);		
+		TableColumn column1 = new TableColumn(parametersTable, SWT.NONE);
+		column1.setText(LauncherMessages.appletlauncher_argumenttab_parameterscolumn_name_text);
+		TableColumn column2 = new TableColumn(parametersTable, SWT.NONE);
+		column2.setText(LauncherMessages.appletlauncher_argumenttab_parameterscolumn_value_text);
+		TableLayout tableLayout = new TableLayout();
+		parametersTable.setLayout(tableLayout);
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		tableLayout.addColumnData(new ColumnWeightData(100));
-		fParametersTable.setHeaderVisible(true);
-		fParametersTable.setLinesVisible(true);
-		fParametersTable.addSelectionListener(fListener);
-		fParametersTable.addMouseListener(new MouseAdapter() {
+		parametersTable.setHeaderVisible(true);
+		parametersTable.setLinesVisible(true);
+		parametersTable.addSelectionListener(fListener);
+		parametersTable.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				setParametersButtonsEnableState();
 				if (fParametersEditButton.isEnabled()) {
@@ -208,7 +205,47 @@ public class AppletParametersTab extends JavaLaunchTab {
 				}
 			}
 		});
+		
+		fViewer.setContentProvider(new IStructuredContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				Map params = (Map) inputElement;
+				return params.keySet().toArray();
+			}
+			public void dispose() {
+			}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+		});
 	
+		fViewer.setLabelProvider(new ITableLabelProvider() {
+			public Image getColumnImage(Object element, int columnIndex) {
+				return null;
+			}
+			public String getColumnText(Object element, int columnIndex) {
+				if (columnIndex == 0) {
+					return element.toString();
+				}
+
+				String key = (String) element;
+				Map params = (Map) fViewer.getInput();
+				Object object = params.get(key);
+				if (object != null)
+					return object.toString();
+				return null;
+			}
+			public void addListener(ILabelProviderListener listener) {
+			}
+			public void dispose() {
+			}
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+			public void removeListener(ILabelProviderListener listener) {
+			}
+		});
+		
+		fViewer.setSorter(new ViewerSorter());
+		
 		Composite envButtonComp = new Composite(parametersComp, SWT.NONE);
 		GridLayout envButtonLayout = new GridLayout();
 		envButtonLayout.marginHeight = 0;
@@ -216,7 +253,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 		envButtonComp.setLayout(envButtonLayout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		envButtonComp.setLayoutData(gd);
-		envButtonComp.setFont(font);
 		
 		fParametersAddButton = createPushButton(envButtonComp ,LauncherMessages.appletlauncher_argumenttab_parameters_button_add_text, null); 
 		fParametersAddButton.addSelectionListener(fListener);
@@ -226,6 +262,8 @@ public class AppletParametersTab extends JavaLaunchTab {
 		
 		fParametersRemoveButton = createPushButton(envButtonComp, LauncherMessages.appletlauncher_argumenttab_parameters_button_remove_text, null); 
 		fParametersRemoveButton.addSelectionListener(fListener);
+		
+		Dialog.applyDialogFont(parent);
 	}
 
 		
@@ -260,20 +298,29 @@ public class AppletParametersTab extends JavaLaunchTab {
 	}
 
 	private void handleParametersEditButtonSelected() {
-		TableItem selectedItem = this.fParametersTable.getSelection()[0];
-		String name = selectedItem.getText(0);
-		String value = selectedItem.getText(1);
+		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
+		String key = (String) selection.getFirstElement();
+		Map params = (Map) fViewer.getInput();
+		String value = (String) params.get(key);
+		
 		NameValuePairDialog dialog =
 			new NameValuePairDialog(getShell(), 
 				LauncherMessages.appletlauncher_argumenttab_parameters_dialog_edit_title,  
 				new String[] {LauncherMessages.appletlauncher_argumenttab_parameters_dialog_edit_name_text, LauncherMessages.appletlauncher_argumenttab_parameters_dialog_edit_value_text},  // 
-				new String[] {name, value});
-		openNewParameterDialog(dialog, selectedItem);		
+				new String[] {key, value});
+		
+		openNewParameterDialog(dialog, key);		
 	}
 
 	private void handleParametersRemoveButtonSelected() {
-		int[] selectedIndices = this.fParametersTable.getSelectionIndices();
-		this.fParametersTable.remove(selectedIndices);
+		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
+		Object[] keys = selection.toArray();
+		for (int i = 0; i < keys.length; i++) {
+			String key = (String) keys[i];
+			Map params = (Map) fViewer.getInput();
+			params.remove(key);			
+		}
+		fViewer.refresh();
 		setParametersButtonsEnableState();
 		updateLaunchConfigurationDialog();
 	}
@@ -283,7 +330,8 @@ public class AppletParametersTab extends JavaLaunchTab {
 	 * selection in the Table widget.
 	 */
 	private void setParametersButtonsEnableState() {
-		int selectCount = this.fParametersTable.getSelectionIndices().length;
+		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
+		int selectCount = selection.size();
 		if (selectCount < 1) {
 			fParametersEditButton.setEnabled(false);
 			fParametersRemoveButton.setEnabled(false);
@@ -304,36 +352,16 @@ public class AppletParametersTab extends JavaLaunchTab {
 	 * @param updateItem the item to update, or <code>null</code> if
 	 *  adding a new item
 	 */
-	private void openNewParameterDialog(NameValuePairDialog dialog, TableItem updateItem) {
+	private void openNewParameterDialog(NameValuePairDialog dialog, String key) {
 		if (dialog.open() != Window.OK) {
 			return;
 		}
 		String[] nameValuePair = dialog.getNameValuePair();
-		TableItem tableItem = updateItem;
-		if (tableItem == null) {
-			tableItem = getTableItemForName(nameValuePair[0]);
-			if (tableItem == null) {
-				tableItem = new TableItem(this.fParametersTable, SWT.NONE);
-			}
-		}
-		tableItem.setText(nameValuePair);
-		this.fParametersTable.setSelection(new TableItem[] {tableItem});
+		Map params = (Map) fViewer.getInput();
+		params.remove(key);
+		params.put(nameValuePair[0], nameValuePair[1]);
+		fViewer.refresh();
 		updateLaunchConfigurationDialog();	
-	}
-	
-	/**
-	 * Helper method that indicates whether the specified parameter name is already present 
-	 * in the parameters table.
-	 */
-	private TableItem getTableItemForName(String candidateName) {
-		TableItem[] items = this.fParametersTable.getItems();
-		for (int i = 0; i < items.length; i++) {
-			String name = items[i].getText(0);
-			if (name.equals(candidateName)) {
-				return items[i];
-			}
-		}
-		return null;
 	}
 	
 	/**
@@ -349,9 +377,9 @@ public class AppletParametersTab extends JavaLaunchTab {
 		} catch (NumberFormatException e) {
 		}
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, fNameText.getText());
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, getMapFromParametersTable());
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map) fViewer.getInput());
 	}
-	
+
 	/**
 	 * Returns the current width specified by the user
 	 * @return the width specified by the user
@@ -367,21 +395,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 	private String getHeightText() {
 		return fHeightText.getText().trim();
 	}
-	
-	private Map getMapFromParametersTable() {
-		TableItem[] items = fParametersTable.getItems();
-		if (items.length == 0) {
-			return null;
-		}
-		Map map = new HashMap(items.length);
-		for (int i = 0; i < items.length; i++) {
-			TableItem item = items[i];
-			String key = item.getText(0);
-			String value = item.getText(1);
-			map.put(key, value);
-		}		
-		return map;
-	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
@@ -389,33 +402,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 	
-	private void updateParametersFromConfig(ILaunchConfiguration config) {
-		Map envVars = null;
-		try {
-			if (config != null) {
-				envVars = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map)null);
-			}
-			updateTable(envVars, this.fParametersTable);
-			setParametersButtonsEnableState();
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
-	}
 
-	private void updateTable(Map map, Table tableWidget) {
-		tableWidget.removeAll();
-		if (map == null) {
-			return;
-		}
-		Iterator iterator = map.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String) iterator.next();
-			String value = (String) map.get(key);
-			TableItem tableItem = new TableItem(tableWidget, SWT.NONE);
-			tableItem.setText(new String[] {key, value});			
-		}
-	}
-		
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
@@ -435,7 +422,16 @@ public class AppletParametersTab extends JavaLaunchTab {
 		} catch(CoreException ce) {
 			fNameText.setText(LauncherMessages.appletlauncher_argumenttab_name_defaultvalue); 
 		}
-		updateParametersFromConfig(config);
+		
+		Map input = new HashMap();
+		try {
+			 Map params = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map) null);
+             if (params != null)
+                 input.putAll(params);
+		} catch (CoreException e) {
+		}
+		
+		fViewer.setInput(input);
 	}
 	
 	/**
