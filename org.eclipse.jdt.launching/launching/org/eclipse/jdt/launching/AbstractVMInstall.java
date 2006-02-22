@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
@@ -53,6 +55,9 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private LibraryLocation[] fSystemLibraryDescriptions;
 	private URL fJavadocLocation;
 	private String fVMArgs;
+	// system properties are cached in user prefs prefixed with this key, followed
+	// by vm type, vm id, and system property name
+	private static final String PREF_VM_INSTALL_SYSTEM_PROPERTY = "PREF_VM_INSTALL_SYSTEM_PROPERTY"; //$NON-NLS-1$
 	// whether change events should be fired
 	private boolean fNotify = true;
 	
@@ -319,101 +324,149 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			monitor = new NullProgressMonitor();
 		}
 		Map map = new HashMap();
-		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
-		if (file.exists()) {
-			String javaVersion = getJavaVersion();
-			boolean hasXMLSupport = false;
-			if (javaVersion != null) {
-				hasXMLSupport = true;
-				if (javaVersion.startsWith(JavaCore.VERSION_1_1) ||
-						javaVersion.startsWith(JavaCore.VERSION_1_2) ||
-						javaVersion.startsWith(JavaCore.VERSION_1_3)) {
-					hasXMLSupport = false;
-				}
-			}
-			String mainType = null;
-			if (hasXMLSupport) {
-				mainType = "org.eclipse.jdt.internal.launching.support.SystemProperties"; //$NON-NLS-1$
+		
+		// first check cache (pref store) to avoid launching VM
+		Preferences preferences = JavaRuntime.getPreferences();
+		boolean cached = true; 
+		for (int i = 0; i < properties.length; i++) {
+			String property = properties[i];
+			String key = getSystemPropertyKey(property);
+			if (preferences.contains(key)) {
+				String value = preferences.getString(key);
+				map.put(property, value);
 			} else {
-				mainType = "org.eclipse.jdt.internal.launching.support.LegacySystemProperties"; //$NON-NLS-1$
+				map.clear();
+				cached = false;
+				break;
 			}
-			VMRunnerConfiguration config = new VMRunnerConfiguration(mainType, new String[]{file.getAbsolutePath()});
-			IVMRunner runner = getVMRunner(ILaunchManager.RUN_MODE);
-			if (runner == null) {
-				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-			}
-			config.setProgramArguments(properties);
-			Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
-			if (monitor.isCanceled()) {
-				return map;
-			}
-			monitor.beginTask(LaunchingMessages.AbstractVMInstall_1, 2);
-			runner.run(config, launch, monitor);
-			IProcess[] processes = launch.getProcesses();
-			if (processes.length != 1) {
-				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-			}
-			IProcess process = processes[0];
-			try {
-				int total = 0;
-				int max = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
-				while (!process.isTerminated()) {
-					try {
-						if (total > max) {
-							break;
-						}
-						Thread.sleep(50);
-						total+=50;
-					} catch (InterruptedException e) {
+		}
+		if (!cached) {		
+			// launch VM to evaluate properties
+			File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
+			if (file.exists()) {
+				String javaVersion = getJavaVersion();
+				boolean hasXMLSupport = false;
+				if (javaVersion != null) {
+					hasXMLSupport = true;
+					if (javaVersion.startsWith(JavaCore.VERSION_1_1) ||
+							javaVersion.startsWith(JavaCore.VERSION_1_2) ||
+							javaVersion.startsWith(JavaCore.VERSION_1_3)) {
+						hasXMLSupport = false;
 					}
 				}
-			} finally {
-				if (!launch.isTerminated()) {
-					launch.terminate();
+				String mainType = null;
+				if (hasXMLSupport) {
+					mainType = "org.eclipse.jdt.internal.launching.support.SystemProperties"; //$NON-NLS-1$
+				} else {
+					mainType = "org.eclipse.jdt.internal.launching.support.LegacySystemProperties"; //$NON-NLS-1$
 				}
-			}
-			monitor.worked(1);
-			if (monitor.isCanceled()) {
-				return map;
-			}
-			
-			monitor.subTask(LaunchingMessages.AbstractVMInstall_3);
-			IStreamsProxy streamsProxy = process.getStreamsProxy();
-			String text = null;
-			if (streamsProxy != null) {
-				text = streamsProxy.getOutputStreamMonitor().getContents();
-			}
-			if (text != null && text.length() > 0) {
+				VMRunnerConfiguration config = new VMRunnerConfiguration(mainType, new String[]{file.getAbsolutePath()});
+				IVMRunner runner = getVMRunner(ILaunchManager.RUN_MODE);
+				if (runner == null) {
+					abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				}
+				config.setProgramArguments(properties);
+				Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
+				if (monitor.isCanceled()) {
+					return map;
+				}
+				monitor.beginTask(LaunchingMessages.AbstractVMInstall_1, 2);
+				runner.run(config, launch, monitor);
+				IProcess[] processes = launch.getProcesses();
+				if (processes.length != 1) {
+					abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				}
+				IProcess process = processes[0];
 				try {
-					DocumentBuilder parser = LaunchingPlugin.getParser();
-					Document document = parser.parse(new ByteArrayInputStream(text.getBytes()));
-					Element envs = document.getDocumentElement();
-					NodeList list = envs.getChildNodes();
-					int length = list.getLength();
-					for (int i = 0; i < length; ++i) {
-						Node node = list.item(i);
-						short type = node.getNodeType();
-						if (type == Node.ELEMENT_NODE) {
-							Element element = (Element) node;
-							if (element.getNodeName().equals("property")) { //$NON-NLS-1$
-								String name = element.getAttribute("name"); //$NON-NLS-1$
-								String value = element.getAttribute("value"); //$NON-NLS-1$
-								map.put(name, value);
+					int total = 0;
+					int max = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+					while (!process.isTerminated()) {
+						try {
+							if (total > max) {
+								break;
 							}
+							Thread.sleep(50);
+							total+=50;
+						} catch (InterruptedException e) {
 						}
-					}			
-				} catch (SAXException e) {
-					abort(LaunchingMessages.AbstractVMInstall_4, e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-				} catch (IOException e) {
-					abort(LaunchingMessages.AbstractVMInstall_4, e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+					}
+				} finally {
+					if (!launch.isTerminated()) {
+						launch.terminate();
+					}
 				}
+				monitor.worked(1);
+				if (monitor.isCanceled()) {
+					return map;
+				}
+				
+				monitor.subTask(LaunchingMessages.AbstractVMInstall_3);
+				IStreamsProxy streamsProxy = process.getStreamsProxy();
+				String text = null;
+				if (streamsProxy != null) {
+					text = streamsProxy.getOutputStreamMonitor().getContents();
+				}
+				if (text != null && text.length() > 0) {
+					try {
+						DocumentBuilder parser = LaunchingPlugin.getParser();
+						Document document = parser.parse(new ByteArrayInputStream(text.getBytes()));
+						Element envs = document.getDocumentElement();
+						NodeList list = envs.getChildNodes();
+						int length = list.getLength();
+						for (int i = 0; i < length; ++i) {
+							Node node = list.item(i);
+							short type = node.getNodeType();
+							if (type == Node.ELEMENT_NODE) {
+								Element element = (Element) node;
+								if (element.getNodeName().equals("property")) { //$NON-NLS-1$
+									String name = element.getAttribute("name"); //$NON-NLS-1$
+									String value = element.getAttribute("value"); //$NON-NLS-1$
+									map.put(name, value);
+								}
+							}
+						}			
+					} catch (SAXException e) {
+						abort(LaunchingMessages.AbstractVMInstall_4, e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+					} catch (IOException e) {
+						abort(LaunchingMessages.AbstractVMInstall_4, e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+					}
+				} else {
+					abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				}
+				monitor.worked(1);
 			} else {
 				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
-			monitor.worked(1);
-			monitor.done();
+			// cache for future reference
+			Iterator keys = map.keySet().iterator();
+			while (keys.hasNext()) {
+				String property = (String)keys.next();
+				String value = (String) map.get(property);
+				String key = getSystemPropertyKey(property);
+				preferences.setValue(key, value);
+			}
 		}
+		monitor.done();
 		return map;
+	}
+
+	/**
+	 * Generates a key used to cache system property for this VM in this plug-ins
+	 * preference store.
+	 * 
+	 * @param property system property name
+	 * @return preference store key
+	 */
+	private String getSystemPropertyKey(String property) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(PREF_VM_INSTALL_SYSTEM_PROPERTY);
+		buffer.append("."); //$NON-NLS-1$
+		buffer.append(getVMInstallType().getId());
+		buffer.append("."); //$NON-NLS-1$
+		buffer.append(getId());
+		buffer.append("."); //$NON-NLS-1$
+		buffer.append(property);
+		return buffer.toString();
 	}
 	
 	/**
