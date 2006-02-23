@@ -90,8 +90,13 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			if (method.isBinary()) {
 				fResolvedSignature = method.getSignature();
 			} else {
-                String key = method.getKey();
-                fResolvedSignature = new BindingKey(key).toSignature();
+				if (method.isResolved()) {
+	                String key = method.getKey();
+	                String sig2 = new BindingKey(key).toSignature();
+	                fResolvedSignature = sig2.replace('.', '/');
+				} else {
+					fResolvedSignature = ToggleBreakpointAdapter.resolveMethodSignature(method.getDeclaringType(), method.getSignature());
+				}
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
@@ -341,3 +346,5 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			event.getDetail() == fExpectedDetail;
 	}
 }
+
+	
