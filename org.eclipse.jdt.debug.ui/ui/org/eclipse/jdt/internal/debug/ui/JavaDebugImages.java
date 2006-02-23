@@ -185,8 +185,8 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OBJS_OWNED_MONITOR, T_OBJ + "owned_monitor_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_THREAD_GROUP, T_OBJ + "threadgroup_obj.gif"); //$NON-NLS-1$
 				
-		declareRegistryImage(IMG_WIZBAN_NEWSCRAPPAGE, T_WIZBAN + "newsbook_wiz.gif");		//$NON-NLS-1$
-		declareRegistryImage(IMG_WIZBAN_LIBRARY, T_WIZBAN + "library_wiz.gif"); 	//$NON-NLS-1$
+		declareRegistryImage(IMG_WIZBAN_NEWSCRAPPAGE, T_WIZBAN + "newsbook_wiz.png");		//$NON-NLS-1$
+		declareRegistryImage(IMG_WIZBAN_LIBRARY, T_WIZBAN + "library_wiz.png"); 	//$NON-NLS-1$
 				
 		declareRegistryImage(IMG_TOOL_TERMSNIPPET, T_ELCL + "term_sbook.gif"); 			//$NON-NLS-1$
 		declareRegistryImage(IMG_TOOL_TERMSNIPPET_HOVER, T_ELCL + "term_sbook.gif"); 			//$NON-NLS-1$

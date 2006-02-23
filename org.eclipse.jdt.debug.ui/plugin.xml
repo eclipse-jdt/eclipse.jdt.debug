@@ -2481,7 +2481,7 @@ M4 = Platform-specific fourth key
       </category>
       <wizard
             name="%NewJavaScrapbookPage.label"
-            icon="$nl$/icons/full/etool16/newsbook_wiz.gif"
+            icon="$nl$/icons/full/etool16/newsbook_wiz.png"
             category="org.eclipse.jdt.ui.java/org.eclipse.jdt.debug.ui.java"
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.NewSnippetFileCreationWizard"
             id="org.eclipse.jdt.debug.ui.snippetEditor.NewSnippetFileCreationWizard">
