@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +29,8 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
@@ -39,6 +43,25 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class AddFolderAction extends RuntimeClasspathAction {
 
+	/**
+	 * provides a filter to remove the files from the ElementSelectionDialog
+	 * 
+	 * @since 3.2
+	 *
+	 */
+	class FileFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if(element instanceof IProject) {
+				return true;
+			}
+			if(element instanceof IFolder) {
+				return true;
+			}
+			return false;
+		}
+		
+	}
+	
 	public AddFolderAction(IClasspathViewer viewer) {
 		super(ActionMessages.AddFolderAction_Add__Folders_1, viewer); 
 	}	
@@ -69,6 +92,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
+		dialog.addFilter(new FileFilter());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		dialog.setValidator(validator);
 		dialog.setTitle(ActionMessages.AddFolderAction_Folder_Selection_4); 
