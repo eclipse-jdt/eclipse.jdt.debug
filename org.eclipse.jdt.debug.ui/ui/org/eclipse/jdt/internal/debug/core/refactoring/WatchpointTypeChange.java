@@ -67,4 +67,12 @@ public class WatchpointTypeChange extends WatchpointChange {
 		return new DeleteBreakpointChange(breakpoint);
 	}
 
+	public IType getDestinationType() {
+		return fDestType;
+	}
+
+	public IType getOriginalType() {
+		return fOriginalType;
+	}
+
 }
