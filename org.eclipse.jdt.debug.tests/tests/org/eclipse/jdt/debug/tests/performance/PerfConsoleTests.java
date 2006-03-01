@@ -45,18 +45,18 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     public void testProcessConsolePlainOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
-        runConsole80CharsTest(10000, 10);
+        runConsole80CharsTest(10000, 75);
     }
     
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
         setComment("3.1 uses regex pattern matching support to detect hyperlinks.");
-        runStackTrace(5000, 10); // 2 lines * 5000 repeats = 10000 lines
+        runStackTrace(5000, 75); // 2 lines * 5000 repeats = 10000 lines
     }
 
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: wrapped output", Dimension.ELAPSED_PROCESS);
-        runVariableLength(2500, 10); // 4 lines * 2500 repeats = 10000 lines
+        runVariableLength(2500, 75); // 4 lines * 2500 repeats = 10000 lines
     }
 
     protected void setUp() throws Exception {
