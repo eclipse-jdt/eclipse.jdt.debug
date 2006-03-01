@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -173,7 +173,9 @@ public class VMDefinitionsContainer {
 	 * @return List 
 	 */
 	public List getValidVMList() {
-		List resultList = getVMList();
+		List vms = getVMList();
+		List resultList = new ArrayList(vms.size());
+		resultList.addAll(vms);
 		resultList.removeAll(fInvalidVMList);
 		return resultList;
 	}
@@ -358,10 +360,16 @@ public class VMDefinitionsContainer {
 		}
 		return root;
 	}
+	
+	public static VMDefinitionsContainer parseXMLIntoContainer(InputStream inputStream) throws IOException {
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
+		parseXMLIntoContainer(inputStream, container);
+		return container;
+	}
 			
 	/**
-	 * Parse the VM definitions contained in the specified InputStream and return an instance
-	 * of <code>VMDefinitionsContainer</code>.
+	 * Parse the VM definitions contained in the specified InputStream into the
+	 * specified container.
 	 * <p>
 	 * The VMs in the returned container are instances of <code>VMStandin</code>.
 	 * </p>
@@ -375,16 +383,15 @@ public class VMDefinitionsContainer {
 	 * the XML contained in <code>inputStream</code>.
 	 * </p>
 	 * @param inputStream the <code>InputStream</code> containing XML that declares a set of VMs and a default VM
+	 * @param container the container to add the VM defs to
 	 * @return VMDefinitionsContainer a container for the VM objects declared in <code>inputStream</code>
 	 * @throws IOException if this method fails. Reasons include:<ul>
 	 * <li>the XML in <code>inputStream</code> was badly formatted</li>
 	 * <li>the top-level node was not 'vmSettings'</li>
 	 * </ul>
+	 * @since 3.2
 	 */
-	public static VMDefinitionsContainer parseXMLIntoContainer(InputStream inputStream) throws IOException {
-		
-		// Create the container to populate
-		VMDefinitionsContainer container = new VMDefinitionsContainer();
+	public static void parseXMLIntoContainer(InputStream inputStream, VMDefinitionsContainer container) throws IOException {
 
 		// Wrapper the stream for efficient parsing
 		InputStream stream= new BufferedInputStream(inputStream);
@@ -426,8 +433,6 @@ public class VMDefinitionsContainer {
 				}
 			}
 		}
-		
-		return container;
 	}
 	
 	/**

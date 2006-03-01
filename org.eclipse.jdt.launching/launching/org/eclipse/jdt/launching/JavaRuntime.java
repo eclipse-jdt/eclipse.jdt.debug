@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -245,6 +244,10 @@ public final class JavaRuntime {
 	 */
 	public static final String CLASSPATH_ATTR_LIBRARY_PATH_ENTRY =  LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_ATTR_LIBRARY_PATH_ENTRY"; //$NON-NLS-1$
 
+	// lock for vm initialization
+	private static Object fgVMLock = new Object();
+	private static boolean fgInitializingVMs = false;
+	
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
 	private static String fgDefaultVMConnectorId = null;
@@ -291,7 +294,10 @@ public final class JavaRuntime {
 	private JavaRuntime() {
 	}
 
-	private static synchronized void initializeVMTypes() {
+	/**
+	 * Initializes vm type extensions.
+	 */
+	private static void initializeVMTypeExtensions() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, "vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
 		MultiStatus status= new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, LaunchingMessages.JavaRuntime_exceptionOccurred, null); 
@@ -317,16 +323,6 @@ public final class JavaRuntime {
 				fgVMTypes= new IVMInstallType[temp.size()];
 				fgVMTypes= (IVMInstallType[])temp.toArray(fgVMTypes);
 			}
-		}
-		
-		try {
-			initializeVMConfiguration();
-		} catch (IOException e) {
-			LaunchingPlugin.log(e);
-		} catch (ParserConfigurationException e) {
-			LaunchingPlugin.log(e);
-		} catch (TransformerException e) {
-			LaunchingPlugin.log(e);
 		}
 	}
 
@@ -453,14 +449,10 @@ public final class JavaRuntime {
 		if (install != null) {
 			install.getVMInstallType().disposeVMInstall(install.getId());
 		}
-		fgDefaultVMId = null;
-		// re-detect
-		detectDefaultVM();
-		// update VM prefs 
-		try {
-			saveVMConfiguration();
-		} catch(CoreException e) {
-			LaunchingPlugin.log(e);
+		synchronized (fgVMLock) {
+			fgDefaultVMId = null;
+			fgVMTypes = null;
+			initializeVMs();
 		}
 		return getVMFromCompositeId(getDefaultVMId());
 	}
@@ -489,24 +481,18 @@ public final class JavaRuntime {
 	 * 
 	 * @return the list of registered VM types
 	 */
-	public static synchronized IVMInstallType[] getVMInstallTypes() {
-		if (fgVMTypes == null) {
-			initializeVMTypes();
-		}
+	public static IVMInstallType[] getVMInstallTypes() {
+		initializeVMs();
 		return fgVMTypes; 
 	}
 	
-	private static synchronized String getDefaultVMId() {
-		if (fgVMTypes == null) {
-			initializeVMTypes();
-		}
+	private static String getDefaultVMId() {
+		initializeVMs();
 		return fgDefaultVMId;
 	}
 	
-	private static synchronized String getDefaultVMConnectorId() {
-		if (fgVMTypes == null) {
-			initializeVMTypes();
-		}
+	private static String getDefaultVMConnectorId() {
+		initializeVMs();
 		return fgDefaultVMConnectorId;
 	}	
 	
@@ -1380,23 +1366,6 @@ public final class JavaRuntime {
 		}
 	}
 	
-	/**
-	 * Write out the specified String as the new value of the VM definitions preference
-	 * and save all preferences.
-	 */
-	private static void saveVMDefinitions(final String vmDefXML) {
-		Job prefJob = new Job(LaunchingMessages.JavaRuntime_0) { 
-			protected IStatus run(IProgressMonitor monitor) {
-				LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, vmDefXML);
-				LaunchingPlugin.getDefault().savePluginPreferences();
-				return Status.OK_STATUS;
-			}
-		};
-		prefJob.setSystem(true);
-		prefJob.schedule();
-
-	}
-
 	private static String getVMsAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		VMDefinitionsContainer container = new VMDefinitionsContainer();	
 		container.setDefaultVMInstallCompositeID(getDefaultVMId());
@@ -1413,13 +1382,14 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * This method loads the set of installed JREs.  This definition is stored in the
-	 * workbench preferences, however older workspaces may store this information in
-	 * a meta-data file.  In both cases, the VMs are described as an XML document.
-	 * If neither the preference nor the meta-data file is found, the file system is
-	 * searched for VMs.
+	 * This method loads installed JREs based an existing user preference
+	 * or old vm configurations file. The VMs found in the preference
+	 * or vm configurations file are added to the given VM definitions container.
+	 * 
+	 * Returns whether the user preferences should be set - i.e. if it was
+	 * not already set when initialized.
 	 */
-	private static void initializeVMConfiguration() throws ParserConfigurationException, IOException, TransformerException {
+	private static boolean addPersistedVMs(VMDefinitionsContainer vmDefs) throws IOException {
 		// Try retrieving the VM preferences from the preference store
 		String vmXMLString = getPreferences().getString(PREF_VM_XML);
 		
@@ -1427,8 +1397,8 @@ public final class JavaRuntime {
 		if (vmXMLString.length() > 0) {
 			try {
 				ByteArrayInputStream inputStream = new ByteArrayInputStream(vmXMLString.getBytes());
-				VMDefinitionsContainer vmDefs = VMDefinitionsContainer.parseXMLIntoContainer(inputStream);
-				loadVMDefsIntoMemory(vmDefs);
+				VMDefinitionsContainer.parseXMLIntoContainer(inputStream, vmDefs);
+				return false;
 			} catch (IOException ioe) {
 				LaunchingPlugin.log(ioe);
 			}			
@@ -1438,32 +1408,21 @@ public final class JavaRuntime {
 			IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 			File file = new File(stateFile.toOSString());
 			
-			VMDefinitionsContainer vmDefs = null;
 			if (file.exists()) {        
 				// If file exists, load VM defs from it into memory and write the defs to
 				// the preference store WITHOUT triggering any processing of the new value
 				FileInputStream fileInputStream = new FileInputStream(file);
-				vmDefs = VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream);
-				loadVMDefsIntoMemory(vmDefs);
-				LaunchingPlugin.getDefault().setIgnoreVMDefPropertyChangeEvents(true);
-				saveVMDefinitions(vmDefs.getAsXML());
-				LaunchingPlugin.getDefault().setIgnoreVMDefPropertyChangeEvents(false);				
-			} else {				 
-				// Otherwise go looking for VMs in the file system.  Write the results
-				// to the preference store.  This will be treated just like a user change
-				// to the VM prefs with full notification to all VM listeners.
-				detectAndSaveVMDefinitions();
-			}			
+				VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream, vmDefs);			
+			}		
 		}
-		
-		loadVMInstalls();
+		return true;
 	}
 	
 	/**
 	 * Loads contributed VM installs
 	 * @since 3.2
 	 */
-	private static void loadVMInstalls() {
+	private static void addVMExtensions(VMDefinitionsContainer vmDefs) {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_VM_INSTALLS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configs.length; i++) {
@@ -1472,17 +1431,17 @@ public final class JavaRuntime {
 				if ("vmInstall".equals(element.getName())) { //$NON-NLS-1$
 					String vmType = element.getAttribute("vmInstallType"); //$NON-NLS-1$
 					if (vmType == null) {
-						abort(MessageFormat.format("Missing required vmInstallType attribute for vmInstall contributed by {0}",
+						abort(MessageFormat.format("Missing required vmInstallType attribute for vmInstall contributed by {0}", //$NON-NLS-1$
 								new String[]{element.getContributor().getName()}), null);
 					}
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
-						abort(MessageFormat.format("Missing required id attribute for vmInstall contributed by {0}",
+						abort(MessageFormat.format("Missing required id attribute for vmInstall contributed by {0}", //$NON-NLS-1$
 								new String[]{element.getContributor().getName()}), null);
 					}
 					IVMInstallType installType = getVMInstallType(vmType);
 					if (installType == null) {
-						abort(MessageFormat.format("vmInstall {0} contributed by {1} references undefined VM install type {2}",
+						abort(MessageFormat.format("vmInstall {0} contributed by {1} references undefined VM install type {2}", //$NON-NLS-1$
 								new String[]{id, element.getContributor().getName(), vmType}), null);
 					}
 					IVMInstall install = installType.findVMInstall(id);
@@ -1490,12 +1449,12 @@ public final class JavaRuntime {
 						// only load/create if first time we've seen this VM install
 						String name = element.getAttribute("name"); //$NON-NLS-1$
 						if (name == null) {
-							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute name",
+							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute name", //$NON-NLS-1$
 									new String[]{id, element.getContributor().getName()}), null);
 						}
 						String home = element.getAttribute("home"); //$NON-NLS-1$
 						if (home == null) {
-							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute home",
+							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute home", //$NON-NLS-1$
 									new String[]{id, element.getContributor().getName()}), null);
 						}		
 						String javadoc = element.getAttribute("javadocURL"); //$NON-NLS-1$
@@ -1514,7 +1473,7 @@ public final class JavaRuntime {
                         }
                         IStatus status = installType.validateInstallLocation(homeDir);
                         if (!status.isOK()) {
-                        	abort(MessageFormat.format("Illegal install location {0} for vmInstall {1} contributed by {2}: {3}",
+                        	abort(MessageFormat.format("Illegal install location {0} for vmInstall {1} contributed by {2}: {3}", //$NON-NLS-1$
                         			new String[]{home, id, element.getContributor().getName(), status.getMessage()}), null);
                         }
                         standin.setInstallLocation(homeDir);
@@ -1522,7 +1481,7 @@ public final class JavaRuntime {
 							try {
 								standin.setJavadocLocation(new URL(javadoc));
 							} catch (MalformedURLException e) {
-								abort(MessageFormat.format("Illegal javadocURL attribute for vmInstall {0} contributed by {1}",
+								abort(MessageFormat.format("Illegal javadocURL attribute for vmInstall {0} contributed by {1}", //$NON-NLS-1$
 										new String[]{id, element.getContributor().getName()}), e);
 							}
 						}
@@ -1537,7 +1496,7 @@ public final class JavaRuntime {
                                 IConfigurationElement library = libraries[j];
                                 String libPathStr = library.getAttribute("path"); //$NON-NLS-1$
                                 if (libPathStr == null) {
-                                    abort(MessageFormat.format("library for vmInstall {0} contributed by {1} missing required attribute libPath",
+                                    abort(MessageFormat.format("library for vmInstall {0} contributed by {1} missing required attribute libPath", //$NON-NLS-1$
                                             new String[]{id, element.getContributor().getName()}), null);
                                 }
                                 String sourcePathStr = library.getAttribute("sourcePath"); //$NON-NLS-1$
@@ -1548,7 +1507,7 @@ public final class JavaRuntime {
                                     try {
                                         url = new URL(javadocOverride);
                                     } catch (MalformedURLException e) {
-                                        abort(MessageFormat.format("Illegal javadocURL attribute specified for library {0} for vmInstall {1} contributed by {2}"
+                                        abort(MessageFormat.format("Illegal javadocURL attribute specified for library {0} for vmInstall {1} contributed by {2}" //$NON-NLS-1$
                                                 ,new String[]{libPathStr, id, element.getContributor().getName()}), e);
                                     }
                                 }
@@ -1566,11 +1525,11 @@ public final class JavaRuntime {
                             }
                         }
                         standin.setLibraryLocations(locations);
-                        standin.convertToRealVM();
+                        vmDefs.addVM(standin);
 					}
                     fgContributedVMs.add(id);
 				} else {
-					abort(MessageFormat.format("Illegal element {0} in vmInstalls extension contributed by {1}",
+					abort(MessageFormat.format("Illegal element {0} in vmInstalls extension contributed by {1}", //$NON-NLS-1$
 							new String[]{element.getName(), element.getContributor().getName()}), null);
 				}
 			} catch (CoreException e) {
@@ -1603,23 +1562,6 @@ public final class JavaRuntime {
         getVMInstallTypes(); // ensure VMs are initialized
         return fgContributedVMs.contains(id);
     }
-	
-	/**
-	 * For each VMStandin object in the specified VM container, convert it into a 'real' VM.
-	 */
-	private static void loadVMDefsIntoMemory(VMDefinitionsContainer vmContainer) {
-		fgDefaultVMId = vmContainer.getDefaultVMInstallCompositeID();
-		fgDefaultVMConnectorId = vmContainer.getDefaultVMInstallConnectorTypeID();
-		
-		// Create the underlying VMs for each VMStandin
-		List vmList = vmContainer.getValidVMList();
-		Iterator vmListIterator = vmList.iterator();
-		while (vmListIterator.hasNext()) {
-			VMStandin vmStandin = (VMStandin) vmListIterator.next();
-			vmStandin.convertToRealVM();
-		}
-		
-	}
 	
 	/**
 	 * Evaluates library locations for a IVMInstall. If no library locations are set on the install, a default
@@ -1694,7 +1636,7 @@ public final class JavaRuntime {
 			if (detectedLocation != null && detectedVMStandin == null) {
 				
 				// Make sure the VM id is unique
-				int unique = i;
+				long unique = System.currentTimeMillis();	
 				IVMInstallType vmType = vmTypes[i];
 				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
 					unique++;
@@ -1714,98 +1656,9 @@ public final class JavaRuntime {
 		}
 		return detectedVMStandin;
 	}
-
-	/**
-	 * Tries to locate a default VM (if one is not currently set). Sets the
-	 * default VM to be the Eclipse runtime or the first VM found. Log an error
-	 * with the workspace if a no VMs can be located.
-	 */
-	private static void detectDefaultVM() {
-		if (getDefaultVMId() == null) {
-			VMStandin eclipseRuntime = detectEclipseRuntime();
-			IVMInstall defaultVM = null;
-			IVMInstallType[] vmTypes= getVMInstallTypes();
-			if  (eclipseRuntime == null) {
-				// No default VM or Eclipse runtime. Set the first VM as the default (if any)
-				for (int i = 0; i < vmTypes.length; i++) {
-					IVMInstallType type = vmTypes[i];
-					IVMInstall[] vms = type.getVMInstalls();
-					for (int j = 0; j < vms.length; j++) {
-						defaultVM = vms[j];
-						break;
-					}
-					if (defaultVM != null) {
-						break;
-					}
-				}
-			} else {
-				// if there is no default VM, set the Eclipse runtime to be the default
-				// VM. First search for an existing VM install with the same
-				// install location as the detected runtime
-				IVMInstallType type = eclipseRuntime.getVMInstallType();
-				IVMInstall[] vms = type.getVMInstalls();
-				for (int j = 0; j < vms.length; j++) {
-					IVMInstall install = vms[j];
-					if (install.getInstallLocation().equals(eclipseRuntime.getInstallLocation())) {
-						defaultVM = install;
-						break;
-					}
-				}
-				if (defaultVM == null) {
-					// There is no VM install that corresponds to the Eclipse runtime.
-					// Create a VM install for the Eclipse runtime.
-					defaultVM = eclipseRuntime.convertToRealVM();
-				}
-			}
-			if (defaultVM != null) {
-				fgDefaultVMId = getCompositeIdFromVM(defaultVM);
-                // set compiler compliance based on default VM Java version level
-                if (defaultVM instanceof IVMInstall2) {
-                    String javaVersion = ((IVMInstall2)defaultVM).getJavaVersion();
-                    if (javaVersion != null && javaVersion.startsWith(JavaCore.VERSION_1_5)) {
-                        Hashtable defaultOptions = JavaCore.getDefaultOptions();
-                        Hashtable options = JavaCore.getOptions();
-                        boolean isDefault =
-                        	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
-                        	equals(JavaCore.COMPILER_SOURCE, defaultOptions, options) &&
-                        	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, defaultOptions, options) &&
-                        	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, defaultOptions, options) &&
-                        	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, defaultOptions, options);
-                        // only update the compliance settings if they are default settings, otherwise the
-                        // settings have already been modified by a tool or user
-                        if (isDefault) {
-	                        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-                            options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-                            options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-                            options.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-                            options.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
-	                        JavaCore.setOptions(options);
-                        }
-                    }
-                }
-			}
-		}		
-	}
 	
 	private static boolean equals(String optionName, Map defaultOptions, Map options) {
 		return defaultOptions.get(optionName).equals(options.get(optionName));
-	}
-	/**
-	 * Detects VM installations, and a default VM (if required). Saves the
-	 * results.
-	 */
-	private static void detectAndSaveVMDefinitions() {
-		detectDefaultVM();
-		try {
-			String vmDefXML = getVMsAsXML();
-			saveVMDefinitions(vmDefXML);
-		} catch (IOException ioe) {
-			LaunchingPlugin.log(ioe);
-		} catch (ParserConfigurationException e) {
-			LaunchingPlugin.log(e);
-		} catch (TransformerException e) {
-			LaunchingPlugin.log(e);
-		}
 	}
 	
 	/**
@@ -2309,11 +2162,13 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMAdded(IVMInstall vm) {
-		Object[] listeners = fgVMListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
-			listener.vmAdded(vm);
-		}		
+		if (!fgInitializingVMs) {
+			Object[] listeners = fgVMListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+				listener.vmAdded(vm);
+			}
+		}
 	}	
 	
 	/**
@@ -2570,6 +2425,145 @@ public final class JavaRuntime {
 	 */
 	public static IExecutionEnvironmentsManager getExecutionEnvironmentsManager() {
 		return EnvironmentsManager.getDefault();
+	}
+	
+	/**
+	 * Perform VM type and VM install initialization. Does not hold locks
+	 * while performing change notification.
+	 * 
+	 * @since 3.2
+	 */
+	private static void initializeVMs() {
+		VMDefinitionsContainer vmDefs = null;
+		boolean setPref = false;
+		boolean updateCompliance = false;
+		synchronized (fgVMLock) {
+			if (fgVMTypes == null) {
+				try {
+					fgInitializingVMs = true;
+					// 1. load VM type extensions
+					initializeVMTypeExtensions();
+					try {
+						vmDefs = new VMDefinitionsContainer();
+						// 2. add persisted VMs
+						setPref = addPersistedVMs(vmDefs);
+						
+						// 3. if there are none, detect the eclispe runtime
+						if (vmDefs.getValidVMList().isEmpty()) {
+							setPref = true;
+							VMStandin runtime = detectEclipseRuntime();
+							if (runtime != null) {
+								updateCompliance = true;
+								vmDefs.addVM(runtime);
+								vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(runtime));
+							}
+						}
+						// 4. load contributed VM installs
+						addVMExtensions(vmDefs);
+						// 5. verify default VM is valid
+						String defId = vmDefs.getDefaultVMInstallCompositeID();
+						boolean validDef = false;
+						if (defId != null) {
+							Iterator iterator = vmDefs.getValidVMList().iterator();
+							while (iterator.hasNext()) {
+								IVMInstall vm = (IVMInstall) iterator.next();
+								if (getCompositeIdFromVM(vm).equals(defId)) {
+									validDef = true;
+									break;
+								}
+							}
+						}
+						if (!validDef) {
+							// use the first as the default
+							setPref = true;
+							List list = vmDefs.getValidVMList();
+							if (!list.isEmpty()) {
+								IVMInstall vm = (IVMInstall) list.get(0);
+								vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(vm));
+							}
+						}
+						fgDefaultVMId = vmDefs.getDefaultVMInstallCompositeID();
+						fgDefaultVMConnectorId = vmDefs.getDefaultVMInstallConnectorTypeID();
+						
+						// Create the underlying VMs for each valid VM
+						List vmList = vmDefs.getValidVMList();
+						Iterator vmListIterator = vmList.iterator();
+						while (vmListIterator.hasNext()) {
+							VMStandin vmStandin = (VMStandin) vmListIterator.next();
+							vmStandin.convertToRealVM();
+						}						
+						
+
+					} catch (IOException e) {
+						LaunchingPlugin.log(e);
+					}
+				} finally {
+					fgInitializingVMs = false;
+				}
+			}
+		}
+		if (vmDefs != null) {
+			// notify of initial VMs for backwards compatibility
+			IVMInstallType[] installTypes = getVMInstallTypes();
+			for (int i = 0; i < installTypes.length; i++) {
+				IVMInstallType type = installTypes[i];
+				IVMInstall[] installs = type.getVMInstalls();
+				for (int j = 0; j < installs.length; j++) {
+					fireVMAdded(installs[j]);
+				}
+			}
+			
+			// save settings if required
+			if (setPref) {
+				try {
+					String xml = vmDefs.getAsXML();
+					LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, xml);
+				} catch (ParserConfigurationException e) {
+					LaunchingPlugin.log(e);
+				} catch (IOException e) {
+					LaunchingPlugin.log(e);
+				} catch (TransformerException e) {
+					LaunchingPlugin.log(e);
+				}
+				
+			}
+			
+			// update compliance if required
+			if (updateCompliance) {
+				updateCompliance(getDefaultVMInstall());
+			}
+		}
+	}
+	
+	/**
+	 * Update compliler compliance settings based on the given vm.
+	 * 
+	 * @param vm
+	 */
+	private static void updateCompliance(IVMInstall vm) {
+        if (vm instanceof IVMInstall2) {
+            String javaVersion = ((IVMInstall2)vm).getJavaVersion();
+            if (javaVersion != null && javaVersion.startsWith(JavaCore.VERSION_1_5)) {
+                Hashtable defaultOptions = JavaCore.getDefaultOptions();
+                Hashtable options = JavaCore.getOptions();
+                boolean isDefault =
+                	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
+                	equals(JavaCore.COMPILER_SOURCE, defaultOptions, options) &&
+                	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, defaultOptions, options) &&
+                	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, defaultOptions, options) &&
+                	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, defaultOptions, options);
+                // only update the compliance settings if they are default settings, otherwise the
+                // settings have already been modified by a tool or user
+                if (isDefault) {
+                    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+                    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+                    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+                    options.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+                    options.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+                    JavaCore.setOptions(options);
+                }
+            }
+        }		
 	}
 
 }
