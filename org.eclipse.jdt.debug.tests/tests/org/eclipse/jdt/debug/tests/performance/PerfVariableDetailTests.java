@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.performance;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -48,7 +49,8 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
         IJavaLineBreakpoint breakpoint = createLineBreakpoint(24, typeName);
         IJavaThread thread = null;
         try {
-        	thread = launchToBreakpoint(typeName);
+        	ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
+        	thread = launchToBreakpoint(configuration, false);
         	IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
         	assertNotNull("Missing top stack frame", frame);
         	IJavaVariable variable = frame.findVariable("v");
@@ -65,7 +67,7 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
         	}
         	
         	// test
-        	for (int i = 0; i < 10; i++) {
+        	for (int i = 0; i < 300; i++) {
         		startMeasuring();
         		for (int j = 0; j < 150; j++) {
 	        		synchronized (fLock) {
