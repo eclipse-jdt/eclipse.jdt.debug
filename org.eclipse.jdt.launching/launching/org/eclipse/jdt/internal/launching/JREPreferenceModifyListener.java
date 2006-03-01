@@ -74,6 +74,17 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 								vms.addVM(vm);
 							}
 						}
+						// update default VM if it exists
+						String defaultVMInstallCompositeID = container.getDefaultVMInstallCompositeID();
+						validVMList = vms.getValidVMList();
+						iterator = validVMList.iterator();
+						while (iterator.hasNext()) {
+							IVMInstall vm = (IVMInstall)iterator.next();
+							if (JavaRuntime.getCompositeIdFromVM(vm).equals(defaultVMInstallCompositeID)) {
+								vms.setDefaultVMInstallCompositeID(defaultVMInstallCompositeID);
+								break;
+							}
+						}
 					} catch (IOException e) {
 						LaunchingPlugin.log(e);
 						return false;
@@ -101,6 +112,8 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		try {
+			// force VMs to be initialized before we import the new VMs
+			JavaRuntime.getVMInstallTypes();
 			node.accept(new Visitor());
 		} catch (BackingStoreException e) {
             LaunchingPlugin.log(e);
