@@ -410,7 +410,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 			
 			if (getMethodSignature() != null) {
-				if (!method.signature().equals(getMethodSignature())) {
+				String sig = method.signature();
+				if(sig.indexOf('$') > -1) {
+					sig = sig.replace('$', '.');
+				}
+				if (!sig.equals(getMethodSignature())) {
 					return true;
 				}
 			}
@@ -563,9 +567,15 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 	}	
 	
+	/**
+	 * converts the specified string to one which has been formated to our needs
+	 * @param stringMatcherPattern the initial pattern
+	 * @return the modified pattern
+	 */
 	private String convertToRegularExpression(String stringMatcherPattern) {
 	    String regex = stringMatcherPattern.replaceAll("\\.", "\\\\.");  //$NON-NLS-1$//$NON-NLS-2$
 	    regex = regex.replaceAll("\\*", "\\.\\*");  //$NON-NLS-1$//$NON-NLS-2$
+	    regex = regex.replaceAll("\\$", "\\\\\\$"); //$NON-NLS-1$ //$NON-NLS-2$
 	    return regex;
 	}
 	

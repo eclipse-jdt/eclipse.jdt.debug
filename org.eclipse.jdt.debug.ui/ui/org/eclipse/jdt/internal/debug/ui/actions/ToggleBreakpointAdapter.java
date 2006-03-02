@@ -85,6 +85,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
 	public ToggleBreakpointAdapter() {
 		// init helper in UI thread
 		ActionDelegateHelper.getDefault();
@@ -583,11 +585,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                 int end = -1;
                                 Map attributes = new HashMap(10);
                             	if (javaField == null) {
-                            		Object object = JavaDebugUtils.resolveSourceElement(var.getJavaType(), var.getLaunch());
-                            		if (object instanceof IAdaptable) {
-										IAdaptable adaptable = (IAdaptable) object;
-										resource = (IResource) adaptable.getAdapter(IResource.class);
-									}
+                            		if(var != null) {
+	                            		Object object = JavaDebugUtils.resolveSourceElement(var.getJavaType(), var.getLaunch());
+	                            		if (object instanceof IAdaptable) {
+											IAdaptable adaptable = (IAdaptable) object;
+											resource = (IResource) adaptable.getAdapter(IResource.class);
+										}
+                            		}
                             		if (resource == null) {
                             			resource = ResourcesPlugin.getWorkspace().getRoot();
                             		}
@@ -648,7 +652,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     public static String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
         String[] parameterTypes = Signature.getParameterTypes(methodSignature);
-        int length = length = parameterTypes.length;
+        int length = parameterTypes.length;
         String[] resolvedParameterTypes = new String[length];
 
         for (int i = 0; i < length; i++) {
@@ -679,8 +683,19 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             // the type name cannot be resolved
             return null;
         }
-        String resolvedElementTypeName = Signature.toQualifiedName(resolvedElementTypeNames[0]);
-        String resolvedElementTypeSignature = Signature.createTypeSignature(resolvedElementTypeName, true).replace('.', '/');
+        String[] types = resolvedElementTypeNames[0];
+        types[1] = types[1].replace('.', '$');
+        
+        String resolvedElementTypeName = Signature.toQualifiedName(types);
+        String resolvedElementTypeSignature = EMPTY_STRING;
+        if(types[0].equals(EMPTY_STRING)) {
+        	resolvedElementTypeName = resolvedElementTypeName.substring(1);
+        	resolvedElementTypeSignature = Signature.createTypeSignature(resolvedElementTypeName, true);
+        }
+        else {
+        	resolvedElementTypeSignature = Signature.createTypeSignature(resolvedElementTypeName, true).replace('.', '/');
+        }
+        resolvedElementTypeSignature = resolvedElementTypeSignature.replace('$','.');
         return Signature.createArraySignature(resolvedElementTypeSignature, count);
     }
 
