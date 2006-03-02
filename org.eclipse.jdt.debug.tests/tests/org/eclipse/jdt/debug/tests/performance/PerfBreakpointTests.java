@@ -40,7 +40,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         IResource resource = getBreakpointResource(typeName);
 
         IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
-        IJavaThread thread = launchToBreakpoint(typeName);
+        IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
         
         try {
@@ -51,21 +51,23 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 lineNumbers[i] = 15 + i;
             }
             
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
                 removeAllBreakpoints();
+                
                 waitForBreakpointCount(0);
                 breakpointCount = 0;  
             }
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 100; i++) {
                 System.gc();
                 startMeasuring();
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
                 stopMeasuring();
                 removeAllBreakpoints();
+                
                 waitForBreakpointCount(0);
                 breakpointCount = 0;
             }
@@ -74,6 +76,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         } finally {
             DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
             removeAllBreakpoints();
+            
             terminateAndRemove(thread);
         }
     }
@@ -84,7 +87,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         IResource resource = getBreakpointResource(typeName);
 
         IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
-        IJavaThread thread = launchToBreakpoint(typeName);
+        IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 
         IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
@@ -96,12 +99,13 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 lineNumbers[i] = 15 + i;
             }
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
                 IBreakpoint[] breakpoints = manager.getBreakpoints();
                 manager.removeBreakpoints(breakpoints, true);
                 waitForBreakpointCount(0);
+                
             }
 
             lineNumbers = new int[250];
@@ -109,7 +113,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 lineNumbers[i] = 15 + i;
             }
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 150; i++) {
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
                 IBreakpoint[] breakpoints = manager.getBreakpoints();
@@ -118,25 +122,25 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 manager.removeBreakpoints(breakpoints, true);
                 waitForBreakpointCount(0);
                 stopMeasuring();
+                
             }
             commitMeasurements();
             assertPerformance();
         } finally {
             manager.removeBreakpointListener(this);
             removeAllBreakpoints();
+            
             terminateAndRemove(thread);
         }
     }
     
-
-
     public void testMethodEntryBreakpointCreation() throws Exception {
         tagAsSummary("Install Method Entry Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
         IProject project = getJavaProject().getProject();
         
         IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
-        IJavaThread thread = launchToBreakpoint(typeName);
+        IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 
         IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
@@ -148,20 +152,22 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 methods[i] = "method"+(i+1);
             }
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 10; i++) {
                 createMethodEntryBreakpoints(project, typeName, methods);
                 waitForBreakpointCount(methods.length);
                 removeAllBreakpoints();
                 waitForBreakpointCount(0);
+                
             }
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 100; i++) {
                 System.gc();
                 startMeasuring();
                 createMethodEntryBreakpoints(project, typeName, methods);
                 waitForBreakpointCount(methods.length);
                 stopMeasuring();
                 removeAllBreakpoints();
+                
                 breakpointCount = 0;
             }
             commitMeasurements();
@@ -169,6 +175,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         } finally {
             DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
             removeAllBreakpoints();
+            
             terminateAndRemove(thread);
         }        
     }
@@ -179,7 +186,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         IResource resource = getBreakpointResource(typeName);
         
         IJavaLineBreakpoint bp = createLineBreakpoint(516, typeName);
-        IJavaThread thread = launchToBreakpoint(typeName);
+        IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
 
         IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
@@ -191,20 +198,22 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 fields[i] = "field_"+(i+1);
             }
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 10; i++) {
                 createWatchpoints(resource, typeName, fields);
                 waitForBreakpointCount(fields.length);
                 removeAllBreakpoints();
                 waitForBreakpointCount(0);
+                
             }
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 100; i++) {
                 System.gc();
                 startMeasuring();
                 createWatchpoints(resource, typeName, fields);
                 waitForBreakpointCount(fields.length);
                 stopMeasuring();
                 removeAllBreakpoints();
+                
                 breakpointCount = 0;
             }
             commitMeasurements();
@@ -212,6 +221,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         } finally {
             DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
             removeAllBreakpoints();
+            
             terminateAndRemove(thread);
         }        
     }
