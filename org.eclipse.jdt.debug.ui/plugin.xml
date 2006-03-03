@@ -632,7 +632,7 @@
                helpContextId="primitive_options_action_context"
                tooltip="%primitiveOptionsAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
          </action>
          <action
@@ -640,14 +640,14 @@
                label="%editLogicalStructuresAction.label"
                tooltip="%editLogicalStructuresAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.EditLogicalStructuresAction"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                id="org.eclipse.jdt.debug.ui.variableViewActions.LogicalStructures"/>         
          <action
                label="%detailOptionsAction.label"
                helpContextId="detail_options_action_context"
                tooltip="%detailOptionsAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.DetailOptionsAction"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                id="org.eclipse.jdt.debug.ui.variableViewActions.DetailOptions">
          </action>
          <action
@@ -656,7 +656,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
                helpContextId="show_null_entries_action_context"
                label="%showNullEntriesAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                tooltip="%showNullEntriesAction.tooltip">
          </action>                  
          <action
@@ -666,7 +666,7 @@
                icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                tooltip="%showQualifiedAction.tooltip">
          </action>
          <action
@@ -676,19 +676,25 @@
                icon="$nl$/icons/full/elcl16/static_co.gif"
                helpContextId="show_static_action_context"
                label="%showStaticAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                tooltip="%showStaticAction.tooltip">
          </action>
          <action
-               style="toggle"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowConstants"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
-               icon="$nl$/icons/full/elcl16/constant_co.gif"
                helpContextId="show_constants_action_context"
+               icon="$nl$/icons/full/elcl16/constant_co.gif"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.ShowConstants"
                label="%showConstantsAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
+               style="toggle"
                tooltip="%showConstantsAction.tooltip">
          </action>
+         <menu
+               id="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu"
+               label="%VariablesViewJavaSubmenu.label"
+               path="javaActions">
+            <groupMarker name="org.eclipse.jdt.debug.ui.javaPart"/>
+         </menu>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
@@ -698,7 +704,7 @@
                helpContextId="primitive_options_action_context"
                tooltip="%primitiveOptionsAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.PrimitiveOptions">
          </action>
          <action
@@ -707,7 +713,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
                helpContextId="show_null_entries_action_context"
                label="%showNullEntriesAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                tooltip="%showNullEntriesAction.tooltip">
          </action>                  
          <action
@@ -717,7 +723,7 @@
                icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                tooltip="%showQualifiedAction.tooltip">
          </action>
          <action
@@ -727,7 +733,7 @@
                icon="$nl$/icons/full/elcl16/static_co.gif"
                helpContextId="show_static_action_context"
                label="%showStaticAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                tooltip="%showStaticAction.tooltip">
          </action>
          <action
@@ -737,9 +743,15 @@
                icon="$nl$/icons/full/elcl16/constant_co.gif"
                helpContextId="show_constants_action_context"
                label="%showConstantsAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                tooltip="%showConstantsAction.tooltip">
          </action>
+         <menu
+               id="org.eclipse.jdt.debug.ui.expSubmenu"
+               label="%ExpressionViewJavaSubmenu.label"
+               path="javaActions">
+            <groupMarker name="org.eclipse.jdt.debug.ui.javaPart"/>
+         </menu>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.BreakpointView"
