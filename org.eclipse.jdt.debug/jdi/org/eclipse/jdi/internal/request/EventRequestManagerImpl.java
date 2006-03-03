@@ -461,8 +461,33 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		return new ArrayList(fRequests[VM_DEATH_INDEX]);
 	}
 
+	public void removeRequestIDMapping(EventRequestImpl req) {
+		if (req instanceof AccessWatchpointRequestImpl)
+			fEnabledRequests[ACCESS_WATCHPOINT_INDEX].remove(req.requestID());
+		else if (req instanceof BreakpointRequestImpl)
+			fEnabledRequests[BREAKPOINT_INDEX].remove(req.requestID());
+		else if (req instanceof ClassPrepareRequestImpl)
+			fEnabledRequests[CLASS_PREPARE_INDEX].remove(req.requestID());
+		else if (req instanceof ClassUnloadRequestImpl)
+			fEnabledRequests[CLASS_UNLOAD_INDEX].remove(req.requestID());
+		else if (req instanceof ExceptionRequestImpl)
+			fEnabledRequests[EXCEPTION_INDEX].remove(req.requestID());
+		else if (req instanceof MethodEntryRequestImpl)
+			fEnabledRequests[METHOD_ENTRY_INDEX].remove(req.requestID());
+		else if (req instanceof MethodExitRequestImpl)
+			fEnabledRequests[METHOD_EXIT_INDEX].remove(req.requestID());
+		else if (req instanceof ModificationWatchpointRequestImpl)
+			fEnabledRequests[MODIFICATION_WATCHPOINT_INDEX].remove(req.requestID());
+		else if (req instanceof StepRequestImpl)
+			fEnabledRequests[STEP_INDEX].remove(req.requestID());
+		else if (req instanceof ThreadDeathRequestImpl)
+			fEnabledRequests[THREAD_DEATH_INDEX].remove(req.requestID());
+		else if (req instanceof ThreadStartRequestImpl)
+			fEnabledRequests[THREAD_START_INDEX].remove(req.requestID());
+	}
+	
 	/**
-	 * Maps a reuqest ID to requests.
+	 * Maps a request ID to requests.
 	 */ 
 	public void addRequestIDMapping(EventRequestImpl req) {
 		if (req instanceof AccessWatchpointRequestImpl)

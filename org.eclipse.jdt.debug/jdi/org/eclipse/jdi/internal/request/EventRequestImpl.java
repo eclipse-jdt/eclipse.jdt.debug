@@ -196,6 +196,8 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 					throw new InvalidRequestStateException();
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			virtualMachineImpl().eventRequestManagerImpl().removeRequestIDMapping(this);
 			fRequestID = null;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
