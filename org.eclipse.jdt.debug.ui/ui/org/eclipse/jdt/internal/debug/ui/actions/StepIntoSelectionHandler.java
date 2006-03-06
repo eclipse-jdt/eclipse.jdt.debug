@@ -18,7 +18,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
-import org.eclipse.jdt.core.BindingKey;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -90,13 +89,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			if (method.isBinary()) {
 				fResolvedSignature = method.getSignature();
 			} else {
-				if (method.isResolved()) {
-	                String key = method.getKey();
-	                String sig2 = new BindingKey(key).toSignature();
-	                fResolvedSignature = sig2.replace('.', '/');
-				} else {
-					fResolvedSignature = ToggleBreakpointAdapter.resolveMethodSignature(method.getDeclaringType(), method.getSignature());
-				}
+				fResolvedSignature = ToggleBreakpointAdapter.resolveMethodSignature(method.getDeclaringType(), method.getSignature());
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
@@ -346,5 +339,3 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			event.getDetail() == fExpectedDetail;
 	}
 }
-
-	

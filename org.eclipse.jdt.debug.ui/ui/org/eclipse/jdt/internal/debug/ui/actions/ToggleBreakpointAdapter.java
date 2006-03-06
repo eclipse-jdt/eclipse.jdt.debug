@@ -695,7 +695,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         else {
         	resolvedElementTypeSignature = Signature.createTypeSignature(resolvedElementTypeName, true).replace('.', '/');
         }
-        resolvedElementTypeSignature = resolvedElementTypeSignature.replace('$','.');
+
         return Signature.createArraySignature(resolvedElementTypeSignature, count);
     }
 
