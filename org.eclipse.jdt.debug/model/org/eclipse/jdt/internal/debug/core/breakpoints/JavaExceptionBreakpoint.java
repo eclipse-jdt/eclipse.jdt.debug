@@ -25,10 +25,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
@@ -96,6 +99,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * The current set of inclusion class filters.
 	 */
 	protected String[] fExclusionClassFilters= null;
+	
+	private ObjectReference fLastException;
+	private JDIDebugTarget fLastTarget;
 	
 	public JavaExceptionBreakpoint() {
 	}
@@ -264,7 +270,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */
 	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
 		if (event instanceof ExceptionEvent) {
-			setExceptionName(((ExceptionEvent)event).exception().type().name());
+			ObjectReference ex = ((ExceptionEvent)event).exception(); 
+			fLastTarget = target;
+			fLastException = ex;
+			setExceptionName(ex.type().name());
 			if (getExclusionClassFilters().length > 1 
 				|| getInclusionClassFilters().length > 1
 				|| (getExclusionClassFilters().length + getInclusionClassFilters().length) >= 2
@@ -293,6 +302,15 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#setInstalledIn(org.eclipse.jdt.debug.core.IJavaDebugTarget, boolean)
+	 */
+	protected void setInstalledIn(IJavaDebugTarget target, boolean installed) {
+		fLastException = null;
+		fLastTarget = null;
+		super.setInstalledIn(target, installed);
+	}
+
 	protected boolean filtersIncludeDefaultPackage(String[] filters) {
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i].length() == 0 || (filters[i].indexOf('.') == -1)) {
@@ -546,5 +564,19 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			((ExceptionRequest)request).addInstanceFilter(object);
 		}
 	}	
+	
+	/**
+	 * Returns the last exception object that was encountered by this exception
+	 * 
+	 * TODO: make API in future release.
+	 * 
+	 * @return
+	 */
+	public IJavaObject getLastException() {
+		if (fLastException != null) {
+			return (IJavaObject) JDIValue.createValue(fLastTarget, fLastException);
+		}
+		return null;
+	}
 }
 

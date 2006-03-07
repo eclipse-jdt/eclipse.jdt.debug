@@ -51,5 +51,6 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS, false);
 		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
 		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, false);
 	}
 }

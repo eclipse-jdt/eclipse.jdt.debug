@@ -48,6 +48,7 @@ import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionInspector;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
@@ -320,9 +321,12 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);
-		
+        		
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
+		
+		// initialize exception inspector handler
+		new ExceptionInspector();
 	}
 	
 	/* (non-Javadoc)

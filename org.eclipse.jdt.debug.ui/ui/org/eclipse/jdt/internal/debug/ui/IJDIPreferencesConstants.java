@@ -188,4 +188,8 @@ public interface IJDIPreferencesConstants {
 	
 	public static final String PREF_THREAD_MONITOR_IN_DEADLOCK_COLOR= "org.eclipse.jdt.debug.ui.InDeadlockColor"; //$NON-NLS-1$
 
+	/**
+	 * @since 3.2
+	 */
+	public static final String PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION = IJavaDebugUIConstants.PLUGIN_ID + ".open_inspect_popup_on_exception"; //$NON-NLS-1$
 }
