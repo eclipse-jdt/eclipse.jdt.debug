@@ -80,7 +80,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		Composite comp = new Composite(parent, parent.getStyle());
+		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, true);
 		comp.setLayout(layout);
 		comp.setFont(font);
