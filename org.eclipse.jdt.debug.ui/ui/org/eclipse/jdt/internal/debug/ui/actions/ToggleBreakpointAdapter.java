@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
@@ -680,9 +681,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         String elementTypeName = Signature.toString(elementTypeSignature);
         String[][] resolvedElementTypeNames = type.resolveType(elementTypeName);
         if (resolvedElementTypeNames == null || resolvedElementTypeNames.length != 1) {
+        	// check if type parameter
+            ITypeParameter[] typeParameters = type.getTypeParameters();
+            for (int i = 0; i < typeParameters.length; i++) {
+    			ITypeParameter parameter = typeParameters[i];
+    			if (parameter.getElementName().equals(elementTypeName)) {
+    				return "Ljava/lang/Object;"; //$NON-NLS-1$
+    			}
+    		}
             // the type name cannot be resolved
             return null;
         }
+
         String[] types = resolvedElementTypeNames[0];
         types[1] = types[1].replace('.', '$');
         
