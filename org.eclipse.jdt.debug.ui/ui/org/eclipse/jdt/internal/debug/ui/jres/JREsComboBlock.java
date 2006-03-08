@@ -371,6 +371,7 @@ public class JREsComboBlock {
 			i++;
 		}
 		fCombo.setItems(names);
+		fCombo.setVisibleItemCount(Math.min(names.length, 20));
 	}
 	
 	protected Shell getShell() {
@@ -488,6 +489,7 @@ public class JREsComboBlock {
 			i++;
 		}
 		fEnvironmentsCombo.setItems(names);
+		fEnvironmentsCombo.setVisibleItemCount(Math.min(names.length, 20));
 	}	
 	
 	/**
