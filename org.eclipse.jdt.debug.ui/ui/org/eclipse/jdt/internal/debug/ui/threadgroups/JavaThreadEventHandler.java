@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  * @since 3.2
@@ -51,8 +52,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler {
 					threadGroup = threadGroup.getThreadGroup();
 				}
 			} catch (DebugException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				JDIDebugUIPlugin.log(e);
 			}
 			Iterator iterator = groups.iterator();
 			while (iterator.hasNext()) {
