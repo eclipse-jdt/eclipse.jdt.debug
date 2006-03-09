@@ -14,6 +14,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
@@ -52,6 +53,63 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#getValue(java.lang.Object, java.lang.String)
+	 */
+	public Object getValue(Object element, String property) {
+		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+			if (element instanceof IJavaVariable) {
+				IJavaVariable var = (IJavaVariable) element;
+				if (isBoolean(var)) {
+					try {
+						if (var.getValue().getValueString().equals(Boolean.toString(true))) {
+							return new Integer(0);
+						} else {
+							return new Integer(1);
+						}
+					} catch (DebugException e) {
+					}
+				}
+			}
+		}
+		return super.getValue(element, property);
+	}
+	
+	
+	
+	public void modify(Object element, String property, Object value) {
+		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+			if (element instanceof IJavaVariable) {
+				IJavaVariable var = (IJavaVariable) element;
+				if (isBoolean(var)) {
+					switch (((Integer)value).intValue()) {
+						case 0:
+							super.modify(element, property, Boolean.toString(true));
+							return;
+						case 1:
+							super.modify(element, property, Boolean.toString(false));
+							return;
+					}
+				}
+			}
+		}
+		super.modify(element, property, value);
+	}
+
+	/**
+	 * Returns whether the given variable is a boolean.
+	 * 
+	 * @param variable
+	 * @return
+	 */
+	public static boolean isBoolean(IJavaVariable variable) {
+		try {
+			String signature = variable.getSignature();
+			return (signature.length() == 1 && signature.charAt(0) == Signature.C_BOOLEAN);
+		} catch (DebugException e) {
+		}		
+		return false;
+	}
 
 
 }
