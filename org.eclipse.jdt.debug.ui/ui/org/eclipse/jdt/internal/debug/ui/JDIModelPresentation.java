@@ -1171,20 +1171,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		
-		String valueString= DebugUIMessages.JDIModelPresentation_unknown_value__3; 
-		if (javaValue != null) {
-			if (isShowLabelDetails(javaValue)) {
-	    		valueString = getVariableDetail(var);
-	    		if (valueString == null) {
-	    			valueString = DebugUIMessages.JDIModelPresentation_unknown_value__3;
-	    		}
-			} else {
-				try {
-					valueString= getValueText(javaValue);
-				} catch (DebugException exception) {
-				}
-			}
-		}
+		String valueString= getFormattedValueText(javaValue); 
+		
 		//do not put the equal sign for array partitions
 		if (valueString.length() != 0) {
 			buff.append("= "); //$NON-NLS-1$
@@ -1194,13 +1182,38 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	/**
+	 * Returns text for the given value based on user preferences to display
+	 * toString() details.
+	 * 
+	 * @param javaValue
+	 * @return text
+	 */
+	public String getFormattedValueText(IJavaValue javaValue) {
+		String valueString= DebugUIMessages.JDIModelPresentation_unknown_value__3; 
+		if (javaValue != null) {
+			if (isShowLabelDetails(javaValue)) {
+	    		valueString = getVariableDetail(javaValue);
+	    		if (valueString == null) {
+	    			valueString = DebugUIMessages.JDIModelPresentation_unknown_value__3;
+	    		}
+			} else {
+				try {
+					valueString= getValueText(javaValue);
+				} catch (DebugException exception) {
+				}
+			}
+		}		
+		return valueString;
+	}
+	
+	/**
 	 * Returns whether or not details should be shown in the
 	 * label of the given variable.
 	 * @param variable the variable
 	 * @return whether or not details should be shown in the label
 	 *  of the given variable
 	 */
-	protected boolean isShowLabelDetails(IJavaValue value) {
+	public boolean isShowLabelDetails(IJavaValue value) {
 		boolean showDetails= false;
 		String details= JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
 		if (details != null) {
@@ -1225,32 +1238,28 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @param variable the varible to compute the detail for
 	 * @return the detail value for the variable
 	 */
-	private String getVariableDetail(IJavaVariable variable) {
+	private String getVariableDetail(IJavaValue value) {
 		final String[] detail= new String[1];
 		final Object lock= new Object();
-		try {
-			computeDetail(variable.getValue(), new IValueDetailListener() {
-			    /* (non-Javadoc)
-			     * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
-			     */
-			    public void detailComputed(IValue value, String result) {
-			        synchronized (lock) {
-			            detail[0]= result;
-			            lock.notifyAll();
-			        }
-			    }
-			});
-			synchronized (lock) {
-			    if (detail[0] == null) {
-			        try {
-			            lock.wait(5000);
-			        } catch (InterruptedException e1) {
-			            // Fall through
-			        }
-			    }
-			}
-		} catch (DebugException e) {
-			// Fall through
+		computeDetail(value, new IValueDetailListener() {
+		    /* (non-Javadoc)
+		     * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
+		     */
+		    public void detailComputed(IValue value, String result) {
+		        synchronized (lock) {
+		            detail[0]= result;
+		            lock.notifyAll();
+		        }
+		    }
+		});
+		synchronized (lock) {
+		    if (detail[0] == null) {
+		        try {
+		            lock.wait(5000);
+		        } catch (InterruptedException e1) {
+		            // Fall through
+		        }
+		    }
 		}
 		return detail[0];
 	}
@@ -1755,7 +1764,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Return the simple generic name from a qualified generic name
 	 */
-	private String removeQualifierFromGenericName(String qualifiedName) {
+	public String removeQualifierFromGenericName(String qualifiedName) {
 		if (qualifiedName.endsWith("...")) { //$NON-NLS-1$
 			// handle variable argument name
 			return removeQualifierFromGenericName(qualifiedName.substring(0, qualifiedName.length() - 3)) + "..."; //$NON-NLS-1$

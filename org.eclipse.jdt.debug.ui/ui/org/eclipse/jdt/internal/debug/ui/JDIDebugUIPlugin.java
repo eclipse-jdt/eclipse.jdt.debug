@@ -59,6 +59,7 @@ import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.internal.debug.ui.sourcelookup.JavaDebugShowInAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.JavaDebugElementLabelAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.variables.ColumnPresentationAdapterFactory;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -321,9 +322,14 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);
-        		
+        
+        IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
+        //manager.registerAdapters(columnFactory, IJavaStackFrame.class);
+        manager.registerAdapters(columnFactory, IJavaVariable.class);
+		
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
+		
 		
 		// initialize exception inspector handler
 		new ExceptionInspector();
