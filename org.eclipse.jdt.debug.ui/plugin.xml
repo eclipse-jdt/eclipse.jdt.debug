@@ -210,14 +210,15 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.jdt.debug.ui.Watch"
-               hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.Watch"
                disabledIcon="$nl$/icons/full/dtool16/watch_exp.gif"
                enablesFor="+"
-               icon="$nl$/icons/full/etool16/watch_exp.gif"
-               label="%Watch.label"
                helpContextId="watch_action_context"
+               hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
+               id="org.eclipse.jdt.debug.ui.Watch"
+               label="%Watch.label"
                menubarPath="org.eclipse.ui.run/jdtGroup">
             <enablement>
                <and>
@@ -2004,7 +2005,12 @@ M4 = Platform-specific fourth key
             description="%AppletShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.javaAppletShortcut.run">
-      </command> 
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.watch.description"
+            id="org.eclipse.jdt.debug.ui.commands.Watch"
+            name="%ActionDefinition.watch.name"/> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
       <key
