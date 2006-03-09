@@ -33,7 +33,10 @@ public class JavaVariableLabelAdapter extends VariableLabelAdapter {
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getValueText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue)
 	 */
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
-		return fLabelProvider.getFormattedValueText((IJavaValue) value);
+		if (value instanceof IJavaValue) {
+			return fLabelProvider.getFormattedValueText((IJavaValue) value);
+		}
+		return super.getValueText(variable, value, context);
 	}
 
 	/* (non-Javadoc)
