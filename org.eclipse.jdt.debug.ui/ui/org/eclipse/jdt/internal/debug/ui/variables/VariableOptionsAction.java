@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.actions;
+package org.eclipse.jdt.internal.debug.ui.variables;
 
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage;
 import org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -24,9 +25,9 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * Action which opens the Java logical structures preference page.
+ * Action which opens preference settings for Java variables.
  */
-public class EditLogicalStructuresAction implements IViewActionDelegate {
+public class VariableOptionsAction implements IViewActionDelegate {
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
@@ -38,16 +39,16 @@ public class EditLogicalStructuresAction implements IViewActionDelegate {
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage", new JavaLogicalStructuresPreferencePage()); //$NON-NLS-1$
-        
+        IPreferenceNode details = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", new JavaDetailFormattersPreferencePage()); //$NON-NLS-1$
+        IPreferenceNode structures = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage", new JavaLogicalStructuresPreferencePage()); //$NON-NLS-1$
         PreferenceManager manager = new PreferenceManager();
-        manager.addToRoot(targetNode);
+        manager.addToRoot(details);
+        manager.addToRoot(structures);
         final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
         final boolean [] result = new boolean[] { false };
         BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
             public void run() {
                 dialog.create();
-                dialog.setMessage(targetNode.getLabelText());
                 result[0]= (dialog.open() == Window.OK);
             }
         }); 
@@ -58,5 +59,5 @@ public class EditLogicalStructuresAction implements IViewActionDelegate {
      */
     public void selectionChanged(IAction action, ISelection selection) {
     }
-
+    
 }

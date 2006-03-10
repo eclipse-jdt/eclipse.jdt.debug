@@ -525,7 +525,9 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
 	public boolean performCancel() {
-		fCodeViewer.dispose();
+		if (fCodeViewer != null) {
+			fCodeViewer.dispose();
+		}
 		return super.performCancel();
 	}
 	

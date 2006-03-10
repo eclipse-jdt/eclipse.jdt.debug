@@ -637,20 +637,12 @@
                id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
          </action>
          <action
-               helpContextId="edit_logical_structures_action_context"
-               label="%editLogicalStructuresAction.label"
-               tooltip="%editLogicalStructuresAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.EditLogicalStructuresAction"
+               helpContextId="edit_variable_preferences"
+               label="%variablePreferences.label"
+               tooltip="%variablePreferences.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.variables.VariableOptionsAction"
                menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.LogicalStructures"/>         
-         <action
-               label="%detailOptionsAction.label"
-               helpContextId="detail_options_action_context"
-               tooltip="%detailOptionsAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DetailOptionsAction"
-               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.DetailOptions">
-         </action>
+               id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>         
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
@@ -708,6 +700,13 @@
                menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.PrimitiveOptions">
          </action>
+         <action
+               helpContextId="edit_variable_preferences"
+               label="%variablePreferences.label"
+               tooltip="%variablePreferences.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.variables.VariableOptionsAction"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>          
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
