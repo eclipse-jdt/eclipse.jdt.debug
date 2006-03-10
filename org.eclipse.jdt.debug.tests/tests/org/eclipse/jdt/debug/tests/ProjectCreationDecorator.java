@@ -46,7 +46,9 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -230,6 +232,13 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         
         // turn off workbench heap monitor
         PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+        for (int i = 0; i < windows.length; i++) {
+            IWorkbenchWindow window = windows[i];
+            if(window instanceof WorkbenchWindow){
+                ((WorkbenchWindow) window).showHeapStatus(false);
+            }
+        }       
     }
 
     public void testBuild() throws Exception {
