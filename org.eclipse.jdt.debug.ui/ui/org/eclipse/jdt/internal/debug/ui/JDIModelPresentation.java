@@ -106,40 +106,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @see #setAttribute(String, Object)
 	 */
 	public final static String DISPLAY_QUALIFIED_NAMES= "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
-	
-	/**
-	 * Qualified names presentation property (value <code>"SHOW_HEX_VALUES"</code>).
-	 * When <code>SHOW_HEX_VALUES</code> is set to <code>True</code>,
-	 * this label provider should show hexadecimal values rendering elements.
-	 * When set to <code>False</code>, this label provider should not
-	 * show hexadecimal values when rendering elements.
-	 * @see #setAttribute(String, Object)
-	 * @since 2.1
-	 */
-	public final static String SHOW_HEX_VALUES= "SHOW_HEX_VALUES"; //$NON-NLS-1$
-	
-	/**
-	 * Qualified names presentation property (value <code>"SHOW_CHAR_VALUES"</code>).
-	 * When <code>SHOW_CHAR_VALUES</code> is set to <code>True</code>,
-	 * this label provider should show ASCII values when rendering character
-	 * elements. When set to <code>False</code>, this label provider should not
-	 * show ASCII values when rendering elements.
-	 * @see #setAttribute(String, Object)
-	 * @since 2.1
-	 */
-	public final static String SHOW_CHAR_VALUES= "SHOW_CHAR_VALUES"; //$NON-NLS-1$
-	
-	/**
-	 * Qualified names presentation property (value <code>"SHOW_UNSIGNED_VALUES"</code>).
-	 * When <code>SHOW_UNSIGNED_VALUES</code> is set to <code>True</code>,
-	 * this label provider should show unsigned values when rendering
-	 * byte elements. When set to <code>False</code>, this label provider should
-	 * not show unsigned values when rendering byte elements.
-	 * @see #setAttribute(String, Object)
-	 * @since 2.1
-	 */
-	public final static String SHOW_UNSIGNED_VALUES= "SHOW_UNSIGNED_VALUES"; //$NON-NLS-1$
-	
+		
 	protected HashMap fAttributes= new HashMap(3);
 	
 	static final Point BIG_SIZE= new Point(16, 16);
@@ -1110,21 +1077,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected boolean isShowHexValues() {
-		Boolean show= (Boolean) fAttributes.get(SHOW_HEX_VALUES);
-		show= show == null ? Boolean.FALSE : show;
-		return show.booleanValue();
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_HEX);
 	}
 
 	protected boolean isShowCharValues() {
-		Boolean show= (Boolean) fAttributes.get(SHOW_CHAR_VALUES);
-		show= show == null ? Boolean.FALSE : show;
-		return show.booleanValue();
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_CHAR);
 	}
 
 	protected boolean isShowUnsignedValues() {
-		Boolean show= (Boolean) fAttributes.get(SHOW_UNSIGNED_VALUES);
-		show= show == null ? Boolean.FALSE : show;
-		return show.booleanValue();
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED);
 	}
 
 	protected String getVariableText(IJavaVariable var) {

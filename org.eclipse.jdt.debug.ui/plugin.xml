@@ -629,14 +629,6 @@
             targetID="org.eclipse.debug.ui.VariableView"
             id="org.eclipse.jdt.debug.ui.VariableViewActions">
          <action
-               label="%primitiveOptionsAction.label"
-               helpContextId="primitive_options_action_context"
-               tooltip="%primitiveOptionsAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
-               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
-         </action>
-         <action
                helpContextId="edit_variable_preferences"
                label="%variablePreferences.label"
                tooltip="%variablePreferences.tooltip"
@@ -692,14 +684,6 @@
       <viewContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.jdt.debug.ui.ExpressionViewActions">
-         <action
-               label="%primitiveOptionsAction.label"
-               helpContextId="primitive_options_action_context"
-               tooltip="%primitiveOptionsAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
-               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
-               id="org.eclipse.jdt.debug.ui.expressionViewActions.PrimitiveOptions">
-         </action>
          <action
                helpContextId="edit_variable_preferences"
                label="%variablePreferences.label"
@@ -1734,6 +1718,13 @@
             id="org.eclipse.jdt.debug.ui.JavaStepFilterPreferencePage">
          <keywordReference id="org.eclipse.jdt.debug.ui.stepFilters"/>
       </page>
+      <page
+            name="%javaPrimitivesPrefName"
+            category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.JavaPrimitivesPreferencePage"
+            id="org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage">
+         <keywordReference id="org.eclipse.jdt.debug.ui.primitiveOptions"/>
+      </page>   
       <page
             name="%javaDetailFormattersPrefName"
             category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"

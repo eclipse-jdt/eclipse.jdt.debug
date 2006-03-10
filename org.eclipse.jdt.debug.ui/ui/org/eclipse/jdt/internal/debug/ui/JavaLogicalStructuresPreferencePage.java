@@ -516,8 +516,10 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fLogicalStructuresContentProvider.saveUserDefinedJavaLogicalStructures();
-		fCodeViewer.dispose();
+		if (fCodeViewer != null) {
+			fLogicalStructuresContentProvider.saveUserDefinedJavaLogicalStructures();
+			fCodeViewer.dispose();
+		}
 		return super.performOk();
 	}
 

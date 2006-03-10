@@ -326,18 +326,20 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	}
 	
 	public boolean performOk() {
-		fFormatViewerContentProvider.saveDetailFormatters();
-
-        String value= IJDIPreferencesConstants.DETAIL_PANE;
-        if (fInlineAllButton.getSelection()) {
-            value= IJDIPreferencesConstants.INLINE_ALL;
-        } else if (fInlineFormattersButton.getSelection()) {
-            value= IJDIPreferencesConstants.INLINE_FORMATTERS;
-        }
-        JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_SHOW_DETAILS, value);
-        
-		JDIDebugUIPlugin.getDefault().savePluginPreferences();
-		fCodeViewer.dispose();
+		if (fFormatViewerContentProvider != null) {
+			fFormatViewerContentProvider.saveDetailFormatters();
+	
+	        String value= IJDIPreferencesConstants.DETAIL_PANE;
+	        if (fInlineAllButton.getSelection()) {
+	            value= IJDIPreferencesConstants.INLINE_ALL;
+	        } else if (fInlineFormattersButton.getSelection()) {
+	            value= IJDIPreferencesConstants.INLINE_FORMATTERS;
+	        }
+	        JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_SHOW_DETAILS, value);
+	        
+			JDIDebugUIPlugin.getDefault().savePluginPreferences();
+			fCodeViewer.dispose();
+		}
 		return true;
 	}
 	

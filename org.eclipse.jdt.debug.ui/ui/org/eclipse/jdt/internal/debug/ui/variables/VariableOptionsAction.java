@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage;
 import org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage;
+import org.eclipse.jdt.internal.debug.ui.JavaPrimitivesPreferencePage;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -41,9 +42,11 @@ public class VariableOptionsAction implements IViewActionDelegate {
     public void run(IAction action) {
         IPreferenceNode details = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", new JavaDetailFormattersPreferencePage()); //$NON-NLS-1$
         IPreferenceNode structures = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage", new JavaLogicalStructuresPreferencePage()); //$NON-NLS-1$
+        IPreferenceNode primitives = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage", new JavaPrimitivesPreferencePage()); //$NON-NLS-1$
         PreferenceManager manager = new PreferenceManager();
         manager.addToRoot(details);
         manager.addToRoot(structures);
+        manager.addToRoot(primitives);
         final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
         final boolean [] result = new boolean[] { false };
         BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {

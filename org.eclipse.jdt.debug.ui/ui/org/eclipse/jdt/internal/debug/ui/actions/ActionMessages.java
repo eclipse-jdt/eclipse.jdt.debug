@@ -105,8 +105,6 @@ public class ActionMessages extends NLS {
 
 	public static String StepIntoSelectionActionDelegate_No_Method;
 
-	public static String PrimitiveOptionsDialog_Primitive_Type_Display_Options_1;
-
 	public static String StepIntoSelectionActionDelegate_Step_into_selection_only_available_for_types_in_Java_projects__1;
 	public static String StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_top_stack_frame__3;
 	public static String StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_Java_editor__4;

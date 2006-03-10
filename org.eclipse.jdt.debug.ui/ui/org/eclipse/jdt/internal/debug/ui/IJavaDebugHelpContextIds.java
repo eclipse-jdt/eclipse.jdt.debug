@@ -33,7 +33,6 @@ public interface IJavaDebugHelpContextIds {
 	public static final String EDIT_JRE_DIALOG= PREFIX + "edit_jre_dialog_context"; //$NON-NLS-1$
 	public static final String JRE_DETAILS_DIALOG= PREFIX + "jre_details_dialog_context"; //$NON-NLS-1$
 	public static final String MAIN_TYPE_SELECTION_DIALOG= PREFIX + "main_type_selection_dialog_context"; //$NON-NLS-1$
-	public static final String PRIMITIVE_DISPLAY_OPTIONS_DIALOG= PREFIX + "primitive_options_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_DETAIL_FORMATTER_DIALOG= PREFIX + "edit_detail_formatter_dialog_context"; //$NON-NLS-1$
 	public static final String INSTANCE_BREAKPOINT_SELECTION_DIALOG= PREFIX + "instance_breakpoint_selection_dialog_context"; //$NON-NLS-1$
 	public static final String SNIPPET_IMPORTS_DIALOG= PREFIX + "snippet_imports_dialog_context"; //$NON-NLS-1$
@@ -48,6 +47,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JAVA_STEP_FILTER_PREFERENCE_PAGE= PREFIX + "java_step_filter_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_BREAKPOINT_PREFERENCE_PAGE= PREFIX + "java_breakpoint_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE= PREFIX + "java_detail_formatter_preference_page_context"; //$NON-NLS-1$
+	public static final String JAVA_PRIMITIVES_PREFERENCE_PAGE= PREFIX + "java_primitives_preference_page_context"; //$NON-NLS-1$
 	
 	// reused ui-blocks
 	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$
@@ -67,7 +67,6 @@ public interface IJavaDebugHelpContextIds {
 
 	//actions
 	public static final String STEP_INTO_SELECTION_ACTION = PREFIX + "step_into_selection_action"; //$NON-NLS-1$
-	public static final String PRIMITIVE_DISPLAY_OPTIONS_ACTION = PREFIX + "primitive_options_action_context"; //$NON-NLS-1$
 	public static final String SHOW_STATICS_ACTION = PREFIX + "show_static_action_context"; //$NON-NLS-1$
 	public static final String SHOW_CONSTANTS_ACTION = PREFIX + "show_constants_action_context"; //$NON-NLS-1$
 	public static final String CLEAR_DISPLAY_VIEW_ACTION = PREFIX + "clear_display_view_action_context"; //$NON-NLS-1$
