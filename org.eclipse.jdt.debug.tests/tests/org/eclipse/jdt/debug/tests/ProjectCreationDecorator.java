@@ -45,7 +45,9 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Test to close the workbench, since debug tests do not run in the UI thread.
@@ -225,6 +227,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
         // turn off monitor information
         jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
+        
+        // turn off workbench heap monitor
+        PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
     }
 
     public void testBuild() throws Exception {
