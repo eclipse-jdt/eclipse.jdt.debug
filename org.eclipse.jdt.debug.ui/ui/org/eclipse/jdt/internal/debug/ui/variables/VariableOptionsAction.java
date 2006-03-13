@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage;
 import org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage;
@@ -28,12 +32,15 @@ import org.eclipse.ui.IViewPart;
 /**
  * Action which opens preference settings for Java variables.
  */
-public class VariableOptionsAction implements IViewActionDelegate {
+public class VariableOptionsAction implements IViewActionDelegate, IPropertyChangeListener {
+	
+	private IViewPart fPart;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
     public void init(IViewPart view) {
+    	fPart = view;
     }
 
     /* (non-Javadoc)
@@ -49,12 +56,15 @@ public class VariableOptionsAction implements IViewActionDelegate {
         manager.addToRoot(primitives);
         final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
         final boolean [] result = new boolean[] { false };
+        Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
+		pluginPreferences.addPropertyChangeListener(this);
         BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
             public void run() {
                 dialog.create();
                 result[0]= (dialog.open() == Window.OK);
             }
         }); 
+        pluginPreferences.removePropertyChangeListener(this);
     }
 
     /* (non-Javadoc)
@@ -62,5 +72,16 @@ public class VariableOptionsAction implements IViewActionDelegate {
      */
     public void selectionChanged(IAction action, ISelection selection) {
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (fPart instanceof IDebugView) {
+			IDebugView view = (IDebugView) fPart;
+			view.getViewer().refresh();
+		}
+		
+	}
     
 }
