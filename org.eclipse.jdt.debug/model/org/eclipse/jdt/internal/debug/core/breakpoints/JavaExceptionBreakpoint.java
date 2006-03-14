@@ -137,6 +137,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				attributes.put(CAUGHT, Boolean.valueOf(caught));
 				attributes.put(UNCAUGHT, Boolean.valueOf(uncaught));
 				attributes.put(CHECKED, Boolean.valueOf(checked));
+				attributes.put(SUSPEND_POLICY, new Integer(getDefaultSuspendPolicy()));
 				
 				ensureMarker().setAttributes(attributes);
 				

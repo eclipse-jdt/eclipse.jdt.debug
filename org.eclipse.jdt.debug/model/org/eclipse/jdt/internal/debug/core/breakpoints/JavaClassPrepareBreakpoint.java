@@ -83,6 +83,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 				attributes.put(TYPE_NAME, typeName);
 				attributes.put(MEMBER_TYPE, new Integer(memberType));
 				attributes.put(ENABLED, Boolean.TRUE);
+				attributes.put(SUSPEND_POLICY, new Integer(getDefaultSuspendPolicy()));
 				
 				ensureMarker().setAttributes(attributes);
 				

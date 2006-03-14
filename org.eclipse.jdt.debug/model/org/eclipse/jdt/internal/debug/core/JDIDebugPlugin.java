@@ -47,6 +47,15 @@ import com.sun.jdi.VirtualMachineManager;
 
 public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChangeListener {
 	
+	
+	/**
+	 * integer preference controlling if we should, by default, suspend the VM instead of the thread
+	 * 
+	 * @since 3.2
+	 * @TODO make API once the freeze is over (post 3.2)
+	 */
+	public static final String PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY = JDIDebugPlugin.getUniqueIdentifier() + ".default_breakpoint_suspend_policy"; //$NON-NLS-1$
+	
 	public static final String EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES= "javaLogicalStructures"; //$NON-NLS-1$
 
 	/**

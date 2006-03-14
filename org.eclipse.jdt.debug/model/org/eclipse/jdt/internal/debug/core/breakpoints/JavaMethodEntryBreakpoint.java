@@ -75,6 +75,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				addMethodNameAndSignature(attributes, methodName, methodSignature);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
 				//set attributes
+				attributes.put(SUSPEND_POLICY, new Integer(getDefaultSuspendPolicy()));
 				ensureMarker().setAttributes(attributes);
 				
 				register(register);

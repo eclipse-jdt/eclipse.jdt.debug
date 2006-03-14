@@ -14,7 +14,9 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,6 +26,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,6 +34,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -53,18 +57,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		public JavaDebugIntegerFieldEditor(String name, String labelText, Composite parent) {
 			super(name, labelText, parent);
 		}
-		
-		/**
-		 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
-		 */
+
 		protected void refreshValidState() {
 			super.refreshValidState();
 		}
-		
-		/**
-		 * Clears the error message from the message line if the error
-		 * message is the error message from this field editor.
-		 */
+
 		protected void clearErrorMessage() {
 			if (canClearErrorMessage()) {
 				super.clearErrorMessage();
@@ -77,8 +74,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendOnCompilationErrors;
 	private Button fSuspendDuringEvaluations;
 	private Button fOpenInspector;
-	
 	private Button fPromptUnableToInstallBreakpoint;
+	private CCombo fSuspendVMorThread;
 	
 	// Hot code replace preference widgets
 	private Button fAlertHCRButton;
@@ -95,16 +92,15 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		setDescription(DebugUIMessages.JavaDebugPreferencePage_description); 
 	}
 
-	/**
-	 * @see PreferencePage#createContents(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
-		
 		Font font = parent.getFont();
 		
 		//The main composite
-		Composite composite = new Composite(parent, SWT.NULL);
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.marginHeight=0;
@@ -122,28 +118,35 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 
 		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		runLink.getControl().setLayoutData(data);	
-		
-		//createSpacer(composite, 1);
-		
+	
 		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1); 
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1); 
 		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1); 
 		fSuspendDuringEvaluations= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_14);
 		fOpenInspector = createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_20);
 		
-		//createSpacer(composite, 1);
+		Composite group = new Composite(comp, SWT.NONE);
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.numColumns = 2;
+		groupLayout.marginHeight=0;
+		groupLayout.marginWidth=0;
+		group.setLayout(groupLayout);
+		data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		group.setLayoutData(data);
+		Label label = new Label(group, SWT.NONE);
+		label.setText(DebugUIMessages.JavaDebugPreferencePage_21);
+		fSuspendVMorThread = new CCombo(group, SWT.BORDER);
+		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
 				
-		comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2); 
+		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2); 
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1); 
 		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1); 
 		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1); 
 		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1); 
-		
-		//createSpacer(composite, 1);
 
 		fPromptUnableToInstallBreakpoint= createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19); 
-		
-		//createSpacer(composite, 1);
 
 		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Communication_1); 
 		//Add in an intermediate composite to allow for spacing
@@ -174,41 +177,52 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fConnectionTimeoutText.load();
 		fConnectionTimeoutText.setPropertyChangeListener(this);
-		// cannot set preference store, as it is a core preference
-		
+
 		setValues();
 		applyDialogFont(composite);
 		return composite;		
 	}
 		
-	/**
-	 * @see IWorkbenchPreferencePage#init(IWorkbench)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) {
-	}
+	public void init(IWorkbench workbench) {}
 	
-	/**
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 * Also, notifies interested listeners
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		storeValues();
+		IPreferenceStore store = getPreferenceStore();
+		Preferences coreStore = JDIDebugModel.getPreferences();
+		Preferences runtimeStore = JavaRuntime.getPreferences();
+		
+		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
+		coreStore.setValue(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, fSuspendDuringEvaluations.getSelection());
+		int selectionIndex = fSuspendVMorThread.getSelectionIndex();
+		int policy = IJavaBreakpoint.SUSPEND_THREAD;
+		if (selectionIndex > 0) {
+			policy = IJavaBreakpoint.SUSPEND_VM;
+		}
+		coreStore.setValue(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY, policy);
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, fAlertHCRNotSupportedButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
+		coreStore.setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
+		coreStore.setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
+		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		JDIDebugModel.savePreferences();
 		JavaRuntime.savePreferences();
 		return true;
 	}
 	
-	/**
-	 * Sets the default preferences.
-	 * @see PreferencePage#performDefaults()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		setDefaultValues();
-		super.performDefaults();	
-	}
-	
-	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
 		Preferences coreStore= JDIDebugModel.getPreferences();
 		Preferences runtimeStore= JavaRuntime.getPreferences();
@@ -216,6 +230,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fSuspendDuringEvaluations.setSelection(coreStore.getDefaultBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION));
+		int value = coreStore.getDefaultInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY);
+		fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD) ? 0 : 1);
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
@@ -224,6 +240,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 		fPromptUnableToInstallBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
+		super.performDefaults();	
 	}
 	
 	/**
@@ -233,7 +250,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button createCheckButton(Composite parent, String label) {
 		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
 		button.setText(label);		
-		// FieldEditor GridData
 		GridData data = new GridData();	
 		button.setLayoutData(data);
 		button.setFont(parent.getFont());
@@ -251,12 +267,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private Composite createGroupComposite(Composite parent, int numColumns, String labelText) {
 		Group comp = new Group(parent, SWT.NONE);
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		comp.setLayout(layout);
-		//GridData
-		GridData gd= new GridData();
+		comp.setLayout(new GridLayout(numColumns, true));
+		GridData gd = new GridData();
 		gd.verticalAlignment = GridData.FILL;
 		gd.horizontalAlignment = GridData.FILL;
 		comp.setLayoutData(gd);
@@ -277,6 +289,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fSuspendDuringEvaluations.setSelection(coreStore.getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION));
+		int value = coreStore.getInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY);
+		fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD ? 0 : 1));
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
@@ -286,34 +300,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
 	}
-	
-	/**
-	 * Store the preference values based on the state of the
-	 * component widgets
-	 */
-	private void storeValues() {
-		IPreferenceStore store = getPreferenceStore();
-		Preferences coreStore = JDIDebugModel.getPreferences();
-		Preferences runtimeStore = JavaRuntime.getPreferences();
-		
-		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
-		coreStore.setValue(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, fSuspendDuringEvaluations.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, fAlertHCRNotSupportedButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
-		coreStore.setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
-		coreStore.setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
-		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
-		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
-	}
 
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-
 		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 			boolean newValue = ((Boolean) event.getNewValue()).booleanValue();
 			// If the new value is true then we must check all field editors.
@@ -332,6 +323,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		}
 	}
 
+	/**
+	 * if the error message can be cleared or not
+	 * @return true if the error message can be cleared, false otherwise
+	 */
 	protected boolean canClearErrorMessage() {
 		if (fTimeoutText.isValid() && fConnectionTimeoutText.isValid()) {
 			return true;

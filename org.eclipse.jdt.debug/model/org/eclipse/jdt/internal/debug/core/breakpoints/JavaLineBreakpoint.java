@@ -150,6 +150,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
 				// set attributes
+				attributes.put(SUSPEND_POLICY, new Integer(getDefaultSuspendPolicy()));
 				ensureMarker().setAttributes(attributes);
 				
 				// add to breakpoint manager if requested

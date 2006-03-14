@@ -121,6 +121,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addStratumPatternAndHitCount(attributes, stratum, sourceName, sourcePath, pattern, hitCount);
 				// set attributes
+				attributes.put(SUSPEND_POLICY, new Integer(getDefaultSuspendPolicy()));
 				ensureMarker().setAttributes(attributes);
 				
 				register(register);

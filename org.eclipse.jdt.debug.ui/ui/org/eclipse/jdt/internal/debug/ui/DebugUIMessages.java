@@ -18,6 +18,12 @@ public class DebugUIMessages extends NLS {
 
 	public static String ImageDescriptorRegistry_Allocating_image_for_wrong_display_1;
 
+	public static String JavaDebugPreferencePage_21;
+
+	public static String JavaDebugPreferencePage_22;
+
+	public static String JavaDebugPreferencePage_23;
+
 	public static String JavaDebugPreferencePage_description;
 	public static String JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1;
 	public static String JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1;

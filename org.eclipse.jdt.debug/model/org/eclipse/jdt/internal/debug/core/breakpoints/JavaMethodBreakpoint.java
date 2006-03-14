@@ -149,10 +149,9 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				attributes.put(ENTRY, Boolean.valueOf(entry));
 				attributes.put(EXIT, Boolean.valueOf(exit));
 				attributes.put(NATIVE, Boolean.valueOf(nativeOnly));
-				
+				attributes.put(SUSPEND_POLICY, new Integer(getDefaultSuspendPolicy()));
 				//set attributes
 				ensureMarker().setAttributes(attributes);
-				
 				register(register);
 			}
 			
@@ -269,7 +268,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 					}
 				}
 				if (request == null) {
-					request= manager.createMethodEntryRequest();
+					request = manager.createMethodEntryRequest();
 					if (classFilter instanceof String) {
 						((MethodEntryRequest)request).addClassFilter((String)classFilter);
 					} else if (classFilter instanceof ReferenceType) {

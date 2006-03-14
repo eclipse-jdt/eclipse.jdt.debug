@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.core;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 public class JDIDebugPluginPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -27,12 +28,10 @@ public class JDIDebugPluginPreferenceInitializer extends AbstractPreferenceIniti
 	 */
 	public void initializeDefaultPreferences() {
 		Preferences prefs = JDIDebugPlugin.getDefault().getPluginPreferences();
-		prefs.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT,
-				JDIDebugModel.DEF_REQUEST_TIMEOUT);
+		prefs.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
 		prefs.setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
-		prefs.setDefault(
-				JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION,
-				true);
+		prefs.setDefault(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, true);
+		prefs.setDefault(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY, IJavaBreakpoint.SUSPEND_THREAD);
 		prefs.addPropertyChangeListener(JDIDebugPlugin.getDefault());
 	}
 }
