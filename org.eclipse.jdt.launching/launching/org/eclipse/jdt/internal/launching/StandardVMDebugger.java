@@ -153,15 +153,21 @@ public class StandardVMDebugger extends StandardVMRunner {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
 		}
-		arguments.add("-Xdebug"); //$NON-NLS-1$
-		arguments.add("-Xnoagent"); //$NON-NLS-1$
-		
 		double version = getJavaVersion();
+		if (version < 1.5) {
+			arguments.add("-Xdebug"); //$NON-NLS-1$
+			arguments.add("-Xnoagent"); //$NON-NLS-1$
+		}
+		
 		//check if java 1.4 or greater
 		if (version < 1.4) {
 			arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
 		}
-		arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+		if (version < 1.5) { 
+			arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+		} else {
+			arguments.add("-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+		}
 
 		arguments.add(config.getClassToLaunch());
 		addArguments(config.getProgramArguments(), arguments);
