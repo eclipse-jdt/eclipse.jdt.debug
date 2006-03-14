@@ -571,5 +571,19 @@ public class VMDefinitionsContainer {
 		}	
 		vm.setLibraryLocations((LibraryLocation[])locations.toArray(new LibraryLocation[locations.size()]));
 	}
+	
+	/**
+	 * Removes the VM from this container.
+	 * 
+	 * @param vm vm intall
+	 */
+	public void removeVM(IVMInstall vm) {
+		fVMList.remove(vm);
+		fInvalidVMList.remove(vm);
+		List list = (List) fVMTypeToVMMap.get(vm.getVMInstallType());
+		if (list != null) {
+			list.remove(vm);
+		}
+	}
 		
 }
