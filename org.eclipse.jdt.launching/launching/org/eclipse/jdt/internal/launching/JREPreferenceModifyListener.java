@@ -13,9 +13,11 @@ package org.eclipse.jdt.internal.launching;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -24,7 +26,9 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.PreferenceModifyListener;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMStandin;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -44,8 +48,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					String pref = LaunchingPlugin.getDefault().getPluginPreferences().getString(JavaRuntime.PREF_VM_XML);
 					// names -> existing vms
 					Map names = new HashMap();
-					// locations -> existing vms
-					Map locations = new HashMap();
+					Set ids = new HashSet();
 					if (pref.length() > 0) {
 						try {
 							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes()));
@@ -54,7 +57,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 							while (iterator.hasNext()) {
 								IVMInstall vm = (IVMInstall) iterator.next();
 								names.put(vm.getName(), vm);
-								locations.put(vm.getInstallLocation(), vm);
+								ids.add(vm.getId());
 								vms.addVM(vm);
 							}
 							vms.setDefaultVMInstallCompositeID(container.getDefaultVMInstallCompositeID());
@@ -73,14 +76,21 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 						while (iterator.hasNext()) {
 							IVMInstall vm = (IVMInstall) iterator.next();
 							IVMInstall existing = (IVMInstall) names.get(vm.getName());
-							if (existing == null) {
-								// vm with same name already exists - replace with imported VM
-								existing = (IVMInstall) locations.get(vm.getInstallLocation());
-							}
 							if (existing != null) {
-								// vm with same name or location already exists - replace with imported VM
+								// vm with same name already exists - replace with imported VM
 								vms.removeVM(existing);
+								ids.remove(existing.getId());
 							}
+							boolean collision = ids.contains(vm.getId());
+							if (collision) {
+								// conflicting id, create a new one with unique id
+								long unique = System.currentTimeMillis();	
+								IVMInstallType vmType = vm.getVMInstallType();
+								while (vmType.findVMInstall(String.valueOf(unique)) != null) {
+									unique++;
+								}
+								vm = new VMStandin(vm, String.valueOf(unique));
+							}							
 							vms.addVM(vm);
 						}
 						// update default VM if it exists
