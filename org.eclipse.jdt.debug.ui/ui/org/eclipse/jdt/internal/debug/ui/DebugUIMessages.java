@@ -64,10 +64,10 @@ public class DebugUIMessages extends NLS {
 	public static String JavaStepFilterPreferencePage_Could_not_open_type_selection_dialog_for_step_filters_21;
 	public static String JavaStepFilterPreferencePage_Defined_step_fi_lters__8;
 	public static String JavaStepFilterPreferencePage_Key_in_the_name_of_a_new_step_filter_10;
-	public static String JavaStepFilterPreferencePage__Enable_All_1;
-	public static String JavaStepFilterPreferencePage_Enables_all_step_filters_2;
-	public static String JavaStepFilterPreferencePage_Disa_ble_All_3;
-	public static String JavaStepFilterPreferencePage_Disables_all_step_filters_4;
+	public static String JavaStepFilterPreferencePage__Select_All_1;
+	public static String JavaStepFilterPreferencePage_Selects_all_step_filters_2;
+	public static String JavaStepFilterPreferencePage_Deselect_All_3;
+	public static String JavaStepFilterPreferencePage_Deselects_all_step_filters_4;
 
 	public static String JDIDebugUIPlugin__0__contains_obsolete_methods_1;
 	public static String JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2;
@@ -299,4 +299,6 @@ public class DebugUIMessages extends NLS {
 	public static String JavaPrimitivesPreferencePage_0;
 
 	public static String JavaPrimitivesPreferencePage_1;
+	
+	public static String JavaStepFilterPreferencePage__Use_step_filters;
 }
