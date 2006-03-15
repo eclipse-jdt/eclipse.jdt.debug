@@ -13,11 +13,12 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -79,27 +80,27 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 			if (vmInstallLocation != null) {
 				LibraryInfo libraryInfo= LaunchingPlugin.getLibraryInfo(vmInstallLocation.getAbsolutePath());
 				if (libraryInfo != null) {
-					// only return bootstrap classpath entries if we have the info
-					String[] bootpath= libraryInfo.getBootpath();
-					int length= bootpath.length;
-					// use libs to set source attachment properly
+					// only return endorsed and bootstrap classpath entries if we have the info
+					// libs in the ext dirs are not loaded by the boot class loader
+					String[] extensionDirsArray = libraryInfo.getExtensionDirs();
+					Set extensionDirsSet = new HashSet();
+					for (int i = 0; i < extensionDirsArray.length; i++) {
+						extensionDirsSet.add(extensionDirsArray[i]);
+					}
 					LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
-					List resolvedEntries = new ArrayList(length);
-					for (int i= 0; i < length; i++) {
-						IPath libPath = new Path(bootpath[i]);
-						if (libPath.toFile().exists()) {
-							IRuntimeClasspathEntry resolved = JavaRuntime.newArchiveRuntimeClasspathEntry(libPath);
+					List resolvedEntries = new ArrayList(libs.length);
+					for (int i = 0; i < libs.length; i++) {
+						LibraryLocation location = libs[i];
+						IPath libraryPath = location.getSystemLibraryPath();
+						String dir = libraryPath.toFile().getParent();
+						// exclude extension directory entries
+						if (!extensionDirsSet.contains(dir)) {
+							IRuntimeClasspathEntry resolved = JavaRuntime.newArchiveRuntimeClasspathEntry(libraryPath);
 							resolved.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-							for (int j = 0; j < libs.length; j++) {
-								String resolvedPath = resolved.getPath().toString();
-								if (libs[j].getSystemLibraryPath().toString().equalsIgnoreCase(resolvedPath)) {
-									IPath path = libs[j].getSystemLibrarySourcePath();
-									if (path != null && !path.isEmpty()) {
-										resolved.setSourceAttachmentPath(path);
-										resolved.setSourceAttachmentRootPath(libs[j].getPackageRootPath());
-									}
-									break;
-								}
+							IPath sourcePath = location.getSystemLibrarySourcePath();
+							if (sourcePath != null && !sourcePath.isEmpty()) {
+								resolved.setSourceAttachmentPath(sourcePath);
+								resolved.setSourceAttachmentRootPath(location.getPackageRootPath());
 							}
 							resolvedEntries.add(resolved);
 						}

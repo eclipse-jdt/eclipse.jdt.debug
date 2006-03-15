@@ -299,13 +299,13 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				.computeUnresolvedRuntimeClasspath(configuration);
 		List bootEntriesPrepend = new ArrayList();
 		int index = 0;
-		boolean jreContainerFound = false;
-		while (!jreContainerFound && index < entries.length) {
+		IRuntimeClasspathEntry jreEntry = null;
+		while (jreEntry == null && index < entries.length) {
 			IRuntimeClasspathEntry entry = entries[index++];
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES
 					|| entry.getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES) {
 				if (JavaRuntime.isVMInstallReference(entry)) {
-					jreContainerFound = true;
+					jreEntry = entry;
 				} else {
 					bootEntriesPrepend.add(entry);
 				}
@@ -323,7 +323,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				entriesPrep[i] = bootEntriesPrep[i].getLocation();
 			}
 		}
-		if (jreContainerFound) {
+		if (jreEntry != null) {
 			List bootEntriesAppend = new ArrayList();
 			for (; index < entries.length; index++) {
 				IRuntimeClasspathEntry entry = entries[index];
@@ -347,18 +347,34 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			LibraryLocation[] libraryLocations = install.getLibraryLocations();
 			if (libraryLocations != null) {
 				// determine if explicit bootpath should be used
+				// TODO: this test does not tell us if the bootpath entries are different (could still be
+				// the same, as a non-bootpath entry on the JRE may have been removed/added)
+				// We really need a way to ask a VM type for its default boothpath library locations and
+				// compare that to the resolved entries for the "jreEntry" to see if they 
+				// are different (requires explicit bootpath)
 				if (!JRERuntimeClasspathEntryResolver.isSameArchives(libraryLocations, install.getVMInstallType().getDefaultLibraryLocations(install.getInstallLocation()))) {
+					// resolve bootpath entries in jre entry
+					IRuntimeClasspathEntry[] bootEntries = null; 
+					if (jreEntry.getType() == IRuntimeClasspathEntry.CONTAINER) {
+						IRuntimeClasspathEntry bootEntry = JavaRuntime.newRuntimeContainerClasspathEntry(
+								jreEntry.getPath(),
+								IRuntimeClasspathEntry.BOOTSTRAP_CLASSES,
+								getJavaProject(configuration));
+						bootEntries = JavaRuntime.resolveRuntimeClasspathEntry(bootEntry, configuration);
+					} else {
+						bootEntries = JavaRuntime.resolveRuntimeClasspathEntry(jreEntry, configuration);
+					}
+					
 					// non-default JRE libraries - use explicit bootpath only
 					String[] bootpath = new String[bootEntriesPrep.length
-							+ libraryLocations.length + bootEntriesApp.length];
+							+ bootEntries.length + bootEntriesApp.length];
 					if (bootEntriesPrep.length > 0) {
 						System.arraycopy(bootpathInfo[0], 0, bootpath, 0,
 								bootEntriesPrep.length);
 					}
 					int dest = bootEntriesPrep.length;
-					for (int i = 0; i < libraryLocations.length; i++) {
-						bootpath[dest] = libraryLocations[i].getSystemLibraryPath()
-								.toOSString();
+					for (int i = 0; i < bootEntries.length; i++) {
+						bootpath[dest] = bootEntries[i].getLocation();
 						dest++;
 					}
 					if (bootEntriesApp.length > 0) {

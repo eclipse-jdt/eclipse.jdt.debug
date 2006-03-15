@@ -266,24 +266,45 @@ public class StandardVMType extends AbstractVMInstallType {
 				
 		String[] bootpath = libInfo.getBootpath();
 		
-		List extensions = gatherAllLibraries(libInfo.getExtensionDirs(), installLocation);
-		List allLibs = new ArrayList(bootpath.length + extensions.size());
+		List endorsed = gatherAllLibraries(libInfo.getEndorsedDirs());
+		List extensions = gatherAllLibraries(libInfo.getExtensionDirs());
+		List allLibs = new ArrayList(endorsed.size() + bootpath.length + extensions.size());
 		
+		// Add all endorsed libraries - they are first, as they replace
+		// classes in the standard libraries/bootpath
+		appendLibraries(endorsed, allLibs);		
+		
+		// next is the bootpath libraries
+		List boot = new ArrayList(bootpath.length);
 		URL url = getDefaultJavadocLocation(installLocation);
 		for (int i = 0; i < bootpath.length; i++) {
 			IPath path = new Path(bootpath[i]);
 			File lib = path.toFile(); 
 			if (lib.exists() && lib.isFile()) {
-				allLibs.add(new LibraryLocation(path,
+				LibraryLocation libraryLocation = new LibraryLocation(path,
 								getDefaultSystemLibrarySource(lib),
 								getDefaultPackageRootPath(),
-								url));
+								url);
+				boot.add(libraryLocation);
 			}
-			
 		}
+		appendLibraries(boot, allLibs);
 				
-		// Add all extension directories
-		Iterator iter = extensions.iterator();
+		// Add all extension libraries
+		appendLibraries(extensions, allLibs);
+				
+		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
+	}
+
+	/**
+	 * Appends the non-duplicate libraries in libraryLocations to the list
+	 * of allLibs.
+	 * 
+	 * @param libraryLocations libraries to append
+	 * @param allLibs list to append to, omitting duplicates
+	 */
+	private void appendLibraries(List libraryLocations, List allLibs) {
+		Iterator iter = libraryLocations.iterator();
 		while (iter.hasNext()) {
 			LibraryLocation lib = (LibraryLocation)iter.next();
 			// check for dups, in case bootpath contains an ext dir entry (see bug 50201)
@@ -291,8 +312,6 @@ public class StandardVMType extends AbstractVMInstallType {
 				allLibs.add(lib);
 			}
 		}
-				
-		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
 	}
 	
 	/**
@@ -346,9 +365,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @param dirPaths a list of absolute paths of directories to search
 	 * @return List of all zips and jars
 	 */
-	protected List gatherAllLibraries(String[] dirPaths, File installLocation) {
+	protected List gatherAllLibraries(String[] dirPaths) {
 		List libraries = new ArrayList();
-		URL defaultJavadocLocation = getDefaultJavadocLocation(installLocation);
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
 			if (extDir.exists() && extDir.isDirectory()) {
@@ -363,7 +381,7 @@ public class StandardVMType extends AbstractVMInstallType {
 							if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
 								try {
 									IPath libPath = new Path(jar.getCanonicalPath());
-									LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY, defaultJavadocLocation);
+									LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY, null);
 									libraries.add(library);
 								} catch (IOException e) {
 									LaunchingPlugin.log(e);
