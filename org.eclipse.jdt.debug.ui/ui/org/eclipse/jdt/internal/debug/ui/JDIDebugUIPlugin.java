@@ -50,6 +50,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionInspector;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntryAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory;
@@ -60,6 +61,7 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvid
 import org.eclipse.jdt.internal.debug.ui.sourcelookup.JavaDebugShowInAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.JavaDebugElementLabelAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.ColumnPresentationAdapterFactory;
+import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -325,6 +327,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         
         IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
         manager.registerAdapters(columnFactory, IJavaVariable.class);
+        
+        IAdapterFactory entryFactory = new ClasspathEntryAdapterFactory();
+        manager.registerAdapters(entryFactory, DefaultProjectClasspathEntry.class);
 		
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);

@@ -17,6 +17,16 @@ public class ClasspathMessages extends NLS {
     public static String ClasspathModel_0;
 	public static String ClasspathModel_1;
 
+	public static String DefaultClasspathEntryDialog_0;
+
+	public static String DefaultClasspathEntryDialog_1;
+
+	public static String DefaultClasspathEntryDialog_2;
+
+	public static String DefaultClasspathEntryDialog_3;
+
+	public static String DefaultClasspathEntryDialog_4;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ClasspathMessages.class);

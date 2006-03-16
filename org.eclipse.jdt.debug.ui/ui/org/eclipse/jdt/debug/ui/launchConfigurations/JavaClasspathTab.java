@@ -36,6 +36,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.AddLibraryAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddVariableAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
+import org.eclipse.jdt.internal.debug.ui.actions.EditClasspathEntryAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
@@ -160,6 +161,9 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
 		createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer, adv));
 
+		action = new EditClasspathEntryAction(fClasspathViewer, getLaunchConfiguration());
+		createButton(pathButtonComp, action);
+		
 		action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
 		createButton(pathButtonComp, action);
 		action.setEnabled(true);

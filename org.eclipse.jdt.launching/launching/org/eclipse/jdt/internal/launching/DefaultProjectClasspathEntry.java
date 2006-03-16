@@ -40,6 +40,12 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public static final String TYPE_ID = "org.eclipse.jdt.launching.classpathentry.defaultClasspath"; //$NON-NLS-1$
 	
 	/**
+	 * Whether only exported entries should be on the runtime classpath.
+	 * By default all entries are on the runtime classpath.
+	 */
+	private boolean fExportedEntriesOnly = false;
+	
+	/**
 	 * Default constructor need to instantiate extensions
 	 */
 	public DefaultProjectClasspathEntry() {
@@ -59,6 +65,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 */
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		memento.setAttribute("project", getJavaProject().getElementName()); //$NON-NLS-1$
+		memento.setAttribute("exportedEntriesOnly", Boolean.toString(fExportedEntriesOnly)); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -71,6 +78,12 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		}		
 		IJavaProject project = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(name));
 		setJavaProject(project);
+		name = memento.getAttribute("exportedEntriesOnly"); //$NON-NLS-1$
+		if (name == null) {
+			fExportedEntriesOnly = false;
+		} else {
+			fExportedEntriesOnly = Boolean.valueOf(name).booleanValue();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
@@ -149,7 +162,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * expanded (to detect cycles)
 	 * @exception CoreException if unable to expand the classpath
 	 */
-	private static void expandProject(IClasspathEntry projectEntry, List expandedPath, List expanding) throws CoreException {
+	private void expandProject(IClasspathEntry projectEntry, List expandedPath, List expanding) throws CoreException {
 		expanding.add(projectEntry);
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
@@ -171,13 +184,20 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		List unexpandedPath = new ArrayList(buildPath.length);
 		boolean projectAdded = false;
 		for (int i = 0; i < buildPath.length; i++) {
-			if (buildPath[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+			IClasspathEntry classpathEntry = buildPath[i];
+			if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				if (!projectAdded) {
 					projectAdded = true;
 					unexpandedPath.add(projectEntry);
 				}
 			} else {
-				unexpandedPath.add(buildPath[i]);
+				// add exported entires, as configured
+				if (classpathEntry.isExported()) {
+					unexpandedPath.add(classpathEntry);
+				} else if (!isExportedEntriesOnly() || project.equals(getJavaProject())) {
+					// add non exported entries from root project or if we are including all entries
+					unexpandedPath.add(classpathEntry);
+				}
 			}
 		}
 		// 3. expand each project entry (except for the root project)
@@ -289,13 +309,39 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		return obj instanceof DefaultProjectClasspathEntry &&
-		 ((DefaultProjectClasspathEntry)obj).getJavaProject().equals(getJavaProject());
+		if (obj instanceof DefaultProjectClasspathEntry) {
+			DefaultProjectClasspathEntry entry = (DefaultProjectClasspathEntry) obj;
+			return entry.getJavaProject().equals(getJavaProject()) &&
+				entry.isExportedEntriesOnly() == isExportedEntriesOnly();
+		}
+		return false;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getJavaProject().hashCode();
+	}
+	
+	/**
+	 * Sets whether the runtime classpath computaion should only
+	 * include exported entries in referenced projects.
+	 * 
+	 * @param exportedOnly
+	 * @since 3.2
+	 */
+	public void setExportedEntriesOnly(boolean exportedOnly) {
+		fExportedEntriesOnly = exportedOnly;
+	}
+	
+	/**
+	 * Returns whether the classpath computation only includes exported
+	 * entries in referenced projects.
+	 * 
+	 * @return
+	 * @since 3.2
+	 */
+	public boolean isExportedEntriesOnly() {
+		return fExportedEntriesOnly;
 	}
 }

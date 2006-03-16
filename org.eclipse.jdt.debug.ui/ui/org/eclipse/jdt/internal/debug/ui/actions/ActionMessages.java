@@ -30,6 +30,8 @@ public class ActionMessages extends NLS {
 	public static String DisplayAction_result_pattern;
 	public static String DisplayAction_type_name_pattern;
 
+	public static String EditClasspathEntryAction_0;
+
 	public static String Evaluate_error_message_direct_exception;
 	public static String Evaluate_error_message_exception_pattern;
 	public static String Evaluate_error_message_src_context;
