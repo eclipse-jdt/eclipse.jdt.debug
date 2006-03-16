@@ -92,6 +92,8 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation__garbage_collected_object__6;
 	public static String JDIModelPresentation__obsolete_method_in__1;
 	public static String JDIModelPresentation__terminated__2;
+
+	public static String JDIModelPresentation_117;
 	public static String JDIModelPresentation_access_71;
 	public static String JDIModelPresentation_access_and_modification_70;
 	public static String JDIModelPresentation_caught_61;

@@ -62,6 +62,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
@@ -1428,6 +1429,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		buffer.append(getQualifiedName(typeName));
 		appendHitCount(breakpoint, buffer);
 		appendSuspendPolicy(breakpoint, buffer);
+		//TODO remove the cast once the API freeze has thawed
+		if(((JavaExceptionBreakpoint)breakpoint).isSuspendOnSubclasses()) {
+			buffer.append(DebugUIMessages.JDIModelPresentation_117);
+		}
 		appendThreadFilter(breakpoint, buffer);
 		if (breakpoint.getExclusionFilters().length > 0 || breakpoint.getInclusionFilters().length > 0) {
 			buffer.append(DebugUIMessages.JDIModelPresentation___scoped__1); 

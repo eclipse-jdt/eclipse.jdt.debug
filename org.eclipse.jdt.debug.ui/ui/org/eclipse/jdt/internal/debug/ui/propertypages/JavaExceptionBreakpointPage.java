@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,21 @@ package org.eclipse.jdt.internal.debug.ui.propertypages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * 
+ * Implements the property page for a Java exception breakpoint
  */
 public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 
+	//widgets
 	private Button fCaughtButton;
 	private Button fUncaughtButton;
+	private Button fSuspendOnSubclasses;
 	
 	private static final String fgExceptionBreakpointError= PropertyPageMessages.JavaExceptionBreakpointPage_2; 
 	/**
@@ -40,6 +43,11 @@ public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 		boolean uncaught= fUncaughtButton.getSelection();
 		if (uncaught != breakpoint.isUncaught()) {
 			breakpoint.setUncaught(uncaught);
+		}
+		// TODO remove cast once the API freeze is over and the method has been added to IJavaExceptionBreakpoint
+		boolean suspend = fSuspendOnSubclasses.getSelection();
+		if(suspend != ((JavaExceptionBreakpoint)breakpoint).isSuspendOnSubclasses()) {
+			((JavaExceptionBreakpoint)breakpoint).setSuspendOnSubclasses(suspend);
 		}
 	}
 
@@ -69,8 +77,17 @@ public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 			JDIDebugPlugin.log(e);
 		}
 		fUncaughtButton.addSelectionListener(exceptionBreakpointValidator);
+		fSuspendOnSubclasses = createCheckButton(parent, PropertyPageMessages.JavaExceptionBreakpointPage_4);
+		try {
+			// TODO add back the API for isSuspendOnSubclasses and setSuspendOnSubclasses in IJavaExceptionBreakpoint, and remove the cast below
+			fSuspendOnSubclasses.setSelection(((JavaExceptionBreakpoint)breakpoint).isSuspendOnSubclasses());
+		}
+		catch (CoreException ce) {JDIDebugPlugin.log(ce);}
 	}
 
+	/**
+	 * validates the exception breakpoint
+	 */
 	private void validateExceptionBreakpoint() {
 		if (fEnabledButton.getSelection() && !(fCaughtButton.getSelection() || fUncaughtButton.getSelection())) {
 			addErrorMessage(fgExceptionBreakpointError);

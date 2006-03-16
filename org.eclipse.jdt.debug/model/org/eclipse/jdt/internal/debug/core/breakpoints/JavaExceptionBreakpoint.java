@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
+import com.sun.jdi.ClassType;
 import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -84,6 +85,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * INCLUSIVE_FILTERS.
 	 */
 	protected static final String EXCLUSION_FILTERS = "org.eclipse.jdt.debug.core.exclusion_filters"; //$NON-NLS-1$	
+	/**
+	 * Allows the user to specify whether we should suspend if subclasses of the specified exception are thrown/caught
+	 * @since 3.2
+	 */
+	protected static final String SUSPEND_ON_SUBCLASSES = "org.eclipse.jdt.debug.core.suspend_on_subclasses"; //$NON-NLS-1$
+	
 	/**
 	 * Name of the exception that was actually hit (could be a
 	 * subtype of the type that is being caught).
@@ -160,7 +167,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		ExceptionRequest request= null;
 		EventRequestManager manager = target.getEventRequestManager();
 		if (manager == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.JavaExceptionBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1, null);  
+			target.requestFailed(JDIDebugBreakpointMessages.JavaExceptionBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1, null);
+			return null;
 		}
 
 		try {
@@ -229,6 +237,23 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		recreate();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#setSuspendOnSubclasses(boolean)
+	 */
+	public void setSuspendOnSubclasses(boolean suspend) throws CoreException {
+		if(suspend != isSuspendOnSubclasses()) {
+			setAttribute(SUSPEND_ON_SUBCLASSES, suspend);
+			recreate();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#isSuspendOnSubclasses()
+	 */
+	public boolean isSuspendOnSubclasses() throws CoreException {
+		return ensureMarker().getAttribute(SUSPEND_ON_SUBCLASSES, false);
+	}
+	
 	/**
 	 * @see IJavaExceptionBreakpoint#isUncaught()
 	 */
@@ -268,16 +293,27 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	/**
 	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget, JDIThread)
+	 * Decides how to handle an exception being thrown
+	 * 
+	 * @return true if we do not want to suspend false otherwise
 	 */
 	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
 		if (event instanceof ExceptionEvent) {
 			ObjectReference ex = ((ExceptionEvent)event).exception(); 
 			fLastTarget = target;
 			fLastException = ex;
-			setExceptionName(ex.type().name());
-			if (getExclusionClassFilters().length > 1 
-				|| getInclusionClassFilters().length > 1
-				|| (getExclusionClassFilters().length + getInclusionClassFilters().length) >= 2
+			String name = ex.type().name();
+			try {
+				if(!name.equals(getTypeName())) {
+					if(!isSuspendOnSubclasses() & isSubclass((ClassType) ex.type(), getTypeName())) {
+						return true;
+					}
+				}
+			} 
+			catch (CoreException e) {JDIDebugPlugin.log(e);}
+			setExceptionName(name);
+			if (getExclusionClassFilters().length >= 1 
+				|| getInclusionClassFilters().length >= 1
 				|| filtersIncludeDefaultPackage(fInclusionClassFilters) 
 				|| filtersIncludeDefaultPackage(fExclusionClassFilters)) {
 					Location location = ((ExceptionEvent)event).location();
@@ -303,6 +339,26 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return true;
 	}
 	
+	/**
+	 * Returns whether the given class type is a subclass of the classs
+	 * with the given name. 
+	 * 
+	 * @param type the class type reference
+	 * @return true if the specified the class type is a subclass of the class
+	 * with the given name
+	 * @since 3.2
+	 */
+	private boolean isSubclass(ClassType type, String typeName) throws CoreException {
+		type = type.superclass();
+		while (type != null) {
+			if (type.name().equals(typeName)) {
+				return true;
+			}
+			type = type.superclass();
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#setInstalledIn(org.eclipse.jdt.debug.core.IJavaDebugTarget, boolean)
 	 */
@@ -312,6 +368,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		super.setInstalledIn(target, installed);
 	}
 
+	/**
+	 * Determines of the filters for this exception include the default package or not
+	 * @param filters the list of filters to inspect
+	 * @return true if any one of the spcified filters include the default package
+	 */
 	protected boolean filtersIncludeDefaultPackage(String[] filters) {
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i].length() == 0 || (filters[i].indexOf('.') == -1)) {
@@ -354,9 +415,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected void setExceptionName(String name) {
 		fExceptionName = name;
 	}
-	
-	/**
-	 * @see IJavaExceptionBreakpoint#getExceptionTypeName()
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExceptionTypeName()
 	 */
 	public String getExceptionTypeName() {
 		return fExceptionName;
@@ -388,8 +449,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		recreate();
 	}
 	
-	/**
-	 * Adds the filtering to the exception request
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#configureRequest(com.sun.jdi.request.EventRequest, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
 	protected void configureRequest(EventRequest eRequest, JDIDebugTarget target) throws CoreException {
 		String[] iFilters= getInclusionClassFilters();

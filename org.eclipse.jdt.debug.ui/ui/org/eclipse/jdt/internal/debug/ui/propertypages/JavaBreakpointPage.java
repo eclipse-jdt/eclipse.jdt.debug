@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,9 +51,8 @@ public class JavaBreakpointPage extends PropertyPage {
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;
 	protected Button fHitCountButton;
-	protected Button fSuspendThreadButton;
-	protected Button fSuspendVMButton;
 	protected Text fHitCountText;
+	protected CCombo fSuspendPolicy;
 	
 	protected List fErrorMessages= new ArrayList();
 	
@@ -62,6 +62,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	public static final String ATTR_DELETE_ON_CANCEL = JDIDebugUIPlugin.getUniqueIdentifier() + ".ATTR_DELETE_ON_CANCEL";  //$NON-NLS-1$
 	
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String fgHitCountErrorMessage= PropertyPageMessages.JavaBreakpointPage_0; 
 	
 	/**
@@ -105,16 +106,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		}
 		fErrorMessages.remove(message);
 		fErrorMessages.add(message);
-		setErrorMessage(message);
 		setValid(false);
-	}
-	
-	/**
-	 * @deprecated Call addErrorMessage(String message) instead.
-	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
-	 */
-	public void setErrorMessage(String newMessage) {
-		super.setErrorMessage(newMessage);
 	}
 	
 	/**
@@ -127,10 +119,10 @@ public class JavaBreakpointPage extends PropertyPage {
 	public void removeErrorMessage(String message) {
 		fErrorMessages.remove(message);
 		if (fErrorMessages.isEmpty()) {
-			setErrorMessage(null);
+			addErrorMessage(null);
 			setValid(true);
 		} else {
-			setErrorMessage((String) fErrorMessages.get(fErrorMessages.size() - 1));
+			addErrorMessage((String) fErrorMessages.get(fErrorMessages.size() - 1));
 		}
 	}
 	
@@ -183,8 +175,8 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void storeSuspendPolicy(IJavaBreakpoint breakpoint) throws CoreException {
 		int suspendPolicy= IJavaBreakpoint.SUSPEND_VM;
-		if (fSuspendThreadButton.getSelection()) {
-			suspendPolicy= IJavaBreakpoint.SUSPEND_THREAD;
+		if(fSuspendPolicy.getSelectionIndex() == 0) {
+			suspendPolicy = IJavaBreakpoint.SUSPEND_THREAD;
 		}
 		breakpoint.setSuspendPolicy(suspendPolicy);
 	}
@@ -233,17 +225,15 @@ public class JavaBreakpointPage extends PropertyPage {
     /**
      * Returns the name of the given element.
      * 
-     * @param element
-     *            the element
+     * @param element the element
      * @return the name of the element
      */
     private String getName(IAdaptable element) {
-        IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
-                .getAdapter(IWorkbenchAdapter.class);
+        IWorkbenchAdapter adapter = (IWorkbenchAdapter) element.getAdapter(IWorkbenchAdapter.class);
         if (adapter != null) {
             return adapter.getLabel(element);
         } 
-        return "";//$NON-NLS-1$
+        return EMPTY_STRING;
     }	
 	
 	/**
@@ -273,13 +263,16 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void createSuspendPolicyEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		createLabel(parent, PropertyPageMessages.JavaBreakpointPage_6); 
+		Composite comp = createComposite(parent, 2);
+		createLabel(comp, PropertyPageMessages.JavaBreakpointPage_6); 
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
-		Composite radioComposite= createComposite(parent, 2);
-		fSuspendThreadButton= createRadioButton(radioComposite, PropertyPageMessages.JavaBreakpointPage_7); 
-		fSuspendThreadButton.setSelection(suspendThread);
-		fSuspendVMButton= createRadioButton(radioComposite, PropertyPageMessages.JavaBreakpointPage_8); 
-		fSuspendVMButton.setSelection(!suspendThread);
+		fSuspendPolicy = new CCombo(comp, SWT.BORDER);
+		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_7);
+		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_8);
+		fSuspendPolicy.select(1);
+		if(suspendThread) {
+			fSuspendPolicy.select(0);
+		}
 	}
 
 	/**
@@ -297,7 +290,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			}
 		});
 		int hitCount= breakpoint.getHitCount();
-		String hitCountString= ""; //$NON-NLS-1$
+		String hitCountString= EMPTY_STRING;
 		if (hitCount > 0) {
 			hitCountString= new Integer(hitCount).toString();
 			fHitCountButton.setSelection(true);
@@ -364,17 +357,13 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * breakpoint page.
 	 * @param parent
 	 */
-	protected void createTypeSpecificLabels(Composite parent) {
-		// Do nothing
-	}
+	protected void createTypeSpecificLabels(Composite parent) {}
 	/**
 	* Allows subclasses to add type specific editors to the common Java
 	* breakpoint page.
 	* @param parent
 	*/
-   protected void createTypeSpecificEditors(Composite parent) throws CoreException {
-   		// Do nothing
-   }
+   protected void createTypeSpecificEditors(Composite parent) throws CoreException {}
 	
 	/**
 	 * Creates a fully configured text editor with the given initial value
@@ -383,14 +372,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @return the configured text editor
 	 */
 	protected Text createText(Composite parent, String initialValue) {
-		Composite textComposite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		textComposite.setLayout(layout);
-		textComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		textComposite.setFont(parent.getFont());
+		Composite textComposite = createComposite(parent, 2);
 		Text text= new Text(textComposite, SWT.SINGLE | SWT.BORDER);
 		text.setText(initialValue);
 		text.setFont(parent.getFont());

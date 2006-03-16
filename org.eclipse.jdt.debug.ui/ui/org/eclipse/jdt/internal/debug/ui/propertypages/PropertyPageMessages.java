@@ -71,4 +71,6 @@ public class PropertyPageMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PropertyPageMessages.class);
 	}
+
+	public static String JavaExceptionBreakpointPage_4;
 }
