@@ -30,6 +30,8 @@ public class LaunchingMessages extends NLS {
 	public static String ClasspathVariableSourceContainerTypeDelegate_6;
 	public static String ClasspathVariableSourceContainerTypeDelegate_7;
 
+	public static String DefaultProjectClasspathEntry_2;
+
 	public static String DefaultProjectClasspathEntry_3;
 	public static String DefaultProjectClasspathEntry_4;
 

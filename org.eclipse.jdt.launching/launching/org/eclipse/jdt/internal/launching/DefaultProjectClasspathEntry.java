@@ -303,6 +303,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	public String getName() {
+		if (isExportedEntriesOnly()) {
+			return MessageFormat.format(LaunchingMessages.DefaultProjectClasspathEntry_2, new String[] {getJavaProject().getElementName()});
+		}
 		return MessageFormat.format(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()}); 
 	}
 	/* (non-Javadoc)
