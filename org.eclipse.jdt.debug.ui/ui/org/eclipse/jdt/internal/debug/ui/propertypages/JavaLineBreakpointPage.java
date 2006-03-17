@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
 import java.text.MessageFormat;
-import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
@@ -20,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,9 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * Property page for editing breakpoints of type
@@ -55,7 +55,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	private static final String fgWatchpointError= PropertyPageMessages.JavaLineBreakpointPage_0; 
 	private static final String fgMethodBreakpointError= PropertyPageMessages.JavaLineBreakpointPage_1;
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#doStore()
 	 */
 	protected void doStore() throws CoreException {
@@ -99,7 +99,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#createTypeSpecificLabels(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createTypeSpecificLabels(Composite parent) {
@@ -181,6 +181,9 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		}
 	}
 	
+	/**
+	 * Validates the watchpoint...if we are one
+	 */
 	private void validateWatchpoint() {
 		if (fEnabledButton.getSelection() && !(fFieldAccess.getSelection() || fFieldModification.getSelection())) {
 			addErrorMessage(fgWatchpointError);
@@ -189,6 +192,9 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		}
 	}
 	
+	/**
+	 * Validates the method breakpoint, if we are one
+	 */
 	private void validateMethodBreakpoint() {
 		if (fEnabledButton.getSelection() && !(fMethodEntry.getSelection() || fMethodExit.getSelection())) {
 			addErrorMessage(fgMethodBreakpointError);
@@ -206,16 +212,13 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	private void createConditionEditor(Composite parent) throws CoreException {
 		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
 		IType type = BreakpointUtils.getType(breakpoint);
-		
 		String label = null;
 		if (type != null) {
-			ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-			ICommand command = commandManager.getCommand("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
-			if (command != null) {
-				List keyBindings = command.getKeySequenceBindings();
-				if (keyBindings != null && keyBindings.size() > 0) {
-					IKeySequenceBinding binding = (IKeySequenceBinding)keyBindings.get(0);
-					label = MessageFormat.format(PropertyPageMessages.JavaLineBreakpointPage_12, new String[] {binding.getKeySequence().format()}); 
+			IBindingService bindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			if(bindingService != null) {
+				TriggerSequence keyBinding = bindingService.getBestActiveBindingFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+				if (keyBinding != null) {
+					label = MessageFormat.format(PropertyPageMessages.JavaLineBreakpointPage_12, new String[] {keyBinding.format()}); 
 				} 
 			}
 		}
@@ -233,9 +236,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 				setConditionEnabled(fEnableConditionButton.getSelection());
 			}
 		});
-		
 		fConditionEditor = new BreakpointConditionEditor(conditionComposite, this); 
-		
 		fSuspendWhenLabel= createLabel(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_15); 
 		fConditionIsTrue= createRadioButton(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_16); 
 		fConditionHasChanged= createRadioButton(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_17); 
@@ -258,16 +259,14 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		fConditionHasChanged.setEnabled(enabled);
 	}
 	
-	/**
-	 * Overridden here to increase visibility
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertHeightInCharsToPixels(int)
 	 */
 	public int convertHeightInCharsToPixels(int chars) {
 		return super.convertHeightInCharsToPixels(chars);
 	}
 	
-	/**
-	 * Overridden here to increase visibility
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertWidthInCharsToPixels(int)
 	 */
 	public int convertWidthInCharsToPixels(int chars) {
@@ -283,5 +282,4 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		}
 		super.dispose();
 	}
-
 }

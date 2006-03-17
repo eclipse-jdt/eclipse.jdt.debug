@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
-import java.util.Map;
-
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
@@ -26,140 +27,123 @@ import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistPro
 import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
-import org.eclipse.jdt.ui.text.JavaTextTools;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
+/**
+ * The widget for the conditional editor on the breakpoints properties page
+ */
 public class BreakpointConditionEditor {
 	
 	private JDISourceViewer fViewer;
 	private IContentAssistProcessor fCompletionProcessor;
-		
-	private boolean fIsValid;
-		
+	private boolean fIsValid;	
 	private String fOldValue;
 	private String fErrorMessage;
-	
 	private JavaLineBreakpointPage fPage;
 	private IJavaLineBreakpoint fBreakpoint;
-	
-	private HandlerSubmission submission;
+	private IHandlerService fHandlerService;
+	private IHandler fHandler;
+	private IHandlerActivation fActivation;
     private IDocumentListener fDocumentListener;
 		
+	/**
+	 * Constructor
+	 * @param parent the parent to add this widget to
+	 * @param page the page that is associated with this widget
+	 */
 	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
-		fPage= page;
-		fBreakpoint= (IJavaLineBreakpoint) fPage.getBreakpoint();
-		String condition;
+		fPage = page;
+		fBreakpoint = (IJavaLineBreakpoint) fPage.getBreakpoint();
+		String condition = new String();
 		try {
-			condition= fBreakpoint.getCondition();
-		} catch (CoreException exception) {
-			JDIDebugUIPlugin.log(exception);
-			return;
-		}
-		fErrorMessage= PropertyPageMessages.BreakpointConditionEditor_1; 
-		fOldValue= ""; //$NON-NLS-1$
+			condition = fBreakpoint.getCondition();
+			fErrorMessage  = PropertyPageMessages.BreakpointConditionEditor_1; 
+			fOldValue = ""; //$NON-NLS-1$
 			
-		// the source viewer
-		fViewer= new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		fViewer.setInput(parent);
-		
-		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
-		IDocument document= new Document();
-		tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
-		
+			fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+			fViewer.setInput(parent);
+			IDocument document = new Document();
+			JDIDebugUIPlugin.getDefault().getJavaTextTools().setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		// we can only do code assist if there is an associated type
-		IJavaDebugContentAssistContext context = null;
-		IType type= BreakpointUtils.getType(fBreakpoint);
-		if (type == null) {
-			context = new TypeContext(null, -1);
-		} else {
-			try {	
-				String source= null;
-				ICompilationUnit compilationUnit= type.getCompilationUnit();
-				if (compilationUnit != null) {
-					source= compilationUnit.getSource();
-				} else {
-					IClassFile classFile= type.getClassFile();
-					if (classFile != null) {
-						source= classFile.getSource();
+			IJavaDebugContentAssistContext context = null;
+			IType type = BreakpointUtils.getType(fBreakpoint);
+			if (type == null) {
+				context = new TypeContext(null, -1);
+			} 
+			else {
+				try {	
+					String source= null;
+					ICompilationUnit compilationUnit= type.getCompilationUnit();
+					if (compilationUnit != null) {
+						source = compilationUnit.getSource();
+					} 
+					else {
+						IClassFile classFile = type.getClassFile();
+						if (classFile != null) {
+							source = classFile.getSource();
+						}
 					}
-				}
-				int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
-				int position= -1;
-				if (source != null && lineNumber != -1) {
-					try {
-						position= new Document(source).getLineOffset(lineNumber - 1);
-					} catch (BadLocationException e) {
+					int lineNumber = fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
+					int position= -1;
+					if (source != null && lineNumber != -1) {
+						try {
+							position = new Document(source).getLineOffset(lineNumber - 1);
+						} 
+						catch (BadLocationException e) {JDIDebugUIPlugin.log(e);}
 					}
+					context = new TypeContext(type, position);
+				} 
+				catch (CoreException e) {JDIDebugUIPlugin.log(e);}
+			}
+			fCompletionProcessor = new JavaDebugContentAssistProcessor(context);
+			fViewer.configure(new DisplayViewerConfiguration() {
+				public IContentAssistProcessor getContentAssistantProcessor() {
+						return fCompletionProcessor;
 				}
-				context = new TypeContext(type, position);
-			} catch (CoreException e) {
-			}
-		}
-		fCompletionProcessor = new JavaDebugContentAssistProcessor(context);
-		
-		fViewer.configure(new DisplayViewerConfiguration() {
-			public IContentAssistProcessor getContentAssistantProcessor() {
-					return fCompletionProcessor;
-			}
-		});
-		fViewer.setEditable(true);
-		fViewer.setDocument(document);
-		final IUndoManager undoManager= new DefaultUndoManager(10);
-		fViewer.setUndoManager(undoManager);
-		undoManager.connect(fViewer);
-		
-		fViewer.getTextWidget().setFont(JFaceResources.getTextFont());
+			});
+			fViewer.setEditable(true);
+			fViewer.setDocument(document);
+			fViewer.setUndoManager(new TextViewerUndoManager(10));
+			fViewer.getUndoManager().connect(fViewer);
+			fDocumentListener = new IDocumentListener() {
+	            public void documentAboutToBeChanged(DocumentEvent event) {
+	            }
+	            public void documentChanged(DocumentEvent event) {
+	                valueChanged();
+	            }
+	        };
+			fViewer.getDocument().addDocumentListener(fDocumentListener);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.heightHint = fPage.convertHeightInCharsToPixels(10);
+			gd.widthHint = fPage.convertWidthInCharsToPixels(40);
+			fViewer.getControl().setLayoutData(gd);
+			document.set(condition);
+			valueChanged();
 			
-		Control control= fViewer.getControl();
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);
-		
-		// listener for check the value
-		fDocumentListener= new IDocumentListener() {
-            public void documentAboutToBeChanged(DocumentEvent event) {
-            }
-            public void documentChanged(DocumentEvent event) {
-                valueChanged();
-            }
-        };
-		fViewer.getDocument().addDocumentListener(fDocumentListener);
-			
-		gd= (GridData)fViewer.getControl().getLayoutData();
-		gd.heightHint= fPage.convertHeightInCharsToPixels(10);
-		gd.widthHint= fPage.convertWidthInCharsToPixels(40);	
-		document.set(condition);
-		valueChanged();
-		
-		IHandler handler = new AbstractHandler() {
-		    public Object execute(Map parameter) throws ExecutionException {
-		        fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-		        return null;
-			}
-		};
-		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //	
+			fHandler = new AbstractHandler() {
+				public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+					fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+					return null;
+				}
+			};
+			fHandlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		} 
+		catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
 	}
 
 	/**
@@ -177,10 +161,10 @@ public class BreakpointConditionEditor {
 		// the value is valid if the field is not editable, or if the value is not empty
 		if (!fViewer.isEditable()) {
 			fPage.removeErrorMessage(fErrorMessage);
-			fIsValid= true;
+			fIsValid = true;
 		} else {
-			String text= fViewer.getDocument().get();
-			fIsValid= text != null && text.trim().length() > 0;
+			String text = fViewer.getDocument().get();
+			fIsValid = text != null && text.trim().length() > 0;
 			if (!fIsValid) {
 				fPage.addErrorMessage(fErrorMessage);
 			} else {
@@ -198,34 +182,35 @@ public class BreakpointConditionEditor {
 		if (enabled) {
 			fViewer.updateViewerColors();
 			fViewer.getTextWidget().setFocus();
-			
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-			commandSupport.addHandlerSubmission(submission);
+			fActivation = fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fHandler);
 		} else {
-			Color color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			Color color = fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			fViewer.getTextWidget().setBackground(color);
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-			commandSupport.removeHandlerSubmission(submission);
+			if(fActivation != null) {
+				fHandlerService.deactivateHandler(fActivation);
+			}
 		}
 		valueChanged();
 	}
 	
+	/**
+	 * Handle that the value changed
+	 */
 	protected void valueChanged() {
 		refreshValidState();
-				
 		String newValue = fViewer.getDocument().get();
 		if (!newValue.equals(fOldValue)) {
 			fOldValue = newValue;
 		}
 	}
 	
+	/**
+	 * Dispose of the handlers, etc
+	 */
 	public void dispose() {
 	    if (fViewer.isEditable()) {
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-			commandSupport.removeHandlerSubmission(submission);
+	    	fHandlerService.deactivateHandler(fActivation);
+	    	fHandlerService.dispose();
 	    }
 	    fViewer.getDocument().removeDocumentListener(fDocumentListener);
 		fViewer.dispose();
