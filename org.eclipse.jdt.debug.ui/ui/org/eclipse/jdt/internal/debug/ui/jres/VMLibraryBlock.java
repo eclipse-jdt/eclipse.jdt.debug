@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
-import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -230,11 +229,19 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 */
 	public void update() {
 		updateButtons();
-		IStatus status = new StatusInfo();
+		IStatus status = Status.OK_STATUS;
 		if (fLibraryContentProvider.getLibraries().length == 0) { // && !isDefaultSystemLibrary()) {
 			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
 				JREMessages.VMLibraryBlock_Libraries_cannot_be_empty__1, null);
-		}		
+		}
+		LibraryStandin[] standins = fLibraryContentProvider.getStandins();
+		for (int i = 0; i < standins.length; i++) {
+			IStatus st = standins[i].validate();
+			if (!st.isOK()) {
+				status = st;
+				break;
+			}
+		}
 		fDialog.setSystemLibraryStatus(status);
 		fDialog.updateStatusLine();
 	}

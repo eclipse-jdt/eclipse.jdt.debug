@@ -11,8 +11,12 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.net.URL;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.launching.LibraryLocation;
 
 
@@ -157,6 +161,26 @@ public final class LibraryStandin {
 	 */
 	LibraryLocation toLibraryLocation() {
 		return new LibraryLocation(getSystemLibraryPath(), getSystemLibrarySourcePath(), getPackageRootPath(), getJavadocLocation());
+	}
+	
+	/**
+	 * Returns a status for this library describing any error states
+	 * 
+	 * @return
+	 */
+	IStatus validate() {
+		if (!getSystemLibraryPath().toFile().exists()) {
+			return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, 
+					MessageFormat.format(JREMessages.LibraryStandin_0, new String[]{getSystemLibraryPath().toOSString()}), null);
+		}
+		IPath path = getSystemLibrarySourcePath();
+		if (!path.isEmpty()) {
+			if (!path.toFile().exists()) {
+				return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, 
+						MessageFormat.format(JREMessages.LibraryStandin_1, new String[]{path.toOSString()}), null);
+			}
+		}
+		return Status.OK_STATUS;
 	}
 	
 }

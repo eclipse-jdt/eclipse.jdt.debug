@@ -273,4 +273,13 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		fViewer.refresh();
 	}
 	
+	/**
+	 * Returns the standin libraries being edited.
+	 * 
+	 * @return standins
+	 */
+	LibraryStandin[] getStandins() {
+		return fLibraries;
+	}
+	
 }

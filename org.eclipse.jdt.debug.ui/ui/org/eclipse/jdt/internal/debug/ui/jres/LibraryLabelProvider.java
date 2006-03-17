@@ -13,13 +13,17 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIImageDescriptor;
 import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -41,6 +45,12 @@ public class LibraryLabelProvider extends LabelProvider {
                 key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
 			} else {
 				key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
+			}
+			IStatus status = library.validate();
+			if (!status.isOK()) {
+				ImageDescriptor base = JavaUI.getSharedImages().getImageDescriptor(key);
+				JDIImageDescriptor descriptor= new JDIImageDescriptor(base, JDIImageDescriptor.IS_OUT_OF_SYNCH);
+				return JDIDebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
 			}
 			return JavaUI.getSharedImages().getImage(key);
 		} else if (element instanceof SubElement) {

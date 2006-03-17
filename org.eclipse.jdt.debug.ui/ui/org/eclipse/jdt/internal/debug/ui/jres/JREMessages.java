@@ -69,6 +69,10 @@ public class JREMessages extends NLS {
 	public static String AddVMDialog_23;
 	public static String AddVMDialog_0;
 
+	public static String LibraryStandin_0;
+
+	public static String LibraryStandin_1;
+
 	public static String VMLibraryBlock_Libraries_cannot_be_empty__1;
 
 	public static String JREsUpdater_0;
