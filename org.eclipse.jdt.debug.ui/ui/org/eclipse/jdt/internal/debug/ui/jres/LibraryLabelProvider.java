@@ -18,7 +18,6 @@ import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -34,8 +33,8 @@ public class LibraryLabelProvider extends LabelProvider {
 	private ImageDescriptorRegistry fRegistry= JavaPlugin.getImageDescriptorRegistry();
 
 	public Image getImage(Object element) {
-		if (element instanceof LibraryLocation) {
-			LibraryLocation library= (LibraryLocation) element;
+		if (element instanceof LibraryStandin) {
+			LibraryStandin library= (LibraryStandin) element;
 			IPath sourcePath= library.getSystemLibrarySourcePath();
 			String key = null;
 			if (sourcePath != null && !Path.EMPTY.equals(sourcePath)) {
@@ -54,8 +53,8 @@ public class LibraryLabelProvider extends LabelProvider {
 	}
 
 	public String getText(Object element) {
-		if (element instanceof LibraryLocation) {
-			return ((LibraryLocation)element).getSystemLibraryPath().toOSString();
+		if (element instanceof LibraryStandin) {
+			return ((LibraryStandin)element).getSystemLibraryPath().toOSString();
 		} else if (element instanceof SubElement) {
 			SubElement subElement= (SubElement) element;
 			StringBuffer text= new StringBuffer();

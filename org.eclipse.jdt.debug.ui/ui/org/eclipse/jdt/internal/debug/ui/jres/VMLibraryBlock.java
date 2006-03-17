@@ -372,7 +372,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 */
 	private void edit(IStructuredSelection selection) {
 		SubElement firstElement= (SubElement)selection.getFirstElement();
-		LibraryLocation library= firstElement.getParent();
+		LibraryLocation library= firstElement.getParent().toLibraryLocation();
 		if (firstElement.getType() == SubElement.JAVADOC_URL) {
 			URL[] urls= BuildPathDialogAccess.configureJavadocLocation(fLibraryViewer.getControl().getShell(), library.getSystemLibraryPath().toOSString(), library.getJavadocLocation());
 			if (urls != null) {
@@ -407,26 +407,26 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		boolean enableDown= true;
 		boolean allSource= true;
 		boolean allJavadoc= true;
-		LibraryLocation[] libraries= fLibraryContentProvider.getLibraries();
+		Object[] libraries= fLibraryContentProvider.getElements(null);
 		if (selection.isEmpty() || libraries.length == 0) {
 			enableUp= enableDown= false;
 		} else {
-			LibraryLocation first= libraries[0];
-			LibraryLocation last= libraries[libraries.length - 1];
+			Object first= libraries[0];
+			Object last= libraries[libraries.length - 1];
 			for (Iterator iter= selection.iterator(); iter.hasNext();) {
 				Object element= iter.next();
-				LibraryLocation lib;
-				if (element instanceof LibraryLocation) {
-					lib= (LibraryLocation)element;
-					allSource= allJavadoc= false;
-				} else {
+				Object lib;
+				if (element instanceof SubElement) {
 					SubElement subElement= (SubElement)element;
-					lib= (subElement).getParent();
+					lib= (subElement).getParent().toLibraryLocation();
 					if (subElement.getType() == SubElement.JAVADOC_URL) {
 						allSource= false;
 					} else {
 						allJavadoc= false;
 					}
+				} else {
+					lib= element;
+					allSource= allJavadoc= false;
 				}
 				if (lib == first) {
 					enableUp= false;

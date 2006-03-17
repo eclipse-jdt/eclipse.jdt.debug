@@ -11,9 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
@@ -33,26 +35,37 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		public static final int JAVADOC_URL= 1;
 		public static final int SOURCE_PATH= 2;
 		
-		private LibraryLocation fParent;
+		private LibraryStandin fParent;
 		private int fType;
 
-		public SubElement(LibraryLocation parent, int type) {
+		public SubElement(LibraryStandin parent, int type) {
 			fParent= parent;
 			fType= type;
 		}
 		
-		public LibraryLocation getParent() {
+		public LibraryStandin getParent() {
 			return fParent;
 		}
 		
 		public int getType() {
 			return fType;
 		}
+		
+		public void remove() {
+			switch (fType) {
+				case JAVADOC_URL:
+					fParent.setJavadocLocation(null);
+					break;
+				case SOURCE_PATH:
+					fParent.setSystemLibrarySourcePath(Path.EMPTY);
+					break;
+			}
+		}
 	}
 
 	private HashMap fChildren= new HashMap();
 
-	private LibraryLocation[] fLibraries= new LibraryLocation[0];
+	private LibraryStandin[] fLibraries= new LibraryStandin[0];
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -78,12 +91,12 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof LibraryLocation) {
-			LibraryLocation libraryLocation= (LibraryLocation) parentElement;
-			Object[] children= (Object[])fChildren.get(libraryLocation);
+		if (parentElement instanceof LibraryStandin) {
+			LibraryStandin standin= (LibraryStandin) parentElement;
+			Object[] children= (Object[])fChildren.get(standin);
 			if (children == null) {
-				children= new Object[] {new SubElement(libraryLocation, SubElement.SOURCE_PATH), new SubElement(libraryLocation, SubElement.JAVADOC_URL)};
-				fChildren.put(libraryLocation, children);
+				children= new Object[] {new SubElement(standin, SubElement.SOURCE_PATH), new SubElement(standin, SubElement.JAVADOC_URL)};
+				fChildren.put(standin, children);
 			}
 			return children;
 		}
@@ -104,16 +117,23 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		return element instanceof LibraryLocation;
+		return element instanceof LibraryStandin;
 	}
 
 	public void setLibraries(LibraryLocation[] libs) {
-		fLibraries= libs;
+		fLibraries = new LibraryStandin[libs.length];
+		for (int i = 0; i < libs.length; i++) {
+			fLibraries[i] = new LibraryStandin(libs[i]);
+		}
 		fViewer.refresh();
 	}
 
 	public LibraryLocation[] getLibraries() {
-		return fLibraries;
+		LibraryLocation[] locations = new LibraryLocation[fLibraries.length];
+		for (int i = 0; i < locations.length; i++) {
+			locations[i] = fLibraries[i].toLibraryLocation();
+		}
+		return locations;
 	}
 
 	/**
@@ -124,7 +144,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		Set libraries= new HashSet();
 		for (Iterator iter= selection.iterator(); iter.hasNext();) {
 			Object element= iter.next();
-			if (element instanceof LibraryLocation) {
+			if (element instanceof LibraryStandin) {
 				libraries.add(element);
 			} else if (element instanceof SubElement) {
 				libraries.add(((SubElement)element).getParent());
@@ -140,7 +160,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		Set libraries= getSelectedLibraries(selection);
 		for (int i= 0; i < fLibraries.length - 1; i++) {
 			if (libraries.contains(fLibraries[i + 1])) {
-				LibraryLocation temp= fLibraries[i];
+				LibraryStandin temp= fLibraries[i];
 				fLibraries[i]= fLibraries[i + 1];
 				fLibraries[i + 1]= temp;
 			}
@@ -156,7 +176,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		Set libraries= getSelectedLibraries(selection);
 		for (int i= fLibraries.length - 1; i > 0; i--) {
 			if (libraries.contains(fLibraries[i - 1])) {
-				LibraryLocation temp= fLibraries[i];
+				LibraryStandin temp= fLibraries[i];
 				fLibraries[i]= fLibraries[i - 1];
 				fLibraries[i - 1]= temp;
 			}
@@ -169,15 +189,21 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * Remove the libraries contained in the given selection.
 	 */
 	public void remove(IStructuredSelection selection) {
-		Set libraries= getSelectedLibraries(selection);
-		LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length - libraries.size()];
-		int k= 0;
-		for (int i= 0; i < fLibraries.length; i++) {
-			if (!libraries.contains(fLibraries[i])) {
-				newLibraries[k++]= fLibraries[i];
+		List newLibraries = new ArrayList();
+		for (int i = 0; i < fLibraries.length; i++) {
+			newLibraries.add(fLibraries[i]);
+		}
+		Iterator iterator = selection.iterator();
+		while (iterator.hasNext()) {
+			Object element = iterator.next();
+			if (element instanceof LibraryStandin) {
+				newLibraries.remove(element);
+			} else {
+				SubElement subElement = (SubElement)element;
+				subElement.remove();
 			}
 		}
-		fLibraries= newLibraries;
+		fLibraries= (LibraryStandin[]) newLibraries.toArray(new LibraryStandin[newLibraries.size()]);
 		fViewer.refresh();
 	}
 
@@ -186,26 +212,28 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * if the selection is empty.
 	 */
 	public void add(LibraryLocation[] libs, IStructuredSelection selection) {
-		LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length + libs.length];
+		List newLibraries = new ArrayList(fLibraries.length + libs.length);
+		for (int i = 0; i < fLibraries.length; i++) {
+			newLibraries.add(fLibraries[i]);
+		}
+		List toAdd = new ArrayList(libs.length);
+		for (int i = 0; i < libs.length; i++) {
+			toAdd.add(new LibraryStandin(libs[i]));
+		}
 		if (selection.isEmpty()) {
-			System.arraycopy(fLibraries, 0, newLibraries, 0, fLibraries.length);
-			System.arraycopy(libs, 0, newLibraries, fLibraries.length, libs.length);
+			newLibraries.addAll(toAdd);
 		} else {
 			Object element= selection.getFirstElement();
-			LibraryLocation firstLib;
+			LibraryStandin firstLib;
 			if (element instanceof LibraryLocation) {
-				firstLib= (LibraryLocation) element;
+				firstLib= (LibraryStandin) element;
 			} else {
 				firstLib= ((SubElement) element).getParent();
 			}
-			int i= 0;
-			while (i < fLibraries.length && fLibraries[i] != firstLib) {
-				newLibraries[i]= fLibraries[i++];
-			}
-			System.arraycopy(libs, 0, newLibraries, i, libs.length);
-			System.arraycopy(fLibraries, i, newLibraries, i + libs.length, fLibraries.length - i);
+			int index = newLibraries.indexOf(firstLib);
+			newLibraries.addAll(index, toAdd);
 		}
-		fLibraries= newLibraries;
+		fLibraries= (LibraryStandin[]) newLibraries.toArray(new LibraryStandin[newLibraries.size()]);
 		fViewer.refresh();
 		fViewer.setSelection(new StructuredSelection(libs), true);
 	}
@@ -216,22 +244,12 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 */
 	public void setJavadoc(URL javadocLocation, IStructuredSelection selection) {
 		Set libraries= getSelectedLibraries(selection);
-		LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length];
-		Object[] newSelection= new Object[libraries.size()];
-		int j= 0;
-		for (int i= 0; i < fLibraries.length; i++) {
-			LibraryLocation library= fLibraries[i];
-			if (libraries.contains(library)) {
-				LibraryLocation lib= new LibraryLocation(library.getSystemLibraryPath(), library.getSystemLibrarySourcePath(), library.getPackageRootPath(), javadocLocation);
-				newSelection[j++]= getChildren(lib)[1];
-				newLibraries[i]= lib;
-			} else {
-				newLibraries[i]= library;
-			}
+		Iterator iterator = libraries.iterator();
+		while (iterator.hasNext()) {
+			LibraryStandin standin = (LibraryStandin) iterator.next();
+			standin.setJavadocLocation(javadocLocation);
 		}
-		fLibraries= newLibraries;
 		fViewer.refresh();
-		fViewer.setSelection(new StructuredSelection(newSelection));
 	}
 
 	/**
@@ -240,28 +258,19 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 */
 	public void setSourcePath(IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IStructuredSelection selection) {
 		Set libraries= getSelectedLibraries(selection);
-		LibraryLocation[] newLibraries= new LibraryLocation[fLibraries.length];
-		Object[] newSelection= new Object[libraries.size()];
-		int j= 0;
-		for (int i= 0; i < fLibraries.length; i++) {
-			LibraryLocation library= fLibraries[i];
-			if (libraries.contains(library)) {
-				if (sourceAttachmentPath == null) {
-					sourceAttachmentPath = Path.EMPTY;
-				}
-				if (sourceAttachmentRootPath == null) {
-					sourceAttachmentRootPath = Path.EMPTY;
-				}
-				LibraryLocation lib= new LibraryLocation(library.getSystemLibraryPath(), sourceAttachmentPath, sourceAttachmentRootPath, library.getJavadocLocation());
-				newSelection[j++]= getChildren(lib)[1];
-				newLibraries[i]= lib;
-			} else {
-				newLibraries[i]= library;
-			}
+		if (sourceAttachmentPath == null) {
+			sourceAttachmentPath = Path.EMPTY;
 		}
-		fLibraries= newLibraries;
+		if (sourceAttachmentRootPath == null) {
+			sourceAttachmentRootPath = Path.EMPTY;
+		}
+		Iterator iterator = libraries.iterator();
+		while (iterator.hasNext()) {
+			LibraryStandin standin = (LibraryStandin) iterator.next();
+			standin.setSystemLibrarySourcePath(sourceAttachmentPath);
+			standin.setPackageRootPath(sourceAttachmentRootPath);
+		}
 		fViewer.refresh();
-		fViewer.setSelection(new StructuredSelection(newSelection));
 	}
 	
 }
