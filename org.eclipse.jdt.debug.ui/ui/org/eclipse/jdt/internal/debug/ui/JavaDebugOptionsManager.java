@@ -54,6 +54,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
@@ -140,6 +141,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			// uncaught exception breakpoint
 			try {
 				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
+				((JavaExceptionBreakpoint)bp).setSuspendOnSubclasses(true);
 				bp.setPersisted(false);
 				setSuspendOnUncaughtExceptionBreakpoint(bp);
 			} catch (CoreException e) {
