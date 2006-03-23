@@ -23,7 +23,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
  * Delegate for migrating Java launch configurations.
- * The migration process involves a resource mapping being craeted such that launch configurations
+ * The migration process involves a resource mapping being created such that launch configurations
  * can be filtered from the launch configuration dialog based on resource availability
  * 
  * @since 3.2
