@@ -131,7 +131,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	
 	/**
 	 * returns the default listener from this class. For all subclasses
-	 * this listener will only provide the fucntionality of updating the current tab
+	 * this listener will only provide the functionality of updating the current tab
 	 * 
 	 * @return a widget listener
 	 */
@@ -203,7 +203,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	}
 	
 	/**
-	 * Maps the config to associdated java project.
+	 * Maps the config to associated java project.
 	 * 
 	 * @param config
 	 */
