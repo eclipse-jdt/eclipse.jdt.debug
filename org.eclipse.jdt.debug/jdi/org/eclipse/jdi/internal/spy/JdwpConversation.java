@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.spy;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 
 public class JdwpConversation {

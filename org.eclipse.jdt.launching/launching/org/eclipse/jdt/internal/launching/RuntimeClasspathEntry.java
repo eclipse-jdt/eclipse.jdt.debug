@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;

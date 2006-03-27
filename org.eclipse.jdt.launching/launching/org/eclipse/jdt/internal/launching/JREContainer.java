@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.net.URL;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui;
 
  
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;

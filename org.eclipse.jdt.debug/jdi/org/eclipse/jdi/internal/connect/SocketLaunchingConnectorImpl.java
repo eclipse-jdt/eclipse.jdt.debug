@@ -14,7 +14,7 @@ package org.eclipse.jdi.internal.connect;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 

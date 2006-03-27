@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.environments;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

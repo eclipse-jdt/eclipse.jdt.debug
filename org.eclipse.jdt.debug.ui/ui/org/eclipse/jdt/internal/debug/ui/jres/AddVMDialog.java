@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
 import java.net.URL;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;

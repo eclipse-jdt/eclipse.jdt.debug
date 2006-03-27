@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.io.File;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;

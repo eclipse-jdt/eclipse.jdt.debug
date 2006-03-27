@@ -12,7 +12,7 @@ package org.eclipse.jdi.internal.connect;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;

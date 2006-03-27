@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;

@@ -12,8 +12,8 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.MessageFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

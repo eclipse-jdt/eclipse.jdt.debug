@@ -11,7 +11,7 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

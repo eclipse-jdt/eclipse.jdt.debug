@@ -14,7 +14,7 @@ package org.eclipse.jdi.internal;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;

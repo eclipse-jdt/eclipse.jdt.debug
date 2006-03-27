@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
