@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,6 +33,7 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -42,6 +41,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Property page for configuring IJavaBreakpoints.
@@ -52,7 +53,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	protected Button fEnabledButton;
 	protected Button fHitCountButton;
 	protected Text fHitCountText;
-	protected CCombo fSuspendPolicy;
+	protected Combo fSuspendPolicy;
 	
 	protected List fErrorMessages= new ArrayList();
 	
@@ -266,7 +267,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		Composite comp = createComposite(parent, 2);
 		createLabel(comp, PropertyPageMessages.JavaBreakpointPage_6); 
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
-		fSuspendPolicy = new CCombo(comp, SWT.BORDER);
+		fSuspendPolicy = new Combo(comp, SWT.BORDER|SWT.READ_ONLY);
 		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_7);
 		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_8);
 		fSuspendPolicy.select(1);
