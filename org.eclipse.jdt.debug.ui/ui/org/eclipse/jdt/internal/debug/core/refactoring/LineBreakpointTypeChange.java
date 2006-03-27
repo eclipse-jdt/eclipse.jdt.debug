@@ -29,12 +29,10 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class LineBreakpointTypeChange extends LineBreakpointChange {
 	
 	private IType fDestType;
-	private IType fOriginalType;
 	
-	public LineBreakpointTypeChange(IJavaLineBreakpoint breakpoint, IType destType, IType originalType) throws CoreException {
+	public LineBreakpointTypeChange(IJavaLineBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
-		fOriginalType = originalType;
 	}
 	
 	/* (non-Javadoc)

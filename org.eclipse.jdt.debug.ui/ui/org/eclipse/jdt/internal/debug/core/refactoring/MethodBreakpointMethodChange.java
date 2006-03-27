@@ -28,12 +28,11 @@ import org.eclipse.ltk.core.refactoring.Change;
  */
 public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 
-	private IMethod fDestMethod, fOriginalMethod;
+	private IMethod fDestMethod;
 	
-	public MethodBreakpointMethodChange(IJavaMethodBreakpoint breakpoint, IMethod destMethod, IMethod originalMethod) throws CoreException {
+	public MethodBreakpointMethodChange(IJavaMethodBreakpoint breakpoint, IMethod destMethod) throws CoreException {
 		super(breakpoint);
 		fDestMethod = destMethod;
-		fOriginalMethod = originalMethod;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()

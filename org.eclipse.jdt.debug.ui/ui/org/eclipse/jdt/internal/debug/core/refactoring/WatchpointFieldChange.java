@@ -28,12 +28,11 @@ import org.eclipse.ltk.core.refactoring.Change;
  */
 public class WatchpointFieldChange extends WatchpointChange {
 	
-	private IField fDestField, fOriginalField;
+	private IField fDestField;
 	
-	public WatchpointFieldChange(IJavaWatchpoint watchpoint, IField destField, IField originalField) throws CoreException {
+	public WatchpointFieldChange(IJavaWatchpoint watchpoint, IField destField) throws CoreException {
 		super(watchpoint);
 		fDestField = destField;
-		fOriginalField = originalField;
 	}
 
 	/* (non-Javadoc)

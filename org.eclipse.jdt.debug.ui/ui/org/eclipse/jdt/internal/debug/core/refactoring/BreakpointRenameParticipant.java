@@ -145,13 +145,13 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 		if (breakpoint instanceof IJavaWatchpoint) {
 			return new WatchpointTypeChange((IJavaWatchpoint) breakpoint, destType, originalType);
 		} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
-			return new ClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) breakpoint, destType, originalType);
+			return new ClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) breakpoint, destType);
 		} else if (breakpoint instanceof IJavaMethodBreakpoint) {
-			return new MethodBreakpointTypeChange((IJavaMethodBreakpoint) breakpoint, destType, originalType);
+			return new MethodBreakpointTypeChange((IJavaMethodBreakpoint) breakpoint, destType);
 		} else if (breakpoint instanceof IJavaExceptionBreakpoint) {
-			return new ExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) breakpoint, destType, originalType);
+			return new ExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) breakpoint, destType);
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
-			return new LineBreakpointTypeChange((IJavaLineBreakpoint) breakpoint, destType, originalType);
+			return new LineBreakpointTypeChange((IJavaLineBreakpoint) breakpoint, destType);
 		}
 		return null;
 	}		

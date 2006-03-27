@@ -49,7 +49,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 				IType breakpointType = BreakpointUtils.getType(watchpoint);
 				if (breakpointType != null && originalField.getDeclaringType().equals(breakpointType)) {
 					IField destField = originalField.getDeclaringType().getField(destFieldName);
-					changes.add(new WatchpointFieldChange(watchpoint, destField, originalField));
+					changes.add(new WatchpointFieldChange(watchpoint, destField));
 				}
 			}
 		}
