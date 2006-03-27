@@ -204,7 +204,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			}
 			fVariables[j][1]= variableValue;
 		}
-        fContributingPluginId= configurationElement.getNamespace();
+        fContributingPluginId= configurationElement.getContributor().getName();
 	}
 	
 	/**
