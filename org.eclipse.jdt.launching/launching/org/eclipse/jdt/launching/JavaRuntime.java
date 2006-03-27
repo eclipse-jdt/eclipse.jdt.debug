@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,6 +78,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The central access point for launching support. This class manages
@@ -279,8 +280,10 @@ public final class JavaRuntime {
 	/**
 	 * Cache of already resolved projects in container entries. Used to avoid
 	 * cycles in project dependencies when resolving classpath container entries.
+	 * Counters used to know when entring/exiting to clear cache
 	 */
-	private static ThreadLocal fgProjects = new ThreadLocal();
+	private static ThreadLocal fgProjects = new ThreadLocal(); // Lists
+	private static ThreadLocal fgEntryCount = new ThreadLocal(); // Integers
 	
     /**
      *  Set of ids of vms contributed via vmInstalls extension point.
@@ -1098,18 +1101,23 @@ public final class JavaRuntime {
 				break;
 		}			
 		List resolved = new ArrayList(cpes.length);
-		for (int i = 0; i < cpes.length; i++) {
-			IClasspathEntry cpe = cpes[i];
-			if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-				IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
-				IJavaProject jp = JavaCore.create(p);
-				List projects = (List) fgProjects.get();
-				if (projects == null) {
-					projects = new ArrayList();
-					fgProjects.set(projects);
-				}
-				if (!projects.contains(jp)) {
-					try {
+		List projects = (List) fgProjects.get();
+		Integer count = (Integer) fgEntryCount.get();
+		if (projects == null) {
+			projects = new ArrayList();
+			fgProjects.set(projects);
+			count = new Integer(0);
+		}
+		int intCount = count.intValue();
+		intCount++;
+		fgEntryCount.set(new Integer(intCount));
+		try {
+			for (int i = 0; i < cpes.length; i++) {
+				IClasspathEntry cpe = cpes[i];
+				if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
+					IJavaProject jp = JavaCore.create(p);
+					if (!projects.contains(jp)) {
 						projects.add(jp);
 						IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
 						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
@@ -1119,18 +1127,21 @@ public final class JavaRuntime {
 								resolved.add(entries[j]);
 							}
 						}
-					} finally {
-						projects.remove(jp);
+					}
+				} else {
+					IRuntimeClasspathEntry e = newRuntimeClasspathEntry(cpe);
+					if (!resolved.contains(e)) {
+						resolved.add(e);
 					}
 				}
-				if (projects.isEmpty()) {
-					fgProjects.set(null);
-				}
+			}
+		} finally {
+			intCount--;
+			if (intCount == 0) {
+				fgProjects.set(null);
+				fgEntryCount.set(null);
 			} else {
-				IRuntimeClasspathEntry e = newRuntimeClasspathEntry(cpe);
-				if (!resolved.contains(e)) {
-					resolved.add(e);
-				}
+				fgEntryCount.set(new Integer(intCount));
 			}
 		}
 		// set classpath property
