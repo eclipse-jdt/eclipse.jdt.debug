@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
  
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -26,11 +24,11 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -40,6 +38,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for debug preferences that apply specifically to
@@ -75,7 +75,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendDuringEvaluations;
 	private Button fOpenInspector;
 	private Button fPromptUnableToInstallBreakpoint;
-	private CCombo fSuspendVMorThread;
+	private Combo fSuspendVMorThread;
 	
 	// Hot code replace preference widgets
 	private Button fAlertHCRButton;
@@ -137,7 +137,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		group.setLayoutData(data);
 		Label label = new Label(group, SWT.NONE);
 		label.setText(DebugUIMessages.JavaDebugPreferencePage_21);
-		fSuspendVMorThread = new CCombo(group, SWT.BORDER);
+		fSuspendVMorThread = new Combo(group, SWT.BORDER|SWT.READ_ONLY);
 		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
 				
 		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2); 
