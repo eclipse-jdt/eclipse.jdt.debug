@@ -19,97 +19,103 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 
-	/**
-	 * Constructs a new cell modifier for Java variables.
-	 * 
-	 * @param context
-	 */
-	public JavaVariableCellModifier(IPresentationContext context) {
-		super(context);
-	}
+    /**
+     * Constructs a new cell modifier for Java variables.
+     * 
+     * @param context
+     */
+    public JavaVariableCellModifier(IPresentationContext context) {
+        super(context);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#canModify(java.lang.Object, java.lang.String)
-	 */
-	public boolean canModify(Object element, String property) {
-		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
-			if (element instanceof IJavaVariable) {
-				IJavaVariable var = (IJavaVariable) element;
-				try {
-					String signature = var.getSignature();
-					if (signature.length() == 1) {
-						// primitive
-						return true;
-					}
-					return signature.equals("Ljava/lang/String;"); //$NON-NLS-1$
-				} catch (DebugException e) {
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#canModify(java.lang.Object,
+     *      java.lang.String)
+     */
+    public boolean canModify(Object element, String property) {
+        if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+            if (element instanceof IJavaVariable) {
+                IJavaVariable var = (IJavaVariable) element;
+                try {
+                    String signature = var.getSignature();
+                    if (signature.length() == 1) {
+                        // primitive
+                        return true;
+                    }
+                    return signature.equals("Ljava/lang/String;"); //$NON-NLS-1$
+                } catch (DebugException e) {
+                }
+            }
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#getValue(java.lang.Object, java.lang.String)
-	 */
-	public Object getValue(Object element, String property) {
-		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
-			if (element instanceof IJavaVariable) {
-				IJavaVariable var = (IJavaVariable) element;
-				if (isBoolean(var)) {
-					try {
-						if (var.getValue().getValueString().equals(Boolean.toString(true))) {
-							return new Integer(0);
-						} else {
-							return new Integer(1);
-						}
-					} catch (DebugException e) {
-					}
-				}
-			}
-		}
-		return super.getValue(element, property);
-	}
-	
-	
-	
-	public void modify(Object element, String property, Object value) {
-		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
-			if (element instanceof IJavaVariable) {
-				IJavaVariable var = (IJavaVariable) element;
-				if (isBoolean(var)) {
-					switch (((Integer)value).intValue()) {
-						case 0:
-							super.modify(element, property, Boolean.toString(true));
-							return;
-						case 1:
-							super.modify(element, property, Boolean.toString(false));
-							return;
-					}
-				}
-			}
-		}
-		super.modify(element, property, value);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#getValue(java.lang.Object,
+     *      java.lang.String)
+     */
+    public Object getValue(Object element, String property) {
+        if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+            if (element instanceof IJavaVariable) {
+                IJavaVariable var = (IJavaVariable) element;
+                if (isBoolean(var)) {
+                    try {
+                        if (var.getValue().getValueString().equals(Boolean.toString(true))) {
+                            return new Integer(0);
+                        } else {
+                            return new Integer(1);
+                        }
+                    } catch (DebugException e) {
+                    }
+                }
+            }
+        }
+        return super.getValue(element, property);
+    }
 
-	/**
-	 * Returns whether the given variable is a boolean.
-	 * 
-	 * @param variable
-	 * @return
-	 */
-	public static boolean isBoolean(IJavaVariable variable) {
-		try {
-			String signature = variable.getSignature();
-			return (signature.length() == 1 && signature.charAt(0) == Signature.C_BOOLEAN);
-		} catch (DebugException e) {
-		}		
-		return false;
-	}
+    public void modify(Object element, String property, Object value) {
+        Object oldValue = getValue(element, property);
+        if (!value.equals(oldValue)) {
+            if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+                if (element instanceof IJavaVariable) {
+                    IJavaVariable var = (IJavaVariable) element;
+                    if (isBoolean(var)) {
+                        switch (((Integer) value).intValue()) {
+                        case 0:
+                            super.modify(element, property, Boolean.toString(true));
+                            return;
+                        case 1:
+                            super.modify(element, property, Boolean.toString(false));
+                            return;
+                        }
+                    }
+                }
+            }
+            super.modify(element, property, value);
+        }
+    }
 
+    /**
+     * Returns whether the given variable is a boolean.
+     * 
+     * @param variable
+     * @return
+     */
+    public static boolean isBoolean(IJavaVariable variable) {
+        try {
+            String signature = variable.getSignature();
+            return (signature.length() == 1 && signature.charAt(0) == Signature.C_BOOLEAN);
+        } catch (DebugException e) {
+        }
+        return false;
+    }
 
 }
