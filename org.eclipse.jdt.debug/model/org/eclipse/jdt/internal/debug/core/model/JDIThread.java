@@ -416,7 +416,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see IThread#getStackFrames()
 	 */
-	public IStackFrame[] getStackFrames() throws DebugException {
+	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspendedQuiet()) {
 			return new IStackFrame[0];
 		}
@@ -952,7 +952,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see IThread#getTopStackFrame()
 	 */
-	public IStackFrame getTopStackFrame() throws DebugException {
+	public synchronized IStackFrame getTopStackFrame() throws DebugException {
 		List c= computeStackFrames();
 		if (c.isEmpty()) {
 			return null;
@@ -1094,7 +1094,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return fTerminated;
 	}
 	
-	public boolean isOutOfSynch() throws DebugException {
+	public synchronized boolean isOutOfSynch() throws DebugException {
 		if (isSuspended() && ((JDIDebugTarget)getDebugTarget()).hasHCRFailed()) {
 			List frames= computeStackFrames();
 			Iterator iter= frames.iterator();
