@@ -395,7 +395,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		} else {
 			parentBinding= ((AnonymousClassDeclaration)parent).resolveBinding();
 		}
-		if (isInstanceOf(parentBinding, referenceTypeBinding)) {
+		if (parentBinding.isCastCompatible(referenceTypeBinding)) {
 			return 0;
 		}
 		return getEnclosingLevel(parent, referenceTypeBinding) + 1;
@@ -406,25 +406,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return 0;
 		}
 		return getSuperLevel(current.getSuperclass(), reference);
-	}
-
-	private boolean isInstanceOf(ITypeBinding current, ITypeBinding reference) {
-		if (current.equals(reference)) {
-			return true;
-		}
-		
-		ITypeBinding[] interfaces= current.getInterfaces();
-		for (int i= 0; i < interfaces.length; i++) {
-			if (isInstanceOf(interfaces[i], reference)) {
-				return true;
-			}
-		}
-		
-		ITypeBinding superClass= current.getSuperclass();
-		if (superClass != null) {
-			return isInstanceOf(current.getSuperclass(), reference);
-		}
-		return false;
 	}
 
 	/**
