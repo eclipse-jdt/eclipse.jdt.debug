@@ -51,7 +51,7 @@ public class BreakpointConditionEditor {
 	
 	private JDISourceViewer fViewer;
 	private IContentAssistProcessor fCompletionProcessor;
-	private boolean fIsValid;	
+//	private boolean fIsValid;	
 	private String fOldValue;
 	private String fErrorMessage;
 	private JavaLineBreakpointPage fPage;
@@ -158,14 +158,11 @@ public class BreakpointConditionEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 	 */
 	protected void refreshValidState() {
-		// the value is valid if the field is not editable, or if the value is not empty
 		if (!fViewer.isEditable()) {
 			fPage.removeErrorMessage(fErrorMessage);
-			fIsValid = true;
 		} else {
 			String text = fViewer.getDocument().get();
-			fIsValid = text != null && text.trim().length() > 0;
-			if (!fIsValid) {
+			if (!(text != null && text.trim().length() > 0)) {
 				fPage.addErrorMessage(fErrorMessage);
 			} else {
 				fPage.removeErrorMessage(fErrorMessage);

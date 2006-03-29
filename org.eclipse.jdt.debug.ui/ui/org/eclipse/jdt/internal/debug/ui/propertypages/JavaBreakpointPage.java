@@ -101,13 +101,11 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * This method should be used instead of setErrorMessage(String).
 	 * @param message the error message to display on this page.
 	 */
-	public void addErrorMessage(String message) {
-		if (message == null) {
-			return;
-		}
+	protected void addErrorMessage(String message) {
 		fErrorMessages.remove(message);
 		fErrorMessages.add(message);
-		setValid(false);
+		setErrorMessage(message);
+		setValid(message == null);
 	}
 	
 	/**
@@ -117,13 +115,13 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Clients should call this method instead of setErrorMessage(null).
 	 * @param message the error message to clear
 	 */
-	public void removeErrorMessage(String message) {
+	protected void removeErrorMessage(String message) {
 		fErrorMessages.remove(message);
 		if (fErrorMessages.isEmpty()) {
 			addErrorMessage(null);
-			setValid(true);
 		} else {
-			addErrorMessage((String) fErrorMessages.get(fErrorMessages.size() - 1));
+			String msg = (String) fErrorMessages.get(fErrorMessages.size() - 1);
+			addErrorMessage(msg);
 		}
 	}
 	
@@ -329,9 +327,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		if (hitCount < 1) {
 			addErrorMessage(fgHitCountErrorMessage);
 		} else {
-			if (fgHitCountErrorMessage.equals(getErrorMessage())) {
-				removeErrorMessage(fgHitCountErrorMessage);
-			}
+			removeErrorMessage(fgHitCountErrorMessage);
 		}
 	}
 

@@ -196,11 +196,14 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 * Validates the method breakpoint, if we are one
 	 */
 	private void validateMethodBreakpoint() {
+		boolean valid = true;
 		if (fEnabledButton.getSelection() && !(fMethodEntry.getSelection() || fMethodExit.getSelection())) {
-			addErrorMessage(fgMethodBreakpointError);
+			setErrorMessage(fgMethodBreakpointError);
+			valid = false;
 		} else {
-			removeErrorMessage(fgMethodBreakpointError);
+			setErrorMessage(null);
 		}
+		setValid(valid);
 	}
 	
 	/**
