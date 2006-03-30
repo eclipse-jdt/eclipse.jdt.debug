@@ -73,7 +73,8 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launchToBreakpoint(typeName);
+			// do not register launch - see bug 130911
+			thread= launchToBreakpoint(typeName, false);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			while (!bps.isEmpty()) {
 				IBreakpoint hit = getBreakpoint(thread);
