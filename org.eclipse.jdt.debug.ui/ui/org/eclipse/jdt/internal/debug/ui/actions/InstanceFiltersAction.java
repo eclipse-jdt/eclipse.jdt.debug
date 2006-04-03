@@ -11,10 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -29,20 +29,25 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action to associate an object with one or more breakpoints.
@@ -58,6 +63,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 			ILabelProvider labelProvider,
 			String message) {
 			super(parentShell, input, contentProvider, labelProvider, message);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
 		}
 		
 		
@@ -74,6 +80,21 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 			
 		}
 
+        protected String getDialogSettingsSectionName() {
+            return IJavaDebugUIConstants.PLUGIN_ID + ".INSTANCE_FILTERS_ACTION_DIALOG"; //$NON-NLS-1$
+        }
+        
+         /* (non-Javadoc)
+         * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+         */
+        protected IDialogSettings getDialogBoundsSettings() {
+            IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
+            IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+            if (section == null) {
+                section = settings.addNewSection(getDialogSettingsSectionName());
+            } 
+            return section;
+        }
 }
 
 	/**
