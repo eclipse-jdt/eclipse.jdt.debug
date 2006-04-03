@@ -41,7 +41,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		
 		IJavaThread thread = null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp);
+			thread= launchToLineBreakpoint(typeName, bp, false);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
@@ -64,7 +64,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		
 		IJavaThread thread = null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp);
+			thread= launchToLineBreakpoint(typeName, bp, false);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
@@ -87,7 +87,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		
 		IJavaThread thread = null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp);
+			thread= launchToLineBreakpoint(typeName, bp, false);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
@@ -110,7 +110,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		
 		IJavaThread thread = null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp);
+			thread= launchToLineBreakpoint(typeName, bp, false);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			thread = stepReturnWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
@@ -133,7 +133,7 @@ public class StepFilterTests extends AbstractDebugTest {
 		
 		IJavaThread thread = null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp);
+			thread= launchToLineBreakpoint(typeName, bp, false);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			thread = stepOverWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();

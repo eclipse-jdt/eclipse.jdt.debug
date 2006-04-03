@@ -398,11 +398,25 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToLineBreakpoint(String mainTypeName, ILineBreakpoint bp) throws Exception {
-		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
-		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
-		return launchToLineBreakpoint(config, bp);
+		return launchToLineBreakpoint(mainTypeName, bp, true);
 	}
 
+	/**
+	 * Launches the type with the given name, and waits for a line breakpoint suspend
+	 * event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param mainTypeName the program to launch
+	 * @param bp the breakpoint that should cause a suspend event
+	 * @param register whether to register the launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToLineBreakpoint(String mainTypeName, ILineBreakpoint bp, boolean register) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		return launchToLineBreakpoint(config, bp, register);
+	}
+	
 	/**
 	 * Launches the given configuration in debug mode, and waits for a line breakpoint 
 	 * suspend event in that program. Returns the thread in which the suspend
@@ -412,11 +426,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
 	 */	
-	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp) throws Exception {
+	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp, boolean register) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
-		Object suspendee= launchAndWait(config, waiter);
+		Object suspendee= launchAndWait(config, waiter, register);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
 		IJavaThread thread = (IJavaThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
@@ -1203,12 +1217,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		// turn filters on
+		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
-			DebugUITools.setUseStepFilters(true);
+			target.setStepFiltersEnabled(true);
 			frame.stepInto();
 		} finally {
 			// turn filters off
-			DebugUITools.setUseStepFilters(false);
+			target.setStepFiltersEnabled(false);
 		}
 		
 		
@@ -1229,12 +1244,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		// turn filters on
+		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
-			DebugUITools.setUseStepFilters(true);
+			target.setStepFiltersEnabled(true);
 			frame.stepReturn();
 		} finally {
 			// turn filters off
-			DebugUITools.setUseStepFilters(false);
+			target.setStepFiltersEnabled(false);
 		}
 		
 		
@@ -1255,12 +1271,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		// turn filters on
+		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
-			DebugUITools.setUseStepFilters(true);
+			target.setStepFiltersEnabled(true);
 			frame.stepOver();
 		} finally {
 			// turn filters off
-			DebugUITools.setUseStepFilters(false);
+			target.setStepFiltersEnabled(false);
 		}
 		
 		
