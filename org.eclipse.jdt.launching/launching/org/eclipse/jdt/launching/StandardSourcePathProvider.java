@@ -13,6 +13,8 @@ package org.eclipse.jdt.launching;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -55,7 +57,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List all = new ArrayList(entries.length);
+		List all = new UniqueList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			switch (entries[i].getType()) {
 				case IRuntimeClasspathEntry.PROJECT:
@@ -140,6 +142,74 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
                 }
             }
         }
+    }
+
+    /*
+     * An ArrayList that acts like a set -ie does not allow duplicate items.
+     * hack for bug 112774
+     */
+    class UniqueList extends ArrayList {
+        private static final long serialVersionUID = -7402160651027036270L;
+        HashSet set;
+        
+        public UniqueList(int length) {
+            super(length);
+            set = new HashSet(length);
+        }
+
+        public void add(int index, Object element) {
+            if (set.add(element))
+                super.add(index, element);
+        }
+
+        public boolean add(Object o) {
+            if (set.add(o))
+                return super.add(o);
+            return false;
+        }
+
+        public boolean addAll(Collection c) {
+            if (set.addAll(c))
+                return super.addAll(c);
+            return false;
+        }
+
+        public boolean addAll(int index, Collection c) {
+            if (set.addAll(c))
+                return super.addAll(index, c);
+            return false;
+        }
+
+        public void clear() {
+            set.clear();
+            super.clear();
+        }
+
+        public boolean contains(Object elem) {
+            return set.contains(elem);
+        }
+
+        public void ensureCapacity(int minCapacity) {
+            super.ensureCapacity(minCapacity);
+        }
+
+        public Object remove(int index) {
+            Object object = super.remove(index);
+            set.remove(object);
+            return object;
+        }
+
+        protected void removeRange(int fromIndex, int toIndex) {
+            for (int index = fromIndex; index<=toIndex; index++)
+                remove(index);
+        }
+
+        public Object set(int index, Object element) {
+            set.remove(element);
+            if (set.add(element))
+                return super.set(index, element);
+            return null; //should not happen.
+        }        
     }
 
 }
