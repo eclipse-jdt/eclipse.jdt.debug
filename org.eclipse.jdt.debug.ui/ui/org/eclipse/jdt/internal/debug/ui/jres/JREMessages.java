@@ -79,20 +79,20 @@ public class JREMessages extends NLS {
 	public static String VMLibraryBlock_0;
 	public static String VMLibraryBlock_1;
 	public static String VMLibraryBlock_2;
+	public static String VMLibraryBlock_3;
 	public static String VMLibraryBlock_4;
 	public static String VMLibraryBlock_5;
 	public static String VMLibraryBlock_6;
 	public static String VMLibraryBlock_7;
 	public static String VMLibraryBlock_8;
+	public static String VMLibraryBlock_9;
+	public static String VMLibraryBlock_10;
+	public static String VMLibraryBlock_11;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, JREMessages.class);
 	}
-
-	public static String VMLibraryBlock_9;
-
-	public static String VMLibraryBlock_10;
 
 	public static String JREsComboBlock_0;
 

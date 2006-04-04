@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,23 +59,27 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 */
 	protected static final String LAST_PATH_SETTING = "LAST_PATH_SETTING"; //$NON-NLS-1$
 	
+	/**
+	 * the prefix for dialog setting pertaining to this block
+	 */
+	protected static final String DIALOG_SETTINGS_PREFIX = "VMLibraryBlock"; //$NON-NLS-1$
+	
+	protected boolean fInCallback = false;
 	protected IVMInstall fVmInstall;
 	protected IVMInstallType fVmInstallType;
 	protected File fHome;
 	
-	protected TreeViewer fLibraryViewer;
+	//widgets
 	protected LibraryContentProvider fLibraryContentProvider;
-	protected Button fDefaultButton;
-	
 	protected AddVMDialog fDialog = null;
-	protected boolean fInCallback = false;
-	
-	protected static final String DIALOG_SETTINGS_PREFIX = "VMLibraryBlock"; //$NON-NLS-1$
+	protected TreeViewer fLibraryViewer;
 	private Button fUpButton;
 	private Button fDownButton;
 	private Button fRemoveButton;
 	private Button fAddButton;
-	private Button fEditButton;
+	private Button fJavadocButton;
+	private Button fSourceButton;
+	protected Button fDefaultButton;
 	
 	/**
 	 * Constructor for VMLibraryBlock.
@@ -123,15 +127,16 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		fAddButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7);
 		fAddButton.addSelectionListener(this);
 		
-		fEditButton= createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_8);
-		fEditButton.addSelectionListener(this);
+		fJavadocButton = createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_3);
+		fJavadocButton.addSelectionListener(this);
+		fSourceButton = createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_11);
+		fSourceButton.addSelectionListener(this);
 		fLibraryViewer.addDoubleClickListener(new IDoubleClickListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-			 */
 			public void doubleClick(DoubleClickEvent event) {
-				if (fEditButton.isEnabled()) {
-					edit((IStructuredSelection) fLibraryViewer.getSelection());
+				IStructuredSelection sel = (IStructuredSelection)event.getViewer().getSelection();
+				Object obj = sel.getFirstElement();
+				if(obj instanceof SubElement) {
+					edit(sel, ((SubElement)obj).getType());
 				}
 			}
 		});
@@ -199,16 +204,14 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 * @param type type of vm install
 	 */
 	public void initializeFrom(IVMInstall vm, IVMInstallType type) {
-		setVMInstall(vm);
-		setVMInstallType(type);
+		fVmInstall = vm;
+		fVmInstallType = type;
 		if (vm != null) {
 			setHomeDirectory(vm.getInstallLocation());
 			fLibraryContentProvider.setLibraries(JavaRuntime.getLibraryLocations(getVMInstall()));
 		}
 		update();
 	}
-	
-	
 	
 	/**
 	 * Sets the home directory of the VM Install the user has chosen
@@ -258,6 +261,10 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		}		
 	}	
 	
+	/**
+	 * Determines if the present setup is the default location s for this JRE
+	 * @return true if the current set of locations are the defaults, false otherwise
+	 */
 	protected boolean isDefaultLocations() {
 		LibraryLocation[] libraryLocations = fLibraryContentProvider.getLibraries();
         IVMInstall install = getVMInstall();
@@ -281,15 +288,6 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	}
 	
 	/**
-	 * Sets the vm install associated with this library block.
-	 * 
-	 * @param vm vm install
-	 */
-	private void setVMInstall(IVMInstall vm) {
-		fVmInstall = vm;
-	}
-	
-	/**
 	 * Returns the vm install associated with this library block.
 	 * 
 	 * @return vm install
@@ -297,15 +295,6 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	protected IVMInstall getVMInstall() {
 		return fVmInstall;
 	}	
-
-	/**
-	 * Sets the vm install type associated with this library block.
-	 * 
-	 * @param type vm install type
-	 */
-	private void setVMInstallType(IVMInstallType type) {
-		fVmInstallType = type;
-	}
 	
 	/**
 	 * Returns the vm install type associated with this library block.
@@ -329,9 +318,14 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 			fLibraryContentProvider.remove((IStructuredSelection) fLibraryViewer.getSelection());
 		} else if (source == fAddButton) {
 			add((IStructuredSelection) fLibraryViewer.getSelection());
-		} else if (source == fEditButton) {
-			edit((IStructuredSelection) fLibraryViewer.getSelection());
-		} else if (source == fDefaultButton) {
+		} 
+		else if(source == fJavadocButton) {
+			edit((IStructuredSelection) fLibraryViewer.getSelection(), SubElement.JAVADOC_URL);
+		}
+		else if(source == fSourceButton) {
+			edit((IStructuredSelection) fLibraryViewer.getSelection(), SubElement.SOURCE_PATH);
+		}
+		else if (source == fDefaultButton) {
 			restoreDefaultLibraries();
 		}
 		update();
@@ -340,8 +334,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
-	public void widgetDefaultSelected(SelectionEvent e) {
-	}
+	public void widgetDefaultSelected(SelectionEvent e) {}
 
 	/**
 	 * Open the file selection dialog, and add the return jars as libraries.
@@ -377,21 +370,32 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 * Open the javadoc location dialog or the source location dialog, and set the result
 	 * to the selected libraries.
 	 */
-	private void edit(IStructuredSelection selection) {
-		SubElement firstElement= (SubElement)selection.getFirstElement();
-		LibraryLocation library= firstElement.getParent().toLibraryLocation();
-		if (firstElement.getType() == SubElement.JAVADOC_URL) {
-			URL[] urls= BuildPathDialogAccess.configureJavadocLocation(fLibraryViewer.getControl().getShell(), library.getSystemLibraryPath().toOSString(), library.getJavadocLocation());
-			if (urls != null) {
-				fLibraryContentProvider.setJavadoc(urls[0], selection);
-			}
-		} else {
-			IRuntimeClasspathEntry entry= JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
-			entry.setSourceAttachmentPath(library.getSystemLibrarySourcePath());
-			entry.setSourceAttachmentRootPath(library.getPackageRootPath());
-			IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(fLibraryViewer.getControl().getShell(), entry.getClasspathEntry()); 
-			if (classpathEntry != null) {
-				fLibraryContentProvider.setSourcePath(classpathEntry.getSourceAttachmentPath(), classpathEntry.getSourceAttachmentRootPath(), selection);
+	private void edit(IStructuredSelection selection, int type) {
+		Object obj = selection.getFirstElement();
+		LibraryStandin standin = null;
+		if(obj instanceof LibraryStandin) {
+			standin = (LibraryStandin) obj;
+		}
+		else if(obj instanceof SubElement){
+			SubElement sub = (SubElement)obj;
+			standin = sub.getParent();
+		}
+		if(standin != null) {
+			LibraryLocation library = standin.toLibraryLocation();
+			if (type == SubElement.JAVADOC_URL) {
+				URL[] urls = BuildPathDialogAccess.configureJavadocLocation(fLibraryViewer.getControl().getShell(), library.getSystemLibraryPath().toOSString(), library.getJavadocLocation());
+				if (urls != null) {
+					fLibraryContentProvider.setJavadoc(urls[0], selection);
+				}
+			} 
+			else if(type == SubElement.SOURCE_PATH){
+				IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
+				entry.setSourceAttachmentPath(library.getSystemLibrarySourcePath());
+				entry.setSourceAttachmentRootPath(library.getPackageRootPath());
+				IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(fLibraryViewer.getControl().getShell(), entry.getClasspathEntry()); 
+				if (classpathEntry != null) {
+					fLibraryContentProvider.setSourcePath(classpathEntry.getSourceAttachmentPath(), classpathEntry.getSourceAttachmentRootPath(), selection);
+				}
 			}
 		}
 	}
@@ -407,44 +411,48 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	 * Refresh the enable/disable state for the buttons.
 	 */
 	private void updateButtons() {
-		IStructuredSelection selection= (IStructuredSelection) fLibraryViewer.getSelection();
-		fAddButton.setEnabled(true);
+		IStructuredSelection selection = (IStructuredSelection) fLibraryViewer.getSelection();
 		fRemoveButton.setEnabled(!selection.isEmpty());
-		boolean enableUp= true;
-		boolean enableDown= true;
-		boolean allSource= true;
-		boolean allJavadoc= true;
-		Object[] libraries= fLibraryContentProvider.getElements(null);
+		boolean enableUp = true, 
+				enableDown = true, 
+				allSource = true, 
+				allJavadoc = true,
+				allRoots = true;
+		Object[] libraries = fLibraryContentProvider.getElements(null);
 		if (selection.isEmpty() || libraries.length == 0) {
-			enableUp= enableDown= false;
+			enableUp = false;
+			enableDown = false;
 		} else {
-			Object first= libraries[0];
-			Object last= libraries[libraries.length - 1];
+			Object first = libraries[0];
+			Object last = libraries[libraries.length - 1];
 			for (Iterator iter= selection.iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				Object lib;
 				if (element instanceof SubElement) {
+					allRoots = false;
 					SubElement subElement= (SubElement)element;
-					lib= (subElement).getParent().toLibraryLocation();
+					lib = (subElement).getParent().toLibraryLocation();
 					if (subElement.getType() == SubElement.JAVADOC_URL) {
-						allSource= false;
+						allSource = false;
 					} else {
-						allJavadoc= false;
+						allJavadoc = false;
 					}
 				} else {
-					lib= element;
-					allSource= allJavadoc= false;
+					lib = element;
+					allSource = false;
+					allJavadoc = false;
 				}
 				if (lib == first) {
-					enableUp= false;
+					enableUp = false;
 				}
 				if (lib == last) {
-					enableDown= false;
+					enableDown = false;
 				}
 			}
 		}
 		fUpButton.setEnabled(enableUp);
 		fDownButton.setEnabled(enableDown);
-		fEditButton.setEnabled(!selection.isEmpty() && (allSource || allJavadoc));
+		fJavadocButton.setEnabled(!selection.isEmpty() && (allJavadoc || allRoots));
+		fSourceButton.setEnabled(!selection.isEmpty() && (allSource || allRoots));
 	}
 }
