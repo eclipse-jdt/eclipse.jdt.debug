@@ -117,7 +117,9 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 								Object tos;
 								try {
 									tos = thread.getTopStackFrame();
-									getStructuredViewer().setSelection(new StructuredSelection(tos));
+									if (tos != null) {
+										getStructuredViewer().setSelection(new StructuredSelection(tos));
+									}
 								} catch (DebugException e) {
 								}								
 							}
