@@ -536,6 +536,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     ISelection selection = finalSelection;
                     selection = translateToMembers(part, selection);
                     ITextEditor textEditor = getTextEditor(part);
+                    boolean allowed = false;
                     if (textEditor != null && selection instanceof ITextSelection) {
                         ITextSelection textSelection = (ITextSelection) selection;
                         CompilationUnit compilationUnit = parseCompilationUnit(textEditor);
@@ -543,6 +544,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             BreakpointFieldLocator locator = new BreakpointFieldLocator(textSelection.getOffset());
                             compilationUnit.accept(locator);
                             String fieldName = locator.getFieldName();
+                            int idx = fieldName.indexOf("final"); //$NON-NLS-1$
+                            if(!(idx > -1) & !(fieldName.indexOf("static") > -1 & idx > -1)) { //$NON-NLS-1$
+                            	allowed = true;
+                            }
                             if (fieldName == null) {
                                 report(ActionMessages.ManageWatchpointActionDelegate_CantAdd, part); 
                                 return Status.OK_STATUS;
@@ -552,6 +557,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             // remove it, else create one
                             IJavaWatchpoint existing = getWatchpoint(typeName, fieldName);
                             if (existing == null) {
+                            	if(!allowed) {
+                            		report(ActionMessages.ToggleBreakpointAdapter_8, part); 
+                                    return Status.OK_STATUS;
+                            	}
                             	createWatchpoint(getResource((IEditorPart) part), typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10));
                             } else {
                             	removeBreakpoint(existing, true);
@@ -574,13 +583,21 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								javaField = (IField) element;
 								typeName = javaField.getDeclaringType().getFullyQualifiedName();
 								fieldName = javaField.getElementName();
+								int f = javaField.getFlags();
+								boolean fin = Flags.isFinal(f);
+								allowed = !(fin) & !(Flags.isStatic(f) & fin);
 							} else if (element instanceof IJavaFieldVariable) {
 								var = (IJavaFieldVariable) element;
 								typeName = var.getDeclaringType().getName();
 								fieldName = var.getName();
+								allowed = !(var.isFinal() || var.isStatic());
 							}
                             IJavaBreakpoint breakpoint = getWatchpoint(typeName, fieldName);
                             if (breakpoint == null) {
+                            	if(!allowed) {
+                            		report(ActionMessages.ToggleBreakpointAdapter_8, part);
+                            		return Status.OK_STATUS;
+                            	}
                             	IResource resource = null;
                             	int start = -1;
                                 int end = -1;
@@ -596,7 +613,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             		if (resource == null) {
                             			resource = ResourcesPlugin.getWorkspace().getRoot();
                             		}
-                            		// TODO: could we try to resolve a line number?
                             	} else {
 	                                IType type = javaField.getDeclaringType();
 	                                ISourceRange range = javaField.getNameRange();
