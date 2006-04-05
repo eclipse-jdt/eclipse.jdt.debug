@@ -233,7 +233,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launchToBreakpoint(typeName);
+			thread= launchToBreakpoint(typeName, false);
 			assertNotNull("breakpoint not hit within timeout period", thread);
 			
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -260,7 +260,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launchToBreakpoint(typeName);
+			thread= launchToBreakpoint(typeName, false);
 			assertNotNull("breakpoint not hit within timeout period", thread);
 			
 			thread.getTopStackFrame();
