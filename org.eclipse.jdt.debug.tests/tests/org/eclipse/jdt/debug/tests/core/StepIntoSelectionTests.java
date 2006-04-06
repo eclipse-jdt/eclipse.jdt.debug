@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,10 @@ import org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionHandler;
  */
 public class StepIntoSelectionTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor 
+	 * @param name the name of the test
+	 */
 	public StepIntoSelectionTests(String name) {
 		super(name);
 	}
@@ -153,6 +157,10 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 			
 			IType type = getJavaProject().findType("java.util.Vector");
 			IMethod method = type.getMethod("addElement", new String[]{"Ljava.lang.Object;"});
+			//for 1.5 compliance, addElement has a type 'E' not an object as the param type
+			if(!method.exists()) {
+				method = type.getMethod("addElement", new String[] {"TE;"});
+			}
 			assertTrue("Could not find method 'addElement'", method.exists());
 			
 			StepIntoSelectionHandler handler = new StepIntoSelectionHandler(thread, (IJavaStackFrame)thread.getTopStackFrame(), method);
