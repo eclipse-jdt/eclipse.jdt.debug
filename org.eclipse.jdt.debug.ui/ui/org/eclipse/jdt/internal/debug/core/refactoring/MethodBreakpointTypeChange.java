@@ -51,6 +51,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destMethod);
 		IResource resource = BreakpointUtils.getBreakpointResource(destMethod);
+		int[] range = getNewLineNumberAndRange(destMethod);
 		IJavaMethodBreakpoint breakpoint = JDIDebugModel.createMethodBreakpoint(
 				resource,
 				fDestType.getFullyQualifiedName(),
@@ -59,10 +60,10 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 				isEntry(),
 				isExit(),
 				isNativeOnly(),
-				getLineNumber(),
-				getCharStart(),
-				getCharEnd(),
-				0, 
+				range[0],
+				range[1],
+				range[2],
+				getHitCount(), 
 				true,
 				map);
 		apply(breakpoint);

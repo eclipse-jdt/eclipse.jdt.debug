@@ -13,10 +13,10 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -30,13 +30,11 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChange {
 	
 	private IType fDestType;
-	private int fStart, fEnd;
 
 	public ClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
-		fStart = breakpoint.getMarker().getAttribute(IMarker.CHAR_START, -1);
-		fEnd = breakpoint.getMarker().getAttribute(IMarker.CHAR_END, -1);	}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
@@ -53,12 +51,13 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);
 		// TODO - start/end should be adjusted, but can access new CU from model yet
+		ISourceRange range = fDestType.getNameRange();
 		IJavaClassPrepareBreakpoint breakpoint = JDIDebugModel.createClassPrepareBreakpoint(
 				resource,
 				fDestType.getFullyQualifiedName(),
 				getMemberType(),
-				fStart, 
-				fEnd,
+				range.getOffset(), 
+				range.getOffset() + range.getLength(),
 				true,
 				map);
 		apply(breakpoint);

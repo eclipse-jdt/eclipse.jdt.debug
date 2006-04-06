@@ -51,12 +51,13 @@ public class BreakpointMoveTypeParticipant extends BreakpointMoveParticipant {
 				IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
 				if (breakpointType != null && isContained(originalType, breakpointType)) {
 					ICompilationUnit cu = destPackage.getCompilationUnit(breakpointType.getCompilationUnit().getElementName());
-					String[] typeNames = breakpointType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
-					IType destType = cu.getType(typeNames[0]);
-					for (int j = 1; j < typeNames.length; j++) {
-						destType = destType.getType(typeNames[j]);
+					IJavaElement element = BreakpointChange.findElement(cu, breakpointType);
+					if (element != null) {
+						if (element instanceof IType) {
+							IType destType = (IType) element;
+							changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
+						}
 					}
-					changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
 				}
 			}
 		}

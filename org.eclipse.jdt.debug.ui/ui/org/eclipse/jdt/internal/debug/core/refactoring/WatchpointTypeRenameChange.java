@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.refactoring.IJavaElementMapper;
 import org.eclipse.jdt.core.refactoring.RenameTypeArguments;
@@ -32,8 +33,17 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 		IField destinationField = null;
 		
 		if (fArguments.getUpdateSimilarDeclarations()) {
-			IJavaElementMapper elementMapper = (IJavaElementMapper) fProcessor.getAdapter(IJavaElementMapper.class);
-			destinationField = (IField) elementMapper.getRefactoredJavaElement(originalField);
+			IJavaElement[] similarDeclarations = fArguments.getSimilarDeclarations();
+			if (similarDeclarations != null) {
+				for (int i = 0; i < similarDeclarations.length; i++) {
+					IJavaElement element = similarDeclarations[i];
+					if (element.equals(originalField)) {
+						IJavaElementMapper elementMapper = (IJavaElementMapper) fProcessor.getAdapter(IJavaElementMapper.class);
+						destinationField = (IField) elementMapper.getRefactoredJavaElement(originalField);
+						break;
+					}
+				}
+			}
 		}
 		if (destinationField == null) {
 			destinationField = getDestinationType().getField(getFieldName());
@@ -42,14 +52,15 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destinationField);
 		IResource resource = BreakpointUtils.getBreakpointResource(destinationField);
+		int[] range = getNewLineNumberAndRange(destinationField);
 		IJavaWatchpoint breakpoint = JDIDebugModel.createWatchpoint(
 				resource,
 				getDestinationType().getFullyQualifiedName(),
 				destinationField.getElementName(),
-				getLineNumber(),
-				getCharStart(),
-				getCharEnd(),
-				0,
+				range[0],
+				range[1],
+				range[2],
+				getHitCount(),
 				true,
 				map);
 		apply(breakpoint);

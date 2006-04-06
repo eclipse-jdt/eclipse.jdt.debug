@@ -73,6 +73,11 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
             }
             destCU = originalType.getPackageFragment().getCompilationUnit(simpleDestName + ext);
         }
+        
+        // newType is the type that is changing - it may contain nested members with breakpoints
+        IType newType = BreakpointChange.getType(originalType.getParent(), simpleDestName);
+        newType = (IType) BreakpointChange.findElement(destCU, newType);
+        
 
         for (int i = 0; i < markers.length; i++) {
             IMarker marker = markers[i];
@@ -81,19 +86,20 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
                 IJavaBreakpoint javaBreakpoint = (IJavaBreakpoint) breakpoint;
                 IType breakpointType = BreakpointUtils.getType(javaBreakpoint);
                 IType destType = null;
-                if (breakpointType != null && isContained(originalCU, breakpointType)) {
-                    String typeQualifiedName = breakpointType.getTypeQualifiedName();
-					String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
-                    if (isContained(originalType, breakpointType)) {
-                        String[] oldNames = originalType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
-                        names[oldNames.length - 1] = simpleDestName;
-                    }
-                    destType = destCU.getType(names[0]);
-                    for (int j = 1; j < names.length; j++) {
-                        destType = destType.getType(names[j]);
-                    }
-                    changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
+                if (breakpointType != null) {
+                	IJavaElement element = null;
+                	if (isContained(originalType, breakpointType)) {
+                		element = BreakpointChange.findElement(newType, breakpointType);
+                	} else if (isContained(originalCU, breakpointType)) {
+                		// non public, or other type in the CU
+                		element = BreakpointChange.findElement(destCU, breakpointType);
+                	}
+                	if (element instanceof IType) {
+                		destType = (IType) element;
+                		changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
+                	}
                 }
+                	
             }
         }
 

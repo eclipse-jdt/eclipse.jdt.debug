@@ -66,12 +66,13 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 					IPackageFragmentRoot destRoot = destProject.getPackageFragmentRoot(rootResource);
 					IPackageFragment destPackage = destRoot.getPackageFragment(breakpointType.getPackageFragment().getElementName());
 					ICompilationUnit destCU = destPackage.getCompilationUnit(breakpointType.getCompilationUnit().getElementName());
-					String[] typeNames = breakpointType.getTypeQualifiedName().split("\\$"); //$NON-NLS-1$
-					IType destType = destCU.getType(typeNames[0]);
-					for (int j = 1; j < typeNames.length; j++) {
-						destType = destType.getType(typeNames[j]);
+					IJavaElement element = BreakpointChange.findElement(destCU, breakpointType);
+					if (element != null) {
+						if (element instanceof IType) {
+							IType destType = (IType) element;
+							changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
+						}
 					}
-					changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
 				}
 			}
 		}

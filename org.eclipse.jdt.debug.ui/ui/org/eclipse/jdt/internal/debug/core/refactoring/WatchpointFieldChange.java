@@ -49,14 +49,15 @@ public class WatchpointFieldChange extends WatchpointChange {
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestField);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestField);
+		int[] range = getNewLineNumberAndRange(fDestField);
 		IJavaWatchpoint breakpoint = JDIDebugModel.createWatchpoint(
 				resource,
 				fDestField.getDeclaringType().getFullyQualifiedName(),
 				fDestField.getElementName(),
-				getLineNumber(),
-				getCharStart(),
-				getCharEnd(),
-				0,
+				range[0],
+				range[1],
+				range[2],
+				getHitCount(),
 				true,
 				map);
 		apply(breakpoint);
