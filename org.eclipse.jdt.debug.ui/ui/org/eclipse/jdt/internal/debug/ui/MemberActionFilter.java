@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IActionFilter;
 
@@ -33,6 +34,13 @@ public class MemberActionFilter implements IActionFilter {
 				}
 				if (value.equals("isRemote")) { //$NON-NLS-1$
 					return !member.getJavaProject().getProject().exists();
+				}
+				if(value.equals("isInterface")) { //$NON-NLS-1$
+					IType type = member.getDeclaringType();
+					try {
+						return type != null && type.isInterface();
+					} 
+					catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}  
 				}
 			}
 		}

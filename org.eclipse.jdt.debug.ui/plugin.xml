@@ -1501,7 +1501,7 @@
 	                  <objectState name="MemberActionFilter" value="isAbstract"/>
 	               </not>
 	               <not>
-   	               <objectState name="MemberActionFilter" value="isRemote"/>
+   	               <objectState name="MemberActionFilter" value="isInterface"/>
    	            </not>
 	            </and>
          </visibility>
@@ -1518,9 +1518,18 @@
             objectClass="org.eclipse.jdt.core.IField"
             id="org.eclipse.jdt.debug.ui.WatchpointActions">
          <visibility>
-            	   <not>
-   	               <objectState name="MemberActionFilter" value="isRemote"/>
-   	            </not>
+                <and>
+                   <not>
+                      <objectState
+                            name="MemberActionFilter"
+                            value="isRemote"/>
+                   </not>
+                   <not>
+                      <objectState
+                            name="MemberActionFilter"
+                            value="isInterface"/>
+                   </not>
+                </and>
          </visibility>            
          <action
                label="%manageWatchpointAction.label"
