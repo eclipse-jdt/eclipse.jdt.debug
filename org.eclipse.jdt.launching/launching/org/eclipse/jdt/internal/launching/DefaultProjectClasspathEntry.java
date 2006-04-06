@@ -252,7 +252,11 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 											if (initializer2 == null) {
 												id2 = re.getPath().segment(0);
 											} else {
-												id2 = initializer2.getComparisonID(re.getPath(), project);
+												IJavaProject context = re.getJavaProject();
+												if (context == null) {
+													context = project;
+												}
+												id2 = initializer2.getComparisonID(re.getPath(), context);
 											}
 											if (id1 == null) {
 												duplicate = id2 == null;
