@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.ui.DebugUIMessages;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -76,6 +77,24 @@ public class JavaVariableLabelAdapter extends VariableLabelAdapter {
 		}
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getColumnText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue, java.lang.String, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+	 */
+	protected String getColumnText(IVariable variable, IValue value, String columnId, IPresentationContext context) throws CoreException {
+		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_ID.equals(columnId)) {
+			if (value instanceof JDIObjectValue) {
+				long uniqueId = ((JDIObjectValue)value).getUniqueId();
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(uniqueId);
+				return buffer.toString();
+			} else {
+				return ""; //$NON-NLS-1$
+			}
+		}
+		return super.getColumnText(variable, value, columnId, context);
+	}
+	
 	
 
 }

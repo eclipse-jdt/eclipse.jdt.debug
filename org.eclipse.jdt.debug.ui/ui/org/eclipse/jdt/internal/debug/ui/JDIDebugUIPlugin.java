@@ -327,6 +327,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         
         IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
         manager.registerAdapters(columnFactory, IJavaVariable.class);
+        manager.registerAdapters(columnFactory, IJavaStackFrame.class);
         
         IAdapterFactory entryFactory = new ClasspathEntryAdapterFactory();
         manager.registerAdapters(entryFactory, DefaultProjectClasspathEntry.class);

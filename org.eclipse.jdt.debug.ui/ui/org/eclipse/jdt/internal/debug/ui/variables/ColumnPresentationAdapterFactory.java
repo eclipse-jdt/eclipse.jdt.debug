@@ -13,6 +13,8 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
@@ -24,6 +26,7 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 	
 	private static final IAsynchronousLabelAdapter fgLabel = new JavaVariableLabelAdapter();
 	private static final IColumnEditorFactoryAdapter fgColumnEditor = new JavaVariableColumnEditorFactory();
+	private static final IColumnPresentationFactoryAdapter fgColumnPresentation = new JavaVariableColumnPresentationFactory();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -37,6 +40,11 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 				return fgColumnEditor;
 			}
 		}
+		if (adaptableObject instanceof IJavaStackFrame) {
+			if (IColumnPresentationFactoryAdapter.class.equals(adapterType)) {
+				return fgColumnPresentation;
+			}
+		}
 		return null;
 	}
 
@@ -44,7 +52,7 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{IAsynchronousLabelAdapter.class, IColumnEditorFactoryAdapter.class};
+		return new Class[]{IAsynchronousLabelAdapter.class, IColumnEditorFactoryAdapter.class, IColumnPresentationFactoryAdapter.class};
 	}
 
 }

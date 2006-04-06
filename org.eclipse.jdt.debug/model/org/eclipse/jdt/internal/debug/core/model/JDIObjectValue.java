@@ -341,6 +341,25 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			return null;			
 		}
 	}
+	
+	/**
+	 * Returns the unique id for this object.
+	 * 
+	 * @return unique id
+	 * @throws DebugException
+	 * 
+	 * TODO: make API on IJavaObject
+	 */
+	public long getUniqueId() throws DebugException {
+		try {
+			return getUnderlyingObject().uniqueID();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_unique_id, new String[] {e.toString()}), e); 
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return 0;	
+		}
+	}
 
 }
 
