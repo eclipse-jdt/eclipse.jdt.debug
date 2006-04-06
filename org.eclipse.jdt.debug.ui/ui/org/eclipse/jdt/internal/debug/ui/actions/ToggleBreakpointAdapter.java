@@ -544,13 +544,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             BreakpointFieldLocator locator = new BreakpointFieldLocator(textSelection.getOffset());
                             compilationUnit.accept(locator);
                             String fieldName = locator.getFieldName();
-                            int idx = fieldName.indexOf("final"); //$NON-NLS-1$
-                            if(!(idx > -1) & !(fieldName.indexOf("static") > -1 & idx > -1)) { //$NON-NLS-1$
-                            	allowed = true;
-                            }
                             if (fieldName == null) {
                                 report(ActionMessages.ManageWatchpointActionDelegate_CantAdd, part); 
                                 return Status.OK_STATUS;
+                            }
+                            int idx = fieldName.indexOf("final"); //$NON-NLS-1$
+                            if(!(idx > -1) & !(fieldName.indexOf("static") > -1 & idx > -1)) { //$NON-NLS-1$
+                                allowed = true;
                             }
                             String typeName = locator.getTypeName();
                             // check if the watchpoint already exists. If yes,
