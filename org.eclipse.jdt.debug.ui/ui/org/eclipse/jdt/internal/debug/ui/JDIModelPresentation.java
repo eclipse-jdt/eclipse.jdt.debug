@@ -1197,7 +1197,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Returns the detail value for the given variable or <code>null</code>
 	 * if none can be computed.
-	 * @param variable the varible to compute the detail for
+	 * @param variable the variable to compute the detail for
 	 * @return the detail value for the variable
 	 */
 	private String getVariableDetail(IJavaValue value) {
@@ -1207,7 +1207,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		    /* (non-Javadoc)
 		     * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 		     */
-		    public void detailComputed(IValue value, String result) {
+		    public void detailComputed(IValue computedValue, String result) {
 		        synchronized (lock) {
 		            detail[0]= result;
 		            lock.notifyAll();
@@ -1771,7 +1771,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	/**
-	 * Decompose a commat separated list of generic names (String) to a list of generic names (List)
+	 * Decompose a comma separated list of generic names (String) to a list of generic names (List)
 	 */
 	private List getNameList(String listName) {
 		List names= new ArrayList();
