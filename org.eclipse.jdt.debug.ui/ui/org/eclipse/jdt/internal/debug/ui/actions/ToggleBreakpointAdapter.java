@@ -269,7 +269,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      ISelection)
      */
     public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
-    	if (isRemote(part, selection) || isInterface(selection)) {
+    	if (isRemote(part, selection)) {
     		return false;
     	}    	
         return selection instanceof ITextSelection;
@@ -421,7 +421,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
-    	if (isRemote(part, selection) || isInterface(selection)) {
+    	if (isRemote(part, selection)) {
     		return false;
     	}
         if (selection instanceof IStructuredSelection) {
@@ -633,7 +633,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                             }
                             int idx = fieldName.indexOf("final"); //$NON-NLS-1$
                             if(!(idx > -1) & !(fieldName.indexOf("static") > -1 & idx > -1)) { //$NON-NLS-1$
-                                allowed = true;
+                            	allowed = true;
                             }
                             String typeName = locator.getTypeName();
                             // check if the watchpoint already exists. If yes,
@@ -933,7 +933,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
-    	if (isRemote(part, selection) || isInterface(selection)) {
+    	if (isRemote(part, selection)) {
     		return false;
     	}
         if (selection instanceof IStructuredSelection) {
@@ -1059,7 +1059,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      *      org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
-    	if (isRemote(part, selection) || isInterface(selection)) {
+    	if (isRemote(part, selection)) {
     		return false;
     	}    	
         return canToggleLineBreakpoints(part, selection);
