@@ -150,8 +150,16 @@ public class JavaVarActionFilter implements IActionFilter {
 				else if (name.equals("JavaVariableActionFilter") && value.equals("instanceFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return !var.isStatic() && (varValue instanceof IJavaObject) && (((IJavaObject)varValue).getJavaType() instanceof IJavaClassType) && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
 				} 
-				else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
-					return (varValue instanceof IJavaObject) && (JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType()));
+				else if (name.equals("DetailFormatterFilter") & (varValue instanceof IJavaObject)) { //$NON-NLS-1$
+					if(value.equals("isDefined")) { //$NON-NLS-1$
+						return JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType());
+					}
+					if(value.equals("inInterface")) { //$NON-NLS-1$
+						return JavaDetailFormattersManager.getDefault().hasInterfaceDetailFormatter(((IJavaObject)varValue).getJavaType());
+					}
+					if(value.equals("inSuperclass")) { //$NON-NLS-1$
+						return JavaDetailFormattersManager.getDefault().hasSuperclassDetailFormatter(((IJavaObject)varValue).getJavaType());
+					}
 				} 
 				else if (name.equals("JavaLogicalStructureFilter") && value.equals("canEditLogicalStructure")) {  //$NON-NLS-1$ //$NON-NLS-2$
                     return varValue instanceof JavaStructureErrorValue || EditVariableLogicalStructureAction.getLogicalStructure(varValue) != null;
@@ -163,10 +171,20 @@ public class JavaVarActionFilter implements IActionFilter {
 			if (name.equals("PrimitiveVariableActionFilter") && value.equals("isNotPrimitive")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return !isPrimitiveType(exp);
 			} 
-			else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
+			else if (name.equals("DetailFormatterFilter")) { //$NON-NLS-1$
 				try {
-					IValue varValue= exp.getValue();
-					return (varValue instanceof IJavaObject) && (JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType()));
+					IValue varValue = exp.getValue();
+					if(varValue instanceof IJavaObject) {
+						if(value.equals("isDefined")) { //$NON-NLS-1$
+							return JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType());
+						}
+						if(value.equals("inInterface")) { //$NON-NLS-1$
+							return JavaDetailFormattersManager.getDefault().hasInterfaceDetailFormatter(((IJavaObject)varValue).getJavaType());
+						}
+						if(value.equals("inSuperclass")) { //$NON-NLS-1$
+							return JavaDetailFormattersManager.getDefault().hasSuperclassDetailFormatter(((IJavaObject)varValue).getJavaType());
+						}
+					}
 				} 
 				catch (DebugException exception) {}
 			}

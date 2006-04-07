@@ -209,24 +209,91 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		return project;
 	}
 	
+	/**
+	 * Searches the listing of implemented interfaces to see if one of them has a detail formatter
+	 * @param type the type whose interfaces you want to inspect
+	 * @return an associated details formatter of <code>null</code> if none is found
+	 * @since 3.2
+	 */
+	public DetailFormatter getDetailFormatterFromInterface(IJavaClassType type) {
+		try {
+			IJavaInterfaceType[] inter = type.getAllInterfaces();
+			Object formatter = null;
+			for (int i = 0; i < inter.length; i++) {
+				formatter = fDetailFormattersMap.get(inter[i].getName());
+				if(formatter != null) {
+					return (DetailFormatter) formatter;
+				}
+			}
+			return null;
+			}
+		catch(DebugException e) {return null;}
+	}
+	
+	/**
+	 * Returns if the specified <code>IJavaType</code> has a detail formatter on one of its interfaces
+	 * @param type the type to inspect
+	 * @return true if there is an existing detail formater on one of the types' interfaces, false otherwise
+	 * @since 3.2
+	 */
+	public boolean hasInterfaceDetailFormatter(IJavaType type) {
+		if(type instanceof IJavaClassType) {
+			return getDetailFormatterFromInterface((IJavaClassType) type) != null;
+		}
+		return false;
+	}
+	
+	/**
+	 * Searches the superclass hierarchy to see if any of the specified classes parents have a detail formatter
+	 * @param type the current type. Ideally this should be the first parent class.
+	 * @return the first detail formatter located wlking up the superclass hierarchy or <code>null</code> if none are found
+	 * @since 3.2
+	 */
+	public DetailFormatter getDetailFormatterFromSuperclass(IJavaClassType type) {
+		try {
+			if(type == null) {
+				return null;
+			}
+			DetailFormatter formatter = (DetailFormatter) fDetailFormattersMap.get(type.getName());
+			if(formatter != null && formatter.isEnabled()) {
+				return formatter;
+			}
+			return getDetailFormatterFromSuperclass(type.getSuperclass());
+			}
+		catch(DebugException e) {return null;}
+	}
+	
+	/**
+	 * Returns if one of the parent classes of the specified type has a detail formatter
+	 * @param type the type to inspect
+	 * @return true if one of the parent classes of the type has a detail formatter, false otherwise
+	 * @since 3.2
+	 */
+	public boolean hasSuperclassDetailFormatter(IJavaType type) {
+		if(type instanceof IJavaClassType) {
+			return getDetailFormatterFromSuperclass((IJavaClassType) type) != null;
+		}
+		return false;
+	}
+	
 	public boolean hasAssociatedDetailFormatter(IJavaType type) {
 		return getAssociatedDetailFormatter(type) != null;
 	}
 	
 	public DetailFormatter getAssociatedDetailFormatter(IJavaType type) {
-		String typeName;
+		String typeName = ""; //$NON-NLS-1$
 		try {
 			while (type instanceof IJavaArrayType) {
-				type= ((IJavaArrayType)type).getComponentType();
+				type = ((IJavaArrayType)type).getComponentType();
 			}
 			if (type instanceof IJavaClassType) {
-				typeName= type.getName();
-			} else {
+				typeName = type.getName();
+			} 
+			else {
 				return null;
 			}
-		} catch (DebugException e) {
-			return null;
-		}
+		} 
+		catch (DebugException e) {return null;}
 		return (DetailFormatter)fDetailFormattersMap.get(typeName);
 	}
 	

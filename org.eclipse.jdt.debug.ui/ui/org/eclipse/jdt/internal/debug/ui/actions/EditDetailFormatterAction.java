@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -49,10 +50,16 @@ public class EditDetailFormatterAction extends ObjectActionDelegate {
 		} catch (DebugException e) {
 			return;
 		}
-		JavaDetailFormattersManager detailFormattersManager= JavaDetailFormattersManager.getDefault();
-		DetailFormatter detailFormatter= detailFormattersManager.getAssociatedDetailFormatter(type);
-		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), detailFormatter, null, false, true).open() == Window.OK) {
-			detailFormattersManager.setAssociatedDetailFormatter(detailFormatter);
+		JavaDetailFormattersManager fm = JavaDetailFormattersManager.getDefault();
+		DetailFormatter formatter = fm.getAssociatedDetailFormatter(type);
+		if(formatter == null & type instanceof IJavaClassType) {
+			formatter = fm.getDetailFormatterFromInterface((IJavaClassType) type);
+			if(formatter == null) {
+				formatter = fm.getDetailFormatterFromSuperclass((IJavaClassType) type);
+			}
+		}
+		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), formatter, null, false, true).open() == Window.OK) {
+			fm.setAssociatedDetailFormatter(formatter);
 		}
 	}
 

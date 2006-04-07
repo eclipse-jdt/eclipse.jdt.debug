@@ -1042,10 +1042,6 @@
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
-         <filter
-               name="DetailFormatterFilter"
-               value="isDefined">
-         </filter>
          <action
                label="%editDetailFormatter.label"
                helpContextId="edit_detail_formatter_action_context"
@@ -1055,7 +1051,25 @@
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
          </action>
-         <action
+         <visibility>
+            <or>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="isDefined"/>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="inInterface"/>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="inSuperclass"/>
+            </or>
+         </visibility>
+         
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+            <action
                label="%removeDetailFormatter.label"
                helpContextId="remove_detail_formatter_action_context"
                tooltip="%removeDetailFormatter.tooltip"
@@ -1064,6 +1078,11 @@
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.removeDetailFormatter">
          </action>
+            <visibility>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="isDefined"/>
+            </visibility>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
@@ -1095,14 +1114,6 @@
       <objectContribution
             objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
             id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions">
-         <filter
-               name="PrimitiveVariableActionFilter"
-               value="isNotPrimitive">
-         </filter>
-         <filter
-               name="DetailFormatterFilter"
-               value="isDefined">
-         </filter>
          <action
                label="%editDetailFormatter.label"
                helpContextId="edit_detail_formatter_action_context"
@@ -1112,6 +1123,28 @@
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
          </action>
+         <visibility>
+            <and>
+            <or>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="isDefined"/>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="inInterface"/>
+               <objectState
+                     name="DetailFormatterFilter"
+                     value="inSuperclass"/>
+            </or>
+            <objectState
+                  name="PrimitiveVariableActionFilter"
+                  value="isNotPrimitive"/>
+            </and>
+         </visibility>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions"
+            objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression">
          <action
                label="%removeDetailFormatter.label"
                helpContextId="remove_detail_formatter_action_context"
@@ -1121,6 +1154,11 @@
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.removeDetailFormatter">
          </action>
+         <visibility>
+            <objectState
+                  name="DetailFormatterFilter"
+                  value="isDefined"/>
+         </visibility>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
