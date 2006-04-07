@@ -757,6 +757,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	public void snippetStateChanged(JavaSnippetEditor editor) {
 		if (editor != null && !editor.isEvaluating() && editor.getFile() != null) {
 			update();
+			getAction().setEnabled(getSelectedObject() != null);
 		} else {
 			getAction().setEnabled(false);
 		}
