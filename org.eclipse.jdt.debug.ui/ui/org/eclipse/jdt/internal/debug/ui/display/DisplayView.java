@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -43,6 +44,8 @@ import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -70,8 +73,13 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.console.actions.ClearOutputAction;
+import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
@@ -161,6 +169,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		fSourceViewer.addTextInputListener(this);
 		fRestoredContents= null;
 		createActions();
+		createUndoRedoActions();
 		initializeToolBar();
 
 		// create context menu
@@ -222,39 +231,37 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	protected void createActions() {
 				
-		fClearDisplayAction= new ClearOutputAction(fSourceViewer);
-
-		IActionBars actionBars = getViewSite().getActionBars();		
+		fClearDisplayAction= new ClearOutputAction(fSourceViewer);	
 		
 		IAction action= new DisplayViewAction(this, ITextOperationTarget.CUT);
 		action.setText(DisplayMessages.DisplayView_Cut_label); 
 		action.setToolTipText(DisplayMessages.DisplayView_Cut_tooltip); 
 		action.setDescription(DisplayMessages.DisplayView_Cut_description); 
-		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
+		setGlobalAction(ActionFactory.CUT.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.COPY);
 		action.setText(DisplayMessages.DisplayView_Copy_label); 
 		action.setToolTipText(DisplayMessages.DisplayView_Copy_tooltip); 
 		action.setDescription(DisplayMessages.DisplayView_Copy_description); 
-		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
+		setGlobalAction(ActionFactory.COPY.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.PASTE);
 		action.setText(DisplayMessages.DisplayView_Paste_label); 
 		action.setToolTipText(DisplayMessages.DisplayView_Paste_tooltip); 
 		action.setDescription(DisplayMessages.DisplayView_Paste_Description); 
-		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
+		setGlobalAction(ActionFactory.PASTE.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.SELECT_ALL);
 		action.setText(DisplayMessages.DisplayView_SelectAll_label); 
 		action.setToolTipText(DisplayMessages.DisplayView_SelectAll_tooltip); 
 		action.setDescription(DisplayMessages.DisplayView_SelectAll_description); 
-		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
+		setGlobalAction(ActionFactory.SELECT_ALL.getId(), action);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayMessages"); //$NON-NLS-1$
 		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action_", this); //$NON-NLS-1$
 		findReplaceAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
-		setGlobalAction(actionBars, ActionFactory.FIND.getId(), findReplaceAction);
+		setGlobalAction(ActionFactory.FIND.getId(), findReplaceAction);
 		
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.COPY.getId());
@@ -268,7 +275,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		fContentAssistAction.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		fContentAssistAction.setHoverImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		fContentAssistAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
-		actionBars.updateActionBars();
+		getViewSite().getActionBars().updateActionBars();
 
 		IHandler handler = new AbstractHandler() {
 			public Object execute(Map parameterValuesByName) throws ExecutionException {
@@ -284,8 +291,48 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		commandSupport.addHandlerSubmission(fSubmission);	
 
 	}
+	
+	/**
+	 * Creates this editor's undo/redo actions.
+	 * <p>
+	 * Subclasses may override or extend.</p>
+	 *
+	 * @since 3.2
+	 */
+	protected void createUndoRedoActions() {
+		IUndoContext undoContext= getUndoContext();
+		if (undoContext != null) {
+			// Use actions provided by global undo/redo
+			
+			// Create the undo action
+			OperationHistoryActionHandler undoAction= new UndoActionHandler(getSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			setGlobalAction(ITextEditorActionConstants.UNDO, undoAction);
 
-	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
+			// Create the redo action.
+			OperationHistoryActionHandler redoAction= new RedoActionHandler(getSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			setGlobalAction(ITextEditorActionConstants.REDO, redoAction);
+		}
+	}	
+	
+	/**
+	 * Returns this editor's viewer's undo manager undo context.
+	 *
+	 * @return the undo context or <code>null</code> if not available
+	 * @since 3.2
+	 */
+	private IUndoContext getUndoContext() {
+		IUndoManager undoManager= fSourceViewer.getUndoManager();
+		if (undoManager instanceof IUndoManagerExtension)
+			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		return null;
+	}	
+
+	protected void setGlobalAction(String actionID, IAction action) {
+		IActionBars actionBars = getViewSite().getActionBars();	
 		fGlobalActions.put(actionID, action);
 		actionBars.setGlobalActionHandler(actionID, action);
 	}
