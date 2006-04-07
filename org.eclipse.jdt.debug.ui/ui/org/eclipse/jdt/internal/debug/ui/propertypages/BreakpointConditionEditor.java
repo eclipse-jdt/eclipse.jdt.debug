@@ -207,7 +207,6 @@ public class BreakpointConditionEditor {
 	public void dispose() {
 	    if (fViewer.isEditable()) {
 	    	fHandlerService.deactivateHandler(fActivation);
-	    	fHandlerService.dispose();
 	    }
 	    fViewer.getDocument().removeDocumentListener(fDocumentListener);
 		fViewer.dispose();
