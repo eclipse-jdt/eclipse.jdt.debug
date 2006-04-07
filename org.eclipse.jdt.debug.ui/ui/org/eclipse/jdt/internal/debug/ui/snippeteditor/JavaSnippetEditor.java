@@ -234,11 +234,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
-		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), this));		
-		fSnippetStateListeners= new ArrayList(4);
 		IPreferenceStore store = new ChainedPreferenceStore(new IPreferenceStore[] {
 				PreferenceConstants.getPreferenceStore(),
 				EditorsUI.getPreferenceStore()});
+		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), store, this));		
+		fSnippetStateListeners= new ArrayList(4);
 		setPreferenceStore(store);
 		setEditorContextMenuId("#JavaSnippetEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$

@@ -13,9 +13,9 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
-import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -28,8 +28,8 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguration {
 	
-	public JavaSnippetViewerConfiguration(JavaTextTools tools, JavaSnippetEditor editor) {
-		super(tools.getColorManager(), PreferenceConstants.getPreferenceStore(), editor, null);
+	public JavaSnippetViewerConfiguration(JavaTextTools tools, IPreferenceStore preferenceStore, JavaSnippetEditor editor) {
+		super(tools.getColorManager(), preferenceStore, editor, null);
 	}
 	
 	/**
