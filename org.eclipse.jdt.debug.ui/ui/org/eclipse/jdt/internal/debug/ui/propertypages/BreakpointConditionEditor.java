@@ -50,8 +50,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 public class BreakpointConditionEditor {
 	
 	private JDISourceViewer fViewer;
-	private IContentAssistProcessor fCompletionProcessor;
-//	private boolean fIsValid;	
+	private IContentAssistProcessor fCompletionProcessor;	
 	private String fOldValue;
 	private String fErrorMessage;
 	private JavaLineBreakpointPage fPage;
@@ -87,8 +86,8 @@ public class BreakpointConditionEditor {
 			} 
 			else {
 				try {	
-					String source= null;
-					ICompilationUnit compilationUnit= type.getCompilationUnit();
+					String source = null;
+					ICompilationUnit compilationUnit = type.getCompilationUnit();
 					if (compilationUnit != null) {
 						source = compilationUnit.getSource();
 					} 
@@ -117,6 +116,7 @@ public class BreakpointConditionEditor {
 				}
 			});
 			fViewer.setEditable(true);
+			document.set(condition);
 			fViewer.setDocument(document);
 			fViewer.setUndoManager(new TextViewerUndoManager(10));
 			fViewer.getUndoManager().connect(fViewer);
@@ -132,9 +132,6 @@ public class BreakpointConditionEditor {
 			gd.heightHint = fPage.convertHeightInCharsToPixels(10);
 			gd.widthHint = fPage.convertWidthInCharsToPixels(40);
 			fViewer.getControl().setLayoutData(gd);
-			document.set(condition);
-			valueChanged();
-			
 			fHandler = new AbstractHandler() {
 				public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 					fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
@@ -194,11 +191,11 @@ public class BreakpointConditionEditor {
 	 * Handle that the value changed
 	 */
 	protected void valueChanged() {
-		refreshValidState();
 		String newValue = fViewer.getDocument().get();
 		if (!newValue.equals(fOldValue)) {
 			fOldValue = newValue;
 		}
+		refreshValidState();
 	}
 	
 	/**
