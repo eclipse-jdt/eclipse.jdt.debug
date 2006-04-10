@@ -796,7 +796,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             for (int i = 0; i < typeParameters.length; i++) {
     			ITypeParameter parameter = typeParameters[i];
     			if (parameter.getElementName().equals(elementTypeName)) {
-    				return "Ljava/lang/Object;"; //$NON-NLS-1$
+    				String[] bounds = parameter.getBounds();
+    				if (bounds.length == 0) {
+    					return "Ljava/lang/Object;"; //$NON-NLS-1$
+    				} else {
+						String bound = Signature.createTypeSignature(bounds[0], false);
+						return resolveType(type, bound);
+    				}
     			}
     		}
             // the type name cannot be resolved
