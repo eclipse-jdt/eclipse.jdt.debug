@@ -12,12 +12,15 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -292,6 +295,28 @@ public class AddVMDialog extends StatusDialog {
 		}
 		if (s.isOK()) {
 			fLibraryBlock.setHomeDirectory(file);
+			String name = fVMName.getText();
+			if (name == null || name.trim().length() == 0) {
+				// auto-generate VM name
+				try {
+					String genName = null;
+					IPath path = new Path(file.getCanonicalPath());
+					int segs = path.segmentCount();
+					if (segs == 1) {
+						genName = path.segment(0);
+					} else if (segs >= 2) {
+						String last = path.lastSegment();
+						if ("jre".equalsIgnoreCase(last)) { //$NON-NLS-1$
+							genName = path.segment(segs - 2);
+						} else {
+							genName = last;
+						}
+					}
+					if (genName != null) {
+						fVMName.setText(genName);
+					}
+				} catch (IOException e) {}
+			}
 		} else {
 			fLibraryBlock.setHomeDirectory(null);
 		}
