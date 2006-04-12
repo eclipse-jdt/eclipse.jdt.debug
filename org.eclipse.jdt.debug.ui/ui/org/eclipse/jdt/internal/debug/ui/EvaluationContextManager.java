@@ -16,20 +16,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -37,10 +34,9 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Manages the current evaluation context (stack frame) for evaluation actions.
  * In each page, the selection is tracked in each debug view (if any). When a stack
- * frame selection exists, the "debuggerActive" System property is set to true. When
- * a scrapbook becomes active, the "scrapbookActive" System property is set to true. 
+ * frame selection exists, the "debuggerActive" System property is set to true. 
  */
-public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {
+public class EvaluationContextManager implements IWindowListener, IDebugContextListener {
 
 	private static EvaluationContextManager fgManager;
 	
@@ -60,6 +56,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	private IWorkbenchWindow fActiveWindow;
 	
 	private EvaluationContextManager() {
+		DebugContextManager.getDefault().addDebugContextListener(this);
 	}
 	
 	public static void startup() {
@@ -85,14 +82,12 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
 		fActiveWindow = window;
-		windowOpened(window);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
-		window.removePageListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -105,65 +100,6 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
-		IWorkbenchPage[] pages = window.getPages();
-		for (int i = 0; i < pages.length; i++) {
-			window.addPageListener(this);
-			pageOpened(pages[i]);
-		}
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-		pageOpened(page);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-		page.removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		page.removePartListener(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
-	 */
-	public void pageOpened(IWorkbenchPage page) {
-		page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		page.addPartListener(this);
-		IWorkbenchPartReference ref = page.getActivePartReference();
-		if (ref != null) {
-			partActivated(ref);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		IWorkbenchPage page = part.getSite().getPage();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if (ss.size() == 1) {
-				Object element = ss.getFirstElement();
-				if (element instanceof IAdaptable) {
-					IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
-					boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
-					if (frame != null) {
-						// do not consider scrapbook frames
-						if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-							setContext(page, frame, instOf);
-							return;
-						}
-					}
-				}
-			}
-		}
-		// no context in the given view
-		removeContext(page);
 	}
 
 	/**
@@ -291,60 +227,30 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 		return frame;
 	}
 	
-	/**
-	 * @see IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partActivated(IWorkbenchPartReference ref) {
-		if ("org.eclipse.jdt.debug.ui.SnippetEditor".equals(ref.getId())) { //$NON-NLS-1$
-			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+	public void contextActivated(ISelection selection, IWorkbenchPart part) {
+		IWorkbenchPage page = part.getSite().getPage();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if (ss.size() == 1) {
+				Object element = ss.getFirstElement();
+				if (element instanceof IAdaptable) {
+					IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
+					boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
+					if (frame != null) {
+						// do not consider scrapbook frames
+						if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
+							setContext(page, frame, instOf);
+							return;
+						}
+					}
+				}
+			}
 		}
+		// no context in the given view
+		removeContext(page);
 	}
 
-	/**
-	 * @see IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partBroughtToTop(IWorkbenchPartReference ref) {
-	}
-
-	/**
-	 * @see IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partClosed(IWorkbenchPartReference ref) {
-		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(ref.getId())) {
-			removeContext(ref.getPage());
-		}
-	}
-
-	/**
-	 * @see IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partDeactivated(IWorkbenchPartReference ref) {
-	}
-
-	/**
-	 * @see IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */ 
-	public void partOpened(IWorkbenchPartReference ref) {
-	}
-
-	/**
-	 * @see IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-	 */	
-	public void partHidden(IWorkbenchPartReference ref) {
-	}
-
-	/**
-	 * @see IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partVisible(IWorkbenchPartReference ref) {
-	}
-
-	/**
-	 * @see IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partInputChanged(IWorkbenchPartReference ref) {
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {
 	}
 	
 }

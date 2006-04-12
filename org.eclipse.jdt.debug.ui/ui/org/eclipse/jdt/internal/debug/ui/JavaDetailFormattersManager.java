@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,8 +55,8 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 
 public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
@@ -182,12 +181,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		IStackFrame stackFrame= null;
 		IJavaDebugTarget target = (IJavaDebugTarget)javaValue.getDebugTarget().getAdapter(IJavaDebugTarget.class);
 		if (target != null) {
-			stackFrame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
-			if (stackFrame == null || !stackFrame.getDebugTarget().equals(target)) {
-				stackFrame= thread.getTopStackFrame();
-				if (stackFrame != null && !stackFrame.getDebugTarget().equals(target)) {
-					stackFrame= null;
-				}
+			stackFrame= thread.getTopStackFrame();
+			if (stackFrame != null && !stackFrame.getDebugTarget().equals(target)) {
+				stackFrame= null;
 			}
 		}
 		if (stackFrame == null) {

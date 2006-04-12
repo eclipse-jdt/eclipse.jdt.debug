@@ -103,8 +103,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -231,6 +233,43 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}		
 	}
 	
+	/**
+	 * Listens for part activation to set scrapbook active system property
+	 * for action enablement.
+	 */
+	private IPartListener2 fActivationListener = new IPartListener2() {
+
+		public void partActivated(IWorkbenchPartReference partRef) {
+			if ("org.eclipse.jdt.debug.ui.SnippetEditor".equals(partRef.getId())) { //$NON-NLS-1$
+				System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
+
+		public void partClosed(IWorkbenchPartReference partRef) {
+		}
+
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
+
+		public void partHidden(IWorkbenchPartReference partRef) {
+		}
+
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
+
+		public void partVisible(IWorkbenchPartReference partRef) {
+		}
+		
+	};
+	
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
@@ -258,6 +297,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 	}
 		
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+		site.getWorkbenchWindow().getPartService().addPartListener(fActivationListener);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
@@ -266,6 +310,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		fPresentation.dispose();
 		fSnippetStateListeners= null;
 		((JDISourceViewer) getSourceViewer()).dispose();
+		getSite().getWorkbenchWindow().getPartService().removePartListener(fActivationListener);
 		super.dispose();
 	}
 	
