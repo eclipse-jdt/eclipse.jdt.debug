@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -40,6 +41,10 @@ public class ExcludeExceptionLocationAction extends ObjectActionDelegate {
 				IBreakpoint[] breakpoints= thread.getBreakpoints();
 				IJavaStackFrame frame= (IJavaStackFrame)thread.getTopStackFrame();
 				String newFilter= frame.getDeclaringTypeName();
+				int index = newFilter.indexOf(Signature.C_GENERIC_START);
+				if (index > 0) {
+					newFilter = newFilter.substring(0, index);
+				}
 				for (int i = 0; i < breakpoints.length; i++) {
 					IBreakpoint breakpoint = breakpoints[i];
 					if (breakpoint instanceof IJavaExceptionBreakpoint) {
