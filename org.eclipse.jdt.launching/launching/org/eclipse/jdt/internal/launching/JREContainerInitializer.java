@@ -71,22 +71,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment environment = manager.getEnvironment(id);
 				if (environment != null) {
-					vm = environment.getDefaultVM();
-					if (vm == null) {
-						IVMInstall[] installs = environment.getCompatibleVMs();
-						// take the first strictly compatible vm if there is no default
-						for (int i = 0; i < installs.length; i++) {
-							IVMInstall install = installs[i];
-							if (environment.isStrictlyCompatible(install)) {
-								vm = install;
-								break;
-							}
-						}
-						// use the first vm failing that
-						if (vm == null && installs.length > 0) {
-							vm = installs[0];
-						}
-					}
+					vm = resolveVM(environment);
 				}
 			} else {
 				String vmTypeId = getVMTypeId(containerPath);
@@ -104,13 +89,41 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	}
 	
 	/**
+	 * Returns the VM install bound to the given execution environment
+	 * or <code>null</code>.
+	 * 
+	 * @param environment
+	 * @return vm install or <code>null</code>
+	 * @since 3.2
+	 */
+	public static IVMInstall resolveVM(IExecutionEnvironment environment) {
+		IVMInstall vm = environment.getDefaultVM();
+		if (vm == null) {
+			IVMInstall[] installs = environment.getCompatibleVMs();
+			// take the first strictly compatible vm if there is no default
+			for (int i = 0; i < installs.length; i++) {
+				IVMInstall install = installs[i];
+				if (environment.isStrictlyCompatible(install)) {
+					vm = install;
+					break;
+				}
+			}
+			// use the first vm failing that
+			if (vm == null && installs.length > 0) {
+				vm = installs[0];
+			}
+		}
+		return vm;
+	}
+	
+	/**
 	 * Returns the segment from the path containing the execution environment id.
 	 * 
 	 * @param path container path
 	 * @return ee id
 	 */
 	public static String getExecutionEnvironmentId(IPath path) {
-		return path.removeFirstSegments(2).toString();
+		return path.removeFirstSegments(4).toString();
 	}
 	
 	/**
@@ -120,7 +133,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @return whether the given path identifies a vm by exeuction environment
 	 */
 	public static boolean isExecutionEnvironment(IPath path) {
-		return JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(1));
+		return JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(3));
 	}
 	
 	/**
@@ -138,7 +151,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @return the VM name from the given container ID path
 	 */
 	public static String getVMName(IPath path) {
-		return path.removeFirstSegments(2).toString();
+		return path.segment(2);
 	}	
 	
 	/**

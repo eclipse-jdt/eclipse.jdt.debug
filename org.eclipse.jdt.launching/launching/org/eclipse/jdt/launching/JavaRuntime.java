@@ -1752,7 +1752,11 @@ public final class JavaRuntime {
 	 * @since 3.2
 	 */
 	public static IPath newJREContainerPath(IExecutionEnvironment environment) {
-		IPath path = newDefaultJREContainerPath();
+		IVMInstall vm = JREContainerInitializer.resolveVM(environment);
+		if (vm == null) {
+			vm = getDefaultVMInstall();
+		}
+		IPath path = newJREContainerPath(vm); 
 		path = path.append(EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 		path = path.append(environment.getId());
 		return path;
