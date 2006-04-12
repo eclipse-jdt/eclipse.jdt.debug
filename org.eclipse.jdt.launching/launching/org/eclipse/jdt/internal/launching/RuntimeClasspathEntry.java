@@ -596,9 +596,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 */
 	protected void updateClasspathEntry(IPath path, IPath sourcePath, IPath rootPath) {
 		IClasspathEntry entry = null;
+		IClasspathEntry original = getClasspathEntry();
 		switch (getType()) {
 			case ARCHIVE:
-				entry = JavaCore.newLibraryEntry(path, sourcePath, rootPath);
+				entry = JavaCore.newLibraryEntry(path, sourcePath, rootPath, original.getAccessRules(), original.getExtraAttributes(), original.isExported());
 				break;
 			case VARIABLE:
 				entry = JavaCore.newVariableEntry(path, sourcePath, rootPath);

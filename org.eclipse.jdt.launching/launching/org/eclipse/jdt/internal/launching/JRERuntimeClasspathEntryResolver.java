@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,8 +21,11 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -32,6 +36,8 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * Resolves for JRELIB_VARIABLE and JRE_CONTAINER
  */
 public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver2 {
+	
+	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
 
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
@@ -95,14 +101,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 						String dir = libraryPath.toFile().getParent();
 						// exclude extension directory entries
 						if (!extensionDirsSet.contains(dir)) {
-							IRuntimeClasspathEntry resolved = JavaRuntime.newArchiveRuntimeClasspathEntry(libraryPath);
-							resolved.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-							IPath sourcePath = location.getSystemLibrarySourcePath();
-							if (sourcePath != null && !sourcePath.isEmpty()) {
-								resolved.setSourceAttachmentPath(sourcePath);
-								resolved.setSourceAttachmentRootPath(location.getPackageRootPath());
-							}
-							resolvedEntries.add(resolved);
+							resolvedEntries.add(resolveLibraryLocation(vm, location, kind));
 						}
 					}
 					return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
@@ -122,14 +121,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		for (int i = 0; i < libs.length; i++) {
 			IPath systemLibraryPath = libs[i].getSystemLibraryPath();
 			if (systemLibraryPath.toFile().exists()) {
-				IRuntimeClasspathEntry resolved = JavaRuntime.newArchiveRuntimeClasspathEntry(systemLibraryPath);
-				IPath path = libs[i].getSystemLibrarySourcePath();
-				if (path != null && !path.isEmpty()) {
-					resolved.setSourceAttachmentPath(path);
-					resolved.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-				}
-				resolved.setClasspathProperty(kind);
-				resolvedEntries.add(resolved);
+				resolvedEntries.add(resolveLibraryLocation(vm, libs[i], kind));
 			}
 		}
 		return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
@@ -198,6 +190,38 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 				break;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns a runtime classpath entry for the given library in the specified VM.
+	 * 
+	 * @param vm
+	 * @param location
+	 * @param kind
+	 * @return runtime classpath entry
+	 * @since 3.2
+	 */
+	private IRuntimeClasspathEntry resolveLibraryLocation(IVMInstall vm, LibraryLocation location, int kind) {
+		IPath libraryPath = location.getSystemLibraryPath();
+		URL javadocLocation = location.getJavadocLocation();
+		if (javadocLocation == null) {
+			javadocLocation = vm.getJavadocLocation();
+		}							
+		IClasspathAttribute[] attributes = null;
+		if (javadocLocation == null) {
+			attributes = new IClasspathAttribute[0];
+		} else {
+			attributes = new IClasspathAttribute[]{JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadocLocation.toExternalForm())};
+		}
+		IClasspathEntry cpe = JavaCore.newLibraryEntry(libraryPath, location.getSystemLibraryPath(), location.getPackageRootPath(), EMPTY_RULES, attributes, false);
+		IRuntimeClasspathEntry resolved = new RuntimeClasspathEntry(cpe);
+		resolved.setClasspathProperty(kind);
+		IPath sourcePath = location.getSystemLibrarySourcePath();
+		if (sourcePath != null && !sourcePath.isEmpty()) {
+			resolved.setSourceAttachmentPath(sourcePath);
+			resolved.setSourceAttachmentRootPath(location.getPackageRootPath());
+		}
+		return resolved;
 	}
 
 }
