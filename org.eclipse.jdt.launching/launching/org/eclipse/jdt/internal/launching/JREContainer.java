@@ -96,7 +96,12 @@ public class JREContainer implements IClasspathContainer {
 	 * @return classpath entries
 	 */
 	private static IClasspathEntry[] computeClasspathEntries(IVMInstall vm) {
-		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
+		LibraryLocation[] libs = vm.getLibraryLocations();
+		boolean overrideJavaDoc = false;
+		if (libs == null) {
+			libs = JavaRuntime.getLibraryLocations(vm);
+			overrideJavaDoc = true;
+		}
 		List entries = new ArrayList(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			if (!libs[i].getSystemLibraryPath().isEmpty()) {
@@ -109,7 +114,7 @@ public class JREContainer implements IClasspathContainer {
 					rootPath = null;
 				}
 				URL javadocLocation = libs[i].getJavadocLocation();
-				if (javadocLocation == null) {
+				if (overrideJavaDoc && javadocLocation == null) {
 					javadocLocation = vm.getJavadocLocation();
 				}
 				IClasspathAttribute[] attributes = null;

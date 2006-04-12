@@ -81,6 +81,17 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 * Resolves libray locations for the given VM install
 	 */
 	protected IRuntimeClasspathEntry[] resolveLibraryLocations(IVMInstall vm, int kind) {
+		LibraryLocation[] libs = vm.getLibraryLocations();
+		LibraryLocation[] defaultLibs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
+		boolean overrideJavadoc = false;
+		if (libs == null) {
+			// default system libs
+			libs = defaultLibs;
+			overrideJavadoc = true;
+		} else if (!isSameArchives(libs, defaultLibs)) {
+			// determine if bootpath should be explicit
+			kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+		}		
 		if (kind == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
 			File vmInstallLocation= vm.getInstallLocation();
 			if (vmInstallLocation != null) {
@@ -93,7 +104,6 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 					for (int i = 0; i < extensionDirsArray.length; i++) {
 						extensionDirsSet.add(extensionDirsArray[i]);
 					}
-					LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
 					List resolvedEntries = new ArrayList(libs.length);
 					for (int i = 0; i < libs.length; i++) {
 						LibraryLocation location = libs[i];
@@ -101,27 +111,18 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 						String dir = libraryPath.toFile().getParent();
 						// exclude extension directory entries
 						if (!extensionDirsSet.contains(dir)) {
-							resolvedEntries.add(resolveLibraryLocation(vm, location, kind));
+							resolvedEntries.add(resolveLibraryLocation(vm, location, kind, overrideJavadoc));
 						}
 					}
 					return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
 				}
 			}
 		}
-		LibraryLocation[] libs = vm.getLibraryLocations();
-		LibraryLocation[] defaultLibs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
-		if (libs == null) {
-			// default system libs
-			libs = defaultLibs;
-		} else if (!isSameArchives(libs, defaultLibs)) {
-			// determine if bootpath should be explicit
-			kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-		}
 		List resolvedEntries = new ArrayList(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			IPath systemLibraryPath = libs[i].getSystemLibraryPath();
 			if (systemLibraryPath.toFile().exists()) {
-				resolvedEntries.add(resolveLibraryLocation(vm, libs[i], kind));
+				resolvedEntries.add(resolveLibraryLocation(vm, libs[i], kind, overrideJavadoc));
 			}
 		}
 		return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
@@ -201,10 +202,10 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 * @return runtime classpath entry
 	 * @since 3.2
 	 */
-	private IRuntimeClasspathEntry resolveLibraryLocation(IVMInstall vm, LibraryLocation location, int kind) {
+	private IRuntimeClasspathEntry resolveLibraryLocation(IVMInstall vm, LibraryLocation location, int kind, boolean overrideJavaDoc) {
 		IPath libraryPath = location.getSystemLibraryPath();
 		URL javadocLocation = location.getJavadocLocation();
-		if (javadocLocation == null) {
+		if (overrideJavaDoc && javadocLocation == null) {
 			javadocLocation = vm.getJavadocLocation();
 		}							
 		IClasspathAttribute[] attributes = null;
