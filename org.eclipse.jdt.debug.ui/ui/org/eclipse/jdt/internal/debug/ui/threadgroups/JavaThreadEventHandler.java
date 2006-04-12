@@ -82,7 +82,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler {
 						if (event.getKind() == DebugEvent.SUSPEND) {
 							try {
 								IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
-								if (frame.getDeclaringTypeName().startsWith("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain")) {
+								if (frame.getDeclaringTypeName().startsWith("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain")) { //$NON-NLS-1$
 									return false;
 								}
 							} catch (DebugException e) {
