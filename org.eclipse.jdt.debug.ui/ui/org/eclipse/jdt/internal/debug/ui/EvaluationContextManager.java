@@ -228,26 +228,28 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	}
 	
 	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		IWorkbenchPage page = part.getSite().getPage();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if (ss.size() == 1) {
-				Object element = ss.getFirstElement();
-				if (element instanceof IAdaptable) {
-					IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
-					boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
-					if (frame != null) {
-						// do not consider scrapbook frames
-						if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-							setContext(page, frame, instOf);
-							return;
+		if (part != null) {
+			IWorkbenchPage page = part.getSite().getPage();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				if (ss.size() == 1) {
+					Object element = ss.getFirstElement();
+					if (element instanceof IAdaptable) {
+						IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
+						boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
+						if (frame != null) {
+							// do not consider scrapbook frames
+							if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
+								setContext(page, frame, instOf);
+								return;
+							}
 						}
 					}
 				}
 			}
+			// no context in the given view
+			removeContext(page);
 		}
-		// no context in the given view
-		removeContext(page);
 	}
 
 	public void contextChanged(ISelection selection, IWorkbenchPart part) {
