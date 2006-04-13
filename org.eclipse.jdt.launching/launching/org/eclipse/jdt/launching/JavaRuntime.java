@@ -68,6 +68,7 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
@@ -1753,12 +1754,13 @@ public final class JavaRuntime {
 	 */
 	public static IPath newJREContainerPath(IExecutionEnvironment environment) {
 		IVMInstall vm = JREContainerInitializer.resolveVM(environment);
-		if (vm == null) {
-			vm = getDefaultVMInstall();
+		String typeId = StandardVMType.ID_STANDARD_VM_TYPE;
+		if (vm != null) {
+			typeId = vm.getVMInstallType().getId();
 		}
-		IPath path = newJREContainerPath(vm); 
-		path = path.append(EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
-		path = path.append(environment.getId());
+		IPath path = newDefaultJREContainerPath(); 
+		path = path.append(typeId);
+		path = path.append(JREContainerInitializer.encodeEnvironmentId(environment.getId()));
 		return path;
 	}	
 	

@@ -43,6 +43,7 @@ import org.eclipse.osgi.service.environment.Constants;
  */
 public class StandardVMType extends AbstractVMInstallType {
 	
+	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
 	/**
 	 * The root path for the attached src
 	 */
