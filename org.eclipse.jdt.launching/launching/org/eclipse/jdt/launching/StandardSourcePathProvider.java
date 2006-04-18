@@ -109,7 +109,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
             if (location != null) {
                 JarFile jar = null;
                 try {
-                    jar = new JarFile(location);
+                    jar = new JarFile(location, false);
                     Manifest manifest = jar.getManifest();
                     if (manifest != null) {
                         Attributes mainAttributes = manifest.getMainAttributes();
