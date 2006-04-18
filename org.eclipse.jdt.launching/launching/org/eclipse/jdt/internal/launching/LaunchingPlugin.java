@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -38,8 +37,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -74,6 +76,8 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
@@ -83,6 +87,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
@@ -99,7 +105,14 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Identifier for 'runtimeClasspathEntries' extension point
 	 */
-	public static final String ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES = "runtimeClasspathEntries"; //$NON-NLS-1$	
+	public static final String ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES = "runtimeClasspathEntries"; //$NON-NLS-1$
+	
+	/**
+	 * Marker type for JRE container problems.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String ID_JRE_CONTAINER_MARKER = ID_PLUGIN + ".jreContainerMarker"; //$NON-NLS-1$
 	
 	private static LaunchingPlugin fgLaunchingPlugin;
 	
@@ -436,7 +449,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		getPluginPreferences().addPropertyChangeListener(this);
 
 		JavaRuntime.addVMInstallChangedListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_BUILD);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -705,11 +718,41 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 
 	/**
 	 * Clear the archive cache when a project is about to be deleted.
+	 * Warn when a buildpath changes and references an execution environment
+	 * that does not have a perfect match.
 	 * 
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		ArchiveSourceLocation.closeArchives();
+		if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
+			IResourceDelta delta = event.getDelta();
+			IResourceDelta[] projectDeltas = delta.getAffectedChildren();
+			for (int i = 0, length = projectDeltas.length; i < length; i++) {
+				IResourceDelta projectDelta = projectDeltas[i];
+				IResourceDelta classpathDelta = projectDelta.findMember(new Path(".classpath")); //$NON-NLS-1$
+				if (classpathDelta != null) {
+					IJavaProject project = (IJavaProject) JavaCore.create(projectDelta.getResource());
+					if (project != null) {
+						try {
+							IClasspathEntry[] rawClasspath = project.getRawClasspath();
+							for (int j = 0; j < rawClasspath.length; j++) {
+								IClasspathEntry entry = rawClasspath[j];
+								if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+									IPath path = entry.getPath();
+									if (JavaRuntime.JRE_CONTAINER.equals(path.segment(0))) {
+										IVMInstall vm = JREContainerInitializer.resolveVM(path);
+										validateEnvironment(path, project, vm);
+									}
+								}
+							}
+						} catch (CoreException e) {
+							LaunchingPlugin.log(e);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public void setIgnoreVMDefPropertyChangeEvents(boolean ignore) {
@@ -1007,6 +1050,57 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	protected static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, message, exception);
 		throw new CoreException(status);
+	}	
+	
+	private void validateEnvironment(IPath containerPath, final IJavaProject project, IVMInstall vm) {
+		try {
+			project.getProject().deleteMarkers(ID_JRE_CONTAINER_MARKER, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			LaunchingPlugin.log(e);
+		}
+		if (JREContainerInitializer.isExecutionEnvironment(containerPath)) {
+			String id = JREContainerInitializer.getExecutionEnvironmentId(containerPath);
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			final IExecutionEnvironment environment = manager.getEnvironment(id);
+			if (environment != null) {
+				if (!environment.isStrictlyCompatible(vm)) {
+					// warn that VM does not match EE
+					// first determine if there is a strictly compatible JRE available
+					IVMInstall[] compatibleVMs = environment.getCompatibleVMs();
+					int exact = 0;
+					for (int i = 0; i < compatibleVMs.length; i++) {
+						if (environment.isStrictlyCompatible(compatibleVMs[i])) {
+							exact++;
+						}
+					}
+					String message = null;
+					if (exact == 0) {
+						message = MessageFormat.format(
+							LaunchingMessages.LaunchingPlugin_35,
+							new String[]{environment.getId()});
+					} else {
+						message = MessageFormat.format(
+								LaunchingMessages.LaunchingPlugin_36,
+								new String[]{environment.getId()});
+					}
+					try {
+						IMarker marker = project.getProject().createMarker(ID_JRE_CONTAINER_MARKER);
+						marker.setAttributes(
+							new String[] { 
+									IMarker.MESSAGE, 
+									IMarker.SEVERITY, 
+									IMarker.LOCATION								},
+								new Object[] {
+									message,
+									new Integer(IMarker.SEVERITY_WARNING), 
+									LaunchingMessages.LaunchingPlugin_37
+								});
+					} catch (CoreException e) {
+						return;
+					}
+				}
+			}
+		}
 	}	
 }
 

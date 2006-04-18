@@ -73,6 +73,12 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRuntime_32;
 	public static String JavaRuntime_0;
 
+	public static String LaunchingPlugin_35;
+
+	public static String LaunchingPlugin_36;
+
+	public static String LaunchingPlugin_37;
+
 	public static String LaunchingPlugin_Exception_occurred_reading_vmConnectors_extensions_1;
 	public static String LaunchingPlugin_32;
 	public static String LaunchingPlugin_33;

@@ -2689,6 +2689,12 @@ M4 = Platform-specific fourth key
           name="java_extensions_regex"
           resolver="org.eclipse.jdt.internal.debug.ui.console.JavaLikeExtensionsResolver"
           supportsArgument="false"/>
+ </extension>
+ <extension
+       point="org.eclipse.ui.ide.markerSupport">
+    <markerAttributeGrouping
+          defaultGroupingEntry="org.eclipse.jdt.ui.category.buildpath"
+          markerType="org.eclipse.jdt.launching.jreContainerMarker"/>
  </extension>	
     
 </plugin>
