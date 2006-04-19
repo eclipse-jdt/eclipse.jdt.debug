@@ -64,15 +64,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * The list of locations in which to look for the java executable in candidate
 	 * VM install locations, relative to the VM install location.
 	 */
-	private static final String[] fgCandidateJavaLocations = {
-							"bin" + fgSeparator + "javaw",                                //$NON-NLS-2$ //$NON-NLS-1$
-							"bin" + fgSeparator + "javaw.exe",                            //$NON-NLS-2$ //$NON-NLS-1$
-							"jre" + fgSeparator + "bin" + fgSeparator + "javaw",          //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-							"jre" + fgSeparator + "bin" + fgSeparator + "javaw.exe",      //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$									
-							"bin" + fgSeparator + "java",                                 //$NON-NLS-2$ //$NON-NLS-1$
-							"bin" + fgSeparator + "java.exe",                             //$NON-NLS-2$ //$NON-NLS-1$
-							"jre" + fgSeparator + "bin" + fgSeparator + "java",           //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-							"jre" + fgSeparator + "bin" + fgSeparator + "java.exe"};      //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$							
+	private static final String[] fgCandidateJavaFiles = {"javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+	private static final String[] fgCandidateJavaLocations = {"bin" + fgSeparator, "jre" + fgSeparator + "bin" + fgSeparator}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	/**
 	 * Starting in the specified VM install location, attempt to find the 'java' executable
@@ -80,13 +73,14 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * <code>null</code>.
 	 */
 	public static File findJavaExecutable(File vmInstallLocation) {
-		
 		// Try each candidate in order.  The first one found wins.  Thus, the order
-		// of fgCandidateJavaLocations is significant.
-		for (int i = 0; i < fgCandidateJavaLocations.length; i++) {
-			File javaFile = new File(vmInstallLocation, fgCandidateJavaLocations[i]);
-			if (javaFile.isFile()) {
-				return javaFile;
+		// of fgCandidateJavaLocations and fgCandidateJavaFiles is significant.
+		for (int i = 0; i < fgCandidateJavaFiles.length; i++) {
+			for (int j = 0; j < fgCandidateJavaLocations.length; j++) {
+				File javaFile = new File(vmInstallLocation, fgCandidateJavaLocations[j] + fgCandidateJavaFiles[i]);
+				if (javaFile.isFile()) {
+					return javaFile;
+				}				
 			}
 		}		
 		return null;							
@@ -238,8 +232,32 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 			parent = parent.getParentFile();
 		}
+		// if we didn't find any of the normal source files, look for J9 source
+		IPath result = checkForJ9LibrarySource(libLocation);
+		if (result != null)
+			return result;
 		setDefaultRootPath(""); //$NON-NLS-1$
 		return Path.EMPTY; 
+	}
+
+	// J9 has a known/fixed structure for its libs and source locations.  Here just
+	// look for the source associated with each lib.
+	private IPath checkForJ9LibrarySource(File libLocation) {
+		File parent= libLocation.getParentFile();
+		String name = libLocation.getName();
+		if (name.equalsIgnoreCase("classes.zip")) { //$NON-NLS-1$
+			File source = new File(parent, "source/source.zip"); //$NON-NLS-1$
+			return source.isFile() ? new Path(source.getPath()) : Path.EMPTY;
+		}
+		if (name.equalsIgnoreCase("locale.zip")) { //$NON-NLS-1$
+			File source = new File(parent, "source/locale-src.zip"); //$NON-NLS-1$
+			return source.isFile() ? new Path(source.getPath()) : Path.EMPTY;
+		}
+		if (name.equalsIgnoreCase("charconv.zip")) { //$NON-NLS-1$
+			File source = new File(parent, "charconv-src.zip"); //$NON-NLS-1$
+			return source.isFile() ? new Path(source.getPath()) : Path.EMPTY;
+		}
+		return null;
 	}
 
 	protected IPath getDefaultPackageRootPath() {
