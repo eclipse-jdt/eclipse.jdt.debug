@@ -733,7 +733,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				IResourceDelta classpathDelta = projectDelta.findMember(new Path(".classpath")); //$NON-NLS-1$
 				if (classpathDelta != null || (projectDelta.getFlags() & IResourceDelta.DESCRIPTION) > 0) {
 					IJavaProject project = (IJavaProject) JavaCore.create(projectDelta.getResource());
-					if (project != null) {
+					if (project != null && project.exists()) {
 						try {
 							IClasspathEntry[] rawClasspath = project.getRawClasspath();
 							for (int j = 0; j < rawClasspath.length; j++) {
