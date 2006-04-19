@@ -302,15 +302,26 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			ObjectReference ex = ((ExceptionEvent)event).exception(); 
 			fLastTarget = target;
 			fLastException = ex;
-			String name = ex.type().name();
+			String name = null;
 			try {
+				name = ex.type().name();
 				if(!name.equals(getTypeName())) {
 					if(!isSuspendOnSubclasses() & isSubclass((ClassType) ex.type(), getTypeName())) {
 						return true;
 					}
 				}
-			} 
-			catch (CoreException e) {JDIDebugPlugin.log(e);}
+			} catch (VMDisconnectedException e) {
+				return true;
+			} catch (CoreException e) {
+				JDIDebugPlugin.log(e);
+			} catch (RuntimeException e) {
+				try {
+					target.targetRequestFailed(e.getMessage(), e);
+				} catch (DebugException de) {
+					JDIDebugPlugin.log(e);
+					return false;
+				}				
+			}
 			setExceptionName(name);
 			if (getExclusionClassFilters().length >= 1 
 				|| getInclusionClassFilters().length >= 1
@@ -348,7 +359,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * with the given name
 	 * @since 3.2
 	 */
-	private boolean isSubclass(ClassType type, String typeName) throws CoreException {
+	private boolean isSubclass(ClassType type, String typeName) {
 		type = type.superclass();
 		while (type != null) {
 			if (type.name().equals(typeName)) {
