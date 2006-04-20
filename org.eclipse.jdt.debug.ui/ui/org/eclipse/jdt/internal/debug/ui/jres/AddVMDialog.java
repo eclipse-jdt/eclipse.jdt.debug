@@ -410,7 +410,12 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	protected void setFieldValuesToVM(IVMInstall vm) {
-		vm.setInstallLocation(new File(fJRERoot.getText()).getAbsoluteFile());
+		File dir = new File(fJRERoot.getText());
+		try {
+			vm.setInstallLocation(dir.getCanonicalFile());
+		} catch (IOException e) {
+			vm.setInstallLocation(dir.getAbsoluteFile());
+		}
 		vm.setName(fVMName.getText());
 		vm.setJavadocLocation(getURL());
 		
