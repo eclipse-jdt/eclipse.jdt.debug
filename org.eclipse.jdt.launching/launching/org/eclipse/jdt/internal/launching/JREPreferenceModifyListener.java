@@ -51,7 +51,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					Set ids = new HashSet();
 					if (pref.length() > 0) {
 						try {
-							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes()));
+							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes("UTF8"))); //$NON-NLS-1$
 							List validVMList = container.getValidVMList();
 							Iterator iterator = validVMList.iterator();
 							while (iterator.hasNext()) {
@@ -68,8 +68,8 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 						}
 					}
 					// merge valid VMs with existing VMs
-					ByteArrayInputStream inputStream = new ByteArrayInputStream(jresXML.getBytes());
 					try {
+						ByteArrayInputStream inputStream = new ByteArrayInputStream(jresXML.getBytes("UTF8")); //$NON-NLS-1$
 						VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(inputStream);
 						List validVMList = container.getValidVMList();
 						Iterator iterator = validVMList.iterator();

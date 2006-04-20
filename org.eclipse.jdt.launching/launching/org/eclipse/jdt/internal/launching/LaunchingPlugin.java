@@ -653,10 +653,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * @return VMDefinitionsContainer
 	 */
 	private VMDefinitionsContainer getVMDefinitions(String xml) {
-		byte[] bytes = xml.getBytes();
-		if (bytes.length > 0) {
-			ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+		if (xml.length() > 0) {
 			try {
+				ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
 				return VMDefinitionsContainer.parseXMLIntoContainer(stream);
 			} catch (IOException e) {
 				LaunchingPlugin.log(e);
