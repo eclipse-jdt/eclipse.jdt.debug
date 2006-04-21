@@ -527,7 +527,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	/**
 	 * Listener use to manage the result of the formatter.
-	 * Utilise the 'standart' pretty printer methods to return the result.
+	 * Utilise the 'standard' pretty printer methods to return the result.
 	 */
 	static private class EvaluationListener implements IEvaluationListener {
 		
@@ -543,6 +543,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		 * used to evaluate 'toString()' for displaying details of values.
 		 */
 		private static final String fgToStringSignature= "()Ljava/lang/String;"; //$NON-NLS-1$
+		
+		/**
+		 * Signature of a string object
+		 */
+		private static final String STRING_SIGNATURE = "Ljava/lang/String;"; //$NON-NLS-1$
 		
 		private IJavaValue fValue;
 		
@@ -585,27 +590,44 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		
 		public void valueToString(final IJavaValue objectValue) throws DebugException {
+			String nonEvalResult = null;
+			StringBuffer result= null;
+			if (objectValue.getSignature() == null) {
+				// no need to spawn eval for a null fValue
+				nonEvalResult = DebugUIMessages.JavaDetailFormattersManager_null; 
+			} else if (objectValue instanceof IJavaPrimitiveValue) {
+				// no need to spawn eval for a primitive value
+				result = new StringBuffer();
+				appendJDIPrimitiveValueString(result, objectValue);
+			} else if (fThread == null || !fThread.isSuspended()) {
+				// no thread available
+				result = new StringBuffer();
+				result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads); 
+				appendJDIValueString(result, objectValue);
+			} else if (objectValue instanceof IJavaObject && STRING_SIGNATURE.equals(objectValue.getSignature())) {
+				// no need to spawn eval for a java.lang.String
+				result = new StringBuffer();
+				appendJDIValueString(result, objectValue);
+			}
+			if (result != null) {
+				nonEvalResult = result.toString();
+			}
+			if (nonEvalResult != null) {
+				fListener.detailComputed(fValue, nonEvalResult);
+				return;
+			}
+			
 			IEvaluationRunnable eval = new IEvaluationRunnable() {
 				public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
-					StringBuffer result= new StringBuffer();
-					if (objectValue.getSignature() == null) {
-						// no need to spawn a thread for a null fValue
-						result.append(DebugUIMessages.JavaDetailFormattersManager_null); 
-					} else if (objectValue instanceof IJavaPrimitiveValue) {
-						// no need to spawn a thread for a primitive value
-						appendJDIPrimitiveValueString(result, objectValue);
-					} else if (fThread == null || !fThread.isSuspended()) {
-						// no thread available
-						result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads); 
-						appendJDIValueString(result, objectValue);
-					} else if (objectValue instanceof IJavaArray) {
-						appendArrayDetail(result, (IJavaArray) objectValue);
+					StringBuffer buf= new StringBuffer();
+					if (objectValue instanceof IJavaArray) {
+						appendArrayDetail(buf, (IJavaArray) objectValue);
 					} else if (objectValue instanceof IJavaObject) {
-						appendObjectDetail(result, (IJavaObject) objectValue);
+						appendObjectDetail(buf, (IJavaObject) objectValue);
 					} else {
-						appendJDIValueString(result, objectValue);
+						appendJDIValueString(buf, objectValue);
 					}
-					fListener.detailComputed(fValue, result.toString());
+					fListener.detailComputed(fValue, buf.toString());
 				}
 			};
 			fThread.runEvaluation(eval, null, DebugEvent.EVALUATION_IMPLICIT, false);
@@ -675,11 +697,16 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		
 		
 		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
-			IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
-			if (toStringValue == null) {
-				result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_); 
+			// optimize if the result is a string - no need to send toString to a string
+			if (STRING_SIGNATURE.equals(objectValue.getSignature())) {
+				appendJDIValueString(result, objectValue);
 			} else {
-				appendJDIValueString(result, toStringValue);
+				IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
+				if (toStringValue == null) {
+					result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_); 
+				} else {
+					appendJDIValueString(result, toStringValue);
+				}
 			}
 		}
 		
