@@ -53,7 +53,9 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	public JDIFieldVariable(JDIDebugTarget target, Field field, ObjectReference objectRef) {
 		super(target);
 		fField= field;
-		fObject= objectRef;
+		if (!field.isStatic()) {
+			fObject= objectRef;
+		}
 		fType= (ReferenceType)objectRef.type();
 	}
 
