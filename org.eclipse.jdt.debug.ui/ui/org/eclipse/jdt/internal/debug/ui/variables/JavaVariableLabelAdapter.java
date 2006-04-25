@@ -37,7 +37,7 @@ public class JavaVariableLabelAdapter extends VariableLabelAdapter {
 	 */
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		if (value instanceof IJavaValue) {
-			return fLabelProvider.getFormattedValueText((IJavaValue) value);
+			return escapeSpecialChars(fLabelProvider.getFormattedValueText((IJavaValue) value));
 		}
 		return super.getValueText(variable, value, context);
 	}
