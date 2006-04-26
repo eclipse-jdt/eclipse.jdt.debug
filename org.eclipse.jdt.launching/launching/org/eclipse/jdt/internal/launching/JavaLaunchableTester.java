@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -36,10 +37,16 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IOpenable;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.compiler.IScanner;
+import org.eclipse.jdt.core.compiler.ITerminalSymbols;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 /**
  * Generalized property tester class to determine enablement of context launching menu artifacts
@@ -57,6 +64,16 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * name for the "has method" property
 	 */
 	private static final String PROPERTY_HAS_METHOD = "hasMethod"; //$NON-NLS-1$	
+	
+	/**
+	 * name for the "has method with annotation" property
+	 */
+	private static final String PROPERTY_HAS_METHOD_WITH_ANNOTATION = "hasMethodWithAnnotation"; //$NON-NLS-1$	
+
+	/**
+	 * name for the "has type with annotation" property
+	 */
+	private static final String PROPERTY_HAS_TYPE_WITH_ANNOTATION = "hasTypeWithAnnotation"; //$NON-NLS-1$	
 	
 	/**
 	 * name for the "extends class" property
@@ -87,6 +104,10 @@ public class JavaLaunchableTester extends PropertyTester {
      * Map of modifier text to corresponding flag (Integer)
      */
     private static Map fgModifiers = new HashMap();
+    
+    private static final int FLAGS_MASK= Flags.AccPublic | Flags.AccProtected | Flags.AccPrivate | Flags.AccStatic
+    	| Flags.AccFinal | Flags.AccSynchronized | Flags.AccAbstract | Flags.AccNative;
+    
     
     static {
         fgModifiers.put("public",       new Integer(Flags.AccPublic)); //$NON-NLS-1$
@@ -198,8 +219,164 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		catch (JavaModelException e) {}
 		return false;
+	}
+	
+	/**
+	 * Determines is the java element contains a type with a specific annotation.
+     * <p>
+     * The syntax for the property tester is of the form: qualified or unqualified annotation name
+     * <li>qualified or unqualified annotation name, required. For example,
+     *  <code>org.junit.JUnit</code>.</li>
+     * </ol>
+	 * @param element the element to check for the method 
+	 * @param annotationName the qualified or unqualified name of the annotation to look for
+	 * @return true if the type is found in the element, false otherwise
+	 */
+	private boolean hasTypeWithAnnotation(IJavaElement element, String annotationType) {
+		try {			
+			IType type= getType(element);
+			if (type == null || !type.exists()) {
+				return false;
+			}
+
+			IBuffer buffer= null;
+			IOpenable openable= type.getOpenable();
+			if (openable instanceof ICompilationUnit) {
+				buffer= ((ICompilationUnit) openable).getBuffer();
+			} else if (openable instanceof IClassFile) {
+				buffer= ((IClassFile) openable).getBuffer();
+			}
+			if (buffer == null) {
+				return false;
+			}
+			
+			ISourceRange sourceRange= type.getSourceRange();
+			ISourceRange nameRange= type.getNameRange();
+			if (sourceRange != null && nameRange != null) {
+				IScanner scanner= ToolFactory.createScanner(false, false, true, false);
+				scanner.setSource(buffer.getCharacters());
+				scanner.resetTo(sourceRange.getOffset(), nameRange.getOffset());
+				if (findAnnotation(scanner, annotationType)) {
+					return true;
+				}
+			}
+		} catch (JavaModelException e) {
+		} catch (InvalidInputException e) {
+		}
+		return false;
+	}	
+
+	
+	/**
+	 * Determines is the java element contains a method with a specific annotation.
+     * <p>
+     * The syntax for the property tester is of the form: qualified or unqualified annotation name, modifiers
+     * <li>qualified or unqualified annotation name, required. For example,
+     *  <code>org.junit.JUnit</code>.</li>
+     * <li>modifiers - optional space seperated list of modifiers, for
+     *  example, <code>public static</code>.</li>
+     * </ol>
+	 * @param element the element to check for the method 
+	 * @param annotationName the qualified or unqualified name of the annotation to look for
+	 * @return true if the method is found in the element, false otherwise
+	 */
+	private boolean hasMethodWithAnnotation(IJavaElement element, Object[] args) {
+		try {
+			String annotationType= (String) args[0];
+            int flags = 0;
+			if (args.length > 1) {
+				String[] modifiers = ((String) args[1]).split(" "); //$NON-NLS-1$
+                for (int j = 0; j < modifiers.length; j++) {
+                    String modifier = modifiers[j];
+                    Integer flag = (Integer) fgModifiers.get(modifier);
+                    if (flag != null) {
+                        flags = flags | flag.intValue();
+                    }
+                }
+			} else {
+				flags= -1;
+			}
+			
+			IType type= getType(element);
+			if (type == null || !type.exists()) {
+				return false;
+			}
+			IMethod[] methods= type.getMethods();
+			if (methods.length == 0) {
+				return false;
+			}
+
+			IBuffer buffer= null;
+			IOpenable openable= type.getOpenable();
+			if (openable instanceof ICompilationUnit) {
+				buffer= ((ICompilationUnit) openable).getBuffer();
+			} else if (openable instanceof IClassFile) {
+				buffer= ((IClassFile) openable).getBuffer();
+			}
+			if (buffer == null) {
+				return false;
+			}
+			IScanner scanner=null; // delay initialization
+			
+			for (int i= 0; i < methods.length; i++) {
+				IMethod curr= methods[i];
+				if (curr.isConstructor() || (flags != -1 && flags != (curr.getFlags() & FLAGS_MASK))) {
+					continue;
+				}
+				
+				
+				ISourceRange sourceRange= curr.getSourceRange();
+				ISourceRange nameRange= curr.getNameRange();
+				if (sourceRange != null && nameRange != null) {
+					if (scanner == null) {
+						scanner= ToolFactory.createScanner(false, false, true, false);
+						scanner.setSource(buffer.getCharacters());
+					}
+					scanner.resetTo(sourceRange.getOffset(), nameRange.getOffset());
+					if (findAnnotation(scanner, annotationType)) {
+						return true;
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+		} catch (InvalidInputException e) {
+		}
+		return false;
 	}	
 	
+	private boolean findAnnotation(IScanner scanner, String annotationName) throws InvalidInputException {
+		String simpleName= Signature.getSimpleName(annotationName);
+		StringBuffer buf= new StringBuffer();
+		int tok= scanner.getNextToken();
+		while (tok != ITerminalSymbols.TokenNameEOF) {
+			if (tok == ITerminalSymbols.TokenNameAT) {
+				buf.setLength(0);
+				tok= readName(scanner, buf);
+				String name= buf.toString();
+				if (name.equals(annotationName) || name.equals(simpleName) || name.endsWith('.' + simpleName)) {
+					return true;
+				}
+			} else {
+				tok= scanner.getNextToken();
+			}
+		}
+		return false;
+	}
+
+	private int readName(IScanner scanner, StringBuffer buf) throws InvalidInputException {
+		int tok= scanner.getNextToken();
+		while (tok == ITerminalSymbols.TokenNameIdentifier) {
+			buf.append(scanner.getCurrentTokenSource());
+			tok= scanner.getNextToken();
+			if (tok != ITerminalSymbols.TokenNameDOT) {
+				return tok;
+			}
+			buf.append('.');
+			tok= scanner.getNextToken();
+		}
+		return tok;
+	}
+
 	/**
      * determines if the project selected has the specified nature
      * @param resource the resource to get the project for
@@ -363,6 +540,13 @@ public class JavaLaunchableTester extends PropertyTester {
 		if (PROPERTY_HAS_METHOD.equals(property)) {
 			return hasMethod(element, args);
 		}
+		if (PROPERTY_HAS_METHOD_WITH_ANNOTATION.equals(property)) {
+			return hasMethodWithAnnotation(element, args);
+		}
+		if (PROPERTY_HAS_TYPE_WITH_ANNOTATION.equals(property)) {
+			return hasTypeWithAnnotation(element, (String)args[0]);
+		}
+		
 		if(PROPERTY_BUILDPATH_REFERENCE.equals(property)) {
 			return hasItemOnBuildPath(element, args);
 		}
