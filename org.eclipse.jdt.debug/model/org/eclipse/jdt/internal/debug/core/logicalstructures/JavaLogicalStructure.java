@@ -134,12 +134,8 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				DebugException exception = fResult.getException();
 				String message;
 				if (exception != null) {
-                    if (isContributed()) {
-                        JDIDebugPlugin.log(exception);
-                    }
 					message= MessageFormat.format(LogicalStructuresMessages.JavaLogicalStructure_2, new String[] { exception.getMessage() }); 
 				} else {
-                    log(fResult.getErrorMessages());
 					message= LogicalStructuresMessages.JavaLogicalStructure_3; 
 				}
 				return new JavaStructureErrorValue(message, fEvaluationValue);
