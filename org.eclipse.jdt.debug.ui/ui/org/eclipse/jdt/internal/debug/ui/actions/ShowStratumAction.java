@@ -14,6 +14,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -38,11 +39,13 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
     
     private IStructuredSelection fSelection;
+    private IWorkbenchPart fPart;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
      */
     public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+    	fPart = targetPart;
     }
 
     /* (non-Javadoc)
@@ -129,6 +132,8 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
                 }
                 DebugEvent event = new DebugEvent(frame, DebugEvent.CHANGE, DebugEvent.CONTENT);
                 DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{event});
+                // TODO: post 3.2 - make API to force source lookup
+                SourceLookupManager.getDefault().displaySource(frame, fPart.getSite().getPage(), true);
             }
         });
         return item;
