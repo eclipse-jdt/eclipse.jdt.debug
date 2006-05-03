@@ -166,6 +166,7 @@ public class AddVMDialog extends StatusDialog {
 		fJRERoot.doFillIntoGrid(parent, 3);
 		
 		fVMArgs.doFillIntoGrid(parent, 3);
+		((GridData)fVMArgs.getTextControl(null).getLayoutData()).widthHint= convertWidthInCharsToPixels(50);
 		
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(JREMessages.AddVMDialog_JRE_system_libraries__1); 
