@@ -58,8 +58,8 @@ public class VMStandin extends AbstractVMInstall {
 	 */
 	public VMStandin(IVMInstall sourceVM, String id) {
 		super(sourceVM.getVMInstallType(), id);
+		setNotify(false);
 		init(sourceVM);
-		
 	}
 	
 	/**
