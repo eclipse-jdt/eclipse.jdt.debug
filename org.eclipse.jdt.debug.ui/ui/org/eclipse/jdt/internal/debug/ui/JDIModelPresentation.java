@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -91,6 +90,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectCollectedException;
 
 /**
@@ -114,6 +114,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	private ImageDescriptorRegistry fJavaElementImageRegistry;
 	private org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry;
+	
+	/**
+	 * Flag to indicate if image registries referenced by this model presentation is initialized
+	 */
+	private static boolean fInitialized = false;
 
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
 	
@@ -621,6 +626,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object item) {
+		
+		initImageRegistries();
+		
 		try {
 			if (item instanceof IJavaVariable) {
 				return getVariableImage((IAdaptable) item);
@@ -663,6 +671,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		    // no need to log errors - elements may no longer exist by the time we render them
 		}
 		return null;
+	}
+
+	/**
+	 * Initialize image registries that this model presentation references to
+	 */
+	private synchronized void initImageRegistries() {
+		
+		// if not initialized and this is called on the UI thread
+		if (!fInitialized && Thread.currentThread().equals(JDIDebugUIPlugin.getStandardDisplay().getThread())) {
+			// call get image registries to force them to be created on the UI thread
+			getDebugImageRegistry();
+			getJavaElementImageRegistry();
+			JavaUI.getSharedImages();
+			fInitialized = true;
+		}
 	}
 
 	/**
