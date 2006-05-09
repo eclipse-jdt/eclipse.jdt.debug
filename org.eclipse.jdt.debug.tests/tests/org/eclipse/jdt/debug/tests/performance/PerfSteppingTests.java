@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
-import org.eclipse.test.performance.Dimension;
 
 /**
  * Tests performance of stepping.
@@ -79,7 +78,6 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	 * @throws Exception
 	 */
 	public void testBareStepOver() throws Exception {
-		tagAsSummary("Bare Step Over", Dimension.ELAPSED_PROCESS);
 		String typeName = "PerfLoop";
 		IJavaLineBreakpoint bp = createLineBreakpoint(20, typeName);
 		
