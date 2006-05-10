@@ -70,6 +70,7 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
+import org.eclipse.jdt.internal.launching.VMListener;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -2467,12 +2468,24 @@ public final class JavaRuntime {
 						
 						// 3. if there are none, detect the eclispe runtime
 						if (vmDefs.getValidVMList().isEmpty()) {
+							// calling out to detectEclipseRuntime() could allow clients to change
+							// VM settings (i.e. call back into change VM settings).
+							VMListener listener = new VMListener();
+							addVMInstallChangedListener(listener);
 							setPref = true;
 							VMStandin runtime = detectEclipseRuntime();
-							if (runtime != null) {
-								updateCompliance = true;
-								vmDefs.addVM(runtime);
-								vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(runtime));
+							removeVMInstallChangedListener(listener);
+							if (!listener.isChanged()) {
+								if (runtime != null) {
+									updateCompliance = true;
+									vmDefs.addVM(runtime);
+									vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(runtime));
+								}
+							} else {
+								// vms were changed - reflect current settings
+								addPersistedVMs(vmDefs);
+								vmDefs.setDefaultVMInstallCompositeID(fgDefaultVMId);
+								updateCompliance = fgDefaultVMId != null;
 							}
 						}
 						// 4. load contributed VM installs
