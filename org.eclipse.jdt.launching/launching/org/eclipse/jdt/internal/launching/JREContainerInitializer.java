@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.launching;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -35,6 +34,8 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Resolves a container for a JRE classpath container entry.
@@ -66,8 +67,8 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		IVMInstall vm = null;
 		if (containerPath.segmentCount() > 1) {
 			// specific JRE
-			if (isExecutionEnvironment(containerPath)) {
-				String id = getExecutionEnvironmentId(containerPath);
+			String id = getExecutionEnvironmentId(containerPath);
+			if (id != null) {
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment environment = manager.getEnvironment(id);
 				if (environment != null) {
@@ -124,20 +125,13 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @return ee id
 	 */
 	public static String getExecutionEnvironmentId(IPath path) {
-		// TODO: this is old format to be removed post 3.2RC1
-		if (JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(3))) {
-			return path.removeFirstSegments(4).toString();
-		} else if (JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(1))) {
-			return path.removeFirstSegments(2).toString();
-		} else {
-			String name = getVMName(path);
-			if (name != null) {
-				name = decodeEnvironmentId(name);
-				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-				IExecutionEnvironment environment = manager.getEnvironment(name);
-				if (environment != null) {
-					return environment.getId();
-				}
+		String name = getVMName(path);
+		if (name != null) {
+			name = decodeEnvironmentId(name);
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment environment = manager.getEnvironment(name);
+			if (environment != null) {
+				return environment.getId();
 			}
 		}
 		return null;
@@ -150,21 +144,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @return whether the given path identifies a vm by exeuction environment
 	 */
 	public static boolean isExecutionEnvironment(IPath path) {
-		// TODO: this is old format to be removed post 3.2RC1
-		boolean ee = JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(3)) ||
-		JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS.equals(path.segment(1));
-		if (!ee) {
-			String name = getVMName(path);
-			if (name != null) {
-				name = decodeEnvironmentId(name);
-				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-				IExecutionEnvironment environment = manager.getEnvironment(name);
-				if (environment != null) {
-					ee = true;
-				}
-			}
-		}
-		return ee;
+		return getExecutionEnvironmentId(path) != null;
 	}
 	
 	/**

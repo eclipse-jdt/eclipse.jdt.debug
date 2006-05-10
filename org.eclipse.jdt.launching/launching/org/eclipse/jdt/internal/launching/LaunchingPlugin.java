@@ -1057,8 +1057,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		} catch (CoreException e) {
 			LaunchingPlugin.log(e);
 		}
-		if (JREContainerInitializer.isExecutionEnvironment(containerPath)) {
-			String id = JREContainerInitializer.getExecutionEnvironmentId(containerPath);
+		String id = JREContainerInitializer.getExecutionEnvironmentId(containerPath);
+		if (id != null) {
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			final IExecutionEnvironment environment = manager.getEnvironment(id);
 			if (environment != null) {

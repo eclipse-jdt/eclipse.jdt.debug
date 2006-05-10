@@ -1817,10 +1817,7 @@ public final class JavaRuntime {
 	 * @since 3.2
 	 */
 	public static String getExecutionEnvironmentId(IPath jreContainerPath) {
-		if (JREContainerInitializer.isExecutionEnvironment(jreContainerPath)) {
-			return JREContainerInitializer.getExecutionEnvironmentId(jreContainerPath);
-		}
-		return null;
+		return JREContainerInitializer.getExecutionEnvironmentId(jreContainerPath);
 	}
 	
 	/**
