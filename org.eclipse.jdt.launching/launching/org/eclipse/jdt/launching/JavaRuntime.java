@@ -1754,13 +1754,8 @@ public final class JavaRuntime {
 	 * @since 3.2
 	 */
 	public static IPath newJREContainerPath(IExecutionEnvironment environment) {
-		IVMInstall vm = JREContainerInitializer.resolveVM(environment);
-		String typeId = StandardVMType.ID_STANDARD_VM_TYPE;
-		if (vm != null) {
-			typeId = vm.getVMInstallType().getId();
-		}
 		IPath path = newDefaultJREContainerPath(); 
-		path = path.append(typeId);
+		path = path.append(StandardVMType.ID_STANDARD_VM_TYPE);
 		path = path.append(JREContainerInitializer.encodeEnvironmentId(environment.getId()));
 		return path;
 	}	
