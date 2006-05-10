@@ -537,7 +537,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				source.append(" extends "); //$NON-NLS-1$
 				Iterator iter2= typeBounds.iterator();
 				source.append(getTypeName((Type) iter2.next()));
-				while (iter.hasNext()) {
+				while (iter2.hasNext()) {
 					source.append('&');
 					source.append(getTypeName((Type) iter2.next()));
 				}
@@ -551,7 +551,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 					source.append(" extends "); //$NON-NLS-1$
 					Iterator iter2= typeBounds.iterator();
 					source.append(getTypeName((Type) iter2.next()));
-					while (iter.hasNext()) {
+					while (iter2.hasNext()) {
 						source.append('&');
 						source.append(getTypeName((Type) iter2.next()));
 					}
