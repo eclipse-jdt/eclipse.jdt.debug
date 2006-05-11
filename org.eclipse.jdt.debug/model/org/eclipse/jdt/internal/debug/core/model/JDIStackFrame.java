@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,6 +35,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -148,12 +148,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				return null;
 			} else if (fDepth == depth) {
 				Location location = frame.location();
-				if (location.method().equals(fLocation.method())) {
-					// TODO: what about receiving type being the same?
-					fStackFrame = frame;
-					fLocation = location;
-					clearCachedData();
-					return this;
+				Method method = location.method();
+				if (method.equals(fLocation.method())) {
+					try {
+						if (method.declaringType().defaultStratum().equals("Java") || //$NON-NLS-1$
+						    equals(getSourceName(location), getSourceName(fLocation))) {
+							// TODO: what about receiving type being the same?
+							fStackFrame = frame;
+							fLocation = location;
+							clearCachedData();
+							return this;
+						}
+					} catch (DebugException e) {
+					}
 				}
 			}
 			// invalidate this franme
@@ -870,17 +877,33 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public String getSourceName() throws DebugException {
 		synchronized (fThread) {
-			try {
-				return fLocation.sourceName();
-			} catch (AbsentInformationException e) {
-				return null;
-			} catch (NativeMethodException e) {
-				return null;
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_exception_retrieving_source_name, new String[] {e.toString()}), e); 
-			}
+			return getSourceName(fLocation); 
+		}
+	}
+	
+	/**
+	 * Returns the source from the default stratum of the given location
+	 * or <code>null</code> if not available (missing attribute).
+	 */
+	private String getSourceName(Location location) throws DebugException {
+		try {
+			return location.sourceName();
+		} catch (AbsentInformationException e) {
+			return null;
+		} catch (NativeMethodException e) {
+			return null;
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_exception_retrieving_source_name, new String[] {e.toString()}), e); 
 		}
 		return null;
+	}	
+	
+	private boolean equals(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
+		} else {
+			return o1.equals(o2);
+		}
 	}
 	
 	protected boolean isTopStackFrame() throws DebugException {
