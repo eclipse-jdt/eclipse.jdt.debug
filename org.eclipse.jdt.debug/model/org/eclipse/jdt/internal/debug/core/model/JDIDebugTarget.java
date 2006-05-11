@@ -2288,7 +2288,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public IJavaThreadGroup[] getRootThreadGroups() throws DebugException {
 		try {
-			List groups = getVM().topLevelThreadGroups();
+			VirtualMachine vm = getVM();
+			if (vm == null) {
+				return new IJavaThreadGroup[0];
+			}
+			List groups = vm.topLevelThreadGroups();
 			List modelGroups = new ArrayList(groups.size());
 			Iterator iterator = groups.iterator();
 			while (iterator.hasNext()) {
