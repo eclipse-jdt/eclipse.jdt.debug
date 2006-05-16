@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
  * An evaluation engine that performs evaluations by
- * interpretting abstract syntax trees. An AST evalutaion engine
+ * interpreting abstract syntax trees. An AST evaluation engine
  * is capable of creating compiled expressions that can be
  * evaluated multiple times in a given runtime context.
  * <p>
@@ -34,7 +34,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * the specified stack frame, reporting the result back to the given listener.
 	 * The thread is resumed from the location at which it
 	 * is currently suspended to perform the evaluation. When the evaluation
-	 * completes, the thread will be suspened at this original location.
+	 * completes, the thread will be suspended at this original location.
 	 * The thread runs the evaluation with the given evaluation detail
 	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
@@ -43,7 +43,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * @param frame the stack frame context in which to run the
 	 *   evaluation.
 	 * @param listener the listener that will receive notification
-	 *   when/if the evalaution completes
+	 *   when/if the evaluation completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @param hitBreakpoints whether or not breakpoints should be honored
@@ -71,7 +71,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * expression is determined to have no errors, the expression
 	 * is evaluated in the thread associated with the given
 	 * stack frame. When the evaluation completes, the thread
-	 * will be suspened at this original location.
+	 * will be suspended at this original location.
 	 * The thread runs the evaluation with the given evaluation detail
 	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
@@ -81,7 +81,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * @param thread the thread in which to run the evaluation,
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
-	 *   when/if the evalaution completes
+	 *   when/if the evaluation completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @param hitBreakpoints whether or not breakpoints should be honored

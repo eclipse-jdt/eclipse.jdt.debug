@@ -66,12 +66,12 @@ public interface IJavaStratumLineBreakpoint extends IJavaLineBreakpoint {
 	public String getStratum() throws CoreException;	
 	
 	/**
-	 * Returns the qaulified source file path in which this breakpoint is set,
+	 * Returns the qualified source file path in which this breakpoint is set,
 	 * or <code>null</code>. When specified, this breakpoint is
 	 * only installed in types whose source file path debug attribute
 	 * matches this value, relative to this breakpoint's stratum. 
 	 * 
-	 * @return the qaulified source file path in which this breakpoint is set,
+	 * @return the qualified source file path in which this breakpoint is set,
 	 * or <code>null</code>
 	 * @throws CoreException
 	 */

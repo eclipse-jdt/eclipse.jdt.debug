@@ -75,10 +75,10 @@ public interface IJavaReferenceType extends IJavaType {
 	
 	/**
 	 * Returns a collection of the names of all of the fields declared in this
-	 * type, all of its superclasses, implemented interfaces and super interfaces.
+	 * type, all of its super classes, implemented interfaces and super interfaces.
 	 * 
 	 * @return a collection of the names of all of the fields declared in this
-	 * type, all of its superclasses, implemented interfaces and super interfaces
+	 * type, all of its super classes, implemented interfaces and super interfaces
 	 * @throws DebugException if unable to retrieve field names
 	 */
 	public String[] getAllFieldNames() throws DebugException;

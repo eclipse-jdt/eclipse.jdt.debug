@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A launch configuration tab that displays and edits program arguments,
  * VM arguments, and working directory launch configuration attributes,
- * for applets.
+ * for an applet.
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>

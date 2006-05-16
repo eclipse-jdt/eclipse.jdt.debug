@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A method entry breakpoint suspends execution on the first
  * executable line of a method when entered. Entry breakpoints
- * are only installable in methods that have executable code (i.e.
+ * can only be installed in methods that have executable code (i.e.
  * do not work in native methods). 
  * <p>
  * This breakpoint provides a subset of the function provided by

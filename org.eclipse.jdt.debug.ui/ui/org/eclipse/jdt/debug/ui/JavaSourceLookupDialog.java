@@ -60,7 +60,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	 * launch configuration, based on the attributes
 	 * <code>IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH</code> and
 	 * <code>IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH</code>. If the user
-	 * changes the source lookup path and presses "ok", the launch configuration
+	 * changes the source lookup path and presses "OK", the launch configuration
 	 * is updated with the new source lookup path. 
 	 * 
 	 * @param shell the shell to open the dialog on

@@ -256,7 +256,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	}	
 	
 	/**
-	 * Notification that the user changed the selection in the JRE combo box.
+	 * Notification that the user changed the selection in the JRE combination box.
 	 */
 	protected void handleSelectedJREChanged() {
 		loadDynamicJREArea();
@@ -264,7 +264,7 @@ public class JavaJRETab extends JavaLaunchTab {
 		// always set the newly created area with defaults
 		ILaunchConfigurationWorkingCopy wc = getLaunchConfigurationWorkingCopy();
 		if (getDynamicTab() == null) {
-			// remove any VM specfic args from the config
+			// remove any VM specific arguments from the config
 			if (wc == null) {
 				if (getLaunchConfiguration().isWorkingCopy()) {
 					wc = (ILaunchConfigurationWorkingCopy)getLaunchConfiguration();

@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
- * An evaluation engine performs an evalutaion of a
+ * An evaluation engine performs an evaluation of a
  * code snippet or expression in a specified thread of a debug target.
  * An evaluation engine is associated with a specific
  * debug target and Java project on creation.
@@ -41,7 +41,7 @@ public interface IEvaluationEngine {
 	 * is evaluated in the thread associated with the given
 	 * stack frame. The thread is resumed from the location at which it
 	 * is currently suspended to perform the evaluation. When the evaluation
-	 * completes, the thread will be suspened at this original location.
+	 * completes, the thread will be suspended at this original location.
 	 * The thread runs the evaluation with the given evaluation detail
 	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
@@ -50,7 +50,7 @@ public interface IEvaluationEngine {
 	 * @param frame the stack frame context in which to run the
 	 *   evaluation.
 	 * @param listener the listener that will receive notification
-	 *   when/if the evalaution completes
+	 *   when/if the evaluation completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @param hitBreakpoints whether or not breakpoints should be honored
@@ -78,7 +78,7 @@ public interface IEvaluationEngine {
 	 * is evaluated in the thread associated with the given
 	 * stack frame. The thread is resumed from the location at which it
 	 * is currently suspended to perform the evaluation. When the evaluation
-	 * completes, the thread will be suspened at this original location.
+	 * completes, the thread will be suspended at this original location.
 	 * The thread runs the evaluation with the given evaluation detail
 	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
@@ -88,7 +88,7 @@ public interface IEvaluationEngine {
 	 * @param thread the thread in which to run the evaluation,
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
-	 *   when/if the evalaution completes
+	 *   when/if the evaluation completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @param hitBreakpoints whether or not breakpoints should be honored
@@ -109,8 +109,8 @@ public interface IEvaluationEngine {
 	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 
 	/**
-	 * Returns the Java project in which snippets are
-	 * compliled.
+	 * Returns the Java project in which expressions are
+	 * compiled.
 	 * 
 	 * @return Java project context
 	 */

@@ -190,7 +190,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	}
 
 	/**
-	 * Retuns the string in the text widget, or <code>null</code> if empty.
+	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
 	 */

@@ -99,7 +99,7 @@ public abstract class JavaLaunchTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Sets the Java project attribute on the given working copy to the Java project
-	 * assocaited with the given Java element.
+	 * associated with the given Java element.
 	 * 
 	 * @param javaElement Java model element this tab is associated with
 	 * @param config configuration on which to set the Java project attribute

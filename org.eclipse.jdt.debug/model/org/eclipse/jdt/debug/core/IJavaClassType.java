@@ -127,9 +127,10 @@ public interface IJavaClassType  extends IJavaReferenceType {
 	public IJavaInterfaceType[] getAllInterfaces() throws DebugException;
 	
 	/**
-	 * Returns whether this type is declared as a typesafe enum.
+	 * Returns whether this type is declared as a type safe enumeration.
 	 * 
-	 * @return <code>true</code> if this type is a typesafe enum, <code>false</code> otherwise.
+	 * @return <code>true</code> if this type is a type safe enumeration,
+	 * 	<code>false</code> otherwise.
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for

@@ -71,7 +71,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	public static final String ATTR_INCLUDE_EXTERNAL_JARS = IJavaDebugUIConstants.PLUGIN_ID + ".INCLUDE_EXTERNAL_JARS"; //$NON-NLS-1$
 	/**
 	 * Boolean launch configuration attribute indicating whether types inheriting
-	 * a main method should be considerd when searching for a main type.
+	 * a main method should be considered when searching for a main type.
 	 * Default value is <code>false</code>.
 	 * 
 	 * @since 3.0

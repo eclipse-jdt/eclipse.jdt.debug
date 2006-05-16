@@ -62,7 +62,7 @@ public interface IJavaDebugUIConstants {
 	public static final int INTERNAL_ERROR = 150;
 
 	/**
-	 * Boolean preference indicating whether the monitor and thread info should be displayed in the debug view.
+	 * Boolean preference indicating whether the monitor and thread information should be displayed in the debug view.
 	 * A view may override this preference, and if so, stores its preference, prefixed by view id.
 	 *  
 	 * @since 3.2

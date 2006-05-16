@@ -196,7 +196,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	}
 
 	/**
-	 * Initialize the appletviewer class name attribute.
+	 * Initialize the applet viewer class name attribute.
 	 */
 	private void initializeAppletViewerClass(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
@@ -245,7 +245,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	}
 	
 	/**
-	 * Returns whether the default appletviewer is to be used
+	 * Returns whether the default applet viewer is to be used
 	 */
 	private boolean isDefaultAppletViewerClassName() {
 		return fAppletViewerClassDefaultButton.getSelection();
@@ -288,7 +288,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	}
 	
 	/**
-	 * Set the current appletviewer class name on the specified working copy.
+	 * Set the current applet viewer class name on the specified working copy.
 	 */
 	private void performApplyAppletViewerClassName(ILaunchConfigurationWorkingCopy config) {
 		String appletViewerClassName= null;
@@ -302,7 +302,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	}
 	
 	/**
-	 * Set the appropriate enabled state for the appletviewer text widget.
+	 * Set the appropriate enabled state for the applet viewer text widget.
 	 */
 	private void setAppletViewerTextEnabledState() {
 		if (isDefaultAppletViewerClassName()) {

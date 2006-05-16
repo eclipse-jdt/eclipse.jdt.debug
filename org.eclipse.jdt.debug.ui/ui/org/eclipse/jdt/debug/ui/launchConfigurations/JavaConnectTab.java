@@ -100,7 +100,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	}
 
 	/**
-	 * creates the conector type control group
+	 * creates the connector type control group
 	 * @param parent the parent composite to add this one to
 	 */
 	private void createConnectionTypeControl(Composite parent) {
@@ -130,7 +130,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	}
 	
 	/**
-	 * Creates the connection params control group
+	 * Creates the connection parameters control group
 	 * @param parent the parent composite to add this one to
 	 */
 	private void createConnectionParamsControl(Composite parent) {

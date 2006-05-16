@@ -170,7 +170,7 @@ public class JDIDebugModel {
 	/**
 	 * Returns the identifier for the JDI debug model plug-in
 	 *
-	 * @return plugin identifier
+	 * @return plug-in identifier
 	 */
 	public static String getPluginIdentifier() {
 		return JDIDebugPlugin.getUniqueIdentifier();
@@ -189,7 +189,7 @@ public class JDIDebugModel {
 	}
 		
 	/**
-	 * Deregisters the given listener for hot code replace notifications. Has no
+	 * Unregisters the given listener for hot code replace notifications. Has no
 	 * effect if an identical listener is not already registered.
 	 * 
 	 * @param listener hot code replace listener
@@ -213,7 +213,7 @@ public class JDIDebugModel {
 	}	
 
 	/**
-	 * Deregisters the given listener for breakpoint notifications. Has no
+	 * Unregisters the given listener for breakpoint notifications. Has no
 	 * effect if an identical listener is not already registered.
 	 * 
 	 * @param listener breakpoint listener
