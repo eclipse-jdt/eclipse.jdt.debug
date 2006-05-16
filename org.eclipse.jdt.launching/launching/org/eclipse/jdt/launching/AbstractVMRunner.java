@@ -121,7 +121,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * 
 	 * @param configuration runner configuration
 	 * @param vmInstall vm install
-	 * @return combined VM arguments specified by the runner confiugration
+	 * @return combined VM arguments specified by the runner configuration
 	 *  and VM install
 	 * @since 3.0
 	 */

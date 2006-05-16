@@ -46,7 +46,7 @@ public interface IVMInstall {
 	 */
 	IVMRunner getVMRunner(String mode);
 	/**
-	 * Returns the id for this VM. VM ids are unique within the VMs 
+	 * Returns the id for this VM. VM IDs are unique within the VMs 
 	 * of a given VM type. The VM id is not intended to be presented to users.
 	 * 
 	 * @return the VM identifier. Must not return <code>null</code>.

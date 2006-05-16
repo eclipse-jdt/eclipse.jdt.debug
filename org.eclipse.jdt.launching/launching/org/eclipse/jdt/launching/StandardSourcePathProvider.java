@@ -145,7 +145,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
     }
 
     /*
-     * An ArrayList that acts like a set -ie does not allow duplicate items.
+     * An ArrayList that acts like a set -i.e. does not allow duplicate items.
      * hack for bug 112774
      */
     class UniqueList extends ArrayList {

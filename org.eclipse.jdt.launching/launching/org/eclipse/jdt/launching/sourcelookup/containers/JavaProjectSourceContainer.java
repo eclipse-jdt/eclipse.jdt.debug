@@ -51,7 +51,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	private static String[] fgJavaExtensions = null;
 	
 	/**
-	 * init java file extensions
+	 * initialize java file extensions
 	 */
 	static {
 		String[] extensions = JavaCore.getJavaLikeExtensions();

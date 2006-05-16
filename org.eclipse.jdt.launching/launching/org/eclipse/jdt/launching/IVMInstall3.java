@@ -36,7 +36,7 @@ public interface IVMInstall3 {
 	 * @param properties the property names to evaluate, for example <code>{"user.home"}</code>
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return map of system property names to associated property values
-	 * @throws CoreException if an exception occurrs evaluating the properties
+	 * @throws CoreException if an exception occurs evaluating the properties
 	 * @since 3.2
 	 */
 	public Map evaluateSystemProperties(String[] properties, IProgressMonitor monitor) throws CoreException;

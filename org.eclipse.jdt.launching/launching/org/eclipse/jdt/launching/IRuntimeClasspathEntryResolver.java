@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * Resolves variable and/or container runtime classpath entries in
  * the context of a launch configuration or Java project. A resolver can be declared
  * as an extension (<code>org.eclipse.jdt.launching.runtimeClasspathEntryResolver</code>),
- * or be registered with the <code>JavaRuntime</code> programatically.
+ * or be registered with the <code>JavaRuntime</code> programmatically.
  * <p>
  * A resolver is registered for a specific classpath
  * <code>VARIABLE</code> and/or <code>CONTAINER</code>. A resolver is

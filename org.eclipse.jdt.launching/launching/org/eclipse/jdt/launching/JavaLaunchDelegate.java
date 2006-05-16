@@ -59,7 +59,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		// Environment variables
 		String[] envp= getEnvironment(configuration);
 		
-		// Program & VM args
+		// Program & VM arguments
 		String pgmArgs = getProgramArguments(configuration);
 		String vmArgs = getVMArguments(configuration);
 		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);

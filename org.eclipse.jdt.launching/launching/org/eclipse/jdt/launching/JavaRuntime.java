@@ -282,13 +282,13 @@ public final class JavaRuntime {
 	/**
 	 * Cache of already resolved projects in container entries. Used to avoid
 	 * cycles in project dependencies when resolving classpath container entries.
-	 * Counters used to know when entring/exiting to clear cache
+	 * Counters used to know when entering/exiting to clear cache
 	 */
 	private static ThreadLocal fgProjects = new ThreadLocal(); // Lists
 	private static ThreadLocal fgEntryCount = new ThreadLocal(); // Integers
 	
     /**
-     *  Set of ids of vms contributed via vmInstalls extension point.
+     *  Set of IDs of VMs contributed via vmInstalls extension point.
      */
     private static Set fgContributedVMs = new HashSet();
     
@@ -1416,13 +1416,13 @@ public final class JavaRuntime {
 				LaunchingPlugin.log(ioe);
 			}			
 		} else {			
-			// Otherwise, look for the old file that previously held the VM defs
+			// Otherwise, look for the old file that previously held the VM definitions
 			IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
 			IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 			File file = new File(stateFile.toOSString());
 			
 			if (file.exists()) {        
-				// If file exists, load VM defs from it into memory and write the defs to
+				// If file exists, load VM definitions from it into memory and write the definitions to
 				// the preference store WITHOUT triggering any processing of the new value
 				FileInputStream fileInputStream = new FileInputStream(file);
 				VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream, vmDefs);			
@@ -1774,7 +1774,7 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Returns the identifier of the VM install type referecend by the
+	 * Returns the identifier of the VM install type referenced by the
 	 * given JRE classpath container path, or <code>null</code> if none.
 	 * 
 	 * @param jreContainerPath
@@ -2458,7 +2458,7 @@ public final class JavaRuntime {
 						// 2. add persisted VMs
 						setPref = addPersistedVMs(vmDefs);
 						
-						// 3. if there are none, detect the eclispe runtime
+						// 3. if there are none, detect the eclipse runtime
 						if (vmDefs.getValidVMList().isEmpty()) {
 							// calling out to detectEclipseRuntime() could allow clients to change
 							// VM settings (i.e. call back into change VM settings).
@@ -2474,7 +2474,7 @@ public final class JavaRuntime {
 									vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(runtime));
 								}
 							} else {
-								// vms were changed - reflect current settings
+								// VMs were changed - reflect current settings
 								addPersistedVMs(vmDefs);
 								vmDefs.setDefaultVMInstallCompositeID(fgDefaultVMId);
 								updateCompliance = fgDefaultVMId != null;
@@ -2558,7 +2558,7 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Update compliler compliance settings based on the given vm.
+	 * Update compiler compliance settings based on the given vm.
 	 * 
 	 * @param vm
 	 */

@@ -23,7 +23,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * Package fragment root source container. Represents an archive
- * or folder in the Java model containing classfiles, with a possible
+ * or folder in the Java model containing class files, with a possible
  * source attachment.
  * <p>
  * This class may be instantiated; this class is not intended to be

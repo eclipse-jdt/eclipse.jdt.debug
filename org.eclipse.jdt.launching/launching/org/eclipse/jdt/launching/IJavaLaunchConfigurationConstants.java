@@ -161,7 +161,7 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH";	 //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration attribute key. The value is a boolean specfying
+	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether a default classpath should be used when launching a local
 	 * Java application. When <code>false</code>, a classpath must be specified
 	 * via the <code>ATTR_CLASSPATH</code> attribute. When <code>true</code> or
@@ -264,7 +264,7 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is a String indicating the
-	 * fully qualified name of the appletviewer utility class to use.
+	 * fully qualified name of the applet viewer utility class to use.
 	 * 
 	 * @since 2.1
 	 */

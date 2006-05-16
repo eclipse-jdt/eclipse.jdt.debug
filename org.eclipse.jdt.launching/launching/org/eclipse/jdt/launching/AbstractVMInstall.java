@@ -55,7 +55,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private LibraryLocation[] fSystemLibraryDescriptions;
 	private URL fJavadocLocation;
 	private String fVMArgs;
-	// system properties are cached in user prefs prefixed with this key, followed
+	// system properties are cached in user preferences prefixed with this key, followed
 	// by vm type, vm id, and system property name
 	private static final String PREF_VM_INSTALL_SYSTEM_PROPERTY = "PREF_VM_INSTALL_SYSTEM_PROPERTY"; //$NON-NLS-1$
 	// whether change events should be fired
@@ -325,7 +325,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		}
 		Map map = new HashMap();
 		
-		// first check cache (pref store) to avoid launching VM
+		// first check cache (preference store) to avoid launching VM
 		Preferences preferences = JavaRuntime.getPreferences();
 		boolean cached = true; 
 		for (int i = 0; i < properties.length; i++) {

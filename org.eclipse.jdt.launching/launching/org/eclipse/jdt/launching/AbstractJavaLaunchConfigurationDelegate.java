@@ -235,7 +235,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 *            launch configuration
 	 * @return the bootpath specified by the given launch configuration. An
 	 *         empty bootpath is specified by an empty array, and
-	 *         <code>null</code> represents a default boothpath.
+	 *         <code>null</code> represents a default bootpath.
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
@@ -349,11 +349,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				// determine if explicit bootpath should be used
 				// TODO: this test does not tell us if the bootpath entries are different (could still be
 				// the same, as a non-bootpath entry on the JRE may have been removed/added)
-				// We really need a way to ask a VM type for its default boothpath library locations and
+				// We really need a way to ask a VM type for its default bootpath library locations and
 				// compare that to the resolved entries for the "jreEntry" to see if they 
 				// are different (requires explicit bootpath)
 				if (!JRERuntimeClasspathEntryResolver.isSameArchives(libraryLocations, install.getVMInstallType().getDefaultLibraryLocations(install.getInstallLocation()))) {
-					// resolve bootpath entries in jre entry
+					// resolve bootpath entries in JRE entry
 					IRuntimeClasspathEntry[] bootEntries = null; 
 					if (jreEntry.getType() == IRuntimeClasspathEntry.CONTAINER) {
 						IRuntimeClasspathEntry bootEntry = JavaRuntime.newRuntimeContainerClasspathEntry(
@@ -991,7 +991,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @since 3.2
 	 */
 	protected File getDefaultWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
-		// default working dir is the project if this config has a project
+		// default working directory is the project if this config has a project
 		IJavaProject jp = getJavaProject(configuration);
 		if (jp != null) {
 			IProject p = jp.getProject();

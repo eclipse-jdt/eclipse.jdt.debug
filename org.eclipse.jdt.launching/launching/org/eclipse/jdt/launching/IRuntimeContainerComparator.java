@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.IPath;
 public interface IRuntimeContainerComparator {
 	
 	/**
-	 * Returns whether this container is a duplicate of the conatiner
+	 * Returns whether this container is a duplicate of the container
 	 * identified by the given path.
 	 * 
 	 * @param containerPath the container to compare against
-	 * @return whether this container is a duplicate of the conatiner
+	 * @return whether this container is a duplicate of the container
 	 * identified by the given path
 	 */
 	public boolean isDuplicate(IPath containerPath);

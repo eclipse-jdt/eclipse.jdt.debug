@@ -80,7 +80,7 @@ public interface IVMInstallType {
 	
 	/**
 	 * Returns the globally unique id of this VM type.
-	 * Clients are reponsible for providing a unique id.
+	 * Clients are responsible for providing a unique id.
 	 * 
 	 * @return the id of this IVMInstallType
 	 */ 
@@ -88,7 +88,7 @@ public interface IVMInstallType {
 	/**
 	 * Validates the given location of a VM installation.
 	 * <p>
-	 * For example, an implementation might check whether the VM executeable 
+	 * For example, an implementation might check whether the VM executable 
 	 * is present.
 	 * </p>
 	 * 
