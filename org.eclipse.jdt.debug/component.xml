@@ -31,11 +31,22 @@
  	<type name="IJavaStratumLineBreakpoint" implement="false" />
  	<type name="IJavaTargetPatternBreakpoint" implement="false" />
  	<type name="IJavaThread" implement="false" />
+ 	<type name="IJavaThreadGroup" implement="false" />
  	<type name="IJavaType" implement="false" />
  	<type name="IJavaValue" implement="false" />
  	<type name="IJavaVariable" implement="false" />
  	<type name="IJavaWatchpoint" implement="false" />
 	<type name="JDIDebugModel" instantiate="false" subclass="false" />
+ </package>
+ 
+ <package name="org.eclipse.jdt.debug.eval">
+ 	<type name="EvaluationManager" instantiate="false" subclass="false" />
+ 	<type name="IAstEvaluationEngine" implement="false" />
+ 	<type name="IClassFileEvaluationEngine" implement="false" />
+ 	<type name="ICompiledExpression" implement="false" />
+ 	<type name="IEvaluationEngine" implement="false" />
+ 	<type name="IEvaluationListener" />
+ 	<type name="IEvaluationResult" implement="false" />
  </package>
  
  <component-depends unrestricted="true"/>

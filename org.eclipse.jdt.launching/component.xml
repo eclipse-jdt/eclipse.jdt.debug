@@ -15,11 +15,13 @@
  	<type name="IRuntimeClasspathEntry" implement="false" />
  	<type name="IRuntimeClasspathEntry2" implement="false" />
  	<type name="IRuntimeClasspathEntryResolver" />
+ 	<type name="IRuntimeClasspathEntryResolver2" />
  	<type name="IRuntimeClasspathProvider" />
  	<type name="IRuntimeContainerComparator" />
  	<type name="IVMConnector" />
  	<type name="IVMInstall" />
  	<type name="IVMInstall2" />
+ 	<type name="IVMInstall3" />
  	<type name="IVMInstallChangedListener" />
  	<type name="IVMInstallType" />
  	<type name="IVMRunner" />
