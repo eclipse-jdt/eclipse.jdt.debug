@@ -23,8 +23,8 @@
  	<type name="JavaArgumentsTab" subclass="false" instantiate="true"/>
  	<type name="JavaClasspathTab" subclass="false" instantiate="true"/>
  	<type name="JavaConnectTab" subclass="false" instantiate="true"/>
- 	<type name="JavaLaunchTab" subclass="true" instantiate="false"/>
  	<type name="JavaJRETab" subclass="false" instantiate="true"/>
+ 	<type name="JavaLaunchTab" subclass="true" instantiate="false"/>
  	<type name="JavaMainTab" subclass="false" instantiate="true"/>
  	<type name="JavaSourceLookupTab" subclass="false" instantiate="true"/>
  </package>
