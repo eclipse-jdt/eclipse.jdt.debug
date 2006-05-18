@@ -41,6 +41,7 @@ import org.eclipse.jdt.debug.tests.core.HcrTests;
 import org.eclipse.jdt.debug.tests.core.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
+import org.eclipse.jdt.debug.tests.core.InstructionPointerTests;
 import org.eclipse.jdt.debug.tests.core.JavaBreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.JavaProjectSourceContainerTests;
@@ -216,6 +217,8 @@ public class AutomatedSuite extends DebugSuite {
 		// and these tests modify UI layout
 		addTest(new TestSuite(ViewMangementTests.class));
 		
+		// and these tests check for leaks
+		addTest(new TestSuite(InstructionPointerTests.class));
 		
 	}
 }
