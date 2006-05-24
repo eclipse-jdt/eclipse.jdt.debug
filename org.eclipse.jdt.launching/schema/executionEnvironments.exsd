@@ -101,16 +101,19 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
+         Following is an example definition of an execution environment and analyzer.
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.jdt.launching.executionEnvironments&quot;&gt;
+      &lt;environment
+            id=&quot;J2SE-1.4&quot;
+            description=&quot;Java 2 Platform, Standard Edition 1.4&quot;/&gt;
+      &lt;analyzer
+            class=&quot;com.example.ExecutionEnvironmentAnalyzer&quot;
+            id=&quot;com.example.eeAnalyzer&quot;/&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -119,7 +122,19 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         PDE (&lt;code&gt;org.eclispe.pde.core&lt;/code&gt;) provides definitions and an analyzer for the following execution environments:
+&lt;ul&gt;
+&lt;li&gt;OSGi/Minimum-1.0&lt;/li&gt;
+&lt;li&gt;OSGi/Minimum-1.1&lt;/li&gt;
+&lt;li&gt;JRE-1.1&lt;/li&gt;
+&lt;li&gt;J2SE-1.2&lt;/li&gt;
+&lt;li&gt;J2SE-1.3&lt;/li&gt;
+&lt;li&gt;J2SE-1.4&lt;/li&gt;
+&lt;li&gt;J2SE-1.5&lt;/li&gt;
+&lt;li&gt;JavaSE-1.6&lt;/li&gt;
+&lt;li&gt;CDC-1.0/Foundation-1.0&lt;/li&gt;
+&lt;li&gt;CDC-1.1/Foundation-1.1&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 
