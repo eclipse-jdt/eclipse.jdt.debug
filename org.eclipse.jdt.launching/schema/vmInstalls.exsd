@@ -139,16 +139,18 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
+         Following is an example vm install definition.
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.jdt.launching.vmInstalls&quot;&gt;
+	&lt;vmInstall
+		home=&quot;${eclipse_home}/jre&quot;
+		id=&quot;com.example.vm.id&quot;
+		name=&quot;JRE-1.4&quot;
+		vmInstallType=&quot;com.example.vm.type&quot;/&gt;
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -157,7 +159,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Java tooling does not provide any specific VM installs.
+         JDT does not provide any specific VM installs.
       </documentation>
    </annotation>
 
