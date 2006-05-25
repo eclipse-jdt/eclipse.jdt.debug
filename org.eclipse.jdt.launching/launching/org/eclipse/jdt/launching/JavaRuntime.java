@@ -1534,7 +1534,7 @@ public final class JavaRuntime {
                                 if (packageRootStr != null) {
                                     packageRootPath = new Path(substitute(packageRootStr));
                                 }
-                                locations[i] = new LibraryLocation(libPath, sourcePath, packageRootPath, url);
+                                locations[j] = new LibraryLocation(libPath, sourcePath, packageRootPath, url);
                             }
                         }
                         standin.setLibraryLocations(locations);
