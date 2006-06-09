@@ -18,7 +18,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,11 +32,10 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ClassNotLoadedException;
-import com.sun.jdi.InvalidCodeIndexException;
-import com.sun.jdi.InvalidLineNumberException;
 import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -211,7 +209,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		getLineTable();
 		if (lineCodeIndex > fHighestValidCodeIndex) {
-			throw new InvalidCodeIndexException (JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4); 
+            throw new AbsentInformationException(JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4); 
 		}
 
 		Long lineCodeIndexObj;
@@ -233,7 +231,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 					return lineNrObj.intValue();
 				}
 			}
-			throw new InvalidCodeIndexException (JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4); 
+			throw new AbsentInformationException (JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4); 
 		}
 		return lineNrObj.intValue();
 	}
@@ -437,7 +435,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		try {
 			Integer lineNrInt = (Integer)javaStratumCodeIndexToLine().get(new Long(index));
 			if (lineNrInt == null) {
-				throw new InvalidCodeIndexException(MessageFormat.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2, new Object[]{Long.toString(index)})); 
+				throw new AbsentInformationException(MessageFormat.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2, new Object[]{Long.toString(index)})); 
 			}
 		} catch (AbsentInformationException e ) {
 		}
@@ -447,7 +445,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @see com.sun.jdi.Method#locationsOfLine(int)
 	 */
-	public List locationsOfLine(int line) throws AbsentInformationException, InvalidLineNumberException {
+	public List locationsOfLine(int line) throws AbsentInformationException {
 		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
 	
