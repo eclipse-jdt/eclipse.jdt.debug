@@ -74,32 +74,32 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	private class WidgetListener extends SelectionAdapter implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
-		}//end modifyText
+		}
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
 			if (source == fWorkspaceButton) {
 				handleWorkspaceDirBrowseButtonSelected();
-			}//end if
+			}
 			else if (source == fFileSystemButton) {
 				handleWorkingDirBrowseButtonSelected();
-			}//end if 
+			} 
 			else if (source == fVariablesButton) {
 				handleWorkingDirVariablesButtonSelected();
-			}//end if 
+			} 
 			else if(source == fUseDefaultDirButton) {
 				//only perform the action if this is the button that was selected
 				if(fUseDefaultDirButton.getSelection()) {
 					setDefaultWorkingDir();
-				}//end if
-			}//end if 
+				}
+			} 
 			else if(source == fUseOtherDirButton) {
 				//only perform the action if this is the button that was selected
 				if(fUseOtherDirButton.getSelection()) {
 					handleUseOtherWorkingDirButtonSelected();
-				}//end if
-			}//end if
-		}//end widgetSelected
-	}//end WidgetListener class
+				}
+			}
+		}
+	}
 	
 	private WidgetListener fListener = new WidgetListener();
 	
@@ -178,13 +178,13 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			File path = new File(currentWorkingDir);
 			if (path.exists()) {
 				dialog.setFilterPath(currentWorkingDir);
-			}//end if		
-		}//end if
+			}		
+		}
 		String selectedDirectory = dialog.open();
 		if (selectedDirectory != null) {
 			fOtherWorkingText.setText(selectedDirectory);
-		}//end if		
-	}//end handleQWrokingDirBrowseBUttonSelected
+		}		
+	}
 
 	/**
 	 * Show a dialog that lets the user select a working directory from 
@@ -194,7 +194,7 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	    IContainer currentContainer= getContainer();
 		if (currentContainer == null) {
 		    currentContainer = ResourcesPlugin.getWorkspace().getRoot();
-		}//end if 
+		} 
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), currentContainer, false,	LauncherMessages.WorkingDirectoryBlock_4); 
 		dialog.showClosedProjects(false);
 		dialog.open();
@@ -203,8 +203,8 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			IPath path = (IPath)results[0];
 			String containerName = path.makeRelative().toString();
 			setOtherWorkingDirectoryText("${workspace_loc:" + containerName + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-		}//end if			
-	}//end handleWorkspaceDirBrowseButtonSelected
+		}			
+	}
 	
 	/**
 	 * Returns the selected workspace container,or <code>null</code>
@@ -221,19 +221,19 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
                     IContainer[] containers = root.findContainersForLocation(new Path(path));
                     if (containers.length > 0) {
                         res = containers[0];
-                    }//end if
-                }//end try 
+                    }
+                } 
 			    catch (CoreException e) {}
-			}//end if 
+			} 
 		    else {	    
 				res = root.findMember(path);
-			}//end else
+			}
 			if (res instanceof IContainer) {
 				return (IContainer)res;
-			}//end if
-		}//end if
+			}
+		}
 		return null;
-	}//end getContainer
+	}
 		
 	/**
 	 * The default working dir radio button has been selected.
@@ -268,8 +268,8 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 		String variableText = dialog.getVariableExpression();
 		if (variableText != null) {
 			fOtherWorkingText.insert(variableText);
-		}//end if
-	}//end handleWorkingDirVariablesButtonSelected
+		}
+	}
 	
 	/**
 	 * Sets the default working directory
@@ -282,9 +282,9 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 				if (javaProject != null) {
 					setDefaultWorkingDirectoryText("${workspace_loc:" + javaProject.getPath().makeRelative().toOSString() + "}");  //$NON-NLS-1$//$NON-NLS-2$
 					return;
-				}//end if
-			}//end if
-		}//end try 
+				}
+			}
+		} 
 		catch (CoreException ce) {}
 		setDefaultWorkingDirectoryText(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
@@ -301,27 +301,27 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 			try {
 				manager.validateStringVariables(workingDirPath);
-			}//end try
+			}
 			catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 				return false;
-			}//end catch
-		}//end if 
+			}
+		} 
 		else if (workingDirPath.length() > 0) {
 			IContainer container = getContainer();
 			if (container == null) {
 				File dir = new File(workingDirPath);
 				if (dir.isDirectory()) {
 					return true;
-				}//end if
+				}
 				setErrorMessage(LauncherMessages.WorkingDirectoryBlock_10); 
 				return false;
-			}//end if
+			}
 		} else if (workingDirPath.length() == 0) {
 			setErrorMessage(LauncherMessages.WorkingDirectoryBlock_20);
 		}
 		return true;
-	}//end isValid
+	}
 
 	/**
 	 * Defaults are empty.
@@ -342,12 +342,12 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			setDefaultWorkingDir();
 			if (wd != null) {
 				setOtherWorkingDirectoryText(wd);
-			}//end else
-		}//end try 
+			}
+		} 
 		catch (CoreException e) {
 			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); 
 			JDIDebugUIPlugin.log(e);
-		}//end catch
+		}
 	}
 
 	/* (non-Javadoc)
@@ -356,18 +356,18 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if(fUseDefaultDirButton.getSelection()) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-		}//end if
+		}
 		else {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getWorkingDirectoryText());
-		}//end else
-	}//end performApply
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.WorkingDirectoryBlock_Working_Directory_8; 
-	}//end getName
+	}
 	
 	/**
 	 * gets the path from the text box that is selected
@@ -377,9 +377,9 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	protected String getWorkingDirectoryText() {
 		if(fUseDefaultDirButton.getSelection()) {
 			return fWorkingDirText.getText().trim();
-		}//end if
+		}
 		return fOtherWorkingText.getText().trim();
-	}//end getWorkingDirectoryPath
+	}
 	
 	/**
 	 * sets the default working directory text
@@ -391,8 +391,8 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			fWorkingDirText.setText(dir);
 			fUseDefaultDirButton.setSelection(true);
 			handleUseDefaultWorkingDirButtonSelected();
-		}//end if
-	}//setDefaultWorkingDirectoryText
+		}
+	}
 	
 	/**
 	 * sets the other dir text
@@ -405,8 +405,8 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			fUseDefaultDirButton.setSelection(false);
 			fUseOtherDirButton.setSelection(true);
 			handleUseOtherWorkingDirButtonSelected();
-		}//end if
-	}//end setOtherWorkingDirectoryText
+		}
+	}
 	
 	/**
 	 * Sets the java project currently specified by the
@@ -435,12 +435,12 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			fWorkspaceButton.setEnabled(enabled);
 			fVariablesButton.setEnabled(enabled);
 			fFileSystemButton.setEnabled(enabled);
-		}//end if
+		}
 		// in the case where the 'other' text is selected and we want to enable
 		if(fUseOtherDirButton.getSelection() && enabled == true) {
 			fOtherWorkingText.setEnabled(enabled);
-		}//end if
-	}//end setEnabled
+		}
+	}
 	
-}//end class
+}
 
