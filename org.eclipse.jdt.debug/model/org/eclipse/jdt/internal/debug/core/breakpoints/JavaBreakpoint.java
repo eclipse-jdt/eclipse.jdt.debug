@@ -171,8 +171,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * or sets it as unregistered.
 	 */
 	protected void register(boolean register) throws CoreException {
-		if (register) {
-			DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
+        DebugPlugin plugin = DebugPlugin.getDefault();
+		if (plugin != null && register) {
+            plugin.getBreakpointManager().addBreakpoint(this);
 		} else {
 			setRegistered(false);
 		}
@@ -385,7 +386,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @return whether this breakpoint should be skipped
 	 */
 	public boolean shouldSkipBreakpoint() throws CoreException {
-		return isRegistered() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled();
+		DebugPlugin plugin = DebugPlugin.getDefault();
+        return plugin != null && isRegistered() && !plugin.getBreakpointManager().isEnabled();
 	}
 
 	/**
@@ -882,7 +884,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @param target debug target
 	 */
 	protected void fireAdding(IJavaDebugTarget target) {
-		JDIDebugPlugin.getDefault().fireBreakpointAdding(target, this);
+		JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
+        if (plugin != null)
+            plugin.fireBreakpointAdding(target, this);
 	}
 	
 	/**
@@ -892,8 +896,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @param target debug target
 	 */
 	protected void fireRemoved(IJavaDebugTarget target) {
-		JDIDebugPlugin.getDefault().fireBreakpointRemoved(target, this);
-		setInstalledIn(target, false);
+		JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
+        if (plugin != null) {
+            plugin.fireBreakpointRemoved(target, this);
+            setInstalledIn(target, false);
+        }
 	}	
 	
 	/**
@@ -903,8 +910,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @param target debug target
 	 */
 	protected void fireInstalled(IJavaDebugTarget target) {
-		if (!isInstalledIn(target)) {
-			JDIDebugPlugin.getDefault().fireBreakpointInstalled(target, this);
+        JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
+		if (plugin!= null && !isInstalledIn(target)) {
+            plugin.fireBreakpointInstalled(target, this);
 			setInstalledIn(target, true);
 		}
 	}	
@@ -1053,11 +1061,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 *  not installed in a specific type
 	 */
 	protected boolean queryInstallListeners(JDIDebugTarget target, ReferenceType type) {
-		IJavaType jt = null;
-		if (type != null) {
-			jt = JDIType.createType(target, type);
-		}
-		return JDIDebugPlugin.getDefault().fireInstalling(target, this, jt);
+        JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
+        if (plugin != null) {
+            IJavaType jt = null;
+            if (type != null) {
+                jt = JDIType.createType(target, type);
+            }
+            return plugin.fireInstalling(target, this, jt);
+        }
+        return false;
 	}
 	
 	/* (non-Javadoc)
@@ -1080,8 +1092,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * exist if the associated project was closed).
 	 */
 	protected void fireChanged() {
-		if (markerExists()) {	
-			DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
+        DebugPlugin plugin = DebugPlugin.getDefault();
+		if (plugin != null && markerExists()) {	
+            plugin.getBreakpointManager().fireBreakpointChanged(this);
 		}					
 	}
 
@@ -1113,23 +1126,26 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * all targets.
 	 */
 	protected void recreate() throws CoreException {
-		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget target = targets[i];
-			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.JavaBreakpoint_Exception, null); 
-			IJavaDebugTarget jdiTarget = (IJavaDebugTarget)target.getAdapter(IJavaDebugTarget.class);
-			if (jdiTarget != null) {
-				try {
-					recreate((JDIDebugTarget)jdiTarget);
-				} catch (CoreException e) {
-					multiStatus.add(e.getStatus());
-				}
-			}
-			if (!multiStatus.isOK()) {
-				throw new CoreException(multiStatus);
-			} 
-		}
-	}
+		DebugPlugin plugin = DebugPlugin.getDefault();
+        if (plugin != null) {
+            IDebugTarget[] targets = plugin.getLaunchManager().getDebugTargets();
+            for (int i = 0; i < targets.length; i++) {
+                IDebugTarget target = targets[i];
+                MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.JavaBreakpoint_Exception, null);
+                IJavaDebugTarget jdiTarget = (IJavaDebugTarget) target.getAdapter(IJavaDebugTarget.class);
+                if (jdiTarget != null) {
+                    try {
+                        recreate((JDIDebugTarget) jdiTarget);
+                    } catch (CoreException e) {
+                        multiStatus.add(e.getStatus());
+                    }
+                }
+                if (!multiStatus.isOK()) {
+                    throw new CoreException(multiStatus);
+                }
+            }
+        }
+    }
 	
 	/**
 	 * Recreate this breakpoint in the given target, as long as the
