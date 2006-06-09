@@ -1791,7 +1791,7 @@
             class="org.eclipse.jdt.internal.debug.ui.jres.ExecutionEnvironmentsPreferencePage"
             id="org.eclipse.jdt.debug.ui.jreProfiles"
             name="%JreProfilesPage.name">
-         <keywordReference id="%preferenceKeywords.executionEnvironments"/>
+         <keywordReference id="org.eclipse.jdt.debug.ui.executionEnvironments"/>
       </page>
    </extension>
    <extension
@@ -2665,6 +2665,9 @@ M4 = Platform-specific fourth key
     <keyword
           id="org.eclipse.jdt.debug.ui.stepFilters"
           label="%preferenceKeywords.stepFilters"/>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.executionEnvironments"
+          label="%preferenceKeywords.executionEnvironments"/>
  </extension>
  <extension
        point="org.eclipse.ui.preferenceTransfer">
