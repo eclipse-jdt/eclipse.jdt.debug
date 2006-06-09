@@ -198,8 +198,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                     int end = start + sourceRange.getLength();
                                     if (offset < start || offset > end) {
                                         // not in the inner type
-                                        IStatusLineManager statusLine = editor.getEditorSite().getActionBars().getStatusLineManager();
-                                        statusLine.setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { type.getTypeQualifiedName() })); 
+                                        final ITextEditor finalEditor = editor;
+                                        final IType finalType = type;
+                                        Display.getCurrent().asyncExec(new Runnable() {
+                                            public void run() {
+                                                IStatusLineManager statusLine = finalEditor.getEditorSite().getActionBars().getStatusLineManager();
+                                                statusLine.setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { finalType.getTypeQualifiedName() })); 
+                                            }
+                                        });
                                         Display.getCurrent().beep();
                                         return Status.OK_STATUS;
                                     }
