@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,17 @@ import junit.framework.TestSuite;
  */
 public class AutomatedSuite extends TestSuite {
 	
+	/**
+	 * returns an instance of AutomatedSuite
+	 * @return a new test suite
+	 */
 	public static TestSuite suite() {
 		return new AutomatedSuite();
 	}
 	
+	/**
+	 * runs the specified tests
+	 */
 	public AutomatedSuite() {
 		AbstractJDITest.parseArgs(new String[0]);
 
@@ -78,6 +85,11 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VMDisconnectEventTest.class));
 		addTest(new TestSuite(VMDisposeTest.class));
 		
+		//Java 1.6 capatibility tests
+		/*addTest(new TestSuite(HeapWalkingTests.class));
+		addTest(new TestSuite(ConstantPoolTests.class));
+		addTest(new TestSuite(SourceNameFilterTests.class));
+		addTest(new TestSuite(MethodReturnValuesTests.class));*/
 	}
 	
 }
