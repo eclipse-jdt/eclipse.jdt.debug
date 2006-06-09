@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -56,7 +57,7 @@ public class JavaVariableColumnEditor extends VariableColumnEditor {
 			if (element instanceof IJavaVariable) {
 				IJavaVariable var = (IJavaVariable) element;
 				if (JavaVariableCellModifier.isBoolean(var)) {
-					return new ComboBoxCellEditor(parent, new String[]{Boolean.toString(true), Boolean.toString(false)});
+					return new ComboBoxCellEditor(parent, new String[]{Boolean.toString(true), Boolean.toString(false)}, SWT.READ_ONLY);
 				}
 			}
 		}
