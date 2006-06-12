@@ -39,7 +39,6 @@ public class LaunchingMessages extends NLS {
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1;
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_0;
-	public static String JavaLocalApplicationLaunchConfigurationDelegate_1;
 
 	public static String JavaProjectSourceContainerTypeDelegate_5;
 	public static String JavaProjectSourceContainerTypeDelegate_6;
@@ -49,10 +48,6 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1;
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1;
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
-
-	public static String JavaAppletLaunchConfigurationDelegate_Starting_Applet__0_____1;
-	public static String JavaAppletLaunchConfigurationDelegate_Verifying_launch_attributes____1;
-	public static String JavaAppletLaunchConfigurationDelegate_Creating_source_locator____2;
 
 	public static String JavaRuntime_badFormat;
 	public static String JavaRuntime_exceptionOccurred;
@@ -72,7 +67,6 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRuntime_28;
 	public static String JavaRuntime_31;
 	public static String JavaRuntime_32;
-	public static String JavaRuntime_0;
 
 	public static String LaunchingPlugin_35;
 
@@ -182,7 +176,6 @@ public class LaunchingMessages extends NLS {
 	public static String PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___missing_handle_identifier_for_package_fragment_root__6;
 	public static String PackageFragmentRootSourceLocation_Unable_to_initialize_source_location___package_fragment_root_does_not_exist__7;
 	public static String PackageFragmentRootSourceLocation_Exception_occurred_initializing_source_location__8;
-	public static String JavaAppletLaunchConfigurationDelegate_No_launch_configuration_specified_1;
 	public static String JavaAppletLaunchConfigurationDelegate_Could_not_build_HTML_file_for_applet_launch_1;
 	public static String AbstractVMRunner_0;
 	public static String AbstractJavaLaunchConfigurationDelegate_20;

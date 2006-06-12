@@ -68,7 +68,6 @@ public class JREMessages extends NLS {
 	public static String AddVMDialog_JRE_system_libraries__1;
 	public static String AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1;
 	public static String AddVMDialog_23;
-	public static String AddVMDialog_0;
 
 	public static String LibraryStandin_0;
 
@@ -85,7 +84,6 @@ public class JREMessages extends NLS {
 	public static String VMLibraryBlock_5;
 	public static String VMLibraryBlock_6;
 	public static String VMLibraryBlock_7;
-	public static String VMLibraryBlock_8;
 	public static String VMLibraryBlock_9;
 	public static String VMLibraryBlock_10;
 	public static String VMLibraryBlock_11;

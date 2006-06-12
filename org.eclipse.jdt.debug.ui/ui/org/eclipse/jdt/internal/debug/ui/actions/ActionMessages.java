@@ -50,9 +50,6 @@ public class ActionMessages extends NLS {
 
 	public static String JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1;
 
-	public static String ManageBreakpointRulerAction_label;
-	public static String ManageBreakpointRulerAction_error_adding_message1;
-
 	public static String ManageMethodBreakpointActionDelegate_CantAdd;
 
 	public static String ManageWatchpointActionDelegate_CantAdd;
@@ -138,11 +135,7 @@ public class ActionMessages extends NLS {
 
 	public static String ToggleBreakpointAdapter_8;
 	public static String ToggleBreakpointAdapter_9;
-	public static String ToggleBreakpointAdapter_0;
-	public static String ToggleBreakpointAdapter_2;
-	public static String ToggleBreakpointAdapter_3;
 	public static String ToggleBreakpointAdapter_10;
-	public static String ToggleBreakpointAdapter_1;
 	public static String StepIntoSelectionHandler_1;
 	public static String StepIntoSelectionHandler_2;
 	public static String AddLibraryAction_0;
@@ -165,7 +158,6 @@ public class ActionMessages extends NLS {
 	public static String StringValueInputDialog_0;
 	public static String StringValueInputDialog_1;
 	public static String StringValueInputDialog_2;
-	public static String StringValueInputDialog_3;
 	public static String StringValueInputDialog_4;
 
 	static {

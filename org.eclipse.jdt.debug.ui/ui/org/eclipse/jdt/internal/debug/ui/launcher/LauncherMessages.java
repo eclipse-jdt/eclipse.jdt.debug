@@ -131,8 +131,6 @@ public class LauncherMessages extends NLS {
 	public static String appletlauncher_utils_error_main_type_not_specified;
 	public static String appletlauncher_utils_error_main_type_does_not_exist;
 
-	public static String appletlauncher_search_dialog_title;
-	public static String appletlauncher_search_dialog_error_noapplets;
 	public static String appletlauncher_search_task_inprogress;
 
 	public static String AppletParametersTab__optional_applet_instance_name__1;
