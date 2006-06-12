@@ -21,10 +21,12 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenTypeHierarchyAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * This action opens a Java editor on the element represented by text selection of
@@ -42,7 +44,10 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		fEditor= editor;
 		setResources();
 		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-		editor.getSite().getKeyBindingService().registerAction(this);
+        
+        ActionHandler handler = new ActionHandler(this);
+        IHandlerService handlerService = (IHandlerService) editor.getSite().getService(IHandlerService.class);
+        handlerService.activateHandler(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY, handler);
 	}
 	
 	protected void setResources() {

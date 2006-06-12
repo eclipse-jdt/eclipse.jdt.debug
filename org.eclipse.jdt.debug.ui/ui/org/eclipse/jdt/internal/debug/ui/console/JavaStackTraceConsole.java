@@ -21,7 +21,7 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -113,7 +113,7 @@ public class JavaStackTraceConsole extends TextConsole {
         return partitioner;
     }
 
-    class JavaStackTraceConsolePartitioner extends DefaultPartitioner implements IConsoleDocumentPartitioner {
+    class JavaStackTraceConsolePartitioner extends FastPartitioner implements IConsoleDocumentPartitioner {
 
         public JavaStackTraceConsolePartitioner() {
             super(new RuleBasedPartitionScanner(), null);

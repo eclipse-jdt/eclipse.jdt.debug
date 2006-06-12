@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,7 +37,6 @@ import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
@@ -72,14 +73,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  */
@@ -196,7 +195,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private IType fType;
 	private boolean fTypeSearched= false;
 	private DisplayViewerConfiguration fViewerConfiguration;
-	private HandlerSubmission fSubmission;
+    private IHandlerActivation fHandlerActivation;
 
 	public EditLogicalStructureDialog(Shell parentShell, JavaLogicalStructure logicalStructure) {
 		super(parentShell);
@@ -216,7 +215,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fParentComposite= parent;
 		
 		IHandler handler = new AbstractHandler() {
-			public Object execute(Map parameterValuesByName) throws ExecutionException {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
 				findCorrespondingType();
 				fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
 				return null;
@@ -224,10 +223,9 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		};
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
-		fSubmission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
-		commandSupport.addHandlerSubmission(fSubmission);	
+		IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
+        
 		
 		// big container
 		Composite container= new Composite(parent, SWT.NONE);
@@ -831,8 +829,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
 	public boolean close() {
-		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(fSubmission);
-		
+		IWorkbench workbench = PlatformUI.getWorkbench();
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        handlerService.deactivateHandler(fHandlerActivation);
+
 		fSnippetViewer.dispose();
 		return super.close();
 	}

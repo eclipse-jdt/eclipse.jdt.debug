@@ -253,7 +253,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
-				SearchEngine.createJavaSearchScope(new IJavaElement[]{fEditor.getJavaProject()}, true), IJavaElementSearchConstants.CONSIDER_TYPES, false);
+				SearchEngine.createJavaSearchScope(new IJavaElement[]{fEditor.getJavaProject()}, true), IJavaElementSearchConstants.CONSIDER_ALL_TYPES, false);
 		} catch (JavaModelException jme) {
 			String title= SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_12"); //$NON-NLS-1$
 			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_class_selection_dialog_13"); //$NON-NLS-1$

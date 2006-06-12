@@ -78,7 +78,6 @@ import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
-import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1122,8 +1121,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		JavaTextTools textTools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
-		return textTools.affectsBehavior(event);
+        JavaSourceViewerConfiguration sourceViewerConfiguration = (JavaSourceViewerConfiguration) getSourceViewerConfiguration();
+        return sourceViewerConfiguration.affectsTextPresentation(event);
 	}
 	
 	/* (non-Javadoc)
@@ -1196,7 +1195,6 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	
 	/**
      * Terminates existing VM on a rename of the editor
-	 * @see org.eclipse.ui.part.WorkbenchPart#setTitle(java.lang.String)
  	 */
 	protected void setTitle(String title) {
 		cleanupOnRenameOrMove();

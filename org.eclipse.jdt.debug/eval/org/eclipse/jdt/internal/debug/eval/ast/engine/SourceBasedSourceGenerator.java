@@ -188,7 +188,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	}
 	
 	private int getCorrespondingLineNumber(int charOffset) {
-		return getCompilationUnit().lineNumber(charOffset);
+        int lineNumber = getCompilationUnit().getLineNumber(charOffset);
+        return lineNumber < 1 ? 1 : lineNumber;
 	}
 	
 	private boolean rightTypeFound() {

@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -66,13 +70,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.console.actions.ClearOutputAction;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
@@ -153,7 +153,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * workbench shutdown.
 	 */
 	private static IMemento fgMemento;
-	private HandlerSubmission fSubmission;
+	private IHandlerActivation fHandlerActivation;
 	
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
@@ -278,18 +278,15 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		getViewSite().getActionBars().updateActionBars();
 
 		IHandler handler = new AbstractHandler() {
-			public Object execute(Map parameterValuesByName) throws ExecutionException {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
 				fContentAssistAction.run();
 				return null;
 			}
 			
 		};
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();	
-		fSubmission = new HandlerSubmission(null, null, getSite(), ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
-		commandSupport.addHandlerSubmission(fSubmission);	
-
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
 	}
 	
 	/**
@@ -495,8 +492,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		}
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmission(fSubmission);
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        handlerService.deactivateHandler(fHandlerActivation);
 		
 		super.dispose();
 	}

@@ -30,7 +30,6 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
-import com.sun.jdi.InvalidLineNumberException;
 import com.sun.jdi.Location;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ReferenceType;
@@ -258,10 +257,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			return null;
 		} catch (NativeMethodException e) {
 			return null;
-		} catch (InvalidLineNumberException e) {
-			//possibly in a nested type, will be handled when that class is loaded
-			return null;
-		} catch (VMDisconnectedException e) {
+        } catch (VMDisconnectedException e) {
 			return null;
 		} catch (ClassNotPreparedException e) {
 			// could be a nested type that is not yet loaded

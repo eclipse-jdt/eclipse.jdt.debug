@@ -75,7 +75,7 @@ public class JDIContentAssistPreference {
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY);
 		restrictProposalsToMatchingCases(enabled);
 		
-		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 		dcp.orderProposalsAlphabetically(enabled);
 	}
 	
@@ -96,7 +96,7 @@ public class JDIContentAssistPreference {
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY);
 		restrictProposalsToMatchingCases(enabled);
 		
-		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 		cp.orderProposalsAlphabetically(enabled);
 	}
 	
@@ -145,8 +145,8 @@ public class JDIContentAssistPreference {
 			if (triggers != null) {
 				dcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
-		} else if (PreferenceConstants.CODEASSIST_ORDER_PROPOSALS.equals(key)) {
-			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
+		} else if (PreferenceConstants.CODEASSIST_SORTER.equals(key)) {
+			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 			dcp.orderProposalsAlphabetically(enable);
 		}
 	}
@@ -161,8 +161,8 @@ public class JDIContentAssistPreference {
 			if (triggers != null) {
 				cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
-		} else if (PreferenceConstants.CODEASSIST_ORDER_PROPOSALS.equals(key)) {
-			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
+		} else if (PreferenceConstants.CODEASSIST_SORTER.equals(key)) {
+			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 			cp.orderProposalsAlphabetically(enable);
 		}	
 	}

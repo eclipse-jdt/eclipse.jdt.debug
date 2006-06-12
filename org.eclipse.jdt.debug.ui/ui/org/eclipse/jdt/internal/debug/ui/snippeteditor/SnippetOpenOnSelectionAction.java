@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
@@ -21,11 +22,13 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * This action opens a Java editor on the element represented by text selection of
@@ -42,7 +45,11 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		fEditor= editor;
 		setResources();
 		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
-		editor.getSite().getKeyBindingService().registerAction(this);
+        
+        
+        IHandler handler = new ActionHandler(this);
+		IHandlerService service = (IHandlerService) editor.getSite().getService(IHandlerService.class);
+        service.activateHandler(IJavaEditorActionDefinitionIds.OPEN_EDITOR, handler);
 	}
 	
 	protected void setResources() {

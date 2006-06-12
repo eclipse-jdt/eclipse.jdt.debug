@@ -236,7 +236,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			return false;
 		}
 		int startPosition= node.getStartPosition();
-		int endLine= fCompilationUnit.lineNumber(startPosition + node.getLength() - 1);
+		int endLine= lineNumber(startPosition + node.getLength() - 1);
 		// if the position is not in this part of the code
 		// no need to check the element inside.
 		if (endLine < fLineNumber) {
@@ -245,7 +245,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		// if the first line of this node always represents some executable code and the
 		// breakpoint is requested on this line or on a previous line, this is a valid 
 		// location
-		int startLine = fCompilationUnit.lineNumber(startPosition);
+		int startLine = lineNumber(startPosition);
 		if (isCode && (fLineNumber <= startLine)) {
 			fLineLocation= startLine;
 			fLocationFound= true;
@@ -415,7 +415,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			// this assigment to be executed
 			Expression leftHandSide= node.getLeftHandSide();
 			if (leftHandSide instanceof Name) {
-				int startLine = fCompilationUnit.lineNumber(node.getStartPosition());
+				int startLine = lineNumber(node.getStartPosition());
 				if (fLineNumber < startLine) {
 					if (fBindingsResolved) {
 						IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
@@ -439,7 +439,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		if (visit(node, false)) {
 			if (node.statements().isEmpty() && node.getParent().getNodeType() == ASTNode.METHOD_DECLARATION) {
 				// in case of an empty method, set the breakpoint on the last line of the empty block.
-				fLineLocation= fCompilationUnit.lineNumber(node.getStartPosition() + node.getLength() - 1);
+				fLineLocation= lineNumber(node.getStartPosition() + node.getLength() - 1);
 				fLocationFound= true;
 				fLocationType= LOCATION_LINE;
 				fTypeName= computeTypeName(node);
@@ -611,7 +611,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				if (fragments.size() == 1) {
 					int offset= ((VariableDeclarationFragment)fragments.get(0)).getName().getStartPosition();
 					// check if the breakpoint is to be set on the line which contains the name of the field
-					if (fCompilationUnit.lineNumber(offset) == fLineNumber) {
+					if (lineNumber(offset) == fLineNumber) {
 						fMemberOffset= offset;
 						fLocationType= LOCATION_FIELD;
 						fLocationFound= true;
@@ -704,7 +704,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 					
 				}
 			}
-			fLineLocation= fCompilationUnit.lineNumber(firstConstant.getStartPosition());
+			fLineLocation= lineNumber(firstConstant.getStartPosition());
 			fLocationFound= true;
 			fLocationType= LOCATION_LINE;
 			fTypeName= computeTypeName(firstConstant);
@@ -806,7 +806,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			if (fBestMatch) {
 				// check if we are on the line which contains the method name
 				int nameOffset= node.getName().getStartPosition();
-				if (fCompilationUnit.lineNumber(nameOffset) == fLineNumber) {
+				if (lineNumber(nameOffset) == fLineNumber) {
 					fMemberOffset= nameOffset;
 					fLocationType= LOCATION_METHOD;
 					fLocationFound= true;
@@ -905,7 +905,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(PrefixExpression node) {
 		if (visit(node, false)) {
 			if (isReplacedByConstantValue(node)) {
-				fLineLocation= fCompilationUnit.lineNumber(node.getStartPosition());
+				fLineLocation= lineNumber(node.getStartPosition());
 				fLocationFound= true;
 				fLocationType= LOCATION_LINE;
 				fTypeName= computeTypeName(node);
@@ -1106,7 +1106,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(VariableDeclarationFragment node) {
 		Expression initializer = node.getInitializer();
 		if (visit(node, false) && initializer != null) {
-			int startLine = fCompilationUnit.lineNumber(node.getName().getStartPosition());
+			int startLine = lineNumber(node.getName().getStartPosition());
+            
 			if (fLineNumber == startLine) {
 				fLineLocation= startLine;
 				fLocationFound= true;
@@ -1118,6 +1119,12 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		}
 		return false;
 	}
+    
+    private int lineNumber(int offset) {
+        int lineNumber = fCompilationUnit.getLineNumber(offset);
+        return lineNumber < 1 ? 1 : lineNumber;
+    }
+        
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.WildcardType)

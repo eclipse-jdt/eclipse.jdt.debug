@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,9 +55,9 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
-import com.sun.jdi.InvalidLineNumberException;
 import com.sun.jdi.Location;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
@@ -327,9 +326,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			}
 			return null;
 		} catch (NativeMethodException e) {
-			return null;
-		} catch (InvalidLineNumberException e) {
-			//possibly in a nested type, will be handled when that class is loaded
 			return null;
 		} catch (VMDisconnectedException e) {
 			return null;

@@ -10,23 +10,21 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
-import java.util.Map;
-
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.actions.CloseConsoleAction;
-import org.eclipse.ui.contexts.EnabledSubmission;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -35,9 +33,9 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class JavaStackTracePageParticipant implements IConsolePageParticipant {
     
     private CloseConsoleAction fCloseAction;
-    private EnabledSubmission fEnabledSubmission;
-    private HandlerSubmission fHandlerSubmission;
     private FormatStackTraceActionDelegate fFormatAction;
+    private IHandlerActivation fHandlerActivation;
+    private IContextActivation fContextActivation;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(org.eclipse.ui.part.IPageBookViewPage, org.eclipse.ui.console.IConsole)
@@ -49,14 +47,6 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
         manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fCloseAction);
         
         fFormatAction = new FormatStackTraceActionDelegate((JavaStackTraceConsole) console);
-        IHandler formatHandler = new AbstractHandler() {
-            public Object execute(Map parameterValuesByName) throws ExecutionException {
-                fFormatAction.run(null);
-                return null;
-            }
-        };
-        fEnabledSubmission = new EnabledSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.jdt.ui.javaEditorScope"); //$NON-NLS-1$
-        fHandlerSubmission = new HandlerSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.jdt.ui.edit.text.java.format", formatHandler, Priority.MEDIUM); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -79,10 +69,19 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 	public void activated() {
         // add EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.addEnabledSubmission(fEnabledSubmission);
-		commandSupport.addHandlerSubmission(fHandlerSubmission);
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        
+        IHandler formatHandler = new AbstractHandler() {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
+                fFormatAction.run(null);
+                return null;
+            }
+        };
+        
+        fHandlerActivation = handlerService.activateHandler("org.eclipse.jdt.ui.edit.text.java.format", formatHandler); //$NON-NLS-1$
+		
+        IContextService contextService = (IContextService) workbench.getAdapter(IContextService.class);
+        fContextActivation = contextService.activateContext("org.eclipse.jdt.ui.javaEditorScope"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -91,10 +90,10 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 	public void deactivated() {
         // remove EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		commandSupport.removeHandlerSubmission(fHandlerSubmission);
-		contextSupport.removeEnabledSubmission(fEnabledSubmission);
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        handlerService.deactivateHandler(fHandlerActivation);
+        IContextService contextService = (IContextService) workbench.getAdapter(IContextService.class);
+        contextService.deactivateContext(fContextActivation);
 	}
 
 }

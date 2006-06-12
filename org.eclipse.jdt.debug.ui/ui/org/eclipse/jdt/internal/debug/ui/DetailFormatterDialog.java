@@ -11,10 +11,12 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -33,7 +35,6 @@ import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
@@ -62,17 +63,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Dialog for edit detail formatter.
@@ -110,7 +107,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	
 	private List fDefinedTypes;
 
-	private HandlerSubmission submission;
+    private IHandlerActivation fHandlerActivation;
 	
 	/**
 	 * DetailFormatterDialog constructor.
@@ -150,7 +147,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		Font font = parent.getFont();
 
 		IHandler handler = new AbstractHandler() {
-			public Object execute(Map parameterValuesByName) throws ExecutionException {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
 				findCorrespondingType();
 				fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
 				return null;
@@ -158,11 +155,9 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		};
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
-		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); 
-		commandSupport.addHandlerSubmission(submission);	
-		
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
+        
 		Composite container = (Composite)super.createDialogArea(parent);
 		
 		// type name label
@@ -212,18 +207,14 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		
 		// snippet label
 		String labelText = null;
-		ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-		ICommand command = commandManager.getCommand("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
-		if (command != null) {
-			List keyBindings = command.getKeySequenceBindings();
-			if (keyBindings != null && keyBindings.size() > 0) {
-				IKeySequenceBinding binding = (IKeySequenceBinding)keyBindings.get(0);
-				labelText = MessageFormat.format(DebugUIMessages.DetailFormatterDialog_17, new String[] {binding.getKeySequence().format()});  
-			} 
-		}
-		if (labelText == null) {
-			labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1; 
-		}
+        IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
+        String binding = bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
+        if (binding != null) {
+            labelText = MessageFormat.format(DebugUIMessages.DetailFormatterDialog_17, new String[] { binding });
+        }
+        if (labelText == null) {
+            labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1;
+        }
 		
 		label= new Label(container, SWT.NONE);
 		label.setText(labelText); 
@@ -397,9 +388,8 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 */
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmission(submission);
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        handlerService.deactivateHandler(fHandlerActivation);
 		
 		fSnippetViewer.dispose();
 		return super.close();

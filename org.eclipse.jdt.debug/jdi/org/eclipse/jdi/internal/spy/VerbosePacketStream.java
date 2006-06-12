@@ -1708,7 +1708,6 @@ public class VerbosePacketStream extends PrintStream {
 		for (int i= 0; i < methodsCount; i++) {
 			long methodId= readMethodID(in);
 			String name= readString(in);
-			String signature= readString(in);
 			String genericSignature= readString(in);
 			int modifiers= in.readInt();
 			printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId);
