@@ -117,9 +117,9 @@ public class WatchpointTests extends AbstractDebugTest {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 
-			IBreakpoint hit = getBreakpoint(thread);
+			wp = (IJavaWatchpoint) getBreakpoint(thread);
 			IStackFrame frame = thread.getTopStackFrame();
-			assertNotNull("No breakpoint", hit);
+			assertNotNull("No breakpoint", wp);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
 			assertEquals("Should be line 30", 30, frame.getLineNumber());			
 			
@@ -127,9 +127,9 @@ public class WatchpointTests extends AbstractDebugTest {
 			int count = 9;
 			while (count > 0) {
 				thread = resume(thread);
-				hit = getBreakpoint(thread);
+				wp = (IJavaWatchpoint) getBreakpoint(thread);
 				frame = thread.getTopStackFrame();
-				assertNotNull("No breakpoint", hit);
+				assertNotNull("No breakpoint", wp);
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
 				assertEquals("Should be line 30", 30, frame.getLineNumber());
 				count--;
