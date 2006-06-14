@@ -171,13 +171,13 @@ public class MainClass extends Date implements Runnable, Printable {
 	
 	synchronized public void printAndSignal() {
 		print(System.out);
-
 		// Signal readiness by throwing an exception
 		try {
 			throw new NegativeArraySizeException();
 		} catch (NegativeArraySizeException exc) {
 		}
 	}
+	
 	public void run() {
 		try {
 			Thread t = Thread.currentThread();
@@ -282,6 +282,9 @@ public class MainClass extends Date implements Runnable, Printable {
 			return;
 		else if(eventType.equals("refclassload")) {
 			new RefClass();
+		}
+		else if(eventType.equals("fooreturn")) {
+			foo();
 		}
 		else if(eventType.equals("argvalues")) {
 			argValues("teststr", 5, new Double(1.33));

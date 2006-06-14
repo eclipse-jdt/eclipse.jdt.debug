@@ -57,7 +57,6 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 			BreakpointRequest br = getBreakpointRequest(method.location());
 			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
-			
 			EventWaiter waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
 			triggerEvent("forcereturn2");

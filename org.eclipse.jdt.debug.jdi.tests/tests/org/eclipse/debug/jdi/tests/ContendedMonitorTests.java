@@ -24,7 +24,6 @@ public class ContendedMonitorTests extends AbstractJDITest {
 	/**
 	 * test to see if a the 1.6 VM can get monitor events info and that 
 	 * a non-1.6VM cannot.
-	 * TODO Retest this once a final version of a 1.6VM is released, as of the beta 2 release contended monitor info does not work
 	 */
 	public void testCanRequestMonitorEvents() {
 		if(fVM.version().indexOf("1.6") > -1) {

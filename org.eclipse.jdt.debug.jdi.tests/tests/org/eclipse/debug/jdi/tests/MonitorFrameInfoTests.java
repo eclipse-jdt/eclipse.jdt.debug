@@ -33,7 +33,6 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 	/**
 	 * test to see if a the 1.6 VM can get monitor frame info and that 
 	 * a non-1.6VM cannot.
-	 * TODO Retest this once a final version of a 1.6VM is released, as of the beta 2 release monitor frame info does not work
 	 */
 	public void testCanGetMonitorFrameInfo() {
 		if(fVM.version().indexOf("1.6") > -1) {

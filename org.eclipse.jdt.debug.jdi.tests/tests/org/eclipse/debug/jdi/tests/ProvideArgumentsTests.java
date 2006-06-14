@@ -37,7 +37,6 @@ public class ProvideArgumentsTests extends AbstractJDITest {
 	/**
 	 * tests getting argument values from a stackframe when no debugging
 	 * info is available 
-	 * TODO Retest this once a final version of a 1.6VM is released, as of the beta 2 release getting argument values does not work
 	 */
 	public void testGetArgumentValues() {
 		try {
