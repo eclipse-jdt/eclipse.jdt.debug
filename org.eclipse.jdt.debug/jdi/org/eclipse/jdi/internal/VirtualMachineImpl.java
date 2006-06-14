@@ -455,15 +455,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData); //$NON-NLS-1$
 				fCanSetDefaultStratum= readBoolean("set default stratum", replyData); //$NON-NLS-1$
 				fCanGetInstanceInfo = readBoolean("instance info", replyData); //$NON-NLS-1$
-				if(version().indexOf("1.6") > -1) { //$NON-NLS-1$
-					fCanGetClassFileVersion = true; //readBoolean("class file version", replyData); 
-					fCanGetMethodReturnValue = true; //readBoolean("method return value", replyData);
-				}
 				fCanRequestMonitorEvents = readBoolean("request monitor events", replyData); //$NON-NLS-1$
 				fCanGetMonitorFrameInfo = readBoolean("monitor frame info", replyData); //$NON-NLS-1$
 				fCanUseSourceNameFilters = readBoolean("source name filters", replyData); //$NON-NLS-1$
 				fCanGetConstantPool = readBoolean("constant pool", replyData); //$NON-NLS-1$
 				fCanForceEarlyReturn = readBoolean("force early return", replyData); //$NON-NLS-1$
+				/*if(version().indexOf("1.6") > -1) { //$NON-NLS-1$
+					fCanGetClassFileVersion = true; //readBoolean("class file version", replyData); 
+					fCanGetMethodReturnValue = true; //readBoolean("method return value", replyData);
+				}*/
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;

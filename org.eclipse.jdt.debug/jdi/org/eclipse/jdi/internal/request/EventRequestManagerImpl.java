@@ -32,7 +32,6 @@ import org.eclipse.jdi.internal.event.EventImpl;
 import org.eclipse.jdi.internal.event.ExceptionEventImpl;
 import org.eclipse.jdi.internal.event.MethodEntryEventImpl;
 import org.eclipse.jdi.internal.event.MethodExitEventImpl;
-import org.eclipse.jdi.internal.event.MethodExitWithReturnValueEventImpl;
 import org.eclipse.jdi.internal.event.ModificationWatchpointEventImpl;
 import org.eclipse.jdi.internal.event.MonitorContendedEnterEventImpl;
 import org.eclipse.jdi.internal.event.MonitorContendedEnteredEventImpl;
@@ -95,7 +94,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	private static final int MONITOR_CONTENDED_ENTER_INDEX = 13;
 	private static final int MONITOR_WAITED_INDEX = 14;
 	private static final int MONITOR_WAIT_INDEX = 15;
-	private static final int METHOD_EXIT_RETURN_VALUE_INDEX = 16;
 
 	/** Set of all existing requests per request type. */
 	private HashSet[] fRequests;
@@ -110,12 +108,12 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		super("EventRequestManager", vmImpl); //$NON-NLS-1$
 		
 		// Initialize list of requests.
-		fRequests = new HashSet[METHOD_EXIT_RETURN_VALUE_INDEX + 1];
+		fRequests = new HashSet[MONITOR_WAIT_INDEX + 1];
 		for (int i = 0; i < fRequests.length; i++)
 			fRequests[i] = new HashSet();
 			
 		// Initialize map of request IDs to enabled requests.
-		fEnabledRequests = new Hashtable[METHOD_EXIT_RETURN_VALUE_INDEX + 1];
+		fEnabledRequests = new Hashtable[MONITOR_WAIT_INDEX + 1];
 		for (int i = 0; i < fEnabledRequests.length; i++)
 			fEnabledRequests[i] = new Hashtable();
 	}
@@ -188,16 +186,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		addEventRequest(METHOD_EXIT_INDEX, req);
 		return req;
 	} 
-
-	/**
-	 * Creates a method request with a return value
-	 * @since 3.3
-	 */
-	public MethodExitRequest createMethodExitWithReturnValueRequest() {
-		MethodExitWithReturnValueRequestImpl req = new MethodExitWithReturnValueRequestImpl(virtualMachineImpl());
-		addEventRequest(METHOD_EXIT_RETURN_VALUE_INDEX, req);
-		return req;
-	}
 	
 	/**
 	 * Creates a MonitorContendedEnteredRequest
@@ -425,9 +413,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		else if(req instanceof MonitorWaitedRequestImpl) {
 			deleteEventRequest(MONITOR_WAITED_INDEX, req);
 		}
-		else if(req instanceof MethodExitWithReturnValueRequestImpl) {
-			deleteEventRequest(METHOD_EXIT_RETURN_VALUE_INDEX, req);
-		}
 		else
 		
 		throw new InternalError(MessageFormat.format(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, new String[]{req.toString()})); 
@@ -575,9 +560,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		else if(req instanceof MonitorWaitedRequestImpl) {
 			fEnabledRequests[MONITOR_WAITED_INDEX].remove(req.requestID());
 		}
-		else if(req instanceof MethodExitWithReturnValueRequestImpl) {
-			fEnabledRequests[METHOD_EXIT_RETURN_VALUE_INDEX].remove(req.requestID());
-		}
 	}
 	
 	/**
@@ -617,9 +599,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		}
 		else if(req instanceof MonitorContendedEnteredRequestImpl) {
 			fEnabledRequests[MONITOR_CONTENDED_ENTERED_INDEX].put(req.requestID(), req);
-		}
-		else if(req instanceof MethodExitWithReturnValueRequestImpl) {
-			fEnabledRequests[METHOD_EXIT_RETURN_VALUE_INDEX].put(req.requestID(), req);
 		}
 	}
 
@@ -663,9 +642,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		else if(event instanceof MonitorContendedEnteredEventImpl) {
 			return (EventRequestImpl)fEnabledRequests[MONITOR_CONTENDED_ENTERED_INDEX].get(event.requestID());
 		}
-		else if(event instanceof MethodExitWithReturnValueEventImpl) {
-			return (EventRequestImpl)fEnabledRequests[METHOD_EXIT_RETURN_VALUE_INDEX].get(event.requestID());
-		}
 		else
 			throw new InternalError(RequestMessages.EventRequestManagerImpl_Got_event_of_unknown_type_2); 
 	}
@@ -701,13 +677,4 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
     public List monitorWaitedRequests() {
     	return new ArrayList(fRequests[MONITOR_WAITED_INDEX]);
     }
-    
-    /**
-	 * @return list of method exit requests that also ask for the return value
-	 * @since 3.3
-	 */
-	public List methodExitWithReturnValueRequests() {
-		return new ArrayList(fRequests[METHOD_EXIT_RETURN_VALUE_INDEX]);
-	}
-	
 }

@@ -134,9 +134,6 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 			case MethodExitEventImpl.EVENT_KIND:
 				result = MethodExitEventImpl.read(target, requestID, dataInStream);
 				break;
-			case MethodExitWithReturnValueEventImpl.EVENT_KIND:
-				result = MethodExitWithReturnValueEventImpl.read(target, requestID, dataInStream);
-				break;
 			case MonitorContendedEnteredEventImpl.EVENT_KIND:
 				result = MonitorContendedEnteredEventImpl.read(target, requestID, dataInStream);
 				break;

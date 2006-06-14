@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,10 @@ public interface EventRequestManager extends Mirror {
 	public ExceptionRequest createExceptionRequest(com.sun.jdi.ReferenceType arg1, boolean arg2, boolean arg3);
 	public MethodEntryRequest createMethodEntryRequest();
 	public MethodExitRequest createMethodExitRequest();
-	public MethodExitRequest createMethodExitWithReturnValueRequest();
+	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest();
+	public MonitorContendedEnterRequest createMonitorContendedEnterRequest();
+	public MonitorWaitedRequest createMonitorWaitedRequest();
+	public MonitorWaitRequest createMonitorWaitRequest();
 	public ModificationWatchpointRequest createModificationWatchpointRequest(Field arg1);
 	public StepRequest createStepRequest(ThreadReference arg1, int arg2, int arg3);
 	public ThreadDeathRequest createThreadDeathRequest();

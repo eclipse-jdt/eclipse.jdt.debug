@@ -15,6 +15,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ValueImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.request.RequestID;
 
@@ -49,6 +50,9 @@ public class MethodExitEventImpl extends LocatableEventImpl implements MethodExi
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		MethodExitEventImpl event = new MethodExitEventImpl(vmImpl, requestID);
 		event.readThreadAndLocation(target, dataInStream);
+		if(vmImpl.canGetMethodReturnValues()) {
+			event.fReturnValue = ValueImpl.readWithTag(target, dataInStream);
+		}
 		return event;
    	}
 
@@ -64,9 +68,6 @@ public class MethodExitEventImpl extends LocatableEventImpl implements MethodExi
 	 * @since 3.3
 	 */
 	public Value returnValue() {
-		if(!virtualMachineImpl().canGetMethodReturnValues()) {
-			throw new UnsupportedOperationException(EventMessages.MethodExitEventImpl_no_support_for_return_types);
-		}
 		return fReturnValue;
 	}
 }
