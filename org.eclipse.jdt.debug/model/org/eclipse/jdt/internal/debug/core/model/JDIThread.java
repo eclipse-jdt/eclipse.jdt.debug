@@ -12,7 +12,6 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -44,6 +43,7 @@ import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -1167,15 +1167,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
 			preserveStackFrames();
-			try {
-				fThread.forceEarlyReturn(getVM().mirrorOf(45));
-			} catch (InvalidTypeException e) {
-				e.printStackTrace();
-			} catch (ClassNotLoadedException e) {
-				e.printStackTrace();
-			} catch (IncompatibleThreadStateException e) {
-				e.printStackTrace();
-			}
 			fThread.resume();
 		} catch (VMDisconnectedException e) {
 			disconnected();
