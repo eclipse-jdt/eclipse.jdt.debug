@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+* Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +34,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.request.EventRequestManagerImpl;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ByteValue;
 import com.sun.jdi.CharValue;
@@ -122,6 +122,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanGetSourceDebugExtension;
 	private boolean fCanRequestVMDeathEvent;
 	private boolean fCanSetDefaultStratum;
+	private boolean fCanGetInstanceInfo;
+	private boolean fCanGetClassFileVersion;
+	private boolean fCanGetConstantPool;
+	private boolean fCanUseSourceNameFilters;
+	private boolean fCanGetMethodReturnValue;
+	private boolean fCanForceEarlyReturn;
+	private boolean fCanRequestMonitorEvents;
+	private boolean fCanGetMonitorFrameInfo;
 	private boolean[] fHcrCapabilities = null;
 	
 	/*
@@ -446,6 +454,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanGetSourceDebugExtension = readBoolean("get source debug extension", replyData); //$NON-NLS-1$
 				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData); //$NON-NLS-1$
 				fCanSetDefaultStratum= readBoolean("set default stratum", replyData); //$NON-NLS-1$
+				fCanGetInstanceInfo = readBoolean("instance info", replyData); //$NON-NLS-1$
+				if(version().indexOf("1.6") > -1) { //$NON-NLS-1$
+					fCanGetClassFileVersion = true; //readBoolean("class file version", replyData); 
+					fCanGetMethodReturnValue = true; //readBoolean("method return value", replyData);
+				}
+				fCanRequestMonitorEvents = readBoolean("request monitor events", replyData); //$NON-NLS-1$
+				fCanGetMonitorFrameInfo = readBoolean("monitor frame info", replyData); //$NON-NLS-1$
+				fCanUseSourceNameFilters = readBoolean("source name filters", replyData); //$NON-NLS-1$
+				fCanGetConstantPool = readBoolean("constant pool", replyData); //$NON-NLS-1$
+				fCanForceEarlyReturn = readBoolean("force early return", replyData); //$NON-NLS-1$
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;
@@ -455,6 +473,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanGetSourceDebugExtension = false;
 				fCanRequestVMDeathEvent = false;
 				fCanSetDefaultStratum= false;
+				fCanGetInstanceInfo = false;
+				fCanGetClassFileVersion = false;
+				fCanGetConstantPool = false;
+				fCanUseSourceNameFilters = false;
+				fCanGetMethodReturnValue = false;
+				fCanForceEarlyReturn = false;
+				fCanRequestMonitorEvents = false;
+				fCanGetMonitorFrameInfo = false;
 			}
 			fGotCapabilities = true;
 		} catch (IOException e) {
@@ -463,6 +489,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		} finally {
 			handledJdwpRequest();
 		}
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canForceEarlyReturn()
+	 * @since 3.3
+	 */
+	public boolean canForceEarlyReturn() {
+		getCapabilities();
+		return fCanForceEarlyReturn;
 	}
 	
 	/**
@@ -482,11 +517,38 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 	
 	/**
+	 * @see com.sun.jdi.VirtualMachine#canGetInstanceInfo()
+	 * @since 3.3
+	 */
+	public boolean canGetInstanceInfo() {
+		getCapabilities();
+		return fCanGetInstanceInfo;
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canGetMethodReturnValues()
+	 * @since 3.3
+	 */
+	public boolean canGetMethodReturnValues() {
+		getCapabilities();
+		return fCanGetMethodReturnValue;
+	}
+	
+	/**
 	 * @return Returns true if this implementation supports the retrieval of the monitor information for an object.
 	 */
 	public boolean canGetMonitorInfo() {
 		getCapabilities();
 		return fCanGetMonitorInfo;
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canGetMonitorFrameInfo()
+	 * @since 3.3
+	 */
+	public boolean canGetMonitorFrameInfo() {
+		getCapabilities();
+		return fCanGetMonitorFrameInfo;
 	}
 	
 	/**
@@ -504,6 +566,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	public boolean canGetSyntheticAttribute() {
 		getCapabilities();
 		return fCanGetSyntheticAttribute;
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canRequestMonitorEvents()
+	 * @since 3.3
+	 */
+	public boolean canRequestMonitorEvents() {
+		getCapabilities();
+		return fCanRequestMonitorEvents;
 	}
 	
 	/**
@@ -915,9 +986,27 @@ e.printStackTrace();
 	/**
 	 * @return Returns Whether VM can get the version of a given class file.
 	 */
-	public boolean canGetClassFileVersion() {
+	public boolean canGetClassFileVersion1() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION];
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canGetClassFileVersion()
+	 * @since 3.3
+	 */
+	public boolean canGetClassFileVersion() {
+		getCapabilities();
+		return fCanGetClassFileVersion;
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canGetConstantPool()
+	 * @since 3.3
+	 */
+	public boolean canGetConstantPool() {
+		getCapabilities();
+		return fCanGetConstantPool;
 	}
 	
 	/**
@@ -1058,9 +1147,6 @@ e.printStackTrace();
 			(fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
 	}
 	
-	/*
-	 * @see VirtualMachine#redefineClasses(Map)
-	 */
 	public void redefineClasses(Map typesToBytes) {
 		if (!canRedefineClasses()) {
 			throw new UnsupportedOperationException();
@@ -1152,6 +1238,15 @@ e.printStackTrace();
 		return fCanUnrestrictedlyRedefineClasses;
 	}
 
+	/**
+	 * @see com.sun.jdi.VirtualMachine#canUseSourceNameFilters()
+	 * @since 3.3
+	 */
+	public boolean canUseSourceNameFilters() {
+		getCapabilities();
+		return fCanUseSourceNameFilters;
+	}
+	
 	/*
 	 * @see VirtualMachine#canPopFrames()
 	 */
@@ -1215,6 +1310,58 @@ e.printStackTrace();
 	 */
 	public String getDefaultStratum() {
 		return fDefaultStratum;
+	}
+	
+	/**
+	 * @see com.sun.jdi.VirtualMachine#instanceCounts(java.util.List)
+	 * @since 3.3
+	 */
+	public long[] instanceCounts(List refTypes) {
+		if(refTypes == null) {
+			throw new NullPointerException(JDIMessages.VirtualMachineImpl_2);
+		}
+		int size = refTypes.size();
+		if(size == 0) {
+			return new long[0];
+		}
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			writeInt(size, "size", outData); //$NON-NLS-1$
+			for(int i = 0; i < size; i++) {
+				((ReferenceTypeImpl)refTypes.get(i)).getRefTypeID().write(outData); 
+			}
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_INSTANCE_COUNTS, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_CLASS:
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
+				case JdwpReplyPacket.ILLEGAL_ARGUMENT:
+					throw new IllegalArgumentException(JDIMessages.VirtualMachineImpl_count_less_than_zero);
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			int counts = readInt("counts", replyData); //$NON-NLS-1$
+			if(counts != size) {
+				throw new InternalError(JDIMessages.VirtualMachineImpl_3);
+			}
+			long[] ret = new long[counts];
+			for(int i = 0; i < counts; i++) {
+				ret[i] = readLong("ref count", replyData); //$NON-NLS-1$
+			}
+			return ret;
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return null;
+		} finally {
+			handledJdwpRequest();
+		}
 	}
 	
 	/**

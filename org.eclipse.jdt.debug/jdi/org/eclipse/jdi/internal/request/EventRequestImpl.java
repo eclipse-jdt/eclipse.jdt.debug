@@ -73,6 +73,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	public static final byte MODIF_KIND_FIELDONLY = 9;
 	public static final byte MODIF_KIND_STEP = 10;
 	public static final byte MODIF_KIND_INSTANCE = 11;
+	public static final byte MODIF_KIND_SOURCE_NAME_FILTER = 12;
 	
 	/** Mapping of command codes to strings. */
 	private static HashMap fStepSizeMap = null;
@@ -123,6 +124,11 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	
 	/** Instance filters. */
 	protected ArrayList fInstanceFilters = null;
+	/** 
+	 * source name filters
+	 * @since 3.3
+	 */
+	protected ArrayList fSourceNameFilters = null;
 
 	/**
 	 * Creates new EventRequest.
@@ -419,6 +425,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 	fThreadStepFilters.add(filter);
 	 }
 	 
+	 /**
+	  * Helper method which allows instance filters to be added
+	  * @param instance the object ref instance to add to the listing
+	  */
 	 public void addInstanceFilter(ObjectReference instance) {
 	 	checkDisabled();
 	 	checkVM(instance);
@@ -428,6 +438,19 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 	fInstanceFilters.add(instance);
 	 }
 
+	 /**
+	  * Helper method which allows us to add source name filters to a list to be sent all at once 
+	  * @param pattern the pattern for filtering to add to the existing list
+	  * @since 3.3
+	  */
+	 public void addNewSourceNameFilter(String pattern) {
+		 checkDisabled();
+		 if(fSourceNameFilters == null) {
+			 fSourceNameFilters = new ArrayList();
+		 }
+		 fSourceNameFilters.add(pattern);
+	 }
+	 
 	/**
 	 * From here on JDWP functionality of EventRequest is implemented.
 	 */
@@ -509,7 +532,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			count += fThreadStepFilters.size();
 		if (fInstanceFilters != null)
 			count += fInstanceFilters.size();
-			
+		if(fSourceNameFilters != null) {
+			count += fSourceNameFilters.size();
+		}
 		return count;
 	}
 
@@ -587,6 +612,12 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			for (int i = 0; i < fInstanceFilters.size(); i++) {
 				writeByte(MODIF_KIND_INSTANCE, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				((ObjectReferenceImpl)fInstanceFilters.get(i)).write(this, outData);
+			}
+		}
+		if(fSourceNameFilters != null) {
+			for (int i = 0; i < fSourceNameFilters.size(); i++) {
+				writeByte(MODIF_KIND_SOURCE_NAME_FILTER, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
+				writeString((String)fSourceNameFilters.get(i), "modifier", outData); //$NON-NLS-1$
 			}
 		}
 	}

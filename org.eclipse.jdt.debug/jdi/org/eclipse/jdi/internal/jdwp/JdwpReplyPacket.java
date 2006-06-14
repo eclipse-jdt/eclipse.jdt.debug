@@ -30,6 +30,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 	public static final short INVALID_PRIORITY = 12;
 	public static final short THREAD_NOT_SUSPENDED = 13;
 	public static final short THREAD_SUSPENDED = 14;
+	public static final short THREAD_NOT_ALIVE = 15;  
 	public static final short INVALID_OBJECT = 20;
 	public static final short INVALID_CLASS = 21;
 	public static final short CLASS_NOT_PREPARED = 22;

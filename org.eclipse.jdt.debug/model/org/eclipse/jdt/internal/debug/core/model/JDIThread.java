@@ -256,7 +256,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		setRunning(false);
 		try {
 			// see bug 30816
-			if (getUnderlyingThread().status() == ThreadReference.THREAD_STATUS_UNKNOWN) {
+			if (fThread.status() == ThreadReference.THREAD_STATUS_UNKNOWN) {
 				setRunning(true);
 				return;
 			}
@@ -270,7 +270,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} 
 		
 		try {
-			boolean suspended = getUnderlyingThread().isSuspended();
+			boolean suspended = fThread.isSuspended();
 			if (suspended) {
 				// Unless we're at a breakpoint, set status to running. The thread state
 				// will be properly updated to suspended in the case that a breakpoint
@@ -523,7 +523,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_retrieve_stack_frame___thread_not_suspended__1, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		}
 		try {
-			return getUnderlyingThread().frames();
+			return fThread.frames();
 		} catch (IncompatibleThreadStateException e) {
 			requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_retrieve_stack_frame___thread_not_suspended__1, e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		} catch (RuntimeException e) {
@@ -551,7 +551,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected int getUnderlyingFrameCount() throws DebugException {
 		try {
-			return getUnderlyingThread().frameCount();
+			return fThread.frameCount();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_frame_count, new String[] {e.toString()}), e); 
 		} catch (IncompatibleThreadStateException e) {
@@ -732,9 +732,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				flags |= ObjectReference.INVOKE_NONVIRTUAL;
 			}
 			if (receiverClass == null) {
-				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, flags);
+				result= receiverObject.invokeMethod(fThread, method, args, flags);
 			} else {
-				result= receiverClass.invokeMethod(getUnderlyingThread(), method, args, flags);
+				result= receiverClass.invokeMethod(fThread, method, args, flags);
 			}
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
@@ -804,7 +804,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRunning(true);
 			setInvokingMethod(true);
 			preserveStackFrames();
-			result= receiverClass.newInstance(getUnderlyingThread(), constructor, args, ClassType.INVOKE_SINGLE_THREADED);
+			result= receiverClass.newInstance(fThread, constructor, args, ClassType.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
 		} catch (ClassNotLoadedException e) {
@@ -906,7 +906,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public String getName() throws DebugException {
 		try {
-			fPreviousName = getUnderlyingThread().name();
+			fPreviousName = fThread.name();
 		} catch (RuntimeException e) {
 			// Don't bother reporting the exception when retrieving the name (bug 30785 & bug 33276)
 			if (e instanceof ObjectCollectedException) {
@@ -931,11 +931,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// to get the priority, we must get the value from the "priority" field
 		Field p= null;
 		try {
-			p= getUnderlyingThread().referenceType().fieldByName("priority"); //$NON-NLS-1$
+			p= fThread.referenceType().fieldByName("priority"); //$NON-NLS-1$
 			if (p == null) {
 				requestFailed(JDIDebugModelMessages.JDIThread_no_priority_field, null); 
 			}
-			Value v= getUnderlyingThread().getValue(p);
+			Value v= fThread.getValue(p);
 			if (v instanceof IntegerValue) {
 				return ((IntegerValue)v).value();
 			}
@@ -1167,7 +1167,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
 			preserveStackFrames();
-			getUnderlyingThread().resume();
+			try {
+				fThread.forceEarlyReturn(getVM().mirrorOf(45));
+			} catch (InvalidTypeException e) {
+				e.printStackTrace();
+			} catch (ClassNotLoadedException e) {
+				e.printStackTrace();
+			} catch (IncompatibleThreadStateException e) {
+				e.printStackTrace();
+			}
+			fThread.resume();
 		} catch (VMDisconnectedException e) {
 			disconnected();
 		} catch (RuntimeException e) {
@@ -1359,7 +1368,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		Thread thread= new Thread(new Runnable() {
 			public void run() {
 				try {
-					getUnderlyingThread().suspend();
+					fThread.suspend();
 					int timeout= JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 					long stop= System.currentTimeMillis() + timeout;
 					boolean suspended= isUnderlyingThreadSuspended();
@@ -1396,7 +1405,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	public boolean isUnderlyingThreadSuspended() {
-		return getUnderlyingThread().isSuspended();
+		return fThread.isSuspended();
 	}
 
 	/**
@@ -1419,7 +1428,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// To ensure that all threads will fully resume when the VM
 		// is resumed, make sure the suspend count of each thread
 		// is no greater than 1. @see Bugs 23328 and 27622
-		ThreadReference thread= getUnderlyingThread();
+		ThreadReference thread= fThread;
 		while (thread.suspendCount() > 1) {
 			try {
 				thread.resume();
@@ -1609,7 +1618,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected ThreadGroupReference getUnderlyingThreadGroup() throws DebugException {
 		if (fThreadGroup == null) {
 			try {
-				fThreadGroup = getUnderlyingThread().threadGroup();
+				fThreadGroup = fThread.threadGroup();
 			} catch (UnsupportedOperationException e) {
 				requestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
@@ -1743,7 +1752,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void invokeThread() throws DebugException {
 			try {
-				getUnderlyingThread().resume();
+				fThread.resume();
 			} catch (RuntimeException e) {
 				stepEnd();
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stepping, new String[] {e.toString()}), e); 
@@ -1769,7 +1778,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__1, null); 
 			}
 			try {
-				StepRequest request = manager.createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, getStepKind());
+				StepRequest request = manager.createStepRequest(fThread, StepRequest.STEP_LINE, getStepKind());
 				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 				request.addCountFilter(1);
 				attachFiltersToStepRequest(request);
@@ -2223,7 +2232,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				super.invokeThread();
 			} else {
 				try {
-					org.eclipse.jdi.hcr.ThreadReference hcrThread= (org.eclipse.jdi.hcr.ThreadReference) getUnderlyingThread();
+					org.eclipse.jdi.hcr.ThreadReference hcrThread= (org.eclipse.jdi.hcr.ThreadReference) fThread;
 					hcrThread.doReturn(null, true);
 				} catch (RuntimeException e) {
 					stepEnd();
@@ -2300,7 +2309,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return super.createStepRequest();
 			} else if (num == 0) {
 				try {
-					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) manager).createReenterStepRequest(getUnderlyingThread());
+					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) manager).createReenterStepRequest(fThread);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					request.addCountFilter(1);
 					request.enable();
@@ -2310,7 +2319,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}			
 			} else if (num == -1) {
 				try {
-					StepRequest request = manager.createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					StepRequest request = manager.createStepRequest(fThread, StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					request.addCountFilter(1);
 					request.enable();
@@ -2365,7 +2374,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public IJavaObject[] getOwnedMonitors() throws DebugException {
 		try {
 			JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
-			List ownedMonitors= getUnderlyingThread().ownedMonitors();
+			List ownedMonitors= fThread.ownedMonitors();
 			IJavaObject[] javaOwnedMonitors= new IJavaObject[ownedMonitors.size()];
 			Iterator itr= ownedMonitors.iterator();
 			int i= 0;
@@ -2388,7 +2397,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public IJavaObject getContendedMonitor() throws DebugException {
 		try {
-			ObjectReference monitor= getUnderlyingThread().currentContendedMonitor();
+			ObjectReference monitor= fThread.currentContendedMonitor();
 			if (monitor != null) {
 				return new JDIObjectValue((JDIDebugTarget)getDebugTarget(), monitor);
 			}
@@ -2497,7 +2506,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public void stop(IJavaObject exception) throws DebugException {
 		try {
-			getUnderlyingThread().stop(((JDIObjectValue)exception).getUnderlyingObject());
+			fThread.stop(((JDIObjectValue)exception).getUnderlyingObject());
 		} catch (InvalidTypeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stoping_thread, new String[] {e.toString()}), e); 
 		}

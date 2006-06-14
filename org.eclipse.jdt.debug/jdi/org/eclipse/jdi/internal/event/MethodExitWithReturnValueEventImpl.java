@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ValueImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.request.RequestID;
 
@@ -26,11 +26,13 @@ import com.sun.jdi.event.MethodExitEvent;
  * this class implements the corresponding interfaces
  * declared by the JDI specification. See the com.sun.jdi package
  * for more information.
- *
+ * 
+ * @since 3.3
  */
-public class MethodExitEventImpl extends LocatableEventImpl implements MethodExitEvent {
-	/** Jdwp Event Kind. */
-	public static final byte EVENT_KIND = EVENT_METHOD_EXIT;
+public class MethodExitWithReturnValueEventImpl extends LocatableEventImpl implements MethodExitEvent {
+
+	/** even id **/
+	public static final byte EVENT_KIND = EVENT_METHOD_EXIT_WITH_RETURN_VALUE;
 	
 	/** return value for the method **/
 	private Value fReturnValue = null;
@@ -38,35 +40,32 @@ public class MethodExitEventImpl extends LocatableEventImpl implements MethodExi
 	/**
 	 * Creates new MethodExitEventImpl.
 	 */
-	private MethodExitEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("MethodExitEvent", vmImpl, requestID); //$NON-NLS-1$
-	}
-		
+	private MethodExitWithReturnValueEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
+		super("MethodExitWithReturnValueEvent", vmImpl, requestID); //$NON-NLS-1$
+	} 
+	
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl with the method return value, of which requestID has already been read.
 	 */
-	public static MethodExitEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+	public static MethodExitWithReturnValueEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		MethodExitEventImpl event = new MethodExitEventImpl(vmImpl, requestID);
+		MethodExitWithReturnValueEventImpl event = new MethodExitWithReturnValueEventImpl(vmImpl, requestID);
 		event.readThreadAndLocation(target, dataInStream);
+		event.fReturnValue = ValueImpl.readWithTag(target, dataInStream);
 		return event;
-   	}
-
+	}
+	
 	/**
-	 * @return Returns the method that was entered.
+	 * @see com.sun.jdi.event.MethodExitEvent#method()
 	 */
 	public Method method() {
 		return fLocation.method();
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.event.MethodExitEvent#returnValue()
-	 * @since 3.3
 	 */
 	public Value returnValue() {
-		if(!virtualMachineImpl().canGetMethodReturnValues()) {
-			throw new UnsupportedOperationException(EventMessages.MethodExitEventImpl_no_support_for_return_types);
-		}
 		return fReturnValue;
 	}
 }

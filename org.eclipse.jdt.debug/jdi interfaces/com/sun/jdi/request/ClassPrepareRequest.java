@@ -17,4 +17,5 @@ public interface ClassPrepareRequest extends EventRequest {
 	public void addClassExclusionFilter(String arg1);
 	public void addClassFilter(ReferenceType arg1);
 	public void addClassFilter(String arg1);
+	void addSourceNameFilter(String arg1);
 }

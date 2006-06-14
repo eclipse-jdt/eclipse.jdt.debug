@@ -38,4 +38,6 @@ public interface ThreadReference extends ObjectReference {
 	public void suspend();
 	public int suspendCount();
 	public ThreadGroupReference threadGroup();
+	public void forceEarlyReturn(Value value) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException;
+	public List ownedMonitorsAndFrames()throws IncompatibleThreadStateException;
 }

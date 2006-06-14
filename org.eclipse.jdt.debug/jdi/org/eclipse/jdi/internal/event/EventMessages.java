@@ -19,6 +19,8 @@ public class EventMessages extends NLS {
 	public static String EventSetImpl_Invalid_suspend_policy_encountered___1;
 	public static String EventSetImpl_EventSets_are_unmodifiable_3;
 
+	public static String MethodExitEventImpl_no_support_for_return_types;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, EventMessages.class);

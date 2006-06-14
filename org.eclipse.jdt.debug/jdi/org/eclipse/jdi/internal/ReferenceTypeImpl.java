@@ -16,7 +16,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ClassNotLoadedException;
@@ -43,7 +43,9 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 /**
@@ -1927,4 +1929,194 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		}
 	}
 
+	/**
+	 * @see com.sun.jdi.ReferenceType#instances(long)
+	 * @since 3.3
+	 */
+	public List instances(long maxInstances) {
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			write(this, outData);
+			writeLong(maxInstances, "max instances", outData); //$NON-NLS-1$
+			
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_INSTANCES, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_OBJECT:
+				case JdwpReplyPacket.INVALID_CLASS:
+					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
+				case JdwpReplyPacket.ILLEGAL_ARGUMENT:
+					throw new IllegalArgumentException(JDIMessages.ReferenceTypeImpl_26);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			int elements = readInt("element count", replyData); //$NON-NLS-1$
+			if(elements > maxInstances) {
+				throw new InternalError(JDIMessages.ReferenceTypeImpl_25);
+			}
+			ArrayList list = new ArrayList();
+			for(int i = 0; i < elements; i++) {
+				list.add(ValueImpl.readWithTag(this, replyData));
+			}
+			return list;
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return null;
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+	
+	/**
+	 * @see com.sun.jdi.ReferenceType#majorVersion()
+	 * @since 3.3
+	 */
+	public int majorVersion() {
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			getRefTypeID().write(outData);
+			
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_CLASS_VERSION, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_CLASS:
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
+				case JdwpReplyPacket.ABSENT_INFORMATION:
+					return 0;
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_no_class_version_support24);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			return readInt("major version", replyData); //$NON-NLS-1$
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return 0;
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+	
+	/**
+	 * @see com.sun.jdi.ReferenceType#minorVersion()
+	 * @since 3.3
+	 */
+	public int minorVersion() {
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			getRefTypeID().write(outData);
+			
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_CLASS_VERSION, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_CLASS:
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
+				case JdwpReplyPacket.ABSENT_INFORMATION:
+					return 0;
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_no_class_version_support24);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			readInt("major version", replyData); //$NON-NLS-1$
+			return readInt("minor version", replyData); //$NON-NLS-1$
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return 0;
+		} finally {
+			handledJdwpRequest();
+		}		
+	}
+	
+	/**
+	 * @see com.sun.jdi.ReferenceType#constantPoolCount()
+	 * @since 3.3
+	 */
+	public int constantPoolCount() {
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			this.getRefTypeID().write(outData);
+			
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_CONSTANT_POOL, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_CLASS:
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
+				case JdwpReplyPacket.ABSENT_INFORMATION:
+					return 0;
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_no_constant_pool_support);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			return readInt("pool count", replyData); //$NON-NLS-1$
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return 0;
+		} finally {
+			handledJdwpRequest();
+		}		
+	}
+	
+	/**
+	 * @see com.sun.jdi.ReferenceType#constantPool()
+	 * @since 3.3
+	 */
+	public byte[] constantPool() {
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			this.getRefTypeID().write(outData);
+			
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_CONSTANT_POOL, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_CLASS:
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
+				case JdwpReplyPacket.ABSENT_INFORMATION:
+					return new byte[0];
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_no_constant_pool_support);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			readInt("pool count", replyData); //$NON-NLS-1$
+			int bytes = readInt("byte count", replyData); //$NON-NLS-1$
+			byte[] array = new byte[bytes];
+			for (int i = 0; i < bytes; i++) {
+				array[i] = readByte("byte read", replyData); //$NON-NLS-1$
+			}
+			return array;
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return null;
+		} finally {
+			handledJdwpRequest();
+		}		
+	}
 }

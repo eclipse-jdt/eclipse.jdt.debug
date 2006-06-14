@@ -25,6 +25,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpFrameID;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
@@ -148,6 +149,32 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		}
 	}
 
+	/**
+	 * @see com.sun.jdi.StackFrame#getArgumentValues()
+	 * @since 3.3
+	 */
+	public List getArgumentValues() throws InvalidStackFrameException {
+		if(!thread().isSuspended()) {
+			throw new InvalidStackFrameException(JDIMessages.StackFrameImpl_no_argument_values_available);
+		}
+		try {
+			List list = location().method().variables();
+			ArrayList ret = new ArrayList();
+			LocalVariable var = null;
+			for(Iterator iter = list.iterator(); iter.hasNext();){
+				var = (LocalVariable) iter.next();
+				if(var.isArgument()) {
+					ret.add(getValue(var));
+				}
+			}
+			return ret;
+		} 
+		catch (AbsentInformationException e) {
+			JDIDebugPlugin.log(e);
+			return null;
+		}
+	}
+	
 	/**
 	 * @return Returns the Location of the current instruction in the frame.
 	 */

@@ -30,6 +30,7 @@ public interface EventRequestManager extends Mirror {
 	public ExceptionRequest createExceptionRequest(com.sun.jdi.ReferenceType arg1, boolean arg2, boolean arg3);
 	public MethodEntryRequest createMethodEntryRequest();
 	public MethodExitRequest createMethodExitRequest();
+	public MethodExitRequest createMethodExitWithReturnValueRequest();
 	public ModificationWatchpointRequest createModificationWatchpointRequest(Field arg1);
 	public StepRequest createStepRequest(ThreadReference arg1, int arg2, int arg3);
 	public ThreadDeathRequest createThreadDeathRequest();
@@ -46,4 +47,8 @@ public interface EventRequestManager extends Mirror {
 	public List threadDeathRequests();
 	public List threadStartRequests();
 	public List vmDeathRequests();
+	public List monitorContendedEnterRequests();
+    public List monitorContendedEnteredRequests();
+    public List monitorWaitRequests();
+    public List monitorWaitedRequests();
 }

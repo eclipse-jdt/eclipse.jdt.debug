@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 /**
@@ -189,7 +190,53 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		list.add(field);
 		return (ValueImpl)getValues(list).get(field);
 	}
-		
+	
+	/**
+	 * @return Returns objects that directly reference this object. 
+	 * Only objects that are reachable for the purposes of garbage collection are returned. 
+	 * Note that an object can also be referenced in other ways, such as from a local variable in a stack frame, or from a JNI global reference. Such non-object referrers are not returned by this method.
+	 * 
+	 * @since 3.3
+	 */
+	public List referringObjects(long maxReferrers) throws UnsupportedOperationException, IllegalArgumentException {
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			this.getObjectID().write(outData);
+			writeLong(maxReferrers, "max referrers", outData); //$NON-NLS-1$
+						
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.OR_REFERRING_OBJECTS, outBytes);
+			switch(replyPacket.errorCode()) {
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
+				case JdwpReplyPacket.ILLEGAL_ARGUMENT:
+					throw new IllegalArgumentException(JDIMessages.ReferenceTypeImpl_26);
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.ObjectReferenceImpl_object_not_known);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			
+			DataInputStream replyData = replyPacket.dataInStream();
+			int elements = readInt("elements", replyData); //$NON-NLS-1$
+			if(elements > maxReferrers) {
+				elements = (int)maxReferrers;
+			}
+			ArrayList list = new ArrayList();
+			for(int i = 0; i < elements; i++) {
+				list.add(ValueImpl.readWithTag(this, replyData));
+			}
+			return list;
+		}
+		catch(IOException e) {
+			defaultIOExceptionHandler(e);
+			return null;
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+	
 	/** 
 	 * @return Returns the value of multiple instance and/or static fields in this object. 
 	 */

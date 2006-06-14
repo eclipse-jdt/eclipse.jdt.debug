@@ -17,7 +17,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,16 +27,20 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpThreadID;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvalidStackFrameException;
 import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMCannotBeModifiedException;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 
@@ -134,12 +137,59 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 	
 	/**
+	 * @see com.sun.jdi.ThreadReference#forceEarlyReturn(com.sun.jdi.Value)
+	 * @since 3.3
+	 */
+	public void forceEarlyReturn(Value value) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException {
+		if(!virtualMachineImpl().canBeModified()) {
+			throw new VMCannotBeModifiedException(JDIMessages.ThreadReferenceImpl_vm_read_only);
+		}
+		initJdwpRequest();
+		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+		DataOutputStream dataOutStream = new DataOutputStream(byteOutStream);
+		try {
+			write(this, dataOutStream);
+			write((ValueImpl)value, dataOutStream);
+			JdwpReplyPacket reply = requestVM(JdwpCommandPacket.TR_FORCE_EARLY_RETURN, byteOutStream);
+			switch(reply.errorCode()) {
+				case JdwpReplyPacket.INVALID_THREAD:
+					throw new ObjectCollectedException(JDIMessages.ThreadReferenceImpl_thread_object_invalid);
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ClassNotLoadedException(JDIMessages.ThreadReferenceImpl_thread_or_value_unknown);
+				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+				case JdwpReplyPacket.THREAD_NOT_ALIVE:
+					throw new IncompatibleThreadStateException(JDIMessages.ThreadReferenceImpl_thread_not_suspended);
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ThreadReferenceImpl_no_force_early_return_on_threads);
+				case JdwpReplyPacket.OPAQUE_FRAME:
+					throw new NativeMethodException(JDIMessages.ThreadReferenceImpl_thread_cannot_force_native_method);
+				case JdwpReplyPacket.NO_MORE_FRAMES:
+					throw new InvalidStackFrameException(JDIMessages.ThreadReferenceImpl_thread_no_stackframes);
+				case JdwpReplyPacket.TYPE_MISMATCH:
+					throw new InvalidTypeException(JDIMessages.ThreadReferenceImpl_incapatible_return_type);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(reply.errorCode());
+		} 
+		catch (IOException e) {
+			defaultIOExceptionHandler(e);
+		}
+		finally {
+			handledJdwpRequest();
+		}
+	}
+	
+	/**
 	 * @returns Returns the StackFrame at the given index in the thread's current call stack. 
 	 */
 	public StackFrame frame(int index) throws IncompatibleThreadStateException {
 		return (StackFrameImpl)frames(index, 1).get(0);
 	}
 	
+	/**
+	 * @see com.sun.jdi.ThreadReference#frameCount()
+	 */
 	public int frameCount() throws IncompatibleThreadStateException {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -215,7 +265,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 
 	/**
-	 * Interrupts this thread.
+	 * Interrupts this thread
+	 * @see com.sun.jdi.ThreadReference#interrupt()
 	 */
 	public void interrupt() {
 		// Note that this information should not be cached.
@@ -318,7 +369,49 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 
 	/**
-	 * Resumes this thread. 
+	 * @see com.sun.jdi.ThreadReference#ownedMonitorsAndFrames()
+	 * @since 3.3
+	 */
+	public List ownedMonitorsAndFrames() throws IncompatibleThreadStateException {
+		initJdwpRequest();
+		try {
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TR_OWNED_MONITOR_STACK_DEPTH, this);
+			switch (replyPacket.errorCode()) {
+				case JdwpReplyPacket.INVALID_THREAD:
+				case JdwpReplyPacket.INVALID_OBJECT:
+					throw new ObjectCollectedException(JDIMessages.ThreadReferenceImpl_thread_object_invalid);
+				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+					throw new IncompatibleThreadStateException(JDIMessages.ThreadReferenceImpl_Thread_was_not_suspended_5);
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.ThreadReferenceImpl_no_force_early_return_on_threads);
+				case JdwpReplyPacket.VM_DEAD:
+					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			DataInputStream replyData = replyPacket.dataInStream();
+			
+			int owned = readInt("owned monitors", replyData); //$NON-NLS-1$
+			List result = new ArrayList(owned);
+			for (int i = 0; i < owned; i++) {
+				result.add(new MonitorInfoImpl(this, 
+											  readInt("stack depth", replyData),  //$NON-NLS-1$
+											  ObjectReferenceImpl.readObjectRefWithTag(this, replyData), 
+											  virtualMachineImpl()));
+			}
+			return result;
+		} 
+		catch (IOException e) {
+			defaultIOExceptionHandler(e);
+			return null;
+		} 
+		finally {
+			handledJdwpRequest();
+		}
+	}
+	
+	/**
+	 * Resumes this thread.
+	 * @see com.sun.jdi.ThreadReference#resume() 
 	 */
 	public void resume() {
 		initJdwpRequest();
@@ -377,7 +470,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 	
 	/**
-	 * Stops this thread with an asynchronous exception. 
+	 * Stops this thread with an asynchronous exception.
+	 * @see com.sun.jdi.ThreadReference#stop(com.sun.jdi.ObjectReference) 
 	 */
 	public void stop(ObjectReference throwable) throws InvalidTypeException {
 		checkVM(throwable);
@@ -406,7 +500,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 		
 	/**
-	 * Suspends this thread. 
+	 * Suspends this thread.
+	 * @see com.sun.jdi.ThreadReference#suspend() 
 	 */
 	public void suspend() {
 		initJdwpRequest();

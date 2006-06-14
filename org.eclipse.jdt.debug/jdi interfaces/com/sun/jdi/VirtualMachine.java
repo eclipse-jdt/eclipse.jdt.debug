@@ -67,4 +67,13 @@ public interface VirtualMachine extends Mirror {
 	public void suspend();
 	public List topLevelThreadGroups();
 	public String version();
+	public boolean canGetInstanceInfo();
+	public long[] instanceCounts(List arg1);
+	public boolean canGetClassFileVersion();
+    public boolean canGetConstantPool();
+    public boolean canUseSourceNameFilters();
+    public boolean canGetMethodReturnValues();
+    public boolean canForceEarlyReturn();
+    public boolean canRequestMonitorEvents();
+    public boolean canGetMonitorFrameInfo();
 }

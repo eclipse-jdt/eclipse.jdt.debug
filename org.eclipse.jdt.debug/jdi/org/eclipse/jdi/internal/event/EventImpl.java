@@ -49,6 +49,11 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 	public static final byte EVENT_EXCEPTION_CATCH = 30;
 	public static final byte EVENT_METHOD_ENTRY = 40;
 	public static final byte EVENT_METHOD_EXIT = 41;
+	public static final byte EVENT_METHOD_EXIT_WITH_RETURN_VALUE = 42;
+	public static final byte EVENT_MONITOR_CONTENDED_ENTER = 43;
+	public static final byte EVENT_MONITOR_CONTENDED_ENTERED = 44;
+	public static final byte EVENT_MONITOR_WAIT = 45;
+	public static final byte EVENT_MONITOR_WAITED = 46;
 	public static final byte EVENT_VM_INIT = 90;
 	public static final byte EVENT_VM_DEATH = 99;
 	public static final byte EVENT_VM_DISCONNECTED = 100;	// Never sent by across JDWP.
@@ -128,6 +133,21 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 				break;
 			case MethodExitEventImpl.EVENT_KIND:
 				result = MethodExitEventImpl.read(target, requestID, dataInStream);
+				break;
+			case MethodExitWithReturnValueEventImpl.EVENT_KIND:
+				result = MethodExitWithReturnValueEventImpl.read(target, requestID, dataInStream);
+				break;
+			case MonitorContendedEnteredEventImpl.EVENT_KIND:
+				result = MonitorContendedEnteredEventImpl.read(target, requestID, dataInStream);
+				break;
+			case MonitorContendedEnterEventImpl.EVENT_KIND:
+				result = MonitorContendedEnterEventImpl.read(target, requestID, dataInStream);
+				break;
+			case MonitorWaitedEventImpl.EVENT_KIND:
+				result = MonitorWaitedEventImpl.read(target, requestID, dataInStream);
+				break;
+			case MonitorWaitEventImpl.EVENT_KIND:
+				result = MonitorWaitEventImpl.read(target, requestID, dataInStream);
 				break;
 			case ModificationWatchpointEventImpl.EVENT_KIND:
 				result = ModificationWatchpointEventImpl.read(target, requestID, dataInStream);

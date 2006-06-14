@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int VM_REDEFINE_CLASSES = 18			 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_SET_DEFAULT_STRATUM = 19			 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_ALL_CLASSES_WITH_GENERIC= 20		 + (CSET_VIRTUAL_MACHINE << 8);
+	public static final int VM_INSTANCE_COUNTS = 21				 + (CSET_VIRTUAL_MACHINE << 8);
 
 	/** Commands ReferenceType. */
 	public static final int RT_SIGNATURE = 1					 + (CSET_REFERENCE_TYPE << 8);
@@ -81,6 +82,9 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int RT_SIGNATURE_WITH_GENERIC = 13		 + (CSET_REFERENCE_TYPE << 8);
 	public static final int RT_FIELDS_WITH_GENERIC = 14			 + (CSET_REFERENCE_TYPE << 8);
 	public static final int RT_METHODS_WITH_GENERIC = 15		 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_INSTANCES = 16					 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_CLASS_VERSION = 17				 + (CSET_REFERENCE_TYPE << 8);
+	public static final int RT_CONSTANT_POOL = 18				 + (CSET_REFERENCE_TYPE << 8);
 
 	/** Commands ClassType. */
 	public static final int CT_SUPERCLASS = 1					 + (CSET_CLASS_TYPE << 8);
@@ -107,6 +111,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int OR_DISABLE_COLLECTION = 7			 + (CSET_OBJECT_REFERENCE << 8);
 	public static final int OR_ENABLE_COLLECTION = 8			 + (CSET_OBJECT_REFERENCE << 8);
 	public static final int OR_IS_COLLECTED = 9					 + (CSET_OBJECT_REFERENCE << 8);
+	public static final int OR_REFERRING_OBJECTS = 10			 + (CSET_OBJECT_REFERENCE << 8);
 
 	/** Commands StringReference. */
 	public static final int SR_VALUE = 1						 + (CSET_STRING_REFERENCE << 8);
@@ -124,6 +129,8 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int TR_STOP = 10						 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_INTERRUPT = 11					 + (CSET_THREAD_REFERENCE << 8);
 	public static final int TR_SUSPEND_COUNT = 12				 + (CSET_THREAD_REFERENCE << 8);
+	public static final int TR_OWNED_MONITOR_STACK_DEPTH = 13	 + (CSET_THREAD_REFERENCE << 8);
+	public static final int TR_FORCE_EARLY_RETURN = 14			 + (CSET_THREAD_REFERENCE << 8);
 
 	/** Commands ThreadGroupReference. */
 	public static final int TGR_NAME = 1						 + (CSET_THREAD_GROUP_REFERENCE << 8);

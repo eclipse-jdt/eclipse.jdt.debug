@@ -21,6 +21,8 @@ public class JDIMessages extends NLS {
 	public static String ArrayReferenceImpl__Garbage_Collected__ArrayReference_5;
 	public static String ArrayTypeImpl_getValues_not_allowed_on_array_1;
 	public static String ArrayTypeImpl_No_source_name_for_Arrays_1;
+
+	public static String class_or_object_not_known;
 	public static String ClassTypeImpl_Class_does_not_contain_given_method_1;
 	public static String ClassTypeImpl_Number_of_arguments_doesn__t_match_2;
 	public static String ClassTypeImpl_Method_is_constructor_or_intitializer_3;
@@ -47,6 +49,9 @@ public class JDIMessages extends NLS {
 
 	public static String MirrorImpl_Got_error_code_in_reply___1;
 	public static String MirrorImpl_Got_invalid_data___2;
+
+	public static String ObjectReferenceImpl_object_not_known;
+
 	public static String ObjectReferenceImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_1;
 	public static String ObjectReferenceImpl_Class_does_not_contain_given_method_2;
 	public static String ObjectReferenceImpl_Number_of_arguments_doesn__t_match_3;
@@ -55,19 +60,36 @@ public class JDIMessages extends NLS {
 	public static String ObjectReferenceImpl_One_of_the_arguments_of_ObjectReference_invokeMethod___6;
 	public static String ObjectReferenceImpl__Garbage_Collected__ObjectReference__8;
 	public static String ObjectReferenceImpl_Invalid_ObjectID_tag_encountered___9;
+
 	public static String PrimitiveTypeImpl_Invalid_primitive_signature____1;
 	public static String PrimitiveTypeImpl___2;
 	public static String PrimitiveTypeImpl_A_PrimitiveType_does_not_have_modifiers_3;
 	public static String PrimitiveValueImpl_Invalid_Primitive_Value_encountered_1;
 	public static String PrimitiveValueImpl_Invalid_Primitive_Value_tag_encountered___2;
+
+	public static String ReferenceTypeImpl_25;
+	public static String ReferenceTypeImpl_26;
+	public static String ReferenceTypeImpl_27;
+	public static String ReferenceTypeImpl_no_class_version_support24;
+	public static String ReferenceTypeImpl_no_constant_pool_support;
 	public static String ReferenceTypeImpl_Obsolete_method_1;
 	public static String ReferenceTypeImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_3;
 	public static String ReferenceTypeImpl_Can__t_compare_reference_type_to_given_object_4;
 	public static String ReferenceTypeImpl_Source_name_is_not_known_7;
 	public static String ReferenceTypeImpl_Invalid_ReferenceTypeID_tag_encountered___8;
 	public static String ReferenceTypeImpl_Type_has_not_been_loaded_10;
+
+	public static String StackFrameImpl_no_argument_values_available;
 	public static String StackFrameImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_1;
 	public static String StringReferenceImpl__Garbage_Collected__StringReference__3;
+
+	public static String ThreadReferenceImpl_incapatible_return_type;
+	public static String ThreadReferenceImpl_no_force_early_return_on_threads;
+	public static String ThreadReferenceImpl_thread_cannot_force_native_method;
+	public static String ThreadReferenceImpl_thread_no_stackframes;
+	public static String ThreadReferenceImpl_thread_not_suspended;
+	public static String ThreadReferenceImpl_thread_object_invalid;
+	public static String ThreadReferenceImpl_thread_or_value_unknown;
 	public static String ThreadReferenceImpl_Thread_was_not_suspended_1;
 	public static String ThreadReferenceImpl_Invalid_index_of_stack_frames_given_4;
 	public static String ThreadReferenceImpl_Thread_was_not_suspended_5;
@@ -78,12 +100,17 @@ public class JDIMessages extends NLS {
 	public static String ThreadReferenceImpl_Unable_to_pop_the_requested_stack_frame_from_the_call_stack__Reasons_include__The_frame_id_was_invalid__The_thread_was_resumed__10;
 	public static String ThreadReferenceImpl_Unable_to_pop_the_requested_stack_frame__The_requested_stack_frame_is_not_suspended_11;
 	public static String ThreadReferenceImpl_Unable_to_pop_the_requested_stack_frame_from_the_call_stack__Reasons_include__The_requested_frame_was_the_last_frame_on_the_call_stack__The_requested_frame_was_the_last_frame_above_a_native_frame__12;
+	public static String ThreadReferenceImpl_vm_read_only;
 	public static String TypeImpl__Unloaded_Type__1;
 	public static String TypeImpl_Can__t_covert_method_signature_to_tag___9;
 	public static String TypeImpl_Invalid_signature____10;
 	public static String TypeImpl___11;
 	public static String TypeImpl_Can__t_convert_method_signature_to_name_2;
 	public static String ValueImpl_Invalid_Value_tag_encountered___1;
+
+	public static String VirtualMachineImpl_2;
+	public static String VirtualMachineImpl_3;
+	public static String VirtualMachineImpl_count_less_than_zero;
 	public static String VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1;
 	public static String VirtualMachineImpl_Failed_to_get_ID_sizes_2;
 	public static String VirtualMachineImpl_Invalid_result_flag_in_Classes_Have_Changed_response___3;
@@ -92,6 +119,8 @@ public class JDIMessages extends NLS {
 	public static String VirtualMachineImpl_1;
 	public static String VirtualMachineManagerImpl_Could_not_open_verbose_file___1;
 	public static String VirtualMachineManagerImpl_____2;
+
+	public static String vm_dead;
 	public static String VoidTypeImpl_A_VoidType_does_not_have_modifiers_1;
 	public static String VirtualMachineImpl_Add_method_not_implemented_1;
 	public static String VirtualMachineImpl_Scheme_change_not_implemented_2;

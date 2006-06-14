@@ -14,6 +14,8 @@ import org.eclipse.osgi.util.NLS;
 public class RequestMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdi.internal.request.RequestMessages";//$NON-NLS-1$
 
+	public static String ClassPrepareRequestImpl_does_not_support_source_name_filters;
+
 	public static String EventRequestImpl___not_enabled__1;
 	public static String EventRequestImpl____2;
 	public static String EventRequestImpl_Invalid_suspend_policy_encountered___3;
@@ -21,6 +23,8 @@ public class RequestMessages extends NLS {
 	public static String EventRequestImpl_Invalid_step_depth_encountered___5;
 	public static String EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1;
 	public static String EventRequestManagerImpl_Got_event_of_unknown_type_2;
+
+	public static String vm_dead;
 
 	static {
 		// load message values from bundle file

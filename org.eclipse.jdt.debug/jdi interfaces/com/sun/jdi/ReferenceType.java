@@ -50,4 +50,9 @@ public interface ReferenceType extends Type , Comparable , Accessible {
 	public List sourcePaths(String arg1) throws AbsentInformationException;
 	public List visibleFields();
 	public List visibleMethods();
+	public List instances(long arg1);
+	public int majorVersion();
+    public int minorVersion();
+    public int constantPoolCount();
+    public byte[] constantPool();
 }

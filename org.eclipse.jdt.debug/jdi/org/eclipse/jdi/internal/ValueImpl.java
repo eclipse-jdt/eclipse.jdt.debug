@@ -31,6 +31,7 @@ import com.sun.jdi.PrimitiveType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
+import com.sun.jdi.VoidType;
 
 /**
  * this class implements the corresponding interfaces
@@ -182,6 +183,9 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 			if (valueType instanceof ReferenceType && type instanceof ReferenceType) {
 			    checkReferenceType((ReferenceType) valueType, (ReferenceType) type);
 				return (ValueImpl)value;
+			}
+			if(valueType instanceof VoidType && type instanceof VoidType) {
+				return (VoidValueImpl) value;
 			}
 		}
 		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
