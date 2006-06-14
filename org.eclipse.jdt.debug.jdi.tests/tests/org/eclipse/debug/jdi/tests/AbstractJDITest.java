@@ -328,6 +328,16 @@ public abstract class AbstractJDITest extends TestCase {
 		// Create a breakpoint request
 		return fVM.eventRequestManager().createBreakpointRequest(getLocation());
 	}
+	
+	/**
+	 * Creates a new breakpoinmt request for a user specified position
+	 * @param loc thel oc to set the breakpoint on
+	 * @return a new breakpoint request or null if the location is invalid
+	 * @since 3.3
+	 */
+	protected BreakpointRequest getBreakpointRequest(Location loc) {
+		return fVM.eventRequestManager().createBreakpointRequest(loc);
+	}
 	/**
 	 * Returns the class with the given name or null if not loaded.
 	 */
@@ -415,7 +425,7 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 	}
 	/**
-	 * Returns the firt location in MainClass.print(OutputStream).
+	 * Returns the first location in MainClass.print(OutputStream).
 	 */
 	protected Location getLocation() {
 		return getMethod().location();

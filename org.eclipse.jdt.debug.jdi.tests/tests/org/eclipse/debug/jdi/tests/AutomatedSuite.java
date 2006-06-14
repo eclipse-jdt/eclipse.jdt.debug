@@ -30,7 +30,7 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		AbstractJDITest.parseArgs(new String[0]);
 
-		addTest(new TestSuite(AccessibleTest.class));
+		/*addTest(new TestSuite(AccessibleTest.class));
 		addTest(new TestSuite(ArrayReferenceTest.class));
 		addTest(new TestSuite(ArrayTypeTest.class));
 		addTest(new TestSuite(BooleanValueTest.class));
@@ -83,13 +83,17 @@ public class AutomatedSuite extends TestSuite {
 
 		addTest(new TestSuite(VirtualMachineExitTest.class));
 		addTest(new TestSuite(VMDisconnectEventTest.class));
-		addTest(new TestSuite(VMDisposeTest.class));
+		addTest(new TestSuite(VMDisposeTest.class));*/
 		
-		//Java 1.6 capatibility tests
-		/*addTest(new TestSuite(HeapWalkingTests.class));
+	//Java 1.6 capatibility tests
+		addTest(new TestSuite(HeapWalkingTests.class));
 		addTest(new TestSuite(ConstantPoolTests.class));
 		addTest(new TestSuite(SourceNameFilterTests.class));
-		addTest(new TestSuite(MethodReturnValuesTests.class));*/
+		addTest(new TestSuite(MethodReturnValuesTests.class));
+		addTest(new TestSuite(ForceEarlyReturnTests.class));
+		addTest(new TestSuite(MonitorFrameInfoTests.class));
+		addTest(new TestSuite(ProvideArgumentsTests.class));
+		addTest(new TestSuite(ContendedMonitorTests.class));
 	}
 	
 }

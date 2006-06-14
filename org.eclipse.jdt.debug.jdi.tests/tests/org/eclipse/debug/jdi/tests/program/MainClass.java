@@ -122,6 +122,53 @@ public class MainClass extends Date implements Runnable, Printable {
 		writer.println(string);
 		writer.flush();
 	}
+	
+	/**
+	 * Prints out a specified integer. This method is used in the force early return tests to ensure we
+	 * can specifiy a differnet, type compatible return value
+	 * @param out a stream to print out to
+	 * @param num the number we want to print and return
+	 * @return the specified num parameter, just pass it through
+	 * @since 3.3
+	 */
+	public int printNumber(OutputStream out, int num) {
+		String blah = "foo"+foo();
+		PrintWriter writer = new PrintWriter(out);
+		writer.println("The specified number is: "+num);
+		writer.flush();
+		return num;
+	}
+	
+	/**
+	 * dump out a string
+	 * @return a String
+	 * @since 3.3
+	 */
+	public String foo() {
+		System.out.println("foobar");
+		return "man";
+	}
+	
+	/**
+	 * make a sync'd method so we can stop in it to gather monitor information
+	 * @since 3.3
+	 */
+	synchronized public void sync() {
+		System.out.println("sync'd to the moon");
+	}
+	
+	/**
+	 * suspend on the first line of the method to get the argument values from the stackframe.
+	 * used in testing the new 1.6VM capability to get argument values when no debugging info is available.
+	 * @param str a string
+	 * @param num a number
+	 * @param obj an object
+	 * @since 3.3
+	 */
+	public void argValues(String str, int num, Object obj) {
+		System.out.println("get the arg values");
+	}
+	
 	synchronized public void printAndSignal() {
 		print(System.out);
 
@@ -233,6 +280,33 @@ public class MainClass extends Date implements Runnable, Printable {
 		/* Trigger event according to the field fEventType */
 		if (eventType.equals(""))
 			return;
+		else if(eventType.equals("refclassload")) {
+			new RefClass();
+		}
+		else if(eventType.equals("argvalues")) {
+			argValues("teststr", 5, new Double(1.33));
+		}
+		else if(eventType.equals("forcereturn2")) {
+			printNumber(System.out, 1);
+		}
+		else if(eventType.equals("forcereturn")) {
+			print(System.out);
+		}
+		else if(eventType.equals("monitorinfo")) {
+			sync();
+		}
+		else if(eventType.equals("refclass1load")) {
+			new RefClass1();
+		}
+		else if(eventType.equals("refclass2load")) {
+			new RefClass2();
+		}
+		else if(eventType.equals("refclass3load")) {
+			new RefClass3();
+		}
+		else if(eventType.equals("refclass4load")) {
+			new RefClass4();
+		}
 		else if (eventType.equals("AccessWatchpointEvent"))
 			triggerAccessWatchpointEvent();
 		else if (eventType.equals("StaticAccessWatchpointEvent"))
@@ -270,6 +344,7 @@ public class MainClass extends Date implements Runnable, Printable {
 		else
 			System.out.println("Unknown event type: " + eventType);
 	}
+	
 	/**
 	 *	Trigger an exception event for the front-end.
 	 */
