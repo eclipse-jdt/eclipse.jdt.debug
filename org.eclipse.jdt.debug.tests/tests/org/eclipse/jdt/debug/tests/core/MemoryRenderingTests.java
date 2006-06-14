@@ -34,7 +34,7 @@ public class MemoryRenderingTests extends AbstractDebugTest {
 	public void testRenderingTypes() {
 		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
 		IMemoryRenderingType[] types = manager.getRenderingTypes();
-		assertEquals("Wrong number of rendering typess contributed", 7, types.length);
+		assertTrue("Wrong number of rendering types contributed", types.length > 6);
 		assertTrue("Missing type 1", indexOf(manager.getRenderingType("rendering_type_1"), types) >= 0);
         assertTrue("Missing type 2", indexOf(manager.getRenderingType("rendering_type_2"), types) >= 0);
         assertTrue("Missing type 3", indexOf(manager.getRenderingType("rendering_type_3"), types) >= 0);
