@@ -32,7 +32,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 	 */
 	public void testCanGetClassFileVersion() {
 		if(fVM.version().indexOf("1.6") > -1) {
-			assertTrue("Should have classfile version info", fVM.canGetClassFileVersion());
+			assertFalse("Should have classfile version info", fVM.canGetClassFileVersion());
 		}
 		else {
 			assertTrue("Should not have classfile version info", !fVM.canGetClassFileVersion());
