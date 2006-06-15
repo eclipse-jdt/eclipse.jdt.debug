@@ -123,10 +123,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanRequestVMDeathEvent;
 	private boolean fCanSetDefaultStratum;
 	private boolean fCanGetInstanceInfo;
-	private boolean fCanGetClassFileVersion;
 	private boolean fCanGetConstantPool;
 	private boolean fCanUseSourceNameFilters;
-	private boolean fCanGetMethodReturnValue;
 	private boolean fCanForceEarlyReturn;
 	private boolean fCanRequestMonitorEvents;
 	private boolean fCanGetMonitorFrameInfo;
@@ -460,10 +458,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanUseSourceNameFilters = readBoolean("source name filters", replyData); //$NON-NLS-1$
 				fCanGetConstantPool = readBoolean("constant pool", replyData); //$NON-NLS-1$
 				fCanForceEarlyReturn = readBoolean("force early return", replyData); //$NON-NLS-1$
-				/*if(version().indexOf("1.6") > -1) { //$NON-NLS-1$
-					fCanGetClassFileVersion = true; //readBoolean("class file version", replyData); 
-					fCanGetMethodReturnValue = true; //readBoolean("method return value", replyData);
-				}*/
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;
@@ -474,10 +468,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				fCanRequestVMDeathEvent = false;
 				fCanSetDefaultStratum= false;
 				fCanGetInstanceInfo = false;
-				fCanGetClassFileVersion = false;
 				fCanGetConstantPool = false;
 				fCanUseSourceNameFilters = false;
-				fCanGetMethodReturnValue = false;
 				fCanForceEarlyReturn = false;
 				fCanRequestMonitorEvents = false;
 				fCanGetMonitorFrameInfo = false;
@@ -530,8 +522,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @since 3.3
 	 */
 	public boolean canGetMethodReturnValues() {
-		getCapabilities();
-		return fCanGetMethodReturnValue;
+		getVersionInfo();
+		return fJdwpMajorVersion > 1 || fJdwpMinorVersion >= 6;
 	}
 	
 	/**
@@ -996,8 +988,8 @@ e.printStackTrace();
 	 * @since 3.3
 	 */
 	public boolean canGetClassFileVersion() {
-		getCapabilities();
-		return fCanGetClassFileVersion;
+		getVersionInfo();
+		return fJdwpMajorVersion > 1 || fJdwpMinorVersion >= 6;
 	}
 	
 	/**
