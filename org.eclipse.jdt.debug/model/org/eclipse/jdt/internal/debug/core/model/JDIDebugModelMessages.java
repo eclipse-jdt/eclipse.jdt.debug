@@ -102,6 +102,8 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIThisVariableexception_retrieving_type_signature;
 	public static String JDIThisVariable_Exception_occurred_while_retrieving_modifiers__1;
 
+	public static String JDIThread_47;
+
 	public static String JDIThread_can_only_specify_one_receiver_for_a_method_invocation;
 	public static String JDIThread_Cannot_perform_nested_evaluations_2;
 	public static String JDIThread_Cannot_perform_nested_evaluations;

@@ -31,6 +31,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -44,6 +45,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 
 import com.ibm.icu.text.MessageFormat;
+import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -56,6 +58,7 @@ import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
@@ -133,6 +136,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Whether this thread is a system thread.
 	 */
 	private boolean fIsSystemThread;
+	
+	/**
+	 * Whether this thread is a daemon thread
+	 * @since 3.3
+	 */
+	private boolean fIsDaemon = false;
+	
 	/**
 	 * The collection of breakpoints that caused the last suspend, or 
 	 * an empty collection if the thread is not suspended or was not
@@ -239,6 +249,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (underlyingException instanceof ObjectCollectedException) {
 				throw (ObjectCollectedException)underlyingException;
 			}		
+			logError(e);
+		}
+		
+		try {
+			determineIfDaemonThread();
+		} catch (DebugException e) {
+			Throwable underlyingException= e.getStatus().getException();
+			if (underlyingException instanceof VMDisconnectedException) {
+				// Threads may be created by the VM at shutdown
+				// as finalizers. The VM may be disconnected by
+				// the time we hear about the thread creation.
+				disconnected();
+				return;
+			}
 			logError(e);
 		}
 		
@@ -410,6 +434,32 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 	}
+	
+	/**
+	 * Determines whether this is a daemon thread.
+	 * 
+	 * @throws DebugException on failure
+	 */
+	protected void determineIfDaemonThread() throws DebugException {
+		fIsDaemon = false;
+		try {
+			ReferenceType referenceType = getUnderlyingThread().referenceType();
+			Field field = referenceType.fieldByName("daemon"); //$NON-NLS-1$
+			if (field == null) {
+				field = referenceType.fieldByName("isDaemon"); //$NON-NLS-1$
+			}
+			if (field != null) {
+				if (field.signature().equals(Signature.SIG_BOOLEAN)) {
+					Value value = getUnderlyingThread().getValue(field);
+					if (value instanceof BooleanValue) {
+						fIsDaemon = ((BooleanValue)value).booleanValue();
+					}
+				}
+			}
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_47, e);
+		}
+	}	
 
 	/**
 	 * NOTE: this method returns a copy of this thread's stack frames.
@@ -1061,6 +1111,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean isSystemThread() {
 		return fIsSystemThread;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#isDaemon()
+	 */
+	public boolean isDaemon() throws DebugException {
+		return fIsDaemon;
 	}
 
 	/**

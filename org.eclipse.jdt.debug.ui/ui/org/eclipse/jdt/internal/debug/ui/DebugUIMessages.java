@@ -110,35 +110,71 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation_native_method;
 	public static String JDIModelPresentation_not_available;
 	public static String JDIModelPresentation_Suspend_VM;
-	public static String JDIModelPresentation_System_Thread____0____Terminated__7;
-	public static String JDIModelPresentation_System_Thread___0____Evaluating__9;
-	public static String JDIModelPresentation_System_Thread___0____Running__11;
-	public static String JDIModelPresentation_System_Thread___0____Stepping__9;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__27;
-	public static String JDIModelPresentation_System_Thread___0____Suspended___1____2;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__access_of_field__1__in__2____16;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__breakpoint_at_line__1__in__2____24;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__entry_into_method__1__in__2____21;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__exception__1____13;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__exit_of_method__1__in__2____21;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__modification_of_field__1__in__2____18;
-	public static String JDIModelPresentation_System_Thread___0____Suspended__run_to_line__1__in__2____23;
 	public static String JDIModelPresentation_target_suspended;
-	public static String JDIModelPresentation_Thread____0____Terminated__8;
-	public static String JDIModelPresentation_Thread___0____Evaluating__10;
-	public static String JDIModelPresentation_Thread___0____Running__12;
-	public static String JDIModelPresentation_Thread___0____Stepping__10;
-	public static String JDIModelPresentation_Thread___0____Suspended__28;
-	public static String JDIModelPresentation_Thread___0____Suspended___1____3;
-	public static String JDIModelPresentation_Thread___0____Suspended__access_of_field__1__in__2____17;
-	public static String JDIModelPresentation_Thread___0____Suspended__breakpoint_at_line__1__in__2____26;
-	public static String JDIModelPresentation_Thread___0____Suspended__entry_into_method__1__in__2____22;
-	public static String JDIModelPresentation_Thread___0____Suspended__exception__1____14;
-	public static String JDIModelPresentation_Thread___0____Suspended__exit_of_method__1__in__2____22;
-	public static String JDIModelPresentation_Thread___0____Suspended__modification_of_field__1__in__2____19;
-	public static String JDIModelPresentation_Thread___0____Suspended__run_to_line__1__in__2____25;
 	public static String JDIModelPresentation_thread_filtered;
 	public static String JDIModelPresentation_uncaught_62;
+	
+	// thread label keys are built programmatically
+	
+	public static String thread_terminated;
+	public static String thread_evaluating;
+	public static String thread_running;
+	public static String thread_stepping;
+	public static String thread_suspended;
+	public static String thread_suspended_problem;
+	public static String thread_suspended_fieldaccess;
+	public static String thread_suspended_linebreakpoint;
+	public static String thread_suspended_methodentry;
+	public static String thread_suspended_exception;
+	public static String thread_suspended_methodexit;
+	public static String thread_suspended_fieldmodification;
+	public static String thread_suspended_runtoline;
+	public static String thread_suspended_classprepare;
+	
+	public static String thread_daemon_terminated;
+	public static String thread_daemon_evaluating;
+	public static String thread_daemon_running;
+	public static String thread_daemon_stepping;
+	public static String thread_daemon_suspended;
+	public static String thread_daemon_suspended_problem;
+	public static String thread_daemon_suspended_fieldaccess;
+	public static String thread_daemon_suspended_linebreakpoint;
+	public static String thread_daemon_suspended_methodentry;
+	public static String thread_daemon_suspended_exception;
+	public static String thread_daemon_suspended_methodexit;
+	public static String thread_daemon_suspended_fieldmodification;
+	public static String thread_daemon_suspended_runtoline;
+	public static String thread_daemon_suspended_classprepare;
+	
+	public static String thread_system_terminated;
+	public static String thread_system_evaluating;
+	public static String thread_system_running;
+	public static String thread_system_stepping;
+	public static String thread_system_suspended;
+	public static String thread_system_suspended_problem;
+	public static String thread_system_suspended_fieldaccess;
+	public static String thread_system_suspended_linebreakpoint;
+	public static String thread_system_suspended_methodentry;
+	public static String thread_system_suspended_exception;
+	public static String thread_system_suspended_methodexit;
+	public static String thread_system_suspended_fieldmodification;
+	public static String thread_system_suspended_runtoline;
+	public static String thread_system_suspended_classprepare;
+	
+	public static String thread_daemon_system_terminated;
+	public static String thread_daemon_system_evaluating;
+	public static String thread_daemon_system_running;
+	public static String thread_daemon_system_stepping;
+	public static String thread_daemon_system_suspended;
+	public static String thread_daemon_system_suspended_problem;
+	public static String thread_daemon_system_suspended_fieldaccess;
+	public static String thread_daemon_system_suspended_linebreakpoint;
+	public static String thread_daemon_system_suspended_methodentry;
+	public static String thread_daemon_system_suspended_exception;
+	public static String thread_daemon_system_suspended_methodexit;
+	public static String thread_daemon_system_suspended_fieldmodification;
+	public static String thread_daemon_system_suspended_runtoline;
+	public static String thread_daemon_system_suspended_classprepare;
 
 	public static String JDIDebugUIPlugin_An_error_occurred_retrieving_a_VMInstallType_page_1;
 
@@ -242,7 +278,6 @@ public class DebugUIMessages extends NLS {
 	public static String CreateStepFilterDialog_4;
 	public static String CreateStepFilterDialog_5;
 	public static String TypeNameResolver_0;
-	public static String JDIModelPresentation_115;
 	public static String JDIModelPresentation_116;
 	public static String JDIModelPresentation_0;
 	public static String JDIModelPresentation_1;

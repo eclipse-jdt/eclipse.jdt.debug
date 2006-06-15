@@ -249,4 +249,13 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @since 3.2
 	 */
 	public IJavaThreadGroup getThreadGroup() throws DebugException;
+	
+	/**
+	 * Returns whether this thread is a daemon thread.
+	 * 
+	 * @return whether this thread is a daemon thread
+	 * @throws DebugException if an exception occurs while determining status
+	 * @since 3.3
+	 */
+	public boolean isDaemon() throws DebugException;
 }
