@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class JavaLogicalStructuresPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ISelectionChangedListener, Listener {
 
@@ -236,6 +237,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_LOGICAL_STRUCTURES_PAGE);
 		noDefaultAndApplyButton();
 		initializeDialogUnits(parent);
 		

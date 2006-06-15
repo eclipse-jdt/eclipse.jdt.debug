@@ -48,6 +48,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JAVA_BREAKPOINT_PREFERENCE_PAGE= PREFIX + "java_breakpoint_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE= PREFIX + "java_detail_formatter_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_PRIMITIVES_PREFERENCE_PAGE= PREFIX + "java_primitives_preference_page_context"; //$NON-NLS-1$
+	public static final String JAVA_LOGICAL_STRUCTURES_PAGE = PREFIX + "java_logical_structures_page"; //$NON-NLS-1$
 	
 	// reused ui-blocks
 	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$

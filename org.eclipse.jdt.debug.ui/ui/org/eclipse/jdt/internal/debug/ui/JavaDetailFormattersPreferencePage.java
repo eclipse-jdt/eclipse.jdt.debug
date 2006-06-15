@@ -77,6 +77,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		setDescription(DebugUIMessages.JavaDetailFormattersPreferencePage_Override_default___toString_____for_Variables_and_Expressions_view_details__1); 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE);
