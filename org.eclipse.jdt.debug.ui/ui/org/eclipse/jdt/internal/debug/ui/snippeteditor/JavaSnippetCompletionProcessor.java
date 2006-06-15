@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  
 import java.util.Arrays;
 
-import org.eclipse.jdt.core.CompletionContext;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -102,7 +101,6 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			setErrorMessage(null);
 			try {
 				fCollector = new CompletionProposalCollector(fEditor.getJavaProject());
-				fCollector.acceptContext(new CompletionContext());
 				fEditor.codeComplete(fCollector);
 			} catch (JavaModelException x) {
 				Shell shell= viewer.getTextWidget().getShell();
