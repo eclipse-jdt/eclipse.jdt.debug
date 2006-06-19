@@ -23,5 +23,5 @@ public interface StackFrame extends Mirror , Locatable {
 	public ThreadReference thread();
 	public LocalVariable visibleVariableByName(String arg1) throws AbsentInformationException;
 	public List visibleVariables() throws AbsentInformationException;
-	public List getArgumentValues() throws InvalidStackFrameException;
+	public List getArgumentValues();
 }

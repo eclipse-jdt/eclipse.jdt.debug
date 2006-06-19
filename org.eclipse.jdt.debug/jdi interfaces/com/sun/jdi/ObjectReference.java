@@ -31,5 +31,5 @@ public interface ObjectReference extends com.sun.jdi.Value {
 	public void setValue(Field arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
 	public long uniqueID();
 	public List waitingThreads() throws IncompatibleThreadStateException;
-	public List referringObjects(long arg1) throws UnsupportedOperationException, IllegalArgumentException;
+	public List referringObjects(long arg1);
 }
