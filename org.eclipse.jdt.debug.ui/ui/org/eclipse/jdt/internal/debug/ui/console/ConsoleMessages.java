@@ -14,7 +14,11 @@ import org.eclipse.osgi.util.NLS;
 public class ConsoleMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.console.ConsoleMessages";//$NON-NLS-1$
 
-    public static String JavaStackTraceHyperlink_Information_1;
+    public static String AutoFormatSettingAction_0;
+
+	public static String AutoFormatSettingAction_1;
+
+	public static String JavaStackTraceHyperlink_Information_1;
     public static String JavaStackTraceHyperlink_Error;
 	public static String JavaStackTraceConsoleFactory_0;
 	public static String JavaStackTraceConsole_0;

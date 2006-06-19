@@ -16,10 +16,10 @@ public class AutoFormatSettingAction extends Action {
 	private IPreferenceStore fPreferenceStore;
 
 	public AutoFormatSettingAction(JavaStackTraceConsolePage page) {
-		super("Auto Format", SWT.TOGGLE); 
+		super(ConsoleMessages.AutoFormatSettingAction_0, SWT.TOGGLE); 
 		fPage = page;
 		
-		setToolTipText("Auto Format");  
+		setToolTipText(ConsoleMessages.AutoFormatSettingAction_1);  
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_HIDE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_HIDE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_HIDE));
