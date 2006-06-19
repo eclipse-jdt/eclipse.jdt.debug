@@ -456,7 +456,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				}
 			}
-		} catch (RuntimeException e) {
+		}
+		catch(ObjectCollectedException oce) {/*do nothing thread does not exist*/}
+		catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIThread_47, e);
 		}
 	}	
