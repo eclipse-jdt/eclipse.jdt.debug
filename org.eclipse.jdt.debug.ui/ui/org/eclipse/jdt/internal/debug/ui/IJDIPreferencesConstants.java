@@ -192,4 +192,11 @@ public interface IJDIPreferencesConstants {
 	 * @since 3.2
 	 */
 	public static final String PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION = IJavaDebugUIConstants.PLUGIN_ID + ".open_inspect_popup_on_exception"; //$NON-NLS-1$
+
+	/**
+	 * Boolean  preference controlling whether the java stack trace
+	 * console should be formatted when ever a paste occurs.
+	 * @since 3.3
+	 */
+	public static final String PREF_AUTO_FORMAT_JSTCONSOLE = IJavaDebugUIConstants.PLUGIN_ID + ".auto_format_jstconsole"; //$NON-NLS-1$;
 }

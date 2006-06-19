@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
@@ -28,7 +29,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.part.IPageBookViewPage;
 
 public class JavaStackTraceConsole extends TextConsole {
     public final static String CONSOLE_TYPE = "javaStackTraceConsole"; //$NON-NLS-1$
@@ -51,7 +54,7 @@ public class JavaStackTraceConsole extends TextConsole {
         partitioner.connect(getDocument());
     }
 
-    void initializeDocument() {
+	void initializeDocument() {
         File file = new File(FILE_NAME);
         if (file.exists()) {
             try {
@@ -148,5 +151,106 @@ public class JavaStackTraceConsole extends TextConsole {
 		return IJavaDebugHelpContextIds.STACK_TRACE_CONSOLE;
 	}
     
+    public IPageBookViewPage createPage(IConsoleView view) {
+    	return new JavaStackTraceConsolePage(this, view);
+	}
     
+    
+    public void format() {
+        IDocument document = getDocument();
+        String orig = document.get();
+        if (orig != null && orig.length() > 0) {
+            document.set(""); //$NON-NLS-1$ hack avoids bug in the default position updater
+            document.set(format(orig));
+        }
+    }
+    
+    private String format(String trace) {
+        StringTokenizer tokenizer = new StringTokenizer(trace, " \t\n\r\f", true); //$NON-NLS-1$
+        StringBuffer formattedTrace = new StringBuffer();
+        
+        boolean insideAt = false;
+        boolean newLine = true;
+        int pendingSpaces = 0;
+        boolean antTrace = false;
+        
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            if (token.length() == 0)
+                continue; // paranoid
+            char c = token.charAt(0);
+            // handle delimiters
+            switch (c) {
+            case ' ':
+                if (newLine) {
+                    pendingSpaces++;
+                } else {
+                    pendingSpaces = 1;
+                }
+                continue;
+            case '\t':
+                if (newLine) {
+                    pendingSpaces += 4;
+                } else {
+                    pendingSpaces = 1;
+                }
+                continue;
+            case '\n':
+            case '\r':
+            case '\f':
+                if (insideAt) {
+                    pendingSpaces = 1;
+                } else {
+                    pendingSpaces = 0;
+                    newLine = true;
+                }
+                continue;
+            }
+            // consider newlines only before token starting with char '\"' or
+            // token "at" or "-".
+            if (newLine || antTrace) {
+                if (c == '\"') { // leading thread name, e.g. "Worker-124"
+                                    // prio=5
+                    formattedTrace.append("\n\n"); //$NON-NLS-1$  print 2 lines to break between threads
+                } else if ("-".equals(token)) { //$NON-NLS-1$ - locked ...
+                    formattedTrace.append("\n"); //$NON-NLS-1$
+                    formattedTrace.append("    "); //$NON-NLS-1$
+                    formattedTrace.append(token);
+                    pendingSpaces = 0;
+                    continue;
+                } else if ("at".equals(token)) { //$NON-NLS-1$  at ...
+                    if (!antTrace) {
+                        formattedTrace.append("\n"); //$NON-NLS-1$
+                        formattedTrace.append("    "); //$NON-NLS-1$
+                    } else {
+                        formattedTrace.append(' ');
+                    }
+                    insideAt = true;
+                    formattedTrace.append(token);
+                    pendingSpaces = 0;
+                    continue;
+                } else if (c == '[') { 
+                    if(antTrace) {
+                        formattedTrace.append("\n"); //$NON-NLS-1$
+                    }
+                    formattedTrace.append(token);
+                    pendingSpaces = 0;
+                    newLine = false;
+                    antTrace = true;
+                    continue;
+                }
+                newLine = false;
+            }
+            if (pendingSpaces > 0) {
+                for (int i = 0; i < pendingSpaces; i++) {
+                    formattedTrace.append(' ');
+                }
+                pendingSpaces = 0;
+            }
+            formattedTrace.append(token);
+            insideAt = false;
+        }
+        
+        return formattedTrace.toString();
+    }
 }
