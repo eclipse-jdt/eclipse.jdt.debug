@@ -522,8 +522,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @since 3.3
 	 */
 	public boolean canGetMethodReturnValues() {
-		getVersionInfo();
-		return fJdwpMajorVersion > 1 || fJdwpMinorVersion >= 6;
+		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
 	
 	/**
@@ -988,8 +987,7 @@ e.printStackTrace();
 	 * @since 3.3
 	 */
 	public boolean canGetClassFileVersion() {
-		getVersionInfo();
-		return fJdwpMajorVersion > 1 || fJdwpMinorVersion >= 6;
+		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
 	
 	/**
@@ -1314,7 +1312,11 @@ e.printStackTrace();
 		}
 		int size = refTypes.size();
 		if(size == 0) {
-			return new long[0];
+			if (isJdwpVersionGreaterOrEqual(1, 6)) {
+				return new long[0];
+			} else {
+				throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
+			}
 		}
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
