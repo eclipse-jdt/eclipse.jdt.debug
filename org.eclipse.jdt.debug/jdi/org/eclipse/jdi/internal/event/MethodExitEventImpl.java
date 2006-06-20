@@ -15,11 +15,17 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.PrimitiveTypeImpl;
 import org.eclipse.jdi.internal.ValueImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.VoidTypeImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.request.RequestID;
 
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Method;
+import com.sun.jdi.PrimitiveType;
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.MethodExitEvent;
 
@@ -50,11 +56,31 @@ public class MethodExitEventImpl extends LocatableEventImpl implements MethodExi
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		MethodExitEventImpl event = new MethodExitEventImpl(vmImpl, requestID);
 		event.readThreadAndLocation(target, dataInStream);
-		if(vmImpl.canGetMethodReturnValues()) {
+		return event;
+   	}
+	
+	/**
+	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 */
+	public static MethodExitEventImpl readWithReturnValue(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
+		MethodExitEventImpl event = new MethodExitEventImpl(vmImpl, requestID);
+		event.readThreadAndLocation(target, dataInStream);
+		Type type;
+		try {
+			type = event.location().method().returnType();
+		} catch (ClassNotLoadedException e) {
+			return event;
+		}
+		if (type instanceof PrimitiveType) {
+			event.fReturnValue = ValueImpl.readWithoutTag(target, ((PrimitiveTypeImpl)type).tag(), dataInStream);
+		} else if (type instanceof VoidTypeImpl) {
+			event.fReturnValue = ValueImpl.readWithoutTag(target, JdwpID.VOID_TAG, dataInStream);
+		} else {
 			event.fReturnValue = ValueImpl.readWithTag(target, dataInStream);
 		}
 		return event;
-   	}
+   	}	
 
 	/**
 	 * @return Returns the method that was entered.
