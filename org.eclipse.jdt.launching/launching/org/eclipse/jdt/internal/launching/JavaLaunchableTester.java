@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * name for the PROPERTY_HAS_SWT_ON_PATH property
 	 */
 	private static final String PROPERTY_BUILDPATH_REFERENCE = "buildpathReference"; //$NON-NLS-1$
-    
+	
     /**
      * Map of modifier text to corresponding flag (Integer)
      */
@@ -497,7 +496,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		catch(JavaModelException e) {}
 		return false;
 	}
-
+	
 	/**
 	 * Method runs the tests defined from extension points for Run As... and Debug As... menu items.
 	 * Currently this test optimisitically considers everything not a source file. In this context we 
@@ -562,4 +561,4 @@ public class JavaLaunchableTester extends PropertyTester {
 		return false;
 	}
 	
-}//end class
+}
