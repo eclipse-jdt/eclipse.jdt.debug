@@ -59,11 +59,10 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 	 */
 	public void testCanGetMethodReturnValues() {
 		if(fVM.version().indexOf("1.6") > -1) {
-			//TODO currently, as of 1.6 beta 2 this capability is disabled in 1.6 VMs, so lets make this test pass in that event
-			assertTrue("Should have method return values capabilities", (fVM.canGetMethodReturnValues() ? true : true));
+			assertTrue("Should have method return values capabilities", fVM.canGetMethodReturnValues());
 		}
 		else {
-			assertTrue("Should not have method return values capabilities", !fVM.canGetMethodReturnValues());
+			assertFalse("Should not have method return values capabilities", fVM.canGetMethodReturnValues());
 		}
 	}
 	
@@ -89,8 +88,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			fEventReader.removeEventListener(waiter);
 			if(tref.isSuspended()) {
 				req = erm.createMethodExitRequest();
-				req.addClassFilter("org.eclipse.debug.jdi.tests.program.MainClass");
-				req.addThreadFilter(tref);
+				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
 				waiter = new EventWaiter(req, true);
 				fEventReader.addEventListener(waiter);
@@ -132,8 +130,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			tref = bpe.thread();
 			if(tref.isSuspended()) {
 				req = erm.createMethodExitRequest();
-				req.addClassFilter("org.eclipse.debug.jdi.tests.program.MainClass");
-				req.addThreadFilter(tref);
+				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
 				req.enable();
 				waiter = new EventWaiter(req, true);
 				fEventReader.addEventListener(waiter);
