@@ -125,10 +125,10 @@ public class MainClass extends Date implements Runnable, Printable {
 	
 	/**
 	 * Prints out a specified integer. This method is used in the force early return tests to ensure we
-	 * can specifiy a differnet, type compatible return value
+	 * can specify a different, type compatible return value
 	 * @param out a stream to print out to
 	 * @param num the number we want to print and return
-	 * @return the specified num parameter, just pass it through
+	 * @return the specified number parameter, just pass it through
 	 * @since 3.3
 	 */
 	public int printNumber(OutputStream out, int num) {
