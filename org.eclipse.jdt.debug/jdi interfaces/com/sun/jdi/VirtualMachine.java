@@ -76,4 +76,5 @@ public interface VirtualMachine extends Mirror {
     public boolean canForceEarlyReturn();
     public boolean canRequestMonitorEvents();
     public boolean canGetMonitorFrameInfo();
+    public VoidValue mirrorOfVoid();
 }

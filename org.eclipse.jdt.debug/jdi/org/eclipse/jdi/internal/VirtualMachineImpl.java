@@ -47,6 +47,7 @@ import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.VoidValue;
 import com.sun.jdi.connect.spi.Connection;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.request.EventRequestManager;
@@ -759,6 +760,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		} finally {
 			handledJdwpRequest();
 		}
+	}
+	
+	/**
+	 * Returns a void value from the VM.
+	 * 
+	 * @return
+	 */
+	public VoidValue mirrorOfVoid() {
+		return new VoidValueImpl(this);
 	}
 
 	/**
