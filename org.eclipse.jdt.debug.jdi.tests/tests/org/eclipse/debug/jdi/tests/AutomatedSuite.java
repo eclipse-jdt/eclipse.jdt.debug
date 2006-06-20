@@ -85,7 +85,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VMDisconnectEventTest.class));
 		addTest(new TestSuite(VMDisposeTest.class));
 		
-	//Java 1.6 capatibility tests
+	//Java 1.6 capability tests
 		addTest(new TestSuite(HeapWalkingTests.class));
 		addTest(new TestSuite(ConstantPoolTests.class));
 		addTest(new TestSuite(SourceNameFilterTests.class));
