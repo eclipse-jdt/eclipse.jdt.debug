@@ -149,7 +149,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 		DataOutputStream dataOutStream = new DataOutputStream(byteOutStream);
 		try {
 			write(this, dataOutStream);
-			write((ValueImpl)value, dataOutStream);
+			((ValueImpl)value).writeWithTag((ValueImpl)value, dataOutStream);
 			JdwpReplyPacket reply = requestVM(JdwpCommandPacket.TR_FORCE_EARLY_RETURN, byteOutStream);
 			switch(reply.errorCode()) {
 				case JdwpReplyPacket.INVALID_THREAD:
