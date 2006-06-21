@@ -24,8 +24,6 @@ public class EvaluationMessages extends NLS {
 	public static String LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__6;
 	public static String LocalEvaluationEngine_Evaluation_failed___unable_to_initialize___this___context__5;
 	public static String LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__4;
-	public static String LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_directory__0__2;
-	public static String LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_class_file__0__1;
 
 	static {
 		// load message values from bundle file

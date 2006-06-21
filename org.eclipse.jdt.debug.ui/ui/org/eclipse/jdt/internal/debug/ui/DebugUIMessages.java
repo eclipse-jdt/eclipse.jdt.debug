@@ -75,7 +75,6 @@ public class DebugUIMessages extends NLS {
 	public static String JDIDebugUIPlugin_2;
 	public static String JDIDebugUIPlugin_Error_1;
 	public static String JDIDebugUIPlugin_Hot_code_replace_failed_1;
-	public static String JDIDebugUIPlugin_Internal_Error_1;
 	public static String JDIDebugUIPlugin_Obsolete_methods_remain_1;
 	public static String JDIDebugUIPlugin_Stepping_may_be_hazardous_1;
 	public static String JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1;
@@ -175,9 +174,6 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_system_suspended_fieldmodification;
 	public static String thread_daemon_system_suspended_runtoline;
 	public static String thread_daemon_system_suspended_classprepare;
-
-	public static String JDIDebugUIPlugin_An_error_occurred_retrieving_a_VMInstallType_page_1;
-
 	public static String SuspendTimeoutHandler_suspend;
 	public static String SuspendTimeoutHandler_timeout_occurred;
 	public static String JDIDebugUIPlugin_Searching_1;

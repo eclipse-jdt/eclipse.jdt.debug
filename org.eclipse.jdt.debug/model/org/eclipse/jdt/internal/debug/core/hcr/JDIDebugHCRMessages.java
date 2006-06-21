@@ -13,16 +13,11 @@ import org.eclipse.osgi.util.NLS;
 
 public class JDIDebugHCRMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.core.hcr.JDIDebugHCRMessages";//$NON-NLS-1$
-
-	public static String JavaHotCodeReplaceManager_drop_to_frame_failed;
 	public static String JavaHotCodeReplaceManager_Drop_to_frame_not_supported;
-
 	public static String JavaHotCodeReplaceManager_does_not_support_hcr;
 	public static String JavaHotCodeReplaceManager_exception_replacing_types;
-
 	public static String JavaHotCodeReplaceManager_hcr_failed;
 	public static String JavaHotCodeReplaceManager_hcr_ignored;
-
 	public static String JavaHotCodeReplaceManager_hcr_unsupported_redefinition;
 	public static String JavaHotCodeReplaceManager_hcr_unsupported_operation;
 	public static String JavaHotCodeReplaceManager_hcr_bad_bytes;

@@ -672,7 +672,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				if (!file.delete()) {
 					JDIDebugPlugin.log(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-							MessageFormat.format(EvaluationMessages.LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_class_file__0__1, new String[] {file.getAbsolutePath()}), null) 
+							MessageFormat.format("Unable to delete temporary evaluation class file {0}.", new String[] {file.getAbsolutePath()}), null)  //$NON-NLS-1$
 					);				
 				}
 			}
@@ -686,7 +686,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			if (dir.exists() && listing != null && listing.length == 0 && !dir.delete()) {
 				JDIDebugPlugin.log(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format(EvaluationMessages.LocalEvaluationEngine_Unable_to_delete_temporary_evaluation_directory__0__2, new String[] {dir.getAbsolutePath()}), null) 
+						MessageFormat.format("Unable to delete temporary evaluation directory {0}.", new String[] {dir.getAbsolutePath()}), null)  //$NON-NLS-1$
 				);
 			}
 			i--;

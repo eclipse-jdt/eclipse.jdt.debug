@@ -189,7 +189,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.JDIDebugUIPlugin_Internal_Error_1, e));  
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
 	}
 	
 	/**
@@ -495,7 +495,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			try {
 				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch(CoreException ce) {			 
-				log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.JDIDebugUIPlugin_An_error_occurred_retrieving_a_VMInstallType_page_1, ce)); 
+				log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "An error occurred retrieving a VMInstallType page.", ce));  //$NON-NLS-1$
 			} 
 		}
 		return tab;

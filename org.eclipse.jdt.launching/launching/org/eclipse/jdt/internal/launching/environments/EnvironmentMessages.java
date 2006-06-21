@@ -27,9 +27,5 @@ public class EnvironmentMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, EnvironmentMessages.class);
 	}
 
-	public static String Environments_0;
-
-	public static String Environments_1;
-
 	public static String EnvironmentsManager_0;
 }

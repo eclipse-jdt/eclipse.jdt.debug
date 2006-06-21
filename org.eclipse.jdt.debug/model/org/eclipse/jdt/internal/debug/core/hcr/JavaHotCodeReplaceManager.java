@@ -415,7 +415,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * @param resources the resources which correspond to the changed classes
 	 */
 	private void doHotCodeReplace(List targets, List resources, List qualifiedNames) {
-		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugHCRMessages.JavaHotCodeReplaceManager_drop_to_frame_failed, null); 
+		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, "At least one target failed to drop to frame after successful hot code replace.", null);  //$NON-NLS-1$
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();

@@ -50,13 +50,8 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
 
 	public static String JavaRuntime_badFormat;
-	public static String JavaRuntime_exceptionOccurred;
 	public static String JavaRuntime_exceptionsOccurred;
-	public static String JavaRuntime_Library_location_element_incorrectly_specified_3;
-	public static String JavaRuntime_VM_element_specified_with_no_id_attribute_2;
-	public static String JavaRuntime_VM_type_element_with_unknown_id_1;
 	public static String JavaRuntime_Specified_VM_install_type_does_not_exist___0__2;
-	public static String JavaRuntime_VM_not_fully_specified_in_launch_configuration__0____missing_VM_name__Reverting_to_default_VM__1;
 	public static String JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2;
 	public static String JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1;
 	public static String JavaRuntime_Could_not_resolve_classpath_container___0__1;
@@ -69,12 +64,8 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRuntime_32;
 
 	public static String LaunchingPlugin_35;
-
 	public static String LaunchingPlugin_36;
-
 	public static String LaunchingPlugin_37;
-
-	public static String LaunchingPlugin_Exception_occurred_reading_vmConnectors_extensions_1;
 	public static String LaunchingPlugin_32;
 	public static String LaunchingPlugin_33;
 	public static String LaunchingPlugin_34;

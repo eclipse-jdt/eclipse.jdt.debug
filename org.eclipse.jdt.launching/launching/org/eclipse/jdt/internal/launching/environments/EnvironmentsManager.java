@@ -165,7 +165,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				if (name.equals("environment")) { //$NON-NLS-1$
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
-						LaunchingPlugin.log(MessageFormat.format(EnvironmentMessages.Environments_0, new String[]{element.getContributor().getName()}));
+						LaunchingPlugin.log(MessageFormat.format("Execution environment must specify \"id\" attribute. Contributed by {0}.", new String[]{element.getContributor().getName()})); //$NON-NLS-1$
 					} else {
 						IExecutionEnvironment env = new ExecutionEnvironment(element);
 						fEnvironments.add(env);
@@ -174,7 +174,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				} else if (name.equals("analyzer")) { //$NON-NLS-1$
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
-						LaunchingPlugin.log(MessageFormat.format(EnvironmentMessages.Environments_1, new String[]{element.getContributor().getName()}));
+						LaunchingPlugin.log(MessageFormat.format("Execution environment analyzer must specify \"id\" attribute. Contributed by {0}", new String[]{element.getContributor().getName()})); //$NON-NLS-1$
 					} else {
 						fAnalyzers.put(id, new Analyzer(element));
 					}

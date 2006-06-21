@@ -305,7 +305,7 @@ public final class JavaRuntime {
 	private static void initializeVMTypeExtensions() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, "vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, LaunchingMessages.JavaRuntime_exceptionOccurred, null); 
+		MultiStatus status= new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, "Exceptions occurred", null);  //$NON-NLS-1$
 		fgVMTypes= new IVMInstallType[configs.length];
 
 		for (int i= 0; i < configs.length; i++) {
@@ -1282,9 +1282,8 @@ public final class JavaRuntime {
 		// look for a name
 		if (name == null) {
 			// error - type specified without a specific install (could be an old config that specified a VM ID)
-			// log the error, but choose the default VM.
-			IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.JavaRuntime_VM_not_fully_specified_in_launch_configuration__0____missing_VM_name__Reverting_to_default_VM__1, new String[] {configuration.getName()}), null); 
-			LaunchingPlugin.log(status);
+			// log the error, but choose the default VM.  
+			LaunchingPlugin.log(new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format("VM not fully specified in launch configuration {0} - missing VM name. Reverting to default VM.", new String[] {configuration.getName()}), null));  //$NON-NLS-1$
 			return getDefaultVMInstall();
 		} 
 		vm = vt.findVMInstallByName(name);

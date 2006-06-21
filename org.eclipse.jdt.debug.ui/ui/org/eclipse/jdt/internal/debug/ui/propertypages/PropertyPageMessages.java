@@ -35,7 +35,6 @@ public class PropertyPageMessages extends NLS {
 	public static String JavaBreakpointPage_0;
 	public static String JavaBreakpointPage_1;
 	public static String JavaBreakpointPage_10;
-	public static String JavaBreakpointPage_2;
 	public static String JavaBreakpointPage_3;
 	public static String JavaBreakpointPage_4;
 	public static String JavaBreakpointPage_5;

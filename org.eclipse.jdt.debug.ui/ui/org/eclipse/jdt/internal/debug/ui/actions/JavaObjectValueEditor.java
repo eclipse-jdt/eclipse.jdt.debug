@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -24,8 +23,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -44,6 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
@@ -144,10 +144,10 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     protected void handleException(DebugException e, Shell shell) {
         Throwable cause = e.getStatus().getException();
         if (cause instanceof InvalidTypeException) {
-            IStatus status = DebugUIPlugin.newErrorStatus(cause.getMessage(), null);
+            IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, cause.getMessage(), null);
             reportProblem(shell, status);
         } else {
-            DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_0, ActionMessages.JavaObjectValueEditor_1, e); // 
+            JDIDebugUIPlugin.errorDialog(ActionMessages.JavaObjectValueEditor_1, e.getStatus()); // 
         }
     }
 
@@ -212,8 +212,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * @param status a status which has information about the problem
      */
     public void reportProblem(Shell shell, IStatus status) {
-        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaObjectValueEditor_2, 
-                ActionMessages.JavaObjectValueEditor_3, status); 
+    	JDIDebugUIPlugin.errorDialog(ActionMessages.JavaObjectValueEditor_3, status);
     }
     
     /**

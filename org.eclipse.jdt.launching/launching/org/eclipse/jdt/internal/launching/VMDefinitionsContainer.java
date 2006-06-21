@@ -459,7 +459,7 @@ public class VMDefinitionsContainer {
 				}
 			}
 		} else {
-			LaunchingPlugin.log(LaunchingMessages.JavaRuntime_VM_type_element_with_unknown_id_1); 
+			LaunchingPlugin.log("VM type element with unknown id.");  //$NON-NLS-1$
 		}
 	}
 
@@ -521,7 +521,7 @@ public class VMDefinitionsContainer {
 				vmStandin.setVMArgs(vmArgs);
 			}
 		} else {
-			LaunchingPlugin.log(LaunchingMessages.JavaRuntime_VM_element_specified_with_no_id_attribute_2); 
+			LaunchingPlugin.log("id attribute missing from VM element specification.");  //$NON-NLS-1$
 		}
 	}	
 	
@@ -541,13 +541,13 @@ public class VMDefinitionsContainer {
 			try {
 				javadocURL= new URL(jreJavadoc);
 			} catch (MalformedURLException e) {
-				LaunchingPlugin.log(LaunchingMessages.JavaRuntime_Library_location_element_incorrectly_specified_3); 
+				LaunchingPlugin.log("Library location element is specified incorrectly.");  //$NON-NLS-1$
 			}
 		}
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
 			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot), javadocURL);
 		}
-		LaunchingPlugin.log(LaunchingMessages.JavaRuntime_Library_location_element_incorrectly_specified_3); 
+		LaunchingPlugin.log("Library location element is specified incorrectly.");  //$NON-NLS-1$
 		return null;
 	}
 	

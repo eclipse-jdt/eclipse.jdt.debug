@@ -161,7 +161,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			try {
 				hitCount= Integer.parseInt(fHitCountText.getText());
 			} catch (NumberFormatException e) {
-				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_2, new String[] { fHitCountText.getText() }), e)); 
+				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format("JavaBreakpointPage allowed input of invalid string for hit count value: {0}.", new String[] { fHitCountText.getText() }), e));  //$NON-NLS-1$
 			}
 		}
 		breakpoint.setHitCount(hitCount);

@@ -486,7 +486,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private void initializeVMConnectors() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, LaunchingMessages.LaunchingPlugin_Exception_occurred_reading_vmConnectors_extensions_1, null); 
+		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, "Exception occurred reading vmConnectors extensions.", null);  //$NON-NLS-1$
 		fVMConnectors = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			try {
