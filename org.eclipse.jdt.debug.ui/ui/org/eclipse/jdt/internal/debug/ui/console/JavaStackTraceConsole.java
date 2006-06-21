@@ -17,6 +17,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -32,6 +38,7 @@ import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public class JavaStackTraceConsole extends TextConsole {
     public final static String CONSOLE_TYPE = "javaStackTraceConsole"; //$NON-NLS-1$
@@ -157,12 +164,29 @@ public class JavaStackTraceConsole extends TextConsole {
     
     
     public void format() {
-        IDocument document = getDocument();
-        String orig = document.get();
-        if (orig != null && orig.length() > 0) {
-            document.set(""); //$NON-NLS-1$ hack avoids bug in the default position updater
-            document.set(format(orig));
-        }
+    	WorkbenchJob job = new WorkbenchJob("Update Java Stack Trace Console") {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+	            IJobManager jobManager = Platform.getJobManager();
+	            try {
+	                jobManager.join(this, monitor);
+	            } catch (OperationCanceledException e1) {
+	                return Status.CANCEL_STATUS;
+	            } catch (InterruptedException e1) {
+	                return Status.CANCEL_STATUS;
+	            }
+	            IDocument document = getDocument();
+	            String orig = document.get();
+	            if (orig != null && orig.length() > 0) {
+//	                document.set(""); //$NON-NLS-1$ hack avoids bug in the default position updater
+	                document.set(format(orig));
+	            }
+	            
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+       
     }
     
     private String format(String trace) {
