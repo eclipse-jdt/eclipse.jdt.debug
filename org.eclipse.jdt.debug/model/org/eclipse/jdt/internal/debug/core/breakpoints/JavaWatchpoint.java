@@ -466,4 +466,19 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
         return true;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#installableReferenceType(com.sun.jdi.ReferenceType, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+	 */
+	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
+		String installableType= getTypeName();
+		String queriedType= type.name();
+		if (installableType == null || queriedType == null) {
+			return false;
+		}
+		if (installableType.equals(queriedType)) {
+			return queryInstallListeners(target, type);
+		}
+		
+		return false;
+	}
 }
