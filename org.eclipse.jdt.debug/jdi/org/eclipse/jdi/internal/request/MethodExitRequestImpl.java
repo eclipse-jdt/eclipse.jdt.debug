@@ -12,6 +12,7 @@ package org.eclipse.jdi.internal.request;
 
 
 import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.event.EventImpl;
 import org.eclipse.jdi.internal.event.MethodExitEventImpl;
 
 import com.sun.jdi.request.MethodExitRequest;
@@ -34,6 +35,9 @@ public class MethodExitRequestImpl extends EventRequestImpl implements MethodExi
 	 * @return Returns JDWP EventKind.
 	 */
 	protected final byte eventKind() {
+		if (virtualMachine().canGetMethodReturnValues()) {
+			return EventImpl.EVENT_METHOD_EXIT_WITH_RETURN_VALUE;
+		}
 		return MethodExitEventImpl.EVENT_KIND;
 	}
 }

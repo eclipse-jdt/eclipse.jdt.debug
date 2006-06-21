@@ -41,7 +41,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 			assertTrue("Should have force early return capabilities", fVM.canForceEarlyReturn());
 		}
 		else {
-			assertTrue("Should not have force early return capabilities", !fVM.canForceEarlyReturn());
+			assertFalse("Should not have force early return capabilities", fVM.canForceEarlyReturn());
 		}
 	}
 	

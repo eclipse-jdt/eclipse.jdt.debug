@@ -11,7 +11,6 @@
 package org.eclipse.debug.jdi.tests;
 
 import org.eclipse.jdi.internal.StringReferenceImpl;
-import org.eclipse.jdi.internal.VoidValueImpl;
 
 import com.sun.jdi.Method;
 import com.sun.jdi.ThreadReference;
@@ -99,7 +98,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				assertEquals(req, event.request());
 				val = event.returnValue();
 				assertNotNull("value should not be null", val);
-				assertTrue("return value must be VoidValueImpl", val instanceof VoidValueImpl);
+				assertTrue("return value must be void", val.equals(val.virtualMachine().mirrorOfVoid()));
 				erm.deleteEventRequest(req);
 			}
 		}
