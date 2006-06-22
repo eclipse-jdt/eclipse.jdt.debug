@@ -127,7 +127,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		ILaunch launch = getLaunch();
 		Object result = null;
 		if (launch != null) {
-			result = JavaDebugUtils.resolveSourceElement(typeName, getLaunch());
+			result = JavaDebugUtils.resolveSourceElement(JavaDebugUtils.generateSourceName(typeName), getLaunch());
 		}
 		if (result == null) {
 			// search for the type in the workspace
