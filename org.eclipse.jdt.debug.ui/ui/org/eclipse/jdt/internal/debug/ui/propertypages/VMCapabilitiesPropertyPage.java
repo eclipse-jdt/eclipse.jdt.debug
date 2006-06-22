@@ -83,7 +83,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_0, 2);
 		}
 		else {
-			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1+vm.version(), 2);
+			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1+vm.name()+" "+vm.version(), 2); //$NON-NLS-1$
 			SWTUtil.createVerticalSpacer(comp, 1);
 		//General capabilities
 			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_2, 2, GridData.FILL_HORIZONTAL);
