@@ -137,11 +137,11 @@ public class SWTUtil {
 	 * @param hspan the horizontal span to take up in the parent composite
 	 * @return the new label
 	 */
-	public static Label createLabel(Composite parent, String text, int hspan) {
+	public static Label createLabel(Composite parent, String text, Font font, int hspan) {
 		Label l = new Label(parent, SWT.NONE);
-		l.setFont(parent.getFont());
+		l.setFont(font);
 		l.setText(text);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData();
 		gd.horizontalSpan = hspan;
 		l.setLayoutData(gd);
 		return l;

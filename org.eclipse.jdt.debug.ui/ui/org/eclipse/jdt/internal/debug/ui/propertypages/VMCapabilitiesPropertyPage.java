@@ -19,7 +19,9 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,19 +48,16 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			super(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 			setExpandHorizontal(true);
 			setExpandVertical(true);
-			GridLayout layout = new GridLayout();
+			GridLayout layout = new GridLayout(1, false);
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
 			setLayout(layout);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			gd.horizontalIndent = 0;
-			gd.verticalIndent = 0;
-			setLayoutData(gd);
 		}
 	}
 	
 	private List fExpandedComps;
 	private static final String EXPANDED_STATE = "vmc_expanded_state"; //$NON-NLS-1$
+	private static Font fHeadingFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 	
 	/**
 	 * Constructor 
@@ -80,10 +79,10 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		scomp.setContent(comp);
 		VirtualMachineImpl vm = getVM();
 		if(vm == null) {
-			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_0, 2);
+			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_0, fHeadingFont, 2);
 		}
 		else {
-			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1+vm.name()+" "+vm.version(), 2); //$NON-NLS-1$
+			createHeadingLabel(comp, vm);
 			SWTUtil.createVerticalSpacer(comp, 1);
 		//General capabilities
 			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_2, 2, GridData.FILL_HORIZONTAL);
@@ -133,6 +132,12 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		return comp;
 	}
 	
+	private void createHeadingLabel(Composite parent, VirtualMachineImpl vm) {
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+		SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1); 
+		SWTUtil.createLabel(comp, vm.name()+" "+vm.version(), parent.getFont(), 1); //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -160,7 +165,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	 */
 	private void createCapabilityEntry(Composite parent, String label, boolean enabled) {
 		SWTUtil.createCheckButton(parent, null, enabled).setEnabled(false);
-		SWTUtil.createLabel(parent, label, 1);
+		SWTUtil.createLabel(parent, label, parent.getFont(), 1);
 	}
 	
 	/**
