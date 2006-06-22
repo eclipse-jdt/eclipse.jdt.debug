@@ -1741,6 +1741,11 @@
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointPage"
             id="org.eclipse.jdt.debug.ui.propertypages.common">
       </page>
+      <page
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.VMCapabilitiesPropertyPage"
+            id="org.eclipse.debug.ui.properties.vmCapabilities"
+            name="%vmCapabilitiesPageName"
+            objectClass="org.eclipse.jdt.debug.core.IJavaDebugTarget"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
