@@ -1674,6 +1674,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				// execution will not reach this line, as
 				// #requestFailed will throw an exception				
 				return null;
+			} catch (VMDisconnectedException e) {
+				// ignore disconnect
+				return null;
+			} catch (ObjectCollectedException e) {
+				// ignore object collected
+				return null;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_retrieving_thread_group, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
