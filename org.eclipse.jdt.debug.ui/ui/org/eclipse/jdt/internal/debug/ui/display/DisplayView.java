@@ -62,7 +62,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -284,8 +283,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			}
 			
 		};
-		IWorkbench workbench = PlatformUI.getWorkbench();
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+
+        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
 	}
 	
@@ -491,8 +490,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fSourceViewer = null;
 		}
 		
-		IWorkbench workbench = PlatformUI.getWorkbench();
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         handlerService.deactivateHandler(fHandlerActivation);
 		
 		super.dispose();
