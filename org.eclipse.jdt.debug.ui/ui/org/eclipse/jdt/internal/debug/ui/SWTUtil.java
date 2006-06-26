@@ -112,6 +112,29 @@ public class SWTUtil {
 	}	
 	
 	/**
+	 * Creates and returns a new radio button with the given
+	 * label.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param hspan the number of columns to span ni the parent composite
+	 * 
+	 * @return a new radio button
+	 */
+	public static Button createRadioButton(Composite parent, String label, int hspan) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setFont(parent.getFont());
+		if (label != null) {
+			button.setText(label);
+		}
+		GridData gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = hspan;
+		button.setLayoutData(gd);	
+		SWTUtil.setButtonDimensionHint(button);
+		return button;	
+	}
+	
+	/**
 	 * Creates a checked button
 	 * @param parent the parent composite to add this button to
 	 * @param label the label for the button
@@ -125,6 +148,27 @@ public class SWTUtil {
 			button.setText(label);
 		}
 		GridData gd = new GridData();
+		button.setLayoutData(gd);	
+		button.setSelection(checked);
+		return button;	
+	}
+	
+	/**
+	 * Creates a checked button
+	 * @param parent the parent composite to add this button to
+	 * @param label the label for the button
+	 * @param checked the button's checked state
+	 * @param hspan the horizontal span to take up in the parent composite
+	 * @return a new check button
+	 */
+	public static Button createCheckButton(Composite parent, String label, boolean checked, int hspan) {
+		Button button = new Button(parent, SWT.CHECK);
+		button.setFont(parent.getFont());
+		if (label != null) {
+			button.setText(label);
+		}
+		GridData gd = new GridData();
+		gd.horizontalSpan = hspan;
 		button.setLayoutData(gd);	
 		button.setSelection(checked);
 		return button;	
@@ -218,6 +262,28 @@ public class SWTUtil {
     	g.setLayoutData(gd);
     	return g;
     }
+	
+	/**
+	 * Creates a Composite widget
+	 * @param parent the parent composite to add this composite to
+	 * @param columns the number of columns within the composite
+	 * @param hspan the horizontal span the composite should take up on the parent
+	 * @param fill the style for how this composite should fill into its parent
+	 * @param marginwidth the width of the margin to place around the composite (default is 5, specified by GridLayout)
+	 * @return the new group
+	 */
+	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill, int marginwidth, int marginheight) {
+		Composite g = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(columns, false);
+		layout.marginWidth = marginwidth;
+		layout.marginHeight = marginheight;
+    	g.setLayout(layout);
+    	g.setFont(font);
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+	}
 	
 	/**
 	 * creates a vertical spacer for seperating components

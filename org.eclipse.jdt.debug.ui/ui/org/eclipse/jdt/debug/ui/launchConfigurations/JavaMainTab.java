@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -32,6 +31,7 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
 import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
@@ -40,8 +40,6 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,6 +47,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -87,31 +87,21 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Font font = parent.getFont();
-		Composite comp = new Composite(parent, SWT.NONE);
-		setControl(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
-		GridLayout topLayout = new GridLayout();
-		topLayout.verticalSpacing = 0;
-		comp.setLayout(topLayout);
-		comp.setFont(font);
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
+		((GridLayout)comp.getLayout()).verticalSpacing = 0;
 		createProjectEditor(comp);
 		createVerticalSpacer(comp, 1);
-		fSearchExternalJarsCheckButton = createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6); 
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fSearchExternalJarsCheckButton.setLayoutData(gd);
+		fSearchExternalJarsCheckButton = SWTUtil.createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6, false, 2);
 		fSearchExternalJarsCheckButton.addSelectionListener(getDefaultListener());
-		fConsiderInheritedMainButton = createCheckButton(parent, LauncherMessages.JavaMainTab_22); 
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fConsiderInheritedMainButton.setLayoutData(gd);
+		
+		fConsiderInheritedMainButton = SWTUtil.createCheckButton(parent, LauncherMessages.JavaMainTab_22, false, 2);
 		fConsiderInheritedMainButton.addSelectionListener(getDefaultListener());
-		fStopInMainCheckButton = createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1); 
-		gd = new GridData();
-		fStopInMainCheckButton.setLayoutData(gd);
+		
+		fStopInMainCheckButton = SWTUtil.createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1, false);
 		fStopInMainCheckButton.addSelectionListener(getDefaultListener());
 		createMainTypeEditor(comp, LauncherMessages.JavaMainTab_Main_cla_ss__4, new Button[] {fSearchExternalJarsCheckButton, fConsiderInheritedMainButton, fStopInMainCheckButton});
+		setControl(comp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 	}
 
 	/* (non-Javadoc)
@@ -139,35 +129,35 @@ public class JavaMainTab extends SharedJavaMainTab {
 			if (model != null) {
 				try {
 					elements = model.getJavaProjects();
-				}//end try 
+				}
 				catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}
-			}//end if
-		}//end if 
+			}
+		}
 		else {
 			elements = new IJavaElement[]{project};
-		}//end else		
+		}
 		if (elements == null) {
 			elements = new IJavaElement[]{};
-		}//end if
+		}
 		int constraints = IJavaSearchScope.SOURCES;
 		if (fSearchExternalJarsCheckButton.getSelection()) {
 			constraints |= IJavaSearchScope.APPLICATION_LIBRARIES;
 			constraints |= IJavaSearchScope.SYSTEM_LIBRARIES;
-		}//end if	
+		}
 		IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, constraints);
 		MainMethodSearchEngine engine = new MainMethodSearchEngine();
 		IType[] types = null;
 		try {
 			types = engine.searchMainMethods(getLaunchConfigurationDialog(), searchScope, fConsiderInheritedMainButton.getSelection());
-		}//end try 
+		}
 		catch (InvocationTargetException e) {
 			setErrorMessage(e.getMessage());
 			return;
-		}//end catch 
+		}
 		catch (InterruptedException e) {
 			setErrorMessage(e.getMessage());
 			return;
-		}//end catch
+		}
 		SelectionDialog dialog = null;
 		try {
 			dialog = JavaUI.createTypeDialog(
@@ -180,18 +170,18 @@ public class JavaMainTab extends SharedJavaMainTab {
 		} catch (JavaModelException e) {
 			setErrorMessage(e.getMessage());
 			return;
-			}//end catch
+			}
 		dialog.setTitle(LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
 		dialog.setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12); 
 		if (dialog.open() == Window.CANCEL) {
 			return;
-		}//end if
+		}
 		Object[] results = dialog.getResult();	
 		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
 			fProjText.setText(type.getJavaProject().getElementName());
-		}//end if
+		}
 	}	
 	
 	/* (non-Javadoc)
@@ -220,22 +210,22 @@ public class JavaMainTab extends SharedJavaMainTab {
 				if (!project.exists()) {
 					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_20, new String[] {name})); 
 					return false;
-				}//end if
+				}
 				if (!project.isOpen()) {
 					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_21, new String[] {name})); 
 					return false;
-				}//end if
-			}//end if 
+				}
+			}
 			else {
 				setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
 				return false;
-			}//end else
-		}//end if
+			}
+		}
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.JavaMainTab_Main_type_not_specified_16); 
 			return false;
-		}//end if
+		}
 		return true;
 	}
 			
@@ -250,26 +240,26 @@ public class JavaMainTab extends SharedJavaMainTab {
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
 		if (fStopInMainCheckButton.getSelection()) {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
-		}//end if 
+		}
 		else {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, (String)null);
-		}//end else
+		}
 		
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
 		if (fSearchExternalJarsCheckButton.getSelection()) {
 			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, true);
-		}//end if 
+		}
 		else {
 			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, (String)null);
-		}//end else
+		}
 		
 		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
 		if (fConsiderInheritedMainButton.getSelection()) {
 			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, true);
-		}//end if 
+		}
 		else {
 			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, (String)null);
-		}//end else		
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -279,10 +269,10 @@ public class JavaMainTab extends SharedJavaMainTab {
 		IJavaElement javaElement = getContext();
 		if (javaElement != null) {
 			initializeJavaProject(javaElement, config);
-		}//end if 
+		}
 		else {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
-		}//end else
+		}
 		initializeMainTypeAndName(javaElement, config);
 	}
 	
@@ -294,7 +284,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		boolean search = false;
 		try {
 			search = config.getAttribute(ATTR_INCLUDE_EXTERNAL_JARS, false);
-		}//end try 
+		}
 		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		fSearchExternalJarsCheckButton.setSelection(search);
 	}
@@ -307,7 +297,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		boolean inherit = false;
 		try {
 			inherit = config.getAttribute(ATTR_CONSIDER_INHERITED_MAIN, false);
-		}//end try 
+		}
 		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		fConsiderInheritedMainButton.setSelection(inherit);
 	}
@@ -320,9 +310,9 @@ public class JavaMainTab extends SharedJavaMainTab {
 		boolean stop = false;
 		try {
 			stop = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, false);
-		}//end try 
+		}
 		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		fStopInMainCheckButton.setSelection(stop);
 	}
 
-}//end class
+}

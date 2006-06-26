@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -27,6 +26,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsComboBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -37,14 +37,14 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launch configuration tab that displays and edits the VM install 
@@ -96,39 +96,19 @@ public class JavaJRETab extends JavaLaunchTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
+		Composite topComp = SWTUtil.createComposite(parent, font, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		
-		Composite topComp = new Composite(parent, SWT.NONE);
-		setControl(topComp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 1;
-		topLayout.marginHeight=0;
-		topLayout.marginWidth=0;
-		topComp.setLayout(topLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		topComp.setLayoutData(gd);
-		topComp.setFont(font);
-				
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(getDefaultJREDescriptor());
 		fJREBlock.setSpecificJREDescriptor(getSpecificJREDescriptor());
 		fJREBlock.createControl(topComp);
 		Control control = fJREBlock.getControl();
 		fJREBlock.addPropertyChangeListener(fCheckListener);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		control.setLayoutData(gd);
+		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Composite dynTabComp = new Composite(topComp, SWT.NONE);
-		dynTabComp.setFont(font);
-		
-		setDynamicTabHolder(dynTabComp);
-		GridLayout tabHolderLayout = new GridLayout();
-		tabHolderLayout.marginHeight= 0;
-		tabHolderLayout.marginWidth= 0;
-		tabHolderLayout.numColumns = 1;
-		getDynamicTabHolder().setLayout(tabHolderLayout);
-		gd = new GridData(GridData.FILL_BOTH);
-		getDynamicTabHolder().setLayoutData(gd);
+		setDynamicTabHolder(SWTUtil.createComposite(topComp, font, 1, 1, GridData.FILL_BOTH, 0, 0));
+		setControl(topComp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
 	}
 
 	protected void setDynamicTabHolder(Composite tabHolder) {

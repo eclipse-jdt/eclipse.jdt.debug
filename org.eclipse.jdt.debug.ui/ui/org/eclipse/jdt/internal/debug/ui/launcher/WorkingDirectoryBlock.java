@@ -28,16 +28,15 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -107,65 +106,30 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Font font = parent.getFont();
-				
-		Group group = new Group(parent, SWT.NONE);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(group, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);		
-		GridLayout workingDirLayout = new GridLayout();
-		workingDirLayout.numColumns = 2;
-		workingDirLayout.makeColumnsEqualWidth = false;
-		group.setLayout(workingDirLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
-		group.setFont(font);
-		setControl(group);
-		
-		group.setText(LauncherMessages.WorkingDirectoryBlock_12); 
-		
-		fUseDefaultDirButton = new Button(group, SWT.RADIO);
-		fUseDefaultDirButton.setText(LauncherMessages.WorkingDirectoryBlock_18);
-		fUseDefaultDirButton.setFont(font);
+		Font font = parent.getFont();	
+		Group group = SWTUtil.createGroup(parent, LauncherMessages.WorkingDirectoryBlock_12, 2, 1, GridData.FILL_HORIZONTAL);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(group, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
+	//default choice
+		Composite comp = SWTUtil.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
+		fUseDefaultDirButton = SWTUtil.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_18);
 		fUseDefaultDirButton.addSelectionListener(fListener);
-		fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fWorkingDirText.setLayoutData(gd);
-		fWorkingDirText.setFont(font);
+		fWorkingDirText = SWTUtil.createSingleText(comp, 1); 
 		fWorkingDirText.addModifyListener(fListener);
 		fWorkingDirText.setEnabled(false);
-		
-		fUseOtherDirButton = new Button(group, SWT.RADIO);
-		fUseOtherDirButton.setText(LauncherMessages.WorkingDirectoryBlock_19);
-		fUseOtherDirButton.setFont(font);
+	//user enter choice
+		fUseOtherDirButton = SWTUtil.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_19);
 		fUseOtherDirButton.addSelectionListener(fListener);
-		fOtherWorkingText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fOtherWorkingText.setLayoutData(gd);
-		fOtherWorkingText.setFont(font);
+		fOtherWorkingText = SWTUtil.createSingleText(comp, 1);
 		fOtherWorkingText.addModifyListener(fListener);
-		
-		Composite buttonComp = new Composite(group, SWT.NONE);
-		GridLayout layout = new GridLayout(3, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		buttonComp.setLayout(layout);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.horizontalSpan = 2;
-		buttonComp.setLayoutData(gd);
-		buttonComp.setFont(font);		
+	//buttons
+		Composite buttonComp = SWTUtil.createComposite(comp, font, 3, 2, GridData.HORIZONTAL_ALIGN_END); 
 		fWorkspaceButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_0, null); 
 		fWorkspaceButton.addSelectionListener(fListener);
-		
 		fFileSystemButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_1, null); 
 		fFileSystemButton.addSelectionListener(fListener);
-		
 		fVariablesButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_17, null); 
 		fVariablesButton.addSelectionListener(fListener);
 	}
-					
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {}
 		
 	/**
 	 * Show a dialog that lets the user select a working directory

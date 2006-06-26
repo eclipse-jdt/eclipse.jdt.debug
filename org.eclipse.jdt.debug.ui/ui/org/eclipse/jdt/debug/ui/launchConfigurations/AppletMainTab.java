@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
@@ -34,7 +35,6 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -68,25 +68,12 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 */
 	private void createAppletViewerControl(Composite parent) {
 		Font font = parent.getFont();
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(LauncherMessages.AppletMainTab_1);
-		GridLayout layout = new GridLayout(2, true);
-		layout.verticalSpacing = 0;
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
-		group.setLayout(layout);
-		group.setFont(font);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fAppletViewerClassText= new Text(group, SWT.SINGLE | SWT.BORDER);
-		fAppletViewerClassText.setLayoutData(gd);
-		fAppletViewerClassText.setFont(font);
+		Group group = SWTUtil.createGroup(parent, LauncherMessages.AppletMainTab_1, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite comp = SWTUtil.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
+		fAppletViewerClassText= SWTUtil.createSingleText(comp, 2); 
 		fAppletViewerClassText.addModifyListener(getDefaultListener());
-		createVerticalSpacer(group, 1);
-		fAppletViewerClassDefaultButton= createCheckButton(group, LauncherMessages.AppletMainTab_2); 
-		gd= new GridData();
-		gd.horizontalSpan= 2;
-		fAppletViewerClassDefaultButton.setLayoutData(gd);
+		createVerticalSpacer(comp, 1);
+		fAppletViewerClassDefaultButton= createCheckButton(comp, LauncherMessages.AppletMainTab_2);
 		fAppletViewerClassDefaultButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
@@ -99,19 +86,15 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Font font= parent.getFont();
-		Composite projComp= new Composite(parent, SWT.NONE);
-		setControl(projComp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB);
-		GridLayout projLayout= new GridLayout();
-		projLayout.verticalSpacing = 0;
-		projComp.setLayout(projLayout);
-		projComp.setFont(font);
+		Composite projComp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH); 
+		((GridLayout)projComp.getLayout()).verticalSpacing = 0;
 		createProjectEditor(projComp);
 		createVerticalSpacer(projComp, 1);
 		createMainTypeEditor(projComp, LauncherMessages.appletlauncher_maintab_mainclasslabel_name, null);
 		createVerticalSpacer(projComp, 1);
 		createAppletViewerControl(projComp);
+		setControl(projComp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB);
 	}
 	
 	/* (non-Javadoc)
@@ -135,10 +118,10 @@ public class AppletMainTab extends SharedJavaMainTab {
 		setAppletViewerTextEnabledState();
 		if (isDefaultAppletViewerClassName()) {
 			fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
-		}//end if 
+		} 
 		else {
 			fAppletViewerClassText.setText(EMPTY_STRING);
-		}//end else
+		}
 	}
 	
 	/**
@@ -150,15 +133,15 @@ public class AppletMainTab extends SharedJavaMainTab {
 		if (project == null) {
 			try {
 				scope = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-			}//end try 
+			}
 			catch (JavaModelException e) {
 				setErrorMessage(e.getMessage());
 				return;
-			}//end catch
-		}//end if 
+			}
+		}
 		else {
 			scope = new IJavaElement[]{project};
-		}//end else
+		}
 		IType[] types = null;
 		try {
 			types = AppletLaunchConfigurationUtils.findApplets(getLaunchConfigurationDialog(), scope);
@@ -167,7 +150,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		catch (InvocationTargetException e) {
 			setErrorMessage(e.getTargetException().getMessage());
 			return;
-		}//end catch
+		}
 		SelectionDialog dialog = null;
 		try {
 			dialog = JavaUI.createTypeDialog(
@@ -177,22 +160,22 @@ public class AppletMainTab extends SharedJavaMainTab {
 					IJavaElementSearchConstants.CONSIDER_CLASSES, 
 					false,
 					"**"); //$NON-NLS-1$
-		}//end try 
+		}
 		catch (JavaModelException e) {
 			setErrorMessage(e.getMessage());
 			return;
-		}//end catch
+		}
 		dialog.setTitle(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_title); 
  		dialog.setMessage(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_message); 
 		if (dialog.open() == Window.CANCEL) {
 			return;
-		}//end if
+		}
 		Object[] results= dialog.getResult();	
 		IType type= (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
 			fProjText.setText(type.getJavaProject().getElementName());
-		}//end if
+		}
 	}
 
 	/**
@@ -221,11 +204,11 @@ public class AppletMainTab extends SharedJavaMainTab {
 		if (vmInstall == null) {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		}//end if 
+		}
 		else {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmInstall.getName());
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstall.getVMInstallType().getId());
-		}//end else
+		}
 	}
 		
 	/* (non-Javadoc)
@@ -262,18 +245,18 @@ public class AppletMainTab extends SharedJavaMainTab {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
 				setErrorMessage(LauncherMessages.appletlauncher_maintab_project_error_doesnotexist); 
 				return false;
-			}//end if
-		}//end if
+			}
+		}
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.appletlauncher_maintab_type_error_doesnotexist); 
 			return false;
-		}//end if
+		}
 		name = fAppletViewerClassText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.AppletMainTab_3);  
 			return false;			
-		}//end if
+		}
 		return true;
 	}
 
@@ -296,8 +279,8 @@ public class AppletMainTab extends SharedJavaMainTab {
 			appletViewerClassName= fAppletViewerClassText.getText().trim();
 			if (appletViewerClassName.length() <= 0) {
 				appletViewerClassName= null;
-			}//end if
-		}//end if
+			}
+		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, appletViewerClassName);
 	}
 	
@@ -307,10 +290,10 @@ public class AppletMainTab extends SharedJavaMainTab {
 	private void setAppletViewerTextEnabledState() {
 		if (isDefaultAppletViewerClassName()) {
 			fAppletViewerClassText.setEnabled(false);
-		}//end if 
+		}
 		else {
 			fAppletViewerClassText.setEnabled(true);
-		}//end else
+		}
 	}
 
 	/* (non-Javadoc)
@@ -320,10 +303,10 @@ public class AppletMainTab extends SharedJavaMainTab {
 		IJavaElement je= getContext();
 		if (je == null) {
 			initializeHardCodedDefaults(config);
-		}//end if 
+		}
 		else {
 			initializeDefaults(je, config);
-		}//end else
+		}
 	}
 
 	/**
@@ -337,13 +320,13 @@ public class AppletMainTab extends SharedJavaMainTab {
 			if (appletViewerClassName.equals(EMPTY_STRING)) {
 				fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
 				fAppletViewerClassDefaultButton.setSelection(true);
-			}//end if 
+			}
 			else {
 				fAppletViewerClassText.setText(appletViewerClassName);
 				fAppletViewerClassDefaultButton.setSelection(false);
-			}//end else
+			}
 			setAppletViewerTextEnabledState();
-		}//end try 
+		}
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
 	}
-}//end class
+}

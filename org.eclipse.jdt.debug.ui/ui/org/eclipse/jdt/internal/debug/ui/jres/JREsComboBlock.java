@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,9 +21,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -40,7 +39,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -49,6 +47,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A composite that displays installed JRE's in a combo box, with a 'manage...'
@@ -156,31 +156,15 @@ public class JREsComboBlock {
 	 */
 	public void createControl(Composite ancestor) {
 		Font font = ancestor.getFont();
-		Composite comp = new Composite(ancestor, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		comp.setLayout(new GridLayout());
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fControl = comp;
-		comp.setFont(font);
-		
-		Group group= new Group(comp, SWT.NULL);
-		layout= new GridLayout();
-		layout.numColumns= 3;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setFont(font);	
-		
-		GridData data;
-		
+		fControl = SWTUtil.createComposite(ancestor, font, 1, 1, GridData.FILL_BOTH);		
 		if (fTitle == null) {
 			fTitle = JREMessages.JREsComboBlock_3; 
 		}
-		group.setText(fTitle);
-		
-		// display a 'use default JRE' check box
+		Group group = SWTUtil.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL); 
+		Composite comp = SWTUtil.createComposite(group, font, 3, 1, GridData.FILL_BOTH, 0, 0);
+	// display a 'use default JRE' check box
 		if (fDefaultDescriptor != null) {
-			fDefaultButton = new Button(group, SWT.RADIO);
-			fDefaultButton.setText(fDefaultDescriptor.getDescription());
+			fDefaultButton = SWTUtil.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
 			fDefaultButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (fDefaultButton.getSelection()) {
@@ -190,18 +174,14 @@ public class JREsComboBlock {
 					}
 				}
 			});
-			data = new GridData();
-			data.horizontalSpan = 3;
-			fDefaultButton.setLayoutData(data);
-			fDefaultButton.setFont(font);
 		}
 		
-		fSpecificButton = new Button(group, SWT.RADIO);
+	//specific JRE type
+		String text = JREMessages.JREsComboBlock_1;
 		if (fSpecificDescriptor != null) {
-			fSpecificButton.setText(fSpecificDescriptor.getDescription());
-		} else {
-			fSpecificButton.setText(JREMessages.JREsComboBlock_1); 
+			text = fSpecificDescriptor.getDescription();
 		}
+		fSpecificButton = SWTUtil.createRadioButton(comp, text, 1);
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fSpecificButton.getSelection()) {
@@ -219,13 +199,9 @@ public class JREsComboBlock {
 				}
 			}
 		});
-		fSpecificButton.setFont(font);
-		data = new GridData(GridData.BEGINNING);
-		fSpecificButton.setLayoutData(data);
-		
-		fCombo = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fCombo.setFont(font);
-		data= new GridData(GridData.FILL_HORIZONTAL);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 1;
 		fCombo.setLayoutData(data);
 		ControlAccessibleListener.addListener(fCombo, fSpecificButton.getText());
@@ -236,19 +212,17 @@ public class JREsComboBlock {
 			}
 		});
 				
-		fManageButton = createPushButton(group, JREMessages.JREsComboBlock_2); 
+		fManageButton = createPushButton(comp, JREMessages.JREsComboBlock_2); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IPreferencePage page = new JREsPreferencePage();
 				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page); //$NON-NLS-1$
 			}
 		});
-		
 		fillWithWorkspaceJREs();
 		
-		fEnvironmentsButton = new Button(group, SWT.RADIO);
-		fEnvironmentsButton.setText(JREMessages.JREsComboBlock_4);
-		fEnvironmentsButton.setFont(font);
+	//execution environments
+		fEnvironmentsButton = SWTUtil.createRadioButton(comp, JREMessages.JREsComboBlock_4);
 		fEnvironmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fEnvironmentsButton.getSelection()) {
@@ -268,7 +242,7 @@ public class JREsComboBlock {
 		});		
 		
 		
-		fEnvironmentsCombo = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fEnvironmentsCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fEnvironmentsCombo.setFont(font);
 		data= new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 1;
@@ -281,7 +255,7 @@ public class JREsComboBlock {
 			}
 		});		
 		
-		fManageEnvironmentsButton = createPushButton(group, JREMessages.JREsComboBlock_14);
+		fManageEnvironmentsButton = createPushButton(comp, JREMessages.JREsComboBlock_14);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IPreferencePage page = new ExecutionEnvironmentsPreferencePage();
