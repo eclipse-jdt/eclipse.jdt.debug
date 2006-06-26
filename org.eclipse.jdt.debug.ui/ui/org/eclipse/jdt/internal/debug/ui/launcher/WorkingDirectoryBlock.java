@@ -108,6 +108,7 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();	
 		Group group = SWTUtil.createGroup(parent, LauncherMessages.WorkingDirectoryBlock_12, 2, 1, GridData.FILL_HORIZONTAL);
+		setControl(group);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(group, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
 	//default choice
 		Composite comp = SWTUtil.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
