@@ -15,6 +15,18 @@
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaElementPropertyTester"
             id="org.eclipse.jdt.debug.IResourceExtender">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.jdt.internal.debug.ui.VMCapabilitiesPageTester"
+            id="org.eclipse.jdt.debug.ui.vmcapabiltitiesTest"
+            namespace="org.eclipse.jdt.debug.ui"
+            properties="vmpage"
+            type="org.eclipse.debug.core.model.IDebugElement"/>
+      <propertyTester
+            class="org.eclipse.jdt.internal.debug.ui.VMCapabilitiesPageTester"
+            id="org.eclipse.jdt.debug.ui.vmcapabilitiesIProcessTest"
+            namespace="org.eclipse.jdt.debug.ui"
+            properties="vmpage"
+            type="org.eclipse.debug.core.model.IProcess"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.watchExpressionDelegates">
@@ -1745,7 +1757,20 @@
             class="org.eclipse.jdt.internal.debug.ui.propertypages.VMCapabilitiesPropertyPage"
             id="org.eclipse.debug.ui.properties.vmCapabilities"
             name="%vmCapabilitiesPageName"
-            objectClass="org.eclipse.jdt.debug.core.IJavaDebugTarget"/>
+            objectClass="org.eclipse.debug.core.model.IDebugElement">
+         <enabledWhen>
+             <test property="org.eclipse.jdt.debug.ui.vmpage"/>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.VMCapabilitiesPropertyPage"
+            id="org.eclipse.debug.ui.properties.vmCapabilities"
+            name="%vmCapabilitiesPageName"
+            objectClass="org.eclipse.debug.core.model.IProcess">
+         <enabledWhen>
+             <test property="org.eclipse.jdt.debug.ui.vmpage"/>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

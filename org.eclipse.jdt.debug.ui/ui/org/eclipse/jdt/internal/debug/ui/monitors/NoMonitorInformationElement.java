@@ -50,6 +50,9 @@ public class NoMonitorInformationElement implements IDebugElement {
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     public Object getAdapter(Class adapter) {
+    	if(adapter == IDebugTarget.class) {
+    		return getDebugTarget();
+    	}
         return null;
     }
 

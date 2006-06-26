@@ -98,4 +98,16 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement {
 	public ILaunch getLaunch() {
 		return fMonitor.getLaunch();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if(adapter == IDebugTarget.class) {
+			return getDebugTarget();
+		}
+		return super.getAdapter(adapter);
+	}
+	
+	
 }

@@ -92,4 +92,15 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement {
 	public boolean isSuspended() {
 		return fThread.isSuspended();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if(adapter == IDebugTarget.class) {
+			return getDebugTarget();
+		}
+		return super.getAdapter(adapter);
+	}
+	
 }

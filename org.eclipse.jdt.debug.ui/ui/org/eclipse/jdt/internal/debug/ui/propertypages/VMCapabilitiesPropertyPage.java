@@ -13,8 +13,10 @@ package org.eclipse.jdt.internal.debug.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugElement;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
@@ -72,14 +74,17 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		final ScrollPain scomp = new ScrollPain(parent);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		scomp.setLayout(new GridLayout());
+		scomp.setLayoutData(gd);
 		final Composite comp = new Composite(scomp, SWT.NONE);
 		comp.setLayout(new GridLayout(2, true));
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		scomp.setContent(comp);
 		VirtualMachineImpl vm = getVM();
 		if(vm == null) {
-			SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_0, fHeadingFont, 2);
+			setErrorMessage(PropertyPageMessages.VMCapabilitiesPropertyPage_0);
 		}
 		else {
 			createHeadingLabel(comp, vm);
@@ -151,8 +156,19 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	 */
 	private VirtualMachineImpl getVM() {
 		Object obj = getElement();
-		if(obj instanceof JDIDebugElement) {
-			return (VirtualMachineImpl) ((JDIDebugTarget) obj).getVM();
+		IDebugTarget target = null;
+		if(obj instanceof IDebugElement) {
+			target = (IDebugTarget) ((IDebugElement)obj).getAdapter(IDebugTarget.class);
+		}
+		else if(obj instanceof IProcess) {
+			target = (IDebugTarget) ((IProcess)obj).getAdapter(IDebugTarget.class);
+		}
+		if(target != null) {
+			if(!target.isTerminated() && !target.isDisconnected()) {
+				if(target instanceof JDIDebugTarget) {
+					return (VirtualMachineImpl) ((JDIDebugTarget)target).getVM();
+				}
+			}
 		}
 		return null;
 	}
