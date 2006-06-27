@@ -227,7 +227,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 						connectThread.start();
 						while (connectThread.isAlive()) {
 							if (monitor.isCanceled()) {
-								connector.stopListening(map);
+                                try {
+                                    connector.stopListening(map);
+                                } catch (IOException ioe) {
+                                    //expected
+                                }
 								p.destroy();
 								return;
 							}
@@ -250,7 +254,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 						}
 
 						Exception ex = runnable.getException();
-						if (ex instanceof IllegalConnectorArgumentsException)						 {
+						if (ex instanceof IllegalConnectorArgumentsException) {
 							throw (IllegalConnectorArgumentsException)ex;
 						}
 						if (ex instanceof InterruptedIOException) {
