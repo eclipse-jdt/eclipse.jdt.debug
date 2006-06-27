@@ -90,7 +90,8 @@ public class SocketTransportService extends TransportService {
             fServerSocket.setSoTimeout((int) attachTimeout);
         }
         try {
-            fSocket = fServerSocket.accept();
+            if (!fServerSocket.isClosed()) //Bug 148441
+                fSocket = fServerSocket.accept();
         } catch (SocketTimeoutException e) {
             throw new TransportTimeoutException();
         }
