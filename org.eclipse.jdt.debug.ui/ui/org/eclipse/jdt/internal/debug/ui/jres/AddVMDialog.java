@@ -23,13 +23,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.StatusInfo;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.ComboDialogField;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
@@ -40,160 +35,159 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.icu.text.MessageFormat;
 
+/**
+ * Provides the Add VM dialog
+ */
 public class AddVMDialog extends StatusDialog {
-
-	private IAddVMDialogRequestor fRequestor;
 	
+	private IAddVMDialogRequestor fRequestor;
 	private IVMInstall fEditedVM;
-
 	private IVMInstallType[] fVMTypes;
 	private IVMInstallType fSelectedVMType;
-	
-	private ComboDialogField fVMTypeCombo;
+	private Combo fVMCombo;
+	private Text fVMName;
+	private Text fVMArgs;
+	private Text fJRERoot;
 	private VMLibraryBlock fLibraryBlock;
-	
-	private StringButtonDialogField fJRERoot;
-	private StringDialogField fVMName;
-	
-	private StringDialogField fVMArgs;
-
-	// the VM install's javadoc location
+// the VM install's javadoc location
 	private URL fJavadocLocation = null;
 	private boolean fAutoDetectJavadocLocation = false;
-	
-	private IStatus[] fStati;
+	private IStatus[] fStatus;
 	private int fPrevIndex = -1;
 		
+	/**
+	 * Constructor
+	 * @param requestor dialog validation requestor
+	 * @param shell the parent shell 
+	 * @param vmInstallTypes the types of VM installs
+	 * @param editedVM the editedVM
+	 */
 	public AddVMDialog(IAddVMDialogRequestor requestor, Shell shell, IVMInstallType[] vmInstallTypes, IVMInstall editedVM) {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fRequestor= requestor;
-		fStati= new IStatus[5];
-		for (int i= 0; i < fStati.length; i++) {
-			fStati[i]= new StatusInfo();
+		fRequestor = requestor;
+		fStatus = new IStatus[5];
+		for (int i= 0; i < fStatus.length; i++) {
+			fStatus[i] = new StatusInfo();
 		}
-		
-		fVMTypes= vmInstallTypes;
-		fSelectedVMType= editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[0];
-		
-		fEditedVM= editedVM;
-		
-		//only detect the javadoc location if not already set
+		fVMTypes = vmInstallTypes;
+		fSelectedVMType = editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[0];
+		fEditedVM = editedVM;
+	//only detect the javadoc location if not already set
 		fAutoDetectJavadocLocation = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
 	}
-	
-	/**
-	 * @see Windows#configureShell
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.StatusDialog#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IJavaDebugHelpContextIds.EDIT_JRE_DIALOG);
 	}		
 	
-	protected void createDialogFields() {
-		fVMTypeCombo= new ComboDialogField(SWT.READ_ONLY);
-		fVMTypeCombo.setLabelText(JREMessages.addVMDialog_jreType); 
-		fVMTypeCombo.setItems(getVMTypeNames());
-		
-		fVMName= new StringDialogField();
-		fVMName.setLabelText(JREMessages.addVMDialog_jreName); 
-		
-		fJRERoot= new StringButtonDialogField(new IStringButtonAdapter() {
-			public void changeControlPressed(DialogField field) {
-				browseForInstallDir();
-			}
-		});
-		fJRERoot.setLabelText(JREMessages.addVMDialog_jreHome); 
-		fJRERoot.setButtonLabel(JREMessages.addVMDialog_browse1); 
-			
-		fVMArgs= new StringDialogField();
-		fVMArgs.setLabelText(JREMessages.AddVMDialog_23); 
-	}
-	
-	protected void createFieldListeners() {
-		fVMTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				updateVMType();
-			}
-		});
-		
-		fVMName.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setVMNameStatus(validateVMName());
-				updateStatusLine();
-			}
-		});
-		
-		fJRERoot.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setJRELocationStatus(validateJRELocation());
-				updateStatusLine();
-			}
-		});
-	
-	}
-	
+	/**
+	 * Returns the VM name from the text control
+	 * @return
+	 */
 	protected String getVMName() {
 		return fVMName.getText();
 	}
 		
+	/**
+	 * Returns the installation location as a file from the JRE root text control
+	 * @return the installation location as a file
+	 */
 	protected File getInstallLocation() {
 		return new File(fJRERoot.getText());
 	}
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createDialogArea(Composite ancestor) {
-		createDialogFields();
 		Composite parent = (Composite)super.createDialogArea(ancestor);
-		((GridLayout)parent.getLayout()).numColumns= 3;
-		
-		fVMTypeCombo.doFillIntoGrid(parent, 3);
-		((GridData)fVMTypeCombo.getComboControl(null).getLayoutData()).widthHint= convertWidthInCharsToPixels(50);
-
-		fVMName.doFillIntoGrid(parent, 3);
-	
-		fJRERoot.doFillIntoGrid(parent, 3);
-		
-		fVMArgs.doFillIntoGrid(parent, 3);
-		((GridData)fVMArgs.getTextControl(null).getLayoutData()).widthHint= convertWidthInCharsToPixels(50);
-		
-		Label l = new Label(parent, SWT.NONE);
-		l.setText(JREMessages.AddVMDialog_JRE_system_libraries__1); 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		l.setLayoutData(gd);	
-		
+		((GridLayout)parent.getLayout()).numColumns = 3;
+	//VM combo
+		SWTUtil.createLabel(parent, JREMessages.addVMDialog_jreType, 1);
+		fVMCombo = SWTUtil.createCombo(parent, SWT.READ_ONLY, 2, getVMTypeNames());
+	//VM name
+		SWTUtil.createLabel(parent, JREMessages.addVMDialog_jreName, 1);
+		fVMName = SWTUtil.createSingleText(parent, 2);
+	//VM root
+		SWTUtil.createLabel(parent, JREMessages.addVMDialog_jreHome, 1);
+		fJRERoot = SWTUtil.createSingleText(parent, 1);
+		Button browse = SWTUtil.createPushButton(parent, JREMessages.addVMDialog_browse1, null);
+	//VM args
+		SWTUtil.createLabel(parent, JREMessages.AddVMDialog_23, 1);
+		fVMArgs = SWTUtil.createSingleText(parent, 2);
+	//VM libraries block 
+		SWTUtil.createLabel(parent, JREMessages.AddVMDialog_JRE_system_libraries__1, 3);
 		fLibraryBlock = new VMLibraryBlock(this);
 		Control block = fLibraryBlock.createControl(parent);
-		gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);
-		
-		Text t= fJRERoot.getTextControl(parent);
-		gd= (GridData)t.getLayoutData();
-		gd.grabExcessHorizontalSpace=true;
-		gd.widthHint= convertWidthInCharsToPixels(50);
-		
+	
+	//init the fields
 		initializeFields();
-		createFieldListeners();
+		
+	//add the listeners now to prevent them from monkeying with initialized settings
+		fVMCombo.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				updateVMType();
+			}
+		});
+		fVMName.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateVMName();
+				updateStatusLine();	
+			}
+		});
+		fJRERoot.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateJRELocation();
+				updateStatusLine();
+			}
+		});
+		browse.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dialog = new DirectoryDialog(getShell());
+				dialog.setFilterPath(fJRERoot.getText());
+				dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message); 
+				String newPath = dialog.open();
+				if (newPath != null) {
+					fJRERoot.setText(newPath);
+				}
+			}
+		});
 		applyDialogFont(parent);
 		return parent;
 	}
 	
+	/**
+	 * Updates the JRE location status and inits the library block
+	 */
 	private void updateVMType() {
-		int selIndex= fVMTypeCombo.getSelectionIndex();
+		int selIndex = fVMCombo.getSelectionIndex();
 		if (selIndex == fPrevIndex) {
 			return;
 		}
@@ -201,43 +195,57 @@ public class AddVMDialog extends StatusDialog {
 		if (selIndex >= 0 && selIndex < fVMTypes.length) {
 			fSelectedVMType= fVMTypes[selIndex];
 		}
-		setJRELocationStatus(validateJRELocation());
+		validateJRELocation();
 		fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
 		updateStatusLine();
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.StatusDialog#create()
+	 */
 	public void create() {
 		super.create();
 		fVMName.setFocus();
 		selectVMType();  
 	}
 	
+	/**
+	 * Returns the VM type names
+	 * @return an array of strings with the names of the applicable VMs
+	 */
 	private String[] getVMTypeNames() {
-		String[] names=  new String[fVMTypes.length];
-		for (int i= 0; i < fVMTypes.length; i++) {
+		String[] names =  new String[fVMTypes.length];
+		for (int i = 0; i < fVMTypes.length; i++) {
 			names[i]= fVMTypes[i].getName();
 		}
 		return names;
 	}
 	
+	/**
+	 * Selects the corresponding VM for fSelectedVMType
+	 */
 	private void selectVMType() {
 		for (int i= 0; i < fVMTypes.length; i++) {
 			if (fSelectedVMType == fVMTypes[i]) {
-				fVMTypeCombo.selectItem(i);
-				return;
+				if(i < fVMCombo.getItemCount()) {
+					fVMCombo.select(i);
+					return;
+				}
 			}
 		}
 	}
 	
+	/**
+	 * Initialize the dialogs fields
+	 */
 	private void initializeFields() {
-		fVMTypeCombo.setItems(getVMTypeNames());
 		if (fEditedVM == null) {
 			fVMName.setText(""); //$NON-NLS-1$
 			fJRERoot.setText(""); //$NON-NLS-1$
 			fLibraryBlock.initializeFrom(null, fSelectedVMType);
 			fVMArgs.setText(""); //$NON-NLS-1$
 		} else {
-			fVMTypeCombo.setEnabled(false);
+			fVMCombo.setEnabled(false);
 			fVMName.setText(fEditedVM.getName());
 			fJRERoot.setText(fEditedVM.getInstallLocation().getAbsolutePath());
 			fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
@@ -262,33 +270,32 @@ public class AddVMDialog extends StatusDialog {
 				}				
 			}
 		}
-		setVMNameStatus(validateVMName());
+		validateVMName();
 		updateStatusLine();
 	}
 	
-	private IVMInstallType getVMType() {
-		return fSelectedVMType;
-	}
-	
+	/**
+	 * Validates the JRE location
+	 * @return the status after validating the JRE location
+	 */
 	private IStatus validateJRELocation() {
-		String locationName= fJRERoot.getText();
+		String locationName = fJRERoot.getText();
 		IStatus s = null;
 		File file = null;
 		if (locationName.length() == 0) {
 			s = new StatusInfo(IStatus.INFO, JREMessages.addVMDialog_enterLocation); 
-		} else {
-			file= new File(locationName);
+		} 
+		else {
+			file = new File(locationName);
 			if (!file.exists()) {
 				s = new StatusInfo(IStatus.ERROR, JREMessages.addVMDialog_locationNotExists); 
-			} else {
+			} 
+			else {
 				final IStatus[] temp = new IStatus[1];
 				final File tempFile = file; 
 				Runnable r = new Runnable() {
-					/**
-					 * @see java.lang.Runnable#run()
-					 */
 					public void run() {
-						temp[0] = getVMType().validateInstallLocation(tempFile);
+						temp[0] = fSelectedVMType.validateInstallLocation(tempFile);
 					}
 				};
 				BusyIndicator.showWhile(getShell().getDisplay(), r);
@@ -306,11 +313,13 @@ public class AddVMDialog extends StatusDialog {
 					int segs = path.segmentCount();
 					if (segs == 1) {
 						genName = path.segment(0);
-					} else if (segs >= 2) {
+					} 
+					else if (segs >= 2) {
 						String last = path.lastSegment();
 						if ("jre".equalsIgnoreCase(last)) { //$NON-NLS-1$
 							genName = path.segment(segs - 2);
-						} else {
+						} 
+						else {
 							genName = last;
 						}
 					}
@@ -324,6 +333,7 @@ public class AddVMDialog extends StatusDialog {
 		}
 		fLibraryBlock.restoreDefaultLibraries();
 		detectJavadocLocation();
+		fStatus[1] = s;
 		return s;
 	}
 	
@@ -332,8 +342,8 @@ public class AddVMDialog extends StatusDialog {
 	 */
 	private void detectJavadocLocation() {
 		if (fAutoDetectJavadocLocation) {
-			if (getVMType() instanceof AbstractVMInstallType) {
-				AbstractVMInstallType type = (AbstractVMInstallType)getVMType();
+			if (fSelectedVMType instanceof AbstractVMInstallType) {
+				AbstractVMInstallType type = (AbstractVMInstallType)fSelectedVMType;
 				fJavadocLocation = type.getDefaultJavadocLocation(getInstallLocation());
 			}
 		} else {
@@ -341,6 +351,10 @@ public class AddVMDialog extends StatusDialog {
 		}
 	}
 
+	/**
+	 * Validates the entered name of the VM
+	 * @return the status of the name validation
+	 */
 	private IStatus validateVMName() {
 		StatusInfo status= new StatusInfo();
 		String name= fVMName.getText();
@@ -356,66 +370,73 @@ public class AddVMDialog extends StatusDialog {
 				}
 			}
 		}
+		fStatus[0] = status;
 		return status;
 	}
 	
+	/**
+	 * Updates the status line to show/hide messages to the user 
+	 */
 	protected void updateStatusLine() {
 		IStatus max= null;
-		for (int i= 0; i < fStati.length; i++) {
-			IStatus curr= fStati[i];
+		for (int i = 0; i < fStatus.length; i++) {
+			IStatus curr = fStatus[i];
 			if (curr.matches(IStatus.ERROR)) {
 				updateStatus(curr);
 				return;
 			}
 			if (max == null || curr.getSeverity() > max.getSeverity()) {
-				max= curr;
+				max = curr;
 			}
 		}
 		updateStatus(max);
 	}
-			
-	private void browseForInstallDir() {
-		DirectoryDialog dialog= new DirectoryDialog(getShell());
-		dialog.setFilterPath(fJRERoot.getText());
-		dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message); 
-		String newPath= dialog.open();
-		if (newPath != null) {
-			fJRERoot.setText(newPath);
-		}
-	}
 	
+	/**
+	 * Returns the URL for the javadoc location
+	 * @return the URL for the javadoc location
+	 */
 	protected URL getURL() {
 		return fJavadocLocation;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
 	protected void okPressed() {
-		doOkPressed();
-		super.okPressed();
-	}
-	
-	private void doOkPressed() {
 		if (fEditedVM == null) {
-			IVMInstall vm= new VMStandin(fSelectedVMType, createUniqueId(fSelectedVMType));
+			IVMInstall vm = new VMStandin(fSelectedVMType, createUniqueId(fSelectedVMType));
 			setFieldValuesToVM(vm);
 			fRequestor.vmAdded(vm);
 		} else {
 			setFieldValuesToVM(fEditedVM);
 		}
+		super.okPressed();
 	}
 	
+	/**
+	 * Creates a unique name for the VMInstallType
+	 * @param vmType the vm install type
+	 * @return a unique name
+	 */
 	private String createUniqueId(IVMInstallType vmType) {
-		String id= null;
+		String id = null;
 		do {
-			id= String.valueOf(System.currentTimeMillis());
+			id = String.valueOf(System.currentTimeMillis());
 		} while (vmType.findVMInstall(id) != null);
 		return id;
 	}
 	
+	/**
+	 * init fields to the specified VM
+	 * @param vm the VM to init from
+	 */
 	protected void setFieldValuesToVM(IVMInstall vm) {
 		File dir = new File(fJRERoot.getText());
 		try {
 			vm.setInstallLocation(dir.getCanonicalFile());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			vm.setInstallLocation(dir.getAbsoluteFile());
 		}
 		vm.setName(fVMName.getText());
@@ -424,23 +445,29 @@ public class AddVMDialog extends StatusDialog {
 		String argString = fVMArgs.getText().trim();
 		if (vm instanceof IVMInstall2) {
 			IVMInstall2 vm2 = (IVMInstall2) vm;
-			if (argString != null && argString.length() >0) {
+			if (argString != null && argString.length() > 0) {
 				vm2.setVMArgs(argString);			
-			} else {
+			} 
+			else {
 				vm2.setVMArgs(null);
 			}
-		} else {
-			if (argString != null && argString.length() >0) {
+		} 
+		else {
+			if (argString != null && argString.length() > 0) {
 				vm.setVMArguments(DebugPlugin.parseArguments(argString));			
-			} else {
+			} 
+			else {
 				vm.setVMArguments(null);
 			}			
 		}
-		
-
 		fLibraryBlock.performApply(vm);
 	}
 	
+	/**
+	 * returns an absolute file or an empty file if the path is either null or zero length
+	 * @param path the path to the file
+	 * @return a new file
+	 */
 	protected File getAbsoluteFileOrEmpty(String path) {
 		if (path == null || path.length() == 0) {
 			return new File(""); //$NON-NLS-1$
@@ -448,20 +475,19 @@ public class AddVMDialog extends StatusDialog {
 		return new File(path).getAbsoluteFile();
 	}
 	
-	private void setVMNameStatus(IStatus status) {
-		fStati[0]= status;
-	}
-	
-	private void setJRELocationStatus(IStatus status) {
-		fStati[1]= status;
-	}
-	
+	/**
+	 * @return the status of the system library 
+	 */
 	protected IStatus getSystemLibraryStatus() {
-		return fStati[3];
+		return fStatus[3];
 	}
 	
+	/**
+	 * Allows the VM page to set the status of the current system library
+	 * @param status the specified status
+	 */
 	protected void setSystemLibraryStatus(IStatus status) {
-		fStati[3]= status;
+		fStatus[3] = status;
 	}
 	
 	/**
@@ -474,13 +500,6 @@ public class AddVMDialog extends StatusDialog {
 		if (ok != null && !ok.isDisposed())
 			ok.setEnabled(status.getSeverity() == IStatus.OK);
 	}	
-	
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
-	 */
-	protected void setButtonLayoutData(Button button) {
-		super.setButtonLayoutData(button);
-	}
 	
 	/**
 	 * Returns the name of the section that this dialog stores its settings in

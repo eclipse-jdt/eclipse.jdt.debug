@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -37,7 +38,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
  * @since 3.3
  */
 public class SWTUtil {
-		
+	
 	/**
 	 * Returns a width hint for a button control.
 	 */
@@ -192,6 +193,23 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * Creates a new label widget
+	 * @param parent the parent composite to add this label widget to
+	 * @param text the text for the label
+	 * @param hspan the horizontal span to take up in the parent composite
+	 * @return the new label
+	 */
+	public static Label createLabel(Composite parent, String text, int hspan) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setFont(parent.getFont());
+		l.setText(text);
+		GridData gd = new GridData();
+		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
+	
+	/**
 	 * Creates a new text widget 
 	 * @param parent the parent composite to add this text widget to
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -213,6 +231,7 @@ public class SWTUtil {
 	 * @param columns the number of columns within the group
 	 * @param hspan the horizontal span the group should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
 	 * @return the new group
 	 */
 	public static Group createGroup(Composite parent, String text, int columns, int hspan, int fill) {
@@ -251,6 +270,7 @@ public class SWTUtil {
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
 	 * @return the new group
 	 */
 	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill) {
@@ -269,6 +289,7 @@ public class SWTUtil {
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
 	 * @param marginwidth the width of the margin to place around the composite (default is 5, specified by GridLayout)
 	 * @return the new group
 	 */
@@ -298,12 +319,53 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * This method is used to make a combo box
+	 * @param parent the parent composite to add the new combo to
+	 * @param style the style for the Combo
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param fill how the combo will fill into the composite
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
+	 * @param items the item to put into the combo
+	 * @return a new Combo instance
+	 */
+	public static Combo createCombo(Composite parent, int style, int hspan, int fill, String[] items) {
+		Combo c = new Combo(parent, style);
+		c.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		c.setLayoutData(gd);
+		c.setItems(items);
+		c.select(0);
+		return c;
+	}
+	
+	/**
+	 * This method is used to make a combo box with a default fill style of GridData.FILL_HORIZONTAL
+	 * @param parent the parent composite to add the new combo to
+	 * @param style the style for the Combo
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param items the item to put into the combo
+	 * @return a new Combo instance
+	 */
+	public static Combo createCombo(Composite parent, int style, int hspan, String[] items) {
+		Combo c = new Combo(parent, style);
+		c.setFont(parent.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		c.setLayoutData(gd);
+		c.setItems(items);
+		c.select(0);
+		return c;
+	}
+	
+	/**
 	 * Creates an ExpandibleComposite widget
 	 * @param parent the parent to add this widget to
 	 * @param style the style for ExpandibleComposite expanding handle, and layout
 	 * @param label the label for the widget
 	 * @param hspan how many columns to span in the parent
 	 * @param fill the fill style for the widget
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
 	 * @return a new ExpandibleComposite widget
 	 */
 	public static ExpandableComposite createExpandibleComposite(Composite parent, int style, String label, int hspan, int fill) {
