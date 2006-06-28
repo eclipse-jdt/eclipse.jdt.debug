@@ -100,7 +100,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 */
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
-		//The main composite
+	//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -142,10 +142,10 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 		container.setFont(font);
-		fUseStepFiltersButton = createCheckButton(container, 
+		fUseStepFiltersButton = SWTUtil.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters, 
-				2,
-				DebugUITools.isUseStepFilters());
+				DebugUITools.isUseStepFilters(), 
+				2);
 		fUseStepFiltersButton.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					setPageEnablement(fUseStepFiltersButton.getSelection());
@@ -205,42 +205,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 	
 	/**
-	 * Creates a check button
-	 * @param parent the parent conposite to add the button to
-	 * @param text the text for the button
-	 * @param span the horizontal span for the button
-	 * @return the new button
-	 * @since 3.2
-	 */
-	private Button createCheckButton(Composite parent, String text, int span, boolean selection) {
-		Button button = new Button(parent, SWT.CHECK);
-		button.setText(text);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = span;
-		button.setLayoutData(gd);
-		button.setFont(parent.getFont());
-		button.setSelection(selection);
-		return button;
-	}
-	
-	/**
-	 * Creates a default push button
-	 * @param parent the parent composite to add the button to 
-	 * @param text the text of the button
-	 * @param tooltip the tooltip for the button
-	 * @return a new push button
-	 * @since 3.2
-	 */
-	private Button createButton(Composite parent, String text, String tooltip) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText(text);
-		button.setToolTipText(tooltip);
-		button.setFont(parent.getFont());
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		return button;
-	}
-	
-	/**
 	 * Enables or disables the widgets on the page, with the 
 	 * exception of <code>fUseStepFiltersButton</code> according
 	 * to the passed boolean
@@ -265,18 +229,15 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * @param container the parent container
 	 */
 	private void createStepFilterCheckboxes(Composite container) {
-		fFilterSyntheticButton = createCheckButton(container, 
+		fFilterSyntheticButton = SWTUtil.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_s_ynthetic_methods__requires_VM_support__17, 
-				2,
-				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
-		fFilterStaticButton = createCheckButton(container, 
+				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS), 2);
+		fFilterStaticButton = SWTUtil.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_static__initializers_18, 
-				2,
-				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
-		fFilterConstructorButton = createCheckButton(container, 
+				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS), 2);
+		fFilterConstructorButton = SWTUtil.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_co_nstructors_19, 
-				2,
-				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS), 2);
 	}
 	
 	/**
@@ -295,36 +256,37 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		buttonLayout.marginWidth = 0;
 		buttonContainer.setLayout(buttonLayout);
 	//Add filter button
-		fAddFilterButton = createButton(buttonContainer,
+		fAddFilterButton = SWTUtil.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Filter_9, 
-				DebugUIMessages.JavaStepFilterPreferencePage_Key_in_the_name_of_a_new_step_filter_10); 
+				DebugUIMessages.JavaStepFilterPreferencePage_Key_in_the_name_of_a_new_step_filter_10, null);
 		fAddFilterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addFilter();
 			}
 		});
 	//Add type button
-		fAddTypeButton = createButton(buttonContainer,
-				DebugUIMessages.JavaStepFilterPreferencePage_Add__Type____11,
-				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_Java_type_and_add_it_to_step_filters_12);
+		fAddTypeButton = SWTUtil.createPushButton(buttonContainer, 
+				DebugUIMessages.JavaStepFilterPreferencePage_Add__Type____11, 
+				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_Java_type_and_add_it_to_step_filters_12, null);
 		fAddTypeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addType();
 			}
 		});
 	//Add package button
-		fAddPackageButton = createButton(buttonContainer, 
-				DebugUIMessages.JavaStepFilterPreferencePage_Add__Package____13,
-				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_package_and_add_it_to_step_filters_14);
+		fAddPackageButton = SWTUtil.createPushButton(buttonContainer, 
+				DebugUIMessages.JavaStepFilterPreferencePage_Add__Package____13, 
+				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_package_and_add_it_to_step_filters_14, null);
 		fAddPackageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addPackage();
 			}
 		});
 	//Remove button
-		fRemoveFilterButton = createButton(buttonContainer, 
+		fRemoveFilterButton = SWTUtil.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage__Remove_15, 
-				DebugUIMessages.JavaStepFilterPreferencePage_Remove_all_selected_step_filters_16);
+				DebugUIMessages.JavaStepFilterPreferencePage_Remove_all_selected_step_filters_16, 
+				null);
 		fRemoveFilterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				removeFilters();
@@ -340,18 +302,18 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		gd.heightHint= 4;
 		separator.setLayoutData(gd);
 	//Select All button
-		fSelectAllButton = createButton(buttonContainer,
+		fSelectAllButton = SWTUtil.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage__Select_All_1, 
-				DebugUIMessages.JavaStepFilterPreferencePage_Selects_all_step_filters_2);
+				DebugUIMessages.JavaStepFilterPreferencePage_Selects_all_step_filters_2, null);
 		fSelectAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				fTableViewer.setAllChecked(true);
 			}
 		});
 	//De-Select All button
-		fDeselectAllButton = createButton(buttonContainer,
+		fDeselectAllButton = SWTUtil.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Deselect_All_3, 
-				DebugUIMessages.JavaStepFilterPreferencePage_Deselects_all_step_filters_4);
+				DebugUIMessages.JavaStepFilterPreferencePage_Deselects_all_step_filters_4, null);
 		fDeselectAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				fTableViewer.setAllChecked(false);

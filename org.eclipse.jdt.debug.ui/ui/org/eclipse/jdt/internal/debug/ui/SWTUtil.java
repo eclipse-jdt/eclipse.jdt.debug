@@ -92,6 +92,23 @@ public class SWTUtil {
 	}	
 
 	/**
+	 * Creates and returns a new push button with the given
+	 * label, tooltip and/or image.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param tooltip the tooltip text for the button or <code>null</code>
+	 * @param image image of <code>null</code>
+	 * 
+	 * @return a new push button
+	 */
+	public static Button createPushButton(Composite parent, String label, String tooltip, Image image) {
+		Button button = createPushButton(parent, label, image);
+		button.setToolTipText(tooltip);
+		return button;
+	}
+	
+	/**
 	 * Creates and returns a new radio button with the given
 	 * label.
 	 * 
