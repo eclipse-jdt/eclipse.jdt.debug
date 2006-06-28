@@ -12,8 +12,8 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -469,8 +469,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		//TODO: revert once API freeze is over
-		boolean stepenabled = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS/*IDebugUIConstants.PREF_USE_STEP_FILTERS*/);
+		boolean stepenabled = getPreferenceStore().getDefaultBoolean(IDebugUIConstants.PREF_USE_STEP_FILTERS);
 		fUseStepFiltersButton.setSelection(stepenabled);
 		setPageEnablement(stepenabled);
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
@@ -496,7 +495,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 	
 	/**
-	 * returns all of the filters form the table, this includes one sthat have not yet been saved
+	 * returns all of the filters from the table, this includes ones that have not yet been saved
 	 * @return a possibly empty lits of filters fron the table
 	 * @since 3.2
 	 */
@@ -505,6 +504,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Filter[] filters = new Filter[items.length];
 		for(int i = 0; i < items.length; i++) {
 			filters[i] = (Filter)items[i].getData();
+			filters[i].setChecked(items[i].getChecked());
 		}
 		return filters;
 	}
