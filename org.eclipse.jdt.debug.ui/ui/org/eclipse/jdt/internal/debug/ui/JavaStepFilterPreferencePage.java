@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.ArrayList;
 
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -431,7 +430,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		boolean stepenabled = getPreferenceStore().getDefaultBoolean(IDebugUIConstants.PREF_USE_STEP_FILTERS);
+		boolean stepenabled = DebugUITools.isUseStepFilters();
 		fUseStepFiltersButton.setSelection(stepenabled);
 		setPageEnablement(stepenabled);
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
