@@ -163,7 +163,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					}
 				}
 			}
-			// invalidate this franme
+			// invalidate this frame
 			bind(null, -1);
 			// return a new frame
 			return new JDIStackFrame(fThread, frame, depth);
@@ -239,7 +239,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Returns the underlying method associated with this stack frame,
-	 * retreiving the method is necessary.
+	 * retrieving the method is necessary.
 	 */
 	public Method getUnderlyingMethod() {
 		synchronized (fThread) {
@@ -648,7 +648,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				return var;
 			}
 			if (var instanceof JDIThisVariable) {
-				// save for later - check for instance and static vars
+				// save for later - check for instance and static variables
 				thisVariable= var;
 			}
 		}
@@ -993,7 +993,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @exception DebugException if this stack frame does
 	 *  not currently have an underlying frame (is in an
-	 *  interim state where this frame's thead has been
+	 *  interim state where this frame's thread has been
 	 *  resumed, and is not yet suspended).
 	 */
 	protected StackFrame getUnderlyingStackFrame() throws DebugException {
