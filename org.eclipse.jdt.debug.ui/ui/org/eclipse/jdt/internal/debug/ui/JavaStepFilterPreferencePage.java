@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
@@ -469,8 +468,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		//TODO: revert once API freeze is over
-		boolean stepenabled = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS/*IDebugUIConstants.PREF_USE_STEP_FILTERS*/);
+		boolean stepenabled = DebugUITools.isUseStepFilters();
 		fUseStepFiltersButton.setSelection(stepenabled);
 		setPageEnablement(stepenabled);
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
@@ -505,6 +503,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Filter[] filters = new Filter[items.length];
 		for(int i = 0; i < items.length; i++) {
 			filters[i] = (Filter)items[i].getData();
+			filters[i].setChecked(items[i].getChecked());
 		}
 		return filters;
 	}
