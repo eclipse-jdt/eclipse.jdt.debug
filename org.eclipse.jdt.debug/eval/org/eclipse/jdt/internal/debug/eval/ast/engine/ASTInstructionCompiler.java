@@ -18,6 +18,7 @@ import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
@@ -2647,6 +2648,23 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		IMethodBinding methodBinding= (IMethodBinding) node.getName().resolveBinding();
+		if (methodBinding == null) {
+			// could be the receiver is not visible - for example a private field access from super class
+			ASTNode root = node.getRoot();
+			if (root instanceof CompilationUnit) {
+				CompilationUnit cu = (CompilationUnit) root;
+				IProblem[] problems = cu.getProblems();
+				for (int i = 0; i < problems.length; i++) {
+					IProblem problem = problems[i];
+					setHasError(true);
+					addErrorMessage(problem.getMessage());
+				}
+			}
+		}
+		
+		if (hasErrors()) {
+			return true;
+		}
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);

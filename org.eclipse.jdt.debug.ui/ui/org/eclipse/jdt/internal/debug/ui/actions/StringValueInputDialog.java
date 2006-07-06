@@ -197,14 +197,9 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         if (fSourceViewer != null) {
             super.refreshValidState();
             return;
-        }
-	    String errorMessage= null;
-		String text= getText();
-		boolean valid= text != null && text.trim().length() > 0;
-		if (!valid) {
-			errorMessage= ActionMessages.StringValueInputDialog_3; 
-		}
-		setErrorMessage(errorMessage);
+        }    
+    	// even an empty string is valid
+		setErrorMessage(null);
 	}
     
     /**
