@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -38,14 +39,14 @@ import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 
 /**
  * This class provides a properties page displaying all of the capabilities
- * of the VM asscoiated with the selected <code>IDebugTarget</code> or <code>IProcess</code>
+ * of the VM associated with the selected <code>IDebugTarget</code> or <code>IProcess</code>
  * 
  * @since 3.3
  */
 public class VMCapabilitiesPropertyPage extends PropertyPage {
 
 	/**
-	 * Provides a scollable area for the expansion composites
+	 * Provides a scrollable area for the expansion composites
 	 */
 	class ScrollPain extends SharedScrolledComposite {
 		public ScrollPain(Composite parent) {
@@ -89,49 +90,48 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			setErrorMessage(PropertyPageMessages.VMCapabilitiesPropertyPage_0);
 		}
 		else {
+			createExplanation(comp);
+			SWTUtil.createVerticalSpacer(comp, 1);
 			createHeadingLabel(comp, vm);
 			SWTUtil.createVerticalSpacer(comp, 1);
-		//General capabilities
-			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_2, 2, GridData.FILL_HORIZONTAL);
+			
+			// breakpoints
+			ExpandableComposite breakpoints = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "Breakpoints", 2, GridData.FILL_HORIZONTAL);
+			fExpandedComps.add(breakpoints);
+			Composite bp_inner = SWTUtil.createComposite(breakpoints, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			breakpoints.setClient(bp_inner);
+			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_4, vm.canUseInstanceFilters());
+			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_9, vm.canWatchFieldModification());
+			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_10, vm.canWatchFieldAccess());			
+			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_24, vm.canGetMethodReturnValues());
+			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_25, vm.canRequestMonitorEvents());
+			
+			// hot code replace
+			ExpandableComposite hcr = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "Hot Code Replace", 2, GridData.FILL_HORIZONTAL);
+			fExpandedComps.add(hcr);
+			Composite hcr_inner = SWTUtil.createComposite(hcr, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			hcr.setClient(hcr_inner);
+			createCapabilityEntry(hcr_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_15, vm.canRedefineClasses());
+			createCapabilityEntry(hcr_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_12, vm.canAddMethod());
+			createCapabilityEntry(hcr_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_16, vm.canUnrestrictedlyRedefineClasses());
+			
+			// stepping
+			ExpandableComposite stepping = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "Stepping", 2, GridData.FILL_HORIZONTAL);
+			fExpandedComps.add(stepping);
+			Composite stepping_inner = SWTUtil.createComposite(stepping, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			stepping.setClient(stepping_inner);
+			createCapabilityEntry(stepping_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_14, vm.canPopFrames());
+			createCapabilityEntry(stepping_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_3, vm.canGetSyntheticAttribute());
+			createCapabilityEntry(stepping_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_21, vm.canForceEarlyReturn());
+			
+			// others
+			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "General", 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(general);
 			Composite general_inner = SWTUtil.createComposite(general, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			general.setClient(general_inner);
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_3, vm.canGetSyntheticAttribute());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_4, vm.canUseInstanceFilters());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_5, vm.canGetBytecodes());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_6, vm.canGetCurrentContendedMonitor());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_7, vm.canGetMonitorInfo());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_8, vm.canGetOwnedMonitorInfo());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_9, vm.canWatchFieldModification());
-			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_10, vm.canWatchFieldAccess());
-			
-		
-		//1.4 VM capabilities
-			ExpandableComposite onefour = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_11, 2, GridData.FILL_HORIZONTAL);
-			fExpandedComps.add(onefour);
-			Composite onefour_inner = SWTUtil.createComposite(onefour, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
-			onefour.setClient(onefour_inner);
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_12, vm.canAddMethod());
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_13, vm.canGetSourceDebugExtension());
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_14, vm.canPopFrames());
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_15, vm.canRedefineClasses());
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_16, vm.canUnrestrictedlyRedefineClasses());
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_17, vm.canRequestVMDeathEvent());
-			createCapabilityEntry(onefour_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_18, vm.canSetDefaultStratum());
-		
-		//1.6 VM capabilities
-			ExpandableComposite onesix = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_19, 2, GridData.FILL_HORIZONTAL);
-			fExpandedComps.add(onesix);
-			Composite onesix_inner = SWTUtil.createComposite(onesix, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
-			onesix.setClient(onesix_inner);
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_20, vm.canUseSourceNameFilters());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_21, vm.canForceEarlyReturn());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_22, vm.canGetMonitorFrameInfo());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_23, vm.canGetClassFileVersion());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_24, vm.canGetMethodReturnValues());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_25, vm.canRequestMonitorEvents());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_26, vm.canGetInstanceInfo());
-			createCapabilityEntry(onesix_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_27, vm.canGetConstantPool());
+			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_6, vm.canGetCurrentContendedMonitor() && vm.canGetOwnedMonitorInfo());
+			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_18, vm.canSetDefaultStratum());
+			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_26, vm.canGetInstanceInfo());
 			
 		//restore expansion state
 			restoreExpansionState();
@@ -139,8 +139,16 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		return comp;
 	}
 	
+	private void createExplanation(Composite parent) {
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 2, GridData.FILL_HORIZONTAL);
+		Label label = new Label(comp, SWT.WRAP);
+        label.setFont(parent.getFont());
+        label.setText("This page displays optional debug capabilities that may be supported by the selected VM.");
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
+	}
+	
 	private void createHeadingLabel(Composite parent, VirtualMachineImpl vm) {
-		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);				
 		SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1); 
 		SWTUtil.createLabel(comp, vm.name()+" "+vm.version(), parent.getFont(), 1); //$NON-NLS-1$
 	}
@@ -177,7 +185,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	}
 	
 	/**
-	 * Returns a new capabiltiy entry for a specified group
+	 * Returns a new capability entry for a specified group
 	 * @param parent the parent group to add this entry to
 	 * @param label the text for the label
 	 * @param enabled the checked state of the check button
@@ -217,7 +225,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	}
 	
 	/**
-	 * save the expansion state for next time, this only happens when the user sleectes the OK button when closing the dialog
+	 * save the expansion state for next time, this only happens when the user selects the OK button when closing the dialog
 	 */
 	private void persistExpansionState() {
 		IPreferenceStore store = getPreferenceStore();

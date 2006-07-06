@@ -73,62 +73,20 @@ public class PropertyPageMessages extends NLS {
 	}
 
 	public static String JavaExceptionBreakpointPage_4;
-
 	public static String VMCapabilitiesPropertyPage_0;
-
 	public static String VMCapabilitiesPropertyPage_1;
-
 	public static String VMCapabilitiesPropertyPage_10;
-
-	public static String VMCapabilitiesPropertyPage_11;
-
 	public static String VMCapabilitiesPropertyPage_12;
-
-	public static String VMCapabilitiesPropertyPage_13;
-
 	public static String VMCapabilitiesPropertyPage_14;
-
 	public static String VMCapabilitiesPropertyPage_15;
-
 	public static String VMCapabilitiesPropertyPage_16;
-
-	public static String VMCapabilitiesPropertyPage_17;
-
 	public static String VMCapabilitiesPropertyPage_18;
-
-	public static String VMCapabilitiesPropertyPage_19;
-
-	public static String VMCapabilitiesPropertyPage_2;
-
-	public static String VMCapabilitiesPropertyPage_20;
-
 	public static String VMCapabilitiesPropertyPage_21;
-
-	public static String VMCapabilitiesPropertyPage_22;
-
-	public static String VMCapabilitiesPropertyPage_23;
-
 	public static String VMCapabilitiesPropertyPage_24;
-
 	public static String VMCapabilitiesPropertyPage_25;
-
 	public static String VMCapabilitiesPropertyPage_26;
-
-	public static String VMCapabilitiesPropertyPage_27;
-
-	public static String VMCapabilitiesPropertyPage_28;
-
 	public static String VMCapabilitiesPropertyPage_3;
-
 	public static String VMCapabilitiesPropertyPage_4;
-
-	public static String VMCapabilitiesPropertyPage_5;
-
 	public static String VMCapabilitiesPropertyPage_6;
-
-	public static String VMCapabilitiesPropertyPage_7;
-
-	public static String VMCapabilitiesPropertyPage_8;
-
 	public static String VMCapabilitiesPropertyPage_9;
 }
