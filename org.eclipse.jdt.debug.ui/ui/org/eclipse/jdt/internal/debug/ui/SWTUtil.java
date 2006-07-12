@@ -242,6 +242,23 @@ public class SWTUtil {
     }
 	
 	/**
+	 * Creates a new text widget 
+	 * @param parent the parent composite to add this text widget to
+	 * @param style the style bits for the text widget
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @return the new text widget
+	 */
+	public static Text createText(Composite parent, int style, int hspan, String text) {
+    	Text t = new Text(parent, style);
+    	t.setFont(parent.getFont());
+    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    	gd.horizontalSpan = hspan;
+    	t.setLayoutData(gd);
+    	t.setText(text);
+    	return t;
+    }
+	
+	/**
 	 * Creates a Group widget
 	 * @param parent the parent composite to add this group to
 	 * @param text the text for the heading of the group
