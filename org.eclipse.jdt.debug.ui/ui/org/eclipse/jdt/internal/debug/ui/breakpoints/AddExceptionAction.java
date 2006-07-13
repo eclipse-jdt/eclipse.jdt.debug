@@ -31,6 +31,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -43,6 +44,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
@@ -77,7 +79,9 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 					 										 IJavaElementSearchConstants.CONSIDER_CLASSES, 
 					 										 true, "*Exception*", ext); //$NON-NLS-1$
 			dialog.setTitle(BreakpointMessages.AddExceptionAction_0); 
-			dialog.setMessage(BreakpointMessages.AddExceptionAction_1);	
+			dialog.setMessage(BreakpointMessages.AddExceptionAction_1);
+			dialog.create();
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IJavaDebugHelpContextIds.ADD_EXCEPTION_DIALOG);
 			if(dialog.open() == IDialogConstants.OK_ID) {
 				boolean caught = ext.catchExceptions(), 
 						uncaught = ext.uncaughtExceptions();
