@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,9 +74,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Toggles a line breakpoint in a Java editor.
@@ -200,13 +202,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                         // not in the inner type
                                         final ITextEditor finalEditor = editor;
                                         final IType finalType = type;
-                                        Display.getCurrent().asyncExec(new Runnable() {
-                                            public void run() {
-                                                IStatusLineManager statusLine = finalEditor.getEditorSite().getActionBars().getStatusLineManager();
-                                                statusLine.setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { finalType.getTypeQualifiedName() })); 
-                                            }
-                                        });
-                                        Display.getCurrent().beep();
+                                        WorkbenchJob errorJob = new WorkbenchJob("Breakpoint Error Notification") { //$NON-NLS-1$
+											public IStatus runInUIThread(IProgressMonitor monitor) {
+											       IStatusLineManager statusLine = finalEditor.getEditorSite().getActionBars().getStatusLineManager();
+	                                                statusLine.setErrorMessage(MessageFormat.format(ActionMessages.ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1, new String[] { finalType.getTypeQualifiedName() }));
+	                                                Display.getCurrent().beep();
+												return Status.OK_STATUS;
+											}
+										};
+										errorJob.schedule();
                                         return Status.OK_STATUS;
                                     }
                                 }
