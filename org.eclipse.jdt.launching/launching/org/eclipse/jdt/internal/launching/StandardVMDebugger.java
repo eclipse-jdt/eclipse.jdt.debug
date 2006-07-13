@@ -50,7 +50,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	
 	
 	/**
-	 * Used to attach to a VM in a seperate thread, to allow for cancellation
+	 * Used to attach to a VM in a separate thread, to allow for cancellation
 	 * and detect that the associated System process died before the connect
 	 * occurred.
 	 */
@@ -142,7 +142,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		arguments.add(program);
 
-		// VM args are the first thing after the java program so that users can specify
+		// VM arguments are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first options
 		String[] allVMArgs = combineVmArgs(config, fVMInstance);
 		addArguments(allVMArgs, arguments);
