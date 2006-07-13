@@ -94,6 +94,8 @@ public class JavaDebugImages {
 	public static final String IMG_TOOL_TERMSNIPPET_HOVER = "IMG_TOOL_TERMSNIPPET_HOVER"; //$NON-NLS-1$
 	public static final String IMG_TOOL_TERMSNIPPET_DISABLED = "IMG_TOOL_TERMSNIPPET_DISABLED"; //$NON-NLS-1$
 	public static final String IMG_OBJ_JAVA_INSPECT_EXPRESSION = "IMG_OBJ_JAVA_INSPECT_EXPRESSION"; //$NON-NLS-1$
+    
+    public static final String IMG_ELCL_AUTO_FORMAT = "IMG_ELCL_AUTO_FORMAT"; //$NON-NLS-1$
 	
 	/*
 	 * Set of predefined Image Descriptors.
@@ -104,6 +106,7 @@ public class JavaDebugImages {
 	private static final String T_EVIEW= ICONS_PATH + "eview16/"; 	//$NON-NLS-1$
 	private static final String T_DLCL= ICONS_PATH + "dtool16/"; 	//$NON-NLS-1$
 	private static final String T_ELCL= ICONS_PATH + "etool16/"; 	//$NON-NLS-1$
+    private static final String E_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
 
 
 	
@@ -201,6 +204,8 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OBJS_METHOD_BRKPT_TYPE, T_OBJ + "jmeth_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_JSP_BRKPT_TYPE, T_OBJ + "jspbrkpt_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_WATCHPOINT_TYPE, T_OBJ + "jwatch_obj.gif"); //$NON-NLS-1$
+        
+        declareRegistryImage(IMG_ELCL_AUTO_FORMAT, E_LCL + "autoform_menu.gif"); //$NON-NLS-1$
 		
 	}
 	
