@@ -11,14 +11,13 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -129,7 +128,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * @see IValueModification#verifyValue(String)
 	 */
-	public boolean verifyValue(String expression) {
+	public boolean verifyValue(String expression) throws DebugException {
 		return false;
 	}
 	

@@ -160,13 +160,9 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
-	public boolean verifyValue(String expression) {
-		try {
-			IValue value = JDIValue.createValue(getJavaDebugTarget(), generateVMValue(expression));
-			return verifyValue(value);
-		} catch (DebugException e) {
-			return false;
-		}
+	public boolean verifyValue(String expression) throws DebugException {
+		IValue value = JDIValue.createValue(getJavaDebugTarget(), generateVMValue(expression));
+		return verifyValue(value);
 	}
 	
 	/* (non-Javadoc)
