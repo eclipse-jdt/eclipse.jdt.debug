@@ -32,11 +32,10 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorPart;
 
 public abstract class OpenTypeAction extends ObjectActionDelegate {
 	
@@ -112,9 +111,11 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 				typeHierarchyError();
 			}
 		} else {
-			IEditorPart part= EditorUtility.openInEditor(sourceElement);
-			if (part != null && sourceElement instanceof IJavaElement) {
-				EditorUtility.revealInEditor(part, ((IJavaElement)sourceElement));
+			if(sourceElement instanceof IJavaElement) {
+				JavaUI.openInEditor((IJavaElement) sourceElement);
+			}
+			else {
+				showErrorMessage(ActionMessages.OpenTypeAction_2);
 			}
 		}
 	}

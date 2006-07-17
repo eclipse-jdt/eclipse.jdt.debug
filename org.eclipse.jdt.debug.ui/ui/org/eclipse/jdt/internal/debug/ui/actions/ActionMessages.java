@@ -60,6 +60,8 @@ public class ActionMessages extends NLS {
 
 	public static String MoveDownAction_M_ove_Down_1;
 	public static String MoveUpAction_Move_U_p_1;
+
+	public static String OpenTypeAction_2;
 	public static String RemoveAction__Remove_1;
 
 	public static String AddProjectAction_Add_Project_1;
