@@ -67,12 +67,12 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		Object source = e.getSource();
 		if (source == fProjButton) {
 			handleProjectButtonSelected();
-		}//end if
+		}
 		else {
 			updateLaunchConfigurationDialog();
-		}//end else
-	}//end widgetSelected
-}//end private class
+		}
+	}
+}
 	
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	//Project UI widgets
@@ -93,15 +93,15 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		dialog.setMessage(LauncherMessages.AbstractJavaMainTab_3); 
 		try {
 			dialog.setElements(JavaCore.create(getWorkspaceRoot()).getJavaProjects());
-		}//end try 
+		}
 		catch (JavaModelException jme) {JDIDebugUIPlugin.log(jme);}
 		IJavaProject javaProject= getJavaProject();
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
-		}//end if
+		}
 		if (dialog.open() == Window.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
-		}//end if			
+		}		
 		return null;		
 	}
 	
@@ -154,7 +154,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		String projectName = fProjText.getText().trim();
 		if (projectName.length() < 1) {
 			return null;
-		}//end if
+		}
 		return getJavaModel().getJavaProject(projectName);		
 	}
 
@@ -174,10 +174,10 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		IJavaProject project = chooseJavaProject();
 		if (project == null) {
 			return;
-		}//end if
+		}
 		String projectName = project.getElementName();
 		fProjText.setText(projectName);		
-	}//end handle selected
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -195,7 +195,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		String projectName = EMPTY_STRING;
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
-		}//end try 
+		}
 		catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
@@ -216,4 +216,4 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		config.setMappedResources(resources);
 	}	
 	
-}//end class
+}

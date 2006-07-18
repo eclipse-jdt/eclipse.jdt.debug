@@ -26,13 +26,14 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab;
-import org.eclipse.jdt.internal.debug.ui.launcher.ComboFieldEditor;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceStore;
@@ -82,74 +83,37 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		Composite comp = new Composite(parent, SWT.NONE);
-		setControl(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CONNECT_TAB);
-		GridLayout topLayout = new GridLayout();
-		topLayout.verticalSpacing = 0;
-		comp.setLayout(topLayout);
-		comp.setFont(font);
+		Composite comp = SWTUtil.createComposite(parent, font, 1, 1, GridData.FILL_BOTH);
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 0;
+		comp.setLayout(layout);
 		createProjectEditor(comp);
 		createVerticalSpacer(comp, 1);
-		createConnectionTypeControl(comp);
-		createVerticalSpacer(comp, 1);
-		createConnectionParamsControl(comp);
-		createVerticalSpacer(comp, 2);
-		fAllowTerminateButton = createCheckButton(comp, LauncherMessages.JavaConnectTab__Allow_termination_of_remote_VM_6); 
-		fAllowTerminateButton.addSelectionListener(getDefaultListener());
-	}
-
-	/**
-	 * creates the connector type control group
-	 * @param parent the parent composite to add this one to
-	 */
-	private void createConnectionTypeControl(Composite parent) {
-		Font font = parent.getFont();
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(LauncherMessages.JavaConnectTab_Connect_ion_Type__7); 
-		group.setLayout(new GridLayout(2, true));
-		group.setFont(font);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		group.setLayoutData(gd);
-		fConnectorCombo = new Combo(group, SWT.READ_ONLY);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fConnectorCombo.setLayoutData(gd);
-		fConnectorCombo.setFont(font);
+		
+	//connection type
+		Group group = SWTUtil.createGroup(comp, LauncherMessages.JavaConnectTab_Connect_ion_Type__7, 1, 1, GridData.FILL_HORIZONTAL);
 		String[] names = new String[fConnectors.length];
 		for (int i = 0; i < fConnectors.length; i++) {
 			names[i] = fConnectors[i].getName();
 		}
-		fConnectorCombo.setItems(names);
+		fConnectorCombo = SWTUtil.createCombo(group, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, names); 
 		fConnectorCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleConnectorComboModified();
 			}
 		});
-	}
-	
-	/**
-	 * Creates the connection parameters control group
-	 * @param parent the parent composite to add this one to
-	 */
-	private void createConnectionParamsControl(Composite parent) {
-		Font font = parent.getFont();
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(LauncherMessages.JavaConnectTab_Connection_Properties_1); 
-		group.setLayout(new GridLayout());
-		group.setFont(font);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		group.setLayoutData(gd);
-		//Add in an intermediate composite to allow for spacing
-		Composite spacingComposite = new Composite(group, SWT.NONE);
-		spacingComposite.setLayout(new GridLayout(2, true)); 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		spacingComposite.setLayoutData(gd);	
-		fArgumentComposite = spacingComposite;
-		fArgumentComposite.setFont(font); 
+		createVerticalSpacer(comp, 1);
+		
+	//connection properties
+		group = SWTUtil.createGroup(comp, LauncherMessages.JavaConnectTab_Connection_Properties_1, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite cgroup = SWTUtil.createComposite(group, font, 2, 1, GridData.FILL_HORIZONTAL);
+		fArgumentComposite = cgroup;
+		createVerticalSpacer(comp, 2);
+		fAllowTerminateButton = createCheckButton(comp, LauncherMessages.JavaConnectTab__Allow_termination_of_remote_VM_6); 
+		fAllowTerminateButton.addSelectionListener(getDefaultListener());
+		
+		setControl(comp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CONNECT_TAB);
 	}
 	
 	/**
@@ -208,10 +172,12 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
 				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);					
 			}
-			field.setPreferenceStore(store);
-			field.loadDefault();
-			field.setPropertyChangeListener(this);
-			fFieldEditorMap.put(key, field);
+			if(field != null) {
+				field.setPreferenceStore(store);
+				field.loadDefault();
+				field.setPropertyChangeListener(this);
+				fFieldEditorMap.put(key, field);
+			}
 		}
 		fArgumentComposite.getParent().getParent().layout();
 		fArgumentComposite.layout(true);
@@ -222,8 +188,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 */
 	private String getLabel(String label) {
 		if (!label.endsWith(":")) { //$NON-NLS-1$
-			label += ":"; //$NON-NLS-1$
-		}//end if
+			return label+":"; //$NON-NLS-1$
+		}
 		return label;
 	}
 
@@ -244,7 +210,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		boolean allowTerminate = false;
 		try {
 			allowTerminate = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);	
-		}//end try 
+		}
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
 		fAllowTerminateButton.setSelection(allowTerminate);	
 	}
@@ -263,7 +229,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			Map attrMap = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
 			if (attrMap == null) {
 				return;
-			}//end if
+			}
 			Iterator keys = attrMap.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String)keys.next();
@@ -273,17 +239,17 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 					String value = (String)attrMap.get(key);
 					if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
 						editor.getPreferenceStore().setValue(key, value);
-					}//end if 
+					} 
 					else if (arg instanceof Connector.BooleanArgument) {
 						editor.getPreferenceStore().setValue(key, Boolean.valueOf(value).booleanValue());
-					}//end if 
+					}
 					else if (arg instanceof Connector.IntegerArgument) {
 						editor.getPreferenceStore().setValue(key, new Integer(value).intValue());
-					}//end if
+					}
 					editor.load();
-				}//end if
-			}//end while						
-		}//end try 
+				}
+			}						
+		} 
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}	
 	}
 
@@ -302,19 +268,19 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
 			if (!editor.isValid()) {
 				return;
-			}//end if
+			}
 			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
 			editor.store();
 			if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
 				attrMap.put(key, editor.getPreferenceStore().getString(key));
-			}//end if 
+			}
 			else if (arg instanceof Connector.BooleanArgument) {
 				attrMap.put(key, Boolean.valueOf(editor.getPreferenceStore().getBoolean(key)).toString());
-			}//end if 
+			} 
 			else if (arg instanceof Connector.IntegerArgument) {
 				attrMap.put(key, new Integer(editor.getPreferenceStore().getInt(key)).toString());
-			}//end if
-		}//end while				
+			}
+		}				
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, attrMap);
 	}
 	
@@ -334,10 +300,10 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		IJavaElement javaElement = getContext();
 		if (javaElement == null) {
 			initializeHardCodedDefaults(config);
-		}//end if 
+		} 
 		else {
 			initializeDefaults(javaElement, config);
-		}//end else
+		}
 	}
 
 	/**
@@ -353,13 +319,13 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 				int index = name.lastIndexOf('.');
 				if (index > 0) {
 					name = name.substring(0, index);
-				}//end if
-			}//end if 
+				}
+			} 
 			else {
 				name= javaElement.getElementName();
-			}//end else
+			}
 			name = getLaunchConfigurationDialog().generateName(name);				
-		}//end try 
+		}
 		catch (JavaModelException jme) {JDIDebugUIPlugin.log(jme);}
 		config.rename(name);
 	}
@@ -377,15 +343,14 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 */
 	public boolean isValid(ILaunchConfiguration config) {	
 		setErrorMessage(null);
-		setMessage(null);
-		// project		
+		setMessage(null);	
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
 				setErrorMessage(LauncherMessages.JavaConnectTab_Project_does_not_exist_14); 
 				return false;
-			}//end if
-		}//end if
+			}
+		}
 		Iterator keys = fFieldEditorMap.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
@@ -396,11 +361,11 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 				if (!arg.isValid(value)) {
 					setErrorMessage(arg.label() + LauncherMessages.JavaConnectTab__is_invalid__5); 
 					return false;
-				}//end if		
-			}//end if
-		}//end while							
+				}		
+			}
+		}							
 		return true;
-	}//end isValid
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
@@ -429,4 +394,4 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	public void propertyChange(PropertyChangeEvent event) {
 		updateLaunchConfigurationDialog();
 	}
-}//end class
+}
