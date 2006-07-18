@@ -110,7 +110,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			// did not find source
 			MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));  
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ConsoleMessages.JavaStackTraceHyperlink_An_exception_occurred_while_following_link__3, e); 
+			JDIDebugUIPlugin.statusDialog(e.getStatus()); 
 			return;
 		}
 	}

@@ -132,7 +132,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		labelProvider.dispose();			
 		
 		if (!status.isOK()) {
-			JDIDebugUIPlugin.errorDialog(status.getMessage(), status);
+			JDIDebugUIPlugin.statusDialog(status);
 		}
 	}
 

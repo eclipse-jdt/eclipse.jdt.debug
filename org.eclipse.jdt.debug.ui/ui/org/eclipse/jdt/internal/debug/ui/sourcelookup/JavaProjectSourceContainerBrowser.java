@@ -124,7 +124,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 		labelProvider.dispose();			
 		
 		if (!status.isOK()) {
-			JDIDebugUIPlugin.errorDialog(status.getMessage(), status);
+			JDIDebugUIPlugin.statusDialog(status);
 		}
 		return (ISourceContainer[])sourceContainers.toArray(new ISourceContainer[sourceContainers.size()]);
 	}

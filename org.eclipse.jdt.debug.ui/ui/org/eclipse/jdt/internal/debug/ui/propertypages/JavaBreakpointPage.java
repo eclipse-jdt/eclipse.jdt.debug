@@ -94,7 +94,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
 		} 
 		catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.JavaBreakpointPage_1, e); 
+			JDIDebugUIPlugin.statusDialog(e.getStatus()); 
 			JDIDebugUIPlugin.log(e);
 		}
 		return super.performOk();
@@ -425,7 +425,7 @@ public class JavaBreakpointPage extends PropertyPage {
 				getBreakpoint().delete();
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.JavaBreakpointPage_9, e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(PropertyPageMessages.JavaBreakpointPage_9, e.getStatus()); 
 		}
 		return super.performCancel();
 	}

@@ -101,7 +101,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 			};
 			BusyIndicator.showWhile(getShell().getDisplay(), r);
 			if (ex[0] != null) {
-				JDIDebugUIPlugin.errorDialog(MessageFormat.format(DebugUIMessages.HotCodeReplaceErrorDialog_2, operation), ex[0].getStatus()); 
+				JDIDebugUIPlugin.statusDialog(MessageFormat.format(DebugUIMessages.HotCodeReplaceErrorDialog_2, operation), ex[0].getStatus()); 
 			}
 			okPressed();
 		} else {

@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
@@ -85,6 +84,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -442,7 +442,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					try {
 						view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 					} catch (PartInitException e) {
-						JDIDebugUIPlugin.errorDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e); 
+						JDIDebugUIPlugin.statusDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e.getStatus()); 
 					} finally {
 						page.activate(activePart);
 					}

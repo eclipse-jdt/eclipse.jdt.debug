@@ -68,18 +68,18 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                     if (dialog.isUseLiteralValue()) {
 	                    variable.setValue(result);
                     } else {
-                        setValue(variable, shell, result);
+                        setValue(variable, result);
                     }
                 }
             } else {
                 ExpressionInputDialog dialog= new ExpressionInputDialog(shell, javaVariable);
                 if (dialog.open() == Window.OK) {
                     String result = dialog.getResult();
-                    setValue(variable, shell, result);
+                    setValue(variable, result);
                 }
             }
         } catch (DebugException e) {
-            handleException(e, shell);
+            handleException(e);
         }
         return true;
     }
@@ -95,9 +95,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 	        if ("Ljava/lang/String;".equals(signature)) { //$NON-NLS-1$
 	            return false;
 	        }
-	        setValue(variable, shell, expression);
+	        setValue(variable, expression);
         } catch (DebugException e) {
-            handleException(e, shell);
+            handleException(e);
         }
         return true;
     }
@@ -107,18 +107,17 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * using the result.
      * 
      * @param variable the variable whose value should be set
-     * @param shell a shell for reporting errors
      * @param expression the expression to evaluate
      * @throws DebugException if an exception occurs evaluating the expression
      *  or setting the variable's value
      */
-    protected void setValue(final IVariable variable, final Shell shell, final String expression) throws DebugException {
+    protected void setValue(final IVariable variable, final String expression) throws DebugException {
         IProgressService service= PlatformUI.getWorkbench().getProgressService();
         
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                IValue newValue = evaluate(shell, expression);
+                IValue newValue = evaluate(expression);
                 if (newValue != null) {
                     variable.setValue(newValue);
                 }
@@ -141,13 +140,13 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     /**
      * Handles the given exception, which occurred during edit/save.
      */
-    protected void handleException(DebugException e, Shell shell) {
+    protected void handleException(DebugException e) {
         Throwable cause = e.getStatus().getException();
         if (cause instanceof InvalidTypeException) {
             IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, cause.getMessage(), null);
-            reportProblem(shell, status);
+            JDIDebugUIPlugin.statusDialog(ActionMessages.JavaObjectValueEditor_3, status);
         } else {
-            JDIDebugUIPlugin.errorDialog(ActionMessages.JavaObjectValueEditor_1, e.getStatus()); // 
+            JDIDebugUIPlugin.statusDialog(e.getStatus()); 
         }
     }
 
@@ -156,7 +155,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * @param stringValue the snippet to evaluate
      * @return the value that was computed or <code>null</code> if any errors occurred.
      */
-    private IValue evaluate(Shell shell, String stringValue) throws DebugException {
+    private IValue evaluate(String stringValue) throws DebugException {
         IAdaptable adaptable = DebugUITools.getDebugContext();
         IJavaStackFrame frame= (IJavaStackFrame) adaptable.getAdapter(IJavaStackFrame.class);
         if (frame != null) {
@@ -202,17 +201,6 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             }
         }
         return null;
-    }
-    
-    /**
-     * Reports the given status to the user. This status should be for a problem
-     * that occurred due to an error in the user's code (not, for example, because of
-     * a timeout from the VM).
-     * @param shell a shell to use for opening a dialog
-     * @param status a status which has information about the problem
-     */
-    public void reportProblem(Shell shell, IStatus status) {
-    	JDIDebugUIPlugin.errorDialog(ActionMessages.JavaObjectValueEditor_3, status);
     }
     
     /**

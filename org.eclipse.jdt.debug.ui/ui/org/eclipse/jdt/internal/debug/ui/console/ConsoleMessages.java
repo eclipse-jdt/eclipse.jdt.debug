@@ -23,7 +23,6 @@ public class ConsoleMessages extends NLS {
 	public static String JavaStackTraceConsoleFactory_0;
 	public static String JavaStackTraceConsole_0;
 	public static String JavaStackTraceHyperlink_Source_not_found_for__0__2;
-	public static String JavaStackTraceHyperlink_An_exception_occurred_while_following_link__3;
 	public static String JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5;
 	public static String JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6;
 	public static String JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__7;

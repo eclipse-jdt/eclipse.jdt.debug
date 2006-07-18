@@ -99,7 +99,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 */
 	protected ILaunch launch(IFile page) {
 
-		// clean up orphaned launch cofigs
+		// clean up orphaned launch configurations
 		cleanupLaunchConfigurations();
 							
 		if (!page.getFileExtension().equals("jpage")) { //$NON-NLS-1$
@@ -120,10 +120,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			jarURL = JDIDebugUIPlugin.getDefault().getBundle().getEntry("snippetsupport.jar"); //$NON-NLS-1$
 			jarURL = FileLocator.toFileURL(jarURL);
 		} catch (MalformedURLException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e); //$NON-NLS-1$
 			return null;
 		} catch (IOException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -142,7 +142,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			
 			return doLaunch(javaProject, page, classPath);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.statusDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e.getStatus()); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -162,7 +162,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				}
 			} catch (CoreException e) {
 				config = null;
-				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_retrieve_scrapbook_runtime_settings._Settings_will_revert_to_default._1"), e); //$NON-NLS-1$
+				JDIDebugUIPlugin.statusDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_retrieve_settings"), e.getStatus()); //$NON-NLS-1$
 			}
 			
 			if (config == null) {
@@ -176,7 +176,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			try {
 				u = getEncodedURL(f);
 			} catch (MalformedURLException e) {
-				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"),e); //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"),e); //$NON-NLS-1$
 				return null;
 			}
 			String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(p);
@@ -187,7 +187,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				try {
 					urls[i + 1] = getEncodedURL(f).toExternalForm();
 				} catch (MalformedURLException e) {
-					JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e);				 //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e);				 //$NON-NLS-1$
 				 	return null;
 				}
 			}
@@ -227,7 +227,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				return launch;
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.statusDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e.getStatus()); //$NON-NLS-1$
 		}
 		return null;
 	}

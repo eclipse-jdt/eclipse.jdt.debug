@@ -87,7 +87,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 				showProperties(breakpoint);
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ConsoleMessages.JavaStackTraceHyperlink_An_exception_occurred_while_following_link__3, e); 
+			JDIDebugUIPlugin.statusDialog(e.getStatus()); 
 			return;
 		}
 	}

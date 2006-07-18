@@ -24,7 +24,6 @@ public class ActionMessages extends NLS {
 
 	public static String BreakpointHitCountAction__Enter_the_new_hit_count_for_the_breakpoint__3;
 	public static String BreakpointHitCountAction_Enable_Hit_Count_1;
-	public static String BreakpointHitCountAction_Exception_occurred_attempting_to_set_hit_count_1;
 	public static String BreakpointHitCountAction_Set_Breakpoint_Hit_Count_2;
 	public static String BreakpointHitCountAction_Value_must_be_positive_integer;
 
@@ -49,8 +48,6 @@ public class ActionMessages extends NLS {
 	public static String EvaluateAction__evaluation_failed__Reason;
 	public static String EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1;
 	public static String EvaluateAction_Cannot_perform_nested_evaluations__1;
-
-	public static String InspectAction_Exception_occurred_inspecting_variable;
 
 	public static String JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1;
 
@@ -97,7 +94,6 @@ public class ActionMessages extends NLS {
 
 	public static String TerminateEvaluationActionTerminate_Evaluation_1;
 	public static String TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements__The_currently_executing_statement__such_as_a_method_invocation__cannot_be_interrupted__2;
-	public static String TerminateEvaluationActionAn_exception_occurred_while_terminating_the_evaluation_3;
 
 	public static String InstanceFiltersAction_1;
 	public static String InstanceFiltersAction_2;
@@ -148,7 +144,6 @@ public class ActionMessages extends NLS {
 	public static String ShowStratumAction_0;
 	public static String JavaVariableValueEditor_0;
 	public static String JavaVariableValueEditor_1;
-	public static String JavaObjectValueEditor_1;
 	public static String JavaObjectValueEditor_3;
 	public static String JavaPrimitiveValueEditor_0;
 	public static String JavaPrimitiveValueEditor_1;
@@ -170,7 +165,5 @@ public class ActionMessages extends NLS {
 	}
 
 	public static String OpenTypeAction_0;
-
-	public static String OpenTypeAction_1;
 
 }

@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -71,7 +69,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 		try {
 			fThread.terminateEvaluation();
 		} catch (DebugException exception) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.TerminateEvaluationActionAn_exception_occurred_while_terminating_the_evaluation_3, new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception)); 
+			JDIDebugUIPlugin.statusDialog(exception.getStatus()); 
 		}
 	}
 

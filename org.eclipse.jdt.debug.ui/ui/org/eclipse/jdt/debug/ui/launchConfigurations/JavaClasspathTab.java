@@ -284,7 +284,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 					}
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e); 
+					JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e.getStatus()); 
 				}	
 			}
 		}

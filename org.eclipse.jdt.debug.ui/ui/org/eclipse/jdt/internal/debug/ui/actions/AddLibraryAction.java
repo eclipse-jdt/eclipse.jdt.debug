@@ -44,7 +44,7 @@ public class AddLibraryAction extends RuntimeClasspathAction {
 				try {
 					res[i] = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3, e); 
+					JDIDebugUIPlugin.statusDialog(LauncherMessages.RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3, e.getStatus()); 
 					return;
 				}
 			}

@@ -168,7 +168,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		try {
 			fArgumentMap = vm.getDefaultArguments();
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaConnectTab_Unable_to_display_connection_arguments__2, e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaConnectTab_Unable_to_display_connection_arguments__2, e.getStatus()); 
 			return;
 		}
 		

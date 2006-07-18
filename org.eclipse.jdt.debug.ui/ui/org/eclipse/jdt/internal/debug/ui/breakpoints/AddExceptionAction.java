@@ -93,7 +93,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 				settings.put(SETTING_UNCAUGHT_CHECKED, uncaught);
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(BreakpointMessages.AddExceptionAction_2, e.getStatus());
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
 		}
 	}
 	

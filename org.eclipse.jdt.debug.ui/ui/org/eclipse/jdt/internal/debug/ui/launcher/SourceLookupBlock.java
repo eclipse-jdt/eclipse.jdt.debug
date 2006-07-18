@@ -290,7 +290,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 					}
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, mementos);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.SourceLookupBlock_Unable_to_save_source_lookup_path_1, e); 
+					JDIDebugUIPlugin.statusDialog(LauncherMessages.SourceLookupBlock_Unable_to_save_source_lookup_path_1, e.getStatus()); 
 				}	
 			}
 			boolean dup = fDuplicatesButton.getSelection();

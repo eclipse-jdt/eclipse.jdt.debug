@@ -53,7 +53,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		try {
 			handleContainerResolutionError(fUnboundPath, fProject);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.JREContainerResolution_Unable_to_update_classpath_1, e.getStatus());  
+			JDIDebugUIPlugin.statusDialog(LauncherMessages.JREContainerResolution_Unable_to_update_classpath_1, e.getStatus());  
 		}
 	}
 	

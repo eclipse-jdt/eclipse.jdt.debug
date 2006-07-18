@@ -265,7 +265,9 @@ public class JavaJRETab extends JavaLaunchTab {
 							wc = getLaunchConfiguration().getWorkingCopy();
 					}
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog(LauncherMessages.JavaJRETab_Unable_to_initialize_defaults_for_selected_JRE_1, e); 
+					IStatus status = e.getStatus();
+					JDIDebugUIPlugin.statusDialog(status); 
+					JDIDebugUIPlugin.log(status);
 					return;
 				}
 			}

@@ -60,7 +60,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 				}
 			}
 		} catch(CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.OpenTypeAction_1, e.getStatus());
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
 		}
 	}
 	

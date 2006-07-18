@@ -138,7 +138,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 			// unable to retrieve launch config, create a new one
 			fConfig = null;
 			fWorkingCopy = null;
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_retrieve_scrapbook_runtime_settings._Settings_will_revert_to_defaults._1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.statusDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_retrieve_settings"), e.getStatus()); //$NON-NLS-1$
 		}
 
 		if (fConfig == null) {
@@ -146,7 +146,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 				fConfig = ScrapbookLauncher.createLaunchConfigurationTemplate(getFile());
 				fWorkingCopy = fConfig.getWorkingCopy();
 			} catch (CoreException e) {
-				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_create_launch_configuration_for_scrapbook_file_2"), e); //$NON-NLS-1$
+				JDIDebugUIPlugin.statusDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_retrieve_settings"), e.getStatus()); //$NON-NLS-1$
 			}
 		}
 				
@@ -228,7 +228,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 				fWorkingCopy = fConfig.getWorkingCopy();
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_save_scrapbook_settings._3"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
 		}
 		return super.performOk();
 	}

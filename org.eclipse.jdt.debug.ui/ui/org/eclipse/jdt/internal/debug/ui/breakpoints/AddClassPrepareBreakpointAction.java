@@ -101,7 +101,7 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	            }
 	        }
 	    } catch(CoreException e) {
-	    	JDIDebugUIPlugin.errorDialog(BreakpointMessages.AddClassPrepareBreakpointAction_3, e.getStatus());
+	    	JDIDebugUIPlugin.statusDialog(e.getStatus());
 	    }
     }
     

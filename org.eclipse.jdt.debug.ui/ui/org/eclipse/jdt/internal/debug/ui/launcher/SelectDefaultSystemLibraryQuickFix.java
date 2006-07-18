@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -70,7 +71,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 				// cancelled
 			}			
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus()); 
 		}
 	}
 		

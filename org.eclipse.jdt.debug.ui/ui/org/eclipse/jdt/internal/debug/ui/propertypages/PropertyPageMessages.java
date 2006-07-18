@@ -33,7 +33,6 @@ public class PropertyPageMessages extends NLS {
 	public static String ExceptionFilterEditor_20;
 	public static String ExceptionFilterEditor_22;
 	public static String JavaBreakpointPage_0;
-	public static String JavaBreakpointPage_1;
 	public static String JavaBreakpointPage_10;
 	public static String JavaBreakpointPage_3;
 	public static String JavaBreakpointPage_4;

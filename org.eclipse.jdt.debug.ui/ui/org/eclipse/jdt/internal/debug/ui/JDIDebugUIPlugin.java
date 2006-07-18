@@ -67,6 +67,7 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -189,7 +190,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
+		if (e instanceof CoreException) {
+			log(((CoreException)e).getStatus());
+		} else {
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -237,24 +242,42 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		return fSnippetDocumentProvider;
 	}
 	
-	public static void errorDialog(String message, IStatus status) {
-		log(status);
+	public static void statusDialog(IStatus status) {
+		switch (status.getSeverity()) {
+		case IStatus.ERROR:
+			statusDialog(DebugUIMessages.JDIDebugUIPlugin_Error_1, status);
+			break;
+		case IStatus.WARNING:
+			statusDialog("Warning", status);
+			break;
+		case IStatus.INFO:
+			statusDialog("Information", status);
+			break;
+		}		
+	}
+	public static void statusDialog(String title, IStatus status) {
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			ErrorDialog.openError(shell, DebugUIMessages.JDIDebugUIPlugin_Error_1, message, status); 
-		}
+			switch (status.getSeverity()) {
+			case IStatus.ERROR:
+				ErrorDialog.openError(shell, title, status.getMessage(), status);
+				break;
+			case IStatus.WARNING:
+				MessageDialog.openWarning(shell, title, status.getMessage());
+				break;
+			case IStatus.INFO:
+				MessageDialog.openInformation(shell, title, status.getMessage());
+				break;
+			}
+		}		
 	}
-	
+		
 	/**
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(String message, Throwable t) {
-		log(t);
-		Shell shell = getActiveWorkbenchShell();
-		if (shell != null) {
-			IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
-			ErrorDialog.openError(shell, DebugUIMessages.JDIDebugUIPlugin_Error_1, message, status); 
-		}
+		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, t); //$NON-NLS-1$	
+		statusDialog(status);
 	}
 	
 	/**

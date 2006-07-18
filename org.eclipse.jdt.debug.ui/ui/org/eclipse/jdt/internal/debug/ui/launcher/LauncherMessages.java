@@ -36,7 +36,6 @@ public class LauncherMessages extends NLS {
 	public static String JavaConnectTab__is_invalid__5;
 
 	public static String JavaJRETab__JRE_1;
-	public static String JavaJRETab_Unable_to_initialize_defaults_for_selected_JRE_1;
 	public static String JavaJRETab_7;
 	public static String JavaJRETab_8;
 	public static String JavaJRETab_9;
