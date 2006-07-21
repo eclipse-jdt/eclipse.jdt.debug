@@ -14,11 +14,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.console.IConsoleView;
 
 public class FormatStackTraceActionDelegate implements IViewActionDelegate {
     
-    private IConsoleView fConsoleView;
     private JavaStackTraceConsole fConsole;
 
     public FormatStackTraceActionDelegate() {
@@ -32,7 +30,6 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
     public void init(IViewPart view) {
-        fConsoleView = (IConsoleView) view;
     }
 
     /* (non-Javadoc)
