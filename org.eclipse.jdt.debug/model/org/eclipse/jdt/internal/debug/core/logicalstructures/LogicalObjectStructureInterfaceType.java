@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 
 	/**
 	 * Status code used by the debug model to retrieve a thread to use
-	 * for evalutaions, via a status handler. A status handler is contributed by
+	 * for evaluations, via a status handler. A status handler is contributed by
 	 * the Java debug UI. When not present, the debug model uses any suspended thread.
 	 * 
 	 * @since 3.0 
@@ -89,10 +89,10 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 	
 	/**
 	 * Returns the evaluation that computes the logical object structure for this
-	 * strucutre type.
+	 * structure type.
 	 * 
 	 * @return the evaluation that computes the logical object structure for this
-	 * strucutre type
+	 * structure type
 	 */
 	protected abstract IEvaluationRunnable getEvaluation();
 
