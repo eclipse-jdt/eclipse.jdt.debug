@@ -96,7 +96,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			SWTUtil.createVerticalSpacer(comp, 1);
 			
 			// breakpoints
-			ExpandableComposite breakpoints = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "Breakpoints", 2, GridData.FILL_HORIZONTAL);
+			ExpandableComposite breakpoints = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_27, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(breakpoints);
 			Composite bp_inner = SWTUtil.createComposite(breakpoints, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			breakpoints.setClient(bp_inner);
@@ -107,7 +107,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_25, vm.canRequestMonitorEvents());
 			
 			// hot code replace
-			ExpandableComposite hcr = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "Hot Code Replace", 2, GridData.FILL_HORIZONTAL);
+			ExpandableComposite hcr = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_28, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(hcr);
 			Composite hcr_inner = SWTUtil.createComposite(hcr, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			hcr.setClient(hcr_inner);
@@ -116,7 +116,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			createCapabilityEntry(hcr_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_16, vm.canUnrestrictedlyRedefineClasses());
 			
 			// stepping
-			ExpandableComposite stepping = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "Stepping", 2, GridData.FILL_HORIZONTAL);
+			ExpandableComposite stepping = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_29, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(stepping);
 			Composite stepping_inner = SWTUtil.createComposite(stepping, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			stepping.setClient(stepping_inner);
@@ -125,7 +125,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			createCapabilityEntry(stepping_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_21, vm.canForceEarlyReturn());
 			
 			// others
-			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, "General", 2, GridData.FILL_HORIZONTAL);
+			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_30, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(general);
 			Composite general_inner = SWTUtil.createComposite(general, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			general.setClient(general_inner);
@@ -133,9 +133,9 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_18, vm.canSetDefaultStratum());
 			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_26, vm.canGetInstanceInfo());
 			
-		//restore expansion state
 			restoreExpansionState();
 		}
+        applyDialogFont(comp);
 		return comp;
 	}
 	
@@ -143,7 +143,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 2, GridData.FILL_HORIZONTAL);
 		Label label = new Label(comp, SWT.WRAP);
         label.setFont(parent.getFont());
-        label.setText("This page displays optional debug capabilities that may be supported by the selected VM.");
+        label.setText(PropertyPageMessages.VMCapabilitiesPropertyPage_31);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
 	}
 	

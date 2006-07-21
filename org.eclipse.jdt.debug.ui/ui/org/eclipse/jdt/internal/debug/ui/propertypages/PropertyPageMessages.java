@@ -84,7 +84,17 @@ public class PropertyPageMessages extends NLS {
 	public static String VMCapabilitiesPropertyPage_24;
 	public static String VMCapabilitiesPropertyPage_25;
 	public static String VMCapabilitiesPropertyPage_26;
+
+    public static String VMCapabilitiesPropertyPage_27;
+
+    public static String VMCapabilitiesPropertyPage_28;
+
+    public static String VMCapabilitiesPropertyPage_29;
 	public static String VMCapabilitiesPropertyPage_3;
+
+    public static String VMCapabilitiesPropertyPage_30;
+
+    public static String VMCapabilitiesPropertyPage_31;
 	public static String VMCapabilitiesPropertyPage_4;
 	public static String VMCapabilitiesPropertyPage_6;
 	public static String VMCapabilitiesPropertyPage_9;
