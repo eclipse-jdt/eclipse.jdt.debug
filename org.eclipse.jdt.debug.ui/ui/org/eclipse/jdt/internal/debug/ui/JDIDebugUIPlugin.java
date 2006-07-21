@@ -100,6 +100,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private static final String PI_JDI_DEBUG = "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
 	
 	/**
+	 * Id for inspect command.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String COMMAND_INSPECT = "org.eclipse.jdt.debug.ui.commands.Inspect"; //$NON-NLS-1$
+	
+	/**
 	 * Java Debug UI plug-in instance
 	 */
 	private static JDIDebugUIPlugin fgPlugin;
@@ -433,6 +440,19 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			display= Display.getDefault();
 		return display;		
 	}
+	
+	/**
+	 * Returns the currently active workbench window shell or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the currently active workbench window shell or <code>null</code>
+	 */
+	public static Shell getShell() {
+		if (getActiveWorkbenchWindow() != null) {
+			return getActiveWorkbenchWindow().getShell();
+		}
+		return null;
+	}	
 	
 	/**
 	 * Utility method to create and return a selection dialog that allows
