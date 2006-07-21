@@ -18,6 +18,8 @@ public class ConsoleMessages extends NLS {
 
 	public static String AutoFormatSettingAction_1;
 
+    public static String JavaStackTraceConsole_1;
+
 	public static String JavaStackTraceHyperlink_Information_1;
     public static String JavaStackTraceHyperlink_Error;
 	public static String JavaStackTraceConsoleFactory_0;
@@ -25,7 +27,6 @@ public class ConsoleMessages extends NLS {
 	public static String JavaStackTraceHyperlink_Source_not_found_for__0__2;
 	public static String JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5;
 	public static String JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6;
-	public static String JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__7;
 	public static String JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8;
 
 	static {

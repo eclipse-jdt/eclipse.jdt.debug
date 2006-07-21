@@ -215,7 +215,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				throw new CoreException(status);
 			}		
 		}
-		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__7, null); 
+		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, null); 
 		throw new CoreException(status);			
 	}
 	

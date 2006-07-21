@@ -164,7 +164,7 @@ public class JavaStackTraceConsole extends TextConsole {
     
     
     public void format() {
-    	WorkbenchJob job = new WorkbenchJob("Update Java Stack Trace Console") {
+    	WorkbenchJob job = new WorkbenchJob(ConsoleMessages.JavaStackTraceConsole_1) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 	            IJobManager jobManager = Platform.getJobManager();
 	            try {
