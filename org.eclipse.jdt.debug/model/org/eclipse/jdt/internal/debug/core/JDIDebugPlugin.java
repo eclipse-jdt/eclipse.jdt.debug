@@ -93,6 +93,34 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	private JavaEvaluationEngineManager fEvaluationEngineManager;
 
 	/**
+	 * Status code used by the debug model to retrieve a thread to use
+	 * for evaluations, via a status handler. A status handler is contributed by
+	 * the Java debug UI. When not present, the debug model uses any suspended thread.
+	 * 
+	 * @since 3.0 
+	 */
+	public static final int INFO_EVALUATION_THREAD = 110;
+	
+	/**
+	 * Associated status to retrieve a thread.
+	 */
+	public static final IStatus STATUS_GET_EVALUATION_THREAD = new Status(IStatus.INFO, getUniqueIdentifier(), INFO_EVALUATION_THREAD, "Provides thread context for an evaluation", null); //$NON-NLS-1$	
+	
+	/**
+	 * Status code used by the debug model to retrieve a frame to use
+	 * for evaluations, via a status handler. A status handler is contributed by
+	 * the Java debug UI. When not present, the debug model uses any suspended thread.
+	 * 
+	 * @since 3.0 
+	 */
+	public static final int INFO_EVALUATION_STACK_FRAME = 111;	
+
+	/**
+	 * Associated status to retrieve a stack frame.
+	 */
+	public static IStatus STATUS_GET_EVALUATION_FRAME = new Status(IStatus.INFO, getUniqueIdentifier(), INFO_EVALUATION_STACK_FRAME, "Provides thread context for an evaluation", null); //$NON-NLS-1$
+	
+	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
 	 * 

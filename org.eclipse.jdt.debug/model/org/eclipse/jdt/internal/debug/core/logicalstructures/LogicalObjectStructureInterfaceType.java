@@ -41,17 +41,7 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 	
 	private boolean fDone = false; // done the evaluation
 	
-	private static IStatus fgNeedThread = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(), LogicalObjectStructureInterfaceType.INFO_EVALUATION_THREAD, "Provides thread context for an evaluation", null); //$NON-NLS-1$
 	private static IStatusHandler fgThreadProvider;
-
-	/**
-	 * Status code used by the debug model to retrieve a thread to use
-	 * for evaluations, via a status handler. A status handler is contributed by
-	 * the Java debug UI. When not present, the debug model uses any suspended thread.
-	 * 
-	 * @since 3.0 
-	 */
-	public static final int INFO_EVALUATION_THREAD = 110;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILogicalStructureType#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
@@ -143,7 +133,7 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 	private IJavaThread getThread(IValue value) throws CoreException {
 		IStatusHandler handler = getThreadProvider();
 		if (handler != null) {
-			IJavaThread thread = (IJavaThread)handler.handleStatus(fgNeedThread, value);
+			IJavaThread thread = (IJavaThread)handler.handleStatus(JDIDebugPlugin.STATUS_GET_EVALUATION_THREAD, value);
 			if (thread != null) {
 				return thread;
 			}
@@ -164,7 +154,7 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 	
 	private static IStatusHandler getThreadProvider() {
 		if (fgThreadProvider == null) {
-			fgThreadProvider = DebugPlugin.getDefault().getStatusHandler(fgNeedThread);
+			fgThreadProvider = DebugPlugin.getDefault().getStatusHandler(JDIDebugPlugin.STATUS_GET_EVALUATION_THREAD);
 		}
 		return fgThreadProvider;
 	}

@@ -49,10 +49,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 public class JavaLogicalStructure implements ILogicalStructureType {
 
-
-	// stack frame context provider
-	public static final int INFO_EVALUATION_STACK_FRAME = 111;
-	private static IStatus fgNeedStackFrame = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(), INFO_EVALUATION_STACK_FRAME, "Provides thread context for an evaluation", null); //$NON-NLS-1$
 	private static IStatusHandler fgStackFrameProvider;
 
 	/**
@@ -325,7 +321,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	private IJavaStackFrame getStackFrame(IValue value) throws CoreException {
 		IStatusHandler handler = getStackFrameProvider();
 		if (handler != null) {
-			IJavaStackFrame stackFrame = (IJavaStackFrame)handler.handleStatus(fgNeedStackFrame, value);
+			IJavaStackFrame stackFrame = (IJavaStackFrame)handler.handleStatus(JDIDebugPlugin.STATUS_GET_EVALUATION_FRAME, value);
 			if (stackFrame != null) {
 				return stackFrame;
 			}
@@ -346,7 +342,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	
 	private static IStatusHandler getStackFrameProvider() {
 		if (fgStackFrameProvider == null) {
-			fgStackFrameProvider = DebugPlugin.getDefault().getStatusHandler(fgNeedStackFrame);
+			fgStackFrameProvider = DebugPlugin.getDefault().getStatusHandler(JDIDebugPlugin.STATUS_GET_EVALUATION_FRAME);
 		}
 		return fgStackFrameProvider;
 	}
