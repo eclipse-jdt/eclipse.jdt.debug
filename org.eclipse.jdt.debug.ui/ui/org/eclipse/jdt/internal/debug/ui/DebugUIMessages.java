@@ -71,6 +71,8 @@ public class DebugUIMessages extends NLS {
 
 	public static String JDIDebugUIPlugin__0__contains_obsolete_methods_1;
 	public static String JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2;
+
+    public static String JDIDebugUIPlugin_0;
 	public static String JDIDebugUIPlugin_1;
 	public static String JDIDebugUIPlugin_2;
 	public static String JDIDebugUIPlugin_Error_1;
@@ -79,6 +81,7 @@ public class DebugUIMessages extends NLS {
 	public static String JDIDebugUIPlugin_Stepping_may_be_hazardous_1;
 	public static String JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1;
 	public static String JDIDebugUIPlugin_3;
+    public static String JDIDebugUIPlugin_4;
 
 	public static String JDIModelPresentation__No_explicit_return_value__30;
 	public static String JDIModelPresentation__conditional__2;

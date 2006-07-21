@@ -248,10 +248,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			statusDialog(DebugUIMessages.JDIDebugUIPlugin_Error_1, status);
 			break;
 		case IStatus.WARNING:
-			statusDialog("Warning", status);
+			statusDialog(DebugUIMessages.JDIDebugUIPlugin_0, status);
 			break;
 		case IStatus.INFO:
-			statusDialog("Information", status);
+			statusDialog(DebugUIMessages.JDIDebugUIPlugin_4, status);
 			break;
 		}		
 	}
@@ -276,7 +276,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(String message, Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, t); //$NON-NLS-1$	
+		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, t);
 		statusDialog(status);
 	}
 	
