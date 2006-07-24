@@ -336,7 +336,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						args = new String[] {thread.getName(), message};
 					}
 				}			
-				if (breakpoint instanceof IJavaExceptionBreakpoint) {
+				// check args == null in case the exception is a compilation error
+				if (breakpoint instanceof IJavaExceptionBreakpoint && args == null) {
 					key.append("_exception"); //$NON-NLS-1$
 					String exName = ((IJavaExceptionBreakpoint)breakpoint).getExceptionTypeName();
 					if (exName == null) {
