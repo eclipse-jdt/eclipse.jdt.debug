@@ -459,7 +459,13 @@ public class JREsComboBlock {
 		int i = 0;
 		while (iter.hasNext()) {
 			IExecutionEnvironment env = (IExecutionEnvironment)iter.next();
-			names[i] = env.getId();
+			IPath path = JavaRuntime.newJREContainerPath(env);
+			IVMInstall install = JavaRuntime.getVMInstall(path);
+			if (install != null) {
+				names[i] = MessageFormat.format(JREMessages.JREsComboBlock_15, new String[]{env.getId(), install.getName()});
+			} else {
+				names[i] = MessageFormat.format(JREMessages.JREsComboBlock_16, new String[]{env.getId()});
+			}
 			i++;
 		}
 		fEnvironmentsCombo.setItems(names);
