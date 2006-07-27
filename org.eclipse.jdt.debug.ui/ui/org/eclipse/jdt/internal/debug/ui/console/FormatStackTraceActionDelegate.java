@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,14 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleView;
 
 public class FormatStackTraceActionDelegate implements IViewActionDelegate {
     
     private JavaStackTraceConsole fConsole;
-
+    private IConsoleView fView;
+    
     public FormatStackTraceActionDelegate() {
     }
     
@@ -30,13 +33,24 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
     public void init(IViewPart view) {
+    	if (view instanceof IConsoleView) {
+			fView = (IConsoleView) view;
+		}
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-    	fConsole.format();
+    	if (fView != null) {
+    		IConsole console = fView.getConsole();
+    		if (console instanceof JavaStackTraceConsole) {
+				JavaStackTraceConsole jstc = (JavaStackTraceConsole) console;
+				jstc.format();
+			}
+    	} else if (fConsole != null) {
+    		fConsole.format();
+    	}
     }
     
     /* (non-Javadoc)
