@@ -1408,7 +1408,7 @@ public final class JavaRuntime {
 		// If the preference was found, load VMs from it into memory
 		if (vmXMLString.length() > 0) {
 			try {
-				ByteArrayInputStream inputStream = new ByteArrayInputStream(vmXMLString.getBytes());
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(vmXMLString.getBytes("UTF8")); //$NON-NLS-1$
 				VMDefinitionsContainer.parseXMLIntoContainer(inputStream, vmDefs);
 				return false;
 			} catch (IOException ioe) {
