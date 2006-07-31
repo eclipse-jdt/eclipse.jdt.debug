@@ -22,8 +22,7 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
     private JavaStackTraceConsole fConsole;
     private IConsoleView fView;
     
-    public FormatStackTraceActionDelegate() {
-    }
+    public FormatStackTraceActionDelegate() {}
     
     public FormatStackTraceActionDelegate(JavaStackTraceConsole console) {
         fConsole = console;
@@ -42,20 +41,20 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-    	if (fView != null) {
+    	if (fConsole != null) {
+    		fConsole.format();
+    	}
+    	else if (fView != null) {
     		IConsole console = fView.getConsole();
     		if (console instanceof JavaStackTraceConsole) {
-				JavaStackTraceConsole jstc = (JavaStackTraceConsole) console;
-				jstc.format();
+				fConsole = (JavaStackTraceConsole) console;
+				fConsole.format();
 			}
-    	} else if (fConsole != null) {
-    		fConsole.format();
     	}
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
-    }      
+    public void selectionChanged(IAction action, ISelection selection) {}      
 }
