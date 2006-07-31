@@ -149,8 +149,8 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	
 	private void createHeadingLabel(Composite parent, VirtualMachineImpl vm) {
 		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);				
-		SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1); 
-		SWTUtil.createLabel(comp, vm.name()+" "+vm.version(), parent.getFont(), 1); //$NON-NLS-1$
+		SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1);
+		SWTUtil.createText(comp, SWT.READ_ONLY, 1, vm.name()+" "+vm.version()); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
