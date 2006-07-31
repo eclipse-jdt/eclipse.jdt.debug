@@ -37,57 +37,44 @@ import org.eclipse.ui.console.TextConsole;
 public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 
 	private String fExceptionName = null;
-	
+
 	/**
 	 * Constructs a new hyper link
 	 * 
-	 * @param console the console the link is contained in
-	 * @param exceptionName fully qualified name of the exception
+	 * @param console
+	 *            the console the link is contained in
+	 * @param exceptionName
+	 *            fully qualified name of the exception
 	 */
 	public JavaExceptionHyperLink(TextConsole console, String exceptionName) {
 		super(console);
 		fExceptionName = exceptionName;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkActivated()
 	 */
 	public void linkActivated() {
 		try {
 			// check for an existing breakpoint
-			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+			IBreakpoint[] breakpoints = DebugPlugin.getDefault()
+					.getBreakpointManager().getBreakpoints(
+							JDIDebugModel.getPluginIdentifier());
 			for (int i = 0; i < breakpoints.length; i++) {
 				IBreakpoint breakpoint = breakpoints[i];
 				if (breakpoint instanceof IJavaExceptionBreakpoint) {
-					IJavaExceptionBreakpoint exceptionBreakpoint = (IJavaExceptionBreakpoint)breakpoint;
-					if (fExceptionName.equals(exceptionBreakpoint.getTypeName())) {
+					IJavaExceptionBreakpoint exceptionBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
+					if (fExceptionName
+							.equals(exceptionBreakpoint.getTypeName())) {
 						showProperties(exceptionBreakpoint);
 						return;
 					}
 				}
 			}
 			// create a new exception breakpoint
-			Object sourceElement = getSourceElement(fExceptionName);
-			if (sourceElement != null) {
-				IResource res = ResourcesPlugin.getWorkspace().getRoot();
-				IType type = null;
-				if (sourceElement instanceof ICompilationUnit) {
-					type = ((ICompilationUnit)sourceElement).findPrimaryType();
-				} else if (sourceElement instanceof IClassFile) {
-					type = ((IClassFile)sourceElement).getType();
-				} else if (sourceElement instanceof IType) {
-					type = (IType) sourceElement;
-				}
-				if (type != null) {
-					res = BreakpointUtils.getBreakpointResource(type);
-				}
-				Map map = new HashMap();
-				map.put(JavaBreakpointPage.ATTR_DELETE_ON_CANCEL, JavaBreakpointPage.ATTR_DELETE_ON_CANCEL);
-				IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, AddExceptionAction.isChecked(type), false, map);
-				showProperties(breakpoint);
-			}
+			startSourceSearch(fExceptionName, -1);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
 			return;
 		}
 	}
@@ -98,9 +85,38 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 	 * @param exceptionBreakpoint
 	 */
 	private void showProperties(IJavaExceptionBreakpoint breakpoint) {
-		JavaBreakpointPropertiesAction action= new JavaBreakpointPropertiesAction();
+		JavaBreakpointPropertiesAction action = new JavaBreakpointPropertiesAction();
 		action.selectionChanged(null, new StructuredSelection(breakpoint));
-		action.run(null);		
-	}	
+		action.run(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#processSearchResult(java.lang.Object, java.lang.String, int)
+	 */
+	protected void processSearchResult(Object source, String typeName, int lineNumber) {
+		try {
+			IResource res = ResourcesPlugin.getWorkspace().getRoot();
+			IType type = null;
+			if (source instanceof ICompilationUnit) {
+				type = ((ICompilationUnit) source).findPrimaryType();
+			} else if (source instanceof IClassFile) {
+				type = ((IClassFile) source).getType();
+			} else if (source instanceof IType) {
+				type = (IType) source;
+			}
+			if (type != null) {
+				res = BreakpointUtils.getBreakpointResource(type);
+			}
+			Map map = new HashMap();
+			map.put(JavaBreakpointPage.ATTR_DELETE_ON_CANCEL,
+					JavaBreakpointPage.ATTR_DELETE_ON_CANCEL);
+			IJavaExceptionBreakpoint breakpoint = JDIDebugModel
+					.createExceptionBreakpoint(res, fExceptionName, true, true,
+							AddExceptionAction.isChecked(type), false, map);
+			showProperties(breakpoint);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
+		}
+	}
 
 }

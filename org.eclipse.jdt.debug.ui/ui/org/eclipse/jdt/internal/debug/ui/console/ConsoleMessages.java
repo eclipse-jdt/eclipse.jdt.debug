@@ -20,6 +20,8 @@ public class ConsoleMessages extends NLS {
 
     public static String JavaStackTraceConsole_1;
 
+	public static String JavaStackTraceHyperlink_2;
+
 	public static String JavaStackTraceHyperlink_Information_1;
     public static String JavaStackTraceHyperlink_Error;
 	public static String JavaStackTraceConsoleFactory_0;

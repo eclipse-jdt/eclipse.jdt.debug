@@ -11,11 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -33,8 +33,11 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A hyperlink from a stack trace line of the form "*(*.java:*)"
@@ -66,76 +69,108 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkActivated()
 	 */
 	public void linkActivated() {
-		try {
-			String typeName;
-            int lineNumber;
-            try {
-                String linkText = getLinkText();
-                typeName = getTypeName(linkText);
-                lineNumber = getLineNumber(linkText);
-            } catch (CoreException e1) {
-                ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Error, ConsoleMessages.JavaStackTraceHyperlink_Error, e1.getStatus()); 
-                return;
-            }
-			
-			// documents start at 0
-			if (lineNumber > 0) {
-				lineNumber--;
-			}
-			Object sourceElement = getSourceElement(typeName);
-			if (sourceElement != null) {
-				IDebugModelPresentation presentation = JDIDebugUIPlugin.getDefault().getModelPresentation();
-				IEditorInput editorInput = presentation.getEditorInput(sourceElement);
-				if (editorInput != null) {
-					String editorId = presentation.getEditorId(editorInput, sourceElement);
-					if (editorId != null) {
-						IEditorPart editorPart = JDIDebugUIPlugin.getActivePage().openEditor(editorInput, editorId);
-						if (editorPart instanceof ITextEditor && lineNumber >= 0) {
-							ITextEditor textEditor = (ITextEditor)editorPart;
-							IDocumentProvider provider = textEditor.getDocumentProvider();
-							provider.connect(editorInput);
-							IDocument document = provider.getDocument(editorInput);
-							try {
-								IRegion line = document.getLineInformation(lineNumber);
-								textEditor.selectAndReveal(line.getOffset(), line.getLength());
-							} catch (BadLocationException e) {
-                                MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_0, MessageFormat.format("{0}{1}{2}", new String[] {(lineNumber+1)+"", ConsoleMessages.JavaStackTraceHyperlink_1, typeName}));  //$NON-NLS-2$ //$NON-NLS-1$
-							}
-							provider.disconnect(editorInput);
-						}
-						return;
-					}
-				}
-			}
-			// did not find source
-			MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));  
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.statusDialog(e.getStatus()); 
-			return;
+		String typeName;
+        int lineNumber;
+        try {
+            String linkText = getLinkText();
+            typeName = getTypeName(linkText);
+            lineNumber = getLineNumber(linkText);
+        } catch (CoreException e1) {
+            ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Error, ConsoleMessages.JavaStackTraceHyperlink_Error, e1.getStatus()); 
+            return;
+        }
+		
+		// documents start at 0
+		if (lineNumber > 0) {
+			lineNumber--;
 		}
+		startSourceSearch(typeName, lineNumber);
 	}
 	
 	/**
-	 * Returns the source element associated with the given type name,
-	 * or <code>null</code> if none.
+	 * Starts a search for the type with the given name. Reports back to 'searchCompleted(...)'.
 	 * 
-	 * @param typeName type name to search for source element
-	 * @return the source element associated with the given type name,
-	 * or <code>null</code> if none
+	 * @param typeName the type to search for
 	 */
-	protected Object getSourceElement(String typeName) throws CoreException {
-		ILaunch launch = getLaunch();
-		Object result = null;
-		if (launch != null) {
-			result = JavaDebugUtils.resolveSourceElement(JavaDebugUtils.generateSourceName(typeName), getLaunch());
-		}
-		if (result == null) {
-			// search for the type in the workspace
-			result = OpenTypeAction.findTypeInWorkspace(typeName);
-		}
-		return result;
+	protected void startSourceSearch(final String typeName, final int lineNumber) {
+		Job search = new Job(ConsoleMessages.JavaStackTraceHyperlink_2) {
+			protected IStatus run(IProgressMonitor monitor) {
+				ILaunch launch = getLaunch();
+				Object result = null;
+				try {
+					if (launch != null) {
+						result = JavaDebugUtils.resolveSourceElement(JavaDebugUtils.generateSourceName(typeName), getLaunch());
+					}
+					if (result == null) {
+						// search for the type in the workspace
+						result = OpenTypeAction.findTypeInWorkspace(typeName);
+					}
+					searchCompleted(result, typeName, lineNumber, null);
+				} catch (CoreException e) {
+					searchCompleted(null, typeName, lineNumber, e.getStatus());
+				}
+				return Status.OK_STATUS;
+			}
+		
+		};
+		search.schedule();
 	}
 	
+	protected void searchCompleted(final Object source, final String typeName, final int lineNumber, final IStatus status) {
+		UIJob job = new UIJob("link search complete") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (source == null) {
+					if (status == null) {
+						// did not find source
+						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));
+					} else {
+						JDIDebugUIPlugin.statusDialog(status);
+					}			
+				} else {
+					processSearchResult(source, typeName, lineNumber);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+	}
+	
+	/**
+	 * The search succeeded with the given result
+	 * 
+	 * @param source resolved source object for the search
+	 * @param typeName type name searched for
+	 * @param lineNumber line number on link
+	 */
+	protected void processSearchResult(Object source, String typeName, int lineNumber) {
+		IDebugModelPresentation presentation = JDIDebugUIPlugin.getDefault().getModelPresentation();
+		IEditorInput editorInput = presentation.getEditorInput(source);
+		if (editorInput != null) {
+			String editorId = presentation.getEditorId(editorInput, source);
+			if (editorId != null) {
+				try { 
+					IEditorPart editorPart = JDIDebugUIPlugin.getActivePage().openEditor(editorInput, editorId);
+					if (editorPart instanceof ITextEditor && lineNumber >= 0) {
+						ITextEditor textEditor = (ITextEditor)editorPart;
+						IDocumentProvider provider = textEditor.getDocumentProvider();
+						provider.connect(editorInput);
+						IDocument document = provider.getDocument(editorInput);
+						try {
+							IRegion line = document.getLineInformation(lineNumber);
+							textEditor.selectAndReveal(line.getOffset(), line.getLength());
+						} catch (BadLocationException e) {
+                            MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_0, MessageFormat.format("{0}{1}{2}", new String[] {(lineNumber+1)+"", ConsoleMessages.JavaStackTraceHyperlink_1, typeName}));  //$NON-NLS-2$ //$NON-NLS-1$
+						}
+						provider.disconnect(editorInput);
+					}
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+				}
+			}
+		}		
+	}
+
 	/**
 	 * Returns the launch associated with this hyperlink, or
 	 *  <code>null</code> if none

@@ -11,22 +11,24 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -138,33 +140,30 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * @throws JavaModelException
 	 */
 	public static IType findTypeInWorkspace(String typeName) throws CoreException {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IJavaProject[] projects= JavaCore.create(root).getJavaProjects();
-		for (int i= 0; i < projects.length; i++) {
-			IType type= findType(projects[i], typeName);
-			if (type != null) {
-				return type;
-			}
+		IType[] types= findTypes(typeName, null);
+		if (types.length > 0) {
+			return types[0];
 		}
 		return null;
 	}
 	
-	/** 
-	 * Finds a type by its qualified type name (dot separated).
-	 * @param jproject The Java project to search in
-	 * @param fullyQualifiedName The fully qualified name (type name with enclosing type names and package (all separated by dots))
-	 * @return The type found, or <code>null<code> if no type found
-	 * The method does not find inner types. Waiting for a Java Core solution
-	 */	
-	private static IType findType(IJavaProject jproject, String fullyQualifiedName) throws CoreException {
-		IJavaElement jelement= JavaDebugUtils.findElement(fullyQualifiedName, jproject);
-		if (jelement instanceof ICompilationUnit) {
-			String simpleName= Signature.getSimpleName(fullyQualifiedName);
-			return ((ICompilationUnit) jelement).getType(simpleName);
-		} else if (jelement instanceof IClassFile) {
-			return ((IClassFile) jelement).getType();
-		}
-		return null;
+	private static IType[] findTypes(String typeName, IProgressMonitor monitor) throws CoreException {
+		
+		final List results= new ArrayList();
+		
+		SearchRequestor collector= new SearchRequestor() {
+			public void acceptSearchMatch(SearchMatch match) throws CoreException {
+				Object element= match.getElement();
+				if (element instanceof IType)
+					results.add(element);
+			}
+		};
+		
+		SearchEngine engine= new SearchEngine();
+		SearchPattern pattern= SearchPattern.createPattern(typeName, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH);
+		engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, SearchEngine.createWorkspaceScope(), collector, monitor);
+		
+		return (IType[]) results.toArray(new IType[results.size()]);
 	}
 	
 	protected void typeHierarchyError() {
