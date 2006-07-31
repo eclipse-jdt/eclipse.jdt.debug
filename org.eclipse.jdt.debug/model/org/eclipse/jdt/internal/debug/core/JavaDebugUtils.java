@@ -49,8 +49,8 @@ public class JavaDebugUtils {
      * declaring type of the given stack frame, or <code>null</code> if none.
      *  
      * @param frame frame to resolve declaring type for
-     * @return correponding Java model type or <code>null</code>
-     * @exception CoreException if an exception occurrs during the resolution
+     * @return corresponding Java model type or <code>null</code>
+     * @exception CoreException if an exception occurs during the resolution
      * @since 3.2
      */
     public static IType resolveDeclaringType(IJavaStackFrame frame) throws CoreException {
@@ -66,8 +66,8 @@ public class JavaDebugUtils {
      * type of the given value, or <code>null</code> if none.
      *  
      * @param value value to resolve type for
-     * @return correponding Java model type or <code>null</code>
-     * @exception CoreException if an exception occurrs during the resolution
+     * @return corresponding Java model type or <code>null</code>
+     * @exception CoreException if an exception occurs during the resolution
      */
     public static IType resolveType(IJavaValue value) throws CoreException {
         IJavaElement javaElement = resolveJavaElement(value, value.getLaunch());
@@ -78,7 +78,7 @@ public class JavaDebugUtils {
     }   
     
     /**
-     * Resolves and returns the Java model type associcated with the given
+     * Resolves and returns the Java model type associated with the given
      * Java debug type, or <code>null</code> if none.
      * 
      * @param type Java debug model type
@@ -293,8 +293,8 @@ public class JavaDebugUtils {
     } 
     
     /**
-     * Returns the class file or comiplation unit containing the given fully qualified name in the 
-     * specified project. All reqistered java like file extensions are considered.
+     * Returns the class file or compilation unit containing the given fully qualified name in the 
+     * specified project. All registered java like file extensions are considered.
      * 
      * @param qualifiedTypeName fully qualified type name
      * @param project project to search in
