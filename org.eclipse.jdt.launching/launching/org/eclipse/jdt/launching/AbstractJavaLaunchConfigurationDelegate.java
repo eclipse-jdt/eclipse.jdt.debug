@@ -13,8 +13,10 @@ import java.io.File;
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -414,11 +416,15 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 		List userEntries = new ArrayList(entries.length);
+		Set set = new HashSet(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entries[i].getLocation();
 				if (location != null) {
-					userEntries.add(location);
+					if (!set.contains(location)) {
+						userEntries.add(location);
+						set.add(location);
+					}
 				}
 			}
 		}
