@@ -48,6 +48,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -69,6 +70,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -192,8 +194,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     try {
 	                    ITextSelection textSelection = (ITextSelection) selection;
 	                    ISelection sel = translateToMembers(part, selection);
-	                    if(sel instanceof StructuredSelection) {
-	                    	IMember member = (IMember) ((StructuredSelection)sel).getFirstElement();
+	                    if(sel instanceof IStructuredSelection) {
+	                    	IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
 	                    	IType type = null;
 	                    	if(member.getElementType() == IJavaElement.TYPE) {
 	                    		type = (IType) member;
@@ -332,6 +334,81 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.schedule();
     }
     
+    /**
+     * Toggles a class load breakpoint
+     * @param part the part
+     * @param selection the current selection
+     * @since 3.3
+     */
+    public void toggleClassBreakpoints(final IWorkbenchPart part, final ISelection selection) {
+    	Job job = new Job("Toggle Class Load Breakpoints") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				if (monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                }
+                if(isInterface(selection, part)) {
+                	report(ActionMessages.ToggleBreakpointAdapter_1, part);
+                	return Status.OK_STATUS;
+                }
+                try {
+                	report(null, part);
+					ISelection sel  = translateToMembers(part, selection);
+					if(sel instanceof IStructuredSelection) {
+						IMember member = (IMember)((IStructuredSelection)sel).getFirstElement();
+						IType type = (IType) member;
+						IBreakpoint existing = getClassLoadBreakpoint(type);
+						if (existing != null) {
+							existing.delete(); 
+						}
+						else {
+							HashMap map = new HashMap(10);
+							BreakpointUtils.addJavaBreakpointAttributes(map, type);
+							ISourceRange range= type.getNameRange();
+							int start = -1;
+							int end = -1;
+							if (range != null) {
+								start = range.getOffset();
+								end = start + range.getLength();
+							}
+							JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(member), createQualifiedTypeName(type), IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
+						}
+					}
+					else {
+						report(ActionMessages.ToggleBreakpointAdapter_0, part);
+						return Status.OK_STATUS;
+					}
+				} 
+                catch (CoreException e) {
+					return e.getStatus();
+				}
+				return Status.OK_STATUS;
+			}
+    	};
+    	job.setSystem(true);
+    	job.schedule();
+    }
+    
+    /**
+     * Returns the class load breakpoint for the specified type or null if none found
+     * @param type the type tos earch for a class load breakpoint for
+     * @return the existing class load breakpoint, or null if none
+     * @throws CoreException
+     * @since 3.3
+     */
+    protected IBreakpoint getClassLoadBreakpoint(IType type) throws CoreException {
+    	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+    	IBreakpoint existing = null;
+    	IJavaBreakpoint breakpoint = null;
+    	for (int i = 0; i < breakpoints.length; i++) {
+			breakpoint = (IJavaBreakpoint) breakpoints[i];
+			if (breakpoint instanceof IJavaClassPrepareBreakpoint && createQualifiedTypeName(type).equals(breakpoint.getTypeName())) {
+				existing = breakpoint;
+				break;
+			}
+		}
+    	return existing;
+    }
+    	
     /**
      * Returns the package qualified name, while accounting for the fact that a source file might
      * not have a project
@@ -1033,6 +1110,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         				toggleLineBreakpoints(part, selection, true);
         			}
     			}
+    		}
+    		else if(member.getElementType() == IJavaElement.TYPE) {
+    			toggleClassBreakpoints(part, selection);
     		}
     		else {
     			//fall back to old behavior, always create a line breakpoint
