@@ -12,15 +12,9 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 /**
@@ -284,18 +279,8 @@ public class SWTUtil {
 	 * @param id the id of pref page to show
 	 * @param page the actual page to show
 	 */
-	public static void showPreferencePage(String id, IPreferencePage page) {
-		final IPreferenceNode targetNode = new PreferenceNode(id, page);
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
-		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				dialog.open();
-			}
-		});		
+	public static void showPreferencePage(String id) {
+		PreferencesUtil.createPreferenceDialogOn(JDIDebugUIPlugin.getShell(), id, new String[] { id }, null).open();
 	}
 	
 	/**

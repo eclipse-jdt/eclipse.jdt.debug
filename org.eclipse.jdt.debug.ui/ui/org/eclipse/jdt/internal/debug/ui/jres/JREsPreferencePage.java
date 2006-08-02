@@ -16,27 +16,39 @@ import java.io.File;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Installed JREs preference page.
@@ -46,14 +58,14 @@ import org.eclipse.ui.PlatformUI;
 public class JREsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 							
 	// JRE Block
-	private InstalledJREsBlock fJREBlock;									
+	private InstalledJREsBlock fJREBlock;
+	private Link fCompliance;
 		
 	public JREsPreferencePage() {
 		super();
 		
 		// only used when page is shown programatically
 		setTitle(JREMessages.JREsPreferencePage_1);	 
-		
 		setDescription(JREMessages.JREsPreferencePage_2); 
 	}
 
@@ -62,7 +74,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/**
 	 * Find & verify the default VM.
 	 */
@@ -93,7 +105,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		ancestor.setLayout(layout);
-					
+		
 		fJREBlock = new InstalledJREsBlock();
 		fJREBlock.createControl(ancestor);
 		Control control = fJREBlock.getControl();
@@ -102,7 +114,15 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		control.setLayoutData(data);
 		
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
-						
+					
+		fCompliance = new Link(ancestor, SWT.NONE);
+		fCompliance.setText(JREMessages.JREsPreferencePage_14);
+		fCompliance.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fCompliance.setVisible(false);
+		fCompliance.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {openCompliancePreferencePage();}
+		});
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
 		initDefaultVM();
 		fJREBlock.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -112,6 +132,17 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 					setValid(false);
 					setErrorMessage(JREMessages.JREsPreferencePage_13); 
 				} else {
+					//if we change the VM make sure the compliance level supports 
+					//generated class files
+					String compliance = getCurrentCompilerCompliance();
+					if(!supportsCurrentCompliance(install, compliance)) {
+						setMessage(MessageFormat.format(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
+						fCompliance.setVisible(true);
+					}
+					else {
+						setMessage(null);
+						fCompliance.setVisible(false);
+					}
 					setValid(true);
 					setErrorMessage(null);
 				}
@@ -120,7 +151,69 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		applyDialogFont(ancestor);
 		return ancestor;
 	}
-			
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#isValid()
+	 */
+	public boolean isValid() {
+		String compliance = getCurrentCompilerCompliance();
+		if(!supportsCurrentCompliance(getCurrentDefaultVM(), compliance)) {
+			setMessage(MessageFormat.format(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
+			fCompliance.setVisible(true);
+		}
+		else {
+			setMessage(null);
+			fCompliance.setVisible(false);
+		}
+		return super.isValid();
+	}
+
+	/**
+	 * Opens the <code>CompliancePreferencePage</code>
+	 * @since 3.3
+	 */
+	private void openCompliancePreferencePage() {
+		String compliancepage = "org.eclipse.jdt.ui.preferences.CompliancePreferencePage"; //$NON-NLS-1$
+		IWorkbenchPreferenceContainer wpc = (IWorkbenchPreferenceContainer)getContainer();
+		if (wpc != null) {
+			wpc.openPage(compliancepage, null);
+		} else {
+			SWTUtil.showPreferencePage(compliancepage);
+		}
+	}
+	
+	/**
+	 * @return the current compiler compliance level
+	 * @since 3.3
+	 */
+	private String getCurrentCompilerCompliance() {
+		IEclipsePreferences setting = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
+		IEclipsePreferences wcs = ((IWorkbenchPreferenceContainer)getContainer()).getWorkingCopyManager().getWorkingCopy(setting);
+		return wcs.get(JavaCore.COMPILER_COMPLIANCE, null);
+	}
+	
+	/**
+	 * Determines if the vm version will run the currently compiled code based on the compiler compliance lvl
+	 * @param vm the vm install
+	 * @param compliance the current compiler compliance level
+	 * @return true if the selected vm will run the current code, false otherwise
+	 * @since 3.3
+	 */
+	private boolean supportsCurrentCompliance(IVMInstall vm, String compliance) {
+		if(vm instanceof AbstractVMInstall) {
+			AbstractVMInstall install = (AbstractVMInstall) vm;
+			String vmver = install.getJavaVersion();
+			if(vmver == null) {
+				//if we cannot get a version from the VM we must return true, and let the runtime
+				//error sort it out
+				return true;
+			}
+			int val = compliance.compareTo(vmver); 
+			return  val < 0 || val == 0;
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -189,6 +282,5 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	
 	private IVMInstall getCurrentDefaultVM() {
 		return fJREBlock.getCheckedJRE();
-	}	
-	
+	}
 }

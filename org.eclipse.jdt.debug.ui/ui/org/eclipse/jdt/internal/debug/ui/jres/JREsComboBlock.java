@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -279,7 +280,7 @@ public class JREsComboBlock {
 	private void showPrefPage(String id, IPreferencePage page) {
 		IVMInstall prevJRE = getJRE();
 		IExecutionEnvironment prevEnv = getEnvironment();
-		JDIDebugUIPlugin.showPreferencePage(id, page);
+		PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] { page.getTitle() }, null).open();
 		fillWithWorkspaceJREs();
 		fillWithWorkspaceProfiles();
 		restoreCombo(fVMs, prevJRE, fCombo);

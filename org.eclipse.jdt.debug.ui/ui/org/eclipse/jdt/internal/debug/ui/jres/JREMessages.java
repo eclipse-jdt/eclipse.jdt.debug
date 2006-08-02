@@ -52,7 +52,11 @@ public class JREMessages extends NLS {
 	public static String JREContainerWizardPage_Select_the_JRE_used_to_build_this_project__4;
 	public static String JREContainerWizardPage_3;
 
+	public static String JREsPreferencePage_0;
+
 	public static String JREsPreferencePage_1;
+
+	public static String JREsPreferencePage_14;
 	public static String JREsPreferencePage_2;
 	public static String JREsPreferencePage_10;
 	public static String JREsPreferencePage_11;
