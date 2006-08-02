@@ -377,4 +377,14 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * @since 3.2
 	 */
 	public IJavaThreadGroup[] getAllThreadGroups() throws DebugException;
+	
+	/**
+	 * Returns whether this VM supports instance and reference retrieval
+	 * for types and objects.
+	 * 
+	 * @return whether this VM supports instance and reference retrieval
+	 * for types and objects
+	 * @since 3.3
+	 */
+	public boolean supportsInstanceRetrieval();
 }

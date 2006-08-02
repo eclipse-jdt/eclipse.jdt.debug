@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +56,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadGroupReference;
@@ -2316,5 +2316,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		synchronized (fGroups) {
 			return (IJavaThreadGroup[]) fGroups.toArray(new IJavaThreadGroup[fGroups.size()]);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsInstanceRetreival()
+	 */
+	public boolean supportsInstanceRetrieval() {
+		return getVM().canGetInstanceInfo();
 	}
 }
