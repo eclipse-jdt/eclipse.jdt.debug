@@ -77,6 +77,9 @@ public class BreakpointUtils {
 		if (res == null) {
 			res = ResourcesPlugin.getWorkspace().getRoot();
 		}
+		else if(!res.getProject().exists()) {
+			res = ResourcesPlugin.getWorkspace().getRoot();
+		}
 		return res;
 	}
 	

@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
@@ -147,8 +148,13 @@ public class JavaVarActionFilter implements IActionFilter {
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return isDeclaredSameAsConcrete(var);
 				} 
-				else if (name.equals("JavaVariableActionFilter") && value.equals("instanceFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
-					return !var.isStatic() && (varValue instanceof IJavaObject) && (((IJavaObject)varValue).getJavaType() instanceof IJavaClassType) && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
+				else if (name.equals("JavaVariableActionFilter")) { //$NON-NLS-1$
+					if(value.equals("instanceFilter")) { //$NON-NLS-1$ 
+						return !var.isStatic() && (varValue instanceof IJavaObject) && (((IJavaObject)varValue).getJavaType() instanceof IJavaClassType) && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
+					}
+					if(value.equals("isValidField")) { //$NON-NLS-1$
+						return !var.isFinal() & !(var.isFinal() & var.isStatic());
+					}	
 				} 
 				else if (name.equals("DetailFormatterFilter") & (varValue instanceof IJavaObject)) { //$NON-NLS-1$
 					if(value.equals("isDefined")) { //$NON-NLS-1$

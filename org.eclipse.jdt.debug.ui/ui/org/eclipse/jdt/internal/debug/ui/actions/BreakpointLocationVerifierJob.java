@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,8 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Job used to verify the position of a breakpoint
@@ -106,6 +108,9 @@ public class BreakpointLocationVerifierJob extends Job {
 		setSystem(true);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public IStatus run(IProgressMonitor monitor) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		char[] source = fDocument.get().toCharArray();
@@ -181,7 +186,7 @@ public class BreakpointLocationVerifierJob extends Job {
 					new ToggleBreakpointAdapter().toggleWatchpoints(fEditorPart, new TextSelection(locator.getMemberOffset(), 0));
 					break;
 				default:
-					// cannot found a valid location
+					// cannot find a valid location
 					report(ActionMessages.BreakpointLocationVerifierJob_not_valid_location); 
 					if (fBreakpoint != null) {
 						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
@@ -195,6 +200,13 @@ public class BreakpointLocationVerifierJob extends Job {
 		
 	}
 	
+	/**
+	 * Determines the placement of the line breakpoint, and ensures that duplicates are not created
+	 * and that notification is sent in the event of collisions
+	 * @param typeName the fully qualified name of the type to add the line breakpoint to
+	 * @param lineNumber the number we wish to put the breakpoint on
+	 * @return the status of the line breakpoint placement
+	 */
 	public IStatus manageLineBreakpoint(String typeName, int lineNumber) {
 		try {
 			boolean differentLineNumber= lineNumber != fLineNumber;
@@ -204,7 +216,7 @@ public class BreakpointLocationVerifierJob extends Job {
 				if (breakpointExist) {
 					if (differentLineNumber) {
 						// There is already a breakpoint on the valid line.
-						report(ActionMessages.BreakpointLocationVerifierJob_not_valid_location); 
+						report(MessageFormat.format(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)}));
 						return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null); 
 					}
 					// There is already a breakpoint on the valid line, but it's also the requested line.
@@ -218,8 +230,8 @@ public class BreakpointLocationVerifierJob extends Job {
 			if (differentLineNumber) {
 				if (breakpointExist) {
 					// there is already a breakpoint on the valid line.
-					report(ActionMessages.BreakpointLocationVerifierJob_not_valid_location); 
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
+					report(MessageFormat.format(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)})); 
 					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null); 
 				}
 				replaceBreakpoint(lineNumber, typeName);
@@ -261,6 +273,10 @@ public class BreakpointLocationVerifierJob extends Job {
 		JDIDebugModel.createLineBreakpoint(fResource, typeName, lineNumber, -1, -1, 0, true, newAttributes);
 	}
 
+	/**
+	 * Reports any status to the current active workbench shell
+	 * @param message the message to display
+	 */
 	protected void report(final String message) {
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {

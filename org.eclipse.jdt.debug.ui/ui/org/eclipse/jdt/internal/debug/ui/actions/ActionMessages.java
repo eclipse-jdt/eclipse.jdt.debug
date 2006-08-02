@@ -27,6 +27,8 @@ public class ActionMessages extends NLS {
 	public static String BreakpointHitCountAction_Set_Breakpoint_Hit_Count_2;
 	public static String BreakpointHitCountAction_Value_must_be_positive_integer;
 
+	public static String BreakpointLocationVerifierJob_0;
+
 	public static String BreakpointSuspendPolicy_Suspend__Thread_2;
 	public static String BreakpointSuspendPolicy_Suspend__VM_1;
 
@@ -50,11 +52,6 @@ public class ActionMessages extends NLS {
 	public static String EvaluateAction_Cannot_perform_nested_evaluations__1;
 
 	public static String JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1;
-
-	public static String ManageMethodBreakpointActionDelegate_CantAdd;
-
-	public static String ManageWatchpointActionDelegate_CantAdd;
-
 	public static String MoveDownAction_M_ove_Down_1;
 	public static String MoveUpAction_Move_U_p_1;
 
@@ -113,7 +110,6 @@ public class ActionMessages extends NLS {
 	public static String StepIntoSelectionActionDelegate_4;
 
 	public static String ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1;
-	public static String ManageBreakpointRulerAction_Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor___0___1;
 	public static String BreakpointLocationVerifierJob_breakpoint_location;
 	public static String BreakpointLocationVerifierJob_not_valid_location;
 	public static String BreakpointLocationVerifierJob_breakpoint_set;
@@ -128,6 +124,12 @@ public class ActionMessages extends NLS {
 	public static String RunToLineAdapter_2;
 	public static String RunToLineAdapter_3;
 	public static String RunToLineAdapter_4;
+
+	public static String ToggleBreakpointAdapter_2;
+
+	public static String ToggleBreakpointAdapter_3;
+
+	public static String ToggleBreakpointAdapter_4;
 
 	public static String ToggleBreakpointAdapter_5;
 

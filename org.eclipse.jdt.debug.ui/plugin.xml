@@ -1546,6 +1546,12 @@
 	               <not>
    	               <objectState name="MemberActionFilter" value="isInterface"/>
    	            </not>
+                <not>
+                   <objectState
+                         name="MemberActionFilter"
+                         value="isRemote">
+                   </objectState>
+                </not>
 	            </and>
          </visibility>
          <action
@@ -1565,12 +1571,17 @@
                    <not>
                       <objectState
                             name="MemberActionFilter"
-                            value="isRemote"/>
+                            value="isInterface"/>
                    </not>
+                   <objectState
+                         name="MemberActionFilter"
+                         value="isValidField">
+                   </objectState>
                    <not>
                       <objectState
                             name="MemberActionFilter"
-                            value="isInterface"/>
+                            value="isRemote">
+                      </objectState>
                    </not>
                 </and>
          </visibility>            
@@ -1585,12 +1596,7 @@
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.core.IType"
-            id="org.eclipse.jdt.debug.ui.TypeActions">
-         <visibility>
-            	   <not>
-   	               <objectState name="MemberActionFilter" value="isRemote"/>
-   	            </not>
-         </visibility>                
+            id="org.eclipse.jdt.debug.ui.ClassLoadBreakpointActions">
          <action
                label="%toggleClassPrepareAction.label"
                helpContextId="toggle_class_prepare_action_context"
@@ -1599,6 +1605,22 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.ToggleClassPrepare">
          </action>
+         <visibility>
+            <and>
+               <not>
+                  <objectState
+                        name="MemberActionFilter"
+                        value="isInterface">
+                  </objectState>
+               </not>
+               <not>
+                  <objectState
+                        name="MemberActionFilter"
+                        value="isRemote">
+                  </objectState>
+               </not>
+            </and>
+         </visibility>
       </objectContribution>      
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
@@ -1624,9 +1646,15 @@
                helpContextId="manage_watchpoint_action_context"
                class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
                menubarPath="additions"
-               enablesFor="1"
+               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.VariableWatchpoint">
          </action>
+         <visibility>
+            <objectState
+                  name="JavaVariableActionFilter"
+                  value="isValidField">
+            </objectState>
+         </visibility>
       </objectContribution>
       <viewerContribution
             targetID="#JavaSnippetRulerContext"

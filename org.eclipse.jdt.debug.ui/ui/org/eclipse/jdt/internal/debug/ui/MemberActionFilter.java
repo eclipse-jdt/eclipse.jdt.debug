@@ -11,11 +11,17 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 public class MemberActionFilter implements IActionFilter {
 
@@ -33,14 +39,42 @@ public class MemberActionFilter implements IActionFilter {
 					}
 				}
 				if (value.equals("isRemote")) { //$NON-NLS-1$
-					return !member.getJavaProject().getProject().exists();
+					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if(window != null) {
+						IWorkbenchPage page = window.getActivePage();
+						if(page != null) {
+							IEditorPart part = page.getActiveEditor();
+							if(part != null) {
+								Object adapter = Platform.getAdapterManager().getAdapter(part.getEditorInput(), "org.eclipse.team.core.history.IFileRevision"); //$NON-NLS-1$
+					    		return adapter != null;
+							}
+						}
+					}
+					//if we cannot get the editor input, assume it is not remote
+					return false;
 				}
 				if(value.equals("isInterface")) { //$NON-NLS-1$
-					IType type = member.getDeclaringType();
+					IType type = null;
+					if(member.getElementType() == IJavaElement.TYPE) {
+						type = (IType) member;
+					}
+					else {
+						type = member.getDeclaringType();
+					}
 					try {
 						return type != null && type.isInterface();
 					} 
 					catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}  
+				}
+				if(value.equals("isValidField")) { //$NON-NLS-1$
+					try {
+						int flags = member.getFlags();
+						return (member.getElementType() == IJavaElement.FIELD) & (!Flags.isFinal(flags) & !(Flags.isStatic(flags) & Flags.isFinal(flags)));
+					} 
+					catch (JavaModelException e) {
+						JDIDebugUIPlugin.log(e);
+						return false;
+					}
 				}
 			}
 		}

@@ -88,7 +88,7 @@ public class BreakpointConditionEditor {
 				try {	
 					String source = null;
 					ICompilationUnit compilationUnit = type.getCompilationUnit();
-					if (compilationUnit != null) {
+					if (compilationUnit != null && compilationUnit.getJavaProject().getProject().exists()) {
 						source = compilationUnit.getSource();
 					} 
 					else {
