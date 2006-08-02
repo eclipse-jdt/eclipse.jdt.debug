@@ -87,7 +87,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * Constructor
 	 */
 	public ToggleBreakpointAdapter() {
-		// init helper in UI thread
+		// initialize helper in UI thread
 		ActionDelegateHelper.getDefault();
 	}
 
@@ -171,7 +171,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
     
     /**
-     * Toggles a line breakpoint. This is also the method called by the keybinding for creating breakpoints
+     * Toggles a line breakpoint. This is also the method called by the key binding for creating breakpoints
      * @param part the currently active workbench part 
      * @param selection the current selection
      * @param bestMatch if we should make a best match or not
@@ -201,7 +201,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                    	else {
 	                    		type = member.getDeclaringType();
 	                    	}
-	                    	String tname = createQualifiedTypeName(type, type.getFullyQualifiedName());
+	                    	String tname = createQualifiedTypeName(type);
 	                    	IResource resource = BreakpointUtils.getBreakpointResource(type);
 							int lnumber = textSelection.getStartLine() + 1;
 							IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
@@ -312,7 +312,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                         return Status.OK_STATUS;
                                     }
                                 }
-                                JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(members[i]), createQualifiedTypeName(type, type.getFullyQualifiedName()), mname, signature, true, false, false, -1, start, end, 0, true, attributes);
+                                JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(members[i]), createQualifiedTypeName(type), mname, signature, true, false, false, -1, start, end, 0, true, attributes);
                             } else {
                             	DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
                             }
@@ -339,8 +339,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @return the package qualified name
      * @since 3.3
      */
-    private String createQualifiedTypeName(IType type, String typename) {
-    	String tname = typename;
+    private String createQualifiedTypeName(IType type) {
+    	String tname = type.getFullyQualifiedName();
     	try {
 	    	if(!type.getJavaProject().exists()) {
 				IPackageDeclaration[] pd = type.getCompilationUnit().getPackageDeclarations();
@@ -367,7 +367,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if(je != null) {
     		return je;
     	}
-    	//try to get from the workingcopy manager
+    	//try to get from the working copy manager
     	//TODO this one depends on bug 151260
     	return ((WorkingCopyManager)JavaUI.getWorkingCopyManager()).getWorkingCopy(input, false);
     }
@@ -390,7 +390,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
     
     /**
-     * Returns whether the given part/selection is remote (viewing a repsitory)
+     * Returns whether the given part/selection is remote (viewing a repository)
      * 
      * @param part
      * @param selection
@@ -469,7 +469,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     /**
      * Returns if the text selection is a valid method or not
      * @param selection the text selection
-     * @param part the asscoiated workbench part
+     * @param part the associated workbench part
      * @return true if the selection is a valid method, false otherwise
      */
     private boolean isMethod(ITextSelection selection, IWorkbenchPart part) {
@@ -496,7 +496,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * Returns a list of <code>IField</code> and <code>IJavaFieldVariable</code> in the given selection.
      * When an <code>IField</code> can be resolved for an <code>IJavaFieldVariable</code>, it is
      * returned in favour of the variable.
-     * 
+     *
      * @param selection
      * @return list of <code>IField</code> and <code>IJavaFieldVariable</code>, possibly empty
      * @throws CoreException
@@ -526,7 +526,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     /**
      * Returns if the structured selection is itself or is part of an interface
      * @param selection the current selection
-     * @return true if the selection isor is part of an interface, false otherwise
+     * @return true if the selection is part of an interface, false otherwise
      * @since 3.2
      */
     private boolean isInterface(ISelection selection, IWorkbenchPart part) {
@@ -645,7 +645,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        if (element instanceof IField) {
 								javaField = (IField) element;
 								IType type = javaField.getDeclaringType();
-								typeName = createQualifiedTypeName(type, type.getFullyQualifiedName());
+								typeName = createQualifiedTypeName(type);
 								fieldName = javaField.getElementName();
 								int f = javaField.getFlags();
 								boolean fin = Flags.isFinal(f);
@@ -711,7 +711,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /**
      * Returns the resolved method signature for the specified type
-     * @param type the decalring type the method is contained in
+     * @param type the declaring type the method is contained in
      * @param methodSignature the method signature to resolve
      * @return the resolved method signature
      * @throws JavaModelException
@@ -830,7 +830,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
 
     /**
-     * Returns the <code>IJavaBreakpoint</cdoe> from the specified <code>IMember</code>
+     * Returns the <code>IJavaBreakpoint</code> from the specified <code>IMember</code>
      * @param element the element to get the breakpoint from
      * @return the current breakpoint from the element or <code>null</code>
      */
@@ -919,7 +919,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @return a structured selection of the member in the given text selection,
      *         or the original selection if none
      * @exception CoreException
-     *                if an exceptoin occurrs
+     *                if an exception occurs
      */
     protected ISelection translateToMembers(IWorkbenchPart part, ISelection selection) throws CoreException {
     	ITextEditor textEditor = getTextEditor(part);
@@ -1009,6 +1009,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if(sel instanceof IStructuredSelection) {
     		IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
     		if(member.getElementType() == IJavaElement.FIELD) {
+    			// remove line breakpoint if present first
+    	    	if (selection instanceof ITextSelection) {
+    				ITextSelection ts = (ITextSelection) selection;
+    				IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(createQualifiedTypeName(member.getDeclaringType()), ts.getStartLine() + 1);
+    				if (breakpoint != null) {
+    					breakpoint.delete();
+    					return;
+    				}
+    			} 
     			toggleWatchpoints(part, selection);
     		}
     		else if(member.getElementType() == IJavaElement.METHOD) {
@@ -1026,7 +1035,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     			}
     		}
     		else {
-    			//fall back to old behaviour, always create a line breakpoint
+    			//fall back to old behavior, always create a line breakpoint
     			toggleLineBreakpoints(part, selection, true);
     		}
     	}
