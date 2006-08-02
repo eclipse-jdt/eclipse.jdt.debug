@@ -16,8 +16,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFact
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * @since 3.2
@@ -46,17 +44,11 @@ public class JavaVariableColumnPresentationFactory implements IColumnPresentatio
 	}
 	
 	private boolean isApplicable(IPresentationContext context, Object element) {
-		IWorkbenchPart part = context.getPart();
 		IJavaStackFrame frame = null;
-		if (part != null) {
-			IWorkbenchPartSite site = part.getSite();
-			if (site != null) {
-				if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(site.getId())) {
-					if (element instanceof IAdaptable) {
-						IAdaptable adaptable = (IAdaptable)element;
-						frame = (IJavaStackFrame) adaptable.getAdapter(IJavaStackFrame.class);
-					}
-				}
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
+			if (element instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable)element;
+				frame = (IJavaStackFrame) adaptable.getAdapter(IJavaStackFrame.class);
 			}
 		}
 		return frame != null;		

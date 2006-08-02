@@ -15,7 +15,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAda
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * @since 3.2
@@ -28,12 +27,9 @@ public class JavaVariableColumnEditorFactory implements
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#createColumnEditor(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public IColumnEditor createColumnEditor(IPresentationContext context, Object element) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(part.getSite().getId())) {
-				if (element instanceof IJavaVariable) {
-					return new JavaVariableColumnEditor();
-				}
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
+			if (element instanceof IJavaVariable) {
+				return new JavaVariableColumnEditor();
 			}
 		}
 		return null;
@@ -43,12 +39,9 @@ public class JavaVariableColumnEditorFactory implements
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#getColumnEditorId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public String getColumnEditorId(IPresentationContext context, Object element) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(part.getSite().getId())) {
-				if (element instanceof IJavaVariable) {
-					return JavaVariableColumnEditor.JAVA_VARIABLE_COLUMN_EDITOR;
-				}
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
+			if (element instanceof IJavaVariable) {
+				return JavaVariableColumnEditor.JAVA_VARIABLE_COLUMN_EDITOR;
 			}
 		}
 		return null;

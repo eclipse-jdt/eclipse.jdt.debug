@@ -22,7 +22,6 @@ import org.eclipse.jdt.internal.debug.ui.DebugUIMessages;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * @since 3.2
@@ -71,11 +70,7 @@ public class JavaVariableLabelAdapter extends VariableLabelAdapter {
 	}
 
 	private boolean isShowQualfiiedNames(IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			return JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(part.getSite().getId() + "." + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES);  //$NON-NLS-1$
-		}
-		return false;
+		return JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES);  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

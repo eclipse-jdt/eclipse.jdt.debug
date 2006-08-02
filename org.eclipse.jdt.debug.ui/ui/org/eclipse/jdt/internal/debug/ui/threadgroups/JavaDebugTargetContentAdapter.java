@@ -27,8 +27,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 public class JavaDebugTargetContentAdapter extends DebugTargetContentAdapter {
 
     protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-		String id = context.getPart().getSite().getId();
-		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (isShowThreadGroups()) {
 				if (parent instanceof IJavaDebugTarget) {
 					IJavaDebugTarget target = (IJavaDebugTarget) parent;
