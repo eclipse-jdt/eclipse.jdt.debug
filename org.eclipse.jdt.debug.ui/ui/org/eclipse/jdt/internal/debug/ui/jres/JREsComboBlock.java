@@ -123,6 +123,9 @@ public class JREsComboBlock {
 	
 	private Button fManageEnvironmentsButton = null;
 	
+	// a path to an unavailable JRE
+	private IPath fErrorPath;
+	
 	/**
 	 * List of execution environments
 	 */
@@ -208,6 +211,7 @@ public class JREsComboBlock {
 		
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				setStatus(OK_STATUS);
 				firePropertyChange();
 			}
 		});
@@ -355,7 +359,7 @@ public class JREsComboBlock {
 	/**
 	 * Selects a specific JRE based on type/name.
 	 * 
-	 * @param vm JRE
+	 * @param vm JRE or <code>null</code>
 	 */
 	private void selectJRE(IVMInstall vm) {
 		fSpecificButton.setSelection(true);
@@ -363,9 +367,11 @@ public class JREsComboBlock {
 		fEnvironmentsButton.setSelection(false);
 		fCombo.setEnabled(true);
 		fEnvironmentsCombo.setEnabled(false);
-		int index = fVMs.indexOf(vm);
-		if (index >= 0) {
-			fCombo.select(index);		
+		if (vm != null) {
+			int index = fVMs.indexOf(vm);
+			if (index >= 0) {
+				fCombo.select(index);		
+			}
 		}
 		firePropertyChange();
 	}
@@ -381,9 +387,11 @@ public class JREsComboBlock {
 		fCombo.setEnabled(false);
 		fEnvironmentsButton.setSelection(true);
 		fEnvironmentsCombo.setEnabled(true);
-		int index = fEnvironments.indexOf(env);
-		if (index >= 0) {
-			fEnvironmentsCombo.select(index);		
+		if (env != null) {
+			int index = fEnvironments.indexOf(env);
+			if (index >= 0) {
+				fEnvironmentsCombo.select(index);		
+			}
 		}
 		firePropertyChange();
 	}	
@@ -519,7 +527,7 @@ public class JREsComboBlock {
 	/**
 	 * Sets this control to use the 'default' JRE.
 	 */
-	public void setUseDefaultJRE() {
+	private void setUseDefaultJRE() {
 		if (fDefaultDescriptor != null) {
 			fDefaultButton.setSelection(true);
 			fSpecificButton.setSelection(false);
@@ -553,6 +561,9 @@ public class JREsComboBlock {
 	 * @since 3.2
 	 */
 	public IPath getPath() {
+		if (!getStatus().isOK() && fErrorPath != null) {
+			return fErrorPath;
+		}
 		if (fEnvironmentsButton.getSelection()) {
 			int index = fEnvironmentsCombo.getSelectionIndex();
 			if (index >= 0) {
@@ -580,6 +591,7 @@ public class JREsComboBlock {
 	 * @return status 
 	 */
 	public void setPath(IPath containerPath) {
+		fErrorPath = null;
 		setStatus(OK_STATUS);
 		if (JavaRuntime.newDefaultJREContainerPath().equals(containerPath)) {
 			setUseDefaultJRE();
@@ -589,6 +601,8 @@ public class JREsComboBlock {
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment environment = manager.getEnvironment(envId);
 				if (environment == null) {
+					fErrorPath = containerPath;
+					selectEnvironment(environment);
 					setError(MessageFormat.format(JREMessages.JREsComboBlock_6, new String[]{envId}));
 				} else {
 					selectEnvironment(environment);
@@ -600,6 +614,8 @@ public class JREsComboBlock {
 			} else {
 				IVMInstall install = JavaRuntime.getVMInstall(containerPath);
 				if (install == null) {
+					selectJRE(install);
+					fErrorPath = containerPath;
 					String installTypeId = JavaRuntime.getVMInstallTypeId(containerPath);
 					if (installTypeId == null) {
 						setError(JREMessages.JREsComboBlock_8);

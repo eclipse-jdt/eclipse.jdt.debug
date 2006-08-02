@@ -169,7 +169,10 @@ public class JavaJRETab extends JavaLaunchTab {
 			}
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, portablePath);
 		}
-	
+		// erase old attributes in case the user changed from 'specific JRE' to 'default' - see bug 152446
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		
 		// Handle any attributes in the VM-specific area
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab == null) {
@@ -282,7 +285,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	
 	protected void selectJRE(String typeID, String vmName) {
 		if (typeID == null) {
-			fJREBlock.setUseDefaultJRE();
+			fJREBlock.setPath(JavaRuntime.newDefaultJREContainerPath());
 		} else {
 			fJREBlock.setPath(JavaRuntime.newJREContainerPath(typeID, vmName));
 		}

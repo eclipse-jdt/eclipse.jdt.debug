@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -78,7 +79,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	protected void initializeFromSelection() {
 		if (getControl() != null) {
 			if (fSelection == null) {
-				fJREBlock.setUseDefaultJRE();
+				fJREBlock.setPath(JavaRuntime.newDefaultJREContainerPath());
 			} else {
 				fJREBlock.setPath(fSelection.getPath());
 				IStatus status = fJREBlock.getStatus();
