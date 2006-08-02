@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassLoaderReference;
@@ -28,6 +28,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
+import com.sun.jdi.Value;
 
 /**
  * References a class, interface, or array type.
@@ -272,6 +273,23 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	 */
 	public String getGenericSignature() throws DebugException {
 		return getReferenceType().genericSignature();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getInstances(long)
+	 */
+	public IJavaObject[] getInstances(long max) throws DebugException {
+		try {
+			List list = getReferenceType().instances(max);
+			IJavaObject[] instances = new IJavaObject[list.size()];
+			for (int i = 0; i < instances.length; i++) {
+				instances[i] = (IJavaObject) JDIValue.createValue(getJavaDebugTarget(), (Value) list.get(i));
+			}
+			return instances;
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_5, e);
+		}
+		return null;
 	}
 
 }

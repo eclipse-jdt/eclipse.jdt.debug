@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -359,6 +359,23 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			// #targetRequestFailed will thrown an exception			
 			return 0;	
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
+	 */
+	public IJavaObject[] getReferringObjects(long max) throws DebugException {
+		try {
+			List list = getUnderlyingObject().referringObjects(max);
+			IJavaObject[] references = new IJavaObject[list.size()];
+			for (int i = 0; i < references.length; i++) {
+				references[i] = (IJavaObject) JDIValue.createValue(getJavaDebugTarget(), (Value) list.get(i));
+			}
+			return references;
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_12, e);
+		}
+		return null;
 	}
 
 }

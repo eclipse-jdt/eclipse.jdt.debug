@@ -70,12 +70,16 @@ public class JDIDebugModelMessages extends NLS {
 
 	public static String JDIModificationVariable_Unable_to_generate_value___VM_disconnected__1;
 
+	public static String JDIObjectValue_12;
+
 	public static String JDIObjectValue_exception_retrieving_field;
 	public static String JDIObjectValue_exception_retrieving_reference_type;
 	public static String JDIObjectValue_exception_while_performing_method_lookup_for_selector;
 	public static String JDIObjectValue_11;
 	public static String JDIObjectValue_0;
 	public static String JDIObjectValue_1;
+
+	public static String JDIReferenceType_5;
 
 	public static String JDIStackFrame__unknown_declaring_type__1;
 	public static String JDIStackFrame__unknown_method__1;

@@ -140,5 +140,15 @@ public interface IJavaReferenceType extends IJavaType {
      * @since 3.2
      */       
     public String[] getSourcePaths(String stratum) throws DebugException;
+    
+    /**
+     * Retrieves and returns instances of this reference type. 
+     * 
+     * @param max the maximum number of instances to retrieve or 0 to retrieve all instances
+     * @return instances of this reference type
+     * @throws DebugException on failure
+     * @since 3.3
+     */
+    public IJavaObject[] getInstances(long max) throws DebugException;
 	
 }

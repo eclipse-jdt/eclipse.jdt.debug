@@ -168,4 +168,11 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public IJavaThread getOwningThread() throws DebugException {
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
+	 */
+	public IJavaObject[] getReferringObjects(long max) throws DebugException {
+		return fObject.getReferringObjects(max);
+	}
 }

@@ -148,6 +148,16 @@ public interface IJavaObject extends IJavaValue {
 	 * @since 3.1
 	 */
 	public IJavaThread getOwningThread() throws DebugException;
+	
+	/**
+	 * Returns objects that directly reference this object.
+	 * 
+	 * @param max the maximum number of references to retrieve or 0 for all references
+	 * @return objects that directly reference this object
+	 * @throws DebugException
+     * @since 3.3
+	 */
+	public IJavaObject[] getReferringObjects(long max) throws DebugException;
 }
 
 
