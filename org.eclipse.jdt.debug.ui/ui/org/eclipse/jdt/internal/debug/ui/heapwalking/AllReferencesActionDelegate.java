@@ -35,7 +35,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate {
 		IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
 		ReferencesPopupDialog popup;
 		try {
-			popup = new ReferencesPopupDialog(getWorkbenchWindow().getShell(), (IDebugView) getPart().getAdapter(IDebugView.class), null, (IJavaObject) var.getValue());
+			popup = new ReferencesPopupDialog(getWorkbenchWindow().getShell(), (IDebugView) getPart().getAdapter(IDebugView.class), (IJavaObject) var.getValue());
 			popup.open();
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.statusDialog(e.getStatus());

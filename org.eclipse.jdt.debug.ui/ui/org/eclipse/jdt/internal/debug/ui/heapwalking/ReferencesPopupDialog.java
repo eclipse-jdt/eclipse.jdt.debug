@@ -73,12 +73,10 @@ public class ReferencesPopupDialog extends DebugPopup {
      * 
      * @param shell The parent shell
      * @param view view to anchor the popup on
-     * @param commandId The command id to be used for persistence of 
-     * the dialog (possibly <code>null</code>)
      * @param root object to browse references to
      */
-    public ReferencesPopupDialog(Shell shell, IDebugView view, String commandId, IJavaObject root) {
-        super(shell, getAnchor(view), commandId);
+    public ReferencesPopupDialog(Shell shell, IDebugView view, IJavaObject root) {
+        super(shell, getAnchor(view), null);
         fRoot = root;
         fView = view;
     }
