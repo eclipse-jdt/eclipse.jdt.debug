@@ -1956,8 +1956,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			int elements = readInt("element count", replyData); //$NON-NLS-1$
-			if(elements > maxInstances) {
-				throw new InternalError(JDIMessages.ReferenceTypeImpl_25);
+			if(maxInstances > 0 && elements > maxInstances) {
+				elements = (int)maxInstances;
 			}
 			ArrayList list = new ArrayList();
 			for(int i = 0; i < elements; i++) {

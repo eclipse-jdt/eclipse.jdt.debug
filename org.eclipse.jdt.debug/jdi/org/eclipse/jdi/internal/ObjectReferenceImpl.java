@@ -220,7 +220,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			int elements = readInt("elements", replyData); //$NON-NLS-1$
-			if(elements > maxReferrers) {
+			if(maxReferrers > 0 && elements > maxReferrers) {
 				elements = (int)maxReferrers;
 			}
 			ArrayList list = new ArrayList();
