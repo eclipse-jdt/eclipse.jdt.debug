@@ -1935,10 +1935,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public List instances(long maxInstances) {
 		try {
+			int max = (int)maxInstances;
+			if (maxInstances >= Integer.MAX_VALUE) {
+				max = Integer.MAX_VALUE;
+			}
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeLong(maxInstances, "max instances", outData); //$NON-NLS-1$
+			writeInt(max, "max instances", outData); //$NON-NLS-1$
 			
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_INSTANCES, outBytes);
 			switch(replyPacket.errorCode()) {
@@ -1956,8 +1960,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			int elements = readInt("element count", replyData); //$NON-NLS-1$
-			if(maxInstances > 0 && elements > maxInstances) {
-				elements = (int)maxInstances;
+			if(max > 0 && elements > max) {
+				elements = max;
 			}
 			ArrayList list = new ArrayList();
 			for(int i = 0; i < elements; i++) {

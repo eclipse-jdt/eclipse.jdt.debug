@@ -200,10 +200,14 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 */
 	public List referringObjects(long maxReferrers) throws UnsupportedOperationException, IllegalArgumentException {
 		try {
+			int max = (int)maxReferrers;
+			if (maxReferrers >= Integer.MAX_VALUE) {
+				max = Integer.MAX_VALUE;
+			}
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			this.getObjectID().write(outData);
-			writeLong(maxReferrers, "max referrers", outData); //$NON-NLS-1$
+			writeInt(max, "max referrers", outData); //$NON-NLS-1$
 						
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.OR_REFERRING_OBJECTS, outBytes);
 			switch(replyPacket.errorCode()) {
@@ -220,8 +224,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			int elements = readInt("elements", replyData); //$NON-NLS-1$
-			if(maxReferrers > 0 && elements > maxReferrers) {
-				elements = (int)maxReferrers;
+			if(max > 0 && elements > max) {
+				elements = max;
 			}
 			ArrayList list = new ArrayList();
 			for(int i = 0; i < elements; i++) {

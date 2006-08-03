@@ -233,7 +233,6 @@ public class ReferencesPopupDialog extends DebugPopup {
 	 * @see org.eclipse.debug.ui.DebugPopup#persist()
 	 */
 	protected void persist() {
-		super.persist();
 		ITreeSelection selection = (ITreeSelection) fViewer.getSelection();
 		if (!selection.isEmpty()) {
 			TreePath path = selection.getPaths()[0];
@@ -248,6 +247,7 @@ public class ReferencesPopupDialog extends DebugPopup {
 				return;
 			}
 			Rectangle bounds = getShell().getBounds();
+			super.persist();
 			InspectPopupDialog dialog = new InspectPopupDialog(getParentShell(), new Point(bounds.x, bounds.y), "org.eclipse.jdt.debug.ui.commands.Inspect", exp);  //$NON-NLS-1$
 			dialog.open();
 		}
