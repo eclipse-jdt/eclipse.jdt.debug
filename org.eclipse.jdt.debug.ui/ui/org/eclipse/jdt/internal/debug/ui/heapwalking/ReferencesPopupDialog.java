@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
@@ -25,7 +27,13 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -41,6 +49,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A popup that can be used to browse references to an object.
@@ -76,7 +86,7 @@ public class ReferencesPopupDialog extends DebugPopup {
      * @param root object to browse references to
      */
     public ReferencesPopupDialog(Shell shell, IDebugView view, IJavaObject root) {
-        super(shell, getAnchor(view), null);
+        super(shell, getAnchor(view), "org.eclipse.jdt.debug.ui.commands.Inspect"); //$NON-NLS-1$
         fRoot = root;
         fView = view;
     }
@@ -178,7 +188,7 @@ public class ReferencesPopupDialog extends DebugPopup {
      * @see org.eclipse.debug.ui.DebugPopup#getActionText()
      */
     protected String getActionText() {
-		return null;
+		return Messages.ReferencesPopupDialog_0;
 	}
 
     /* (non-Javadoc)
@@ -200,6 +210,12 @@ public class ReferencesPopupDialog extends DebugPopup {
 		return list;
 	}
     
+	/**
+	 * Compute an anchor based on selected item in the tree.
+	 * 
+	 * @param view anchor view
+	 * @return anchor point
+	 */
     protected static Point getAnchor(IDebugView view) {
 		Control control = view.getViewer().getControl();
 		if (control instanceof Tree) {
@@ -212,4 +228,30 @@ public class ReferencesPopupDialog extends DebugPopup {
 		}
 		return control.toDisplay(0, 0);    	
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.DebugPopup#persist()
+	 */
+	protected void persist() {
+		super.persist();
+		ITreeSelection selection = (ITreeSelection) fViewer.getSelection();
+		if (!selection.isEmpty()) {
+			TreePath path = selection.getPaths()[0];
+			IJavaObject parent = (IJavaObject) path.getSegment(path.getSegmentCount() - 2);
+			IExpression exp;
+			try {
+				exp = new JavaInspectExpression(
+						MessageFormat.format(Messages.ReferencesPopupDialog_1, new String[]{parent.getJavaType().getName()}),
+						(IJavaValue) selection.getFirstElement());
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.statusDialog(e.getStatus());
+				return;
+			}
+			Rectangle bounds = getShell().getBounds();
+			InspectPopupDialog dialog = new InspectPopupDialog(getParentShell(), new Point(bounds.x, bounds.y), "org.eclipse.jdt.debug.ui.commands.Inspect", exp);  //$NON-NLS-1$
+			dialog.open();
+		}
+	}
+    
+    
 }

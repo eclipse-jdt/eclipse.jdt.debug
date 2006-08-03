@@ -1,4 +1,5 @@
-#Thu Jan 26 14:33:18 CST 2006
+#Thu Aug 03 15:17:06 CDT 2006
 eclipse.preferences.version=1
 encoding//ui/org/eclipse/jdt/internal/debug/ui/contentassist/Messages.properties=8859_1
+encoding//ui/org/eclipse/jdt/internal/debug/ui/heapwalking/Messages.properties=8859_1
 encoding//ui/org/eclipse/jdt/internal/debug/ui/threadgroups/ThreadGroupMessages.properties=8859_1
