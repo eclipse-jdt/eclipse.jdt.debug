@@ -42,6 +42,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
@@ -351,6 +352,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         IAdapterFactory labelFactory = new JavaDebugElementLabelAdapterFactory();
         manager.registerAdapters(labelFactory, IJavaThreadGroup.class);
         manager.registerAdapters(labelFactory, IJavaDebugTarget.class);
+        manager.registerAdapters(labelFactory, IJavaObject.class);
         
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);

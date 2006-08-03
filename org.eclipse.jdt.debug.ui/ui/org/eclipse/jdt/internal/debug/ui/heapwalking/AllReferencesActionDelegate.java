@@ -11,8 +11,15 @@
 
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 /**
  * Action to browse all references to selected object.
  * 
@@ -24,7 +31,16 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		System.out.println("Under Construction"); //$NON-NLS-1$
+		IStructuredSelection currentSelection = getCurrentSelection();
+		IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
+		ReferencesPopupDialog popup;
+		try {
+			popup = new ReferencesPopupDialog(getWorkbenchWindow().getShell(), (IDebugView) getPart().getAdapter(IDebugView.class), null, (IJavaObject) var.getValue());
+			popup.open();
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
+		}
+		
 	}
 
 }

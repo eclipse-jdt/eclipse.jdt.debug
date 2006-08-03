@@ -37,6 +37,10 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 		fPart = targetPart;
 	}
 	
+	protected IWorkbenchPart getPart() {
+		return fPart;
+	}
+	
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */

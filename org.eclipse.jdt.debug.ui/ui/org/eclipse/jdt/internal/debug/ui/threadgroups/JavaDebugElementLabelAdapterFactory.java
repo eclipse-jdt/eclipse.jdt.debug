@@ -15,7 +15,10 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAda
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
+import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectLabelAdapter;
+import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectReferencesContextAdapter;
 
 /**
  * @since 3.2
@@ -27,6 +30,8 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 	private static IAsynchronousContentAdapter fgThreadGroupTreeAdapter = new JavaThreadGroupContentAdapter();
 	private static IAsynchronousContentAdapter fgTargetTreeAdapter = new JavaDebugTargetContentAdapter();
 	private static IModelProxyFactoryAdapter fgJavaModelProxyFactory = new JavaModelProxyFactory();
+	private static IAsynchronousLabelAdapter fgObjectLabelAdapter = new ObjectLabelAdapter();
+	private static IAsynchronousContentAdapter fgObjectContentAdapter = new ObjectReferencesContextAdapter();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -36,6 +41,9 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 			if (adaptableObject instanceof IJavaThreadGroup) {
 				return fgThreadGroupLabelAdapter;
 			}
+			if (adaptableObject instanceof IJavaObject) {
+				return fgObjectLabelAdapter;
+			}
 		}
 		if (adapterType.equals(IAsynchronousContentAdapter.class)) {
 			if (adaptableObject instanceof IJavaThreadGroup) {
@@ -43,6 +51,9 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 			}
 			if (adaptableObject instanceof IJavaDebugTarget) {
 				return fgTargetTreeAdapter;
+			}
+			if (adaptableObject instanceof IJavaObject) {
+				return fgObjectContentAdapter;
 			}
 		}
 		if (adapterType.equals(IModelProxyFactoryAdapter.class)) {

@@ -415,7 +415,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Build the text for an IJavaValue.
 	 */
-	protected String getValueText(IJavaValue value) throws DebugException {
+	public String getValueText(IJavaValue value) throws DebugException {
 		
 		String refTypeName= value.getReferenceTypeName();
 		String valueString= value.getValueString();
