@@ -189,7 +189,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	private String getCurrentCompilerCompliance() {
 		IEclipsePreferences setting = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
 		IEclipsePreferences wcs = ((IWorkbenchPreferenceContainer)getContainer()).getWorkingCopyManager().getWorkingCopy(setting);
-		return wcs.get(JavaCore.COMPILER_COMPLIANCE, null);
+		return wcs.get(JavaCore.COMPILER_COMPLIANCE, (String) JavaCore.getDefaultOptions().get(JavaCore.COMPILER_COMPLIANCE));
 	}
 	
 	/**

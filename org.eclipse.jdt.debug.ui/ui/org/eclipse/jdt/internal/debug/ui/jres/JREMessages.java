@@ -44,7 +44,6 @@ public class JREMessages extends NLS {
 
 	public static String JREsComboBlock_1;
 
-	public static String JREsComboBlock_17;
 	public static String JREsComboBlock_2;
 	public static String JREsComboBlock_3;
 	public static String JREsComboBlock_15;

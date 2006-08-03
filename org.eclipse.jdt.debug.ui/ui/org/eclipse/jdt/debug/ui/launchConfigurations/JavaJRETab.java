@@ -19,17 +19,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsComboBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -195,6 +198,11 @@ public class JavaJRETab extends JavaLaunchTab {
 			setErrorMessage(status.getMessage());			 
 			return false;
 		}
+		status = checkCompliance();
+		if (!status.isOK()) {
+			setErrorMessage(status.getMessage());			 
+			return false;
+		}
 
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
@@ -202,6 +210,40 @@ public class JavaJRETab extends JavaLaunchTab {
 		}
 		return true;
 	}
+	
+	/**
+	 * Checks to make sure the compiler compliance level and the selected VM are compatible
+	 * i.e. such that the selected JRE can run the currently compiled code
+	 * @since 3.3
+	 */
+	private IStatus checkCompliance() {
+		IJavaProject javaProject = getJavaProject();
+		if (javaProject == null) {
+			return Status.OK_STATUS;
+		}
+		String	compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+		IPath vmPath = fJREBlock.getPath();
+		IVMInstall vm = JavaRuntime.getVMInstall(vmPath);
+		String environmentId = JavaRuntime.getExecutionEnvironmentId(vmPath);
+		if(vm instanceof AbstractVMInstall) {
+			AbstractVMInstall install = (AbstractVMInstall) vm;
+			String vmver = install.getJavaVersion();
+			if(vmver != null) {
+				int val = compliance.compareTo(vmver);
+				if(val > 0) {
+					String message = null;
+					if (environmentId == null) {
+						message = MessageFormat.format(LauncherMessages.JavaJRETab_6, new String[] {compliance});
+					} else {
+						message = MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[] {compliance});
+					}
+					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID,IJavaDebugUIConstants.INTERNAL_ERROR, 
+							message, null);
+				}
+			}
+		}
+		return Status.OK_STATUS;
+	}	
 
 	/**
 	 * @see ILaunchConfigurationTab#getName()

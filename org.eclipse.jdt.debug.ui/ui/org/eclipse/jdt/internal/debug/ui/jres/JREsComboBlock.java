@@ -21,20 +21,17 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
-import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -156,39 +153,6 @@ public class JREsComboBlock {
 	}
 	
 	/**
-	 * Checks to make sure the compiler compliance level and the selected VM are compatible
-	 * i.e. such that the selected JRE can run the currently compiled code
-	 * @since 3.3
-	 */
-	private void checkCompliance() {
-		IEclipsePreferences setting = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
-		String compliance = null;
-		if(setting != null) {
-			compliance = setting.get(JavaCore.COMPILER_COMPLIANCE, null);
-		}
-		IVMInstall vm = null;
-		if(fDefaultButton.getSelection() || fEnvironmentsButton.getSelection()){
-			vm = JavaRuntime.getVMInstall(getPath());
-		}
-		else {
-			vm = getJRE();
-		}
-		if(vm instanceof AbstractVMInstall) {
-			AbstractVMInstall install = (AbstractVMInstall) vm;
-			String vmver = install.getJavaVersion();
-			if(vmver != null) {
-				int val = compliance.compareTo(vmver);
-				if(val < 0 || val == 0) {
-					setStatus(OK_STATUS);
-				}
-				else {
-					setError(MessageFormat.format(JREMessages.JREsComboBlock_17, new String[] {compliance}));
-				}
-			}
-		}
-	}
-	
-	/**
 	 * Creates this block's control in the given control.
 	 * 
 	 * @param anscestor containing control
@@ -208,6 +172,7 @@ public class JREsComboBlock {
 				public void widgetSelected(SelectionEvent e) {
 					if (fDefaultButton.getSelection()) {
 						setUseDefaultJRE();
+						setStatus(OK_STATUS);
 						firePropertyChange();
 					}
 				}
@@ -230,7 +195,7 @@ public class JREsComboBlock {
 					if (fVMs.isEmpty()) {
 						setError(JREMessages.JREsComboBlock_0);
 					} else {
-						checkCompliance();
+						setStatus(OK_STATUS);
 					}					
 					fEnvironmentsCombo.setEnabled(false);
 					firePropertyChange();
@@ -246,7 +211,7 @@ public class JREsComboBlock {
 		
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				checkCompliance();
+				setStatus(OK_STATUS);
 				firePropertyChange();
 			}
 		});
@@ -254,7 +219,8 @@ public class JREsComboBlock {
 		fManageButton = createPushButton(comp, JREMessages.JREsComboBlock_2); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"); //$NON-NLS-1$
+				IPreferencePage page = new JREsPreferencePage();
+				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page); //$NON-NLS-1$
 			}
 		});
 		fillWithWorkspaceJREs();
@@ -272,7 +238,7 @@ public class JREsComboBlock {
 					if (fEnvironments.isEmpty()) {
 						setError(JREMessages.JREsComboBlock_5);
 					} else {
-						checkCompliance();
+						setStatus(OK_STATUS);
 					}
 					firePropertyChange();
 				}
@@ -296,7 +262,8 @@ public class JREsComboBlock {
 		fManageEnvironmentsButton = createPushButton(comp, JREMessages.JREsComboBlock_14);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles"); //$NON-NLS-1$
+				IPreferencePage page = new ExecutionEnvironmentsPreferencePage();
+				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles", page); //$NON-NLS-1$
 			}
 		});		
 		
@@ -309,10 +276,10 @@ public class JREsComboBlock {
 	 * @param id pref page id
 	 * @param page pref page
 	 */
-	private void showPrefPage(String id) {
+	private void showPrefPage(String id, IPreferencePage page) {
 		IVMInstall prevJRE = getJRE();
 		IExecutionEnvironment prevEnv = getEnvironment();
-		SWTUtil.showPreferencePage(id);
+		JDIDebugUIPlugin.showPreferencePage(id, page);
 		fillWithWorkspaceJREs();
 		fillWithWorkspaceProfiles();
 		restoreCombo(fVMs, prevJRE, fCombo);
@@ -567,7 +534,6 @@ public class JREsComboBlock {
 			fEnvironmentsButton.setSelection(false);
 			fCombo.setEnabled(false);
 			fEnvironmentsCombo.setEnabled(false);
-			checkCompliance();
 			firePropertyChange();
 		}
 	}
@@ -629,7 +595,6 @@ public class JREsComboBlock {
 		setStatus(OK_STATUS);
 		if (JavaRuntime.newDefaultJREContainerPath().equals(containerPath)) {
 			setUseDefaultJRE();
-			checkCompliance();
 		} else {
 			String envId = JavaRuntime.getExecutionEnvironmentId(containerPath);
 			if (envId != null) {
@@ -678,7 +643,6 @@ public class JREsComboBlock {
 				}
 			}
 		}
-		checkCompliance();
 	}
 	
 	private void setError(String message) {
