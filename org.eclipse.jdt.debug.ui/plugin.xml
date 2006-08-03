@@ -1681,6 +1681,7 @@
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllReferences"
                enablesFor="1"
                helpContextId="all_references_action_context"
                icon="icons/full/elcl16/all_references.gif"
@@ -2124,7 +2125,13 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.watch.description"
             id="org.eclipse.jdt.debug.ui.commands.Watch"
-            name="%ActionDefinition.watch.name"/> 
+            name="%ActionDefinition.watch.name"/>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.allReferences.description"
+            id="org.eclipse.jdt.debug.ui.commands.AllReferences"
+            name="%ActionDefinition.allReferences.name">
+      </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
       <key
@@ -2173,6 +2180,12 @@ M4 = Platform-specific fourth key
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   <key
+         commandId="org.eclipse.jdt.debug.ui.commands.AllReferences"
+         contextId="org.eclipse.debug.ui.debugging"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M1+M2+N">
+   </key>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
