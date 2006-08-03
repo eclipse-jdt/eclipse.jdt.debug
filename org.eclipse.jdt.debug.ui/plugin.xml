@@ -1676,6 +1676,31 @@
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
       </viewerContribution>
+      <objectContribution
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesActionDelegate"
+               enablesFor="1"
+               helpContextId="all_references_action_context"
+               id="org.eclipse.jdt.debug.ui.actions.AllReferences"
+               label="%allReferences.label"
+               menubarPath="emptyNavigationGroup"
+               tooltip="%allReferences.tooltip">
+         </action>
+         <visibility>
+            <and>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isPrimitive">
+               </objectState>
+            </and>
+         </visibility>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

@@ -144,6 +144,11 @@ public class JavaVarActionFilter implements IActionFilter {
 						return isValuePrimitiveType(varValue);
 					}
 				} 
+				if (name.equals("JavaVariableFilter")) { //$NON-NLS-1$
+					if (value.equals("isInstanceRetrievalAvailable")) { //$NON-NLS-1$
+						return isInstanceRetrievalAvailable(var);
+					}
+				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return isDeclaredSameAsConcrete(var);
 				} 
@@ -195,5 +200,15 @@ public class JavaVarActionFilter implements IActionFilter {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns whether this variable's VM supports instance/reference information.
+	 * 
+	 * @param var variable
+	 * @return whether this variable's VM supports instance/reference information
+	 */
+	protected boolean isInstanceRetrievalAvailable(IJavaVariable var) {
+		return ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceRetrieval();
 	}	
-}//end class
+}
