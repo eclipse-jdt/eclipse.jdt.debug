@@ -16,11 +16,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaObject;
 
 /**
- * Context adapter for object references.
+ * Content adapter for object references.
  * 
  * @since 3.3
  */
-public class ObjectReferencesContextAdapter extends AsynchronousContentAdapter {
+public class ObjectReferencesContentAdapter extends AsynchronousContentAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
