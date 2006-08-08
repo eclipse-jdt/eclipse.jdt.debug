@@ -84,6 +84,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.Bundle;
@@ -575,6 +576,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @param id pref page id
 	 * @param page pref page
+	 * @deprecated use <code>JDIDebugUIPlugin#showPreferencePage(String pageId)</code>, which uses the <code>PreferenceUtils</code> framework for opening pages.
 	 */
 	public static void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
@@ -591,6 +593,16 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			}
 		});		
 	}	
+	
+	/**
+	 * Displays the given preference page
+	 * @param pageId the fully qualified id of the preference page, e.g. <code>org.eclipse.jdt.debug.ui.preferences.VMPreferencePage</code>
+	 * 
+	 * @since 3.3
+	 */
+	public static void showPreferencePage(String pageId) {
+		PreferencesUtil.createPreferenceDialogOn(getShell(), pageId, new String[] { pageId }, null).open();
+	}
 	
 	/**
 	 * Returns the text tools used by this plug-in

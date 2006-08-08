@@ -31,7 +31,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -219,8 +218,7 @@ public class JREsComboBlock {
 		fManageButton = createPushButton(comp, JREMessages.JREsComboBlock_2); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				IPreferencePage page = new JREsPreferencePage();
-				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page); //$NON-NLS-1$
+				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"); //$NON-NLS-1$
 			}
 		});
 		fillWithWorkspaceJREs();
@@ -262,8 +260,7 @@ public class JREsComboBlock {
 		fManageEnvironmentsButton = createPushButton(comp, JREMessages.JREsComboBlock_14);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				IPreferencePage page = new ExecutionEnvironmentsPreferencePage();
-				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles", page); //$NON-NLS-1$
+				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles"); //$NON-NLS-1$
 			}
 		});		
 		
@@ -276,10 +273,10 @@ public class JREsComboBlock {
 	 * @param id pref page id
 	 * @param page pref page
 	 */
-	private void showPrefPage(String id, IPreferencePage page) {
+	private void showPrefPage(String id/*, IPreferencePage page*/) {
 		IVMInstall prevJRE = getJRE();
 		IExecutionEnvironment prevEnv = getEnvironment();
-		JDIDebugUIPlugin.showPreferencePage(id, page);
+		JDIDebugUIPlugin.showPreferencePage(id);
 		fillWithWorkspaceJREs();
 		fillWithWorkspaceProfiles();
 		restoreCombo(fVMs, prevJRE, fCombo);
