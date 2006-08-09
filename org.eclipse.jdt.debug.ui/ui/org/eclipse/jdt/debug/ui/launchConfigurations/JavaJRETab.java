@@ -83,6 +83,8 @@ public class JavaJRETab extends JavaLaunchTab {
 	
 	// Constants
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String WORKBENCH ="workbench"; //$NON-NLS-1$
+	private static final String PROJECT = "project"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
@@ -223,7 +225,24 @@ public class JavaJRETab extends JavaLaunchTab {
 		}
 		String	compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
 		IPath vmPath = fJREBlock.getPath();
-		IVMInstall vm = JavaRuntime.getVMInstall(vmPath);
+		IVMInstall vm = null;
+		String source = WORKBENCH;
+		if(JavaRuntime.newDefaultJREContainerPath().equals(vmPath)) {
+			try {
+				source = PROJECT;
+				vm = JavaRuntime.getVMInstall(getJavaProject());
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+				return Status.OK_STATUS;
+			}
+			if(vm == null) {
+				source = WORKBENCH;
+				vm = JavaRuntime.getVMInstall(vmPath);
+			}
+		}
+		else {
+			vm = JavaRuntime.getVMInstall(vmPath);
+		}
 		String environmentId = JavaRuntime.getExecutionEnvironmentId(vmPath);
 		if(vm instanceof AbstractVMInstall) {
 			AbstractVMInstall install = (AbstractVMInstall) vm;
@@ -233,9 +252,9 @@ public class JavaJRETab extends JavaLaunchTab {
 				if(val > 0) {
 					String message = null;
 					if (environmentId == null) {
-						message = MessageFormat.format(LauncherMessages.JavaJRETab_6, new String[] {compliance});
+						message = MessageFormat.format(LauncherMessages.JavaJRETab_6, new String[] {compliance, source});
 					} else {
-						message = MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[] {compliance});
+						message = MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[] {compliance, source});
 					}
 					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID,IJavaDebugUIConstants.INTERNAL_ERROR, 
 							message, null);
