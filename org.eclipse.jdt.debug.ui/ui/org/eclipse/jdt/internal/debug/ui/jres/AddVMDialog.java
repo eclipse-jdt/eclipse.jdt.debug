@@ -521,4 +521,9 @@ public class AddVMDialog extends StatusDialog {
          } 
          return section;
     }
+
+	protected void setButtonLayoutData(Button button) {
+		super.setButtonLayoutData(button);
+	}
+    
 }

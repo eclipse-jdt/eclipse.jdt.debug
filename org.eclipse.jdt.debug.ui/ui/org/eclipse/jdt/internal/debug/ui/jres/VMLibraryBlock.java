@@ -182,6 +182,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
 		button.setText(label);
+		fDialog.setButtonLayoutData(button);
 		return button;	
 	}
 	
