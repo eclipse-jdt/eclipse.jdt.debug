@@ -172,7 +172,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
     
     /**
-     * Toggles a line breakpoint. This is also the method called by the key binding for creating breakpoints
+     * Toggles a line breakpoint.
      * @param part the currently active workbench part 
      * @param selection the current selection
      * @param bestMatch if we should make a best match or not
@@ -180,19 +180,21 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     public void toggleLineBreakpoints(final IWorkbenchPart part, final ISelection selection, final boolean bestMatch) {
         Job job = new Job("Toggle Line Breakpoint") { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
-            	if(isInterface(selection, part)) {
-            		report(ActionMessages.ToggleBreakpointAdapter_6, part);
-                	return Status.OK_STATUS;
-            	}
             	ITextEditor editor = getTextEditor(part);
                 if (editor != null && selection instanceof ITextSelection) {
                     if (monitor.isCanceled()) {
                         return Status.CANCEL_STATUS;
                     }
-                    report(null, part);
                     try {
-	                    ITextSelection textSelection = (ITextSelection) selection;
-	                    ISelection sel = translateToMembers(part, selection);
+	                    report(null, part);
+	                    ISelection sel = selection;
+	                	if(!(selection instanceof IStructuredSelection)) {
+	                		sel = translateToMembers(part, selection);
+	                	}
+	                	if(isInterface(sel, part)) {
+	                		report(ActionMessages.ToggleBreakpointAdapter_6, part);
+	                    	return Status.OK_STATUS;
+	                	}
 	                    if(sel instanceof IStructuredSelection) {
 	                    	IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
 	                    	IType type = null;
@@ -204,7 +206,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                    	}
 	                    	String tname = createQualifiedTypeName(type);
 	                    	IResource resource = BreakpointUtils.getBreakpointResource(type);
-							int lnumber = textSelection.getStartLine() + 1;
+							int lnumber = ((ITextSelection) selection).getStartLine() + 1;
 							IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
 							if (existingBreakpoint != null) {
 								DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existingBreakpoint, true);
@@ -265,14 +267,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }
-                if(isInterface(finalSelection, part)) {
-                	report(ActionMessages.ToggleBreakpointAdapter_7, part);
-                	return Status.OK_STATUS;
-                }
                 try {
                     report(null, part);
                     ISelection selection = finalSelection;
-                    selection = translateToMembers(part, selection);
+                    if(!(selection instanceof IStructuredSelection)) {
+                    	selection = translateToMembers(part, selection);
+                    }
+                    if(isInterface(selection, part)) {
+                    	report(ActionMessages.ToggleBreakpointAdapter_7, part);
+                    	return Status.OK_STATUS;
+                    }
                     if (selection instanceof IStructuredSelection) {
                         IMethod[] members = getMethods((IStructuredSelection) selection);
                         if (members.length == 0) {
@@ -345,13 +349,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }
-                if(isInterface(selection, part)) {
-                	report(ActionMessages.ToggleBreakpointAdapter_1, part);
-                	return Status.OK_STATUS;
-                }
                 try {
                 	report(null, part);
-					ISelection sel  = translateToMembers(part, selection);
+                	ISelection sel = selection;
+                	if(!(selection instanceof IStructuredSelection)) {
+                		sel = translateToMembers(part, selection);
+                	}
+                	if(isInterface(sel, part)) {
+                    	report(ActionMessages.ToggleBreakpointAdapter_1, part);
+                    	return Status.OK_STATUS;
+                    }
 					if(sel instanceof IStructuredSelection) {
 						IMember member = (IMember)((IStructuredSelection)sel).getFirstElement();
 						IType type = (IType) member;
@@ -607,7 +614,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     private boolean isInterface(ISelection selection, IWorkbenchPart part) {
 		try {
-			ISelection sel = translateToMembers(part, selection);
+			ISelection sel = selection;
+			if(!(sel instanceof IStructuredSelection)) {
+				sel = translateToMembers(part, selection);
+			}
 			if(sel instanceof IStructuredSelection) {
 				Object obj = ((IStructuredSelection)sel).getFirstElement();
 				if(obj instanceof IMember) {
@@ -694,13 +704,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }
-                if(isInterface(finalSelection, part)) {
-            		report(ActionMessages.ToggleBreakpointAdapter_5, part);
-            		return Status.OK_STATUS;
-            	}
                 try {
                     report(null, part);
-                    ISelection selection = translateToMembers(part, finalSelection);
+                    ISelection selection = finalSelection;
+                    if(!(selection instanceof IStructuredSelection)) {
+                    	selection = translateToMembers(part, finalSelection);
+                    }
+                    if(isInterface(selection, part)) {
+                		report(ActionMessages.ToggleBreakpointAdapter_5, part);
+                		return Status.OK_STATUS;
+                	}
                     boolean allowed = false;
 	                if (selection instanceof IStructuredSelection) {
 	                	List fields = getFields((IStructuredSelection) selection);
@@ -1034,8 +1047,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 }
                 else {
                 	unit = ((WorkingCopyManager)JavaUI.getWorkingCopyManager()).getWorkingCopy(editorInput, false);
-                	synchronized (unit) {
-                		unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
+                	if(unit != null) {
+	                	synchronized (unit) {
+	                		unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
+	                	}
                 	}
                 }
                 IJavaElement e = unit.getElementAt(offset);
@@ -1094,7 +1109,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     					return;
     				}
     			} 
-    			toggleWatchpoints(part, selection);
+    			toggleWatchpoints(part, sel);
     		}
     		else if(member.getElementType() == IJavaElement.METHOD) {
     			if(selection instanceof ITextSelection) {
@@ -1103,7 +1118,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, tsel.getStartLine()+1, true, true);
         			unit.accept(loc);
         			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
-        				toggleMethodBreakpoints(part, selection);
+        				toggleMethodBreakpoints(part, sel);
         			}
         			else {
         				toggleLineBreakpoints(part, selection, true);
@@ -1111,11 +1126,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     			}
     		}
     		else if(member.getElementType() == IJavaElement.TYPE) {
-    			toggleClassBreakpoints(part, selection);
+    			toggleClassBreakpoints(part, sel);
     		}
     		else {
     			//fall back to old behavior, always create a line breakpoint
-    			toggleLineBreakpoints(part, selection, true);
+    			toggleLineBreakpoints(part, sel, true);
     		}
     	}
     }
