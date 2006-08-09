@@ -22,13 +22,14 @@ public class LauncherMessages extends NLS {
 	public static String JavaArgumentsTab_Exception_occurred_reading_configuration___15;
 	public static String JavaArgumentsTab_VM_ar_guments__6;
 
+	public static String JavaJRETab_0;
+
+	public static String JavaJRETab_1;
+
+	public static String JavaJRETab_2;
+
 	public static String JavaJRETab_3;
-
 	public static String JavaJRETab_4;
-
-	public static String JavaJRETab_5;
-
-	public static String JavaJRETab_6;
 	public static String RuntimeClasspathAdvancedDialog_6;
 	public static String RuntimeClasspathAdvancedDialog_7;
 

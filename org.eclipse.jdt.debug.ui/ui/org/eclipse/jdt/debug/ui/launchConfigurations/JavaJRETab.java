@@ -250,15 +250,15 @@ public class JavaJRETab extends JavaLaunchTab {
 			if(vmver != null) {
 				int val = compliance.compareTo(vmver);
 				if(val > 0) {
-					String message = null;
-					source = MessageFormat.format(source, new String[] {compliance});
+					String setting = null;
 					if (environmentId == null) {
-						message = MessageFormat.format(LauncherMessages.JavaJRETab_6, new String[] {source});
+						setting = LauncherMessages.JavaJRETab_2;
 					} else {
-						message = MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[] {source});
+						setting = LauncherMessages.JavaJRETab_1;
 					}
 					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID,IJavaDebugUIConstants.INTERNAL_ERROR, 
-							message, null);
+							MessageFormat.format(LauncherMessages.JavaJRETab_0, 
+									new String[]{setting, source, compliance}), null);
 				}
 			}
 		}
