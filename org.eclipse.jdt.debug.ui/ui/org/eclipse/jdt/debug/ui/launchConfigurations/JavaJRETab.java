@@ -83,8 +83,6 @@ public class JavaJRETab extends JavaLaunchTab {
 	
 	// Constants
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private static final String WORKBENCH ="workbench"; //$NON-NLS-1$
-	private static final String PROJECT = "project"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
@@ -223,20 +221,22 @@ public class JavaJRETab extends JavaLaunchTab {
 		if (javaProject == null) {
 			return Status.OK_STATUS;
 		}
-		String	compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+		String source = LauncherMessages.JavaJRETab_3;
+		String	compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, false);
+		if(compliance == null) {
+			compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+			source = LauncherMessages.JavaJRETab_4;
+		}
 		IPath vmPath = fJREBlock.getPath();
 		IVMInstall vm = null;
-		String source = WORKBENCH;
 		if(JavaRuntime.newDefaultJREContainerPath().equals(vmPath)) {
 			try {
-				source = PROJECT;
 				vm = JavaRuntime.getVMInstall(getJavaProject());
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 				return Status.OK_STATUS;
 			}
 			if(vm == null) {
-				source = WORKBENCH;
 				vm = JavaRuntime.getVMInstall(vmPath);
 			}
 		}
@@ -251,10 +251,11 @@ public class JavaJRETab extends JavaLaunchTab {
 				int val = compliance.compareTo(vmver);
 				if(val > 0) {
 					String message = null;
+					source = MessageFormat.format(source, new String[] {compliance});
 					if (environmentId == null) {
-						message = MessageFormat.format(LauncherMessages.JavaJRETab_6, new String[] {compliance, source});
+						message = MessageFormat.format(LauncherMessages.JavaJRETab_6, new String[] {source});
 					} else {
-						message = MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[] {compliance, source});
+						message = MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[] {source});
 					}
 					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID,IJavaDebugUIConstants.INTERNAL_ERROR, 
 							message, null);
