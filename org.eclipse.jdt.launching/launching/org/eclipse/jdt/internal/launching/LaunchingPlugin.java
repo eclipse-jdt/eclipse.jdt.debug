@@ -1062,7 +1062,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			final IExecutionEnvironment environment = manager.getEnvironment(id);
 			if (environment != null) {
-				if (!environment.isStrictlyCompatible(vm)) {
+				if (vm == null) {
+					String message = MessageFormat.format(
+							LaunchingMessages.LaunchingPlugin_38,
+							new String[]{environment.getId()});
+					createJREContainerProblem(project, message, IMarker.SEVERITY_ERROR);
+				} else if (!environment.isStrictlyCompatible(vm)) {
 					// warn that VM does not match EE
 					// first determine if there is a strictly compatible JRE available
 					IVMInstall[] compatibleVMs = environment.getCompatibleVMs();
@@ -1082,25 +1087,29 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 								LaunchingMessages.LaunchingPlugin_36,
 								new String[]{environment.getId()});
 					}
-					try {
-						IMarker marker = project.getProject().createMarker(ID_JRE_CONTAINER_MARKER);
-						marker.setAttributes(
-							new String[] { 
-									IMarker.MESSAGE, 
-									IMarker.SEVERITY, 
-									IMarker.LOCATION								},
-								new Object[] {
-									message,
-									new Integer(IMarker.SEVERITY_WARNING), 
-									LaunchingMessages.LaunchingPlugin_37
-								});
-					} catch (CoreException e) {
-						return;
-					}
+					createJREContainerProblem(project, message, IMarker.SEVERITY_WARNING);
 				}
 			}
 		}
 	}	
+	
+	private void createJREContainerProblem(IJavaProject javaProject, String message, int severity) {
+		try {
+			IMarker marker = javaProject.getProject().createMarker(ID_JRE_CONTAINER_MARKER);
+			marker.setAttributes(
+				new String[] { 
+						IMarker.MESSAGE, 
+						IMarker.SEVERITY, 
+						IMarker.LOCATION},
+					new Object[] {
+						message,
+						new Integer(severity), 
+						LaunchingMessages.LaunchingPlugin_37
+					});
+		} catch (CoreException e) {
+			return;
+		}
+	}
 }
 
  

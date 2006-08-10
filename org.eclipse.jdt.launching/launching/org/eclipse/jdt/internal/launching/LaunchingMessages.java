@@ -72,6 +72,8 @@ public class LaunchingMessages extends NLS {
 	public static String LaunchingPlugin_0;
 	public static String LaunchingPlugin_1;
 
+	public static String LaunchingPlugin_38;
+
 	public static String libraryLocation_assert_libraryNotNull;
 
 	public static String SocketAttachConnector_Failed_to_connect_to_remote_VM_1;
