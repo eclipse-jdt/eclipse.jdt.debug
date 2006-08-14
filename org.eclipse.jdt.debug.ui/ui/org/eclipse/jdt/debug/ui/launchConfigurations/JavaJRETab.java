@@ -230,14 +230,16 @@ public class JavaJRETab extends JavaLaunchTab {
 		IPath vmPath = fJREBlock.getPath();
 		IVMInstall vm = null;
 		if(JavaRuntime.newDefaultJREContainerPath().equals(vmPath)) {
-			try {
-				vm = JavaRuntime.getVMInstall(getJavaProject());
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
-				return Status.OK_STATUS;
-			}
-			if(vm == null) {
-				vm = JavaRuntime.getVMInstall(vmPath);
+			if(javaProject.isOpen()) {
+				try {
+					vm = JavaRuntime.getVMInstall(getJavaProject());
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+					return Status.OK_STATUS;
+				}
+				if(vm == null) {
+					vm = JavaRuntime.getVMInstall(vmPath);
+				}
 			}
 		}
 		else {
