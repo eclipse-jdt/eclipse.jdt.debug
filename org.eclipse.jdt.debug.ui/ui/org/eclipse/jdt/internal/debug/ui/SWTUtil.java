@@ -275,9 +275,8 @@ public class SWTUtil {
     }
 	
 	/**
-	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
+	 * This method allows us to open the preference dialog on the specific page
 	 * @param id the id of pref page to show
-	 * @param page the actual page to show
 	 */
 	public static void showPreferencePage(String id) {
 		PreferencesUtil.createPreferenceDialogOn(JDIDebugUIPlugin.getShell(), id, new String[] { id }, null).open();
