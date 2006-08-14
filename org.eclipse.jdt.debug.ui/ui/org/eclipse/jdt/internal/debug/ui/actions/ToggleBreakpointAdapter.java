@@ -434,6 +434,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					}
 				}
 			}
+	    	if(type.isAnonymous()) {
+				//prune the $# from the name
+				int idx = tname.indexOf('$');
+				if(idx > -1) {
+					tname = tname.substring(0, idx);
+				}
+	    	}
     	} 
     	catch (JavaModelException e) {}
     	return tname;
