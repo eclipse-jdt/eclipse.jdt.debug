@@ -283,6 +283,22 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * This method allows users to open a specific preference page and supply a custom
+	 * set of page filter items.
+	 * 
+	 * This alternative to <code>showPreferencePage(String)</code> allows other related 
+	 * pref pages to be shown at the same time at the developers/context descretion.
+	 * All pages can be shown if <code>null</code> is passed.  
+	 * 
+	 * @param page_id the id for the page to open
+	 * @param page_filters the listing of pages to be shown in the dialog
+	 * @since 3.3
+	 */
+	public static void showPreferencePage(String page_id, String[] page_filters) {
+		PreferencesUtil.createPreferenceDialogOn(JDIDebugUIPlugin.getShell(), page_id, page_filters, null).open();
+	}
+	
+	/**
 	 * Creates a Composite widget
 	 * @param parent the parent composite to add this composite to
 	 * @param columns the number of columns within the composite
