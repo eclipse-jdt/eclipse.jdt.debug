@@ -148,6 +148,9 @@ public class JavaVarActionFilter implements IActionFilter {
 					if (value.equals("isInstanceRetrievalAvailable")) { //$NON-NLS-1$
 						return isInstanceRetrievalAvailable(var);
 					}
+					if(value.equals("isNullValue")) { //$NON-NLS-1$
+						return varValue instanceof JDINullValue;
+					}
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return isDeclaredSameAsConcrete(var);

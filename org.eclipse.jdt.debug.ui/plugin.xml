@@ -1700,6 +1700,12 @@
                      name="PrimitiveVariableActionFilter"
                      value="isPrimitive">
                </objectState>
+               <not>
+                  <objectState
+                        name="JavaVariableFilter"
+                        value="isNullValue">
+                  </objectState>
+               </not>
             </and>
          </visibility>
       </objectContribution>

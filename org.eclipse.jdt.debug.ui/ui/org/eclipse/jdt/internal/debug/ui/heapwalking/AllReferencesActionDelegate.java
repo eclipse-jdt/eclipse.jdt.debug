@@ -40,7 +40,5 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate {
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.statusDialog(e.getStatus());
 		}
-		
 	}
-
 }
