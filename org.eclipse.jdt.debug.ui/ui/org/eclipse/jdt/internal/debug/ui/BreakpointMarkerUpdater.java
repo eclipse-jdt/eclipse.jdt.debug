@@ -78,6 +78,10 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 				if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
 					return false;
 				}
+				//if the line number is already good, perform no resource updating
+				if(marker.getAttribute(IMarker.LINE_NUMBER, -1) == loc.getLineLocation()) {
+					return true;
+				}
 				marker.setAttribute(IMarker.LINE_NUMBER, loc.getLineLocation());
 				return true;
 			} 
