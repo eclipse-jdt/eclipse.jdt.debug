@@ -222,6 +222,25 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * Creates a wrapping label
+	 * @param parent the parent composite to add this label to
+	 * @param text the text to be displayed in the label
+	 * @param hspan the horozontal span that label should take up in the parent composite
+	 * @param wrapwidth the width hint that the label should wrap at
+	 * @return a new label that wraps at a specified width
+	 */
+	public static Label createWrapLabel(Composite parent, String text, int hspan, int wrapwidth) {
+		Label l = new Label(parent, SWT.WRAP);
+		l.setFont(parent.getFont());
+		l.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		gd.widthHint = wrapwidth;
+		l.setLayoutData(gd);
+		return l;
+	}
+	
+	/**
 	 * Creates a new text widget 
 	 * @param parent the parent composite to add this text widget to
 	 * @param hspan the horizontal span to take up on the parent composite
