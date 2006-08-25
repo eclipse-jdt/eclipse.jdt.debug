@@ -117,7 +117,7 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 			thread= launchToLineBreakpoint(mainName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IJavaDebugTarget target = (IJavaDebugTarget)frame.getDebugTarget();
+			frame.getDebugTarget();
 			IVariable var = findVariable(frame, varName);
 			assertNotNull("Could not find variable " + varName, var);
 			IValue value = var.getValue();
