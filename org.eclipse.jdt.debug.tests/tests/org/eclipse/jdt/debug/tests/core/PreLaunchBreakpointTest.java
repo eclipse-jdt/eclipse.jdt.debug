@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -44,7 +43,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 			createLineBreakpoint(52, typeName);
 			DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 			waiter.setTimeout(DEFAULT_TIMEOUT);
-			ILaunch launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+			configuration.launch(ILaunchManager.RUN_MODE, null);
 			Object suspendee= waiter.waitForEvent();
 			assertTrue("Program did not suspend", suspendee instanceof IJavaThread);
 			thread = (IJavaThread) suspendee;
