@@ -14,8 +14,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
 
@@ -79,7 +77,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	 */
 	public void testBareStepOver() throws Exception {
 		String typeName = "PerfLoop";
-		IJavaLineBreakpoint bp = createLineBreakpoint(20, typeName);
+		createLineBreakpoint(20, typeName);
 		
 		IJavaThread thread= null;
 		try {			
@@ -89,7 +87,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			Object lock = new Object();
 			MyFilter filter = new MyFilter(thread, lock);
 			DebugPlugin.getDefault().addDebugEventFilter(filter);
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			thread.getTopStackFrame();
 			for (int n= 0; n < 10; n++) {
 				for (int i = 0; i < 100; i++) {
 					filter.step();
@@ -102,7 +100,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			filter = new MyFilter(thread, lock);
 			DebugPlugin.getDefault().addDebugEventFilter(filter);
 			
-			frame = (IJavaStackFrame)thread.getTopStackFrame();
+			thread.getTopStackFrame();
 			for (int n= 0; n < 150; n++) {
 				startMeasuring();
 				for (int i = 0; i < 500; i++) {
