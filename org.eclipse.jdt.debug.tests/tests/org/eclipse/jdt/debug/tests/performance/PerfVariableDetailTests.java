@@ -15,8 +15,6 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -28,7 +26,6 @@ import org.eclipse.test.performance.Dimension;
  */
 public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implements IValueDetailListener {
 
-    private IJavaDebugTarget fTarget;
     private Object fLock = new Object();
     
     public PerfVariableDetailTests(String name) {
@@ -46,7 +43,7 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
     	tagAsSummary("Computing variable toString() details iteratively", Dimension.ELAPSED_PROCESS);
         removeAllBreakpoints();
         String typeName = "VariableDetails";
-        IJavaLineBreakpoint breakpoint = createLineBreakpoint(24, typeName);
+        createLineBreakpoint(24, typeName);
         IJavaThread thread = null;
         try {
         	ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
@@ -86,7 +83,4 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
         	terminateAndRemove(thread);
         }
     }
-
-	
-
 }
