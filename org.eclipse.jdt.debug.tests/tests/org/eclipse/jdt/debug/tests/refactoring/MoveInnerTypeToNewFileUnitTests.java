@@ -24,12 +24,8 @@ import org.eclipse.jdt.internal.ui.preferences.JavaPreferencesSettings;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTest {
-
-	private static final Class clazz= MoveInnerTypeToNewFileUnitTests.class;
-	private static final String REFACTORING_PATH= "MoveInnerToTopLevel/";
 
 	public MoveInnerTypeToNewFileUnitTests(String name) {
 		super(name);
@@ -41,7 +37,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		try {
 			int lineNumber = 29;
 			//create breakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee$InnerType");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee$InnerType");
 			//refactor
 			Refactoring ref = setupRefactor("Movee","InnerType","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -65,7 +61,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		
 		try {
 			//create Breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
 			//refactor
 			Refactoring ref = setupRefactor("Movee","InnerType","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -87,7 +83,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		
 		try {
 			//create Breakpoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee$InnerType", "innerTypeInt", true, true);
+			createWatchpoint("a.b.c.Movee$InnerType", "innerTypeInt", true, true);
 			//refactor
 			Refactoring ref = setupRefactor("Movee","InnerType","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -109,7 +105,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		
 		try {
 			//create Breakpoint to test
-			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint("a.b.c.Movee$InnerType");
+			createClassPrepareBreakpoint("a.b.c.Movee$InnerType");
 			//refactor
 			Refactoring ref = setupRefactor("Movee","InnerType","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -134,7 +130,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		IType clas= parentClas.getType(className);
 		
 		MoveInnerToTopRefactoring ref= new MoveInnerToTopRefactoring(clas, JavaPreferencesSettings.getCodeGenerationSettings(clas.getJavaProject()));
-		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
+		ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;
 	}
