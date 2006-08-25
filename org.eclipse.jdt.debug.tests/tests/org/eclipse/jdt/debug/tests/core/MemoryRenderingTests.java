@@ -125,9 +125,6 @@ public class MemoryRenderingTests extends AbstractDebugTest {
 			public void memoryRenderingBindingsChanged() {
 				changed[0] = true;
 			}		
-			public boolean hasChanged() {
-				return changed[0];
-			}
 		};
 		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
 		try {
