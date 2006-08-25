@@ -29,7 +29,7 @@ public class VMInstallTests extends AbstractDebugTest {
 		super(name);
 	}
 
-	public void testJavaVersion() throws CoreException {
+	public void testJavaVersion() {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		assertTrue("should be an IVMInstall2", def instanceof IVMInstall2);
 		IVMInstall2 vm2 = (IVMInstall2)def;

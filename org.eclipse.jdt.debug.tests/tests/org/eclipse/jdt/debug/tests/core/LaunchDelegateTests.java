@@ -43,10 +43,8 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests that a delegate extension can provide the source path computer.
-	 * 
-	 * @throws CoreException
 	 */
-	public void testSourcePathComputerExtension() throws CoreException {
+	public void testSourcePathComputerExtension() {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType configurationType = manager.getLaunchConfigurationType("org.eclipse.jdt.debug.tests.testConfigType");
 		assertNotNull("Missing test launch config type", configurationType);
@@ -56,10 +54,8 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests that a delegate extension can provide the source locator.
-	 * 
-	 * @throws CoreException
 	 */
-	public void testSourceLocatorExtension() throws CoreException {
+	public void testSourceLocatorExtension() {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType configurationType = manager.getLaunchConfigurationType("org.eclipse.jdt.debug.tests.testConfigType");
 		assertNotNull("Missing test launch config type", configurationType);
