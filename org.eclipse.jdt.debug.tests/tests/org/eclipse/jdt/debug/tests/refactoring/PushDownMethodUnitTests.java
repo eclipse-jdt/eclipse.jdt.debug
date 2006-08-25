@@ -24,7 +24,6 @@ import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 
@@ -38,7 +37,7 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 29;
 			//create breakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee");
 			//refactor
 			Refactoring ref = setupRefactor("Movee","testMethod1","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -62,7 +61,7 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 		
 		try {
 			//create Breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
 			//refactor
 			Refactoring ref = setupRefactor("Movee","testMethod1","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -90,7 +89,7 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 		
         PushDownRefactoringProcessor processor = new PushDownRefactoringProcessor(new IMethod[] {clas});
 		PushDownRefactoring ref= new PushDownRefactoring(processor);
-		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
+		ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;
 	}

@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameNonVirtualMethodProcessor;
@@ -93,7 +92,6 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 		IMember member = getMember(cunit, fullName);
 		IMethod method = (IMethod)member;
 		
-		IPackageFragment packageFragment = (IPackageFragment )cunit.getParent();
 		JavaRenameProcessor proc = new RenameNonVirtualMethodProcessor(method);
 		proc.setNewElementName("renamedMethod");
 		

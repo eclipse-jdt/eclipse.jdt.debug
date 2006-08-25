@@ -51,7 +51,7 @@ public class MoveFieldUnitTests extends AbstractRefactoringDebugTest {
 			
 		try {
 			//create a watchPoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee", "anInt", true, true);
+			createWatchpoint("a.b.c.Movee", "anInt", true, true);
 			
 			refactor(javaProject, type);		
 			
@@ -79,7 +79,7 @@ public class MoveFieldUnitTests extends AbstractRefactoringDebugTest {
 			
 		try {
 			//create a watchPoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee.InnerType", "innerTypeInt", true, true);
+			createWatchpoint("a.b.c.Movee.InnerType", "innerTypeInt", true, true);
 			
 			refactor(javaProject, type);		
 			
@@ -107,7 +107,7 @@ public class MoveFieldUnitTests extends AbstractRefactoringDebugTest {
 			
 		try {
 			//create a watchPoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c","Movee.java", "NonPublicType", "differentInt", true, true);
+			createWatchpoint("a.b.c","Movee.java", "NonPublicType", "differentInt", true, true);
 			
 			refactor(javaProject, type);		
 			

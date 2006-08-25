@@ -54,7 +54,7 @@ public class MoveInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 38;
 			//create lineBreakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee$InnerType");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee$InnerType");
 			refactor(javaProject, type);		
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -81,7 +81,7 @@ public class MoveInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		
 		try {
 			//create an EntryMethod Breakpoint to test & do so
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
 			refactor(javaProject, type);	
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -106,7 +106,7 @@ public class MoveInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		IType type = cunit.getType("Movee").getType("InnerType");		
 		try {
 			//create a watchPoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee$InnerType", "innerTypeInt", true, true);
+			createWatchpoint("a.b.c.Movee$InnerType", "innerTypeInt", true, true);
 			refactor(javaProject, type);		
 			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of watchpoints", 1, breakPoints .length);
@@ -132,7 +132,7 @@ public class MoveInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		
 		try {
 			//create a classLoad breakpoint to test
-			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint("a.b.c.Movee$InnerType");
+			createClassPrepareBreakpoint("a.b.c.Movee$InnerType");
 			
 			refactor(javaProject, type);	
 			

@@ -53,7 +53,7 @@ public class MovePublicTypeMethodUnitTests extends AbstractRefactoringDebugTest 
 			int lineNumber = 21;
 			int newLineNumber = 19;
 			//create lineBreakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee");
 			refactor(javaProject, type);		
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -80,7 +80,7 @@ public class MovePublicTypeMethodUnitTests extends AbstractRefactoringDebugTest 
 		
 		try {
 			//create an EntryMethod Breakpoint to test & do so
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
 			refactor(javaProject, type);	
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);

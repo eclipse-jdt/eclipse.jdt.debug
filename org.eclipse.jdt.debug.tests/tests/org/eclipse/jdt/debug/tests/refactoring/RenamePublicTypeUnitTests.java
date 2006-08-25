@@ -87,8 +87,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String exceptionName) throws Exception {
 		cleanTestFiles();		
-		String newTypeName = pack + "."+ "RenamedType",
-		fullTargetName = pack + "."+ targetName;
 		try {
 			//create breakpoint to test
 			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(exceptionName, true, true);
@@ -277,7 +275,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 				pack = "a.b.c",
 				cunit = "MoveeChild.java",
 				typeName = "MoveeChild",
-				newName = pack+"."+"RenamedType",
 				exceptionName = "java.lang.NullPointerException";
 		runExceptionBreakpointTest(src, pack, cunit, typeName, exceptionName);
 }//end testBreakPoint		

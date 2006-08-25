@@ -37,7 +37,7 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 21;
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
 			//refactor
 			Refactoring ref = setupRefactor(lineNumber,"src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -62,7 +62,7 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 40;
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c","Movee.java","NonPublicType","nonPublicMethod","()V",true, false);
+			createMethodBreakpoint("a.b.c","Movee.java","NonPublicType","nonPublicMethod","()V",true, false);
 			//refactor
 			Refactoring ref = setupRefactor(lineNumber,"src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -87,7 +87,7 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 29;
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
 			//refactor
 
 			Refactoring ref = setupRefactor(lineNumber,"src","a.b.c","Movee.java");

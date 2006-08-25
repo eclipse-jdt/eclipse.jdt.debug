@@ -11,8 +11,6 @@
 
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import java.util.HashMap;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -76,7 +74,7 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 21;
 			//create lineBreakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee");
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null);
 			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
@@ -102,7 +100,7 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 				
 		try {
 			//create an EntryMethod Breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
 			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
@@ -128,7 +126,7 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 				
 		try {
 			//create a watchPoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee", "anInt", true, true);
+			createWatchpoint("a.b.c.Movee", "anInt", true, true);
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
 			move(cunit, destination);	
 			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
@@ -154,9 +152,7 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 				
 		try {
 			//create a classLoad breakpoint to test
-			java.util.Map map = new HashMap();
-			IResource projResource = javaProject.getResource();
-			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint("a.b.c.Movee");
+			createClassPrepareBreakpoint("a.b.c.Movee");
 			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
 			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();

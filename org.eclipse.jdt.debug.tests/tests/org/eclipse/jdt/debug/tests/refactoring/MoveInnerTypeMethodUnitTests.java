@@ -53,7 +53,7 @@ public class MoveInnerTypeMethodUnitTests extends AbstractRefactoringDebugTest {
 			int lineNumber = 29;
 			int newLineNumber = 20;
 			//create lineBreakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee$InnerType");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee$InnerType");
 			refactor(javaProject, type);		
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -80,7 +80,7 @@ public class MoveInnerTypeMethodUnitTests extends AbstractRefactoringDebugTest {
 			
 		try {
 			//create an EntryMethod Breakpoint to test & do so
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
+			createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
 			refactor(javaProject, type);	
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);

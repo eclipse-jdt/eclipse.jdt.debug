@@ -22,7 +22,6 @@ import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 
@@ -35,7 +34,7 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 		
 		try {
 			//create Breakpoint to test
-			IJavaWatchpoint wp = createWatchpoint("a.b.c.Movee", "anInt", true, true);
+			createWatchpoint("a.b.c.Movee", "anInt", true, true);
 			//refactor
 			Refactoring ref = setupRefactor("Movee","anInt","src","a.b.c","Movee.java");
 			performRefactor(ref);
@@ -63,7 +62,7 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 		
         PushDownRefactoringProcessor processor = new PushDownRefactoringProcessor(new IField[] {clas});
 		PushDownRefactoring ref= new PushDownRefactoring(processor);
-		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
+		ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;
 	}

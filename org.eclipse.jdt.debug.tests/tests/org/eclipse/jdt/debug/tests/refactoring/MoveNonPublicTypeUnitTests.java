@@ -54,7 +54,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			int lineNumber = 31;
 			//create lineBreakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber,"a.b.c","Movee.java","NonPublicType");
+			createLineBreakpoint(lineNumber,"a.b.c","Movee.java","NonPublicType");
 			refactor(javaProject, type);		
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -81,7 +81,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		
 		try {
 			//create an EntryMethod Breakpoint to test & do so
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("a.b.c","Movee.java","NonPublicType","nonPublicMethod","()V",true, false);
+			createMethodBreakpoint("a.b.c","Movee.java","NonPublicType","nonPublicMethod","()V",true, false);
 			refactor(javaProject, type);	
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -106,7 +106,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		IType type = cunit.getType("NonPublicType");		
 		try {
 			//create a watchPoint to test
-			IJavaWatchpoint wp = createNestedTypeWatchPoint("src", "a.b.c", "Movee.java", "NonPublicType$differentInt", true, true);
+			createNestedTypeWatchPoint("src", "a.b.c", "Movee.java", "NonPublicType$differentInt", true, true);
 			
 			refactor(javaProject, type);		
 			
@@ -134,7 +134,7 @@ public class MoveNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		
 		try {
 			//create a classLoad breakpoint to test
-			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint("a.b.c","Movee.java","NonPublicType");
+			createClassPrepareBreakpoint("a.b.c","Movee.java","NonPublicType");
 			
 			refactor(javaProject, type);	
 			

@@ -264,8 +264,6 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String exceptionName) throws Exception {
 		cleanTestFiles();		
-		String newTypeName = pack+"."+"MoveeChild$RenamedType",
-		fullTargetName = pack + "."+ targetName;
 		try {
 			//create breakpoint to test
 			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(exceptionName, true, true);
