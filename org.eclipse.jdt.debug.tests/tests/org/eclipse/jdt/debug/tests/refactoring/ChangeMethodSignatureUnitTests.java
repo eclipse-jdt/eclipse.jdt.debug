@@ -43,7 +43,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 					methodName = "testMethod1",
 					methodSig = "()V";
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(pack+"."+type, methodName, methodSig, true, false);
+			createMethodBreakpoint(pack+"."+type, methodName, methodSig, true, false);
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, type, methodName, methodSig);
 			performRefactor(ref);
@@ -73,7 +73,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 					methodName = "innerTypeMethod",
 					methodSig = "()V";
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(pack+"."+type, methodName, methodSig, true, false);
+			createMethodBreakpoint(pack+"."+type, methodName, methodSig, true, false);
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, type, methodName, methodSig);
 			performRefactor(ref);
@@ -103,7 +103,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 					methodName = "nonPublicMethod",
 					methodSig = "()V";
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(pack,cunit,type,methodName,methodSig,true, false);
+			createMethodBreakpoint(pack,cunit,type,methodName,methodSig,true, false);
 			
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, type, methodName, methodSig);
@@ -185,8 +185,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 		{
 			if(name.charAt(i)=='$')
 			{//Enclosing$Inner$MoreInner
-				String inner = name.substring(i);
-				IType enclosingType = enclosing.getType(name.substring(0, i));
+				enclosing.getType(name.substring(0, i));
 				return getInnermostType(enclosing,name.substring(i+1));
 			}
 		}

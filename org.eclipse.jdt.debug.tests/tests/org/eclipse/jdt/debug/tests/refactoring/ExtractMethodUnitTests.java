@@ -38,7 +38,7 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 			int lineNumber = 21;
 			int newLineNumber = 25;
 			//create breakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee");
 			//refactor
 
 			Refactoring ref = setupRefactor(lineNumber,"src","a.b.c","Movee.java");
@@ -64,7 +64,7 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 			int lineNumber = 40;
 			int newLineNumber = 44;
 			//create breakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber,"a.b.c","Movee.java","NonPublicType");
+			createLineBreakpoint(lineNumber,"a.b.c","Movee.java","NonPublicType");
 			//refactor
 
 			Refactoring ref = setupRefactor(lineNumber,"src","a.b.c","Movee.java");
@@ -90,7 +90,7 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 			int lineNumber = 29;
 			int newLineNumber = 32;
 			//create breakpoint to test
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, "a.b.c.Movee.InnerType");
+			createLineBreakpoint(lineNumber, "a.b.c.Movee.InnerType");
 			//refactor
 
 			Refactoring ref = setupRefactor(lineNumber,"src","a.b.c","Movee.java");

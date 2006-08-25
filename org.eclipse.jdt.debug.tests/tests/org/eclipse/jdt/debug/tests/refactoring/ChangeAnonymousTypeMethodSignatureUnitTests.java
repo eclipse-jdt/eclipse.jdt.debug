@@ -39,13 +39,10 @@ public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractRefacto
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V$1$anonTypeMethod()QString",
-					type = "MoveeChild",
-					methodName = "childsMethod",
-					methodSig = "()V",
 					newAnonMethodName = "changedMethod",
 					newAnonMethodSig = "()QObject";
 			//create breakpoint to test
-			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
+			createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit,fullTargetName);
 			performRefactor(ref);

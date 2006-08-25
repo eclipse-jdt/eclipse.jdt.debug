@@ -30,13 +30,13 @@ public class PerfDebugBaselineTest extends PerformanceTestCase {
         
         //ensure class loading and JIT is done.
         for (int i= 0; i < 5; i++) {
-            int matches = findMatches(text);
+            findMatches(text);
         }
         
         try {
             for (int i= 0; i < 10; i++) {
                 fPerformanceMeter.start();
-                int matches = findMatches(text);
+                findMatches(text);
                 fPerformanceMeter.stop();
             }
             fPerformanceMeter.commit();

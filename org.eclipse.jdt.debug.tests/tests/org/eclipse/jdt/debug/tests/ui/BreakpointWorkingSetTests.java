@@ -46,7 +46,7 @@ public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest 
 		IWorkingSet set = createSet(name);
 		try {
 			BreakpointSetOrganizer.setDefaultWorkingSet(null);
-			IJavaLineBreakpoint breakpoint = createLineBreakpoint(52, "Breakpoints");
+			createLineBreakpoint(52, "Breakpoints");
 			IAdaptable[] elements = set.getElements();
 			assertEquals("Wrong number of breakpoints", 0, elements.length);
 		} finally {
