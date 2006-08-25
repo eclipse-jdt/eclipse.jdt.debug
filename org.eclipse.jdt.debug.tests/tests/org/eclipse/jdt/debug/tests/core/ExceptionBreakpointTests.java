@@ -251,7 +251,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 	
 	public void testSkipExceptionBreakpoint() throws Exception {
 		String typeName = "ThrowsNPE";
-		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);	
+		createExceptionBreakpoint("java.lang.NullPointerException", true, false);	
 		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(15, typeName);
 		
 		IJavaThread thread= null;
