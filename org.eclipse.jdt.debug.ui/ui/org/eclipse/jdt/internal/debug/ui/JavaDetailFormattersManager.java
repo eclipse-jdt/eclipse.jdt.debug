@@ -53,6 +53,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -152,6 +153,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (value instanceof IJavaObject) {
 			IJavaObject objectValue= (IJavaObject) value;
 			try {
+				if(value instanceof JDIAllInstancesValue) {
+					listener.detailComputed(value, ((JDIAllInstancesValue)value).getReferenceTypeName());
+					return;
+				}
 				IJavaDebugTarget debugTarget= (IJavaDebugTarget) thread.getDebugTarget();
 				// get the compiled expression to use
 				Expression expression= getCompiledExpression(objectValue, debugTarget, thread);

@@ -11,12 +11,15 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -75,6 +78,16 @@ public class MemberActionFilter implements IActionFilter {
 						JDIDebugUIPlugin.log(e);
 						return false;
 					}
+				}
+				if(value.equals("isInstanceRetrievalAvailable")) { //$NON-NLS-1$
+					IAdaptable adapt = DebugUITools.getDebugContext();
+					if(adapt != null) {
+						IJavaDebugTarget adapter = (IJavaDebugTarget) adapt.getAdapter(IJavaDebugTarget.class);
+						if(adapter != null) {
+							return adapter.supportsInstanceRetrieval();
+						}
+					}
+					return false;
 				}
 			}
 		}

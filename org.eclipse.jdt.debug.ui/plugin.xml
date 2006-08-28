@@ -1255,11 +1255,12 @@
                id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
          <action
-               label="%AddBreakpoint.label"
-               helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.jdt.debug.ui.actions.BreakpointRulerActionDelegate">
+               helpContextId="manage_breakpoint_action_context"
+               icon="icons/full/obj16/brkp_obj.gif"
+               id="org.eclipse.jdt.debug.ui.actions.BreakpointRulerActionDelegate"
+               label="%AddBreakpoint.label"
+               menubarPath="debug">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1280,11 +1281,12 @@
                id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
          <action
-               label="%AddBreakpoint.label"
-               helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.jdt.debug.ui.actions.BreakpointRulerActionDelegate">
+               helpContextId="manage_breakpoint_action_context"
+               icon="icons/full/obj16/brkp_obj.gif"
+               id="org.eclipse.jdt.debug.ui.actions.BreakpointRulerActionDelegate"
+               label="%AddBreakpoint.label"
+               menubarPath="debug">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1302,32 +1304,13 @@
             </and>
          </visibility>
          <action
-               label="%stepIntoSelectionAction.label"
-               helpContextId="step_into_selection_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-               menubarPath="additions"
-               enablesFor="*"
-               id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
-               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
-         </action>
-         <action
-               label="%runToLineAction.label"
-               helpContextId="run_to_line_action_context"
-               definitionId="org.eclipse.debug.ui.commands.RunToLine"
                class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               icon="icons/full/elcl16/runtoline_co.gif"
+               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
+               label="%runToLineAction.label"
+               menubarPath="additions">
          </action>
          <action
                label="%Execute.label"
@@ -1338,17 +1321,6 @@
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Execute">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
          </action>
          <action
                label="%Display.label"
@@ -1358,17 +1330,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.Display">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
          </action>
          <action
                label="%Inspect.label"
@@ -1378,17 +1339,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.Inspect">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
          </action>
          <action
                label="%Watch.label"
@@ -1398,17 +1348,60 @@
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Watch">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CompilationUnitEditorContext"
+            id="org.eclipse.jdt.debug.ui.CUPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.debuggerActive"
+                     value="true">
+               </systemProperty>
+               <systemProperty
+                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
                         value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
+               </systemProperty>
+               <objectClass
+                     name="org.eclipse.jface.text.ITextSelection">
+               </objectClass>
+            </and>
+         </visibility>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+               enablesFor="*"
+               helpContextId="step_into_selection_action_context"
+               icon="icons/full/elcl16/stepinto_co.gif"
+               id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
+               label="%stepIntoSelectionAction.label"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CompilationUnitEditorContext"
+            id="org.eclipse.jdt.debug.ui.CUPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.debuggerActive"
+                     value="true">
+               </systemProperty>
+               <objectClass
+                     name="org.eclipse.jface.text.ITextSelection">
+               </objectClass>
+            </and>
+         </visibility>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               enablesFor="1"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.allInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1426,32 +1419,13 @@
             </and>
          </visibility>
          <action
-               label="%stepIntoSelectionAction.label"
-               helpContextId="step_into_selection_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-               menubarPath="additions"
-               enablesFor="*"
-               id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection"
-               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
-         </action>
-         <action
-               label="%runToLineAction.label"
-               helpContextId="run_to_line_action_context"
-               definitionId="org.eclipse.debug.ui.commands.RunToLine"
                class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               icon="icons/full/elcl16/runtoline_co.gif"
+               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
+               label="%runToLineAction.label"
+               menubarPath="additions">
          </action>         
          <action
                label="%Execute.label"
@@ -1462,17 +1436,6 @@
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Execute">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
          </action>
          <action
                label="%Display.label"
@@ -1482,17 +1445,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cfPopup.Display">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
          </action>
          <action
                label="%Inspect.label"
@@ -1502,17 +1454,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cfPopup.Inspect">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
          </action>
          <action
                label="%Watch.label"
@@ -1522,17 +1463,60 @@
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Watch">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#ClassFileEditorContext"
+            id="org.eclipse.jdt.debug.ui.CFPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.debuggerActive"
+                     value="true">
+               </systemProperty>
+               <systemProperty
+                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
                         value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
+               </systemProperty>
+               <objectClass
+                     name="org.eclipse.jface.text.ITextSelection">
+               </objectClass>
+            </and>
+         </visibility>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+               enablesFor="*"
+               helpContextId="step_into_selection_action_context"
+               icon="icons/full/elcl16/stepinto_co.gif"
+               id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection"
+               label="%stepIntoSelectionAction.label"
+               menubarPath="additions">
+         </action>
+       </viewerContribution>
+       <viewerContribution
+            targetID="#ClassFileEditorContext"
+            id="org.eclipse.jdt.debug.ui.CFPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.debuggerActive"
+                     value="true">
+               </systemProperty>
+               <objectClass
+                     name="org.eclipse.jface.text.ITextSelection">
+               </objectClass>
+            </and>
+         </visibility>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               enablesFor="1"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.allInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
          </action>
       </viewerContribution>
       <objectContribution
@@ -1555,12 +1539,13 @@
 	            </and>
          </visibility>
          <action
-               label="%manageMethodBreakpointAction.label"
-               helpContextId="manage_method_breakpoint_action_context"
                class="org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate"
-               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.MethodBreakpoint">
+               helpContextId="manage_method_breakpoint_action_context"
+               icon="icons/full/obj16/brkp_obj.gif"
+               id="org.eclipse.jdt.debug.ui.MethodBreakpoint"
+               label="%manageMethodBreakpointAction.label"
+               menubarPath="additions">
          </action>
       </objectContribution>
       <objectContribution
@@ -1586,24 +1571,26 @@
                 </and>
          </visibility>            
          <action
-               label="%manageWatchpointAction.label"
-               helpContextId="manage_watchpoint_action_context"
                class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
-               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.Watchpoint">
+               helpContextId="manage_watchpoint_action_context"
+               icon="icons/full/obj16/readwrite_obj.gif"
+               id="org.eclipse.jdt.debug.ui.Watchpoint"
+               label="%manageWatchpointAction.label"
+               menubarPath="additions">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.core.IType"
-            id="org.eclipse.jdt.debug.ui.ClassLoadBreakpointActions">
+            id="org.eclipse.jdt.debug.ui.ITypePopupActions">
          <action
-               label="%toggleClassPrepareAction.label"
-               helpContextId="toggle_class_prepare_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.ToggleClassPrepareBreakpointAction"
-               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.ToggleClassPrepare">
+               helpContextId="toggle_class_prepare_action_context"
+               icon="icons/full/obj16/class_obj.gif"
+               id="org.eclipse.jdt.debug.ui.ToggleClassPrepare"
+               label="%toggleClassPrepareAction.label"
+               menubarPath="additions">
          </action>
          <visibility>
             <and>
@@ -1621,7 +1608,40 @@
                </not>
             </and>
          </visibility>
-      </objectContribution>      
+      </objectContribution>   
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.IType"
+            id="org.eclipse.jdt.debug.ui.ITypePopupActions">
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.allInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
+         </action>
+         <visibility>
+            <and>
+               <objectState
+                     name="MemberActionFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
+               <not>
+                  <objectState
+                        name="MemberActionFilter"
+                        value="isInterface">
+                  </objectState>
+               </not>
+               <not>
+                  <objectState
+                        name="MemberActionFilter"
+                        value="isRemote">
+                  </objectState>
+               </not>
+            </and>
+         </visibility>
+      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.InstanceFiltersActions">
@@ -1642,12 +1662,13 @@
             objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable"
             id="org.eclipse.jdt.debug.ui.WatchpointActions">
          <action
-               label="%manageWatchpointAction.label"
-               helpContextId="manage_watchpoint_action_context"
                class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
-               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.VariableWatchpoint">
+               helpContextId="manage_watchpoint_action_context"
+               icon="icons/full/obj16/readwrite_obj.gif"
+               id="org.eclipse.jdt.debug.ui.VariableWatchpoint"
+               label="%manageWatchpointAction.label"
+               menubarPath="openOnGroup">
          </action>
          <visibility>
             <objectState
@@ -1677,6 +1698,33 @@
          </action>
       </viewerContribution>
       <objectContribution
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
+               enablesFor="1"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.allInstances"
+               label="%allinstances.label"
+               menubarPath="emptyNavigationGroup"
+               tooltip="%allinstances.tooltip">
+         </action>
+         <visibility>
+            <and>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isPrimitive">
+               </objectState>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
+            </and>
+         </visibility>
+      </objectContribution>
+	  <objectContribution
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
          <action
@@ -2131,12 +2179,18 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.watch.description"
             id="org.eclipse.jdt.debug.ui.commands.Watch"
-            name="%ActionDefinition.watch.name"/>
+            name="%ActionDefinition.watch.name"/> 
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.allReferences.description"
             id="org.eclipse.jdt.debug.ui.commands.AllReferences"
             name="%ActionDefinition.allReferences.name">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.allInstances.description"
+            id="org.eclipse.jdt.debug.ui.commands.AllInstances"
+            name="%ActionDefinition.allInstances.name">
       </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
@@ -2188,6 +2242,12 @@ M4 = Platform-specific fourth key
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    <key
          commandId="org.eclipse.jdt.debug.ui.commands.AllReferences"
+         contextId="org.eclipse.debug.ui.debugging"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M1+M2+N">
+   </key>
+   <key
+         commandId="org.eclipse.jdt.debug.ui.commands.AllInstances"
          contextId="org.eclipse.debug.ui.debugging"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="M1+M2+N">
