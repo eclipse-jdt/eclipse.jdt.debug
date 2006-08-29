@@ -1373,35 +1373,9 @@
                definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
                enablesFor="*"
                helpContextId="step_into_selection_action_context"
-               icon="icons/full/elcl16/stepinto_co.gif"
                id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
                label="%stepIntoSelectionAction.label"
                menubarPath="additions">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            targetID="#CompilationUnitEditorContext"
-            id="org.eclipse.jdt.debug.ui.CUPopupActions">
-         <visibility>
-            <and>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.debuggerActive"
-                     value="true">
-               </systemProperty>
-               <objectClass
-                     name="org.eclipse.jface.text.ITextSelection">
-               </objectClass>
-            </and>
-         </visibility>
-         <action
-               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
-               enablesFor="1"
-               helpContextId="all_instances_action_context"
-               icon="icons/full/elcl16/all_instances.gif"
-               id="org.eclipse.jdt.debug.ui.allInstances"
-               label="%allinstances.label"
-               menubarPath="additions"
-               tooltip="%allinstances.tooltip">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1488,37 +1462,11 @@
                definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
                enablesFor="*"
                helpContextId="step_into_selection_action_context"
-               icon="icons/full/elcl16/stepinto_co.gif"
                id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection"
                label="%stepIntoSelectionAction.label"
                menubarPath="additions">
          </action>
        </viewerContribution>
-       <viewerContribution
-            targetID="#ClassFileEditorContext"
-            id="org.eclipse.jdt.debug.ui.CFPopupActions">
-         <visibility>
-            <and>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.debuggerActive"
-                     value="true">
-               </systemProperty>
-               <objectClass
-                     name="org.eclipse.jface.text.ITextSelection">
-               </objectClass>
-            </and>
-         </visibility>
-         <action
-               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
-               enablesFor="1"
-               helpContextId="all_instances_action_context"
-               icon="icons/full/elcl16/all_instances.gif"
-               id="org.eclipse.jdt.debug.ui.allInstances"
-               label="%allinstances.label"
-               menubarPath="additions"
-               tooltip="%allinstances.tooltip">
-         </action>
-      </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.core.IMethod"
             id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
@@ -1609,39 +1557,6 @@
             </and>
          </visibility>
       </objectContribution>   
-      <objectContribution
-            objectClass="org.eclipse.jdt.core.IType"
-            id="org.eclipse.jdt.debug.ui.ITypePopupActions">
-         <action
-               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
-               helpContextId="all_instances_action_context"
-               icon="icons/full/elcl16/all_instances.gif"
-               id="org.eclipse.jdt.debug.ui.allInstances"
-               label="%allinstances.label"
-               menubarPath="additions"
-               tooltip="%allinstances.tooltip">
-         </action>
-         <visibility>
-            <and>
-               <objectState
-                     name="MemberActionFilter"
-                     value="isInstanceRetrievalAvailable">
-               </objectState>
-               <not>
-                  <objectState
-                        name="MemberActionFilter"
-                        value="isInterface">
-                  </objectState>
-               </not>
-               <not>
-                  <objectState
-                        name="MemberActionFilter"
-                        value="isRemote">
-                  </objectState>
-               </not>
-            </and>
-         </visibility>
-      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.InstanceFiltersActions">
