@@ -190,6 +190,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		setTitle(PropertyPageMessages.JavaBreakpointPage_11);
 		noDefaultAndApplyButton();
 		Composite mainComposite = createComposite(parent, 1);
 		createLabels(mainComposite);

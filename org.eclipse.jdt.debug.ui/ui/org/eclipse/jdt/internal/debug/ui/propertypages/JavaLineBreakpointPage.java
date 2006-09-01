@@ -139,11 +139,13 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createTypeSpecificEditors(Composite parent) throws CoreException {
+		setTitle(PropertyPageMessages.JavaLineBreakpointPage_18);
 		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
 		if (breakpoint.supportsCondition()) {
 			createConditionEditor(parent);
 		}
 		if (breakpoint instanceof IJavaWatchpoint) {
+			setTitle(PropertyPageMessages.JavaLineBreakpointPage_19);
 			IJavaWatchpoint watchpoint= (IJavaWatchpoint) getBreakpoint();
 			SelectionAdapter watchpointValidator= new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -160,6 +162,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			fFieldModification.addSelectionListener(watchpointValidator);
 		}
 		if (breakpoint instanceof IJavaMethodBreakpoint) {
+			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
 			IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) getBreakpoint();
 			SelectionAdapter methodBreakpointValidator= new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {

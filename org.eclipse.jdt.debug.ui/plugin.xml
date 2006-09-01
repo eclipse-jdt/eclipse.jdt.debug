@@ -13,13 +13,7 @@
             id="org.eclipse.jdt.debug.ui.vmcapabiltitiesTest"
             namespace="org.eclipse.jdt.debug.ui"
             properties="vmpage"
-            type="org.eclipse.debug.core.model.IDebugElement"/>
-      <propertyTester
-            class="org.eclipse.jdt.internal.debug.ui.VMCapabilitiesPageTester"
-            id="org.eclipse.jdt.debug.ui.vmcapabilitiesIProcessTest"
-            namespace="org.eclipse.jdt.debug.ui"
-            properties="vmpage"
-            type="org.eclipse.debug.core.model.IProcess"/>
+            type="org.eclipse.core.runtime.IAdaptable"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.watchExpressionDelegates">
@@ -1728,64 +1722,114 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IFile"
             name="%snippetEditorPageName"
             nameFilter="*.jpage"
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorPropertyPage"
             id="org.eclipse.jdt.debug.ui.snippeteditor.SnippetEditorPage">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+               </adapt>
+            </or>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.jdt.debug.core.IJavaLineBreakpoint"
-            adaptable="true"
-            name="%commonPage.label"
+            name="%breakpointPropertiesPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaLineBreakpointPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.common">
+            id="org.eclipse.jdt.debug.ui.propertypages.LineBreakpoints">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.jdt.debug.core.IJavaLineBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.eclipse.jdt.debug.core.IJavaLineBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.jdt.debug.core.IJavaLineBreakpoint"
-            adaptable="true"
             name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointAdvancedPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.filtering">
+            id="org.eclipse.jdt.debug.ui.propertypages.LineBreakpointsFiltering">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.jdt.debug.core.IJavaLineBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.eclipse.jdt.debug.core.IJavaLineBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint"
-            adaptable="true"
-            name="%commonPage.label"
+            name="%breakpointPropertiesPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.common">
+            id="org.eclipse.jdt.debug.ui.propertypages.ClassPrepareBreakpoint">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
       </page>      
       
       <page
-            objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
-            adaptable="true"
             name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointAdvancedPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.filtering">
-      </page>
-      <page
-            objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
-            adaptable="true"
-            name="%commonPage.label"
-            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.common">
-      </page>
-      <page
-            class="org.eclipse.jdt.internal.debug.ui.propertypages.VMCapabilitiesPropertyPage"
-            id="org.eclipse.debug.ui.properties.vmCapabilities"
-            name="%vmCapabilitiesPageName"
-            objectClass="org.eclipse.debug.core.model.IDebugElement">
+            id="org.eclipse.jdt.debug.ui.propertypages.ExceptionBreakpointFiltering">
          <enabledWhen>
-             <test property="org.eclipse.jdt.debug.ui.vmpage"/>
+            <or>
+               <instanceof
+                     value="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
+      </page>
+      <page
+            name="%breakpointPropertiesPage.label"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.ExceptionBreakpoint">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
+               </adapt>
+            </or>
          </enabledWhen>
       </page>
       <page
             class="org.eclipse.jdt.internal.debug.ui.propertypages.VMCapabilitiesPropertyPage"
             id="org.eclipse.debug.ui.properties.vmCapabilities"
             name="%vmCapabilitiesPageName"
-            objectClass="org.eclipse.debug.core.model.IProcess">
+            >
          <enabledWhen>
-             <test property="org.eclipse.jdt.debug.ui.vmpage"/>
+             <and>
+             	<test property="org.eclipse.jdt.debug.ui.vmpage"/>
+                <or>
+                   <instanceof
+                         value="org.eclipse.debug.core.model.IDebugElement">
+                   </instanceof>
+                   <instanceof
+                         value="org.eclipse.debug.core.model.IProcess">
+                   </instanceof>
+                </or>
+             </and>
          </enabledWhen>
       </page>
    </extension>

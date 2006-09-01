@@ -55,6 +55,7 @@ public class JavaExceptionBreakpointPage extends JavaBreakpointPage {
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createTypeSpecificEditors(Composite parent) {
+		setTitle(PropertyPageMessages.JavaExceptionBreakpointPage_5);
 		IJavaExceptionBreakpoint breakpoint= (IJavaExceptionBreakpoint) getBreakpoint();
 		SelectionAdapter exceptionBreakpointValidator= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
