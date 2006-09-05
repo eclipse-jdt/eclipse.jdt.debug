@@ -180,7 +180,7 @@
             class="org.eclipse.jdt.internal.launching.JavaLaunchableTester"
             id="org.eclipse.jdt.launching.JavaLaunchableTester"
             namespace="org.eclipse.jdt.launching"
-            properties="hasMain, extendsClass, extendsInterface, hasMethod, isContainer, hasProjectNature, buildpathReference, hasMethodWithAnnotation, hasTypeWithAnnotation, hasSuperTypeWithAnnotation, hasParentMethodWithAnnotation"
+            properties="hasMain, extendsClass, extendsInterface, hasMethod, isContainer, hasProjectNature, buildpathReference, hasMethodWithAnnotation, hasTypeWithAnnotation"
             type="org.eclipse.core.runtime.IAdaptable"/>            
    </extension>
    <extension
