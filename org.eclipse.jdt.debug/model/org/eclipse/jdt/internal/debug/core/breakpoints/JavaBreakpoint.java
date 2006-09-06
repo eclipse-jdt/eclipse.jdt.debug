@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
@@ -1133,7 +1133,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
                 IDebugTarget target = targets[i];
                 MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.JavaBreakpoint_Exception, null);
                 IJavaDebugTarget jdiTarget = (IJavaDebugTarget) target.getAdapter(IJavaDebugTarget.class);
-                if (jdiTarget != null) {
+                if (jdiTarget instanceof JDIDebugTarget) {
                     try {
                         recreate((JDIDebugTarget) jdiTarget);
                     } catch (CoreException e) {
