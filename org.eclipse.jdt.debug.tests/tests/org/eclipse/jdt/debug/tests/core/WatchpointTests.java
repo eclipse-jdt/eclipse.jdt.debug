@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -27,42 +28,59 @@ public class WatchpointTests extends AbstractDebugTest {
 	}
 
 	public void testAccessAndModification() throws Exception {
-		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
-		
-		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, true);
-		
-		IJavaThread thread= null;
-		try {
-			thread= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
-
-			IBreakpoint hit = getBreakpoint(thread);
-			IStackFrame frame = thread.getTopStackFrame();
-			assertNotNull("No breakpoint", hit);
-			
-			// should be modification
-			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
-			// line 27
-			assertEquals("Should be on line 27", 27, frame.getLineNumber());
-			
-			// should hit access 10 times
-			int count = 10;
-			while (count > 0) {
-				thread = resume(thread);
-				hit = getBreakpoint(thread);
-				frame = thread.getTopStackFrame();
+		// see Bug 148255 [tests] "should be access" test failure
+		boolean targetAborted = true;
+		int attempts = 0;
+		while (attempts < 10 && targetAborted) {
+			targetAborted = false;
+			String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
+			IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, true);
+			IJavaThread thread= null;
+			try {
+				thread= launchToBreakpoint(typeName);
+				assertNotNull("Breakpoint not hit within timeout period", thread);
+	
+				IBreakpoint hit = getBreakpoint(thread);
+				IStackFrame frame = thread.getTopStackFrame();
 				assertNotNull("No breakpoint", hit);
-				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 30", 30, frame.getLineNumber());
-				count--;
+				
+				// should be modification
+				assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+				// line 27
+				assertEquals("Should be on line 27", 27, frame.getLineNumber());
+				
+				// should hit access 10 times
+				int count = 10;
+				while (count > 0) {
+					thread = resume(thread);
+					IDebugTarget debugTarget = thread.getDebugTarget();
+					hit = getBreakpoint(thread);
+					frame = thread.getTopStackFrame();
+					assertNotNull("No breakpoint", hit);
+					if (!(wp.isAccessSuspend(debugTarget))) {
+						targetAborted = debugTarget.isTerminated() || debugTarget.isDisconnected();
+					}
+					if (targetAborted) {
+						attempts++;
+						System.err.println("WARNING: Target aborted during 'testAccessAndModification()' - attempt #" + attempts);
+						break;
+					}
+					assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
+					assertEquals("Should be line 30", 30, frame.getLineNumber());
+					count--;
+				}
+				if (!targetAborted) {
+					resumeAndExit(thread);
+				}
+			} finally {
+				terminateAndRemove(thread);
+				removeAllBreakpoints();
+				if (targetAborted) {
+					Thread.sleep(2000);
+				}
 			}
-			
-			resumeAndExit(thread);
-
-		} finally {
-			terminateAndRemove(thread);
-			removeAllBreakpoints();
-		}		
+		}
+		assertFalse("Target aborted test " + attempts + " times", targetAborted);
 	}
 	
 	public void testModification() throws Exception {
@@ -108,39 +126,57 @@ public class WatchpointTests extends AbstractDebugTest {
 	}	
 	
 	public void testAccess() throws Exception {
-		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
+		// see Bug 148255 [tests] "should be access" test failure
+		boolean targetAborted = true;
+		int attempts = 0;
 		
-		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);
-		
-		IJavaThread thread= null;
-		try {
-			thread= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
-
-			wp = (IJavaWatchpoint) getBreakpoint(thread);
-			IStackFrame frame = thread.getTopStackFrame();
-			assertNotNull("No breakpoint", wp);
-			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());			
-			
-			// should hit access 9 more times
-			int count = 9;
-			while (count > 0) {
-				thread = resume(thread);
+		while (attempts < 10 && targetAborted) {
+			targetAborted = false;
+			String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
+			IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);
+			IJavaThread thread= null;
+			try {
+				thread= launchToBreakpoint(typeName);
+				assertNotNull("Breakpoint not hit within timeout period", thread);
+	
 				wp = (IJavaWatchpoint) getBreakpoint(thread);
-				frame = thread.getTopStackFrame();
+				IStackFrame frame = thread.getTopStackFrame();
 				assertNotNull("No breakpoint", wp);
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 30", 30, frame.getLineNumber());
-				count--;
+				assertEquals("Should be line 30", 30, frame.getLineNumber());			
+				
+				// should hit access 9 more times
+				int count = 9;
+				while (count > 0) {
+					thread = resume(thread);
+					IDebugTarget debugTarget = thread.getDebugTarget();
+					wp = (IJavaWatchpoint) getBreakpoint(thread);
+					frame = thread.getTopStackFrame();
+					assertNotNull("No breakpoint", wp);
+					if (!(wp.isAccessSuspend(debugTarget))) {
+						targetAborted = debugTarget.isTerminated() || debugTarget.isDisconnected();
+					}
+					if (targetAborted) {
+						attempts++;
+						System.err.println("WARNING: Target aborted during 'testAccess()' - attempt #" + attempts);
+						break;
+					}
+					assertTrue("Should be an access", wp.isAccessSuspend(debugTarget));
+					assertEquals("Should be line 30", 30, frame.getLineNumber());
+					count--;
+				}
+				if (!targetAborted) {
+					resumeAndExit(thread);
+				}
+			} finally {
+				terminateAndRemove(thread);
+				removeAllBreakpoints();
+				if (targetAborted) {
+					Thread.sleep(2000);
+				}
 			}
-			
-			resumeAndExit(thread);
-
-		} finally {
-			terminateAndRemove(thread);
-			removeAllBreakpoints();
-		}		
+		}
+		assertFalse("Target aborted test " + attempts + " times", targetAborted);
 	}	
 
 	public void testDisabledAccess() throws Exception {
