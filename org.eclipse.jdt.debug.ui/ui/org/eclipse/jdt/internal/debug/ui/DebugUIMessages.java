@@ -17,6 +17,12 @@ public class DebugUIMessages extends NLS {
 
 	public static String ExceptionHandler_seeErrorLogMessage;
 
+	public static String HeapWalkingPreferencePage_0;
+
+	public static String HeapWalkingPreferencePage_1;
+
+	public static String HeapWalkingPreferencePage_2;
+
 	public static String ImageDescriptorRegistry_Allocating_image_for_wrong_display_1;
 
 	public static String JavaDebugPreferencePage_21;

@@ -15,6 +15,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
@@ -52,11 +53,12 @@ public class AllInstancesActionDelegate extends ObjectActionDelegate implements 
 			IJavaType type = var.getJavaType();
 			if(type instanceof JDIReferenceType) {
 				JDIReferenceType rtype = (JDIReferenceType) type;
-				JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget) type.getDebugTarget(), rtype.getInstances(0));
+				long count = JDIDebugUIPlugin.getDefault().getPreferenceStore().getLong(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT);
+				JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget) type.getDebugTarget(), rtype.getInstances(count));
 				InspectPopupDialog ipd = new InspectPopupDialog(getWorkbenchWindow().getShell(), 
 						getAnchor((IDebugView) getPart().getAdapter(IDebugView.class)), 
 						ACTION_ID, 
-						new JavaInspectExpression(var.getName(), aiv)/*new JavaObjectCollection(rtype.getInstances(0), (IJavaDebugTarget) type.getDebugTarget()))*/);
+						new JavaInspectExpression(var.getName(), aiv));
 				ipd.open();
 			}
 		} catch (DebugException e) {}

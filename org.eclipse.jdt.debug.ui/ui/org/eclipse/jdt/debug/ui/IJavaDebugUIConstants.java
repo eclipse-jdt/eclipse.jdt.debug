@@ -83,6 +83,18 @@ public interface IJavaDebugUIConstants {
 	 */	
 	public static final String PREF_SHOW_THREAD_GROUPS = PLUGIN_ID + ".show_thread_group_info"; //$NON-NLS-1$	
 	
+	/**
+	 * Integer preference for the maximum number of instances to show with the All Instances action
+	 * 
+	 *   @since 3.3
+	 */
+	public static final String PREF_ALLINSTANCES_MAX_COUNT = PLUGIN_ID + ".all_instances_max_count"; //$NON-NLS-1$
 	
+	/**
+	 * Integer preference for the maximum number of references to show with the All References action
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_ALLREFERENCES_MAX_COUNT = PLUGIN_ID + ".all_references_max_count"; //$NON-NLS-1$
 	
 }

@@ -1884,6 +1884,15 @@
             name="%JreProfilesPage.name">
          <keywordReference id="org.eclipse.jdt.debug.ui.executionEnvironments"/>
       </page>
+      <page
+            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.HeapWalkingPreferencePage"
+            id="org.eclipse.jdt.debug.ui.heapWalking"
+            name="%heapwalkingPage.name">
+         <keywordReference
+               id="org.eclipse.jdt.debug.ui.heapWalking">
+         </keywordReference>
+      </page>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -2783,6 +2792,10 @@ M4 = Platform-specific fourth key
     <keyword
           id="org.eclipse.jdt.debug.ui.executionEnvironments"
           label="%preferenceKeywords.executionEnvironments"/>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.heapWalking"
+          label="java heap walking jdk 6.0 1.6 SE all instances references">
+    </keyword>
  </extension>
  <extension
        point="org.eclipse.ui.preferenceTransfer">

@@ -372,6 +372,18 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * creates a horizontal spacer for seperating components
+	 * @param comp
+	 * @param numlines
+	 */
+	public static void createHorizontalSpacer(Composite comp, int numlines) {
+		Label lbl = new Label(comp, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = numlines;
+		lbl.setLayoutData(gd);
+	}
+	
+	/**
 	 * This method is used to make a combo box
 	 * @param parent the parent composite to add the new combo to
 	 * @param style the style for the Combo

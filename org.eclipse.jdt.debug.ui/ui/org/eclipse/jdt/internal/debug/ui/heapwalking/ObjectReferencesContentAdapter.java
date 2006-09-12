@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  * Content adapter for object references.
@@ -28,7 +30,8 @@ public class ObjectReferencesContentAdapter extends AsynchronousContentAdapter {
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		if (parent instanceof IJavaObject) {
 			IJavaObject object = (IJavaObject) parent;
-			return object.getReferringObjects(0);
+			long count = JDIDebugUIPlugin.getDefault().getPreferenceStore().getLong(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT);
+			return object.getReferringObjects(count);
 		}
 		return null;
 	}

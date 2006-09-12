@@ -50,6 +50,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JAVA_PRIMITIVES_PREFERENCE_PAGE= PREFIX + "java_primitives_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_LOGICAL_STRUCTURES_PAGE = PREFIX + "java_logical_structures_page"; //$NON-NLS-1$
 	public static final String VMCAPABILITIES_PROPERTY_PAGE = PREFIX + "vm_capabilities_property_page"; //$NON-NLS-1$
+	public static final String JAVA_HEAPWALKING_PREFERENCE_PAGE = PREFIX + "java_heapwalking_preference_page"; //$NON-NLS-1$
 	
 	// reused ui-blocks
 	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$
