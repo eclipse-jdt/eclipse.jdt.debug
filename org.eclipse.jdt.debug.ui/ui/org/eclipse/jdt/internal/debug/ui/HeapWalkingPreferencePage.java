@@ -13,7 +13,9 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -50,9 +52,11 @@ public class HeapWalkingPreferencePage extends FieldEditorPreferencePage impleme
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
-		SWTUtil.createHorizontalSpacer(getFieldEditorParent(), 2);
-		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_1, getFieldEditorParent()));
-		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_2, getFieldEditorParent()));
+		Group igroup = SWTUtil.createGroup(getFieldEditorParent(), DebugUIMessages.HeapWalkingPreferencePage_3, 1, 1, GridData.FILL_HORIZONTAL);
+		Composite comp = SWTUtil.createComposite(igroup, igroup.getFont(), 1, 2, GridData.FILL_HORIZONTAL);
+		SWTUtil.createLabel(comp, DebugUIMessages.HeapWalkingPreferencePage_4, 2);
+		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_1, comp));
+		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_2, comp));
 	}
 
 	/* (non-Javadoc)
