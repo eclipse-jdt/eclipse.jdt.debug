@@ -26,6 +26,8 @@ import org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAct
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.ui.IActionFilter;
 
+import com.sun.jdi.ClassNotLoadedException;
+
 /**
  * Provides the action filter for Java and Inspect actions
  * 
@@ -81,9 +83,14 @@ public class JavaVarActionFilter implements IActionFilter {
 	protected boolean isPrimitiveType(Object obj) {
 		if(obj instanceof IJavaVariable) {
 			try {
-				return !fgPrimitiveTypes.contains(removeArray(((IJavaVariable)obj).getReferenceTypeName()));
+				return !fgPrimitiveTypes.contains(removeArray(((IJavaVariable) obj).getReferenceTypeName()));
 			} 
-			catch (DebugException e) {JDIDebugUIPlugin.log(e);}
+			catch (DebugException e) {
+				if(!(e.getStatus().getException() instanceof ClassNotLoadedException)) {
+					JDIDebugUIPlugin.log(e);
+				}
+				return false;
+			}
 		}
 		else if(obj instanceof JavaInspectExpression) {
 			try {
