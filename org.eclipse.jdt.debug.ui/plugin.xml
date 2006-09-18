@@ -1885,7 +1885,7 @@
          <keywordReference id="org.eclipse.jdt.debug.ui.executionEnvironments"/>
       </page>
       <page
-            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
+            category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
             class="org.eclipse.jdt.internal.debug.ui.HeapWalkingPreferencePage"
             id="org.eclipse.jdt.debug.ui.heapWalking"
             name="%heapwalkingPage.name">
