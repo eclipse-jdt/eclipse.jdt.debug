@@ -64,6 +64,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -204,7 +205,26 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				// bug 33746 - if there is no old name, then this is not a re-name.
 				if (oldName != null) {
 					oldId = oldId.append(oldName);
-					fRenamedContainerIds.put(oldId, newId);					
+					fRenamedContainerIds.put(oldId, newId);	
+					//bug 39222 update launch configurations that ref old name
+					try {
+						ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+						String container = null;
+						ILaunchConfigurationWorkingCopy wc = null;
+						IPath cpath = null;
+						for(int i = 0; i < configs.length; i++) {
+							container = configs[i].getAttribute(JavaRuntime.JRE_CONTAINER, (String)null);
+							if(container != null) {
+								cpath = new Path(container);
+								if(cpath.lastSegment().equals(oldName)) {
+									cpath = cpath.removeLastSegments(1).append(newId.lastSegment()).addTrailingSeparator();
+									wc = configs[i].getWorkingCopy();
+									wc.setAttribute(JavaRuntime.JRE_CONTAINER, cpath.toString());
+									wc.doSave();
+								}
+							}
+						}
+					} catch (CoreException e) {}
 				}
 			}
 		}
