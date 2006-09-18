@@ -17,13 +17,10 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
@@ -32,7 +29,6 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -67,7 +63,6 @@ public class AddVMDialog extends StatusDialog {
 	private IVMInstallType fSelectedVMType;
 	private Combo fVMCombo;
 	private Text fVMName;
-	private String fOldVMName = null;
 	private Text fVMArgs;
 	private Text fJRERoot;
 	private VMLibraryBlock fLibraryBlock;
@@ -363,9 +358,6 @@ public class AddVMDialog extends StatusDialog {
 	private IStatus validateVMName() {
 		StatusInfo status= new StatusInfo();
 		String name= fVMName.getText();
-		if(fOldVMName == null) {
-			fOldVMName = name;
-		}
 		if (name == null || name.trim().length() == 0) {
 			status.setInfo(JREMessages.addVMDialog_enterName); 
 		} else {
@@ -419,7 +411,6 @@ public class AddVMDialog extends StatusDialog {
 		} else {
 			setFieldValuesToVM(fEditedVM);
 		}
-		fOldVMName = null;
 		super.okPressed();
 	}
 	
@@ -449,25 +440,6 @@ public class AddVMDialog extends StatusDialog {
 			vm.setInstallLocation(dir.getAbsoluteFile());
 		}
 		vm.setName(fVMName.getText());
-		//process to update all launch configs that ref this vm
-		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
-			String container = null;
-			ILaunchConfigurationWorkingCopy wc = null;
-			for(int i = 0; i < configs.length; i++) {
-				container = configs[i].getAttribute(JavaRuntime.JRE_CONTAINER, (String)null);
-				if(container != null) {
-					int idx = container.indexOf(fOldVMName);
-					if(idx > -1) {
-						container = container.substring(0, idx)+fVMName.getText()+"/"; //$NON-NLS-1$
-						wc = configs[i].getWorkingCopy();
-						wc.setAttribute(JavaRuntime.JRE_CONTAINER, container);
-						wc.doSave();
-					}
-				}
-			}
-		} catch (CoreException e) {}
-		
 		vm.setJavadocLocation(getURL());
 		
 		String argString = fVMArgs.getText().trim();
