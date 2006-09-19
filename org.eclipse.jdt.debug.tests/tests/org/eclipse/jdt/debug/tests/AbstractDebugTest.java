@@ -23,9 +23,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -1362,6 +1364,33 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         config.doSave();
-    }	
+    }
+
+    
+	/* (non-Javadoc)
+	 * 
+	 * When a test throws the 'try again' exception, try it again.
+	 * 
+	 * @see junit.framework.TestCase#runBare()
+	 */
+	public void runBare() throws Throwable {
+		boolean tryAgain = true;
+		int attempts = 0;
+		while (tryAgain) {
+			try {
+				attempts++;
+				super.runBare();
+				tryAgain = false;
+			} catch (TestAgainException e) {
+				Status status = new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", "Test failed attempt " + attempts + ". Re-testing: " + this.getName(), e);
+				DebugPlugin.log(status);
+				if (attempts > 9) {
+					tryAgain = false;
+				}
+			}
+		}
+	}
+    
+    
 }
 
