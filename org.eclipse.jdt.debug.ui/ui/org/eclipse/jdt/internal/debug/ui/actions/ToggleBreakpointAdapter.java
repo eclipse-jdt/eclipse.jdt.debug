@@ -1137,7 +1137,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     		}
     		else {
     			//fall back to old behavior, always create a line breakpoint
-    			toggleLineBreakpoints(part, sel, true);
+    			toggleLineBreakpoints(part, selection, true);
     		}
     	}
     }
