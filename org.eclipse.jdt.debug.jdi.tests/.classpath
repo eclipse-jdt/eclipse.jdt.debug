@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="/org.eclipse.jdt.debug"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.junit_3.8.1/junit.jar"/>
+	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.junit_3.8.2/junit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
