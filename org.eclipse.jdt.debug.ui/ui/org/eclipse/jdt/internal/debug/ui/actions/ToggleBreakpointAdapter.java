@@ -494,17 +494,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				IMember member = (IMember) element;
 				return !member.getJavaProject().getProject().exists();
 			}
-			if(element instanceof IJavaFieldVariable) {
-				IJavaFieldVariable var = (IJavaFieldVariable) element;
-				try {
-					IType type = JavaDebugUtils.resolveType(var.getDeclaringType());
-					if(type != null) {
-						return !type.getJavaProject().getProject().exists();
-					}
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
 		}
     	ITextEditor editor = getTextEditor(part);
     	if (editor != null) {
