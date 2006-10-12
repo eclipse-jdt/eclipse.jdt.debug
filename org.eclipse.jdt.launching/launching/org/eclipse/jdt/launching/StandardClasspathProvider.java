@@ -11,10 +11,11 @@
 package org.eclipse.jdt.launching;
 
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -68,7 +69,8 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List all = new ArrayList(entries.length);
+		// use an ordered set to avoid duplicates
+		Set all = new LinkedHashSet(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
 			for (int j = 0; j < resolved.length; j++) {
