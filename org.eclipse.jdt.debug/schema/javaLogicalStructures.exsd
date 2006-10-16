@@ -12,8 +12,8 @@
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="javaLogicalStructure"/>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="javaLogicalStructure" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,8 +41,8 @@
 
    <element name="javaLogicalStructure">
       <complexType>
-         <sequence>
-            <element ref="variable"/>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="variable" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="type" type="string" use="required">
             <annotation>
