@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -52,7 +51,6 @@ public class SWTUtil {
 	 * @param	the button for which to set the dimension hint
 	 */		
 	public static void setButtonDimensionHint(Button button) {
-		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
 			((GridData)gd).widthHint= getButtonWidthHint(button);	

@@ -10,22 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage;
-import org.eclipse.jdt.internal.debug.ui.JavaLogicalStructuresPreferencePage;
-import org.eclipse.jdt.internal.debug.ui.JavaPrimitivesPreferencePage;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
@@ -47,24 +37,10 @@ public class VariableOptionsAction implements IViewActionDelegate, IPropertyChan
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        IPreferenceNode details = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", new JavaDetailFormattersPreferencePage()); //$NON-NLS-1$
-        IPreferenceNode structures = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage", new JavaLogicalStructuresPreferencePage()); //$NON-NLS-1$
-        IPreferenceNode primitives = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage", new JavaPrimitivesPreferencePage()); //$NON-NLS-1$
-        PreferenceManager manager = new PreferenceManager();
-        manager.addToRoot(details);
-        manager.addToRoot(structures);
-        manager.addToRoot(primitives);
-        final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
-        final boolean [] result = new boolean[] { false };
-        Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
-		pluginPreferences.addPropertyChangeListener(this);
-        BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
-            public void run() {
-                dialog.create();
-                result[0]= (dialog.open() == Window.OK);
-            }
-        }); 
-        pluginPreferences.removePropertyChangeListener(this);
+    	SWTUtil.showPreferencePage("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage",  //$NON-NLS-1$
+    			new String[] {"org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", //$NON-NLS-1$
+    							"org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage",  //$NON-NLS-1$
+    							"org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage"}); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
