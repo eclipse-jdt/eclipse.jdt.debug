@@ -123,6 +123,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		assertContains("Missing TEST_MODE", ids, "TEST_MODE");
 		assertContains("Missing debug mode", ids, ILaunchManager.DEBUG_MODE);
 		assertContains("Missing run mode", ids, ILaunchManager.RUN_MODE);
+		assertContains("Missing TEST_MODE", ids, "alternate");
 	}
 	
 	/**
@@ -166,7 +167,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		testGroup.createTabs(dialog, "TEST_MODE");
 		
 		ILaunchConfigurationTab[] tabs = standardGroup.getTabs();
-		assertEquals("Wrong number of tabs in the standard group", 7, tabs.length);
+		assertTrue("Wrong number of tabs in the standard group", tabs.length >= 7);
 		assertTrue("Tab 0 should be 'Main'", tabs[0] instanceof JavaMainTab);
 		assertTrue("Tab 1 should be 'Arguments'", tabs[1] instanceof JavaArgumentsTab);
 		assertTrue("Tab 2 should be 'JRE'", tabs[2] instanceof JavaJRETab);

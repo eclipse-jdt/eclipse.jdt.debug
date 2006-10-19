@@ -66,6 +66,10 @@
             label="TEST_MODE"
             mode="TEST_MODE">
       </launchMode>
+      <launchMode
+            label="Alternate"
+            mode="alternate">
+      </launchMode>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchDelegates">
@@ -82,6 +86,14 @@
             sourcePathComputerId="org.eclipse.jdt.debug.tests.testSourcePathComputer"
             modes="debug"
             id="org.eclipse.jdt.debug.tests.testSourceDelegate"/>
+      <launchDelegate
+            delegate="org.eclipse.jdt.debug.testplugin.AlternateDelegate"
+            id="org.eclipse.jdt.debug.tests.alternateDelegate"
+            modes="alternate"
+            name="Alternate Java Debugger"
+            options="debug"
+            type="org.eclipse.jdt.launching.localJavaApplication">
+      </launchDelegate>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -301,6 +313,15 @@
             contextId="org.eclipse.jdt.debug.ui.debugging"
             >
      </contextViewBinding>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.launchConfigurationTabs">
+     <tab
+           class="org.eclipse.jdt.debug.testplugin.JavaAlernateModeTab"
+           group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+           id="org.eclipse.jdt.debug.tests.alteranateTab"
+           name="Alterante Tab">
+     </tab>
   </extension>   
 
 </plugin>
