@@ -120,6 +120,8 @@ public class JavaMainTab extends SharedJavaMainTab {
 	
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 * 
+	 * @since 3.3
 	 */
 	public String getTabId() {
 		return "org.eclipse.jdt.debug.ui.javaMainTab"; //$NON-NLS-1$

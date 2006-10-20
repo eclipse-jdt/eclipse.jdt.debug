@@ -332,6 +332,8 @@ public class AppletMainTab extends SharedJavaMainTab {
 
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 * 
+	 * @since 3.3
 	 */
 	public String getTabId() {
 		return "org.eclipse.jdt.debug.ui.sourceLookupTab"; //$NON-NLS-1$
