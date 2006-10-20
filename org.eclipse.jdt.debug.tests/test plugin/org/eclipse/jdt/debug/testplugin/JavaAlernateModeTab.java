@@ -45,7 +45,9 @@ public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
 	 * @see org.eclipse.debug.ui.AbstractLaunchModeConfigurationTab#updateLaunchModeControls(java.util.Set)
 	 */
 	public void updateLaunchModeControls(Set modes) {
-		fAlternateModeCheckBox.setSelection(modes.contains("alternate"));
+		if(!fAlternateModeCheckBox.isDisposed()) {
+			fAlternateModeCheckBox.setSelection(modes.contains("alternate"));
+		}
 	}
 
 	/* (non-Javadoc)
@@ -95,6 +97,11 @@ public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
 		setControl(fAlternateModeCheckBox);
 	}
 	
-	
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.jdt.debug.tests.javaAlternateModeTab";
+	}
 
 }

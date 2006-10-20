@@ -382,6 +382,13 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	}
 		
 	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.jdt.debug.ui.javaConnectTab"; //$NON-NLS-1$
+	}
+	
+	/**
 	 * Returns the selected connector
 	 */
 	private IVMConnector getSelectedConnector() {

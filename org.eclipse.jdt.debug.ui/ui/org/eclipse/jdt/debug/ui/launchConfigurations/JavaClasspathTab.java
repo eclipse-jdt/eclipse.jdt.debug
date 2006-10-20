@@ -370,6 +370,13 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	}
 	
 	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.jdt.debug.ui.javaClasspathTab"; //$NON-NLS-1$
+	}
+	
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public static Image getClasspathImage() {

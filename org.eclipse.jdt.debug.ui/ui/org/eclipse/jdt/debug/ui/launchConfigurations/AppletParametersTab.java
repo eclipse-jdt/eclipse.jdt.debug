@@ -452,6 +452,13 @@ public class AppletParametersTab extends JavaLaunchTab {
 	}	
 	
 	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.jdt.debug.ui.appletParametersTab"; //$NON-NLS-1$
+	}
+	
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {

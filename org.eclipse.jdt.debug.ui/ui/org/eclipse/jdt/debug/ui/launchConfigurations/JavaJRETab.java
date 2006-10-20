@@ -281,6 +281,17 @@ public class JavaJRETab extends JavaLaunchTab {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 	}	
 
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.jdt.debug.ui.javaJRETab"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * This method updates the jre selection from the <code>ILaunchConfiguration</code>
+	 * @param config the config to update from 
+	 */
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
 		try {
 			String path = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);

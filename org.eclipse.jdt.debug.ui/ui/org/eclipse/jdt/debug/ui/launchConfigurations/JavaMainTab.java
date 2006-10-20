@@ -119,6 +119,13 @@ public class JavaMainTab extends SharedJavaMainTab {
 	}
 	
 	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.jdt.debug.ui.javaMainTab"; //$NON-NLS-1$
+	}
+	
+	/**
 	 * Show a dialog that lists all main types
 	 */
 	protected void handleSearchButtonSelected() {
