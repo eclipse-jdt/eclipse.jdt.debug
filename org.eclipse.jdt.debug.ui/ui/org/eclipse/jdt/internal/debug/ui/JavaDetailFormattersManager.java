@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
@@ -389,6 +390,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 	
 	protected String getArraySnippet(IJavaArray value) throws DebugException {
+		String signature = value.getSignature();
+		int nesting = Signature.getArrayCount(signature);
+		if (nesting > 1) {
+			// for nested primitive arrays, print everything
+			if (Signature.getElementType(signature).length() == 1) {
+				// return null so we get to "valueToString(IJavaValue)"
+				return null;
+			}
+		}
 		if (((IJavaArrayType)value.getJavaType()).getComponentType() instanceof IJavaReferenceType) {
 			int length = value.getLength();
 			// guestimate at max entries to print based on char/space/comma per entry
