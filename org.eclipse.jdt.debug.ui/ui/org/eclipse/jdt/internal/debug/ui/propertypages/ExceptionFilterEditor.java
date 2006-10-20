@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
@@ -21,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.Filter;
 import org.eclipse.jdt.internal.debug.ui.FilterLabelProvider;
-import org.eclipse.jdt.internal.debug.ui.FilterViewerSorter;
+import org.eclipse.jdt.internal.debug.ui.FilterViewerComparator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -134,7 +135,7 @@ public class ExceptionFilterEditor {
 		fFilterViewer = new CheckboxTableViewer(fFilterTable);
 		fTableEditor = new TableEditor(fFilterTable);
 		fFilterViewer.setLabelProvider(new FilterLabelProvider());
-		fFilterViewer.setSorter(new FilterViewerSorter());
+		fFilterViewer.setComparator(new FilterViewerComparator());
 		fFilterContentProvider = new FilterContentProvider(fFilterViewer);
 		fFilterViewer.setContentProvider(fFilterContentProvider);
 		// input just needs to be non-null

@@ -162,7 +162,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fTableLabel.setFont(font);
 		fTableViewer = CheckboxTableViewer.newCheckList(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		fTableViewer.setLabelProvider(new FilterLabelProvider());
-		fTableViewer.setSorter(new FilterViewerSorter());
+		fTableViewer.setComparator(new FilterViewerComparator());
 		fTableViewer.setContentProvider(new StepFilterContentProvider());
 		fTableViewer.setInput(getAllStoredFilters(false));
 		fTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -36,7 +36,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Adds an internal folder to the runtime class path.
@@ -93,7 +93,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
 		dialog.addFilter(new FileFilter());
-		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+        dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		dialog.setValidator(validator);
 		dialog.setTitle(ActionMessages.AddFolderAction_Folder_Selection_4); 
 		dialog.setMessage(ActionMessages.AddFolderAction_Choose_folders_to_add__5); 

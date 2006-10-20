@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
-public class FilterViewerSorter extends WorkbenchViewerSorter {
+public class FilterViewerComparator extends WorkbenchViewerComparator {
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		ILabelProvider lprov =
 			(ILabelProvider) ((ContentViewer) viewer).getLabelProvider();
