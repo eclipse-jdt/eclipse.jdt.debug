@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +56,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class SelectImportsDialog extends TitleAreaDialog {
 
