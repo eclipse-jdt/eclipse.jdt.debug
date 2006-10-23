@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -247,7 +247,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 			}
 		});
 		
-		fViewer.setSorter(new ViewerSorter());
+		fViewer.setComparator(new ViewerComparator());
 		
 		Composite envButtonComp = new Composite(parametersComp, SWT.NONE);
 		GridLayout envButtonLayout = new GridLayout();

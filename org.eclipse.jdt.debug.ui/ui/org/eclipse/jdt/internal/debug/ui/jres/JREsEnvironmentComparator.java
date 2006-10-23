@@ -13,14 +13,14 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * Sorts execution environments.
  * 
- * @since 3.2
+ * @since 3.3
  */
-public class JREsEnvironmentSorter extends ViewerSorter {
+public class JREsEnvironmentComparator extends ViewerComparator {
 	
 	IExecutionEnvironment fEnvironment;
 

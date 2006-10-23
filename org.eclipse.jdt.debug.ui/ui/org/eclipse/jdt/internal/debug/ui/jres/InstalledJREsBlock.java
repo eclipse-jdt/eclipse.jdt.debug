@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,7 +50,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -72,6 +71,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -440,7 +441,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Sorts by VM type, and name within type.
 	 */
 	private void sortByType() {
-		fVMList.setSorter(new ViewerSorter() {
+		fVMList.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -467,7 +468,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Sorts by VM name.
 	 */
 	private void sortByName() {
-		fVMList.setSorter(new ViewerSorter() {
+		fVMList.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -488,7 +489,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Sorts by VM location.
 	 */
 	private void sortByLocation() {
-		fVMList.setSorter(new ViewerSorter() {
+		fVMList.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;

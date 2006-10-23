@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -144,7 +144,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fProfilesViewer = new TableViewer(table);
 		fProfilesViewer.setContentProvider(new ArrayContentProvider());
 		fProfilesViewer.setLabelProvider(new ExecutionEnvironmentsLabelProvider());
-		fProfilesViewer.setSorter(new ViewerSorter());
+		fProfilesViewer.setComparator(new ViewerComparator());
 		fProfilesViewer.setInput(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments());
 		
 		Composite jreContainer = new Composite(container, SWT.NONE);
@@ -168,7 +168,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 				return (IExecutionEnvironment) fJREsViewer.getInput();
 			}
 		}));
-		fJREsViewer.setSorter(new JREsEnvironmentSorter());
+		fJREsViewer.setComparator(new JREsEnvironmentComparator());
 		
 		label = new Label(container, SWT.NONE);
 		label.setFont(ancestor.getFont());
