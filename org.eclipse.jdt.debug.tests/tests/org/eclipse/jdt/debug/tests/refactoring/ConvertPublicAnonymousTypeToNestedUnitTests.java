@@ -168,7 +168,7 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 		ISourceRange typeInfo = type.getSourceRange();
 		int target = typeInfo.getOffset(); 
 		
-		ConvertAnonymousToNestedRefactoring ref= new ConvertAnonymousToNestedRefactoring(cunit, null, target, 0);
+		ConvertAnonymousToNestedRefactoring ref= new ConvertAnonymousToNestedRefactoring(cunit, target, 0);
 		//configure the ref a little more here!
 		ref.setClassName("NewAnonymousClass");			
 		
