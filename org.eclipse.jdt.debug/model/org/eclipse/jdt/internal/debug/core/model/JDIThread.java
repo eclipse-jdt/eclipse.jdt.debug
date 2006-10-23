@@ -150,12 +150,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private List fCurrentBreakpoints = new ArrayList(2);
 	/**
-	 * State for whether this thread is currently performing
+	 * Whether this thread is currently performing
 	 * an evaluation. An evaluation may involve a series
-	 * of method invocations. Non-negative when performing 
-	 * an evaluation.
+	 * of method invocations.
 	 */
-	private int fEvaluationDetail = -1;
+	private boolean fIsPerformingEvaluation= false;
 	private IEvaluationRunnable fEvaluationRunnable;
 	
 	/**
@@ -364,21 +363,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
-		return isStepEnabled();
+		return canStep();
 	}
 
 	/**
 	 * @see IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
-		return isStepEnabled();
+		return canStep();
 	}
 
 	/**
 	 * @see IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
-		return isStepEnabled();
+		return canStep();
 	}
 
 	/**
@@ -400,18 +399,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return false;
 		}
 	}
-	
-	/**
-	 * Returns whether the step action should be enabled for this
-	 * thread. This check "lies" a little based on the implicit
-	 * evaluation state of the thread to avoid disabling the step
-	 * action during an implicit evaluation.
-	 * 
-	 * @return whether the step action should be enabled for this thread.
-	 */
-	protected boolean isStepEnabled() {
-		return canStep() || fEvaluationDetail == DebugEvent.EVALUATION_IMPLICIT;
-	}	
 
 	/**
 	 * Determines and sets whether this thread represents a system thread.
@@ -514,7 +501,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					fStackFrames.add(0, new JDIStackFrame(this, (StackFrame) frames.get(i), depth));
 					depth++;
 				}
-				int numToRebind = Math.min(newSize, oldSize); // number of frames to attempt to re-bind
+				int numToRebind = Math.min(newSize, oldSize); // number of frames to attempt to rebind
 				int offset = newSize - 1;
 				for (depth = 0; depth < numToRebind; depth++) {
 					JDIStackFrame oldFrame = (JDIStackFrame) fStackFrames.get(offset);
@@ -639,7 +626,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			requestFailed(JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		}
 		
-		fEvaluationDetail = evaluationDetail;
+		fIsPerformingEvaluation = true;
 		fEvaluationRunnable= evaluation;
 		fHonorBreakpoints= hitBreakpoints;
 		fireResumeEvent(evaluationDetail);
@@ -650,7 +637,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (DebugException e) {
 			throw e;
 		} finally {
-			fEvaluationDetail = -1;
+			fIsPerformingEvaluation = false;
 			fEvaluationRunnable= null;
 			fHonorBreakpoints= true;
 			if (getBreakpoints().length == 0 && breakpoints.length > 0) {
@@ -793,7 +780,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			preserveStackFrames();
 			int flags= ClassType.INVOKE_SINGLE_THREADED;
 			if (invokeNonvirtual) {
-				// Superclass method invocation must be performed non virtual.
+				// Superclass method invocation must be performed nonvirtual.
 				flags |= ObjectReference.INVOKE_NONVIRTUAL;
 			}
 			if (receiverClass == null) {
@@ -1304,7 +1291,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IStep#stepInto()
 	 */
 	public synchronized void stepInto() throws DebugException {
-		if (!canStep()) {
+		if (!canStepInto()) {
 			return;
 		}
 		StepHandler handler = new StepIntoHandler();
@@ -1318,7 +1305,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IStep#stepOver()
 	 */
 	public synchronized void stepOver() throws DebugException {
-		if (!canStep()) {
+		if (!canStepOver()) {
 			return;
 		}
 		StepHandler handler = new StepOverHandler();
@@ -1332,7 +1319,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IStep#stepReturn()
 	 */
 	public synchronized void stepReturn() throws DebugException {
-		if (!canStep()) {
+		if (!canStepReturn()) {
 			return;
 		}
 		StepHandler handler = new StepReturnHandler();
@@ -1571,7 +1558,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			} catch (InvalidStackFrameException exception) {
 				// InvalidStackFrameException can be thrown when all but the
 				// deepest frame were popped. Fire a changed notification
-				// in case this has occurred.
+				// in case this has occured.
 				fireChangeEvent(DebugEvent.CONTENT);
 				targetRequestFailed(exception.toString(),exception); 
 			} catch (RuntimeException exception) {
@@ -1626,7 +1613,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				}
 			} catch (DebugException e) {
-				// if the thread has since resumed, return null (no need to report error)
+				// if the thread has since reusmed, return null (no need to report error)
 				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 					throw e;
 				}
@@ -1707,12 +1694,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#isPerformingEvaluation()
 	 */
 	public boolean isPerformingEvaluation() {
-		return fEvaluationDetail >= 0;
+		return fIsPerformingEvaluation;
 	}
 	
 	/**
 	 * Returns whether this thread is currently performing
-	 * a method invocation 
+	 * a method invokation 
 	 */
 	public boolean isInvokingMethod() {
 		return fIsInvokingMethod;
@@ -2224,7 +2211,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
 			try {
 				int numFrames = getUnderlyingFrameCount();
-				// TOS should not be null
+				// tos should not be null
 				if (numFrames <= getRemainingFrames()) {
 					stepEnd();
 					return false;
