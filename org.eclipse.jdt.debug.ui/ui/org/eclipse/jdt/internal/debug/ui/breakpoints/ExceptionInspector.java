@@ -17,12 +17,13 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.InspectPopupDialog;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextManager;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -46,46 +47,47 @@ public class ExceptionInspector implements IDebugContextListener, IPropertyChang
 		Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
 		pluginPreferences.addPropertyChangeListener(this);
 		if (pluginPreferences.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION)) {
-			DebugContextManager.getDefault().addDebugContextListener(this);
+			DebugUITools.getDebugContextManager().addDebugContextListener(this);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		if (part != null) {
-			if (IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {
-				if (part.getSite().getWorkbenchWindow().getActivePage().isPartVisible(part)) {
-					if (selection instanceof IStructuredSelection) {
-						IStructuredSelection ss = (IStructuredSelection) selection;
-						if (ss.size() == 1) {
-							Object firstElement = ss.getFirstElement();
-							if (firstElement instanceof IAdaptable) {
-								IJavaStackFrame frame = (IJavaStackFrame) ((IAdaptable)firstElement).getAdapter(IJavaStackFrame.class);
-								if (frame != null) {
-									IJavaThread thread = (IJavaThread)frame.getThread();
-									try {
-										if (frame.equals(thread.getTopStackFrame())) {
-											IBreakpoint[] breakpoints = thread.getBreakpoints();
-											if (breakpoints.length == 1) {
-												if (breakpoints[0] instanceof IJavaExceptionBreakpoint) {
-													IJavaExceptionBreakpoint exception = (IJavaExceptionBreakpoint) breakpoints[0];
-													IJavaObject lastException = ((JavaExceptionBreakpoint)exception).getLastException();
-													if (lastException != null) {
-														IExpression exp = new JavaInspectExpression(exception.getExceptionTypeName(), lastException);
-														Tree tree = (Tree) ((IDebugView)part).getViewer().getControl();
-														TreeItem[] selection2 = tree.getSelection();
-														Rectangle bounds = selection2[0].getBounds();
-														Point point = tree.toDisplay(bounds.x, bounds.y + bounds.height);
-														InspectPopupDialog dialog = new InspectPopupDialog(part.getSite().getShell(),
-																point, PopupInspectAction.ACTION_DEFININIITION_ID, exp);
-														dialog.open();
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			IWorkbenchPart part = event.getDebugContextProvider().getPart();
+			if (part != null) {
+				if (IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {
+					if (part.getSite().getWorkbenchWindow().getActivePage().isPartVisible(part)) {
+						ISelection selection = event.getContext();
+						if (selection instanceof IStructuredSelection) {
+							IStructuredSelection ss = (IStructuredSelection) selection;
+							if (ss.size() == 1) {
+								Object firstElement = ss.getFirstElement();
+								if (firstElement instanceof IAdaptable) {
+									IJavaStackFrame frame = (IJavaStackFrame) ((IAdaptable)firstElement).getAdapter(IJavaStackFrame.class);
+									if (frame != null) {
+										IJavaThread thread = (IJavaThread)frame.getThread();
+										try {
+											if (frame.equals(thread.getTopStackFrame())) {
+												IBreakpoint[] breakpoints = thread.getBreakpoints();
+												if (breakpoints.length == 1) {
+													if (breakpoints[0] instanceof IJavaExceptionBreakpoint) {
+														IJavaExceptionBreakpoint exception = (IJavaExceptionBreakpoint) breakpoints[0];
+														IJavaObject lastException = ((JavaExceptionBreakpoint)exception).getLastException();
+														if (lastException != null) {
+															IExpression exp = new JavaInspectExpression(exception.getExceptionTypeName(), lastException);
+															Tree tree = (Tree) ((IDebugView)part).getViewer().getControl();
+															TreeItem[] selection2 = tree.getSelection();
+															Rectangle bounds = selection2[0].getBounds();
+															Point point = tree.toDisplay(bounds.x, bounds.y + bounds.height);
+															InspectPopupDialog dialog = new InspectPopupDialog(part.getSite().getShell(),
+																	point, PopupInspectAction.ACTION_DEFININIITION_ID, exp);
+															dialog.open();
+														}
 													}
 												}
-											}
-										} 
-									} catch (DebugException e) {}
+											} 
+										} catch (DebugException e) {}
+									}
 								}
 							}
 						}
@@ -106,7 +108,7 @@ public class ExceptionInspector implements IDebugContextListener, IPropertyChang
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION.equals(event.getProperty())) {
-			IDebugContextManager manager = DebugContextManager.getDefault();
+			IDebugContextManager manager = DebugUITools.getDebugContextManager();
 			if (JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION)) {
 				manager.addDebugContextListener(this);
  			} else {

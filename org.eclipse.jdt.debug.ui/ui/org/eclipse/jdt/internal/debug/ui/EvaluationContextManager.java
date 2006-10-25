@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
@@ -56,7 +57,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	private IWorkbenchWindow fActiveWindow;
 	
 	private EvaluationContextManager() {
-		DebugContextManager.getDefault().addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().addDebugContextListener(this);
 	}
 	
 	public static void startup() {
@@ -227,32 +228,33 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		return frame;
 	}
 	
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		if (part != null) {
-			IWorkbenchPage page = part.getSite().getPage();
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection)selection;
-				if (ss.size() == 1) {
-					Object element = ss.getFirstElement();
-					if (element instanceof IAdaptable) {
-						IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
-						boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
-						if (frame != null) {
-							// do not consider scrapbook frames
-							if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-								setContext(page, frame, instOf);
-								return;
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			IWorkbenchPart part = event.getDebugContextProvider().getPart();
+			if (part != null) {
+				IWorkbenchPage page = part.getSite().getPage();
+				ISelection selection = event.getContext();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ss = (IStructuredSelection)selection;
+					if (ss.size() == 1) {
+						Object element = ss.getFirstElement();
+						if (element instanceof IAdaptable) {
+							IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
+							boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
+							if (frame != null) {
+								// do not consider scrapbook frames
+								if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
+									setContext(page, frame, instOf);
+									return;
+								}
 							}
 						}
 					}
 				}
+				// no context in the given view
+				removeContext(page);
 			}
-			// no context in the given view
-			removeContext(page);
 		}
 	}
 
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {
-	}
-	
 }
