@@ -20,6 +20,10 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class DebugEventTests extends AbstractDebugTest {
 
+	/**
+	 * Constructor
+	 * @param name the name of the test
+	 */
 	public DebugEventTests(String name) {
 		super(name);
 	}

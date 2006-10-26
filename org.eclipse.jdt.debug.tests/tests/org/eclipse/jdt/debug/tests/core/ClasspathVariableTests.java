@@ -26,12 +26,17 @@ import org.eclipse.jdt.launching.LibraryLocation;
  */
 public class ClasspathVariableTests extends AbstractDebugTest {
 		
+	/**
+	 * Constructor
+	 * @param name the name of the test
+	 */
 	public ClasspathVariableTests(String name) {
 		super(name);
 	}
 
 	/**
 	 * Tests that we do not fail on a null variable
+	 * @throws CoreException
 	 */
 	public void testNullVariableResolution() throws CoreException {
 		String varName = "NULL_VARIABLE";
@@ -42,6 +47,10 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Entries should be equal", entry, resolved[0]);
 	}
 	
+	/**
+	 * test JRE resolution
+	 * @throws CoreException
+	 */
 	public void testJRELibResolution() throws CoreException {
 		String varName = JavaRuntime.JRELIB_VARIABLE;
 		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName));
@@ -57,6 +66,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	/**
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a null source attachment.
+	 * @throws Exception
 	 */
 	public void testVariableExtensionWithNullSourceAttachment() throws Exception {
 		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
@@ -77,6 +87,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a source attachment rooted with a null
 	 * variable with an extension.
+	 * @throws Exception
 	 */
 	public void testVariableExtensionWithNullSourceAttachmentWithExtension() throws Exception {
 		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");

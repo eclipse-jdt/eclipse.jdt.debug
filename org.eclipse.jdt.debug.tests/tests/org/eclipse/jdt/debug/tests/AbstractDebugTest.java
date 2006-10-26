@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -36,12 +37,15 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.core.LaunchDelegate;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -97,17 +101,24 @@ import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
-
- 
 /**
  * Tests for launch configurations
  */
 public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
 	
+	/**
+	 * the default timeout
+	 */
 	public static final int DEFAULT_TIMEOUT = 30000;
 	
+	/**
+	 * an evaluation result
+	 */
 	public IEvaluationResult fEvaluationResult;
 	
+	/**
+	 * the java project
+	 */
 	public static IJavaProject fJavaProject;
 	
 	/**
@@ -116,6 +127,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected DebugEvent[] fEventSet;
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public AbstractDebugTest(String name) {
 		super(name);
 		// set error dialog to non-blocking to avoid hanging the UI during test
@@ -180,6 +195,43 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject getJavaProject(String name) {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		return JavaCore.create(project);
+	}
+	
+	/**
+	 * New to 3.3 is the ability to have multiple delegates for a variety of overlapping mode combinations.
+	 * As such, for tests that launch specific configurations, must be check to ensure that there is a preferred 
+	 * launch delegate available for the launch in the event there are duplicates. Otherwise the tests
+	 * will hang waiting for a user to select a resolution action.
+	 * @param configuration
+	 * @param modes
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 */
+	protected void ensurePreferredDelegate(ILaunchConfiguration configuration, Set modes) throws CoreException {
+		ILaunchConfigurationType type = configuration.getType();
+		ILaunchDelegate[] delegates = type.getDelegates(modes);
+		if(delegates.length > 1) {
+			type.setPreferredDelegate(modes, getDelegateById(type.getIdentifier(), "org.eclipse.jdt.launching.localJavaApplication"));
+		}
+	}
+	
+	/**
+	 * Returns the LaunchDelegate for the specified ID
+	 * @param delegateId the id of the delegate to search for
+	 * @return the <code>LaunchDelegate</code> associated with the specified id or <code>null</code> if not found
+	 * @throws CoreException
+	 * @since 3.3
+	 */
+	protected ILaunchDelegate getDelegateById(String typeId, String delegateId) throws CoreException {
+		LaunchManager lm = (LaunchManager) getLaunchManager();
+		LaunchDelegate[] delegates = lm.getLaunchDelegates(typeId);
+		for(int i = 0; i < delegates.length; i++) {
+			if(delegates[i].getId().equals(delegateId)) {
+				return delegates[i];
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -592,13 +644,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
-	 * 
+	 * Creates am  new java line breakpoint
 	 * @param lineNumber
 	 * @param root
 	 * @param packageName
 	 * @param cuName
 	 * @param fullTargetName
-	 * @return
+	 * @return a new line breakpoint
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String root, String packageName, String cuName, 
 			String fullTargetName) throws Exception{
@@ -989,11 +1041,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 * @throws CoreException
 	 * 
-	 * @see
-	 * </code>
+	 * <p>
+	 * <pre>
 	 * Syntax example:
 	 * Type$InnerType$MethodNameAndSignature$AnonymousTypeDeclarationNumber$FieldName
-	 * eg:<code>
+	 * eg:
 	 * public class Foo{
 	 * 		class Inner
 	 * 		{
@@ -1005,7 +1057,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 				}
 	 * 			}
 	 * 		}
-	 * }</code>
+	 * }</pre>
+	 * </p>
 	 * To get the anonymous toString, syntax of fullTargetName would be: <code>Foo$Inner$aMethod()V$1$anIntField</code> 
 	 */
 	protected IJavaWatchpoint createNestedTypeWatchPoint(String root, String packageName, String cuName, 
@@ -1366,11 +1419,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         config.doSave();
     }
 
-    
-	/* (non-Javadoc)
-	 * 
+	/**
 	 * When a test throws the 'try again' exception, try it again.
-	 * 
 	 * @see junit.framework.TestCase#runBare()
 	 */
 	public void runBare() throws Throwable {

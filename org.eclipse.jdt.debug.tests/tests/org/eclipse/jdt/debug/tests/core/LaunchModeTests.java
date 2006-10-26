@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import junit.framework.AssertionFailedError;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -128,6 +132,9 @@ public class LaunchModeTests extends AbstractDebugTest {
 	
 	/**
 	 * Asserts that the array contains the given object
+	 * @param message
+	 * @param array
+	 * @param object
 	 */
 	static public void assertContains(String message, Object[] array, Object object) {
 		for (int i = 0; i < array.length; i++) {
@@ -137,10 +144,10 @@ public class LaunchModeTests extends AbstractDebugTest {
 		}
 		throw new AssertionFailedError(message);
 	}	
-	
+
 	/**
 	 * Ensure our contributed mode is supported.
-	 *
+	 * @throws CoreException
 	 */
 	public void testSupportsMode() throws CoreException {
 		ILaunchConfiguration configuration = getLaunchConfiguration("Breakpoints");
@@ -157,6 +164,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests that mode specific tab group contributions work.
+	 * @throws CoreException
 	 */
 	public void testModeSpecificTabGroups() throws CoreException {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION); 
@@ -167,22 +175,22 @@ public class LaunchModeTests extends AbstractDebugTest {
 		testGroup.createTabs(dialog, "TEST_MODE");
 		
 		ILaunchConfigurationTab[] tabs = standardGroup.getTabs();
-		assertTrue("Wrong number of tabs in the standard group", tabs.length >= 7);
-		assertTrue("Tab 0 should be 'Main'", tabs[0] instanceof JavaMainTab);
-		assertTrue("Tab 1 should be 'Arguments'", tabs[1] instanceof JavaArgumentsTab);
-		assertTrue("Tab 2 should be 'JRE'", tabs[2] instanceof JavaJRETab);
-		assertTrue("Tab 3 should be 'Classpath'", tabs[3] instanceof JavaClasspathTab);
-		assertTrue("Tab 4 should be 'Sourcepath'", tabs[4] instanceof SourceLookupTab);
-		assertTrue("Tab 5 should be 'Environment'", tabs[5] instanceof EnvironmentTab);
-		assertTrue("Tab 6 should be 'Common'", tabs[6] instanceof CommonTab);
+		HashSet tabset = new HashSet();
+		for(int i = 0; i< tabs.length; i++) {
+			tabset.add(tabs[i].getClass());
+		}
+		Class[] classes = new Class[] {JavaMainTab.class, JavaArgumentsTab.class, JavaJRETab.class, JavaClasspathTab.class,
+				SourceLookupTab.class, EnvironmentTab.class, CommonTab.class};
+		assertTrue("Tab set does not contain all default java tabs", tabset.containsAll(new HashSet(Arrays.asList(classes))));
 		
 		tabs = testGroup.getTabs();
 		assertEquals("Wrong number of tabs in the test group", 4, tabs.length);
-		assertTrue("Tab 0 should be 'Main'", tabs[0] instanceof JavaMainTab);
-		assertTrue("Tab 1 should be 'Arguments'", tabs[1] instanceof JavaArgumentsTab);
-		assertTrue("Tab 2 should be 'JRE'", tabs[2] instanceof JavaJRETab);
-		assertTrue("Tab 3 should be 'Classpath'", tabs[3] instanceof JavaClasspathTab);
-		
+		tabset = new HashSet();
+		for(int i = 0; i< tabs.length; i++) {
+			tabset.add(tabs[i].getClass());
+		}
+		classes = new Class[] {JavaMainTab.class, JavaArgumentsTab.class, JavaJRETab.class, JavaClasspathTab.class};
+		assertTrue("Test tab set does not contain all default tabs", tabset.containsAll(new HashSet(Arrays.asList(classes))));
 		standardGroup.dispose();
 		testGroup.dispose();
 	}

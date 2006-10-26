@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.HashSet;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -28,15 +30,25 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	private boolean removed = false;
 	private boolean terminated = false; 
 	
+	/**
+	 * Constructor
+	 * @param name the name of the test
+	 */
 	public LaunchTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * test launch notification
+	 * @throws CoreException
+	 */
 	public void testLaunchNotification() throws CoreException {
 		String typeName = "Breakpoints";		
-
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		getLaunchManager().addLaunchListener(this);
+		HashSet set = new HashSet();
+		set.add(ILaunchManager.DEBUG_MODE);
+		ensurePreferredDelegate(configuration, set);
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
 		synchronized (this) {
 			if (!added) {
@@ -95,7 +107,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
        }	   
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
 	public synchronized void launchRemoved(ILaunch launch) {
@@ -103,19 +115,17 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		notifyAll();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
 	public synchronized void launchAdded(ILaunch launch) {
 		added = true;
 		notifyAll();
 	}
-
-	/* (non-Javadoc)
+	
+	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
-	public synchronized void launchChanged(ILaunch launch) {
-
-	}
+	public synchronized void launchChanged(ILaunch launch) {}
 
 }

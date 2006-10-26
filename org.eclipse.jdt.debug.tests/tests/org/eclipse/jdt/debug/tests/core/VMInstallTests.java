@@ -25,10 +25,17 @@ import org.eclipse.jdt.launching.JavaRuntime;
  */
 public class VMInstallTests extends AbstractDebugTest {
 		
+	/**
+	 * Constructor
+	 * @param name the name of the test
+	 */
 	public VMInstallTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests the java version from the VMInstall
+	 */
 	public void testJavaVersion() {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		assertTrue("should be an IVMInstall2", def instanceof IVMInstall2);
@@ -37,6 +44,10 @@ public class VMInstallTests extends AbstractDebugTest {
         assertNotNull("default VM is missing java.version", javaVersion);
 	}
 	
+	/**
+	 * Test acquiring the set of system properties
+	 * @throws CoreException
+	 */
 	public void testSystemProperties() throws CoreException {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		assertTrue("should be an IVMInstall3", def instanceof IVMInstall3);

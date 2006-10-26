@@ -26,10 +26,18 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	private boolean removed = false;
 	private boolean terminated = false; 
 	
+	/**
+	 * Constructor
+	 * @param name the name of the test
+	 */
 	public LaunchesTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests deferred breakpoints
+	 * @throws CoreException
+	 */
 	public void testDeferredBreakpoints() throws CoreException {
 		String typeName = "Breakpoints";		
 
@@ -69,7 +77,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 		assertTrue("Launch should have been removed", removed);		
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
 	public synchronized void launchesTerminated(ILaunch[] launches) {
@@ -77,7 +85,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 		notifyAll();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
 	public synchronized void launchesRemoved(ILaunch[] launches) {
@@ -85,7 +93,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 		notifyAll();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
 	public synchronized void launchesAdded(ILaunch[] launches) {
@@ -93,11 +101,9 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 		notifyAll();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchChanged(org.eclipse.debug.core.ILaunch[])
+	/**
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
-	public synchronized void launchesChanged(ILaunch[] launches) {
-
-	}
+	public synchronized void launchesChanged(ILaunch[] launches) {}
 
 }

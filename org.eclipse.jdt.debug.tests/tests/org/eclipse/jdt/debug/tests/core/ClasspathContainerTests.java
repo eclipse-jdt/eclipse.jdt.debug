@@ -59,18 +59,25 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 			return new Path(JavaRuntime.JRE_CONTAINER);
 		}
 		
+		/**
+		 * @param cpe
+		 */
 		public void setEntries(IClasspathEntry[] cpe) {
 			entries = cpe;
 		}
 
 	}
 	
+	/**
+	 * @param name
+	 */
 	public ClasspathContainerTests(String name) {
 		super(name);
 	}
 
 	/**
 	 * Tests that the container will accept an update
+	 * @throws CoreException
 	 */
 	public void testCanUpdate() throws CoreException {
 		// Create a new VM install that mirros the current install
