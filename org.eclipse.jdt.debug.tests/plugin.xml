@@ -70,6 +70,10 @@
             label="Alternate"
             mode="alternate">
       </launchMode>
+      <launchMode
+            label="Alternate 2"
+            mode="alternate2">
+      </launchMode>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchDelegates">
@@ -96,6 +100,26 @@
          <modeCombination
                modes="alternate, debug">
          </modeCombination>
+         <modeCombination
+               modes="debug, alternate2">
+         </modeCombination>
+         <modeCombination
+               modes="alternate2, debug, alternate">
+         </modeCombination>
+      </launchDelegate>
+      <launchDelegate
+            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate1"
+            id="org.eclipse.jdt.debug.tests.testDelegate1"
+            modes="alternate2"
+            name="Testing Multiple Launch Delegate"
+            type="org.eclipse.jdt.launching.localJavaApplication">
+      </launchDelegate>
+      <launchDelegate
+            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate2"
+            id="org.eclipse.jdt.debug.tests.testtDelegate2"
+            modes="alternate2"
+            name="Testing Multiple Launch Delegate 2"
+            type="org.eclipse.jdt.launching.localJavaApplication">
       </launchDelegate>
    </extension>
    <extension
@@ -324,6 +348,36 @@
            group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
            id="org.eclipse.jdt.debug.tests.alteranateTab"
            name="Alterante Tab">
+        <placement
+              after="org.nonexistant.tab.placement">
+        </placement>
+     </tab>
+     <tab
+           class="org.eclipse.jdt.debug.testplugin.ContributedTestTab1"
+           group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+           id="org.eclipse.jdt.debug.tests.testTab1"
+           name="Test Tab 1">
+        <placement
+              after="org.eclipse.jdt.debug.ui.javaMainTab">
+        </placement>
+     </tab>
+     <tab
+           class="org.eclipse.jdt.debug.testplugin.ContributedTestTab2"
+           group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+           id="org.eclipse.jdt.debug.tests.TestTab2"
+           name="Test Tab 2">
+        <placement
+              after="org.eclipse.jdt.debug.ui.javaArgumentsTab">
+        </placement>
+     </tab>
+     <tab
+           class="org.eclipse.jdt.debug.testplugin.ContributedTestTab3"
+           group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+           id="org.eclipse.jdt.debug.tests.TestTab3"
+           name="Test Tab 3">
+        <placement
+              after="org.eclipse.jdt.debug.ui.javaArgumentsTab">
+        </placement>
      </tab>
   </extension>   
 

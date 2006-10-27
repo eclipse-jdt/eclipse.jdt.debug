@@ -102,7 +102,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaSourceLookupTab"; //$NON-NLS-1$
 	}
 	

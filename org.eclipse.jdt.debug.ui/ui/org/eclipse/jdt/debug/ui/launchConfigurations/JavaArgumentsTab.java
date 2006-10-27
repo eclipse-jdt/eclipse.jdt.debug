@@ -251,7 +251,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaArgumentsTab"; //$NON-NLS-1$
 	}
 

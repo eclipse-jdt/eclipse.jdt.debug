@@ -386,7 +386,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 * 
 	 * @since 3.3
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaConnectTab"; //$NON-NLS-1$
 	}
 	

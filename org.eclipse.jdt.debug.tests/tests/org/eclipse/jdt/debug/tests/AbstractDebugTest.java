@@ -47,8 +47,14 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.LaunchDelegate;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -497,6 +503,30 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
 		
 		return thread;		
+	}
+	
+	/**
+	 * Returns the standard java launch tab group
+	 * @return the standard java launch tab grooup
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 */
+	protected ILaunchConfigurationTabGroup getJavaLaunchGroup() throws CoreException {
+		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION); 
+		ILaunchConfigurationTabGroup standardGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(javaType, ILaunchManager.DEBUG_MODE);
+		return standardGroup;
+	}
+	
+	/**
+	 * Returns an instance of the launch configuration dialog on the the specified launch mode
+	 * @param modeid the id of the mode to open the launch dialog on
+	 * @return an new instance of <code>IlaunchConfigurationDialog</code>
+	 * 
+	 * @since 3.3
+	 */
+	protected ILaunchConfigurationDialog getLaunchConfigurationDialog(String modeid) {
+		return new LaunchConfigurationsDialog(null, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(modeid));
 	}
 	
 	/**
