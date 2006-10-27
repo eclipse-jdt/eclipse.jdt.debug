@@ -84,7 +84,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		HashSet modes = new HashSet();
 		modes.add("alternate");
 		modes.add(ILaunchManager.DEBUG_MODE);
-		assertTrue("Should support mixed mode (alternate/debug)", type.supportsModes(modes));
+		assertTrue("Should support mixed mode (alternate/debug)", type.supportsModeCombination(modes));
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
 		assertTrue("missing delegate", delegates.length > 0);
 		assertEquals("Wrong number of delegates", 1, delegates.length);
@@ -101,7 +101,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		assertNotNull("Missing java application launch config type", type);
 		HashSet modes = new HashSet();
 		modes.add(ILaunchManager.DEBUG_MODE);
-		assertTrue("Should support mode (debug)", type.supportsModes(modes));
+		assertTrue("Should support mode (debug)", type.supportsModeCombination(modes));
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
 		assertTrue("missing delegate", delegates.length > 0);
 		boolean found = false;
@@ -124,7 +124,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		assertNotNull("Missing java application launch config type", type);
 		HashSet modes = new HashSet();
 		modes.add("alternate");
-		assertTrue("Should support mode (alternate)", type.supportsModes(modes));
+		assertTrue("Should support mode (alternate)", type.supportsModeCombination(modes));
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
 		assertTrue("missing delegate", delegates.length > 0);
 		assertEquals("Wrong number of delegates", 1, delegates.length);

@@ -172,7 +172,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.jdt.debug.ui.standardVMCommandTab"; //$NON-NLS-1$
 	}
 	

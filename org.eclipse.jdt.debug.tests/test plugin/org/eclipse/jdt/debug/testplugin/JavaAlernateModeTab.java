@@ -98,9 +98,9 @@ public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
 	}
 	
 	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.jdt.debug.tests.javaAlternateModeTab";
 	}
 
