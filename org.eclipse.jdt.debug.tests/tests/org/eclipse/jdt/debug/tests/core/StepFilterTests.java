@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Step filtering tests
- * This test forces the UI plugins to load.
+ * This test forces the UI plug-ins to load.
  */
 public class StepFilterTests extends AbstractDebugTest {
 
@@ -36,19 +36,19 @@ public class StepFilterTests extends AbstractDebugTest {
 	public void testSimpleStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
-		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(23, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp, false);
+			thread= launchToLineBreakpoint(typeName, bp, true);
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
+			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 22, but was " + lineNumber, lineNumber == 22);			
+			assertEquals("Wrong line number", 24, lineNumber);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -59,7 +59,7 @@ public class StepFilterTests extends AbstractDebugTest {
 	public void testInactiveStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo");
 		String typeName = "StepFilterOne";
-		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(23, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;
@@ -69,9 +69,9 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			assertTrue("Receiving type name should have been 'StepFilterTwo' but was " + recTypeName, recTypeName.equals("StepFilterTwo"));
+			assertEquals("Wrong receiving type", "StepFilterTwo", recTypeName);
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 25, but was " + lineNumber, lineNumber == 25);			
+			assertEquals("Wrong line number", 25, lineNumber);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -82,7 +82,7 @@ public class StepFilterTests extends AbstractDebugTest {
 	public void testDeepStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
-		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(24, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;
@@ -92,9 +92,9 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepIntoWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			assertTrue("Receiving type name should have been 'StepFilterThree' but was " + recTypeName, recTypeName.equals("StepFilterThree"));
+			assertEquals("Wrong receiving type", "StepFilterThree", recTypeName);
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 19, but was " + lineNumber, lineNumber == 19);			
+			assertEquals("Wrong line number", 19, lineNumber);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -115,9 +115,9 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepReturnWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
+			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 23, but was " + lineNumber, lineNumber == 23);			
+			assertEquals("Wrong line number", 23, lineNumber);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -138,9 +138,9 @@ public class StepFilterTests extends AbstractDebugTest {
 			thread = stepOverWithFilters(stackFrame);
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			String recTypeName = stackFrame.getReceivingTypeName();
-			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
+			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 23, but was " + lineNumber, lineNumber == 23);			
+			assertEquals("Wrong line number", 23, lineNumber);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
