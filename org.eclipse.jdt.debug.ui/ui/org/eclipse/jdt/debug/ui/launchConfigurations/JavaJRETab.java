@@ -282,7 +282,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	}	
 
 	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 * 
 	 * @since 3.3
 	 */
