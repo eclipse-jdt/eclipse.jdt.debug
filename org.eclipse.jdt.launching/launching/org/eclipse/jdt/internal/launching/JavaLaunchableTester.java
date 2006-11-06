@@ -151,16 +151,61 @@ public class JavaLaunchableTester extends PropertyTester {
 	private boolean hasMain(IJavaElement element) {
 		try {
             IType type = getType(element);
-			if (type != null && type.exists()) {
-				IMethod[] methods = type.getMethods();
-				for (int i= 0; i < methods.length; i++) {
-					if(methods[i].isMainMethod()) {
-							return true;
+            if(type != null && type.exists()) {
+				if(hasMainMethod(type)) {
+					return true;
+				}
+				//failed to find in public type, check static inner types
+				IJavaElement[] children = type.getChildren();
+				for(int i = 0; i < children.length; i++) {
+					if(hasMainInChildren(getType(children[i]))) {
+						return true;
 					}
+				}
+            }
+		}
+		catch (JavaModelException e) {}
+		catch (CoreException ce){}
+		return false;
+	}
+	
+	/**
+	 * Returns if the specified <code>IType</code> has a main method
+	 * @param type the type to inspect for a main type
+	 * @return true if the sepcified type has a main method, false otherwise
+	 * @throws JavaModelException
+	 * @since 3.3
+	 */
+	private boolean hasMainMethod(IType type) throws JavaModelException {
+		IMethod[] methods = type.getMethods();
+		for (int i= 0; i < methods.length; i++) {
+			if(methods[i].isMainMethod()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * This method asks the specified <code>IType</code> if it has a main method, if not it recurses through all of its children
+	 * When recursing we only care about child <code>IType</code>s that are static. 
+	 * @param type the <code>IType</code> to inspect for a main method
+	 * @return true if a main method was found in specified <code>IType</code>, false otherwsie
+	 * @throws CoreException
+	 * @since 3.3
+	 */
+	private boolean hasMainInChildren(IType type) throws CoreException {
+		if(type.isClass() & Flags.isStatic(type.getFlags())) {
+			if(hasMainMethod(type)) {
+				return true;
+			}
+			else {
+				IJavaElement[] children = type.getChildren();
+				for(int i = 0; i < children.length; i++) {
+					return hasMainInChildren(getType(children[i]));
 				}
 			}
 		}
-		catch (JavaModelException e) {}
 		return false;
 	}
 	
@@ -259,9 +304,9 @@ public class JavaLaunchableTester extends PropertyTester {
 					return true;
 				}
 			}
-		} catch (JavaModelException e) {
-		} catch (InvalidInputException e) {
-		}
+		} 
+		catch (JavaModelException e) {} 
+		catch (InvalidInputException e) {}
 		return false;
 	}	
 
