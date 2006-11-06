@@ -451,12 +451,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return model thread
 	 */
 	protected JDIThread createThread(ThreadReference thread) {
-		JDIThread jdiThread= null;
-		try {
-			jdiThread= new JDIThread(this, thread);
-		} catch (ObjectCollectedException exception) {
-			// ObjectCollectionException can be thrown if the thread has already
-			// completed (exited) in the VM.
+		JDIThread jdiThread= newThread(thread);
+		if (jdiThread == null) {
 			return null;
 		}
 		if (isDisconnected()) {
@@ -467,6 +463,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		jdiThread.fireCreationEvent();
 		return jdiThread;
+	}
+	
+	/**
+	 * Factory method for creating new threads. Creates and returns a new thread
+	 * object for the underlying thread reference, or <code>null</code> if none
+	 * 
+	 * @param reference thread reference
+	 * @return JDI model thread
+	 */
+	protected JDIThread newThread(ThreadReference reference) {
+		try {
+			return new JDIThread(this, reference);
+		} catch (ObjectCollectedException exception) {
+			// ObjectCollectionException can be thrown if the thread has already
+			// completed (exited) in the VM.
+		}
+		return null;
 	}
 	
 	/**
