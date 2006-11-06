@@ -394,8 +394,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		int nesting = Signature.getArrayCount(signature);
 		if (nesting > 1) {
 			// for nested primitive arrays, print everything
-			if (Signature.getElementType(signature).length() == 1) {
-				// return null so we get to "valueToString(IJavaValue)"
+			String sig = Signature.getElementType(signature);
+			if (sig.length() == 1 || "Ljava/lang/String;".equals(sig)) { //$NON-NLS-1$
+				// return null so we get to "valueToString(IJavaValue)" for primitive and string types
 				return null;
 			}
 		}
