@@ -39,6 +39,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -521,6 +522,26 @@ public class AddVMDialog extends StatusDialog {
          } 
          return section;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		IDialogSettings settings = getDialogBoundsSettings();
+		if(settings != null) {
+			try {
+				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
+				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
+				if(width > 0 & height > 0) {
+					return new Point(width, height);
+				}
+			}
+			catch (NumberFormatException nfe) {
+				return new Point(500, 500);
+			}
+		}
+		return new Point(500, 500);
+	}
 
 	protected void setButtonLayoutData(Button button) {
 		super.setButtonLayoutData(button);
