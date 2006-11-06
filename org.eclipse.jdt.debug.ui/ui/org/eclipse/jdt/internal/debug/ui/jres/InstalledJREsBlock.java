@@ -31,6 +31,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -57,6 +58,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -688,7 +690,22 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		};
 		
 		try {
-            ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell());
+            ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell()) {
+                /*
+                 * Overidden createCancelButton to replace Cancel label with Stop label
+                 * More accurately reflects action taken when button pressed.
+                 * Bug [162902]
+                 */
+                protected void createCancelButton(Composite parent) {
+                    cancel = createButton(parent, IDialogConstants.CANCEL_ID,
+                            IDialogConstants.STOP_LABEL, true);
+                    if (arrowCursor == null) {
+            			arrowCursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
+            		}
+                    cancel.setCursor(arrowCursor);
+                    setOperationCancelButtonEnabled(enableCancelButton);
+                }
+            };
             progress.run(true, true, r);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
