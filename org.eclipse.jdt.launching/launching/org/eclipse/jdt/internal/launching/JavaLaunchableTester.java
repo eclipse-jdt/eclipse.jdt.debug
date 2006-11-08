@@ -202,7 +202,9 @@ public class JavaLaunchableTester extends PropertyTester {
 			else {
 				IJavaElement[] children = type.getChildren();
 				for(int i = 0; i < children.length; i++) {
-					return hasMainInChildren(getType(children[i]));
+					if(children[i].getElementType() == IJavaElement.TYPE) {
+						return hasMainInChildren((IType) children[i]);
+					}
 				}
 			}
 		}
