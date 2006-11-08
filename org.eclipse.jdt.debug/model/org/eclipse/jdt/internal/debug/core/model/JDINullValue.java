@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 /**
  * Represents a value of "null"
  */
-public class JDINullValue extends JDIValue {
+public class JDINullValue extends JDIObjectValue {
 	
 	
 	public JDINullValue(JDIDebugTarget target) {

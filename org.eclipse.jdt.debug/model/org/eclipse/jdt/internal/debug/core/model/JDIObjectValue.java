@@ -271,7 +271,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				if (enclosingThis != null) {
 				    JDIDebugTarget debugTarget = (JDIDebugTarget)getDebugTarget();
 				    JDIFieldVariable fieldVariable = new JDIFieldVariable(debugTarget, enclosingThis, res.getUnderlyingObject());
-				    res= (JDIObjectValue)fieldVariable.getValue();
+				    res = (JDIObjectValue)fieldVariable.getValue();
 				} else {
 				    // it is possible to return null
 				    return null;
