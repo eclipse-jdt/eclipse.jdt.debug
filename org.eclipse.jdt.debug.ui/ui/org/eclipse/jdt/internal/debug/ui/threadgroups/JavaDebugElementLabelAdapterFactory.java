@@ -17,7 +17,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAda
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
-import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectLabelAdapter;
 import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectReferencesContentAdapter;
 
@@ -27,9 +26,6 @@ import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectReferencesContentAdap
  */
 public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 	
-	private static IAsynchronousLabelAdapter fgThreadGroupLabelAdapter = new JavaThreadGroupLabelAdapter();
-	private static IAsynchronousContentAdapter fgThreadGroupTreeAdapter = new JavaThreadGroupContentAdapter();
-	private static IAsynchronousContentAdapter fgTargetTreeAdapter = new JavaDebugTargetContentAdapter();
 	private static IModelProxyFactoryAdapter fgJavaModelProxyFactory = new JavaModelProxyFactory();
 	private static IAsynchronousLabelAdapter fgObjectLabelAdapter = new ObjectLabelAdapter();
 	private static IAsynchronousContentAdapter fgObjectContentAdapter = new ObjectReferencesContentAdapter();
@@ -41,20 +37,11 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
-			if (adaptableObject instanceof IJavaThreadGroup) {
-				return fgThreadGroupLabelAdapter;
-			}
 			if (adaptableObject instanceof IJavaObject) {
 				return fgObjectLabelAdapter;
 			}
 		}
 		if (adapterType.equals(IAsynchronousContentAdapter.class)) {
-			if (adaptableObject instanceof IJavaThreadGroup) {
-				return fgThreadGroupTreeAdapter;
-			}
-			if (adaptableObject instanceof IJavaDebugTarget) {
-				return fgTargetTreeAdapter;
-			}
 			if (adaptableObject instanceof IJavaObject) {
 				return fgObjectContentAdapter;
 			}

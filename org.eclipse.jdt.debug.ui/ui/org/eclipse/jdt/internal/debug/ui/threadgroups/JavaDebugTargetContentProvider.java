@@ -33,7 +33,7 @@ public class JavaDebugTargetContentProvider extends DebugTargetContentProvider {
 				if (debugTarget.isDisconnected() || debugTarget.isTerminated()) {
 					return 0;
 				}
-				return (debugTarget).getRootThreadGroups().length;
+				return debugTarget.getRootThreadGroups().length;
 			}
 		}
 		return super.getChildCount(element, context, monitor);
