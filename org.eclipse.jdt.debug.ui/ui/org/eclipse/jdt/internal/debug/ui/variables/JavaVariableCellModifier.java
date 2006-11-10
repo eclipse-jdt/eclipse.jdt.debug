@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
@@ -22,16 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
  * 
  */
 public class JavaVariableCellModifier extends DefaultVariableCellModifier {
-
-    /**
-     * Constructs a new cell modifier for Java variables.
-     * 
-     * @param context
-     */
-    public JavaVariableCellModifier(IPresentationContext context) {
-        super(context);
-    }
-
+	
     /*
      * (non-Javadoc)
      * 

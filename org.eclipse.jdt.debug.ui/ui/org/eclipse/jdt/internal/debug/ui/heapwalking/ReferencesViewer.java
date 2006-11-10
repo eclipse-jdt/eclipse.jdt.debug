@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.swt.widgets.Composite;
 

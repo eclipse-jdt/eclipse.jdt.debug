@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
+import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
@@ -27,7 +27,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
  * @since 3.2
  *
  */
-public class JavaVariableLabelAdapter extends VariableLabelAdapter {
+public class JavaVariableLabelProvider extends VariableLabelProvider {
 	
 	public static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
 	
@@ -76,7 +76,7 @@ public class JavaVariableLabelAdapter extends VariableLabelAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getColumnText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue, java.lang.String, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
-	protected String getColumnText(IVariable variable, IValue value, String columnId, IPresentationContext context) throws CoreException {
+	protected String getColumnText(IVariable variable, IValue value, IPresentationContext context, String columnId) throws CoreException {
 		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_ID.equals(columnId)) {
 			if (value instanceof JDIObjectValue) {
 				long uniqueId = ((JDIObjectValue)value).getUniqueId();
@@ -87,7 +87,7 @@ public class JavaVariableLabelAdapter extends VariableLabelAdapter {
 				return ""; //$NON-NLS-1$
 			}
 		}
-		return super.getColumnText(variable, value, columnId, context);
+		return super.getColumnText(variable, value, context, columnId);
 	}
 	
 	

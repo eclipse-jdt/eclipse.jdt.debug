@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;

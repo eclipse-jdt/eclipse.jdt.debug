@@ -37,7 +37,7 @@ public class JavaVariableColumnEditor extends VariableColumnEditor {
 	 */
 	public ICellModifier getCellModifier() {
 		if (fModifier == null) {
-			fModifier = new JavaVariableCellModifier(getPresentationContext());
+			fModifier = new JavaVariableCellModifier();
 		}
 		return fModifier;
 	}

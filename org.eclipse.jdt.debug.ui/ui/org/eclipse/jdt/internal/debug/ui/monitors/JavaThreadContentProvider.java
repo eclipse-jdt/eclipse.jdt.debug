@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -20,15 +21,47 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.JavaDebugUtils;
 
 /**
- * Generates monitor information as well as stack frames
+ * Java thread presentation adapter.
+ * 
+ * @since 3.3
  */
-public class AsyncJavaThreadAdapter extends AsyncMonitorAdapter {
+public class JavaThreadContentProvider extends JavaElementContentProvider {
 
-	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-		IJavaThread thread = (IJavaThread) parent;
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+	 */
+	protected int getChildCount(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+		IJavaThread thread = (IJavaThread)element;
+		if (!thread.isSuspended()) {
+			return 0;
+		}
+		int childCount = thread.getFrameCount();
+		if (isDisplayMonitors()) {
+			if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
+				childCount+= thread.getOwnedMonitors().length;
+				if (thread.getContendedMonitor() != null) {
+					childCount++;
+				}
+			} else {
+				// unavailable notice
+				childCount++;
+			}
+		}
+		return childCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+		IJavaThread thread = (IJavaThread)parent;
 		if (!thread.isSuspended()) {
 			return EMPTY;
 		}
+		return getElements(getChildren(thread), index, length);
+	}
+	
+	protected Object[] getChildren(IJavaThread thread) {
 		try {
 			IStackFrame[] frames = thread.getStackFrames();
 			if (!isDisplayMonitors()) {
@@ -64,12 +97,17 @@ public class AsyncJavaThreadAdapter extends AsyncMonitorAdapter {
 			return children;
 		} catch (DebugException e) {
 			return EMPTY;
-		}
+		}		
 	}
 
-	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
-		IJavaThread thread = (IJavaThread) element;
-		return thread.hasStackFrames();
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected boolean hasChildren(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+		return ((IJavaThread)element).hasStackFrames() ||
+			(isDisplayMonitors() && ((IJavaThread)element).hasOwnedMonitors());
 	}
+	
+	
 
 }
