@@ -2578,5 +2578,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getFrameCount()
+	 */
+	public int getFrameCount() throws DebugException {
+		return getUnderlyingFrameCount();
+	}
 	
 }

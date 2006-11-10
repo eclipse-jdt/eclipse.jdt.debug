@@ -258,4 +258,13 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @since 3.3
 	 */
 	public boolean isDaemon() throws DebugException;
+	
+	/**
+	 * Returns the number of frames in this thread.
+	 * 
+	 * @return number of stack frames
+	 * @throws DebugException if an exception occurs while retrieving the count
+	 * @since 3.3
+	 */
+	public int getFrameCount() throws DebugException;
 }
