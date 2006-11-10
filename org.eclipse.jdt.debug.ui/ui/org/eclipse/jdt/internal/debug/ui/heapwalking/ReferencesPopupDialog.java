@@ -20,6 +20,8 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugPopup;
@@ -30,6 +32,7 @@ import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -64,7 +67,7 @@ public class ReferencesPopupDialog extends DebugPopup {
 
     private static final int MIN_HEIGHT = 200;
 
-    private ReferencesViewer fViewer;
+    private TreeModelViewer fViewer;
 
     private StyledText fValueDisplay;
 
@@ -77,6 +80,11 @@ public class ReferencesPopupDialog extends DebugPopup {
     private IJavaObject fRoot;
     
     private IDebugView fView;
+
+	/**
+	 * Used to identify the presentation context for this viewer
+	 */
+	public static final String VIEWER_ID = IJavaDebugUIConstants.PLUGIN_ID + ".REFERENCES_VIEWER"; //$NON-NLS-1$
 
     /**
      * Creates a new inspect popup.
@@ -104,7 +112,7 @@ public class ReferencesPopupDialog extends DebugPopup {
         fSashForm.setOrientation(SWT.VERTICAL);
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        fViewer = new ReferencesViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL);
+        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL, new PresentationContext(ReferencesPopupDialog.VIEWER_ID));
         
         fValueDisplay = new StyledText(fSashForm, SWT.NO_TRIM | SWT.WRAP | SWT.V_SCROLL);
         fValueDisplay.setEditable(false);
@@ -175,9 +183,6 @@ public class ReferencesPopupDialog extends DebugPopup {
      * @see org.eclipse.debug.ui.DebugPopup#close()
      */
     public boolean close() {
-    	if(fViewer != null) {
-    		fViewer.dispose();
-    	}
     	if(fModelPresentation != null) {
     		fModelPresentation.dispose();
     	}

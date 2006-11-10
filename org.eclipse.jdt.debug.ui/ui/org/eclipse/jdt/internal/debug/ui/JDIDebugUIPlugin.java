@@ -54,13 +54,14 @@ import org.eclipse.jdt.internal.debug.ui.breakpoints.JavaBreakpointTypeAdapterFa
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntryAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
-import org.eclipse.jdt.internal.debug.ui.monitors.JavaDebugElementAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
+import org.eclipse.jdt.internal.debug.ui.monitors.MonitorsAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.internal.debug.ui.sourcelookup.JavaDebugShowInAdapterFactory;
-import org.eclipse.jdt.internal.debug.ui.threadgroups.JavaDebugElementLabelAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.threadgroups.ObjectReferencesAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.threadgroups.TargetAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.ThreadGroupAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.ColumnPresentationAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.JavaVariableAdapterFactory;
@@ -346,16 +347,19 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         IAdapterFactory typeFactory = new JavaBreakpointTypeAdapterFactory();
         manager.registerAdapters(typeFactory, IJavaBreakpoint.class);
         
-        IAdapterFactory monitorFactory = new JavaDebugElementAdapterFactory();
+        IAdapterFactory monitorFactory = new MonitorsAdapterFactory();
         manager.registerAdapters(monitorFactory, IJavaThread.class);
         manager.registerAdapters(monitorFactory, JavaContendedMonitor.class);
         manager.registerAdapters(monitorFactory, JavaOwnedMonitor.class);
         manager.registerAdapters(monitorFactory, JavaOwningThread.class);
         manager.registerAdapters(monitorFactory, JavaWaitingThread.class);
         manager.registerAdapters(monitorFactory, IJavaStackFrame.class);
-        IAdapterFactory labelFactory = new JavaDebugElementLabelAdapterFactory();
-        manager.registerAdapters(labelFactory, IJavaDebugTarget.class);
-        manager.registerAdapters(labelFactory, IJavaObject.class);
+        
+        IAdapterFactory targetFactory = new TargetAdapterFactory();
+        manager.registerAdapters(targetFactory, IJavaDebugTarget.class);
+        
+        IAdapterFactory objectFactory = new ObjectReferencesAdapterFactory();
+        manager.registerAdapters(objectFactory, IJavaObject.class);
         
         IAdapterFactory groupFactory = new ThreadGroupAdapterFactory();
         manager.registerAdapters(groupFactory, IJavaThreadGroup.class);

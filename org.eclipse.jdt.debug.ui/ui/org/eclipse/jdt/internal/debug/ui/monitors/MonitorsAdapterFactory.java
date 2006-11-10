@@ -20,8 +20,8 @@ import org.eclipse.jdt.internal.debug.ui.variables.JavaStackFrameContentProvider
  * Adapter factory that generates content adapters for java debug elements to
  * provide thread monitor information in the debug view.
  */
-public class JavaDebugElementAdapterFactory implements IAdapterFactory {
-    
+public class MonitorsAdapterFactory implements IAdapterFactory {
+	
     private static IElementContentProvider fgCPThread;
     private static IElementContentProvider fgCPFrame = new JavaStackFrameContentProvider();
     private static IElementContentProvider fgCPOwnedMonitor;
@@ -33,6 +33,7 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
     public Object getAdapter(Object adaptableObject, Class adapterType) {
+		
     	if (IElementContentProvider.class.equals(adapterType)) {
     		if (adaptableObject instanceof IJavaThread) {
 	        	return getThreadPresentation();

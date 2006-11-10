@@ -13,39 +13,22 @@ package org.eclipse.jdt.internal.debug.ui.threadgroups;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaObject;
-import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectLabelAdapter;
-import org.eclipse.jdt.internal.debug.ui.heapwalking.ObjectReferencesContentAdapter;
 
 /**
- * @since 3.2
- *
+ * Adapter factory for Java debug target.
+ * 
+ * @since 3.3
  */
-public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
+public class TargetAdapterFactory implements IAdapterFactory{
 	
 	private static IModelProxyFactoryAdapter fgJavaModelProxyFactory = new JavaModelProxyFactory();
-	private static IAsynchronousLabelAdapter fgObjectLabelAdapter = new ObjectLabelAdapter();
-	private static IAsynchronousContentAdapter fgObjectContentAdapter = new ObjectReferencesContentAdapter();
-	
-	private static IElementContentProvider fgTargetPresentation = new JavaDebugTargetContentProvider();
+	private static IElementContentProvider fgCPTarget = new JavaDebugTargetContentProvider();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
-			if (adaptableObject instanceof IJavaObject) {
-				return fgObjectLabelAdapter;
-			}
-		}
-		if (adapterType.equals(IAsynchronousContentAdapter.class)) {
-			if (adaptableObject instanceof IJavaObject) {
-				return fgObjectContentAdapter;
-			}
-		}
 		if (adapterType.equals(IModelProxyFactoryAdapter.class)) {
 			if (adaptableObject instanceof IJavaDebugTarget) {
 				return fgJavaModelProxyFactory;
@@ -53,17 +36,18 @@ public class JavaDebugElementLabelAdapterFactory implements IAdapterFactory{
 		}
 		if (adapterType.equals(IElementContentProvider.class)) {
 			if (adaptableObject instanceof IJavaDebugTarget) {
-				return fgTargetPresentation;
+				return fgCPTarget;
 			}
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class, IModelProxyFactoryAdapter.class,
+		return new Class[]{
+				IModelProxyFactoryAdapter.class,
 				IElementContentProvider.class};
 	}
 
