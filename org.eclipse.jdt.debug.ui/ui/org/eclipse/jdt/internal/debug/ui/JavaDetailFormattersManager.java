@@ -362,6 +362,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */
 	private Expression getCompiledExpression(IJavaObject javaObject, IJavaDebugTarget debugTarget, IJavaThread thread) throws CoreException {
 		IJavaType type= javaObject.getJavaType();
+		if (type == null) {
+			return null;
+		}
 		String typeName= type.getName();
 		Key key= new Key(typeName, debugTarget);
 		if (fCacheMap.containsKey(key)) {
