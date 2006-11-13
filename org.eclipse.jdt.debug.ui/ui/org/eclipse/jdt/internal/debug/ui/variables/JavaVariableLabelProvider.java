@@ -80,12 +80,13 @@ public class JavaVariableLabelProvider extends VariableLabelProvider {
 		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_ID.equals(columnId)) {
 			if (value instanceof JDIObjectValue) {
 				long uniqueId = ((JDIObjectValue)value).getUniqueId();
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(uniqueId);
-				return buffer.toString();
-			} else {
-				return ""; //$NON-NLS-1$
+				if (uniqueId >= 0) {
+					StringBuffer buffer = new StringBuffer();
+					buffer.append(uniqueId);
+					return buffer.toString();
+				}
 			}
+			return ""; //$NON-NLS-1$
 		}
 		return super.getColumnText(variable, value, context, columnId);
 	}

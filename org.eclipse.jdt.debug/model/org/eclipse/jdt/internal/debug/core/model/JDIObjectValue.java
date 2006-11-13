@@ -345,14 +345,19 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * Returns the unique id for this object.
 	 * 
-	 * @return unique id
+	 * @return unique id or -1 if this value is null
 	 * @throws DebugException
 	 * 
 	 * TODO: make API on IJavaObject
 	 */
 	public long getUniqueId() throws DebugException {
 		try {
-			return getUnderlyingObject().uniqueID();
+			ObjectReference underlyingObject = getUnderlyingObject();
+			if (underlyingObject != null) {
+				return underlyingObject.uniqueID();
+			} else {
+				return -1L;
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_unique_id, new String[] {e.toString()}), e); 
 			// execution will not reach this line, as
