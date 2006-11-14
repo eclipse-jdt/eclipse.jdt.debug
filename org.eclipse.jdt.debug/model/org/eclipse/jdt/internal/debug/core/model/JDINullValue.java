@@ -30,10 +30,17 @@ import com.ibm.icu.text.MessageFormat;
 public class JDINullValue extends JDIObjectValue {
 	
 	
+	/**
+	 * Constructor
+	 * @param target
+	 */
 	public JDINullValue(JDIDebugTarget target) {
 		super(target, null);
 	}
 
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getVariablesList()
+	 */
 	protected List getVariablesList() {
 		return Collections.EMPTY_LIST;
 	}
@@ -94,34 +101,62 @@ public class JDINullValue extends JDIObjectValue {
 		return "null"; //$NON-NLS-1$
 	}
 
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getField(java.lang.String, boolean)
+	 */
 	public IJavaFieldVariable getField(String name, boolean superField) {
 		return null;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getField(java.lang.String, java.lang.String)
+	 */
 	public IJavaFieldVariable getField(String name, String typeSignature) {
 		return null;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getWaitingThreads()
+	 */
 	public IJavaThread[] getWaitingThreads() {
 		return null;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getOwningThread()
+	 */
 	public IJavaThread getOwningThread() {
 		return null;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getReferringObjects(long)
+	 */
 	public IJavaObject[] getReferringObjects(long max)  {
 		return new IJavaObject[0];
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread, boolean)
+	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException{
 		return npe(selector, signature);
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
+	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, String typeSignature) throws DebugException{
 		return npe(selector, signature);
 	}
 	
+	/**
+	 * Creates an artificial NPE for display to the user as an error message
+	 * @param selector
+	 * @param signature
+	 * @return
+	 * @throws DebugException
+	 */
 	private IJavaValue npe(String selector, String signature) throws DebugException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(selector);
