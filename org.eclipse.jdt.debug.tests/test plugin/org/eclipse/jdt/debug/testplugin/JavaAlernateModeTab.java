@@ -16,7 +16,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchModeConfigurationTab;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationListenerTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @since 3.3
  */
-public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
+public class JavaAlernateModeTab extends AbstractLaunchConfigurationListenerTab {
 	
 	private Button fAlternateModeCheckBox;
 
@@ -42,15 +43,6 @@ public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchModeConfigurationTab#updateLaunchModeControls(java.util.Set)
-	 */
-	public void updateLaunchModeControls(Set modes) {
-		if(!fAlternateModeCheckBox.isDisposed()) {
-			fAlternateModeCheckBox.setSelection(modes.contains("alternate"));
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
@@ -60,12 +52,7 @@ public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
-			updateLaunchModeControls(configuration.getModes());
-		} catch (CoreException e) {
-		}
-	}
+	public void initializeFrom(ILaunchConfiguration configuration) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -102,6 +89,17 @@ public class JavaAlernateModeTab extends AbstractLaunchModeConfigurationTab {
 	 */
 	public String getId() {
 		return "org.eclipse.jdt.debug.tests.javaAlternateModeTab";
+	}
+
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		try {
+			Set modes = configuration.getModes();
+			modes.add(getLaunchConfigurationDialog().getMode());
+			if(!fAlternateModeCheckBox.isDisposed()) {
+				fAlternateModeCheckBox.setSelection(modes.contains("alternate"));
+			}
+		}
+		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 	}
 
 }
