@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -150,7 +151,8 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	private void createHeadingLabel(Composite parent, VirtualMachineImpl vm) {
 		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);				
 		SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1);
-		SWTUtil.createText(comp, SWT.READ_ONLY, 1, vm.name()+" "+vm.version()); //$NON-NLS-1$
+		Text text = SWTUtil.createText(comp, SWT.READ_ONLY, 1, vm.name()+" "+vm.version()); //$NON-NLS-1$
+		text.setBackground(parent.getBackground());
 	}
 	
 	/* (non-Javadoc)
