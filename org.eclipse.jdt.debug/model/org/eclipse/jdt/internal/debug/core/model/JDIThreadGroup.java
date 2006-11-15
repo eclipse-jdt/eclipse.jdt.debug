@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 
@@ -25,10 +26,11 @@ import com.sun.jdi.ThreadReference;
  * @since 3.2
  *
  */
-public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup {
+public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup, ITerminate {
 	
 	private ThreadGroupReference fGroup = null;
 	private String fName = null;
+	private boolean fTerminated = false;
 
 	/**
 	 * Constructs a new thread group in the given target based on the underlying
@@ -143,6 +145,30 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup 
 			targetRequestFailed(JDIDebugModelMessages.JDIThreadGroup_5, e);
 		}
 		return false;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
+	 */
+	public boolean canTerminate() {
+		//the group can terminate if the target can terminate
+		return getDebugTarget().canTerminate();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return fTerminated;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
+	 */
+	public void terminate() throws DebugException {
+		//delegates a terminate call to each of its children
+		getDebugTarget().terminate();
+		fTerminated = true;
 	}
 
 }
