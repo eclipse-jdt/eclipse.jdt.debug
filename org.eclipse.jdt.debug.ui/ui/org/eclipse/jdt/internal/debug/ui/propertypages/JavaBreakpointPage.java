@@ -250,7 +250,8 @@ public class JavaBreakpointPage extends PropertyPage {
 			String typeName = ((IJavaBreakpoint) getElement()).getTypeName();
 			if (typeName != null) {
 				createLabel(labelComposite, PropertyPageMessages.JavaBreakpointPage_3); 
-				SWTUtil.createText(labelComposite, SWT.READ_ONLY, 1, typeName);
+				Text text = SWTUtil.createText(labelComposite, SWT.READ_ONLY, 1, typeName);
+				text.setBackground(parent.getBackground());
 			}
 			createTypeSpecificLabels(labelComposite);
 		} catch (CoreException ce) {

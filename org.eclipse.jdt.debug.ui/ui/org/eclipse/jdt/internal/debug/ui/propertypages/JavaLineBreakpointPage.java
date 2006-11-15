@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -114,7 +115,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		}
 		if (lineNumber.length() > 0) {
 			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_2); 
-			SWTUtil.createText(parent, SWT.READ_ONLY, 1, lineNumber.toString());
+			Text text = SWTUtil.createText(parent, SWT.READ_ONLY, 1, lineNumber.toString());
+			text.setBackground(parent.getBackground());
 		}
 		// Member
 		try {
@@ -129,7 +131,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 				label = PropertyPageMessages.JavaLineBreakpointPage_5; 
 			}
 			createLabel(parent, label);
-			SWTUtil.createText(parent, SWT.READ_ONLY, 1, fJavaLabelProvider.getText(member));
+			Text text = SWTUtil.createText(parent, SWT.READ_ONLY, 1, fJavaLabelProvider.getText(member));
+			text.setBackground(parent.getBackground());
 		} 
 		catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
 	}
