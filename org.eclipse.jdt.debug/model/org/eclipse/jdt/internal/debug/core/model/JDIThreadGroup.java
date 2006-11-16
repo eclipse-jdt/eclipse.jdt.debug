@@ -30,7 +30,6 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 	
 	private ThreadGroupReference fGroup = null;
 	private String fName = null;
-	private boolean fTerminated = false;
 
 	/**
 	 * Constructs a new thread group in the given target based on the underlying
@@ -159,16 +158,14 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return fTerminated;
+		return getDebugTarget().isTerminated();
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		//delegates a terminate call to each of its children
 		getDebugTarget().terminate();
-		fTerminated = true;
 	}
 
 }
