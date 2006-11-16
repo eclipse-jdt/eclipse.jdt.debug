@@ -37,6 +37,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -124,6 +125,9 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 		fOtherWorkingText.addModifyListener(fListener);
 	//buttons
 		Composite buttonComp = SWTUtil.createComposite(comp, font, 3, 2, GridData.HORIZONTAL_ALIGN_END); 
+		GridLayout ld = (GridLayout)buttonComp.getLayout();
+		ld.marginHeight = 1;
+		ld.marginWidth = 0;
 		fWorkspaceButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_0, null); 
 		fWorkspaceButton.addSelectionListener(fListener);
 		fFileSystemButton = createPushButton(buttonComp, LauncherMessages.WorkingDirectoryBlock_1, null); 
