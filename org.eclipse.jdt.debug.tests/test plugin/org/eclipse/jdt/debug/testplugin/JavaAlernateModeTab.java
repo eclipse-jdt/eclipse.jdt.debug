@@ -14,10 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationListenerTab;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @since 3.3
  */
-public class JavaAlernateModeTab extends AbstractLaunchConfigurationListenerTab {
+public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
 	
 	private Button fAlternateModeCheckBox;
 
@@ -48,6 +50,24 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationListenerTab 
 	public String getName() {
 		return "Alternate";
 	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+	 */
+	public void dispose() {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
+		super.dispose();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -73,7 +93,6 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationListenerTab 
 	}
 
 	public void createControl(Composite parent) {
-		super.createControl(parent);
 		fAlternateModeCheckBox = new Button(parent, SWT.CHECK);
 		fAlternateModeCheckBox.setText("Check &me for 'alternate' mode");
 		fAlternateModeCheckBox.addSelectionListener(new SelectionAdapter() {
@@ -82,6 +101,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationListenerTab 
 			}
 		});
 		setControl(fAlternateModeCheckBox);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
 	
 	/**
