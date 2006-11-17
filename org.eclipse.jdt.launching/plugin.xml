@@ -29,7 +29,7 @@
       <launchConfigurationType
             delegate="org.eclipse.jdt.launching.JavaLaunchDelegate"
             delegateDescription="%localJavaApplicationDelegate.description"
-            delegateName="%localJavaApplicationDelegate.name"
+            delegateName="%eclipseJDTLauncher.name"
             id="org.eclipse.jdt.launching.localJavaApplication"
             migrationDelegate="org.eclipse.jdt.internal.launching.JavaMigrationDelegate"
             modes="run, debug"
@@ -39,7 +39,8 @@
       </launchConfigurationType>
       <launchConfigurationType
             delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
-            delegateName="%remoteJavaApplicationDelegate.name"
+            delegateDescription="%remoteJavaApplicationDelegate.description"
+            delegateName="%eclipseJDTLauncher.name"
             id="org.eclipse.jdt.launching.remoteJavaApplication"
             migrationDelegate="org.eclipse.jdt.internal.launching.JavaMigrationDelegate"
             modes="debug"
@@ -49,7 +50,8 @@
       </launchConfigurationType>
       <launchConfigurationType
             delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
-            delegateName="%javaAppletDelegate.name"
+            delegateDescription="%javaAppletDelegate.description"
+            delegateName="%eclipseJDTLauncher.name"
             id="org.eclipse.jdt.launching.javaApplet"
             migrationDelegate="org.eclipse.jdt.internal.launching.JavaMigrationDelegate"
             modes="run, debug"
