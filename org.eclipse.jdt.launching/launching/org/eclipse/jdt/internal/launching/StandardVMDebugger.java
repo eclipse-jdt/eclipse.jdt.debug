@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdi.Bootstrap;
@@ -266,7 +267,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 						
 						VirtualMachine vm= runnable.getVirtualMachine();
 						if (vm != null) {
-							JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false, config.isResumeOnStartup());
+							createDebugTarget(config, launch, port, process, vm);
 							subMonitor.worked(1);
 							subMonitor.done();
 						}
@@ -300,6 +301,20 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (p != null) {
 			p.destroy();
 		}
+	}
+
+	/**
+	 * Creates a new debug target for the given virtual machine and system process
+	 * that is connected on the specified port for the given launch.
+	 * 
+	 * @param config run configuration used to launch the VM
+	 * @param launch launch to add the target to
+	 * @param port port the VM is connected to
+	 * @param process associated system process
+	 * @param vm JDI virtual machine
+	 */
+	protected IDebugTarget createDebugTarget(VMRunnerConfiguration config, ILaunch launch, int port, IProcess process, VirtualMachine vm) {
+		return JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false, config.isResumeOnStartup());
 	}
 	
 	private double getJavaVersion() {
