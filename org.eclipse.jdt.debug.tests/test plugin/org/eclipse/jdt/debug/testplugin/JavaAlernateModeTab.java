@@ -72,7 +72,9 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void initializeFrom(ILaunchConfiguration configuration) {}
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		launchConfigurationChanged(configuration);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
