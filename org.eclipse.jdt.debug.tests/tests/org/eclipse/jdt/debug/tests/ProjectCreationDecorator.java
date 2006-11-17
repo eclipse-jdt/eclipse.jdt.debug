@@ -56,6 +56,10 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class ProjectCreationDecorator extends AbstractDebugTest {
 
+    /**
+     * Constructor
+     * @param name
+     */
     public ProjectCreationDecorator(String name) {
         super(name);
     }
@@ -69,6 +73,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 //        assertFalse(workspace.isAutoBuilding());
 //    }
 
+    /**
+     * 
+     */
     public void testPerspectiveSwtich() {
         DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
             public void run() {
@@ -85,6 +92,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         });
     }
 
+    /**
+     * @throws Exception
+     */
     public void testProjectCreation() throws Exception {
         // delete any pre-existing project
         IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("DebugTests");
@@ -132,6 +142,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         createLaunchConfiguration("StaticVariablesTests");
         createLaunchConfiguration("DropTests");
         createLaunchConfiguration("ThrowsNPE");
+        createLaunchConfiguration("ThrowsException");
         createLaunchConfiguration("org.eclipse.debug.tests.targets.Watchpoint");
         createLaunchConfiguration("A");
         createLaunchConfiguration("HitCountLooper");
@@ -241,6 +252,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         }       
     }
 
+    /**
+     * @throws Exception
+     */
     public void testBuild() throws Exception {
         // force a full build and wait
         ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
@@ -260,6 +274,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
     /**
      * test if builds completed successfully and output directory contains class
      * files.
+     * @throws Exception
      */
     public void testOutputFolderNotEmpty() throws Exception {
         waitForBuild();
@@ -275,6 +290,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         assertTrue("output folder is empty", children.length > 0);
     }
 
+    /**
+     * @throws Exception
+     */
     public void testForUnexpectedErrorsInProject() throws Exception {
         waitForBuild();
         IProject project = fJavaProject.getProject();
@@ -290,6 +308,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         assertTrue("Unexpected compile errors in project. Expected 1, found " + markers.length, errors == 1);
     }
 
+    /**
+     * @throws Exception
+     */
     public void testClassFilesGenerated() throws Exception {
         waitForBuild();
         IPath outputLocation = fJavaProject.getOutputLocation();
