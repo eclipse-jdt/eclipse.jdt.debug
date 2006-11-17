@@ -89,6 +89,10 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					IJavaThreadGroup parent = group.getThreadGroup();
 					if (parent != null) {
 						index = indexOf(parent.getThreadGroups(), group);
+						if (index >= 0) {
+							// threads are displayed first
+							index += parent.getThreads().length;
+						}
 					} else {
 						index = indexOf(debugTarget.getRootThreadGroups(), group);
 					}
