@@ -150,10 +150,10 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	 */
 	protected int childCount(IThread thread) {
 		try {
-			int count = thread.getStackFrames().length;
+			IJavaThread jThread = (IJavaThread) thread;
+			int count = jThread.getFrameCount();
 			if (isDisplayMonitors()) {
 				if (((IJavaDebugTarget)thread.getDebugTarget()).supportsMonitorInformation()) {
-					IJavaThread jThread = (IJavaThread) thread;
 					count += jThread.getOwnedMonitors().length;
 					if (jThread.getContendedMonitor() != null) {
 						count++;
