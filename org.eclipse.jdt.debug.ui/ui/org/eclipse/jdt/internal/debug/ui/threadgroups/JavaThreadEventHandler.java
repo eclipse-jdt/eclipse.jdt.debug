@@ -162,8 +162,8 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					// make room for the 'no monitor info' element
 					count++;
 				}
-				return count;
 			}
+			return count;
 		} catch (DebugException e) {
 		}
 		return -1;
