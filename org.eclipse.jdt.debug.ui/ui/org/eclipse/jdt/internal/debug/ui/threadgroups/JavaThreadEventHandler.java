@@ -142,6 +142,33 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 	}
 	
+	/**
+	 * Returns the number of children the given thread has in the view.
+	 * 
+	 * @param thread thread
+	 * @return number of children
+	 */
+	protected int childCount(IThread thread) {
+		try {
+			int count = thread.getStackFrames().length;
+			if (isDisplayMonitors()) {
+				if (((IJavaDebugTarget)thread.getDebugTarget()).supportsMonitorInformation()) {
+					IJavaThread jThread = (IJavaThread) thread;
+					count += jThread.getOwnedMonitors().length;
+					if (jThread.getContendedMonitor() != null) {
+						count++;
+					}
+				} else {
+					// make room for the 'no monitor info' element
+					count++;
+				}
+				return count;
+			}
+		} catch (DebugException e) {
+		}
+		return -1;
+	}	
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IThread)
