@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreePath;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -27,17 +28,17 @@ public class JavaThreadGroupLabelProvider extends ElementLabelProvider {
 	private static ImageDescriptor fgImage = JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_THREAD_GROUP);
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
-	protected String getLabel(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
-		IJavaThreadGroup group = (IJavaThreadGroup) element;
+	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		IJavaThreadGroup group = (IJavaThreadGroup) elementPath.getLastSegment();
 		return MessageFormat.format(ThreadGroupMessages.AsyncThreadGroupLabelAdapter_0, new String[]{group.getName()});
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
-	protected ImageDescriptor getImageDescriptor(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return fgImage;
 	}
 

@@ -15,6 +15,7 @@ import org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
+import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Label provider for objects in object references viewer.
@@ -26,10 +27,10 @@ public class ObjectLabelProvider extends ElementLabelProvider {
 	private static JDIModelPresentation fgPresentation = new JDIModelPresentation();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
-	protected String getLabel(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
-		return fgPresentation.getValueText((IJavaValue) element);
+	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		return fgPresentation.getValueText((IJavaValue) elementPath.getLastSegment());
 	}
 
 }
