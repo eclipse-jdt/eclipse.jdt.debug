@@ -32,7 +32,7 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Manages import of installed JREs. Merges valid impoted JREs with existing JREs.
+ * Manages import of installed JREs. Merges valid imported JREs with existing JREs.
  * 
  * @since 3.1
  */
@@ -46,7 +46,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 				if (jresXML != null) {
 					VMDefinitionsContainer vms = new VMDefinitionsContainer();
 					String pref = LaunchingPlugin.getDefault().getPluginPreferences().getString(JavaRuntime.PREF_VM_XML);
-					// names -> existing vms
+					// names -> existing vm's
 					Map names = new HashMap();
 					Set ids = new HashSet();
 					if (pref.length() > 0) {
