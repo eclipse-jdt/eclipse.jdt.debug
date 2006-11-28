@@ -140,6 +140,36 @@ public class MainClass extends Date implements Runnable, Printable {
 	}
 	
 	/**
+	 * Returns 20
+	 * 
+	 * @return 20
+	 */
+	public int getInt() {
+		int x = Math.max(20, 10);
+		return x;
+	}
+	
+	/**
+	 * Returns true.
+	 * 
+	 * @return true
+	 */
+	public boolean getBoolean() {
+		boolean bool = Boolean.valueOf("true").booleanValue();
+		return bool;
+	}
+	
+	/**
+	 * Returns 123L.
+	 * 
+	 * @return 123
+	 */
+	public long getLong() {
+		long l = Long.valueOf("123").longValue();
+		return l;
+	}
+	
+	/**
 	 * dump out a string
 	 * @return a String
 	 * @since 3.3
@@ -309,8 +339,13 @@ public class MainClass extends Date implements Runnable, Printable {
 		}
 		else if(eventType.equals("refclass4load")) {
 			new RefClass4();
-		}
-		else if (eventType.equals("AccessWatchpointEvent"))
+		} else if (eventType.equals("getInt")) {
+			getInt();
+		} else if (eventType.equals("getBoolean")) {
+			getBoolean();
+		} else if (eventType.equals("getLong")) {
+			getLong();
+		} else if (eventType.equals("AccessWatchpointEvent"))
 			triggerAccessWatchpointEvent();
 		else if (eventType.equals("StaticAccessWatchpointEvent"))
 			triggerStaticAccessWatchpointEvent();

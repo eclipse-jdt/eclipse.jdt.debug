@@ -22,8 +22,7 @@ import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.MethodExitRequest;
 
 /**
- * Test cases for the implementation of providing argumebnt information even if 
- * no debugging information is present in the new java 1.6 VM
+ * Test cases for method exit event return values in java 1.6 VM
  * 
  * @since 3.3
  */
@@ -148,4 +147,130 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			assertTrue("thrown exception mean failure", false);
 		}
 	}
+	
+	/**
+	 * test to make sure that returnValue is working to spec.
+	 * test is not applicable to non 1.6 VMs
+	 */
+	public void testGetIntMethodReturnValue() {
+		if(!fVM.canGetMethodReturnValues()) {
+			return;
+		}
+		try {
+			//test non void return types, in the case IntegerValueImpl
+			method = getMethod("getInt", "()I");
+			br = getBreakpointRequest(method.location());
+			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.enable();
+			waiter = new EventWaiter(br, true);
+			fEventReader.addEventListener(waiter);
+			triggerEvent("getInt");
+			bpe = (BreakpointEvent) waiter.waitEvent(5000);
+			fEventReader.removeEventListener(waiter);
+			tref = bpe.thread();
+			if(tref.isSuspended()) {
+				req = erm.createMethodExitRequest();
+				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
+				req.enable();
+				waiter = new EventWaiter(req, true);
+				fEventReader.addEventListener(waiter);
+				tref.resume();
+				event = (MethodExitEvent)waiter.waitEvent(5000);
+				fEventReader.removeEventListener(waiter);
+				assertNotNull("event should not be null", event);
+				assertEquals(req, event.request());
+				val = event.returnValue();
+				assertNotNull("value should not be null", val);
+				assertEquals("return value must be 20", val.virtualMachine().mirrorOf(20), val);
+				erm.deleteEventRequest(req);
+			}
+		} 
+		catch (InterruptedException e) {
+			assertTrue("thrown exception mean failure", false);
+		}
+	}	
+	
+	/**
+	 * test to make sure that returnValue is working to spec.
+	 * test is not applicable to non 1.6 VMs
+	 */
+	public void testGetBooleanMethodReturnValue() {
+		if(!fVM.canGetMethodReturnValues()) {
+			return;
+		}
+		try {
+			//test non void return types, in the case IntegerValueImpl
+			method = getMethod("getBoolean", "()Z");
+			br = getBreakpointRequest(method.location());
+			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.enable();
+			waiter = new EventWaiter(br, true);
+			fEventReader.addEventListener(waiter);
+			triggerEvent("getBoolean");
+			bpe = (BreakpointEvent) waiter.waitEvent(5000);
+			fEventReader.removeEventListener(waiter);
+			tref = bpe.thread();
+			if(tref.isSuspended()) {
+				req = erm.createMethodExitRequest();
+				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
+				req.enable();
+				waiter = new EventWaiter(req, true);
+				fEventReader.addEventListener(waiter);
+				tref.resume();
+				event = (MethodExitEvent)waiter.waitEvent(5000);
+				fEventReader.removeEventListener(waiter);
+				assertNotNull("event should not be null", event);
+				assertEquals(req, event.request());
+				val = event.returnValue();
+				assertNotNull("value should not be null", val);
+				assertEquals("return value must be true", val.virtualMachine().mirrorOf(true), val);
+				erm.deleteEventRequest(req);
+			}
+		} 
+		catch (InterruptedException e) {
+			assertTrue("thrown exception mean failure", false);
+		}
+	}		
+	
+	/**
+	 * test to make sure that returnValue is working to spec.
+	 * test is not applicable to non 1.6 VMs
+	 */
+	public void testGetLongMethodReturnValue() {
+		if(!fVM.canGetMethodReturnValues()) {
+			return;
+		}
+		try {
+			//test non void return types, in the case IntegerValueImpl
+			method = getMethod("getLong", "()J");
+			br = getBreakpointRequest(method.location());
+			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.enable();
+			waiter = new EventWaiter(br, true);
+			fEventReader.addEventListener(waiter);
+			triggerEvent("getLong");
+			bpe = (BreakpointEvent) waiter.waitEvent(5000);
+			fEventReader.removeEventListener(waiter);
+			tref = bpe.thread();
+			if(tref.isSuspended()) {
+				req = erm.createMethodExitRequest();
+				req.addClassFilter("org.eclipse.debug.jdi.tests.program.*");
+				req.enable();
+				waiter = new EventWaiter(req, true);
+				fEventReader.addEventListener(waiter);
+				tref.resume();
+				event = (MethodExitEvent)waiter.waitEvent(5000);
+				fEventReader.removeEventListener(waiter);
+				assertNotNull("event should not be null", event);
+				assertEquals(req, event.request());
+				val = event.returnValue();
+				assertNotNull("value should not be null", val);
+				assertEquals("return value must be 123", val.virtualMachine().mirrorOf(123L), val);
+				erm.deleteEventRequest(req);
+			}
+		} 
+		catch (InterruptedException e) {
+			assertTrue("thrown exception mean failure", false);
+		}
+	}			
 }
