@@ -68,7 +68,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 	public static boolean getBoolean(PropertyChangeEvent event) {
 		Object newValue = event.getNewValue();
 		if (newValue instanceof String) {
-			return ((IPreferenceStore)event.getSource()).getBoolean((String) newValue);
+			return ((IPreferenceStore)event.getSource()).getBoolean(event.getProperty());
 		} else {
 			return ((Boolean)newValue).booleanValue();
 		}		
