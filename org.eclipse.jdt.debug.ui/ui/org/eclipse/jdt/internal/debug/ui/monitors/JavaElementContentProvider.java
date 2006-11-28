@@ -14,6 +14,7 @@ import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,9 +36,9 @@ public abstract class JavaElementContentProvider extends ElementContentProvider 
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
-					fgDisplayMonitors= ((Boolean)event.getNewValue()).booleanValue();
+					fgDisplayMonitors= JDIDebugUIPreferenceInitializer.getBoolean(event);
 				} else if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS)) {
-					fgDisplayThreadGroups= ((Boolean)event.getNewValue()).booleanValue();
+					fgDisplayThreadGroups= JDIDebugUIPreferenceInitializer.getBoolean(event);
 				}
 			}
 		

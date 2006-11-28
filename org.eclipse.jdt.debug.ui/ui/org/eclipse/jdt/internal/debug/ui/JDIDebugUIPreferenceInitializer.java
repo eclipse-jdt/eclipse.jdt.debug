@@ -15,6 +15,7 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -56,5 +57,20 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, false);
 		store.setDefault(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT, 100);
 		store.setDefault(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT, 100);
+	}
+	
+	/**
+	 * Returns the boolean value from the given property change event.
+	 * 
+	 * @param event property change event
+	 * @return new boolean value from the event
+	 */
+	public static boolean getBoolean(PropertyChangeEvent event) {
+		Object newValue = event.getNewValue();
+		if (newValue instanceof String) {
+			return ((IPreferenceStore)event.getSource()).getBoolean((String) newValue);
+		} else {
+			return ((Boolean)newValue).booleanValue();
+		}		
 	}
 }

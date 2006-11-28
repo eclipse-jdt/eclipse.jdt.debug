@@ -31,6 +31,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaElementContentProvider;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -109,7 +110,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
-			fDisplayMonitors= ((Boolean)event.getNewValue()).booleanValue();
+			fDisplayMonitors= JDIDebugUIPreferenceInitializer.getBoolean(event);
 		}
 	}
 
