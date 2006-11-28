@@ -15,6 +15,8 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -31,6 +33,22 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		
 	private IViewPart fView;
 	private IAction fAction;
+	private IPropertyChangeListener fListener = new Updater();
+	
+	class Updater implements IPropertyChangeListener {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(getPreferenceKey()) ||
+					event.getProperty().equals(getCompositeKey())) {
+				fAction.setChecked(getPreferenceValue());
+			}
+			
+		}
+		
+	}
 
 	public ViewFilterAction() {
 		super();
@@ -43,6 +61,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		fView = view;
 		fAction.setChecked(getPreferenceValue());
 		run(fAction);
+		getPreferenceStore().addPropertyChangeListener(fListener);
 	}
 
 	/* (non-Javadoc)
@@ -56,6 +75,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
+		getPreferenceStore().removePropertyChangeListener(fListener);
 	}
 
 	/* (non-Javadoc)
@@ -154,9 +174,9 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	}
 	
 	/**
-	 * Returns whether this action is seleted/checked.
+	 * Returns whether this action is selected/checked.
 	 * 
-	 * @return whether this action is seleted/checked
+	 * @return whether this action is selected/checked
 	 */
 	protected boolean getValue() {
 		return fAction.isChecked();
