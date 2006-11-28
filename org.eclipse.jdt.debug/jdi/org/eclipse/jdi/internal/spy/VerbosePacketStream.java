@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Keith Seitz - Bug 165988
  *******************************************************************************/
 package org.eclipse.jdi.internal.spy;
 
@@ -2743,7 +2744,8 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	protected void printDescription(String description) {
-		int width= 32- description.length();
+		// current max length = 36 (+2 pad)
+		int width = 38 - description.length();
 		print(description);
 		write(padding, 0, width);
 	}
