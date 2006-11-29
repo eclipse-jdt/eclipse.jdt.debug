@@ -11,16 +11,18 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ITerminate;
 
 /**
  * Object used to display owning thread in the debug launch view.
  * In this case, the thread is waiting for the contended monitor,
  * and owns the parent monitor.
  */
-public class JavaOwningThread extends PlatformObject implements IDebugElement {
+public class JavaOwningThread extends PlatformObject implements IDebugElement, ITerminate {
 	
 	/**
 	 * The thread object in the thread and monitor model.
@@ -36,17 +38,28 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement {
 	 */
 	private JavaContendedMonitor fParent;
 
+	/**
+	 * Constructor
+	 * @param thread
+	 * @param parent
+	 */
 	public JavaOwningThread(JavaMonitorThread thread, JavaContendedMonitor parent) {
 		fThread= thread;
 		thread.addElement(this);
 		fParent= parent;
 	}
 
-	
+	/** Returns the <code>JavaMonitorThread</code> of this owning thread
+	 * @return the <code>JavaMonitorThread</code> of this owning thread
+	 */
 	public JavaMonitorThread getThread() {
 		return fThread;
 	}
 	
+	/**
+	 * Returns the parent contended
+	 * @return
+	 */
 	public JavaContendedMonitor getParent() {
 		return fParent;
 	}
@@ -101,6 +114,27 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement {
 			return getDebugTarget();
 		}
 		return super.getAdapter(adapter);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
+	 */
+	public boolean canTerminate() {
+		return getDebugTarget().canTerminate();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return getDebugTarget().isTerminated();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
+	 */
+	public void terminate() throws DebugException {
+		getDebugTarget().terminate();
 	}
 	
 }

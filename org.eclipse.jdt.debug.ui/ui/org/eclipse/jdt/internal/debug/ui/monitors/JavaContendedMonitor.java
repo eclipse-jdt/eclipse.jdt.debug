@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,20 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.core.model.IThread;
 
 /**
  * Object used to display contended monitor in the debug launch view.
  * In this case, the monitor is owned by the owning thread, and waited
  * by the parent thread.
  */
-public class JavaContendedMonitor extends PlatformObject implements IDebugElement {
+public class JavaContendedMonitor extends PlatformObject implements IDebugElement, ITerminate, ISuspendResume {
 
 	/**
 	 * The monitor object in the threads and monitors model.
@@ -35,16 +39,29 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	 */
 	private JavaOwningThread fParent;
 
+	/**
+	 * Constructor
+	 * @param monitor
+	 * @param parent
+	 */
 	public JavaContendedMonitor(JavaMonitor monitor, JavaOwningThread parent) {
 		fMonitor= monitor;
 		monitor.addElement(this);
 		fParent= parent;
 	}
 	
+	/**
+	 * returns the monitor that is in contention
+	 * @return the monitor that is in contention
+	 */
 	public JavaMonitor getMonitor() {
 		return fMonitor;
 	}
 	
+	/**
+	 * Returns the parent <code>JavaOwningThread</code> or the original <code>IThread</code>
+	 * @return the parent <code>JavaOwningThread</code> or the original <code>IThread</code>
+	 */
 	public Object getParent() {
 		if (fParent.getParent() == null) {
 			return fParent.getThread().getOriginalThread();
@@ -52,6 +69,10 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 		return fParent;
 	}
 	
+	/**
+	 * returns the <code>JavaOwningThread</code> that owns this monitor
+	 * @return the <code>JavaOwningThread</code> that owns this monitor
+	 */
 	public JavaOwningThread getOwningThread() {
 		JavaMonitorThread owningThread= fMonitor.getOwningThread0();
 		if (owningThread == null) {
@@ -92,5 +113,77 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 			return getDebugTarget();
 		}
 		return super.getAdapter(adapter);
+	}
+
+	/**
+	 * returns the parent thread of this monitor
+	 * @return the parent <code>IThread</code> that owns this monitor
+	 */
+	protected IThread getParentThread() {
+		Object parent = getParent();
+		IThread thread = null;
+		if(parent instanceof IThread) {
+			thread = (IThread) parent;
+		}
+		else if(parent instanceof JavaOwningThread) {
+			thread = ((JavaOwningThread)parent).getThread().getOriginalThread();
+		}
+		return thread;
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
+	 */
+	public boolean canTerminate() {
+		return getDebugTarget().canTerminate();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return getDebugTarget().isTerminated();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
+	 */
+	public void terminate() throws DebugException {
+		getDebugTarget().terminate();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
+	 */
+	public boolean canResume() {
+		return getOwningThread().getThread().getOriginalThread().canResume();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
+	 */
+	public boolean canSuspend() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
+	 */
+	public boolean isSuspended() {
+		return getOwningThread().getThread().getOriginalThread().isSuspended();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
+	 */
+	public void resume() throws DebugException {
+		getOwningThread().getThread().getOriginalThread().resume();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
+	 */
+	public void suspend() throws DebugException {
+		getOwningThread().getThread().getOriginalThread().suspend();
 	}
 }
