@@ -37,7 +37,8 @@
  </package>
  <package name="org.eclipse.jdt.launching.environments">
  	<type name="CompatibleEnvironment" subclass="false" />
- 	<type name="IExecutionEnvironment.java" implement="false" />
+ 	<type name="IAccessRuleParticipant" />
+ 	<type name="IExecutionEnvironment" implement="false" />
  	<type name="IExecutionEnvironmentAnalyzerDelegate" />
  	<type name="IExecutionEnvironmentsManager" implement="false" />
  </package>

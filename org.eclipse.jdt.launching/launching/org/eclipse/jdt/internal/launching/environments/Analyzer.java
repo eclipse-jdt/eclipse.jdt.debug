@@ -37,12 +37,7 @@ class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer#analyze(org.eclipse.jdt.launching.IVMInstall, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
-		try {
-			return getDelegate().analyze(vm, monitor);
-		} catch (AbstractMethodError e) {
-			// TODO: remove once PDE catches up with API changes
-			return new CompatibleEnvironment[0];
-		}
+		return getDelegate().analyze(vm, monitor);
 	}
 
 	/**

@@ -17,7 +17,24 @@
   <li>added <code>IJavaDebugTarget.supportsInstanceRetreival()</code></li>
   <li>added <code>IJavaReferenceType.getInstances(int max)</code></li>
   <li>added <code>IJavaObject.getReferringObjects(int max)</code></li>
-  <li>added <code>IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT</code> and <code>IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT</code></li>
+  <li>added <code>IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT</code> and 
+    <code>IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT</code></li>
+  <li>added support for access rules to be defined for libraries in an execution 
+    environment 
+    <ul>
+      <li>An execution environment can define an access rule participant to contribute 
+        rules specific to an environment (see the new attribute <code>ruleParticipant</code> 
+        on the <code>environment</code> element of the <code>executionEnvironments</code> 
+        extension point).</li>
+      <li>Additionally an access rule participant can be contributed in isolation 
+        to participate in access rule creation for any execution environment (see 
+        the <code>ruleParticipant </code>element of the <code>executionEnvironments</code> 
+        extension point). The rule participant can create rules selectively based 
+        on project, JRE, and system libraries.</li>
+      <li>See the new interface <code>IAccessRuleParticipant</code> and the new 
+        method <code>IExecutionEnvironment.getAccessRules(...)</code>.</li>
+    </ul>
+  </li>
 </ul>
 
 <h2>Nov 28, 2006</h2>

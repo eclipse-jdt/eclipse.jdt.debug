@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.launching.environments;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +37,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
+import org.eclipse.jdt.launching.environments.IAccessRuleParticipant;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.w3c.dom.Document;
@@ -46,12 +46,29 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Utility class for execution environments.
  * 
  * @since 3.2
  */
 public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMInstallChangedListener, IPropertyChangeListener {
+
+	/**
+	 * Extension configuration element name.
+	 */
+	private static final String ANALYZER_ELEMENT = "analyzer"; //$NON-NLS-1$
+
+	/**
+	 * Extension configuration element name.
+	 */
+	static final String ENVIRONMENT_ELEMENT = "environment"; //$NON-NLS-1$
+	
+	/**
+	 * Extension configuration element name.
+	 */
+	static final String RULE_PARTICIPANT_ELEMENT = "ruleParticipant"; //$NON-NLS-1$	
 
 	private static EnvironmentsManager fgManager = null;
 	
@@ -64,6 +81,11 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * List of environments 
 	 */
 	private List fEnvironments = null;
+	
+	/**
+	 * List of access rule participants
+	 */
+	private List fRuleParticipants = null;
 	
 	/**
 	 * Map of environments keyed by id
@@ -133,6 +155,17 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		return (IExecutionEnvironment[]) fEnvironments.toArray(new IExecutionEnvironment[fEnvironments.size()]);
 	}
 	
+	/**
+	 * Returns all access rule participants that are not specific to an execution environment.
+	 * 
+	 * @return all access rule participants that are not specific to an execution environment.
+	 * @since 3.3
+	 */
+	public synchronized IAccessRuleParticipant[] getAccessRuleParticipants() {
+		initializeExtensions();
+		return (IAccessRuleParticipant[]) fRuleParticipants.toArray(new IAccessRuleParticipant[fRuleParticipants.size()]);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getEnvironment(java.lang.String)
 	 */
@@ -157,12 +190,13 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 			fEnvironments = new ArrayList();
+			fRuleParticipants = new ArrayList();
 			fEnvironmentsMap = new HashMap(configs.length);
 			fAnalyzers = new HashMap(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				IConfigurationElement element = configs[i];
 				String name = element.getName();
-				if (name.equals("environment")) { //$NON-NLS-1$
+				if (name.equals(ENVIRONMENT_ELEMENT)) {
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
 						LaunchingPlugin.log(MessageFormat.format("Execution environment must specify \"id\" attribute. Contributed by {0}.", new String[]{element.getContributor().getName()})); //$NON-NLS-1$
@@ -171,12 +205,19 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 						fEnvironments.add(env);
 						fEnvironmentsMap.put(id, env);
 					}
-				} else if (name.equals("analyzer")) { //$NON-NLS-1$
+				} else if (name.equals(ANALYZER_ELEMENT)) {
 					String id = element.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {
 						LaunchingPlugin.log(MessageFormat.format("Execution environment analyzer must specify \"id\" attribute. Contributed by {0}", new String[]{element.getContributor().getName()})); //$NON-NLS-1$
 					} else {
 						fAnalyzers.put(id, new Analyzer(element));
+					}
+				} else if (name.equals(RULE_PARTICIPANT_ELEMENT)) {
+					String id = element.getAttribute("id"); //$NON-NLS-1$
+					if (id == null) {
+						LaunchingPlugin.log(MessageFormat.format("Execution environment rule participant must specify \"id\" attribute. Contributed by {0}", new String[]{element.getContributor().getName()})); //$NON-NLS-1$
+					} else {
+						fRuleParticipants.add(new AccessRuleParticipant(element));
 					}
 				}
 			}

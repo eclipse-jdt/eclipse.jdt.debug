@@ -305,7 +305,8 @@
       <environment
             description="Java 2 Platform, Standard Edition 1.4.x"
             id="org.eclipse.jdt.debug.tests.environment.j2se14x"
-            name="J2SE 1.4.x"/>
+            name="J2SE 1.4.x"
+            ruleParticipant="org.eclipse.jdt.debug.testplugin.AccessRuleParticipant"/>
       <analyzer
             class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE14x"
             id="org.eclipse.jdt.debug.tests.analyzer.j2se14x"/>
@@ -316,6 +317,10 @@
       <analyzer
             class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE13x"
             id="org.eclipse.jdt.debug.tests.analyzer.j2se13x"/>
+      <ruleParticipant
+            class="org.eclipse.jdt.debug.testplugin.SecondaryAccessRuleParticipant"
+            id="org.eclipse.jdt.debug.tests.secondaryRuleParticipant">
+      </ruleParticipant>
    </extension>
    <extension
          point="org.eclipse.ui.views">

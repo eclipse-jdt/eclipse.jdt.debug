@@ -98,7 +98,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		IVMInstall newVM = def.getVMInstallType().findVMInstall(vmId);
 		assertNotNull("Failed to create new VM", newVM);
 		
-		JREContainer container = new JREContainer(newVM, containerPath);
+		JREContainer container = new JREContainer(newVM, containerPath, getJavaProject());
 		JREContainerInitializer initializer = new JREContainerInitializer();
 		// store the current library settings
 		LibraryLocation[] originalLibs = JavaRuntime.getLibraryLocations(newVM);

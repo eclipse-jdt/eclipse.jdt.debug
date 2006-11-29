@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -39,6 +38,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Label provider for runtime classpath entries.
@@ -186,7 +187,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 							if (path.segmentCount() > 0 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
 								IVMInstall vm = JavaRuntime.getVMInstall(path);
 								if (vm != null) {
-									JREContainer container = new JREContainer(vm, path);
+									JREContainer container = new JREContainer(vm, path, project);
 									return container.getDescription();
 								}
 							}

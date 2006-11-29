@@ -52,7 +52,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				IVMInstall vm = resolveVM(containerPath);
 				JREContainer container = null;
 				if (vm != null) {
-					container = new JREContainer(vm, containerPath);
+					container = new JREContainer(vm, containerPath, project);
 				}
 				JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {container}, null);
 			}

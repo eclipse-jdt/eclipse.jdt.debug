@@ -15,6 +15,7 @@
          <sequence>
             <element ref="environment" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="analyzer" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="ruleParticipant" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -62,6 +63,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="ruleParticipant" type="string">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules first, followed by any &lt;code&gt;ruleParticipants&lt;/code&gt; contributed as elements. This attribute was added in the 3.3 release.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -81,6 +92,33 @@
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="ruleParticipant">
+      <annotation>
+         <documentation>
+            This element was added in the 3.3 release.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier for this rule participant
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates after any &lt;code&gt;ruleParticipant&lt;/code&gt; contributed as by an execution environment directly.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -122,7 +160,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         PDE (&lt;code&gt;org.eclispe.pde.core&lt;/code&gt;) provides definitions and an analyzer for the following execution environments:
+         JDT (&lt;code&gt;org.eclispe.jdt.launching&lt;/code&gt;) provides definitions and an analyzer for the following execution environments:
 &lt;ul&gt;
 &lt;li&gt;OSGi/Minimum-1.0&lt;/li&gt;
 &lt;li&gt;OSGi/Minimum-1.1&lt;/li&gt;

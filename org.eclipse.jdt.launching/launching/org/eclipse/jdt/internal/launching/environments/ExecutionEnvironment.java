@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.environments;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -29,7 +29,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.environments.IAccessRuleParticipant;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A contributed execution environment.
@@ -41,12 +45,17 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	private IConfigurationElement fElement;
 	
 	/**
-	 * Set of compatible vms - just the strictly compatible ones
+	 * Environment specific rule participant or <code>null</code> if none.
+	 */
+	private IAccessRuleParticipant fRuleParticipant;
+	
+	/**
+	 * Set of compatible vm's - just the strictly compatible ones
 	 */
 	private Set fStrictlyCompatible = new HashSet();
 	
 	/** 
-	 * All compatible vms
+	 * All compatible vm's
 	 */
 	private List fCompatibleVMs = new ArrayList();
 	
@@ -57,6 +66,10 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	
 	ExecutionEnvironment(IConfigurationElement element) {
 		fElement = element;
+		String attribute = fElement.getAttribute(EnvironmentsManager.RULE_PARTICIPANT_ELEMENT);
+		if (attribute != null) {
+			fRuleParticipant = new AccessRuleParticipant(fElement);
+		}
 	}
 	
 	private void init() {
@@ -170,5 +183,41 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	
 	void initDefaultVM(IVMInstall vm) {
 		fDefault = vm;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getAccessRules(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
+	 */
+	public IAccessRule[][] getAccessRules(IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
+		List[] libLists = new List[libraries.length]; // array of lists of access rules
+		for (int i = 0; i < libLists.length; i++) {
+			libLists[i] = new ArrayList();
+		}
+		// check primary provider first
+		if (fRuleParticipant != null) {
+			processParticipant(fRuleParticipant, libLists, vm, libraries, project);
+		}
+		// check other participants
+		IAccessRuleParticipant[] participants = EnvironmentsManager.getDefault().getAccessRuleParticipants();
+		for (int i = 0; i < participants.length; i++) {
+			processParticipant(participants[i], libLists, vm, libraries, project);
+		}
+		IAccessRule[][] allRules = new IAccessRule[libraries.length][];
+		for (int i = 0; i < libLists.length; i++) {
+			allRules[i] = (IAccessRule[]) libLists[i].toArray(new IAccessRule[libLists[i].size()]);
+		}
+		return allRules;
+	}
+	
+	private void processParticipant(IAccessRuleParticipant participant, List[] collect, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
+		// TODO: use safe runnables
+		IAccessRule[][] accessRules = participant.getAccessRules(this, vm, libraries, project);
+		for (int i = 0; i < accessRules.length; i++) {
+			IAccessRule[] libRules = accessRules[i];
+			List list = collect[i];
+			for (int j = 0; j < libRules.length; j++) {
+				list.add(libRules[j]);
+			}
+		}
 	}
 }

@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
  * An execution environment describes capabilities of
@@ -82,4 +85,18 @@ public interface IExecutionEnvironment {
 	 *  this environment
 	 */
 	public void setDefaultVM(IVMInstall vm);
+	
+	/**
+	 * Returns a collection of access rules to be applied to the specified VM
+	 * libraries for this execution environment in the context of the given project.
+	 * An array of access rules is returned for each library specified by
+	 * <code>libraries</code>, possibly empty.
+	 * 
+	 * @param vm the vm that access rules are requested for
+	 * @param libraries the libraries that access rules are requested for 
+	 * @param project the project the access rules are requested for or <code>null</code> if none
+	 * @return a collection of arrays of access rules - one array per library
+	 * @since 3.3
+	 */
+	public IAccessRule[][] getAccessRules(IVMInstall vm, LibraryLocation[] libraries, IJavaProject project);
 }

@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -32,6 +32,8 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Quick fix to select an alternate JRE for a project. 
@@ -96,7 +98,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 							project.setRawClasspath(classpath, monitor);
 							newBinding = newPath;
 						}
-					JavaCore.setClasspathContainer(unboundPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, newBinding)}, monitor);
+					JavaCore.setClasspathContainer(unboundPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, newBinding, project)}, monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
