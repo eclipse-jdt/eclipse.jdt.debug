@@ -25,7 +25,8 @@ import org.eclipse.jdt.debug.testplugin.JavaAlernateModeTab;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
- * This test class provides test methods for contibuting tabs to a given (existing) tab group and their rellative placement (if applicable)
+ * This test class provides test methods for contributing tabs to a given (existing)
+ * tab group and their relative placement (if applicable)
  * 
  * @since 3.3
  */
@@ -48,7 +49,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		assertNotNull("Java tab group cannot be null", javagroup);
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		assertTrue("There should be 11 tabs", tabs.length == 11);
+		assertEquals("Wrong number of tabs", 11, tabs.length);
 		Set tabset = new HashSet();
 		for(int i = 0; i < tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
@@ -65,7 +66,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 	 */
 	public void testContributedTabRelativePlacemment() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("java tab gourp cannot be null", javagroup);
+		assertNotNull("java tab group cannot be null", javagroup);
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
 		assertTrue("The second tab must be TestTab1", tabs[1].getClass().equals(ContributedTestTab1.class));
