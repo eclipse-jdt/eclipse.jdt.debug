@@ -68,10 +68,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		for (int i = 0; i < accessRules.length; i++) {
 			IAccessRule[] rules = accessRules[i];
 			assertEquals("wrong number of rules for lib", 4, rules.length);
-			assertEquals("Wrong rule", "discouraged", rules[0].getPattern().toString());
-			assertEquals("Wrong rule", "accessible", rules[1].getPattern().toString());
-			assertEquals("Wrong rule", "non_accessible", rules[2].getPattern().toString());
-			assertEquals("Wrong rule", "secondary", rules[3].getPattern().toString());
+			assertEquals("Wrong rule", "secondary", rules[0].getPattern().toString());
+			assertEquals("Wrong rule", "discouraged", rules[1].getPattern().toString());
+			assertEquals("Wrong rule", "accessible", rules[2].getPattern().toString());
+			assertEquals("Wrong rule", "non_accessible", rules[3].getPattern().toString());
 		}
 	}
 	

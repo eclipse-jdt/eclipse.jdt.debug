@@ -91,7 +91,11 @@ public interface IExecutionEnvironment {
 	 * libraries for this execution environment in the context of the given project.
 	 * An array of access rules is returned for each library specified by
 	 * <code>libraries</code>, possibly empty.
-	 * 
+	 * <p>
+	 * Access rules for an execution environment are defined by access rule participants
+	 * contributed in a <code>org.eclipse.jdt.launching.executionEnvironments</code>
+	 * extension.
+	 * </p>
 	 * @param vm the vm that access rules are requested for
 	 * @param libraries the libraries that access rules are requested for 
 	 * @param project the project the access rules are requested for or <code>null</code> if none

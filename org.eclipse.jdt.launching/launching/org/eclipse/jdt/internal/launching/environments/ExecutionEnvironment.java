@@ -193,14 +193,14 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		for (int i = 0; i < libLists.length; i++) {
 			libLists[i] = new ArrayList();
 		}
-		// check primary provider first
-		if (fRuleParticipant != null) {
-			processParticipant(fRuleParticipant, libLists, vm, libraries, project);
-		}
-		// check other participants
+		// check participants first
 		IAccessRuleParticipant[] participants = EnvironmentsManager.getDefault().getAccessRuleParticipants();
 		for (int i = 0; i < participants.length; i++) {
 			processParticipant(participants[i], libLists, vm, libraries, project);
+		}
+		// check default provider last
+		if (fRuleParticipant != null) {
+			processParticipant(fRuleParticipant, libLists, vm, libraries, project);
 		}
 		IAccessRule[][] allRules = new IAccessRule[libraries.length][];
 		for (int i = 0; i < libLists.length; i++) {

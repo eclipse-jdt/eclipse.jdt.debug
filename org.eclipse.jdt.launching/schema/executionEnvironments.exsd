@@ -66,7 +66,7 @@
          <attribute name="ruleParticipant" type="string">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules first, followed by any &lt;code&gt;ruleParticipants&lt;/code&gt; contributed as elements. This attribute was added in the 3.3 release.
+                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules last, preceeded by any &lt;code&gt;ruleParticipants&lt;/code&gt; contributed as elements. This attribute was added in the 3.3 release.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
@@ -115,7 +115,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates after any &lt;code&gt;ruleParticipant&lt;/code&gt; contributed as by an execution environment directly.
+                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules before a &lt;code&gt;ruleParticipant&lt;/code&gt; contributed by an execution environment directly, allowing a participant to override an environment&apos;s default rules.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
