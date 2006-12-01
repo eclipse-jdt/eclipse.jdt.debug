@@ -37,6 +37,8 @@ public class SecondaryAccessRuleParticipant implements IAccessRuleParticipant {
 		IAccessRule[] ar = null;
 		if (environment.getId().equals("org.eclipse.jdt.debug.tests.environment.j2se14x")) {
 			ar = fRules;
+		} else if (environment.getId().equals("org.eclipse.jdt.debug.tests.environment.j2se15x")){
+			ar = new IAccessRule[]{JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_ACCESSIBLE)};
 		} else {
 			ar = new IAccessRule[0];
 		}

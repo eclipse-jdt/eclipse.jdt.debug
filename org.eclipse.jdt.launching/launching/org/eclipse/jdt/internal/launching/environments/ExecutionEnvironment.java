@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -63,6 +64,11 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * default vm install or <code>null</code> if none
 	 */
 	private IVMInstall fDefault = null;
+	
+	/**
+	 * Wild card pattern matching all files
+	 */
+	private static final IPath ALL_PATTERN = new Path("**/*"); //$NON-NLS-1$
 	
 	ExecutionEnvironment(IConfigurationElement element) {
 		fElement = element;
@@ -215,6 +221,13 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		for (int i = 0; i < accessRules.length; i++) {
 			IAccessRule[] libRules = accessRules[i];
 			List list = collect[i];
+			// if the last rule is a **/* pattern, don't add any more rules, as they will have no effect
+			if (!list.isEmpty()) {
+				IAccessRule lastRule = (IAccessRule) list.get(list.size() - 1);
+				if(lastRule.getPattern().equals(ALL_PATTERN)) {
+					continue;
+				}
+			}
 			for (int j = 0; j < libRules.length; j++) {
 				list.add(libRules[j]);
 			}

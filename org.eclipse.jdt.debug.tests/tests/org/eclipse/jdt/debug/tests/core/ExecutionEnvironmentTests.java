@@ -89,4 +89,20 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			assertEquals("wrong number of rules for lib", 0, rules.length);
 		}
 	}	
+	
+	public void testAccessRuleParticipantsWithShortCircut() throws Exception {
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se15x");
+		assertNotNull("Missing environment j2se15x", environment);
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
+		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, getJavaProject());
+		assertNotNull("Missing access rules", accessRules);
+		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
+		for (int i = 0; i < accessRules.length; i++) {
+			IAccessRule[] rules = accessRules[i];
+			assertEquals("wrong number of rules for lib", 1, rules.length);
+			assertEquals("Wrong rule", "**/*", rules[0].getPattern().toString());
+		}
+	}
 }

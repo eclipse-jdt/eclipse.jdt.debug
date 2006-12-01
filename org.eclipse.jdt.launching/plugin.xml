@@ -200,38 +200,48 @@
       <extension
          point="org.eclipse.jdt.launching.executionEnvironments">
       <environment
+            description="%environment.description.0"
             id="OSGi/Minimum-1.0"
-            description="%environment.description.0"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.1"
             id="OSGi/Minimum-1.1"
-            description="%environment.description.1"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.2"
             id="JRE-1.1"
-            description="%environment.description.2"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.3"
             id="J2SE-1.2"
-            description="%environment.description.3"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.4"
             id="J2SE-1.3"
-            description="%environment.description.4"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.5"
             id="J2SE-1.4"
-            description="%environment.description.5"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.6"
             id="J2SE-1.5"
-            description="%environment.description.6"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.7"
             id="CDC-1.0/Foundation-1.0"
-            description="%environment.description.7"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.8"
             id="CDC-1.1/Foundation-1.1"
-            description="%environment.description.8"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <environment
+            description="%environment.description.9"
             id="JavaSE-1.6"
-            description="%environment.description.9"/>
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"
-            id="org.eclipse.pde.core.eeAnalyzer"/>
+            id="org.eclipse.jdt.launching.eeAnalyzer"/>
    </extension>
      
 </plugin>
