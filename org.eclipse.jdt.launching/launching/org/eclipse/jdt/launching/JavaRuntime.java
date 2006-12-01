@@ -2564,25 +2564,31 @@ public final class JavaRuntime {
 	private static void updateCompliance(IVMInstall vm) {
         if (vm instanceof IVMInstall2) {
             String javaVersion = ((IVMInstall2)vm).getJavaVersion();
-            if (javaVersion != null && javaVersion.startsWith(JavaCore.VERSION_1_5)) {
-                Hashtable defaultOptions = JavaCore.getDefaultOptions();
-                Hashtable options = JavaCore.getOptions();
-                boolean isDefault =
-                	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
-                	equals(JavaCore.COMPILER_SOURCE, defaultOptions, options) &&
-                	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, defaultOptions, options) &&
-                	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, defaultOptions, options) &&
-                	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, defaultOptions, options);
-                // only update the compliance settings if they are default settings, otherwise the
-                // settings have already been modified by a tool or user
-                if (isDefault) {
-                    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-                    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-                    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-                    options.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-                    options.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
-                    JavaCore.setOptions(options);
-                }
+            if (javaVersion != null) {
+            	String compliance = null;
+            	if (javaVersion.startsWith(JavaCore.VERSION_1_5)) {
+            		compliance = JavaCore.VERSION_1_5;
+            	} else if (javaVersion.startsWith(JavaCore.VERSION_1_6)) {
+            		compliance = JavaCore.VERSION_1_6;
+            	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
+            		compliance = JavaCore.VERSION_1_7;
+            	}
+            	if (compliance != null) {
+	                Hashtable defaultOptions = JavaCore.getDefaultOptions();
+	                Hashtable options = JavaCore.getOptions();
+	                boolean isDefault =
+	                	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
+	                	equals(JavaCore.COMPILER_SOURCE, defaultOptions, options) &&
+	                	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, defaultOptions, options) &&
+	                	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, defaultOptions, options) &&
+	                	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, defaultOptions, options);
+	                // only update the compliance settings if they are default settings, otherwise the
+	                // settings have already been modified by a tool or user
+	                if (isDefault) {
+	                	JavaCore.setCompilanceOptions(compliance, options);
+	                    JavaCore.setOptions(options);
+	                }
+            	}
             }
         }		
 	}
