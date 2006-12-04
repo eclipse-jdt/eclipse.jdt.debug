@@ -13,6 +13,8 @@ package org.eclipse.jdt.internal.launching.environments;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -37,25 +39,35 @@ import org.osgi.framework.Constants;
  * @since 3.3
  */
 public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
+	
+	/**
+	 * Cache of access rules per environment. Re-use rules between projects.
+	 */
+	private static Map fgRules = new HashMap();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
 	 */
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
-		String[] packages = retrieveSystemPackages(environment.getId());
-		IAccessRule[] packageRules = null;
-		if (packages.length > 0) {
-			packageRules = new IAccessRule[packages.length + 1];
-			for (int i = 0; i < packages.length; i++) {
-				packageRules[i] = JavaCore.newAccessRule(new Path(packages[i].replace('.', IPath.SEPARATOR)), IAccessRule.K_ACCESSIBLE); //$NON-NLS-1$
+		IAccessRule[][] allRules = null;
+		allRules = (IAccessRule[][]) fgRules.get(environment.getId());
+		if (allRules == null) {
+			String[] packages = retrieveSystemPackages(environment.getId());
+			IAccessRule[] packageRules = null;
+			if (packages.length > 0) {
+				packageRules = new IAccessRule[packages.length + 1];
+				for (int i = 0; i < packages.length; i++) {
+					packageRules[i] = JavaCore.newAccessRule(new Path(packages[i].replace('.', IPath.SEPARATOR)), IAccessRule.K_ACCESSIBLE);
+				}
+				packageRules[packages.length] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
+			} else {
+				packageRules = new IAccessRule[0];
 			}
-			packageRules[packages.length] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
-		} else {
-			packageRules = new IAccessRule[0];
-		}
-		IAccessRule[][] allRules = new IAccessRule[libraries.length][];
-		for (int i = 0; i < allRules.length; i++) {
-			allRules[i] = packageRules;	
+			allRules = new IAccessRule[libraries.length][];
+			for (int i = 0; i < allRules.length; i++) {
+				allRules[i] = packageRules;	
+			}
+			fgRules.put(environment.getId(), allRules);
 		}
 		return allRules;
 	}
