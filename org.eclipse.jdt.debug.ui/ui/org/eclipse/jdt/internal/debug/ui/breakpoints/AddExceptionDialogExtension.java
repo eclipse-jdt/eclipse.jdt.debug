@@ -30,7 +30,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 /**
  * 
- * This class adds the extensions for the AddExceptionDialog, to use the new Camal cased selection dialog
+ * This class adds the extensions for the AddExceptionDialog, to use the new Camel cased selection dialog
  * @since 3.2
  *
  */
