@@ -15,7 +15,6 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -61,8 +60,7 @@ public class ShowQualifiedAction extends ViewFilterAction {
 						viewer.refresh();
 						IPreferenceStore store = getPreferenceStore();
 						String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-						store.setValue(key, getValue());
-						JDIDebugUIPlugin.getDefault().savePluginPreferences();						
+						store.setValue(key, getValue());				
 					}
 				});
 			}

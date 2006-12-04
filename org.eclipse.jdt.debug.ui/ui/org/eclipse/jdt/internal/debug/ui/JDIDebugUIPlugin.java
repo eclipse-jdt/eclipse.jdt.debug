@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -332,7 +334,14 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		JavaDebugOptionsManager.getDefault().startup();
-		
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
+			public void doneSaving(ISaveContext context) {}
+			public void prepareToSave(ISaveContext context)	throws CoreException {}
+			public void rollback(ISaveContext context) {}
+			public void saving(ISaveContext context) throws CoreException {
+				savePluginPreferences();
+			}
+		});
 		IAdapterManager manager= Platform.getAdapterManager();
 		fActionFilterAdapterFactory= new ActionFilterAdapterFactory();
 		manager.registerAdapters(fActionFilterAdapterFactory, IMember.class);
@@ -406,6 +415,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			if (fTextTools != null) {
 				fTextTools.dispose();
 			}
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 		} finally {
 			super.stop(context);
 		}

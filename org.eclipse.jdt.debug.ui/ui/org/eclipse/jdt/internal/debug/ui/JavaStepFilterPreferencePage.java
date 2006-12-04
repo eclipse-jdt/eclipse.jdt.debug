@@ -424,7 +424,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS, fFilterConstructorButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS, fFilterStaticButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS, fFilterSyntheticButton.getSelection());
-		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 	

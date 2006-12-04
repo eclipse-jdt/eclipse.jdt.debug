@@ -107,7 +107,6 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 		store.setValue(key, action.isChecked());
-		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 	}
 
 	/* (non-Javadoc)

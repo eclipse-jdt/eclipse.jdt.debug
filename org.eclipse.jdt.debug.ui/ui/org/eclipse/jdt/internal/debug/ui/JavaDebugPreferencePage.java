@@ -214,7 +214,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
-		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		JDIDebugModel.savePreferences();
 		JavaRuntime.savePreferences();
 		return true;

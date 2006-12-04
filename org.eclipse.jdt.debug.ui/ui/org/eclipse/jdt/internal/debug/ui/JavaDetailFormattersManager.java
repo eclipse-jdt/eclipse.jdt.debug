@@ -317,7 +317,6 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		String pref = JavaDebugOptionsManager.serializeList(values);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST, pref);
-		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 	}
 	
 	/**

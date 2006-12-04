@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -197,6 +201,14 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
+			public void doneSaving(ISaveContext context) {}
+			public void prepareToSave(ISaveContext context)	throws CoreException {}
+			public void rollback(ISaveContext context) {}
+			public void saving(ISaveContext context) throws CoreException {
+				savePluginPreferences();
+			}
+		});
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList();
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
@@ -226,7 +238,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	public void stop(BundleContext context) throws Exception {
 		try {
 			getPluginPreferences().removePropertyChangeListener(this); //added in the preference initializer
-			savePluginPreferences();
 			JavaHotCodeReplaceManager.getDefault().shutdown();
 			fEvaluationEngineManager.dispose();
 			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
@@ -238,6 +249,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 				}
 			}
 			fBreakpointListeners = null;
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 		} finally {
 			fgPlugin = null;
 			super.stop(context);
@@ -367,7 +379,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(JDIDebugModel.PREF_REQUEST_TIMEOUT)) {
-			savePluginPreferences();
 			int value = getPluginPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 			IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 			for (int i = 0; i < targets.length; i++) {
@@ -570,5 +581,4 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
 		return fEvaluationEngineManager.getEvaluationEngine(project, target);
 	}
-	
 }

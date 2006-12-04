@@ -42,6 +42,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -433,8 +435,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			getPluginPreferences().removePropertyChangeListener(this);
 			JavaRuntime.removeVMInstallChangedListener(this);
 			JavaRuntime.saveVMConfiguration();
-			savePluginPreferences();
 			fgXMLParser = null;
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 		} finally {
 			super.stop(context);
 		}
@@ -445,7 +447,15 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
+			public void doneSaving(ISaveContext context) {}
+			public void prepareToSave(ISaveContext context)	throws CoreException {}
+			public void rollback(ISaveContext context) {}
+			public void saving(ISaveContext context) throws CoreException {
+				savePluginPreferences();
+			}
+			
+		});
 		// Exclude launch configurations from being copied to the output directory
 		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
 		Hashtable optionsMap = JavaCore.getOptions();
@@ -559,9 +569,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		if (property.equals(JavaRuntime.PREF_CONNECT_TIMEOUT)) {
-			savePluginPreferences();
-		} else if (property.equals(JavaRuntime.PREF_VM_XML)) {
+		if (property.equals(JavaRuntime.PREF_VM_XML)) {
 			if (!isIgnoreVMDefPropertyChangeEvents()) {
 				processVMPrefsChanged((String)event.getOldValue(), (String)event.getNewValue());
 			}

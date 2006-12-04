@@ -339,8 +339,6 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	            value= IJDIPreferencesConstants.INLINE_FORMATTERS;
 	        }
 	        JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_SHOW_DETAILS, value);
-	        
-			JDIDebugUIPlugin.getDefault().savePluginPreferences();
 			fCodeViewer.dispose();
 		}
 		return true;

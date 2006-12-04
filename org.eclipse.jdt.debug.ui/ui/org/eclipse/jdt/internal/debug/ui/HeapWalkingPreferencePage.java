@@ -58,13 +58,4 @@ public class HeapWalkingPreferencePage extends FieldEditorPreferencePage impleme
 		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_1, comp));
 		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_2, comp));
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		boolean ok = super.performOk();
-		JDIDebugUIPlugin.getDefault().savePluginPreferences();
-		return ok;
-	}
 }
