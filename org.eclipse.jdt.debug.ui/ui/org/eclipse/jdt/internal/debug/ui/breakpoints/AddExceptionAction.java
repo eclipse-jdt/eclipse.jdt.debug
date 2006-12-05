@@ -33,6 +33,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.dialogs.TypeSelectionDialog2;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
@@ -80,6 +81,10 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 					 										 true, "*Exception*", ext); //$NON-NLS-1$
 			dialog.setTitle(BreakpointMessages.AddExceptionAction_0); 
 			dialog.setMessage(BreakpointMessages.AddExceptionAction_1);
+			if (dialog instanceof TypeSelectionDialog2) {				
+				TypeSelectionDialog2 tsd = (TypeSelectionDialog2) dialog;
+				tsd.setFilter("*Exception*", TypeSelectionDialog2.CARET_BEGINNING); //$NON-NLS-1$
+			}
 			dialog.create();
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IJavaDebugHelpContextIds.ADD_EXCEPTION_DIALOG);
 			if(dialog.open() == IDialogConstants.OK_ID) {
