@@ -165,7 +165,7 @@ public class JavaDebugUtils {
 	 *  denoted with <code>$</code> character
 	 * @return a source file path corresponding to the type name
 	 */
-	private static String generateSourceName(String qualifiedTypeName) {
+	public static String generateSourceName(String qualifiedTypeName) {
 		int index = qualifiedTypeName.lastIndexOf('.');
 		if (index < 0) {
 			index = 0;

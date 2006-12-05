@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -35,6 +33,8 @@ import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A hyperlink from a stack trace line of the form "*(*.java:*)"
@@ -127,7 +127,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		ILaunch launch = getLaunch();
 		Object result = null;
 		if (launch != null) {
-			result = JavaDebugUtils.resolveSourceElement(typeName, getLaunch());
+			result = JavaDebugUtils.resolveSourceElement(JavaDebugUtils.generateSourceName(typeName), getLaunch());
 		}
 		if (result == null) {
 			// search for the type in the workspace
