@@ -7,14 +7,6 @@
    <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
 
 <!-- Extensions -->
-   <extension point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.jdt.internal.debug.ui.VMCapabilitiesPageTester"
-            id="org.eclipse.jdt.debug.ui.vmcapabiltitiesTest"
-            namespace="org.eclipse.jdt.debug.ui"
-            properties="vmpage"
-            type="org.eclipse.core.runtime.IAdaptable"/>
-   </extension>
    <extension
          point="org.eclipse.debug.core.watchExpressionDelegates">
          <watchExpressionDelegate
@@ -1814,7 +1806,6 @@
             >
          <enabledWhen>
              <and>
-             	<test property="org.eclipse.jdt.debug.ui.vmpage"/>
                 <or>
                    <instanceof
                          value="org.eclipse.debug.core.model.IDebugElement">
@@ -1823,6 +1814,14 @@
                          value="org.eclipse.debug.core.model.IProcess">
                    </instanceof>
                 </or>
+             	<test
+                    property="org.eclipse.debug.ui.getModelIdentifier"
+                    value="org.eclipse.jdt.debug"/>
+                <not>
+                   <test
+                         property="org.eclipse.debug.ui.isTerminatedOrDisconnected">
+                   </test>
+                </not>
              </and>
          </enabledWhen>
       </page>
