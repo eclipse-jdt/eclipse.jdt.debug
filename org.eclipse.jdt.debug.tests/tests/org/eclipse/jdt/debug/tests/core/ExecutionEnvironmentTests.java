@@ -11,6 +11,10 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -105,4 +109,58 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			assertEquals("Wrong rule", "**/*", rules[0].getPattern().toString());
 		}
 	}
+	
+	/**
+	 * Tests that a project bound to an EE has access rules.
+	 */
+	public void testAccessRulesPresentOnEEProject() throws Exception {
+		boolean foundLib = false;
+		IJavaProject project = getJavaProject("BoundEE");
+		assertTrue("BoundEE project does not exist", project.exists());
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		for (int i = 0; i < rawClasspath.length; i++) {
+			IClasspathEntry entry = rawClasspath[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				String environmentId = JavaRuntime.getExecutionEnvironmentId(entry.getPath());
+				if (environmentId != null) {
+					IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+					assertNotNull("missing classpath container", container);
+					IClasspathEntry[] entries = container.getClasspathEntries();
+					for (int j = 0; j < entries.length; j++) {
+						foundLib = true;
+						IClasspathEntry containerEntry = entries[j];
+						assertTrue("Missing access rules", containerEntry.getAccessRules().length > 0);
+					}
+				}
+			}
+		}
+		assertTrue("did not find JRE libs on classpath", foundLib);
+	}
+	
+	/**
+	 * Tests that a project bound to a specific JRE has no access rules.
+	 */
+	public void testAccessRulesNotPresentOnJREProject() throws Exception {
+		boolean foundLib = false;
+		IJavaProject project = getJavaProject("BoundJRE");
+		assertTrue("BoundJRE project does not exist", project.exists());
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		for (int i = 0; i < rawClasspath.length; i++) {
+			IClasspathEntry entry = rawClasspath[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				IVMInstall install = JavaRuntime.getVMInstall(entry.getPath());
+				if (install != null) {
+					IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+					assertNotNull("missing classpath container", container);
+					IClasspathEntry[] entries = container.getClasspathEntries();
+					for (int j = 0; j < entries.length; j++) {
+						foundLib = true;
+						IClasspathEntry containerEntry = entries[j];
+						assertEquals("access rules should not be present", 0, containerEntry.getAccessRules().length);
+					}
+				}
+			}
+		}
+		assertTrue("did not find JRE library on classpath", foundLib);		
+	}	
 }

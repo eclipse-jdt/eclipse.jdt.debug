@@ -92,10 +92,18 @@ public class JREContainer implements IClasspathContainer {
 			};
 			JavaRuntime.addVMInstallChangedListener(listener);
 		}
-		IClasspathEntry[] entries = (IClasspathEntry[])fgClasspathEntries.get(vm);
-		if (entries == null) {
-			entries = computeClasspathEntries(vm, containerPath, project);
-			fgClasspathEntries.put(vm, entries);
+		String id = JavaRuntime.getExecutionEnvironmentId(containerPath);
+		IClasspathEntry[] entries = null;
+		if (id == null) {
+			// cache classpath entries per JRE when not bound to an EE
+			entries = (IClasspathEntry[])fgClasspathEntries.get(vm);
+			if (entries == null) {
+				entries = computeClasspathEntries(vm, project, id);
+				fgClasspathEntries.put(vm, entries);
+			}
+		} else {
+			// dynamically compute entries when bound to an EE
+			entries = computeClasspathEntries(vm, project, id);
 		}
 		return entries;
 	}
@@ -105,22 +113,21 @@ public class JREContainer implements IClasspathContainer {
 	 * in the context of the given path and project.
 	 * 
 	 * @param vm
-	 * @param containerPath the container path the resolution is for
-	 * @param project the project the resolution is for.
+	 * @param project the project the resolution is for
+	 * @param environmentId execution environment the resolution is for, or <code>null</code>
 	 * @return classpath entries
 	 */
-	private static IClasspathEntry[] computeClasspathEntries(IVMInstall vm, IPath containerPath, IJavaProject project) {
+	private static IClasspathEntry[] computeClasspathEntries(IVMInstall vm, IJavaProject project, String environmentId) {
 		LibraryLocation[] libs = vm.getLibraryLocations();
 		boolean overrideJavaDoc = false;
 		if (libs == null) {
 			libs = JavaRuntime.getLibraryLocations(vm);
 			overrideJavaDoc = true;
 		}
-		String id = JavaRuntime.getExecutionEnvironmentId(containerPath);
 		IAccessRule[][] rules = null;
-		if (id != null) {
+		if (environmentId != null) {
 			// compute access rules for execution environment
-			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id);
+			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(environmentId);
 			if (environment != null) {
 				rules = environment.getAccessRules(vm, libs, project);
 			}

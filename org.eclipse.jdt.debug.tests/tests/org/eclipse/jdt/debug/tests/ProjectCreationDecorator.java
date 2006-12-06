@@ -39,6 +39,7 @@ import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -205,6 +206,48 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         assertNotNull("No default JRE", vm);
         JavaProjectHelper.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
     }
+    
+    /**
+     * Create a project bound to a specific JRE
+     * 
+     * @throws Exception
+     */
+    public void testProjectBoundToJRECreation() throws Exception {
+        // delete any pre-existing project
+        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("BoundJRE");
+        if (pro.exists()) {
+            pro.delete(true, true, null);
+        }
+        // create project with two src folders and output locations
+        IJavaProject project = JavaProjectHelper.createJavaProject("BoundJRE");
+        JavaProjectHelper.addSourceContainer(project, "src", "bin");
+
+        // add VM specific JRE container
+        IPath path = JavaRuntime.newJREContainerPath(JavaRuntime.getDefaultVMInstall());
+        JavaProjectHelper.addContainerEntry(project, path);
+    }   
+    
+    /**
+     * Create a project bound to a specific Execution Environment
+     * 
+     * @throws Exception
+     */
+    public void testProjectBoundToEECreation() throws Exception {
+        // delete any pre-existing project
+        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("BoundEE");
+        if (pro.exists()) {
+            pro.delete(true, true, null);
+        }
+        // create project with two src folders and output locations
+        IJavaProject project = JavaProjectHelper.createJavaProject("BoundEE");
+        JavaProjectHelper.addSourceContainer(project, "src", "bin");
+
+        // add VM specific JRE container
+        IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
+        assertNotNull("Missing J2SE-1.4 environment", j2se14);
+        IPath path = JavaRuntime.newJREContainerPath(j2se14);
+        JavaProjectHelper.addContainerEntry(project, path);
+    }     
 
     /**
      * Set up preferences that need to be changed for the tests
