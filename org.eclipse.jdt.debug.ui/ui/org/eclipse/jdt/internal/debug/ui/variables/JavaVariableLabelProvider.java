@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
@@ -27,9 +33,18 @@ import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
  * @since 3.2
  *
  */
-public class JavaVariableLabelProvider extends VariableLabelProvider {
+public class JavaVariableLabelProvider extends VariableLabelProvider implements IPropertyChangeListener {
 	
 	public static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
+	/**
+	 * Map of view id to qualified name setting
+	 */
+	private Map fQualifiedNameSettigns = new HashMap();
+	private boolean fQualifiedNames = false;
+	
+	public JavaVariableLabelProvider() {
+		JDIDebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getValueText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue)
@@ -48,7 +63,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider {
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
 		try {
 			typeName = value.getReferenceTypeName();
-			if (!isShowQualfiiedNames(context)) {
+			if (!fQualifiedNames) {
 				return fLabelProvider.removeQualifierFromGenericName(typeName);
 			}
 		} catch (DebugException e) {}
@@ -62,15 +77,20 @@ public class JavaVariableLabelProvider extends VariableLabelProvider {
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
 		try {
 			typeName = variable.getReferenceTypeName();
-			if (!isShowQualfiiedNames(context)) {
+			if (!fQualifiedNames) {
 				return fLabelProvider.removeQualifierFromGenericName(typeName);
 			}
 		} catch (DebugException e) {}
 		return typeName;		
 	}
 
-	private boolean isShowQualfiiedNames(IPresentationContext context) {
-		return JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES);  //$NON-NLS-1$
+	private Boolean isShowQualfiiedNames(IPresentationContext context) {
+		Boolean qualified = (Boolean) fQualifiedNameSettigns.get(context.getId());
+		if (qualified == null) {
+			qualified = Boolean.valueOf(JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
+			fQualifiedNameSettigns.put(context.getId(), qualified);
+		}
+		return qualified;
 	}
 
 	/* (non-Javadoc)
@@ -89,6 +109,23 @@ public class JavaVariableLabelProvider extends VariableLabelProvider {
 			return ""; //$NON-NLS-1$
 		}
 		return super.getColumnText(variable, value, context, columnId);
+	}
+
+	/**
+	 * Sets qualified name setting before building label
+	 */
+	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
+		Boolean showQ = isShowQualfiiedNames(update.getPresentationContext());
+		fQualifiedNames = showQ.booleanValue();
+		fLabelProvider.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, showQ);
+		super.retrieveLabel(update);
+	}
+
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
+			fQualifiedNameSettigns.clear();
+		}
 	}
 	
 	
