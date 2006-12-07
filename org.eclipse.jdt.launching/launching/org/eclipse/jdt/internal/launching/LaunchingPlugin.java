@@ -11,6 +11,8 @@
 package org.eclipse.jdt.internal.launching;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -241,7 +244,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * Re-bind classpath variables and containers affected by the JRE
 		 * changes.
 		 */
-		public void process() throws CoreException {
+		public void process() {
 			JREUpdateJob job = new JREUpdateJob(this);
 			job.schedule();
 		}
@@ -448,10 +451,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
-			public void doneSaving(ISaveContext context) {}
-			public void prepareToSave(ISaveContext context)	throws CoreException {}
-			public void rollback(ISaveContext context) {}
-			public void saving(ISaveContext context) throws CoreException {
+			public void doneSaving(ISaveContext context1) {}
+			public void prepareToSave(ISaveContext context1)	throws CoreException {}
+			public void rollback(ISaveContext context1) {}
+			public void saving(ISaveContext context1) throws CoreException {
 				savePluginPreferences();
 			}
 			
@@ -663,11 +666,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			fBatchingChanges = false;	
 			if (vmChanges != null) {
 				JavaRuntime.removeVMInstallChangedListener(vmChanges);
-				try {
-					vmChanges.process();
-				} catch (CoreException e) {
-					log(e);
-				}	
+				vmChanges.process();
 			}
 		}
 
@@ -697,13 +696,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		if (!fBatchingChanges) {
-			try {
-				VMChanges changes = new VMChanges();
-				changes.defaultVMInstallChanged(previous, current);
-				changes.process();
-			} catch (CoreException e) {
-				log(e);
-			}
+			VMChanges changes = new VMChanges();
+			changes.defaultVMInstallChanged(previous, current);
+			changes.process();
 		}
 	}
 
@@ -718,13 +713,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 		if (!fBatchingChanges) {
-			try {
-				VMChanges changes = new VMChanges();
-				changes.vmChanged(event);
-				changes.process();
-			} catch (CoreException e) {
-				log(e);
-			}
+			VMChanges changes = new VMChanges();
+			changes.vmChanged(event);
+			changes.process();
 		}		
 	}
 
@@ -733,13 +724,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public void vmRemoved(IVMInstall vm) {
 		if (!fBatchingChanges) {
-			try {
-				VMChanges changes = new VMChanges();
-				changes.vmRemoved(vm);
-				changes.process();
-			} catch (CoreException e) {
-				log(e);
-			}
+			VMChanges changes = new VMChanges();
+			changes.vmRemoved(vm);
+			changes.process();
 		}
 	}
 
@@ -875,7 +862,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Saves the library info in a local workspace state location 
 	 */
 	private static void saveLibraryInfo() {
-		FileOutputStream stream= null;
+		OutputStream stream= null;
 		try {
 			String xml = getLibraryInfoAsXML();
 			IPath libPath = getDefault().getStateLocation();
@@ -884,7 +871,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			stream = new FileOutputStream(file);
+			stream = new BufferedOutputStream(new FileOutputStream(file));
 			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 		} catch (IOException e) {
 			log(e);
@@ -912,7 +899,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		File file = libPath.toFile();
 		if (file.exists()) {
 			try {
-				InputStream stream = new FileInputStream(file);
+				InputStream stream = new BufferedInputStream(new FileInputStream(file));
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				parser.setErrorHandler(new DefaultHandler());
 				Element root = parser.parse(new InputSource(stream)).getDocumentElement();

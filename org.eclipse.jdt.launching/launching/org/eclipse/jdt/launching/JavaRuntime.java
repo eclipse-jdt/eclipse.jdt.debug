@@ -11,10 +11,12 @@
 package org.eclipse.jdt.launching;
 
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1423,7 +1425,7 @@ public final class JavaRuntime {
 			if (file.exists()) {        
 				// If file exists, load VM definitions from it into memory and write the definitions to
 				// the preference store WITHOUT triggering any processing of the new value
-				FileInputStream fileInputStream = new FileInputStream(file);
+				InputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
 				VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream, vmDefs);			
 			}		
 		}

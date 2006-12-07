@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -96,7 +98,7 @@ public class JavaStackTraceConsole extends TextConsole {
             try {
                 int len = (int) file.length();
                 byte[] b = new byte[len];
-                FileInputStream fin = new FileInputStream(file);
+                InputStream fin = new BufferedInputStream(new FileInputStream(file));
                 int read = 0;
                 while (read < len) {
                     read += fin.read(b);
