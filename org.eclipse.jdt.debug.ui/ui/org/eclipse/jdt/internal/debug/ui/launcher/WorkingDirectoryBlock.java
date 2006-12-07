@@ -288,6 +288,7 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 			}
 		} else if (workingDirPath.length() == 0) {
 			setErrorMessage(LauncherMessages.WorkingDirectoryBlock_20);
+			return false;
 		}
 		return true;
 	}
