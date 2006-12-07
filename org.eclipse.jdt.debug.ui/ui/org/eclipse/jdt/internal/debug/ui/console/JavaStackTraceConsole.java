@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jdt.internal.debug.ui.console;
 
 import java.io.File;
@@ -20,10 +19,10 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.resource.JFaceResources;
@@ -40,7 +39,31 @@ import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+/**
+ * Provides a stack trace console for Java stack traces
+ */
 public class JavaStackTraceConsole extends TextConsole {
+	
+	/**
+	 * Provides a partitioner forthis console type
+	 */
+	class JavaStackTraceConsolePartitioner extends FastPartitioner implements IConsoleDocumentPartitioner {
+
+        public JavaStackTraceConsolePartitioner() {
+            super(new RuleBasedPartitionScanner(), null);
+            getDocument().setDocumentPartitioner(this);
+        }
+
+        public boolean isReadOnly(int offset) {
+            return false;
+        }
+
+        public StyleRange[] getStyleRanges(int offset, int length) {
+            return null;
+        }
+
+    }
+	
     public final static String CONSOLE_TYPE = "javaStackTraceConsole"; //$NON-NLS-1$
     public final static String FILE_NAME = JDIDebugUIPlugin.getDefault().getStateLocation().toOSString() + File.separator + "stackTraceConsole.txt"; //$NON-NLS-1$
 
@@ -48,19 +71,25 @@ public class JavaStackTraceConsole extends TextConsole {
     private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
-            if (property.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
-                setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+            if (property.equals(IDebugUIConstants.PREF_CONSOLE_FONT)) {
+                setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
             }
         }
     };
 
+    /**
+     * Constructor
+     */
     public JavaStackTraceConsole() {
         super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true); 
-        Font font = JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT);
+        Font font = JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT);
         setFont(font);
         partitioner.connect(getDocument());
     }
 
+	/**
+	 * inits the document backing this console
+	 */
 	void initializeDocument() {
         File file = new File(FILE_NAME);
         if (file.exists()) {
@@ -81,14 +110,15 @@ public class JavaStackTraceConsole extends TextConsole {
 		}
     }
 
+    /**
+     * @see org.eclipse.ui.console.AbstractConsole#init()
+     */
     protected void init() {
         JFaceResources.getFontRegistry().addListener(propertyListener);
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.console.AbstractConsole#dispose()
+
+    /**
+     * @see org.eclipse.ui.console.TextConsole#dispose()
      */
     protected void dispose() {
         saveDocument();
@@ -96,6 +126,9 @@ public class JavaStackTraceConsole extends TextConsole {
         super.dispose();
     }
 
+    /**
+     * Saves the backing document for this console
+     */
     void saveDocument() {
         try {
             IDocument document = getDocument();
@@ -110,63 +143,38 @@ public class JavaStackTraceConsole extends TextConsole {
                     file.delete();
                 }
             }
-        } catch (IOException e) {
-        }
+        } 
+        catch (IOException e) {}
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.ui.console.TextConsole#getPartitioner()
      */
     protected IConsoleDocumentPartitioner getPartitioner() {
         return partitioner;
     }
 
-    class JavaStackTraceConsolePartitioner extends FastPartitioner implements IConsoleDocumentPartitioner {
-
-        public JavaStackTraceConsolePartitioner() {
-            super(new RuleBasedPartitionScanner(), null);
-            getDocument().setDocumentPartitioner(this);
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
-         */
-        public boolean isReadOnly(int offset) {
-            return false;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int,
-         *      int)
-         */
-        public StyleRange[] getStyleRanges(int offset, int length) {
-            return null;
-        }
-
-    }
-
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
 	 */
 	public String getHelpContextId() {
 		return IJavaDebugHelpContextIds.STACK_TRACE_CONSOLE;
 	}
     
+    /**
+     * @see org.eclipse.ui.console.TextConsole#createPage(org.eclipse.ui.console.IConsoleView)
+     */
     public IPageBookViewPage createPage(IConsoleView view) {
     	return new JavaStackTraceConsolePage(this, view);
 	}
     
-    
+    /**
+     * performs the formatting of the stacktrace console
+     */
     public void format() {
     	WorkbenchJob job = new WorkbenchJob(ConsoleMessages.JavaStackTraceConsole_1) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-	            IJobManager jobManager = Platform.getJobManager();
+	            IJobManager jobManager = Job.getJobManager();
 	            try {
 	                jobManager.join(this, monitor);
 	            } catch (OperationCanceledException e1) {
@@ -177,7 +185,6 @@ public class JavaStackTraceConsole extends TextConsole {
 	            IDocument document = getDocument();
 	            String orig = document.get();
 	            if (orig != null && orig.length() > 0) {
-//	                document.set(""); //$NON-NLS-1$ hack avoids bug in the default position updater
 	                document.set(format(orig));
 	            }
 	            
@@ -189,6 +196,11 @@ public class JavaStackTraceConsole extends TextConsole {
        
     }
     
+    /**
+     * Underlying format operation
+     * @param trace the stack trace to format
+     * @return the formatted stack trace for this console
+     */
     private String format(String trace) {
         StringTokenizer tokenizer = new StringTokenizer(trace, " \t\n\r\f", true); //$NON-NLS-1$
         StringBuffer formattedTrace = new StringBuffer();
@@ -274,7 +286,6 @@ public class JavaStackTraceConsole extends TextConsole {
             formattedTrace.append(token);
             insideAt = false;
         }
-        
         return formattedTrace.toString();
     }
 }
