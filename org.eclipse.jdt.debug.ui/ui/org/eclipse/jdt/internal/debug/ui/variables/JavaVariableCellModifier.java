@@ -34,11 +34,13 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
                 IJavaVariable var = (IJavaVariable) element;
                 try {
                     String signature = var.getSignature();
-                    if (signature.length() == 1) {
-                        // primitive
-                        return true;
+                    if (signature != null) {
+	                    if (signature.length() == 1) {
+	                        // primitive
+	                        return true;
+	                    }
+	                    return signature.equals("Ljava/lang/String;"); //$NON-NLS-1$
                     }
-                    return signature.equals("Ljava/lang/String;"); //$NON-NLS-1$
                 } catch (DebugException e) {
                 }
             }
