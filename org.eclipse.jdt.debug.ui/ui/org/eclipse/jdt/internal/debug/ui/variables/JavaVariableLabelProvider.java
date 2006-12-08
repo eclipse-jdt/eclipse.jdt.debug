@@ -39,7 +39,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/**
 	 * Map of view id to qualified name setting
 	 */
-	private Map fQualifiedNameSettigns = new HashMap();
+	private Map fQualifiedNameSettings = new HashMap();
 	private boolean fQualifiedNames = false;
 	
 	public JavaVariableLabelProvider() {
@@ -85,10 +85,10 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	}
 
 	private Boolean isShowQualfiiedNames(IPresentationContext context) {
-		Boolean qualified = (Boolean) fQualifiedNameSettigns.get(context.getId());
+		Boolean qualified = (Boolean) fQualifiedNameSettings.get(context.getId());
 		if (qualified == null) {
 			qualified = Boolean.valueOf(JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
-			fQualifiedNameSettigns.put(context.getId(), qualified);
+			fQualifiedNameSettings.put(context.getId(), qualified);
 		}
 		return qualified;
 	}
@@ -124,7 +124,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
-			fQualifiedNameSettigns.clear();
+			fQualifiedNameSettings.clear();
 		}
 	}
 	
