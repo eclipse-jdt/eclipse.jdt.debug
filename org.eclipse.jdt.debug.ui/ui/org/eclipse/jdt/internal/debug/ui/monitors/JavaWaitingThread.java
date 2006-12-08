@@ -11,16 +11,18 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ITerminate;
 
 /**
  * Object used to display waiting thread in the debug launch view.
  * In this case, the thread owns for the owned monitors, and is waiting
  * for the parent monitor.
  */
-public class JavaWaitingThread implements IDebugElement {
+public class JavaWaitingThread implements IDebugElement, ITerminate {
 
 	/**
 	 * The thread object in the thread and monitor model.
@@ -107,9 +109,30 @@ public class JavaWaitingThread implements IDebugElement {
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
+	 * Returns whether this waiting thread is suspended
 	 */
 	public boolean isSuspended() {
 		return fThread.isSuspended();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
+	 */
+	public boolean canTerminate() {
+		return getDebugTarget().canTerminate();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return getDebugTarget().isTerminated();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
+	 */
+	public void terminate() throws DebugException {
+		getDebugTarget().terminate();
 	}
 }
