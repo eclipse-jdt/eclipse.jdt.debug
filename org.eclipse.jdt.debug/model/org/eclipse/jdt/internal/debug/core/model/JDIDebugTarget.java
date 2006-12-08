@@ -386,8 +386,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		initializeState();
 		initializeBreakpoints();
 		getLaunch().addDebugTarget(this);
-        DebugPlugin.getDefault().addDebugEventListener(this);
+        DebugPlugin plugin = DebugPlugin.getDefault();
+		plugin.addDebugEventListener(this);
 		fireCreationEvent();
+		// begin handling/dispatching events after the creation event is handled by all listeners
+		plugin.asyncExec(new Runnable() {
+			public void run() {
+				EventDispatcher dispatcher = getEventDispatcher();
+		        if (dispatcher != null) {
+		            Thread t= new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher); 
+		            t.setDaemon(true);
+		            t.start();
+		        }
+			}
+		});
 	}
 	
 	/**
@@ -2225,22 +2237,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 
     /* (non-Javadoc)
-     * 
-     * begin handling/dispatching events after the creation event is handled by all listeners.
-     * 
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
     public void handleDebugEvents(DebugEvent[] events) {
         if (events.length == 1) {
             DebugEvent event = events[0];
-            if (event.getSource() == this && event.getKind() == DebugEvent.CREATE) {
-                EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
-                if (dispatcher != null) {
-                    Thread t= new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher); 
-                    t.setDaemon(true);
-                    t.start();
-                }
-            } else if (event.getSource().equals(getProcess()) && event.getKind() == DebugEvent.TERMINATE) {
+            if (event.getSource().equals(getProcess()) && event.getKind() == DebugEvent.TERMINATE) {
             	// schedule a job to clean up the target in case we never get a terminate/disconnect
             	// event from the VM
             	int timeout = getRequestTimeout();
@@ -2249,7 +2251,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
             	}
             	new CleanUpJob().schedule(timeout);
             }
-            
         }
     }
     
