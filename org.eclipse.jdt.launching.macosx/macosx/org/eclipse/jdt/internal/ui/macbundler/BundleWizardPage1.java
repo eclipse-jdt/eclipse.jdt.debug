@@ -32,9 +32,13 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 	static String[] JVMS= {
 		"1.3+",	//$NON-NLS-1$
 		"1.3*",	//$NON-NLS-1$
-		"1.4.1",	//$NON-NLS-1$
+		"1.4.2",	//$NON-NLS-1$
 		"1.4+",	//$NON-NLS-1$
-		"1.4*"	//$NON-NLS-1$
+		"1.4*",	//$NON-NLS-1$
+		"1.5+",	//$NON-NLS-1$
+		"1.5*",	//$NON-NLS-1$
+		"1.6+",	//$NON-NLS-1$
+		"1.6*"	//$NON-NLS-1$
 	};
 
 	ILaunchConfiguration[] fConfigurations= new ILaunchConfiguration[0];
