@@ -47,8 +47,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.eclipse.ui.preferences.IWorkingCopyManager;
-import org.eclipse.ui.preferences.WorkingCopyManager;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -190,15 +188,13 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	private String getCurrentCompilerCompliance() {
 		IEclipsePreferences setting = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
-		IEclipsePreferences wcs = null;
 		if(getContainer() instanceof IWorkbenchPreferenceContainer) {
-			wcs = ((IWorkbenchPreferenceContainer)getContainer()).getWorkingCopyManager().getWorkingCopy(setting);
+			IEclipsePreferences wcs = ((IWorkbenchPreferenceContainer)getContainer()).getWorkingCopyManager().getWorkingCopy(setting);
+			return wcs.get(JavaCore.COMPILER_COMPLIANCE, (String) JavaCore.getDefaultOptions().get(JavaCore.COMPILER_COMPLIANCE));
+		} else {
+			return JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
 		}
-		if(wcs == null) {
-			IWorkingCopyManager mgr = new WorkingCopyManager();
-			wcs = mgr.getWorkingCopy(setting);
-		}
-		return wcs.get(JavaCore.COMPILER_COMPLIANCE, (String) JavaCore.getDefaultOptions().get(JavaCore.COMPILER_COMPLIANCE));
+		
 	}
 	
 	/**
