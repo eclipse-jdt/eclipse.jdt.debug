@@ -51,7 +51,8 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		IAccessRule[][] allRules = null;
 		allRules = (IAccessRule[][]) fgRules.get(environment.getId());
-		if (allRules == null) {
+		if (allRules == null || allRules.length != libraries.length) {
+			// if a different number of libraries, create a new set of rules
 			String[] packages = retrieveSystemPackages(environment.getId());
 			IAccessRule[] packageRules = null;
 			if (packages.length > 0) {
