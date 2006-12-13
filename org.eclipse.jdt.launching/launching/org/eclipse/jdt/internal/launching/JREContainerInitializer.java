@@ -45,16 +45,36 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/**
 	 * @see ClasspathContainerInitializer#initialize(IPath, IJavaProject)
 	 */
-	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {		
+	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
+		if (JREContainer.DEBUG_JRE_CONTAINER) {
+			System.out.println("<JRE_CONTAINER> initialize()"); //$NON-NLS-1$
+			System.out.println("\tPath: " + containerPath.toString()); //$NON-NLS-1$
+			System.out.println("\tProj: " + project.getProject().getName()); //$NON-NLS-1$
+		}
 		int size = containerPath.segmentCount();
 		if (size > 0) {
 			if (containerPath.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
 				IVMInstall vm = resolveVM(containerPath);
 				JREContainer container = null;
 				if (vm != null) {
+					if (JREContainer.DEBUG_JRE_CONTAINER) {
+						System.out.println("\tResolved VM: " + vm.getName()); //$NON-NLS-1$
+					}
 					container = new JREContainer(vm, containerPath, project);
+				} else {
+					if (JREContainer.DEBUG_JRE_CONTAINER) {
+						System.out.println("\t*** FAILED RESOLVE VM ***"); //$NON-NLS-1$
+					}
 				}
 				JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {container}, null);
+			} else {
+				if (JREContainer.DEBUG_JRE_CONTAINER) {
+					System.out.println("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
+				}	
+			}
+		} else {
+			if (JREContainer.DEBUG_JRE_CONTAINER) {
+				System.out.println("\t*** NO SEGMENTS IN CONTAINER PATH ***"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -69,10 +89,18 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			// specific JRE
 			String id = getExecutionEnvironmentId(containerPath);
 			if (id != null) {
+				if (JREContainer.DEBUG_JRE_CONTAINER) {
+					System.out.println("<JRE_CONTAINER> resolveVM(IPath)"); //$NON-NLS-1$
+					System.out.println("\tEE: " + id); //$NON-NLS-1$
+				}
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment environment = manager.getEnvironment(id);
 				if (environment != null) {
 					vm = resolveVM(environment);
+				} else {
+					if (JREContainer.DEBUG_JRE_CONTAINER) {
+						System.out.println("\t*** NO ENVIRONMENT ***"); //$NON-NLS-1$
+					}
 				}
 			} else {
 				String vmTypeId = getVMTypeId(containerPath);
@@ -98,20 +126,36 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * @since 3.2
 	 */
 	public static IVMInstall resolveVM(IExecutionEnvironment environment) {
+		if (JREContainer.DEBUG_JRE_CONTAINER) {
+			System.out.println("<JRE_CONTAINER> resolveVM(IExecutionEnvironment)"); //$NON-NLS-1$
+		}
 		IVMInstall vm = environment.getDefaultVM();
 		if (vm == null) {
 			IVMInstall[] installs = environment.getCompatibleVMs();
 			// take the first strictly compatible vm if there is no default
+			if (installs.length == 0 && JREContainer.DEBUG_JRE_CONTAINER) {
+				System.out.println("\t*** NO COMPATIBLE VMS ***"); //$NON-NLS-1$
+			}
 			for (int i = 0; i < installs.length; i++) {
 				IVMInstall install = installs[i];
 				if (environment.isStrictlyCompatible(install)) {
 					vm = install;
+					if (installs.length == 0 && JREContainer.DEBUG_JRE_CONTAINER) {
+						System.out.println("\tPerfect Match: " + vm.getName()); //$NON-NLS-1$
+					}
 					break;
 				}
 			}
 			// use the first vm failing that
 			if (vm == null && installs.length > 0) {
 				vm = installs[0];
+				if (installs.length == 0 && JREContainer.DEBUG_JRE_CONTAINER) {
+					System.out.println("\tFirst Match: " + vm.getName()); //$NON-NLS-1$
+				}
+			}
+		} else {
+			if (JREContainer.DEBUG_JRE_CONTAINER) {
+				System.out.println("\tUser Default VM: " + vm.getName()); //$NON-NLS-1$
 			}
 		}
 		return vm;

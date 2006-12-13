@@ -228,10 +228,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * Initializes compatibility settings.
 	 */
 	void initializeCompatibilities() {
-	    if (!fInitializedCompatibilities) {
-	        fInitializedCompatibilities = true;
-	        IVMInstallType[] installTypes = JavaRuntime.getVMInstallTypes();
-	        synchronized (this) {
+		IVMInstallType[] installTypes = JavaRuntime.getVMInstallTypes();
+        synchronized (this) {
+        	if (!fInitializedCompatibilities) {
+	        	fInitializedCompatibilities = true;
 	            for (int i = 0; i < installTypes.length; i++) {
 	                IVMInstallType type = installTypes[i];
 	                IVMInstall[] installs = type.getVMInstalls();
@@ -242,8 +242,8 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	                }
 	            }
 	            initializeDefaultVMs();
-	        }
-	    }
+        	}
+        }
 	}
 	
 	/**

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -56,9 +57,44 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * Cache of classpath entries per VM install. Cleared when a VM changes.
 	 */
-	private static Map fgClasspathEntries = null;
+	private static Map fgClasspathEntries = new HashMap(10);
 	
 	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
+	
+	// debug flags
+	public static boolean DEBUG_JRE_CONTAINER = false;
+	
+	/**
+	 * Add a vm changed listener to clear cached values when a VM changes or is removed
+	 */
+	static {
+		IVMInstallChangedListener listener = new IVMInstallChangedListener() {
+			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+			}
+
+			public void vmChanged(PropertyChangeEvent event) {
+				if (event.getSource() != null) {
+					fgClasspathEntries.remove(event.getSource());
+				}
+			}
+
+			public void vmAdded(IVMInstall newVm) {
+			}
+
+			public void vmRemoved(IVMInstall removedVm) {
+				fgClasspathEntries.remove(removedVm);
+			}
+		};
+		JavaRuntime.addVMInstallChangedListener(listener);
+	}
+	
+	/**
+	 * Initialize debug flags
+	 */
+	static {
+		DEBUG_JRE_CONTAINER =LaunchingPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+		 Platform.getDebugOption("org.eclipse.jdt.launching/debug/classpath/jreContainer")); //$NON-NLS-1$
+	}
 	
 	/**
 	 * Returns the classpath entries associated with the given VM
@@ -70,28 +106,6 @@ public class JREContainer implements IClasspathContainer {
 	 * @return classpath entries
 	 */
 	private static IClasspathEntry[] getClasspathEntries(IVMInstall vm, IPath containerPath, IJavaProject project) {
-		if (fgClasspathEntries == null) {
-			fgClasspathEntries = new HashMap(10);
-			// add a listener to clear cached value when a VM changes or is removed
-			IVMInstallChangedListener listener = new IVMInstallChangedListener() {
-				public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
-				}
-
-				public void vmChanged(PropertyChangeEvent event) {
-					if (event.getSource() != null) {
-						fgClasspathEntries.remove(event.getSource());
-					}
-				}
-
-				public void vmAdded(IVMInstall newVm) {
-				}
-
-				public void vmRemoved(IVMInstall removedVm) {
-					fgClasspathEntries.remove(removedVm);
-				}
-			};
-			JavaRuntime.addVMInstallChangedListener(listener);
-		}
 		String id = JavaRuntime.getExecutionEnvironmentId(containerPath);
 		IClasspathEntry[] entries = null;
 		if (id == null) {
@@ -102,6 +116,9 @@ public class JREContainer implements IClasspathContainer {
 				fgClasspathEntries.put(vm, entries);
 			}
 		} else {
+			if (DEBUG_JRE_CONTAINER) {
+				System.out.println("\tEE:\t" + id); //$NON-NLS-1$
+			}
 			// dynamically compute entries when bound to an EE
 			entries = computeClasspathEntries(vm, project, id);
 		}
@@ -181,7 +198,20 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		return getClasspathEntries(fVMInstall, getPath(), fProject);
+		if (DEBUG_JRE_CONTAINER) {
+			System.out.println("<JRE_CONTAINER> getClasspathEntries() " + this.toString()); //$NON-NLS-1$
+			System.out.println("\tJRE:\t" + fVMInstall.getName()); //$NON-NLS-1$
+			System.out.println("\tPath:\t" + getPath().toString()); //$NON-NLS-1$
+			System.out.println("\tProj:\t" + fProject.getProject().getName()); //$NON-NLS-1$
+		}
+		IClasspathEntry[] entries = getClasspathEntries(fVMInstall, getPath(), fProject);
+		if (DEBUG_JRE_CONTAINER) {
+			System.out.println("\tResolved " + entries.length + " entries:");  //$NON-NLS-1$//$NON-NLS-2$
+//			for (int i = 0; i < entries.length; i++) {
+//				System.out.println("\t\t" + entries[i].getPath().toString() + " +[" + entries[i].getAccessRules().length + " access rules]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			}
+		}
+		return entries;
 	}
 
 	/**

@@ -153,6 +153,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private static DocumentBuilder fgXMLParser = null;
 	
 	/**
+	 * Whether debug options are turned on for this plug-in.
+	 */
+	public static boolean DEBUG = false;
+	
+	/**
 	 * Stores VM changes resulting from a JRE preference change.
 	 */
 	class VMChanges implements IVMInstallChangedListener {
@@ -450,6 +455,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.launching/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
 			public void doneSaving(ISaveContext context1) {}
 			public void prepareToSave(ISaveContext context1)	throws CoreException {}
