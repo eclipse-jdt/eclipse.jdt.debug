@@ -57,7 +57,7 @@ public class AllInstancesActionDelegate extends ObjectActionDelegate implements 
 				JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget) type.getDebugTarget(), rtype.getInstances(count));
 				InspectPopupDialog ipd = new InspectPopupDialog(getWorkbenchWindow().getShell(), 
 						getAnchor((IDebugView) getPart().getAdapter(IDebugView.class)), 
-						"org.eclipse.jdt.debug.ui.commands.Inspect", 
+						"org.eclipse.jdt.debug.ui.commands.Inspect",  //$NON-NLS-1$
 						new JavaInspectExpression(var.getName(), aiv));
 				ipd.open();
 			}
