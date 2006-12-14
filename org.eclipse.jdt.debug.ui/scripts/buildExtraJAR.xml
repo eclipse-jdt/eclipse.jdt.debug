@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build Snippet support JAR" default="build" basedir="..">
 
-	<property name="bootclasspath" value=""/>
-
 	<target name="build" description="Cleans, builds and refreshes the impacted resources" depends="clean, snippetsupport.jar"/>
 
 	<target name="init" depends="properties">
@@ -24,7 +22,6 @@
 			verbose="false"
 			debug="on"
 			includeAntRuntime="no"
-			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/bin">
 			<src path="Snippet Support/"/>
 		</javac>
