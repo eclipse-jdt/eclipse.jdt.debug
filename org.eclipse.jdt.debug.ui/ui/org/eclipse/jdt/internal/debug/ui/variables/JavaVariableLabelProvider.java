@@ -87,7 +87,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	private Boolean isShowQualfiiedNames(IPresentationContext context) {
 		Boolean qualified = (Boolean) fQualifiedNameSettings.get(context.getId());
 		if (qualified == null) {
-			qualified = Boolean.valueOf(JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
+			qualified = Boolean.valueOf(JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + '.' + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 			fQualifiedNameSettings.put(context.getId(), qualified);
 		}
 		return qualified;
