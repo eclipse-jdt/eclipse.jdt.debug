@@ -947,11 +947,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                         }
                     } else {
                         if (container instanceof IMethod) {
-                            if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
-                                if (method.isSimilar((IMethod) container)) {
-                                    return methodBreakpoint;
-                                }
-                            }
+                        	if(method.getDeclaringType().equals(container.getDeclaringType())) {
+	                            if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
+	                                if (method.isSimilar((IMethod) container)) {
+	                                    return methodBreakpoint;
+	                                }
+	                            }
+                        	}
                         }
                     }
                 }
