@@ -476,6 +476,12 @@
                         value="isDefined">
                   </objectState>
                </not>
+               <not>
+                  <objectState
+                        name="PrimitiveVariableActionFilter"
+                        value="isArray">
+                  </objectState>
+               </not>
             </and>
          </visibility>
          <action
@@ -501,6 +507,7 @@
                id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
          </action>
          <visibility>
+         <and>
             <or>
                <objectState
                      name="DetailFormatterFilter"
@@ -512,6 +519,13 @@
                      name="DetailFormatterFilter"
                      value="inSuperclass"/>
             </or>
+            <not>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isArray">
+               </objectState>
+            </not>
+          </and>
          </visibility>
          
       </objectContribution>

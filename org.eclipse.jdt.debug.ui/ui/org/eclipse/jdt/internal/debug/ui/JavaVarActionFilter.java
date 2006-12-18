@@ -16,9 +16,11 @@ import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
@@ -105,6 +107,25 @@ public class JavaVarActionFilter implements IActionFilter {
 	}
 	
 	/**
+	 * This method returns if the specified object is an array or not
+	 * @param object the object to test
+	 * @return true if the specified object has the <code>IJavaType</code> of <code>JDIArrayType</code>, false otherwise
+	 * @since 3.3
+	 */
+	protected boolean isArrayType(Object object) {
+		if(object instanceof IJavaVariable) {
+			try {
+				IJavaType type = ((IJavaVariable)object).getJavaType();
+				if(type != null) {
+					return type instanceof IJavaArrayType;
+				}
+			} 
+			catch (DebugException e) {JDIDebugUIPlugin.log(e);}
+		}
+		return false;
+	}
+	
+	/**
 	 * Determines if the ref type of the value is primitive
 	 * 
 	 * @param var the variable to inspect
@@ -147,6 +168,9 @@ public class JavaVarActionFilter implements IActionFilter {
 					if (value.equals("isPrimitive")) { //$NON-NLS-1$
 						return isPrimitiveType(var);
 					} 
+					else if(value.equals("isArray")) { //$NON-NLS-1$
+						return isArrayType(var);
+					}
 					else if (value.equals("isValuePrimitive")) { //$NON-NLS-1$
 						return isValuePrimitiveType(varValue);
 					}
