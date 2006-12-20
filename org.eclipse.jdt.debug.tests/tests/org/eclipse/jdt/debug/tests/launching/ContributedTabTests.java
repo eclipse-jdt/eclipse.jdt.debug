@@ -64,7 +64,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 	 * Checks to make sure that a contributed tab with a relative placement to an existing tab is in the correct place
 	 * @throws CoreException
 	 */
-	public void testContributedTabRelativePlacemment() throws CoreException {
+	public void testContributedTabRelativePlacement() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
 		assertNotNull("java tab group cannot be null", javagroup);
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
