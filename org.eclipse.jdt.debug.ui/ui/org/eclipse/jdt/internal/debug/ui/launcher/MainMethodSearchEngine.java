@@ -104,25 +104,32 @@ public class MainMethodSearchEngine{
 		return (IType[]) result.toArray(new IType[result.size()]);
 	}
 
+	/**
+	 * Adds subtypes and enclosed types to the listing of 'found' types 
+	 * @param types the list of found types thus far
+	 * @param monitor progress monitor
+	 * @param scope the scope of elements
+	 * @return as set of all types to consider
+	 */
 	private Set addSubtypes(List types, IProgressMonitor monitor, IJavaSearchScope scope) {
 		Iterator iterator = types.iterator();
 		Set result = new HashSet(types.size());
+		IType type = null;
+		ITypeHierarchy hierarchy = null;
+		IType[] subtypes = null;
 		while (iterator.hasNext()) {
-			IType type = (IType) iterator.next();
+			type = (IType) iterator.next();
 			if (result.add(type)) {
-				ITypeHierarchy hierarchy = null;
 				try {
 					hierarchy = type.newTypeHierarchy(monitor);
-					IType[] subtypes = hierarchy.getAllSubtypes(type);
+					subtypes = hierarchy.getAllSubtypes(type);
 					for (int i = 0; i < subtypes.length; i++) {
-						IType t = subtypes[i];
-						if (scope.encloses(t)) {
-							result.add(t);
+						if (scope.encloses(subtypes[i])) {
+							result.add(subtypes[i]);
 						}
 					}				
-				} catch (JavaModelException e) {
-					JDIDebugUIPlugin.log(e);
-				}
+				} 
+				catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}
 			}
 			monitor.worked(1);
 		}

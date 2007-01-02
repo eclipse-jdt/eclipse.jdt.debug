@@ -25,12 +25,8 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,7 +37,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * Common behavior for Java launch shortcuts
@@ -59,23 +54,20 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 		IType[] types = null;
 		try {
 			types = findTypes(search, PlatformUI.getWorkbench().getProgressService());
-		} catch (InterruptedException e) {
-			return;
-		} catch (CoreException e) {
+		} 
+		catch (InterruptedException e) {return;} 
+		catch (CoreException e) {
 			MessageDialog.openError(getShell(), LauncherMessages.JavaLaunchShortcut_0, e.getMessage()); 
 			return;
 		}
 		IType type = null;
 		if (types.length == 0) {
 			MessageDialog.openError(getShell(), LauncherMessages.JavaLaunchShortcut_1, emptyMessage); 
-		} else if (types.length > 1) {
-			try {
-				type = chooseType(types, selectMessage);
-			} catch (JavaModelException e) {
-				reportErorr(e); 
-				return;
-			}
-		} else {
+		} 
+		else if (types.length > 1) {
+			type = chooseType(types, selectMessage);
+		} 
+		else {
 			type = types[0];
 		}
 		if (type != null) {
@@ -102,17 +94,10 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	 * 
 	 * @return the selected type or <code>null</code> if none.
 	 */
-	protected IType chooseType(IType[] types, String title) throws JavaModelException {
-		SelectionDialog dialog = JavaUI.createTypeDialog(
-				getShell(),
-				PlatformUI.getWorkbench().getProgressService(), 
-				SearchEngine.createJavaSearchScope(types), 
-				IJavaElementSearchConstants.CONSIDER_CLASSES, 
-				false, "**"); //$NON-NLS-1$
-		dialog.setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12);
-		dialog.setTitle(title);
-		if (dialog.open() == Window.OK) {
-			return (IType)dialog.getResult()[0];
+	protected IType chooseType(IType[] types, String title) {
+		MainMethodSelectionDialog mmsd = new MainMethodSelectionDialog(types, title);
+		if (mmsd.open() == Window.OK) {
+			return (IType)mmsd.getResult()[0];
 		}
 		return null;
 	}

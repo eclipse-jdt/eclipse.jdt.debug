@@ -34,9 +34,9 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
+import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
@@ -46,7 +46,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -167,25 +166,11 @@ public class JavaMainTab extends SharedJavaMainTab {
 			setErrorMessage(e.getMessage());
 			return;
 		}
-		SelectionDialog dialog = null;
-		try {
-			dialog = JavaUI.createTypeDialog(
-						getShell(),
-						getLaunchConfigurationDialog(),
-						SearchEngine.createJavaSearchScope(types),
-						IJavaElementSearchConstants.CONSIDER_CLASSES, 
-						false,
-						"**"); //$NON-NLS-1$
-		} catch (JavaModelException e) {
-			setErrorMessage(e.getMessage());
-			return;
-			}
-		dialog.setTitle(LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
-		dialog.setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12); 
-		if (dialog.open() == Window.CANCEL) {
+		MainMethodSelectionDialog mmsd = new MainMethodSelectionDialog(types, LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
+		if (mmsd.open() == Window.CANCEL) {
 			return;
 		}
-		Object[] results = dialog.getResult();	
+		Object[] results = mmsd.getResult();	
 		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());

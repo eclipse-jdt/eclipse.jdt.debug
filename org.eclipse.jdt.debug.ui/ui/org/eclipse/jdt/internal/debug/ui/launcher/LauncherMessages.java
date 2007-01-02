@@ -30,6 +30,8 @@ public class LauncherMessages extends NLS {
 
 	public static String JavaJRETab_3;
 	public static String JavaJRETab_4;
+
+	public static String MainMethodLabelProvider_0;
 	public static String RuntimeClasspathAdvancedDialog_6;
 	public static String RuntimeClasspathAdvancedDialog_7;
 
