@@ -19,10 +19,10 @@ public interface IJDIPreferencesConstants {
 	
 	/**
 	 * Boolean preference controlling whether to suspend
-	 * execution when an uncaught Java exceptionis encountered
+	 * execution when an uncaught Java exceptions encountered
 	 * (while debugging).
 	 */	
-	public static final String PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS= IJavaDebugUIConstants.PLUGIN_ID + "javaDebug.SuspendOnUncaughtExceptions"; //$NON-NLS-1$
+	public static final String PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS= IJavaDebugUIConstants.PLUGIN_ID + ".javaDebug.SuspendOnUncaughtExceptions"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean preference controlling whether to suspend
