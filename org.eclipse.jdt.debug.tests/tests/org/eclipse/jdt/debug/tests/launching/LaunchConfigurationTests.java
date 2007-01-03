@@ -692,5 +692,61 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		handle.delete();
 		assertTrue("Config should not exist after deletion", !handle.exists());
 	}	
+	
+	/**
+	 * Tests a nested working copy.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testNestedWorkingCopyLocalConfiguration() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config123");
+		 IPath location = wc.getLocation();
+		 ILaunchConfiguration handle = wc.doSave();
+		 File file = location.toFile();
+		 assertTrue("Configuration file should exist", file.exists());
+		 
+		 // retrieve attributes
+		 assertEquals("String1 should be String1", handle.getAttribute("String1", "Missing"), "String1");
+		 assertEquals("Int1 should be 1", handle.getAttribute("Int1", 0), 1);
+		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false));
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true));
+		 
+		 // ensure new handle is the index
+		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
+		 assertTrue("Configuration should exist in project index", existsIn(configs, handle));
+		 
+		 // get a working copy
+		 wc = handle.getWorkingCopy();
+		 ILaunchConfigurationWorkingCopy nested = wc.getNestedWorkingCopy();
+		 
+		 // verify nested is same as original
+		 assertEquals("String1 should be String1", nested.getAttribute("String1", "Missing"), "String1");
+		 assertEquals("Int1 should be 1", nested.getAttribute("Int1", 0), 1);
+		 assertTrue("Boolean1 should be true", nested.getAttribute("Boolean1", false));
+		 assertTrue("Boolean2 should be false", !nested.getAttribute("Boolean2", true));
+		 
+		 // change an attribute in the nested working copy
+		 nested.setAttribute("String1", "StringOne");
+		 assertEquals("Wrong attribute value", nested.getAttribute("String1", "Missing"), "StringOne");
+		 assertEquals("Wrong attribute value", wc.getAttribute("String1", "Missing"), "String1");
+		 assertEquals("Wrong attribute value", handle.getAttribute("String1", "Missing"), "String1");
+		 
+		 // save back to parent
+		 ILaunchConfigurationWorkingCopy parent = nested.getParent();
+		 assertEquals("Wrong parent", wc, parent);
+		 assertNull("Should have no parent", wc.getParent());
+		 nested.doSave();
+		 assertEquals("Wrong attribute value", wc.getAttribute("String1", "Missing"), "StringOne");
+		 assertEquals("Wrong attribute value", handle.getAttribute("String1", "Missing"), "String1");
+		 
+		 // check originals
+		 assertEquals("Wrong original config" , handle, wc.getOriginal());
+		 assertEquals("Wrong original config" , handle, nested.getOriginal());
+		 
+		 // cleanup
+		 handle.delete();
+		 assertTrue("Config should not exist after deletion", !handle.exists());
+	}	
 }
+
 
