@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.tests;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,8 +48,10 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.LaunchDelegate;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -173,6 +176,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * Returns the singleton instance of the <code>LaunchConfigurationManager</code>
+	 * 
+	 * @return the singleton instance of the <code>LaunchConfigurationManager</code>
+	 * @since 3.3
+	 */
+	protected LaunchConfigurationManager getLaunchConfigurationManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}
+	
+	/**
 	 * Returns the breakpoint manager
 	 * 
 	 * @return breakpoint manager
@@ -199,6 +212,24 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject getJavaProject(String name) {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		return JavaCore.create(project);
+	}
+	
+	/**
+	 * Returns the local java application launch shortcut
+	 * @return the local java applicaiton launch shortcut
+	 * 
+	 * @since 3.3
+	 */
+	protected LaunchShortcutExtension getJavaApplicationLaunchShortcut() {
+		List exts = getLaunchConfigurationManager().getLaunchShortcuts();
+		LaunchShortcutExtension ext = null;
+		for (int i = 0; i < exts.size(); i++) {
+			ext = (LaunchShortcutExtension) exts.get(i);
+			if(ext.getId().equals("org.eclipse.jdt.debug.ui.localJavaShortcut")) {
+				return ext;
+			}
+		}
+		return null;
 	}
 	
 	/**

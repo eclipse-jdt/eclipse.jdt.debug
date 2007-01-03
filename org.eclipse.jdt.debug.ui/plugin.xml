@@ -2036,6 +2036,9 @@
          <perspective
                id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
+         <configurationType
+               id="org.eclipse.jdt.launching.localJavaApplication">
+         </configurationType>
       </shortcut>
       <shortcut
             label="%AppletShortcut.label"
@@ -2072,6 +2075,9 @@
          <perspective
                id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
+         <configurationType
+               id="org.eclipse.jdt.launching.javaApplet">
+         </configurationType>
       </shortcut>
    </extension>
 <!-- commands and their bindings

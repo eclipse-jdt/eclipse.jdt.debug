@@ -67,6 +67,7 @@ import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchModeTests;
+import org.eclipse.jdt.debug.tests.launching.LaunchShortcutTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchesTests;
 import org.eclipse.jdt.debug.tests.launching.MigrationDelegateTests;
@@ -115,6 +116,7 @@ public class AutomatedSuite extends DebugSuite {
 	//Launching tests
 		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(LaunchDelegateTests.class));
+		addTest(new TestSuite(LaunchShortcutTests.class));
 		addTest(new TestSuite(LaunchTests.class));
 		addTest(new TestSuite(LaunchesTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));

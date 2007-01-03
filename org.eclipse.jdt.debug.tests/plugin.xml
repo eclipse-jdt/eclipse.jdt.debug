@@ -391,6 +391,24 @@
               after="org.eclipse.jdt.debug.ui.javaArgumentsTab">
         </placement>
      </tab>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.launchShortcuts">
+     <shortcut
+           category="testing"
+           class="org.eclipse.jdt.debug.testplugin.TestLaunchShortcut"
+           helpContextId="testing.help.id"
+           id="org.eclipse.jdt.debug.tests.testShortCut"
+           label="Test Shortcut"
+           modes="run, debug"
+           path="test/testing">
+        <perspective
+              id="org.eclipse.debug.ui.DebugPerspective">
+        </perspective>
+        <configurationType
+              id="org.eclipse.jdt.launching.localJavaApplication">
+        </configurationType>
+     </shortcut>
   </extension>   
 
 </plugin>
