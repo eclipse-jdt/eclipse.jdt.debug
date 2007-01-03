@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.launching;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
@@ -95,5 +98,31 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
 		assertNotNull("launch configuration manager cannot be null", lcm);
 		assertTrue("there should be 2 or more shortcuts", lcm.getApplicableLaunchShortcuts("org.eclipse.jdt.launching.localJavaApplication").size() >= 2);
+	}
+	
+	/**
+	 * test that a default launch shortcut can be set, persisted and retrieved
+	 */
+	public void testSetDefaultLaunchShortcut() {
+		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
+		assertNotNull("the launch configuration manager should not be null", lcm);
+		LaunchShortcutExtension ext = getJavaApplicationLaunchShortcut();
+		assertNotNull("the java launch shortcut should not be null", ext);
+		IJavaProject jproject = getJavaProject();
+		assertNotNull("the java project should not be null", jproject);
+		IProject project = jproject.getProject();
+		assertNotNull("the project should not be null", project);
+		try {
+			assertNull("there should be no default launch shortcut for the test project", lcm.getDefaultLaunchShortcut(project));
+			lcm.setDefaultLaunchShortcut(project, ext);
+			ext = lcm.getDefaultLaunchShortcut(project);
+			assertNotNull("the default launch shortcut should be the java app shortcut", ext);
+			lcm.setDefaultLaunchShortcut(project, null);
+			ext = lcm.getDefaultLaunchShortcut(project);
+			assertNull("there should be no default launch shortcut for the test project", ext);
+		} 
+		catch (CoreException e) {
+			fail();
+		}
 	}
 }

@@ -43,6 +43,10 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	protected ILaunchConfiguration fAdded;
 	protected ILaunchConfiguration fRemoved;
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public LaunchConfigurationTests(String name) {
 		super(name);
 	}
@@ -84,6 +88,8 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	/**
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
+	 * 
+	 * @throws CoreException
 	 */
 	public void testCreateLocalConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
@@ -109,6 +115,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	/**
 	 * Ensures that a launch configuration returns a complete attribute map
+	 * @throws CoreException
 	 */
 	public void testGetAttributes() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
@@ -131,6 +138,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	/**
 	 * Ensures that set attributes works
+	 * @throws CoreException
 	 */
 	public void testSetAttributes() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
@@ -156,6 +164,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	/**
 	 * Ensures that set attributes to <code>null</code> works
+	 * @throws CoreException
 	 */
 	public void testSetNullAttributes() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1");
@@ -176,6 +185,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
 	 * Copy the configuration and ensure the original still exists.
+	 * @throws CoreException
 	 */
 	public void testLocalCopy() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "configToCopy");
@@ -216,6 +226,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	/**
 	 * Create a config and save it tiwce, ensuring it only
 	 * ends up in the index once.
+	 * @throws CoreException
 	 */
 	public void testDoubleSave() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "configDoubleSave");
@@ -253,6 +264,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * Creates a local working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes. Deletes
 	 * the configuration and ensures it no longer exists.
+	 * @throws CoreException
 	 */
 	public void testDeleteLocalConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config2delete");
@@ -280,6 +292,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * and saves the working copy, and retrieves the attributes. Renames
 	 * the configuration and ensures it's old config no longer exists,
 	 * and that attributes are retrievable from the new (renamed) config.
+	 * @throws CoreException
 	 */
 	public void testRenameLocalConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config2rename");
@@ -322,6 +335,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	/**
 	 * Moves a local configuration to a shared location
+	 * @throws CoreException
 	 */
 	public void testMoveLocalToSharedConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config2share");
@@ -364,6 +378,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	/**
 	 * Moves a local configuration to a shared location
+	 * @throws CoreException
 	 */
 	public void testMoveSharedToLocalConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "config2local");
@@ -407,6 +422,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	/**
 	 * Creates a shared working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
+	 * @throws CoreException
 	 */
 	public void testCreateSharedConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "config2");
@@ -432,6 +448,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * Creates a shared working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes.
 	 * Copies the configuration and ensures the original still exists.
+	 * @throws CoreException
 	 */
 	public void testSharedCopy() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "config2Copy");
@@ -472,6 +489,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * Creates a shared working copy configuration, sets some attributes,
 	 * and saves the working copy, and retrieves the attributes. Deletes
 	 * the configuration and ensures it no longer exists.
+	 * @throws CoreException
 	 */
 	public void testDeleteSharedConfiguration() throws CoreException {
  		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "shared2delete");
@@ -498,6 +516,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * and saves the working copy, and retrieves the attributes. Renames
 	 * the configuration and ensures it's old config no longer exists,
 	 * and that attributes are retrievable from the new (renamed) config.
+	 * @throws CoreException
 	 */
 	public void testRenameSharedConfiguration() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "shared2rename");
@@ -539,6 +558,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	/** 
 	 * Creates a few configs, closes the project and re-opens the
 	 * project to ensure the config index is persisted properly
+	 * @throws CoreException
 	 */
 	public void testPersistIndex() throws CoreException {
 		ILaunchConfigurationWorkingCopy wc1 = newConfiguration(null, "persist1local");
@@ -669,6 +689,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	/**
 	 * Tests default configuration for a shared config
+	 * @throws CoreException
 	 */
 	public void testSharedDefaultConfiguration() throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "DefaultConfig");
