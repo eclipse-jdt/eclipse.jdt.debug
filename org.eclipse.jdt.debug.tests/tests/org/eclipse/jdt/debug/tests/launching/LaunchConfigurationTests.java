@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
@@ -646,5 +647,50 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	       removeConfigListener();
 	   }
 	}
+	
+	/**
+	 * Tests setting/getting a default configuration for a resource.
+	 * 
+	 * @throws Exception
+	 */
+	public void testDefaultConfiguration() throws Exception {
+		ILaunchConfiguration configuration = getLaunchConfiguration("Breakpoints");
+		IJavaProject javaProject = getJavaProject();
+		IProject project = javaProject.getProject();
+		ILaunchConfiguration defaultConfiguration = getLaunchManager().getDefaultConfiguration(project);
+		assertNull("Should be no default config", defaultConfiguration);
+		getLaunchManager().setDefaultConfiguration(project, configuration);
+		defaultConfiguration = getLaunchManager().getDefaultConfiguration(project);
+		assertEquals("Wrong default configuration", configuration, defaultConfiguration);
+		getLaunchManager().setDefaultConfiguration(project, null);
+		defaultConfiguration = getLaunchManager().getDefaultConfiguration(project);
+		assertNull("Should be no default config", defaultConfiguration);
+	}
+	
+	/**
+	 * Tests default configuration for a shared config
+	 */
+	public void testSharedDefaultConfiguration() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "DefaultConfig");
+		ILaunchConfiguration handle = wc.doSave();
+		assertTrue("Configuration should exist", handle.exists());
+		assertFalse("Should be shared", handle.isLocal());
+		 
+		// set as default
+		IJavaProject javaProject = getJavaProject();
+		IProject project = javaProject.getProject();
+		ILaunchConfiguration defaultConfiguration = getLaunchManager().getDefaultConfiguration(project);
+		assertNull("Should be no default config", defaultConfiguration);
+		getLaunchManager().setDefaultConfiguration(project, handle);
+		defaultConfiguration = getLaunchManager().getDefaultConfiguration(project);
+		assertEquals("Wrong default configuration", handle, defaultConfiguration);
+		getLaunchManager().setDefaultConfiguration(project, null);
+		defaultConfiguration = getLaunchManager().getDefaultConfiguration(project);
+		assertNull("Should be no default config", defaultConfiguration);
+			
+ 		// cleanup
+		handle.delete();
+		assertTrue("Config should not exist after deletion", !handle.exists());
+	}	
 }
 
