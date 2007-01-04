@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Content provider for an owned monitor.
@@ -24,14 +24,14 @@ public class OwnedMonitorContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected int getChildCount(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((JavaOwnedMonitor) element).getWaitingThreads().length;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		 return getElements(((JavaOwnedMonitor) parent).getWaitingThreads(), index, length);
 	}
 	

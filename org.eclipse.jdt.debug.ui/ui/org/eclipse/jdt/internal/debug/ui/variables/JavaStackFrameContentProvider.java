@@ -11,9 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui.variables;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
@@ -27,12 +27,12 @@ public class JavaStackFrameContentProvider extends StackFrameContentProvider {
 	 * 
 	 * @see org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected Object[] getAllChildren(Object parent, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
 			return super.getAllChildren(parent, context, monitor);
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-				monitor.setCanceled(true);
+				monitor.cancel();
 				return EMPTY;
 			}
 			throw e;
