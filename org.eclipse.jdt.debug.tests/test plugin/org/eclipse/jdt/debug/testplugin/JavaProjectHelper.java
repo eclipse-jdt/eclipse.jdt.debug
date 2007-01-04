@@ -49,12 +49,22 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  */
 public class JavaProjectHelper {
 	
+	/**
+	 * path to the test src for 'testprograms'
+	 */
 	public static final IPath TEST_SRC_DIR= new Path("testprograms");
+	/**
+	 * path to the compiler error java file
+	 */
 	public static final IPath TEST_COMPILE_ERROR = new Path("testresources/CompilationError.java");	
 
 	/**
-	 * Creates a IJavaProject.
-	 */	
+	 * creates a java project with the specified name and output folder
+	 * @param projectName
+	 * @param binFolderName
+	 * @return a new java project
+	 * @throws CoreException
+	 */
 	public static IJavaProject createJavaProject(String projectName, String binFolderName) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
@@ -90,10 +100,13 @@ public class JavaProjectHelper {
 		
 		return jproject;	
 	}
-	
+		
 	/**
-	 * Creates a IJavaProject.
-	 */	
+	 * Creates a new Java project with the specified name
+	 * @param projectName
+	 * @return a new java project with the specified name
+	 * @throws CoreException
+	 */
 	public static IJavaProject createJavaProject(String projectName) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
@@ -117,19 +130,24 @@ public class JavaProjectHelper {
 		
 		return jproject;	
 	}	
-	
+			
 	/**
-	 * Removes a IJavaProject.
-	 */		
+	 * deletes a java project
+	 * @param jproject
+	 * @throws CoreException
+	 */
 	public static void delete(IJavaProject jproject) throws CoreException {
 		jproject.setRawClasspath(new ClasspathEntry[0], jproject.getProject().getFullPath(), null);
 		jproject.getProject().delete(true, true, null);
 	}
-
-
+		
 	/**
-	 * Adds a source container to a IJavaProject.
-	 */		
+	 * Adds a new source container specified by the container name to the source path of the specified project
+	 * @param jproject
+	 * @param containerName
+	 * @return the package fragment root of the container name
+	 * @throws CoreException
+	 */
 	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName) throws CoreException {
 		IProject project= jproject.getProject();
 		IContainer container= null;

@@ -15,16 +15,23 @@ import org.eclipse.debug.core.DebugEvent;
 /**
  * Waits for an event on a specific element
  */
-
 public class DebugElementEventWaiter extends DebugEventWaiter {
 	
 	protected Object fElement;
 	
+	/**
+	 * Constructor
+	 * @param kind
+	 * @param element
+	 */
 	public DebugElementEventWaiter(int kind, Object element) {
 		super(kind);
 		fElement = element;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.debug.testplugin.DebugEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
+	 */
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fElement == event.getSource();
 	}

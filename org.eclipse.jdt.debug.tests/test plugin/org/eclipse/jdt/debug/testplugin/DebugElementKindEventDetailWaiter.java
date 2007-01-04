@@ -19,11 +19,20 @@ public class DebugElementKindEventDetailWaiter extends DebugElementKindEventWait
 
 	protected int fDetail;
 
+	/**
+	 * Constructor
+	 * @param eventKind
+	 * @param elementClass
+	 * @param detail
+	 */
 	public DebugElementKindEventDetailWaiter(int eventKind, Class elementClass, int detail) {
 		super(eventKind, elementClass);
 		fDetail = detail;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
+	 */
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fDetail == event.getDetail();
 	}

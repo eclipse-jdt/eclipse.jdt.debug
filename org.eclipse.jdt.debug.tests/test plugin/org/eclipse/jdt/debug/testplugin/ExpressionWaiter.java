@@ -19,10 +19,18 @@ import org.eclipse.debug.core.model.IWatchExpression;
  */
 public class ExpressionWaiter extends DebugElementEventWaiter {
 
+	/**
+	 * Constructor
+	 * @param kind
+	 * @param element
+	 */
 	public ExpressionWaiter(int kind, Object element) {
 		super(kind, element);
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
+	 */
 	public boolean accept(DebugEvent event) {
 		IExpression expression = (IExpression)fElement;
 		boolean pending = false;

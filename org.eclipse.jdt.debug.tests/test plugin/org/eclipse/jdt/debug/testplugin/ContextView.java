@@ -24,14 +24,14 @@ public class ContextView extends ViewPart {
 	
 	private TableViewer viewer;
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {

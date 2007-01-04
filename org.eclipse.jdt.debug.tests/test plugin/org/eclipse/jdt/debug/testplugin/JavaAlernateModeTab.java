@@ -35,8 +35,8 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	
 	private Button fAlternateModeCheckBox;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchModeConfigurationTab#getModes()
+	/**
+	 * @return
 	 */
 	public Set getModes() {
 		HashSet modes = new HashSet();
@@ -44,7 +44,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 		return modes;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
@@ -69,14 +69,14 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}	
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		launchConfigurationChanged(configuration);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -88,12 +88,14 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-	}
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {}
 
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createControl(Composite parent) {
 		fAlternateModeCheckBox = new Button(parent, SWT.CHECK);
 		fAlternateModeCheckBox.setText("Check &me for 'alternate' mode");
@@ -113,6 +115,9 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 		return "org.eclipse.jdt.debug.tests.javaAlternateModeTab";
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		try {
 			Set modes = configuration.getModes();

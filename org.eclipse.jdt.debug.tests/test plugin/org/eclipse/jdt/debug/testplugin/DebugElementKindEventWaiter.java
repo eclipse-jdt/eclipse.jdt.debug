@@ -21,11 +21,19 @@ public class DebugElementKindEventWaiter extends DebugEventWaiter {
 	
 	protected Class fElementClass;
 	
+	/**
+	 * Constructor
+	 * @param eventKind
+	 * @param elementClass
+	 */
 	public DebugElementKindEventWaiter(int eventKind, Class elementClass) {
 		super(eventKind);
 		fElementClass = elementClass;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.debug.testplugin.DebugEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
+	 */
 	public boolean accept(DebugEvent event) {
 		Object o = event.getSource();
 		return super.accept(event) && fElementClass.isInstance(o);

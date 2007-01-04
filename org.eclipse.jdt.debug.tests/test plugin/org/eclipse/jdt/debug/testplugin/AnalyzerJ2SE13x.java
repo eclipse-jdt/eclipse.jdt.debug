@@ -25,11 +25,8 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDeleg
  */
 public class AnalyzerJ2SE13x implements IExecutionEnvironmentAnalyzerDelegate {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer#analyze(org.eclipse.jdt.launching.IVMInstall,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		if (vm instanceof IVMInstall2) {

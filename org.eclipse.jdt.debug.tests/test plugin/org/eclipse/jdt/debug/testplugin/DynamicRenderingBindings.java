@@ -27,25 +27,28 @@ public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsPro
 	// id of rendering type bound by this provider
 	private String fId = "rendering_type_1";
 
+	/**
+	 * Constructor
+	 */
 	public DynamicRenderingBindings() {
 		fgSingleton = this;
 	}
 	
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
         return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
         return new IMemoryRenderingType[]{getPrimaryRenderingType(block)};
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {

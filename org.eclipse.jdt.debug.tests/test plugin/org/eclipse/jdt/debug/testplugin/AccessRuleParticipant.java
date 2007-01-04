@@ -32,7 +32,7 @@ public class AccessRuleParticipant implements IAccessRuleParticipant {
 			JavaCore.newAccessRule(new Path("non_accessible"), IAccessRule.K_NON_ACCESSIBLE),
 			};
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
 	 */
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {

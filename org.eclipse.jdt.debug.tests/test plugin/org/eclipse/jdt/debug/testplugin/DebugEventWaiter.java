@@ -57,9 +57,11 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	public static final long DEFAULT_TIMEOUT= 15000;
 
 	/**
+	 * Constructor
 	 * Creates a new <code>DebugEventWaiter</code> which
 	 * waits for events of a kind <code>eventType</code>.
 	 * The wait method will wait the default timeout value.
+	 * @param eventType
 	 */
 	public DebugEventWaiter(int eventType) {
 		fDebugPlugin= DebugPlugin.getDefault();
@@ -71,12 +73,15 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 
 	/**
 	 * Answers true if the <code>DebugEvent</code> is acceptable.
+	 * @param event
+	 * @return if the event is accepted or not
 	 */
 	public boolean accept(DebugEvent event) {
 		return event.getKind() == fEventType && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT;
 	}
 	/**
 	 * Answers the event name associated with the given flag.
+	 * @return the name of the event kind
 	 */
 	public String getEventKindName() {
 		switch (fEventType) {
@@ -123,6 +128,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 
 	/**
 	 * Sets the number of milliseconds to wait for this callback
+	 * @param milliseconds
 	 */
 	public void setTimeout(long milliseconds) {
 		fTimeout= milliseconds;
@@ -138,6 +144,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	/**
 	 * Returns the source of the accepted event, or <code>null</code>
 	 * if no event was accepted.
+	 * @return the source of the event or <code>null</code>
 	 */
 	public synchronized Object waitForEvent() {
 		if (fEvent == null) {
@@ -155,6 +162,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 
 	/**
 	 * Returns the accepted event, if any.
+	 * @return the event if any
 	 */
 	public DebugEvent getEvent() {
 		return fEvent;
@@ -162,6 +170,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	
 	/**
 	 * Returns the accepted event set, if any.
+	 * @return the even if any
 	 */
 	public DebugEvent[] getEventSet() {
 		return fEventSet;
