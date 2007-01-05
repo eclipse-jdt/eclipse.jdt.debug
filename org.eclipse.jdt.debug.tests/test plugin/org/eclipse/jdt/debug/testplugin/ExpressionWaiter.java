@@ -32,6 +32,9 @@ public class ExpressionWaiter extends DebugElementEventWaiter {
 	 * @see org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
 	 */
 	public boolean accept(DebugEvent event) {
+		if (event.getDetail() == DebugEvent.STATE) {
+			return false;
+		}
 		IExpression expression = (IExpression)fElement;
 		boolean pending = false;
 		if (expression instanceof IWatchExpression) {
