@@ -2333,9 +2333,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsInstanceRetreival()
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsInstanceRetrieval()
 	 */
 	public boolean supportsInstanceRetrieval() {
-		return getVM().canGetInstanceInfo();
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			return vm.canGetInstanceInfo();
+		}
+		return false;
 	}
 }
