@@ -156,7 +156,10 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return getOwningThread().getThread().getOriginalThread().canResume();
+		if(getOwningThread() != null) {
+			return getOwningThread().getThread().getOriginalThread().canResume();
+		}
+		return false;
 	}
 
 	/**
@@ -170,7 +173,10 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
-		return getOwningThread().getThread().getOriginalThread().isSuspended();
+		if(getOwningThread() != null) {
+			return getOwningThread().getThread().getOriginalThread().isSuspended();
+		}
+		return false;
 	}
 
 	/**
