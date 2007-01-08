@@ -26,10 +26,22 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * Provides the content for the JREs selection/edit viewer
+ * 
+ * @see {@link ITreeContentProvider}
+ * @see {@link VMDetailsDialog}
+ * @see {@link VMLibraryBlock}
+ * @see {@link LibraryLocation}
+ * @see {@link LibraryStandin}
+ */
 public class LibraryContentProvider implements ITreeContentProvider {
 	
 	private Viewer fViewer;
 	
+	/**
+	 * Represents a subelement of a <code>LibraryStandin</code>
+	 */
 	public class SubElement {
 		
 		public static final int JAVADOC_URL= 1;
@@ -71,6 +83,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+		fChildren.clear();
 	}
 
 	/* (non-Javadoc)
@@ -120,6 +133,10 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		return element instanceof LibraryStandin;
 	}
 
+	/**
+	 * Sets the array of libraries to be the specified array of libraries
+	 * @param libs the new array of libraries to set
+	 */
 	public void setLibraries(LibraryLocation[] libs) {
 		fLibraries = new LibraryStandin[libs.length];
 		for (int i = 0; i < libs.length; i++) {
@@ -128,6 +145,12 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		fViewer.refresh();
 	}
 
+	/**
+	 * Returns the listing of <code>LibraryLocation</code>s
+	 * 
+	 * @return the listing of <code>LibraryLocation</code>s, or an empty
+	 * array, never <code>null</code>
+	 */
 	public LibraryLocation[] getLibraries() {
 		LibraryLocation[] locations = new LibraryLocation[fLibraries.length];
 		for (int i = 0; i < locations.length; i++) {
@@ -139,6 +162,10 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	/**
 	 * Returns the list of libraries in the given selection. SubElements
 	 * are replaced by their parent libraries.
+	 * @param selection the current selection
+	 * 
+	 * @return the current set of selected <code>LibraryStandin</code>s from
+	 * the current viewer selection, or an empty set, never <code>null</code>
 	 */
 	private Set getSelectedLibraries(IStructuredSelection selection) {
 		Set libraries= new HashSet();
@@ -155,6 +182,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Move the libraries of the given selection up.
+	 * @param selection the current viewer selection
 	 */
 	public void up(IStructuredSelection selection) {
 		Set libraries= getSelectedLibraries(selection);
@@ -171,6 +199,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Move the libraries of the given selection down.
+	 * @param selection the current viewer selection
 	 */
 	public void down(IStructuredSelection selection) {
 		Set libraries= getSelectedLibraries(selection);
@@ -187,6 +216,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Remove the libraries contained in the given selection.
+	 * @param selection the current viewer selection
 	 */
 	public void remove(IStructuredSelection selection) {
 		List newLibraries = new ArrayList();
@@ -210,6 +240,9 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	/**
 	 * Add the given libraries before the selection, or after the existing libraries
 	 * if the selection is empty.
+	 * @param libs the array of <code>LibraryLocation</code>s to add
+	 * @param selection the selection to add the new libraries before in the list, or after if the selection
+	 * is empty.
 	 */
 	public void add(LibraryLocation[] libs, IStructuredSelection selection) {
 		List newLibraries = new ArrayList(fLibraries.length + libs.length);
@@ -225,7 +258,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		} else {
 			Object element= selection.getFirstElement();
 			LibraryStandin firstLib;
-			if (element instanceof LibraryLocation) {
+			if (element instanceof LibraryStandin) {
 				firstLib= (LibraryStandin) element;
 			} else {
 				firstLib= ((SubElement) element).getParent();
@@ -241,6 +274,8 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	/**
 	 * Set the given URL as the javadoc location for the libraries contained in
 	 * the given selection.
+	 * @param javadocLocation the new java doc location to set
+	 * @param selection the selection of libraries to set the new javadoc location for 
 	 */
 	public void setJavadoc(URL javadocLocation, IStructuredSelection selection) {
 		Set libraries= getSelectedLibraries(selection);
@@ -255,6 +290,9 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	/**
 	 * Set the given paths as the source info for the libraries contained in
 	 * the given selection.
+	 * @param sourceAttachmentPath the path of the new attachment
+	 * @param sourceAttachmentRootPath the root path of the new attachment
+	 * @param selection the selection of libraries to set the new paths in
 	 */
 	public void setSourcePath(IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IStructuredSelection selection) {
 		Set libraries= getSelectedLibraries(selection);
@@ -281,5 +319,4 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	LibraryStandin[] getStandins() {
 		return fLibraries;
 	}
-	
 }
