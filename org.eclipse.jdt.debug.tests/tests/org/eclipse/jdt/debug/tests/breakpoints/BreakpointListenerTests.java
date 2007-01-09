@@ -29,15 +29,35 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class BreakpointListenerTests extends AbstractDebugTest implements IBreakpointListener, IBreakpointsListener {
 	
+	/**
+	 * the number of add callbacks 
+	 */
 	public int fAddCallbacks = 0;
+	/**
+	 * the running total
+	 */
 	public int fTotalAdded = 0;
-	
+	/**
+	 * the number of remove callbacks
+	 */
 	public int fRemoveCallbacks = 0;
+	/**
+	 * the total removed
+	 */
 	public int fTotalRemoved = 0;
-	
+	/**
+	 * the number of change callbacks
+	 */
 	public int fChangeCallabcks = 0;
+	/**
+	 * the total changed
+	 */
 	public int fTotalChanged = 0;
 		
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public BreakpointListenerTests(String name) {
 		super(name);
 	}
@@ -102,6 +122,10 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		return bps;
 	}
 
+	/**
+	 * Tests a single breakpoint listener
+	 * @throws Exception
+	 */
 	public void testSingleListener() throws Exception {		
 		List bps = createBreakpoints("Breakpoints");
 		
@@ -129,6 +153,10 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		
 	}
 	
+	/**
+	 * Tests more than one simultaneous breakpoint listener
+	 * @throws Exception
+	 */
 	public void testMultiListener() throws Exception {		
 		List bps = createBreakpoints("Breakpoints");
 		
@@ -156,6 +184,10 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		
 	}	
 	
+	/**
+	 * Test multiple breakpoint listeners over a project open and close
+	 * @throws Exception
+	 */
 	public void testMultiListenerProjectCloseOpen() throws Exception {		
 		List bps = createBreakpoints("Breakpoints");
 		
@@ -193,6 +225,10 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		
 	}		
 
+	/**
+	 * Tests multiple breakpoint listeners over a compilation move operation
+	 * @throws Exception
+	 */
 	public void testMultiListenerMoveCompilationUnit() throws Exception {	
 		IJavaProject project = getJavaProject();
 		ICompilationUnit cu = (ICompilationUnit)project.findElement(new Path("Breakpoints.java"));
@@ -234,6 +270,10 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		
 	}		
 	
+	/**
+	 * Tests a single breakpoint listener over the move of a compilation unit
+	 * @throws Exception
+	 */
 	public void testSingleListenerMoveCompilationUnit() throws Exception {	
 		IJavaProject project = getJavaProject();
 		ICompilationUnit cu = (ICompilationUnit)project.findElement(new Path("Breakpoints.java"));
@@ -311,7 +351,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		fAddCallbacks++;
@@ -319,23 +359,18 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
-	public void breakpointsChanged(
-		IBreakpoint[] breakpoints,
-		IMarkerDelta[] deltas) {
-			fChangeCallabcks++;
-			fTotalChanged += breakpoints.length;
+	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+		fChangeCallabcks++;
+		fTotalChanged += breakpoints.length;
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
-	public void breakpointsRemoved(
-		IBreakpoint[] breakpoints,
-		IMarkerDelta[] deltas) {
-			fRemoveCallbacks++;
-			fTotalRemoved += breakpoints.length;			
+	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+		fRemoveCallbacks++;
+		fTotalRemoved += breakpoints.length;			
 	}
-
 }

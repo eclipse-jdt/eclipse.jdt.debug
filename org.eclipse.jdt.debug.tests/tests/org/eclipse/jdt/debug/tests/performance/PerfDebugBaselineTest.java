@@ -17,8 +17,14 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceTestCase;
 
+/**
+ * Tests the performance of pattern matching on a specific line of text
+ */
 public class PerfDebugBaselineTest extends PerformanceTestCase {
 
+    /**
+     * Test the performance of matching a specific pattern on the given line of text
+     */
     public void testBaseline() {
         tagAsSummary("Baseline Test", Dimension.ELAPSED_PROCESS);
         Performance perf = Performance.getDefault();

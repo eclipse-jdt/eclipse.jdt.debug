@@ -27,6 +27,7 @@ public class PerformanceSuite extends DebugSuite {
 
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
+     * @return the test suite
      */
     public static Test suite() {
         return new PerformanceSuite();

@@ -113,6 +113,7 @@ public class EvalTestSuite extends TestSuite {
 	/**
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
+	 * @return the test suite
 	 */
 	public static Test suite() {
 		return new EvalTestSuite();
@@ -228,6 +229,7 @@ public class EvalTestSuite extends TestSuite {
 	 * Runs the tests and collects their result in a TestResult.
 	 * The debug tests cannot be run in the UI thread or the event
 	 * waiter blocks the UI when a resource changes.
+	 * @see junit.framework.TestSuite#run(junit.framework.TestResult)
 	 */
 	public void run(final TestResult result) {
 		final Display display = Display.getCurrent();

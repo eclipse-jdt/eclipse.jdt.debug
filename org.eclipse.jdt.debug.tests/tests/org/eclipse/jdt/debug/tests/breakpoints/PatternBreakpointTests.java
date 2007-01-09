@@ -25,10 +25,18 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class PatternBreakpointTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public PatternBreakpointTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests several pattern breakpoints
+	 * @throws Exception
+	 */
 	public void testPatternBreakpoints() throws Exception {
 		String sourceName = "Breakpoints.java";
 		String pattern = "Break";
@@ -100,6 +108,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	
 	/**
 	 * Bug 74108 - enable/disable a stratum breakpoint that is not yet installed
+	 * @throws Exception
 	 */
 	public void testToggleStratumBreakpoint() throws Exception {
 		IJavaStratumLineBreakpoint stratumLineBreakpoint = createStratumBreakpoint(3, "date.jsp", "JSP");
@@ -130,6 +139,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	
 	/**
 	 * Bug 74108 - enable/disable a pattern breakpoint that is not yet installed
+	 * @throws Exception
 	 */
 	public void testTogglePatternBreakpoint() throws Exception {
 		IJavaPatternBreakpoint patternBreakpoint = createPatternBreakpoint(3, "date.jsp", "date");
@@ -158,6 +168,10 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		}				
 	}	
 	
+	/**
+	 * Tests that a pattern breakpoint is skipped when set to do so
+	 * @throws Exception
+	 */
 	public void testSkipPatternBreakpoint() throws Exception {
 		String sourceName = "Breakpoints.java";
 		String pattern = "Break";

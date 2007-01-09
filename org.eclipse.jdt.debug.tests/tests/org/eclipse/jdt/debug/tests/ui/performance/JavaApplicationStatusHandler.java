@@ -15,9 +15,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 
+/**
+ * Handles the status passed to it. In this instance the third tab
+ * is selected (set as the acive tab)
+ */
 public class JavaApplicationStatusHandler implements IStatusHandler {
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
      */
     public Object handleStatus(IStatus status, Object source) throws CoreException {

@@ -28,15 +28,10 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 	// the test case to call back when launch is invoked
 	private static LaunchModeTests fgTestCase;
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void launch(
-		ILaunchConfiguration configuration,
-		String mode,
-		ILaunch launch,
-		IProgressMonitor monitor)
-		throws CoreException {
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 			if (fgTestCase == null) {
 				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests",
 				 0, "No test case registered.", null));
@@ -44,8 +39,10 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 			fgTestCase.launch(configuration, mode);
 	}
 	
+	/**
+	 * @param testCase
+	 */
 	public static void setTestCase(LaunchModeTests testCase) {
 		fgTestCase = testCase;
 	}
-
 }

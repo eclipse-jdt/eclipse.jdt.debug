@@ -17,6 +17,9 @@ import org.eclipse.jdt.core.ClasspathVariableInitializer;
  */
 public class NullVariableInitializer extends ClasspathVariableInitializer {
 
+	/**
+	 * Constructor
+	 */
 	public NullVariableInitializer() {
 		super();
 	}

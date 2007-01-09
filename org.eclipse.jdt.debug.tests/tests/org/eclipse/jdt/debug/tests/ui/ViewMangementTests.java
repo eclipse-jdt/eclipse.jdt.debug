@@ -36,7 +36,13 @@ import org.eclipse.ui.PlatformUI;
 public class ViewMangementTests extends AbstractDebugTest implements IPerspectiveListener3 {
 
 	// view ids
+	/**
+	 * The id of test view 'two'
+	 */
 	public static final String VIEW_TWO = "org.eclipse.jdt.debug.tests.context.view.two";
+	/**
+	 * The id of test view 'one'
+	 */
 	public static final String VIEW_ONE = "org.eclipse.jdt.debug.tests.context.view.one";
 
 	private Object fEventLock = new Object();
@@ -56,6 +62,10 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	private String switch_on_suspend;
 	private String debug_perspectives;
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public ViewMangementTests(String name) {
 		super(name);
 	}
@@ -75,7 +85,7 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	}
 	
 	/**
-	 * Siwtches to and resets the specified perspective in the active workbench window.
+	 * Switches to and resets the specified perspective in the active workbench window.
 	 * 
 	 * @return the window in which the perspective is ready
 	 */
@@ -357,31 +367,31 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 		window.addPerspectiveListener(this);
 	}	
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveOpened(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveClosed(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveDeactivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveSavedAs(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void perspectiveSavedAs(IWorkbenchPage page, IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
@@ -394,13 +404,13 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 		checkComplete();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {

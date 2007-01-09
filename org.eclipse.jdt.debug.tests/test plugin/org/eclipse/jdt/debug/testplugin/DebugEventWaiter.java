@@ -99,10 +99,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	}
 
 	/**
-	 * Handles debug events.
-	 *
-	 * @see IDebugEventListener
-	 * @see #accept(DebugEvent)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public synchronized void handleDebugEvents(DebugEvent[] events) {
 		//printReceived(events);

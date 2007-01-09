@@ -26,14 +26,25 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
 import org.eclipse.test.performance.Dimension;
 
+/**
+ * Tests performance of several breakpoints
+ */
 public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements IBreakpointListener {
 
     int breakpointCount = 0;
 
+    /**
+     * Constructor
+     * @param name
+     */
     public PerfBreakpointTests(String name) {
         super(name);
     }
 
+    /**
+     * Tests the performance of line breakpoint creation
+     * @throws Exception
+     */
     public void testLineBreakpointCreation() throws Exception {
         tagAsSummary("Install Line Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
@@ -79,6 +90,10 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }
     }
 
+    /**
+     * Tests the performance of breakpoint removal
+     * @throws Exception
+     */
     public void testBreakpointRemoval() throws Exception {
         tagAsSummary("Remove Line Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
@@ -132,6 +147,10 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }
     }
 
+    /**
+     * Tests the performance of method entry breakpoint creation
+     * @throws Exception
+     */
     public void testMethodEntryBreakpointCreation() throws Exception {
         tagAsSummary("Install Method Entry Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
@@ -178,6 +197,10 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }        
     }
 
+    /**
+     * Tests the performance of watchpoint creation
+     * @throws Exception
+     */
     public void testWatchpointCreation() throws Exception {
         tagAsSummary("Install Watchpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LotsOfFields";
@@ -223,6 +246,11 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }        
     }
     
+    /**
+     * Waits for the specified breakpoint count to be hit
+     * @param i
+     * @throws Exception
+     */
     private synchronized void waitForBreakpointCount(int i) throws Exception {
         long end = System.currentTimeMillis() + 60000;
         while (breakpointCount != i && System.currentTimeMillis() < end) {
@@ -231,12 +259,26 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         assertEquals("Expected " + i + " breakpoints, notified of " + breakpointCount, i, breakpointCount);
     }
 
+    /**
+     * Creates line breakpoints on the specified line numbers in the given type name with the given resource
+     * @param resource
+     * @param typeName
+     * @param lineNumbers
+     * @throws CoreException
+     */
     private void createLineBreakpoints(IResource resource, String typeName, int[] lineNumbers) throws CoreException {
         for (int i = 0; i < lineNumbers.length; i++) {
             JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumbers[i], -1, -1, 0, true, null);
         }
     }
 
+    /**
+     * Creates method entry breakpoints on the specified methods in the given type name in the specified project
+     * @param project
+     * @param typeName
+     * @param methods
+     * @throws CoreException
+     */
     private void createMethodEntryBreakpoints(IProject project, String typeName, String[] methods) throws CoreException {
         for (int i = 0; i < methods.length; i++) {
             String methodName = methods[i];
@@ -244,6 +286,13 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }
     }
     
+    /**
+     * Creates watchpoints on the specified fields of the specified resource with the given type name
+     * @param resource
+     * @param typeName
+     * @param fields
+     * @throws Exception
+     */
     private void createWatchpoints(IResource resource, String typeName, String[] fields) throws Exception {
         for(int i = 0; i < fields.length; i++) {
             IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(resource, typeName, fields[i], -1, -1, -1, 0, true, null);
@@ -252,16 +301,25 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }
     }
     
+    /**
+     * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
+     */
     public synchronized void breakpointAdded(IBreakpoint breakpoint) {
         breakpointCount++;
         notifyAll();
     }
 
+    /**
+     * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
+     */
     public synchronized void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
         breakpointCount--;
         notifyAll();
     }
 
+    /**
+     * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
+     */
     public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
     }
 }

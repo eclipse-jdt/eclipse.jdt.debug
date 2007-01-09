@@ -28,12 +28,24 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJavaBreakpointListener {
 	
+	/**
+	 * count of add callbacks
+	 */
 	public int fAddCallbacks = 0;
 	
+	/**
+	 * count of remove callbacks
+	 */
 	public int fRemoveCallbacks = 0;
 	
+	/**
+	 * count of installed callbacks
+	 */
 	public int fInstalledCallbacks = 0;
 	
+	/** 
+	 * a java breakpoint
+	 */
 	public IJavaBreakpoint fBreakpoint;
 	
 	/**
@@ -44,30 +56,35 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		int fVote;
 		IJavaBreakpoint fTheBreakpoint;
 		
+		/**
+		 * Constructor
+		 * @param suspendVote
+		 * @param breakpoint
+		 */
 		public SuspendVoter(int suspendVote, IJavaBreakpoint breakpoint) {
 			fVote = suspendVote;
 			fTheBreakpoint = breakpoint;
 		}
 		
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 		 */
 		public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasRuntimeException(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.debug.core.DebugException)
 		 */
 		public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
@@ -77,19 +94,19 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			return DONT_CARE;
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointInstalled(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
 		public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 		 */
 		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
@@ -98,14 +115,22 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 
 	}
 	
+	/**
+	 * Aids in the voting for a breakpoint to be installed
+	 */
 	class InstallVoter extends SuspendVoter {
 		
+		/**
+		 * Constructor
+		 * @param installVote
+		 * @param breakpoint
+		 */
 		public InstallVoter(int installVote, IJavaBreakpoint breakpoint) {
 			super(installVote, breakpoint);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
+		/**
+		 * @see org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests.SuspendVoter#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 		 */
 		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			if (breakpoint.equals(fTheBreakpoint)) {
@@ -113,12 +138,19 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			}
 			return DONT_CARE;
 		}
-}
+	}
 			
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public JavaBreakpointListenerTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Resets the number of callbacks to zero
+	 */
 	protected void resetCallbacks() {
 		fAddCallbacks = 0;
 	
@@ -127,6 +159,10 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		fInstalledCallbacks = 0;	
 	}
 	
+	/**
+	 * Tests the functionality of a single line breakpoint
+	 * @throws Exception
+	 */
 	public void testLineBreakpoint() throws Exception {		
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
 		fBreakpoint = breakpoint;
@@ -177,6 +213,10 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		
 	}	
 	
+	/**
+	 * Tests the functionality of an exception breakpoint
+	 * @throws Exception
+	 */
 	public void testExceptionBreakpoint() throws Exception {		
 		IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint("java.lang.NullPointerException", true, true);
 		fBreakpoint = breakpoint;
@@ -238,6 +278,10 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		
 	}	
 	
+	/**
+	 * Tests the functionality of a method breakpoint
+	 * @throws Exception
+	 */
 	public void testMethodBreakpoint() throws Exception {		
 		IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("DropTests", "method4", "()V", true, false);
 		fBreakpoint = breakpoint;
@@ -300,6 +344,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Install 3, Don't Care 0, Don't Install 0 == INSTALL
+	 * @throws Exception
 	 */
 	public void testUnanimousInstallVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
@@ -325,7 +370,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Install 0, Don't Care 3, Don't Install 0 == INSTALL
-	 */	
+	 * @throws Exception
+	 */
 	public void testDontCareInstallVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(DONT_CARE, breakpoint);
@@ -350,7 +396,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Install 1, Don't Care 2, Don't Install 0 == INSTALL
-	 */	
+	 * @throws Exception
+	 */
 	public void testInstallDontCareVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
 		InstallVoter v1 = new InstallVoter(SUSPEND, breakpoint);
@@ -375,6 +422,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		
 	/**
 	 * Vote: Install 1, Don't Care 0, Don't Install 2 == INSTALL
+	 * @throws Exception
 	 */
 	public void testInstallDontVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
@@ -400,7 +448,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Install 0, Don't Care 1, Don't Install 2 = RESUME
-	 */	
+	 * @throws Exception
+	 */
 	public void testDontInstallVote() throws Exception {
 		IJavaLineBreakpoint breakpoint1 = createLineBreakpoint(54, "Breakpoints");
 		IJavaLineBreakpoint breakpoint2 = createLineBreakpoint(55, "Breakpoints");
@@ -426,6 +475,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Suspend 3, Don't Care 0, Don't Suspend 0 == SUSPEND
+	 * @throws Exception
 	 */
 	public void testUnanimousSuspendVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
@@ -451,7 +501,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Suspend 0, Don't Care 3, Don't Suspend 0 == SUSPEND
-	 */	
+	 * @throws Exception
+	 */
 	public void testDontCareSuspendVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
 		SuspendVoter v1 = new SuspendVoter(DONT_CARE, breakpoint);
@@ -476,7 +527,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Suspend 1, Don't Care 2, Don't Suspend 0 == SUSPEND
-	 */	
+	 * @throws Exception
+	 */
 	public void testSuspendDontCareVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
 		SuspendVoter v1 = new SuspendVoter(SUSPEND, breakpoint);
@@ -501,6 +553,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		
 	/**
 	 * Vote: Suspend 1, Don't Care 0, Don't Suspend 2 == SUSPEND
+	 * @throws Exception
 	 */
 	public void testSuspendDontVote() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
@@ -526,7 +579,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Suspend 0, Don't Care 1, Don't Suspend 2 = RESUME
-	 */	
+	 * @throws Exception
+	 */
 	public void testDontSuspendVote() throws Exception {
 		IJavaLineBreakpoint breakpoint1 = createLineBreakpoint(54, "Breakpoints");
 		IJavaLineBreakpoint breakpoint2 = createLineBreakpoint(55, "Breakpoints");
@@ -552,7 +606,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	
 	/**
 	 * Vote: Suspend 0, Don't Care 1 (java debug options manager), Don't Suspend 1 = RESUME
-	 */	
+	 * @throws Exception
+	 */
 	public void testMethodBreakpointDontSuspendVote() throws Exception {
 		IJavaMethodBreakpoint breakpoint1 = createMethodBreakpoint("DropTests", "method2", "()V", true, false);
 		IJavaMethodBreakpoint breakpoint2 = createMethodBreakpoint("DropTests", "method4", "()V", true, false);
@@ -570,7 +625,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		}		
 	}		
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 	 */
 	public void breakpointHasCompilationErrors(
@@ -578,7 +633,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		Message[] errors) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasRuntimeException(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.debug.core.DebugException)
 	 */
 	public void breakpointHasRuntimeException(
@@ -586,7 +641,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		DebugException exception) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
 	public int breakpointHit(
@@ -595,7 +650,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		return DONT_CARE;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointInstalled(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
 	public void breakpointInstalled(
@@ -606,7 +661,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
 	public void breakpointRemoved(
@@ -617,7 +672,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 	 */
 	public int installingBreakpoint(
@@ -627,7 +682,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			return DONT_CARE;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
 	public void addingBreakpoint(

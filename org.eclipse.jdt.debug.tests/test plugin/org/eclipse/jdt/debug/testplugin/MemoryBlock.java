@@ -23,21 +23,21 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  */
 public class MemoryBlock implements IMemoryBlock {
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
 	 */
 	public long getStartAddress() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
 	 */
 	public long getLength() {
 		return 100;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
 	 */
 	public byte[] getBytes() throws DebugException {
@@ -48,46 +48,45 @@ public class MemoryBlock implements IMemoryBlock {
 		return bytes;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
 	 */
 	public boolean supportsValueModification() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
 	 */
 	public void setValue(long offset, byte[] bytes) throws DebugException {
 
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
-
 }

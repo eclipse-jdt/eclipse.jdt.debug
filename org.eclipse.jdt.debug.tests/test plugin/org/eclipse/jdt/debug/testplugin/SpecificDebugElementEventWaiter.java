@@ -22,11 +22,19 @@ public class SpecificDebugElementEventWaiter extends DebugEventWaiter {
 
 	protected IDebugElement fDebugElement;
 	
+	/**
+	 * Constructor
+	 * @param eventKind
+	 * @param element
+	 */
 	public SpecificDebugElementEventWaiter(int eventKind, IDebugElement element) {
 		super(eventKind);
 		fDebugElement = element;
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.debug.testplugin.DebugEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
+	 */
 	public boolean accept(DebugEvent event) {
 		Object o = event.getSource();
 		if (o instanceof IDebugElement) {

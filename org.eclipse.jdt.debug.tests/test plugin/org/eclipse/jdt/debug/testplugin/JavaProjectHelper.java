@@ -169,7 +169,12 @@ public class JavaProjectHelper {
 	
 	/**
 	 * Adds a source container to a IJavaProject.
-	 */		
+	 * @param jproject
+	 * @param containerName
+	 * @param outputName
+	 * @return the package fragment root of the new source container
+	 * @throws CoreException
+	 */
 	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName, String outputName) throws CoreException {
 		IProject project= jproject.getProject();
 		IContainer container= null;
@@ -201,7 +206,13 @@ public class JavaProjectHelper {
 	/**
 	 * Adds a source container to a IJavaProject and imports all files contained
 	 * in the given Zip file.
-	 */	
+	 * @param jproject
+	 * @param containerName
+	 * @param zipFile
+	 * @return the package fragment root of the new source container
+	 * @throws InvocationTargetException
+	 * @throws CoreException
+	 */
 	public static IPackageFragmentRoot addSourceContainerWithImport(IJavaProject jproject, String containerName, ZipFile zipFile) throws InvocationTargetException, CoreException {
 		IPackageFragmentRoot root= addSourceContainer(jproject, containerName);
 		importFilesFromZip(zipFile, root.getPath(), null);
@@ -210,7 +221,10 @@ public class JavaProjectHelper {
 
 	/**
 	 * Removes a source folder from a IJavaProject.
-	 */		
+	 * @param jproject
+	 * @param containerName
+	 * @throws CoreException
+	 */
 	public static void removeSourceContainer(IJavaProject jproject, String containerName) throws CoreException {
 		IFolder folder= jproject.getProject().getFolder(containerName);
 		removeFromClasspath(jproject, folder.getFullPath());
@@ -219,14 +233,24 @@ public class JavaProjectHelper {
 
 	/**
 	 * Adds a library entry to a IJavaProject.
-	 */	
+	 * @param jproject
+	 * @param path
+	 * @return the package fragment root of the new library
+	 * @throws JavaModelException
+	 */
 	public static IPackageFragmentRoot addLibrary(IJavaProject jproject, IPath path) throws JavaModelException {
 		return addLibrary(jproject, path, null, null);
 	}
 
 	/**
 	 * Adds a library entry with source attchment to a IJavaProject.
-	 */			
+	 * @param jproject
+	 * @param path
+	 * @param sourceAttachPath
+	 * @param sourceAttachRoot
+	 * @return the package fragment root of the new library
+	 * @throws JavaModelException
+	 */
 	public static IPackageFragmentRoot addLibrary(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newLibraryEntry(path, sourceAttachPath, sourceAttachRoot);
 		addToClasspath(jproject, cpe);
@@ -235,7 +259,14 @@ public class JavaProjectHelper {
 
 	/**
 	 * Copies the library into the project and adds it as library entry.
-	 */			
+	 * @param jproject
+	 * @param jarPath
+	 * @param sourceAttachPath
+	 * @param sourceAttachRoot
+	 * @return the package fragment root of the new library
+	 * @throws IOException
+	 * @throws CoreException
+	 */
 	public static IPackageFragmentRoot addLibraryWithImport(IJavaProject jproject, IPath jarPath, IPath sourceAttachPath, IPath sourceAttachRoot) throws IOException, CoreException {
 		IProject project= jproject.getProject();
 		IFile newFile= project.getFile(jarPath.lastSegment());
@@ -253,9 +284,15 @@ public class JavaProjectHelper {
 
 		
 	/**
-	 * Adds a variable entry with source attchment to a IJavaProject.
+	 * Adds a variable entry with source attachment to a IJavaProject.
 	 * Can return null if variable can not be resolved.
-	 */			
+	 * @param jproject
+	 * @param path
+	 * @param sourceAttachPath
+	 * @param sourceAttachRoot
+	 * @return the package fragment root of the new variable entry
+	 * @throws JavaModelException
+	 */
 	public static IPackageFragmentRoot addVariableEntry(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newVariableEntry(path, sourceAttachPath, sourceAttachRoot);
 		addToClasspath(jproject, cpe);
@@ -266,6 +303,12 @@ public class JavaProjectHelper {
 		return null;
 	}
 	
+	/**
+	 * Adds a container entry to the specified java project
+	 * @param project
+	 * @param container
+	 * @throws JavaModelException
+	 */
 	public static void addContainerEntry(IJavaProject project, IPath container) throws JavaModelException {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(container, false);
 		addToClasspath(project, cpe);
@@ -273,12 +316,21 @@ public class JavaProjectHelper {
 	
 	/**
 	 * Adds a required project entry.
-	 */		
+	 * @param jproject
+	 * @param required
+	 * @throws JavaModelException
+	 */
 	public static void addRequiredProject(IJavaProject jproject, IJavaProject required) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newProjectEntry(required.getProject().getFullPath());
 		addToClasspath(jproject, cpe);
 	}	
 	
+	/**
+	 * Removes a specified path form the specified java project
+	 * @param jproject
+	 * @param path
+	 * @throws JavaModelException
+	 */
 	public static void removeFromClasspath(IJavaProject jproject, IPath path) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
 		int nEntries= oldEntries.length;
@@ -293,6 +345,12 @@ public class JavaProjectHelper {
 		jproject.setRawClasspath(newEntries, null);
 	}	
 
+	/**
+	 * Adds the specified classpath entry to the specified java project
+	 * @param jproject
+	 * @param cpe
+	 * @throws JavaModelException
+	 */
 	private static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
 		for (int i= 0; i < oldEntries.length; i++) {
@@ -308,6 +366,13 @@ public class JavaProjectHelper {
 	}
 	
 			
+	/**
+	 * Adds the specified nature to the specified project
+	 * @param proj
+	 * @param natureId
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures= description.getNatureIds();
@@ -318,6 +383,13 @@ public class JavaProjectHelper {
 		proj.setDescription(description, monitor);
 	}
 	
+	/**
+	 * Imports files from the specified zip to the specified destination
+	 * @param srcZipFile
+	 * @param destPath
+	 * @param monitor
+	 * @throws InvocationTargetException
+	 */
 	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
 		ZipFileStructureProvider structureProvider=	new ZipFileStructureProvider(srcZipFile);
 		try {
@@ -328,6 +400,14 @@ public class JavaProjectHelper {
 		}
 	}
 	
+	/**
+	 * Imports files form the specified root dir into the specified path
+	 * @param rootDir
+	 * @param destPath
+	 * @param monitor
+	 * @throws InvocationTargetException
+	 * @throws IOException
+	 */
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
 		List files = new ArrayList(100);
@@ -341,6 +421,13 @@ public class JavaProjectHelper {
 		}
 	}	
 	
+	/**
+	 * Imports the specified file into the specified path
+	 * @param file
+	 * @param destPath
+	 * @param monitor
+	 * @throws InvocationTargetException
+	 */
 	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
 		List files = new ArrayList(1);
@@ -354,6 +441,12 @@ public class JavaProjectHelper {
 		}
 	}
 	
+	/**
+	 * Recursively adds files from the specified dir to the provided list
+	 * @param dir
+	 * @param collection
+	 * @throws IOException
+	 */
 	private static void addJavaFiles(File dir, List collection) throws IOException {
 		File[] files = dir.listFiles();
 		List subDirs = new ArrayList(2);
@@ -371,7 +464,13 @@ public class JavaProjectHelper {
 		}
 	}
 	
+	/**
+	 * Static class for an <code>IOverwriteQuery</code> implementation
+	 */
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		/**
+		 * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
+		 */
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	

@@ -38,27 +38,46 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
 
     protected Object fLock = new Object();
 
+    /**
+     * Constructor
+     * @param name
+     */
     public PerfConsoleTests(String name) {
         super(name);
     }
 
 
+    /**
+     * Tests the performance of 1000 lines of plain output to the console
+     * @throws Exception
+     */
     public void testProcessConsolePlainOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
         runConsole80CharsTest(10000, 75);
     }
     
+    /**
+     * Tests the performance of 10000 lines of stack trace output to the console
+     * @throws Exception
+     */
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
         setComment("3.1 uses regex pattern matching support to detect hyperlinks.");
         runStackTrace(5000, 75); // 2 lines * 5000 repeats = 10000 lines
     }
 
+    /**
+     * Tests the performance of 10000 lines of wrapped process console output to the console 
+     * @throws Exception
+     */
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: wrapped output", Dimension.ELAPSED_PROCESS);
         runVariableLength(2500, 75); // 4 lines * 2500 repeats = 10000 lines
     }
 
+    /**
+     * @see org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest#setUp()
+     */
     protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
@@ -66,16 +85,20 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         ConsoleLineTracker.setDelegate(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see junit.framework.TestCase#tearDown()
+    /**
+     * @see org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest#tearDown()
      */
     protected void tearDown() throws Exception {
         super.tearDown();
         ConsoleLineTracker.setDelegate(null);
     }
 
+    /**
+     * Runs the 
+     * @param lines
+     * @param repeatTest
+     * @throws Exception
+     */
     protected void runConsole80CharsTest(int lines, int repeatTest) throws Exception {
         String typeName = "Console80Chars";
         ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
@@ -144,6 +167,11 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         }
     }
 
+    /**
+     * A warmup run of launching and having output piped to the console
+     * @param workingCopy
+     * @throws Exception
+     */
     protected void warmupRun(ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
         fWarmingUp = true;
         for (int i = 0; i < 5; i++) {
@@ -153,6 +181,11 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         fWarmingUp = false;
     }
 
+    /**
+     * Launches the specified working copy and then waits
+     * @param workingCopy
+     * @throws Exception
+     */
     protected void launchWorkingCopyAndWait(final ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
         Runnable runnable = new Runnable() {
             public void run() {
@@ -169,9 +202,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
      */
     public void consoleClosed() {
@@ -184,9 +215,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
      */
     public void init(IConsole console) {
@@ -196,17 +225,13 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
      */
     public void lineAppended(IRegion line) {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
      */
     public void dispose() {

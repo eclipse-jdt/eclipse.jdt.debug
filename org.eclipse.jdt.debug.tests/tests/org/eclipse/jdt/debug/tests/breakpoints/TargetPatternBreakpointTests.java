@@ -33,10 +33,18 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
  */
 public class TargetPatternBreakpointTests extends AbstractDebugTest implements IJavaBreakpointListener {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public TargetPatternBreakpointTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests that several pattern breakpoints are suspending properly
+	 * @throws Exception
+	 */
 	public void testTargetPatternBreakpoints() throws Exception {
 		JDIDebugPlugin.getDefault().addJavaBreakpointListener(this);
 		

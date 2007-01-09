@@ -24,10 +24,18 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class DeferredBreakpointTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public DeferredBreakpointTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests deferring several breakpoints
+	 * @throws Exception
+	 */
 	public void testDeferredBreakpoints() throws Exception {
 		String typeName = "Breakpoints";
 		List bps = new ArrayList();
@@ -97,6 +105,10 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests disabling several breakpoints
+	 * @throws Exception
+	 */
 	public void testDisabledBreakpoint() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
@@ -111,6 +123,10 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		}				
 	}
 
+	/**
+	 * Tests a cycle of enable/disable breakpoints
+	 * @throws Exception
+	 */
 	public void testEnableDisableBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
 		ILineBreakpoint bp = createLineBreakpoint(16, typeName);
@@ -127,6 +143,10 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		}				
 	}
 	
+	/**
+	 * Tests skipping a single line breakpoint
+	 * @throws Exception
+	 */
 	public void testSkipLineBreakpoint() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(52, typeName);

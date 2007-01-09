@@ -33,10 +33,17 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
  */
 public class MethodBreakpointTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public MethodBreakpointTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testEntryAndExitBreakpoints() throws Exception {
 		String typeName = "DropTests";
 		List bps = new ArrayList();
@@ -68,6 +75,11 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 	
+	/**
+	 * Tests the 'stop in main' launching preference
+	 * {@link IJavaLaunchConfigurationConstants#ATTR_STOP_IN_MAIN}
+	 * @throws Exception
+	 */
 	public void testStopInMain() throws Exception {
 		String typeName = "DropTests";
 		ILaunchConfiguration config = getLaunchConfiguration(typeName);
@@ -93,6 +105,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}	
 	
+	/**
+	 * Tests disabled method entry and exit breakpoints 
+	 * @throws Exception
+	 */
 	public void testDisabledEntryAndExitBreakpoints() throws Exception {
 		String typeName = "DropTests";
 		// method 4 - entry
@@ -111,6 +127,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 	
+	/**
+	 * Tests that a method is NOT hit in an inner class
+	 * @throws Exception
+	 */
 	public void testInnerClassNotHit() throws Exception {
 		String typeNamePattern = "A";
 		List bps = new ArrayList();
@@ -136,6 +156,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 	
+	/**
+	 * Tests that a given method IS hit in an inner class
+	 * @throws Exception
+	 */
 	public void testInnerClassesHit() throws Exception {
 		String typeNamePattern = "A*";
 		List bps = new ArrayList();
@@ -174,6 +198,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests the hit count for a method breakpoint suspends when reached
+	 * @throws Exception
+	 */
 	public void testHitCountEntryBreakpoint() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
@@ -200,6 +228,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests that the a method exit breakpoint suspends when its hit count is reached
+	 * @throws Exception
+	 */
 	public void testHitCountExitBreakpoint() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "calculateSum", "()V", false, true);
@@ -226,6 +258,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 	
+	/**
+	 * Tests an inclusive thread filter on a method breakpoint
+	 * @throws Exception
+	 */
 	public void testThreadFilterInclusive() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
@@ -253,6 +289,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}		
 	}	
 	
+	/**
+	 * Tests an exclusive thread filter on a method breakpoint
+	 * @throws Exception
+	 */
 	public void testThreadFilterExclusive() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
@@ -285,6 +325,8 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	
 	/**
 	 * Test for bug 33551
+	 * Tests that a method breakpoint is hit properly in the default package
+	 * @throws Exception
 	 */
 	public void testEntryDefaultPackageReturnType() throws Exception {
 		String typeName = "DefPkgReturnType";
@@ -307,6 +349,8 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	
 	/**
 	 * Test for bug 43611
+	 * Tests that the debug model presentation is returning the correct signature for a specific method breakpoint
+	 * @throws Exception
 	 */
 	public void testLabelWithoutSignature() throws Exception {
 		IDebugModelPresentation modelPresentation = DebugUITools.newDebugModelPresentation();
@@ -323,6 +367,8 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	
 	/**
 	 * Test for bug 43611
+	 * Tests that the debug model presentation handles a label with no name for a specific method breakpoint
+	 * @throws Exception
 	 */
 	public void testLabelWithoutMethodName() throws Exception {
 		IDebugModelPresentation modelPresentation = DebugUITools.newDebugModelPresentation();
@@ -339,6 +385,9 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	
 	/**
 	 * Test for bug 43611
+	 * Tests that the debug model presentation handles no signature or method name for a specific
+	 * method breakpoint
+	 * @throws Exception
 	 */
 	public void testLabelWithoutSigOrMethodName() throws Exception {
 		IDebugModelPresentation modelPresentation = DebugUITools.newDebugModelPresentation();
@@ -353,6 +402,10 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		}
 	}		
 	
+	/**
+	 * Tests that a specific method breakpoint is skipped when set to do so
+	 * @throws Exception
+	 */
 	public void testSkipMethodBreakpoint() throws Exception {
 		String typeName = "DropTests";
 		List bps = new ArrayList();

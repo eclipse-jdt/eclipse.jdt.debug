@@ -63,7 +63,6 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 * 
 	 * @param configuration
 	 * @param mode
-	 * @param launch
 	 */
 	public synchronized void launch(ILaunchConfiguration configuration, String mode) {
 		fConfiguration = configuration;

@@ -29,6 +29,10 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	private static final String COMPILE_ERROR_CONTENTS = 
 	 "public class CompileError {\npublic static void main(String[] args) {\nString foo = \"foo\" + bar;\n}	\n}";
 
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public MiscBreakpointsTests(String name) {
 		super(name);
 	}
@@ -36,6 +40,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	/**
 	 * This method DEPENDS on the default setting of the 'suspend on uncaught exceptions'
 	 * preference being TRUE.
+	 * @throws Exception
 	 */
 	public void testSuspendOnUncaughtExceptions() throws Exception {
 		String typeName = "ThrowsNPE";
@@ -58,6 +63,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	/**
 	 * This method DEPENDS on the default setting of the 'suspend on compilation errors'
 	 * preference being TRUE.
+	 * @throws Exception
 	 */
 	public void testSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
@@ -86,6 +92,11 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests that the program will not suspend on uncaught exceptions or errors if the corresponding
+	 * preferences are set to false
+	 * @throws Exception
+	 */
 	public void testDontSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
@@ -107,6 +118,11 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests that the program will not suspend on uncaught exceptions if the corresponding
+	 * preference is set to false
+	 * @throws Exception
+	 */
 	public void testDontSuspendOnUncaughtExceptions() throws Exception {
 		String typeName = "ThrowsNPE";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);		
@@ -120,6 +136,10 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 	
+	/**
+	 * Returns the <code>JDIDebugUIPlugin</code> preference store
+	 * @return
+	 */
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
 	}

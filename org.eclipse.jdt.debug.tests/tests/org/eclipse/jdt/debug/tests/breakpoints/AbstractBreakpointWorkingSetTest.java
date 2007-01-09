@@ -24,13 +24,17 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugTest {
 
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public AbstractBreakpointWorkingSetTest(String name) {
 		super(name);
 	}
 	
 	/**
 	 * Creates and returns a breakpoint working set with the given name if not
-	 * already in existance.
+	 * already in existence.
 	 * 
 	 * @param name working set name
 	 */

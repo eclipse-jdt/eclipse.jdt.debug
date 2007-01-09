@@ -21,12 +21,23 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.Dimension;
 
+/**
+ * Tests the performance of the contextual launch menu population 
+ */
 public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
     
+    /**
+     * Constructor
+     * @param name
+     */
     public PerfContextualLaunchMenu(String name) {
         super(name);
     }
 
+    /**
+     * Tests the performance of the fly-out time of the contextual launch menu
+     * @throws Exception
+     */
     public void testContextualLaunchMenu() throws Exception {
         tagAsGlobalSummary("Fill Contextual Launch Menu", Dimension.ELAPSED_PROCESS);
         final PerfTestContextualLaunchAction action = new PerfTestContextualLaunchAction();
@@ -71,7 +82,9 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
     }
     
     private class PerfTestContextualLaunchAction extends ContextualLaunchAction {
-
+        /**
+         * Constructor
+         */
         public PerfTestContextualLaunchAction() {
             super(ILaunchManager.RUN_MODE);
         }

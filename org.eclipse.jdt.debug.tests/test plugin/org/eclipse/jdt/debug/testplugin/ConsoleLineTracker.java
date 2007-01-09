@@ -27,7 +27,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	private static IConsole fConsole;
 	
 	/**
-	 * Sets the delegate, possilby <code>null</code>
+	 * Sets the delegate, possibly <code>null</code>
 	 *  
 	 * @param tracker
 	 */
@@ -72,9 +72,9 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 			fDelegate.lineAppended(line);
 		}
 	}
-
+	
 	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
 	public void consoleClosed() {
 		if (fDelegate != null && fConsole != null) {

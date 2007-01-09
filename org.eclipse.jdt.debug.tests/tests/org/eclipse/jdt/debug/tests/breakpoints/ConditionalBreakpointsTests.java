@@ -22,10 +22,18 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public ConditionalBreakpointsTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests a breakpoint with a simple condition
+	 * @throws Exception
+	 */
 	public void testSimpleConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i == 3", true);
@@ -50,6 +58,10 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests a static method call that has a conditional breakpoint on it
+	 * @throws Exception
+	 */
 	public void testStaticMethodCallConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "ArgumentsTests.fact(i) == 24", true);
@@ -74,6 +86,10 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests a simple conditional breakpoint that gets hit when a change is made
+	 * @throws Exception
+	 */
 	public void testSimpleConditionalBreakpointSuspendOnChange() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i != 9", false);
@@ -109,6 +125,10 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests a conditional step return
+	 * @throws Exception
+	 */
 	public void testConditionalStepReturn() throws Exception {
 		String typeName = "ConditionalStepReturn";
 		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(17, typeName);

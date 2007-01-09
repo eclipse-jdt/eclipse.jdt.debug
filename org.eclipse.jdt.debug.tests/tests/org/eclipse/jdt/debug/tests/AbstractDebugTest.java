@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -1423,8 +1424,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         boolean wasInterrupted = false;
         do {
             try {
-                Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-                Platform.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
                 wasInterrupted = false;
             } catch (OperationCanceledException e) {
                 e.printStackTrace();

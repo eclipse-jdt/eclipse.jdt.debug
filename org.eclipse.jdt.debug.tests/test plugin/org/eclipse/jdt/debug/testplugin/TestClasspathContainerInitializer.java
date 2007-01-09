@@ -20,20 +20,17 @@ import org.eclipse.jdt.core.IJavaProject;
  */
 public class TestClasspathContainerInitializer extends ClasspathContainerInitializer {
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
 		// never called
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getComparisonID(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
 	public Object getComparisonID(IPath containerPath, IJavaProject project) {
 		return project;
 	}
-	
-	
-
 }

@@ -39,6 +39,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class RunToLineTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public RunToLineTests(String name) {
 		super(name);
 	}
@@ -48,7 +52,7 @@ public class RunToLineTests extends AbstractDebugTest {
 	
 	class MyListener implements IPerspectiveListener2 {
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 		 */
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
@@ -60,18 +64,17 @@ public class RunToLineTests extends AbstractDebugTest {
             }
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 		 */
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		}
 
-		/* (non-Javadoc)
+		/**
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 		 */
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {			
 		}
-	    
 	}
 
 	/**

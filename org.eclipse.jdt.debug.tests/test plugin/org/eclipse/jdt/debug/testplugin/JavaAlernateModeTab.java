@@ -35,8 +35,8 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	
 	private Button fAlternateModeCheckBox;
 
-	/**
-	 * @return
+	/** Returns the set of modes this tab supports
+	 * @return the set of modes this tab supports
 	 */
 	public Set getModes() {
 		HashSet modes = new HashSet();

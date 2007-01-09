@@ -27,10 +27,19 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class PreLaunchBreakpointTest extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public PreLaunchBreakpointTest(String name) {
 		super(name);
 	}
 	
+	/**
+	 * Tests that the perspective will switch if breakpoints are detected and the program was launched in
+	 * 'run' mode
+	 * @throws Exception
+	 */
 	public void testRunModeLaunchWithBreakpoints() throws Exception {
 		String typeName = "Breakpoints";		
 		

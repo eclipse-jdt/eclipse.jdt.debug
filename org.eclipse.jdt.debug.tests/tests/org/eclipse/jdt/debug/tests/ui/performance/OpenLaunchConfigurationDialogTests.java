@@ -21,14 +21,27 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
+/**
+ * Tests opening of the launch configuraiton dialog
+ */
 public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformanceTest {
 
+    /**
+     * Constructor
+     * @param name
+     */
     public OpenLaunchConfigurationDialogTests(String name) {
         super(name);
     }
 
+    /**
+     * The local java application id 
+     */
     public static String fgIdentifier= "org.eclipse.jdt.launching.localJavaApplication";
     
+    /**
+     * Tests opening the LCD on a given launch configuration on the java tab group 100 times
+     */
     public void testOpenJavaProgramLaunchConfigurationDialog1() {
         // cold run
         ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
@@ -41,6 +54,9 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
 		assertPerformance();
     }
     
+    /**
+     * Tests opening the LCD on a specific launch configuration on the java tab group 1 time
+     */
     public void testOpenJavaProgramLaunchConfigurationDialog2() {
         // warm run..depends on testOpenJavaProgramLaunchConfigurationDialog1 for cold start
         ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
@@ -48,8 +64,12 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
 		openLCD(selection, fgIdentifier);
     }
 
+    /**
+     * Helper method to open the launch configuration dialog
+     * @param selection
+     * @param groupIdentifier
+     */
     private void openLCD(final IStructuredSelection selection, final String groupIdentifier) {
-       
         //set a status to go to the classpath tab
 	    IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, "", null); //$NON-NLS-1$
 		LaunchConfigurationsDialog dialog= new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));

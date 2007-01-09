@@ -27,12 +27,20 @@ public class StepFilterTests extends AbstractDebugTest {
 	private String fOriginalActiveFilters;
 	private String fOriginalInactiveFilters;
 
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public StepFilterTests(String name) {
 		super(name);
 		fOriginalActiveFilters = getPrefStore().getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST);
 		fOriginalInactiveFilters = getPrefStore().getString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST);		
 	}
 
+	/**
+	 * Tests a simple step filter
+	 * @throws Exception
+	 */
 	public void testSimpleStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
@@ -56,6 +64,10 @@ public class StepFilterTests extends AbstractDebugTest {
 		}				
 	}
 	
+	/**
+	 * Tests a step filter that is not active
+	 * @throws Exception
+	 */
 	public void testInactiveStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo");
 		String typeName = "StepFilterOne";
@@ -79,6 +91,11 @@ public class StepFilterTests extends AbstractDebugTest {
 		}						
 	}
 	
+	/**
+	 * Tests a deep step filter, i.e. a step filter that is more than one stack frame deep on the current
+	 * suspended thread
+	 * @throws Exception
+	 */
 	public void testDeepStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
@@ -102,6 +119,10 @@ public class StepFilterTests extends AbstractDebugTest {
 		}				
 	}	
 
+	/**
+	 * Tests a simple step return filter
+	 * @throws Exception
+	 */
 	public void testStepReturnFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
@@ -125,6 +146,10 @@ public class StepFilterTests extends AbstractDebugTest {
 		}				
 	}
 	
+	/**
+	 * Tests a simple step over filter
+	 * @throws Exception
+	 */
 	public void testStepOverFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo,StepFilterThree," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
@@ -148,11 +173,18 @@ public class StepFilterTests extends AbstractDebugTest {
 		}				
 	}	
 	
+	/**
+	 * Reset the step filtering preferences
+	 */
 	protected void resetStepFilters() {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, fOriginalInactiveFilters);
 	}
 
+	/**
+	 * Returns the <code>JDIDebugUIPlugin</code> preference store
+	 * @return
+	 */
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
 	}

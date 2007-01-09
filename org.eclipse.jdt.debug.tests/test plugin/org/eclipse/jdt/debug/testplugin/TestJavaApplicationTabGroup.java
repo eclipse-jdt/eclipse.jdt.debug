@@ -25,7 +25,7 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaMainTab;
 public class TestJavaApplicationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	/**
-	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
@@ -36,5 +36,4 @@ public class TestJavaApplicationTabGroup extends AbstractLaunchConfigurationTabG
 		};
 		setTabs(tabs);
 	}
-
 }

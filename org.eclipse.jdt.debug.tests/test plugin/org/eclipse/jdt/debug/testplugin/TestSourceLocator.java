@@ -17,11 +17,8 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
  */
 public class TestSourceLocator extends AbstractSourceLookupDirector {
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
-	public void initializeParticipants() {
-
-	}
-
+	public void initializeParticipants() {}
 }

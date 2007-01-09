@@ -26,6 +26,10 @@ import org.eclipse.ui.PartInitException;
  */
 public class RefreshTabTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public RefreshTabTests(String name) {
 		super(name);
 	}
@@ -54,6 +58,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope of the selected resource
+	 * @throws CoreException
 	 */
 	public void testSelectedResource() throws CoreException {
 		String scope = "${resource}";
@@ -67,6 +72,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope of the selected resource's container
+	 * @throws CoreException
 	 */
 	public void testSelectionsFolder() throws CoreException {
 		String scope = "${container}";
@@ -80,6 +86,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope of the selected resource's project
+	 * @throws CoreException
 	 */
 	public void testSelectionsProject() throws CoreException {
 		String scope = "${project}";
@@ -93,6 +100,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope of the selected resource's project
+	 * @throws CoreException
 	 */
 	public void testWorkspaceScope() throws CoreException {
 		String scope = "${workspace}";
@@ -104,6 +112,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope for a specific resource (old format)
+	 * @throws CoreException
 	 */
 	public void testSpecificResource() throws CoreException {
 		String scope = "${resource:/DebugTests/.classpath}";
@@ -116,6 +125,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope for a working set
+	 * @throws CoreException
 	 */
 	public void testWorkingSet() throws CoreException {
 		String scope= "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/DebugTests/.classpath\" type=\"1\"/>\n</launchConfigurationWorkingSet>}";

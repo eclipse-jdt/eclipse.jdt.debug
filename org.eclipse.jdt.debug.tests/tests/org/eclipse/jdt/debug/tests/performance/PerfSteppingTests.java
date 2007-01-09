@@ -22,6 +22,10 @@ import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
  */
 public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public PerfSteppingTests(String name) {
 		super(name);
 	}
@@ -32,11 +36,19 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 		private Object fLock;
 		private DebugEvent[] EMPTY = new DebugEvent[0];
 
+		/**
+		 * Constructor
+		 * @param thread
+		 * @param lock
+		 */
 		public MyFilter(IJavaThread thread, Object lock) {
 			fThread = thread;
 			fLock = lock;
 		}
 		
+		/**
+		 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent[])
+		 */
 		public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
 			for (int i = 0; i < events.length; i++) {
 				DebugEvent event = events[i];
@@ -52,6 +64,9 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			return events;
 		}
 		
+		/**
+		 * performs a step operation
+		 */
 		public void step() {
 			synchronized (fLock) {
 				try {

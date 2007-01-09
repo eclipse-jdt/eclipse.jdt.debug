@@ -14,6 +14,9 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 
+/**
+ * An abstract implementation of a debug performance test
+ */
 public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 
 	protected PerformanceMeter fPerformanceMeter;

@@ -41,6 +41,9 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
     private int fMeasuredRuns = 10;
 
     private class BreakpointListener implements IDebugEventSetListener {
+        /**
+         * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+         */
         public void handleDebugEvents(DebugEvent[] events) {
             for (int i = 0; i < events.length; i++) {
                 DebugEvent event = events[i];
@@ -52,10 +55,18 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         }
     };
 
+    /**
+     * Constructor
+     * @param name
+     */
     public PerfConditionalBreakpointsTests(String name) {
         super(name);
     }
 
+    /**
+     * Tests the performance of launching to conditional breakpoints
+     * @throws Exception
+     */
     public void testConditionalBreakpoints() throws Exception {
         tagAsGlobalSummary("Conditional Breakpoint Test", Dimension.ELAPSED_PROCESS);
         // just in case

@@ -22,10 +22,18 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest {
 
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public BreakpointWorkingSetTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Tests adding a breakpoint to the default working set
+	 * @throws Exception
+	 */
 	public void testAddToDefaultWorkingSet() throws Exception {
 		String name = "TEST DEFAULT";
 		IWorkingSet set = createSet(name);
@@ -41,6 +49,10 @@ public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest 
 		}
 	}
 	
+	/**
+	 * Tests adding a breakpoint with no default working set
+	 * @throws Exception
+	 */
 	public void testNoDefaultWorkingSet() throws Exception {
 		String name = "TEST DEFAULT";
 		IWorkingSet set = createSet(name);

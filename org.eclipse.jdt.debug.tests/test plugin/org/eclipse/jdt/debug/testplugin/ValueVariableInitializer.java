@@ -18,11 +18,10 @@ import org.eclipse.core.variables.IValueVariableInitializer;
  */
 public class ValueVariableInitializer implements IValueVariableInitializer {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableInitializer#initialize(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable)
+	/**
+	 * @see org.eclipse.core.variables.IValueVariableInitializer#initialize(org.eclipse.core.variables.IValueVariable)
 	 */
 	public void initialize(IValueVariable variable) {
 		variable.setValue("initialized-value");
 	}
-
 }

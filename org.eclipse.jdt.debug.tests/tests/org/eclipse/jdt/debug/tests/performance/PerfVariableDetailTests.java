@@ -28,16 +28,27 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
 
     private Object fLock = new Object();
     
+    /**
+     * Constructor
+     * @param name
+     */
     public PerfVariableDetailTests(String name) {
         super(name);
     }
 
+    /**
+     * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
+     */
     public void detailComputed(IValue value, String result) {
     	synchronized (fLock) {
     		fLock.notifyAll();
 		}
 	}
     
+    /**
+     * Tests the performance of calculating the 'toString' method 
+     * @throws Exception
+     */
     public void testToStringDetails() throws Exception {
         // just in case
     	tagAsSummary("Computing variable toString() details iteratively", Dimension.ELAPSED_PROCESS);

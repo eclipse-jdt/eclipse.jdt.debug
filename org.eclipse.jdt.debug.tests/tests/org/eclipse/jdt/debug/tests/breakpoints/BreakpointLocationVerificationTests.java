@@ -27,10 +27,20 @@ import org.eclipse.jface.text.Document;
  */
 public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public BreakpointLocationVerificationTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Parses the specified <code>ICompilationUnit</code> into its respective
+	 * <code>CompilationUnit</code>
+	 * @param unit
+	 * @return the parsed <code>CompilationUnit</code>
+	 */
 	private CompilationUnit parseCompilationUnit(ICompilationUnit unit) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(unit);
@@ -39,6 +49,13 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		return (CompilationUnit) parser.createAST(null);
 	}
 	
+	/**
+	 * Tests that the predefined location is locatable in the specified type
+	 * @param lineToTry
+	 * @param expectedLineNumber
+	 * @param expectedTypeName
+	 * @throws JavaModelException
+	 */
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
 		IType type= getJavaProject().findType(expectedTypeName);
 		assertNotNull("Cannot find type", type);
@@ -67,68 +84,136 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		testLocation(9, 18, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineMethodSignature() throws Exception {
 		testLocation(32, 33, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineInInnerType() throws Exception {
 		testLocation(25, 25, "BreakpointsLocation.InnerClass");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineInAnnonymousType() throws Exception {
 		testLocation(39, 39, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineAfterAllCode() throws Exception {
-		// ********* this test need to be updated everytime BreakpointsLocation.java is modified *************
+		// ********* this test need to be updated every time BreakpointsLocation.java is modified *************
 		testLocation(74, -1, "BreakpointsLocation");
 		// ******************************
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineVariableDeclarationWithAssigment() throws Exception {
 		testLocation(43, 46, "BreakpointsLocation");
 	}
     
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
     public void testEmptyLabel() throws Exception {
         testLocation(15, 16, "LabelTest");
     }
 	
+    /**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
     public void testNestedEmptyLabels() throws Exception {
         testLocation(19, 21, "LabelTest");
     }
     
+    /**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
     public void testLabelWithCode() throws Exception {
         testLocation(21, 21, "LabelTest");
     }
     
+    /**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineFieldDeclarationWithAssigment() throws Exception {
 		testLocation(51, 55, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineExpressionReplacedByConstant1() throws Exception {
 		testLocation(62, 62, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineExpressionReplacedByConstant2() throws Exception {
 		testLocation(64, 62, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineExpressionNotReplacedByConstant1() throws Exception {
 		testLocation(70, 70, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineExpressionNotReplacedByConstant2() throws Exception {
 		testLocation(72, 72, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineLitteral1() throws Exception {
 		testLocation(46, 46, "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
 	public void testLineLitteral2() throws Exception {
 		testLocation(55, 55, "BreakpointsLocation");
 	}
-	
+
+	/**
+	 * Tests that an specific field is locatable in a specific type at a given offset and line
+	 * @param line
+	 * @param offsetInLine
+	 * @param expectedFieldName
+	 * @param expectedTypeName
+	 * @throws Exception
+	 */
 	public void testField(int line, int offsetInLine, String expectedFieldName, String expectedTypeName) throws Exception {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
@@ -143,14 +228,31 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		assertEquals("Wrong Type Name", expectedTypeName, typeName);
 	}
 	
+	/**
+	 * Tests that a specific filed is at the correct location
+	 * @throws Exception
+	 */
 	public void testFieldLocationOnField() throws Exception {
 		testField(30, 20, "fList", "BreakpointsLocation");
 	}
 	
+	/**
+	 * Tests that a specific filed is at the correct location
+	 * @throws Exception
+	 */
 	public void testFieldLocationNotOnField() throws Exception {
 		testField(33, 18, null, null);
 	}
 	
+	/**
+	 * Tests that a specific method is locatable in the specified type at the given offset and line
+	 * @param line
+	 * @param offsetInLine
+	 * @param expectedMethodName
+	 * @param expectedTypeName
+	 * @param expectedMethodSignature
+	 * @throws Exception
+	 */
 	public void testMethod(int line, int offsetInLine, String expectedMethodName, String expectedTypeName, String expectedMethodSignature) throws Exception {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
@@ -167,18 +269,34 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		assertEquals("Wrong method signature", expectedMethodSignature, methodSignature);
 	}
 	
+	/**
+	 * Tests that a specific method is locatable in a specific location
+	 * @throws Exception
+	 */
 	public void testMethodOnSignature() throws Exception {
 		testMethod(17, 20, "test1", "BreakpointsLocation", "()V");
 	}
-		
+	
+	/**
+	 * Tests that a specific method is locatable in a specific location
+	 * @throws Exception
+	 */
 	public void testMethodOnCode() throws Exception {
 		testMethod(19, 17, "test1", "BreakpointsLocation", "()V");
 	}
 	
+	/**
+	 * Tests that a specific method is locatable in a specific location
+	 * @throws Exception
+	 */
 	public void testMethodNotOnMethod() throws Exception {
 		testMethod(30, 1, null, null, null);
 	}
 	
+	/**
+	 * Tests that a specific method is locatable in a specific location
+	 * @throws Exception
+	 */
 	public void testMethodOnMethodSignatureNotAvailable() throws Exception {
 		testMethod(32, 1, "test2", "BreakpointsLocation", null);
 	}

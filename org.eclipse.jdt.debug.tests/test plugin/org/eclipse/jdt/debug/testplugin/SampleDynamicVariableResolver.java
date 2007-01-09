@@ -18,8 +18,8 @@ import org.eclipse.core.variables.IDynamicVariableResolver;
  */
 public class SampleDynamicVariableResolver implements IDynamicVariableResolver {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
+	/**
+	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) {
 		if (argument == null) {
