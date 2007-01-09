@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests.program;
 
+/**
+ * Empty test class
+ */
 public class TestClazz10 {
 
 }

@@ -15,14 +15,18 @@ import com.sun.jdi.event.VMDisconnectEvent;
  * Listen for VMDisconnectEvent.
  */
 public class VMDisconnectEventWaiter extends EventWaiter {
+	
 	/**
-	 * Creates a VMDisconnectEventWaiter.
+	 * Constructor
+	 * @param request
+	 * @param shouldGo
 	 */
-	public VMDisconnectEventWaiter(
-		com.sun.jdi.request.EventRequest request,
-		boolean shouldGo) {
+	public VMDisconnectEventWaiter(com.sun.jdi.request.EventRequest request, boolean shouldGo) {
 		super(request, shouldGo);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventWaiter#vmDisconnect(com.sun.jdi.event.VMDisconnectEvent)
+	 */
 	public boolean vmDisconnect(VMDisconnectEvent event) {
 		notifyEvent(event);
 		return fShouldGo;

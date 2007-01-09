@@ -93,12 +93,14 @@ public class LocatableTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new LocatableTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.Locatable";

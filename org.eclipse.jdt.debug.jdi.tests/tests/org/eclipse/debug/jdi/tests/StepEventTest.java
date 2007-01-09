@@ -44,12 +44,14 @@ public class StepEventTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new StepEventTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.event.StepEvent";
@@ -77,6 +79,9 @@ public class StepEventTest extends AbstractJDITest {
 		waitUntilReady();
 	}
 
+	/**
+	 * Tests a step request with a specified class filter
+	 */
 	public void testJDIClassFilter1() {
 		// Request for step events
 		StepRequest request = getRequest();
@@ -108,6 +113,9 @@ public class StepEventTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Retests a step request with a specified class filter
+	 */
 	public void testJDIClassFilter2() {
 		// Request for step events
 		StepRequest request = getRequest();
@@ -126,6 +134,9 @@ public class StepEventTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Tests a step request with a specific exclusion filter
+	 */
 	public void testJDIClassExclusionFilter1() {
 		// Request for step events
 		StepRequest request = getRequest();
@@ -144,6 +155,9 @@ public class StepEventTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Retests a step request with a specific exclusion filter
+	 */
 	public void testJDIClassExclusionFilter2() {
 		StepRequest request = getRequest();
 		request.addClassExclusionFilter("org.eclipse.*");
@@ -162,6 +176,10 @@ public class StepEventTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Creates a returns a new <code>StepRequest</code>
+	 * @return a new <code>StepRequest</code>
+	 */
 	public StepRequest getRequest() {
 		StepRequest eventRequest =
 			fVM.eventRequestManager().createStepRequest(

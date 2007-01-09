@@ -36,7 +36,7 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 		// Get value of "fThread"
 		ThreadReference thread = getThread();
 
-		// Get its threadgroup
+		// Get its thread group
 		fThreadGroup = thread.threadGroup();
 	}
 	/**
@@ -48,12 +48,14 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new ThreadGroupReferenceTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.ThreadGroupReference";

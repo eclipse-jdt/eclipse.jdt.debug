@@ -101,12 +101,14 @@ public class TypeTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new TypeTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.Type";

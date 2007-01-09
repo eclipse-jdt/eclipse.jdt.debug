@@ -23,6 +23,7 @@ public class JDITestSuite extends TestSuite {
 	private AbstractJDITest fTest;
 	/**
 	 * Creates a new test suite for the given JDI test.
+	 * @param test
 	 */
 	public JDITestSuite(AbstractJDITest test) {
 		super();
@@ -30,6 +31,7 @@ public class JDITestSuite extends TestSuite {
 	}
 	/**
 	 * Runs the tests and collects their result in a TestResult.
+	 * @see junit.framework.TestSuite#run(junit.framework.TestResult)
 	 */
 	public void run(TestResult result) {
 		fTest.setUp();

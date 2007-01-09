@@ -16,12 +16,14 @@ import junit.framework.TestCase;
 
 /**
  * Wrapper to be able to use the JDI tests in a test suite without
- * starting and shuting down the VM after each test.
+ * starting and shutting down the VM after each test.
  */
 public class JDITestCase extends TestCase {
 	private AbstractJDITest fTest;
 	/**
 	 * Creates a new test for the given JDI test.
+	 * @param test
+	 * @param name
 	 */
 	public JDITestCase(AbstractJDITest test, String name) {
 		super(name);
@@ -68,6 +70,7 @@ public class JDITestCase extends TestCase {
 	}
 	/**
 	 * Returns a string representation of the test case
+	 * @see junit.framework.TestCase#toString()
 	 */
 	public String toString() {
 		return fTest.getClass().getName() + "." + getName() + "()";

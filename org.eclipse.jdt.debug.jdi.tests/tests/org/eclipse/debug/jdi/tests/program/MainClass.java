@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests.program;
  
+
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Date;
+
+import org.eclipse.debug.jdi.tests.ClassTypeTest;
+
 /**
  * Main class for target VM tests.
  * This class is intended to be run by the target VM. 
@@ -21,10 +28,6 @@ package org.eclipse.debug.jdi.tests.program;
  * as well as its behavior. So if this class or one of the types in this
  * package is changed, the corresponding tests must also be changed.
  */
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Date;
-
 public class MainClass extends Date implements Runnable, Printable {
 
 	private static byte[] byteArray = new byte[0];
@@ -48,22 +51,48 @@ public class MainClass extends Date implements Runnable, Printable {
 	private String[] stringArray = new String[0];
 	private String[][] stringDoubleArray = new String[0][0];
 
+	/**
+	 * An integer value
+	 */
 	public static int fInt = 0;
 
+	/**
+	 * The instance of the <code>MainClass</code>
+	 */
 	public static MainClass fObject = new MainClass();
 
+	/**
+	 * A string initialized to 'hello world'
+	 */
 	public static String fString = "Hello World";
 
+	/**
+	 * A <code>Thread</code> object
+	 */
 	public static Thread fThread;
 
+	/**
+	 * A <code>Thread</code> object representing the main thread
+	 */
 	public static Thread fMainThread;
 
+	/**
+	 */
 	public static String[] fArray = new String[] { "foo", "bar", "hop" };
 
+	/**
+	 * A pre-initialized array of doubles
+	 */
 	public static double[] fDoubleArray = new double[] { 1, 2.2, 3.33 };
 
+	/**
+	 * The name of an event type
+	 */
 	public static String fEventType = "";
 
+	/**
+	 * A boolean value initialized to <code>false</code>
+	 */
 	public boolean fBool = false;
 
 	private char fChar = 'a';
@@ -72,35 +101,68 @@ public class MainClass extends Date implements Runnable, Printable {
 
 	protected final String fString3 = "HEY";
 
-	public MainClass() {
-	}
+	/**
+	 * Constructor
+	 */
+	public MainClass() {}
 
-	/* Used to test ClassType.newInstance */
+	/**
+	 * Constructor
+	 * Used to test ClassType.newInstance
+	 * @see ClassTypeTest
+	 * @param i
+	 * @param o1
+	 * @param o2
+	 */
 	public MainClass(int i, Object o1, Object o2) {
 	}
 
-	/* For invocation tests */
+	/** 
+	 * For invocation tests
+	 * @param x the integer
+	 * @param o
+	 * @return a string object representing the specified interger value
+	 */
 	private static String invoke1(int x, Object o) {
 		if (o == null)
 			return (new Integer(x)).toString();
 		else
 			return "";
 	}
-	/* For invocation tests */
+	/** 
+	 * For invocation tests
+	 */
 	private static void invoke2() {
 		throw new IndexOutOfBoundsException();
 	}
-	/* For invocation tests */
+	
+	/**
+	 * For invocation tests
+	 * @param str
+	 * @param o
+	 * @return an the integer value of the specified string
+	 */
 	private int invoke3(String str, Object o) {
 		return Integer.parseInt(str);
 	}
-	/* For invocation tests */
+	/**
+	 * For invocation tests
+	 * @return nothing, only throws an exception
+	 * @throws java.io.EOFException
+	 */
 	private long invoke4() throws java.io.EOFException {
 		throw new java.io.EOFException();
 	}
-	/* For variables test */
-	private void variablesTest(long l) {
-	}
+	/**
+	 * For variables test
+	 * @param l
+	 */
+	private void variablesTest(long l) {}
+	
+	/**
+	 * Runs the test program 
+	 * @param args
+	 */
 	public static void main(java.lang.String[] args) {
 		// Start the test program
 		ThreadGroup group = new ThreadGroup("Test ThreadGroup");
@@ -116,6 +178,9 @@ public class MainClass extends Date implements Runnable, Printable {
 			} catch (InterruptedException e) {
 			}
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.program.Printable#print(java.io.OutputStream)
+	 */
 	public void print(OutputStream out) {
 		String string = fInt++ +". " + fString;
 		PrintWriter writer = new PrintWriter(out);
@@ -199,6 +264,9 @@ public class MainClass extends Date implements Runnable, Printable {
 		System.out.println("get the arg values");
 	}
 	
+	/**
+	 * Prints to System.out and throws an exception to indicate readiness
+	 */
 	synchronized public void printAndSignal() {
 		print(System.out);
 		// Signal readiness by throwing an exception
@@ -208,6 +276,9 @@ public class MainClass extends Date implements Runnable, Printable {
 		}
 	}
 	
+	/**
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
 		try {
 			Thread t = Thread.currentThread();

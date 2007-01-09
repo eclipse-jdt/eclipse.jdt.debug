@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
+/**
+ * Specialized exception class for testing
+ */
 public class NotYetImplementedException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	

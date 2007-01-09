@@ -41,15 +41,19 @@ import com.sun.jdi.request.EventRequest;
 public class EventReader extends AbstractReader {
 	private EventQueue fEventQueue;
 	private Vector fEventListeners = new Vector(); // A Vector of EventListener
-	/*
-	 * Creates a new event reader that will read from the given event queue.
+
+	/**
+	 * Constructor
+	 * @param name
+	 * @param queue
 	 */
 	public EventReader(String name, EventQueue queue) {
 		super(name);
 		fEventQueue = queue;
 	}
-	/*
+	/**
 	 * Registers the given event listener.
+	 * @param listener
 	 */
 	public synchronized void addEventListener(EventListener listener) {
 		fEventListeners.addElement(listener);
@@ -131,8 +135,9 @@ public class EventReader extends AbstractReader {
 			}
 		}
 	}
-	/*
+	/**
 	 * De-registers the given event listener.
+	 * @param listener
 	 */
 	public synchronized void removeEventListener(EventListener listener) {
 		fEventListeners.removeElement(listener);

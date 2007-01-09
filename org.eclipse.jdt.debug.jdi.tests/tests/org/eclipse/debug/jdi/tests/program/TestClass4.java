@@ -10,5 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests.program;
 
+/**
+ * EMpty test class
+ */
 public class TestClass4 {
 }

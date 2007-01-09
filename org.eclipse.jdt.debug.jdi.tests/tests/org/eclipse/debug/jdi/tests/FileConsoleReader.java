@@ -18,11 +18,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * Tests continuous reading from a file and input stream
+ */
 public class FileConsoleReader extends AbstractReader {
 	private InputStream fInput;
 	private FileOutputStream fFileOutputStream;
-	/*
+	/**
 	 * Creates a new console reader that will read from the given input stream.
+	 * @param name
+	 * @param fileName
+	 * @param input
 	 */
 	public FileConsoleReader(String name, String fileName, InputStream input) {
 		super(name);
@@ -51,6 +57,9 @@ public class FileConsoleReader extends AbstractReader {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.debug.jdi.tests.AbstractReader#stop()
+	 */
 	public void stop() {
 		try {
 			fFileOutputStream.close();

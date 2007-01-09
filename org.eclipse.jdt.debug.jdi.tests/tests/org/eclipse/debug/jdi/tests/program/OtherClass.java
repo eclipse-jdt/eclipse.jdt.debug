@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests.program;
 
+/**
+ * A test class with an inner class
+ */
 public class OtherClass extends MainClass {
 	class InnerClass {
 	}

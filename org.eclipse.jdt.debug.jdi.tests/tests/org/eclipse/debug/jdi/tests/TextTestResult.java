@@ -17,12 +17,21 @@ import junit.framework.Test;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
 
+/**
+ * Tests a <code>TestResult</code>
+ */
 class TextTestResult extends TestResult {
 
+	/**
+	 * @see junit.framework.TestResult#addError(junit.framework.Test, java.lang.Throwable)
+	 */
 	public synchronized void addError(Test test, Throwable t) {
 		super.addError(test, t);
 		System.out.println("E");
 	}
+	/**
+	 * @see junit.framework.TestResult#addFailure(junit.framework.Test, junit.framework.AssertionFailedError)
+	 */
 	public synchronized void addFailure(Test test, AssertionFailedError t) {
 		super.addFailure(test, t);
 		System.out.print("F");
@@ -101,6 +110,9 @@ class TextTestResult extends TestResult {
 					+ errorCount());
 		}
 	}
+	/**
+	 * @see junit.framework.TestResult#startTest(junit.framework.Test)
+	 */
 	public synchronized void startTest(Test test) {
 		super.startTest(test);
 		System.out.print(".");

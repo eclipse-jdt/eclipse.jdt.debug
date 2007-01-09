@@ -18,11 +18,20 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.request.MethodEntryRequest;
 
+/**
+ * Tests a method entry request
+ */
 public class MethodEntryRequestTest extends AbstractJDITest {
 
+	/**
+	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localSetUp()
+	 */
 	public void localSetUp() {
 	}
 
+	/**
+	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localTearDown()
+	 */
 	public void localTearDown() {
 		fVM.resume();
 		waitUntilReady();
@@ -30,21 +39,30 @@ public class MethodEntryRequestTest extends AbstractJDITest {
 
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new MethodEntryRequestTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.MethodEntryRequest";
 	}
 
+	/**
+	 * Creates and returns a new <code>MethodEntryRequest</code>
+	 * @return a new <code>MethodEntryRequest</code>
+	 */
 	protected MethodEntryRequest getMethodEntryRequest() {
 		return fVM.eventRequestManager().createMethodEntryRequest();
 	}
 
+	/**
+	 * Tests a request without any filtering 
+	 */
 	public void testJDIWithoutFilter() {
 		MethodEntryRequest request = getMethodEntryRequest();
 
@@ -56,6 +74,9 @@ public class MethodEntryRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Test a request with class exclusion filtering
+	 */
 	public void testJDIWithClassExclusionFilter() {
 		MethodEntryRequest request = getMethodEntryRequest();
 		request.addClassExclusionFilter("org.eclipse.debug.jdi.tests.program.*");
@@ -70,6 +91,9 @@ public class MethodEntryRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Tests a method entry request with a specified class filter
+	 */
 	public void testJDIWithClassFilter1() {
 		MethodEntryRequest request = getMethodEntryRequest();
 		ClassType clazz = getClass("java.io.PrintStream");
@@ -85,6 +109,9 @@ public class MethodEntryRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Retests a method entry request with a specified class filter
+	 */
 	public void testJDIWithClassFilter2() {
 		MethodEntryRequest request = getMethodEntryRequest();
 		request.addClassFilter("java.io.PrintStream");
@@ -99,6 +126,9 @@ public class MethodEntryRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Tests a method entry request with a thread filter
+	 */
 	public void testJDIWithThreadFilter() {
 		MethodEntryRequest request = getMethodEntryRequest();
 		ThreadReference thr = getMainThread();

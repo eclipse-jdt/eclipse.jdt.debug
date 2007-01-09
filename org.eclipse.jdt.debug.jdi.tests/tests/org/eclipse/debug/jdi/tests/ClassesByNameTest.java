@@ -34,12 +34,14 @@ public class ClassesByNameTest extends AbstractJDITest {
 	}
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new ClassesByNameTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.VirtualMachine.classesByName";
@@ -64,6 +66,10 @@ public class ClassesByNameTest extends AbstractJDITest {
 			classes.size() == 1
 				&& ((Type) classes.get(0)).signature().equals("[[I"));
 	}
+	
+	/**
+	 * tests signature for an array of long values 
+	 */
 	public void testJDILongArray() {
 		List classes = fVM.classesByName("long[]");
 		assertTrue(
@@ -71,6 +77,10 @@ public class ClassesByNameTest extends AbstractJDITest {
 			classes.size() == 1
 				&& ((Type) classes.get(0)).signature().equals("[J"));
 	}
+	
+	/**
+	 * tests signature of a two dimensional array of long values
+	 */
 	public void testJDILongDoubleArray() {
 		List classes = fVM.classesByName("long[][]");
 		assertTrue(
@@ -78,6 +88,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 			classes.size() == 1
 				&& ((Type) classes.get(0)).signature().equals("[[J"));
 	}
+	
 	/**
 	 * Test that there is a class object for 'java.lang.String[]'
 	 */
@@ -89,6 +100,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 				&& ((Type) classes.get(0)).signature().equals(
 					"[Ljava/lang/String;"));
 	}
+	
 	/**
 	 * Test that there is a class object for 'java.lang.String'
 	 */

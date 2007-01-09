@@ -37,29 +37,52 @@ public class EventWaiter implements EventListener {
 	/**
 	 * Creates a new EventWaiter for the given request. Sets whether it
 	 * should let the VM go after it got the event.
+	 * @param request
+	 * @param shouldGo
 	 */
 	public EventWaiter(EventRequest request, boolean shouldGo) {
 		fRequest = request;
 		fShouldGo = shouldGo;
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#accessWatchpoint(com.sun.jdi.event.AccessWatchpointEvent)
+	 */
 	public boolean accessWatchpoint(AccessWatchpointEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#methodEntry(com.sun.jdi.event.MethodEntryEvent)
+	 */
 	public boolean methodEntry(MethodEntryEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#methodExit(com.sun.jdi.event.MethodExitEvent)
+	 */
 	public boolean methodExit(MethodExitEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#breakpoint(com.sun.jdi.event.BreakpointEvent)
+	 */
 	public boolean breakpoint(BreakpointEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#classPrepare(com.sun.jdi.event.ClassPrepareEvent)
+	 */
 	public boolean classPrepare(ClassPrepareEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#classUnload(com.sun.jdi.event.ClassUnloadEvent)
+	 */
 	public boolean classUnload(ClassUnloadEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#exception(com.sun.jdi.event.ExceptionEvent)
+	 */
 	public boolean exception(ExceptionEvent event) {
 		return handleEvent(event);
 	}
@@ -74,6 +97,9 @@ public class EventWaiter implements EventListener {
 		} 
 		return true;
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#modificationWatchpoint(com.sun.jdi.event.ModificationWatchpointEvent)
+	 */
 	public boolean modificationWatchpoint(ModificationWatchpointEvent event) {
 		return handleEvent(event);
 	}
@@ -84,15 +110,27 @@ public class EventWaiter implements EventListener {
 		notify();
 		fEvent = event;
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#step(com.sun.jdi.event.StepEvent)
+	 */
 	public boolean step(StepEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#threadDeath(com.sun.jdi.event.ThreadDeathEvent)
+	 */
 	public boolean threadDeath(ThreadDeathEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#threadStart(com.sun.jdi.event.ThreadStartEvent)
+	 */
 	public boolean threadStart(ThreadStartEvent event) {
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#vmDeath(com.sun.jdi.event.VMDeathEvent)
+	 */
 	public boolean vmDeath(VMDeathEvent event) {
 		if (fEvent == null) {
 			// This is the last event we can ever get an this was not the one we expected
@@ -101,11 +139,16 @@ public class EventWaiter implements EventListener {
 		}
 		return handleEvent(event);
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventListener#vmDisconnect(com.sun.jdi.event.VMDisconnectEvent)
+	 */
 	public boolean vmDisconnect(VMDisconnectEvent event) {
 		return handleEvent(event);
 	}
 	/**
 	 * Waits for the first event corresponding to this waiter's request.
+	 * @return if the vm should be restarted
+	 * @throws InterruptedException
 	 */
 	synchronized public Event waitEvent() throws InterruptedException {
 		if (fEvent == null) // If event didn't already come in
@@ -117,6 +160,9 @@ public class EventWaiter implements EventListener {
 	/**
 	 * Waits for the first event corresponding to this waiter's request
 	 * for the given time (in ms). If it times out, return null.
+	 * @param time
+	 * @return if the vm should be restarted or not
+	 * @throws InterruptedException
 	 */
 	synchronized public Event waitEvent(long time)
 		throws InterruptedException {

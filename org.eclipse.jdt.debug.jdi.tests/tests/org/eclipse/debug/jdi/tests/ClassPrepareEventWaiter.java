@@ -18,13 +18,21 @@ import com.sun.jdi.request.EventRequest;
  */
 public class ClassPrepareEventWaiter extends EventWaiter {
 	protected String fClassName;
+
 	/**
-	 * Creates a new ClassPrepareEventWaiter that waits for the given class to be loaded.
+	 * Constructor
+	 * @param request
+	 * @param shouldGo
+	 * @param className
 	 */
 	public ClassPrepareEventWaiter(EventRequest request, boolean shouldGo, String className) {
 		super(request, shouldGo);
 		fClassName = className;
 	}
+	
+	/**
+	 * @see org.eclipse.debug.jdi.tests.EventWaiter#classPrepare(com.sun.jdi.event.ClassPrepareEvent)
+	 */
 	public boolean classPrepare(ClassPrepareEvent event) {
 		if (event.referenceType().name().equals(fClassName)) {
 			notifyEvent(event);

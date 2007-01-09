@@ -18,10 +18,19 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.request.MethodExitRequest;
 
+/**
+ * Tests method exit requests
+ */
 public class MethodExitRequestTest extends AbstractJDITest {
 
+	/**
+	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localSetUp()
+	 */
 	public void localSetUp() {
 	}
+	/**
+	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localTearDown()
+	 */
 	public void localTearDown() {
 		fVM.resume();
 		waitUntilReady();
@@ -29,20 +38,29 @@ public class MethodExitRequestTest extends AbstractJDITest {
 
 	/**
 	 * Run all tests and output to standard output.
+	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
 		new MethodExitRequestTest().runSuite(args);
 	}
 	/**
 	 * Gets the name of the test case.
+	 * @see junit.framework.TestCase#getName()
 	 */
 	public String getName() {
 		return "com.sun.jdi.MethodExitRequest";
 	}
 
+	/**
+	 * Creates and returns a new <code>MethodExitRequest</code>
+	 * @return a new <code>MethodExitRequest</code>
+	 */
 	protected MethodExitRequest getMethodExitRequest() {
 		return fVM.eventRequestManager().createMethodExitRequest();
 	}
+	/**
+	 * Tests a method exit request without filtering 
+	 */
 	public void testJDIWithoutFilter() {
 		MethodExitRequest request = getMethodExitRequest();
 
@@ -54,6 +72,9 @@ public class MethodExitRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Tests a method exit request with an exclusion filter  
+	 */
 	public void testJDIWithClassExclusionFilter() {
 		MethodExitRequest request = getMethodExitRequest();
 		request.addClassExclusionFilter("org.eclipse.debug.jdi.tests.program.*");
@@ -68,6 +89,9 @@ public class MethodExitRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Tests a method exit request with a specific class filter 
+	 */
 	public void testJDIWithClassFilter1() {
 		MethodExitRequest request = getMethodExitRequest();
 		ClassType clazz = getClass("java.io.PrintStream");
@@ -83,6 +107,9 @@ public class MethodExitRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Retests a method exit request with a specific class filter
+	 */
 	public void testJDIWithClassFilter2() {
 		MethodExitRequest request = getMethodExitRequest();
 		request.addClassFilter("java.io.PrintStream");
@@ -97,6 +124,9 @@ public class MethodExitRequestTest extends AbstractJDITest {
 		fVM.eventRequestManager().deleteEventRequest(request);
 	}
 
+	/**
+	 * Test a method exit request with a thread filter
+	 */
 	public void testJDIWithThreadFilter() {
 		MethodExitRequest request = getMethodExitRequest();
 		ThreadReference thr = getMainThread();
