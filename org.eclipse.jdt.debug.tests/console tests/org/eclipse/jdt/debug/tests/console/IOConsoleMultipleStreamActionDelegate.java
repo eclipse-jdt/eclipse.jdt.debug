@@ -31,38 +31,40 @@ import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
+/**
+ * Test the multiple stream delegate for the console
+ */
 public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate{
 
     private boolean ended = false;
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action) {
-        
-    }
+    public void init(IAction action) {}
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
-    public void dispose() {
-    
-    }
+    public void dispose() {}
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
      */
     public void runWithEvent(IAction action, Event event) {
      run(action);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
         runTest();
     }
     
+    /**
+     * Actually runs the test 
+     */
     public void runTest() {
         ended = false;
         
@@ -129,17 +131,13 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
        }, "INPUT").start();  //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
-      
-    }
+    public void selectionChanged(IAction action, ISelection selection) {}
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
-    }
-
+    public void init(IWorkbenchWindow window) {}
 }

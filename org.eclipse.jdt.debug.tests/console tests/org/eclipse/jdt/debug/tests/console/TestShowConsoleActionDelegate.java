@@ -27,13 +27,16 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 
+/**
+ * Tests the show console drop down action delegate for the console view
+ */
 public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
 	
 	MessageConsole console1;
 	MessageConsole console2;
 	IConsoleManager consoleManager;
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
@@ -43,21 +46,19 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 		consoleManager.addConsoles(new IConsole[]{console1, console2});
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
-	public void dispose() {
-		
-	}
+	public void dispose() {}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
@@ -101,15 +102,13 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 		stream.print(str); //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
+	public void selectionChanged(IAction action, ISelection selection) {}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window) {
-	}
+	public void init(IWorkbenchWindow window) {}
 }

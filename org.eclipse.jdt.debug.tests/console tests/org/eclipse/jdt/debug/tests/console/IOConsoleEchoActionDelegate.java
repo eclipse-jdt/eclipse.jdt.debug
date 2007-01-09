@@ -30,18 +30,33 @@ import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
+/**
+ * Tests the IO console echo action delegate
+ */
 public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+     */
     public void init(IAction action) {
     }
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate2#dispose()
+     */
     public void dispose() {
     }
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+     */
     public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
     public void run(IAction action) {
         final IOConsole console = new IOConsole("IO Test Console", null, DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
         new Thread(new Runnable() {
@@ -51,6 +66,10 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         }, "IOConsole Test Thread").start(); //$NON-NLS-1$
     }
     
+    /**
+     * Actually runs the test
+     * @param console
+     */
     public void runTest(IOConsole console) {
         final Display display = Display.getDefault();
         
@@ -91,9 +110,15 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         }
     }
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+     */
     public void selectionChanged(IAction action, ISelection selection) {
     }
 
+    /**
+     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+     */
     public void init(IWorkbenchWindow window) {
     }
 

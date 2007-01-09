@@ -28,10 +28,18 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     private int fMatchCount;
     private boolean fDisconnected = false;
 
+    /**
+     * Constructor
+     * @param name
+     */
     public IOConsoleTests(String name) {
         super(name);
     }
     
+    /**
+     * Tests that the pattern matcher will find a specific pattern
+     * @throws Exception
+     */
     public void testPatternMatchListener() throws Exception {
         MessageConsole console = new MessageConsole("Test console", null);
         fMatchCount = 0;
@@ -57,48 +65,45 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
      */
     public String getPattern() {
         return "foo";
     }
     
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getQuickPattern()
+    /**
+     * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
      */
     public String getLineQualifier() {
     	return "foo";
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
+    /**
+     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
     public synchronized void matchFound(PatternMatchEvent event) {
         fMatchCount++;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#getModifiers()
+	/**
+	 * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
 	 */
 	public int getCompilerFlags() {
 		return 0;
 	}
 	
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
      */
-    public void connect(TextConsole console) {
-    }
+    public void connect(TextConsole console) {}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
+    /**
+     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#disconnect()
      */
     public synchronized void disconnect() {
         fDisconnected = true;
         notifyAll();
     }
-
 }
     

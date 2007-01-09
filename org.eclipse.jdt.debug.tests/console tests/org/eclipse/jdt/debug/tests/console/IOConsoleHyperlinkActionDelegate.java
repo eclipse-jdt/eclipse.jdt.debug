@@ -32,8 +32,14 @@ import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
 
+/**
+ * Test the hyperlink action delegate for the console
+ */
 public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
  
+    /**
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
     public void run(IAction action) {
         final IOConsole console = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
         console.setConsoleWidth(17);
@@ -80,35 +86,56 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
     }
     
     private class MyHyperlink implements IHyperlink {
+        /**
+         * @see org.eclipse.ui.console.IHyperlink#linkEntered()
+         */
         public void linkEntered() {
             System.out.println("link entered");
         }
 
+        /**
+         * @see org.eclipse.ui.console.IHyperlink#linkExited()
+         */
         public void linkExited() {
             System.out.println("link exited");
         }
 
+        /**
+         * @see org.eclipse.ui.console.IHyperlink#linkActivated()
+         */
         public void linkActivated() {
             System.out.println("link activated");
         }
     }
     
-    
-    
+    /**
+     * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+     */
     public void init(IAction action) {        
     }
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate2#dispose()
+     */
     public void dispose() {        
     }
 
+    /**
+     * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+     */
     public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 
-    
+    /**
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+     */
     public void selectionChanged(IAction action, ISelection selection) {
     }
 
+    /**
+     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+     */
     public void init(IWorkbenchWindow window) {       
     }
 
