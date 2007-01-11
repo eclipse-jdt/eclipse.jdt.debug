@@ -189,7 +189,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	protected abstract ILaunchConfiguration createConfiguration(IType type);
 	
 	/**
-	 * Opens an error dialog on the given excpetion.
+	 * Opens an error dialog on the given exception.
 	 * 
 	 * @param exception
 	 */
