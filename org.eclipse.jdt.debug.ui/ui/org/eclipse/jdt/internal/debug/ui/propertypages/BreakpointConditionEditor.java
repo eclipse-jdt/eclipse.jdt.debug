@@ -128,7 +128,7 @@ public class BreakpointConditionEditor {
 	            }
 	        };
 			fViewer.getDocument().addDocumentListener(fDocumentListener);
-			GridData gd = new GridData(GridData.FILL_BOTH);
+			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = fPage.convertHeightInCharsToPixels(10);
 			gd.widthHint = fPage.convertWidthInCharsToPixels(40);
 			fViewer.getControl().setLayoutData(gd);

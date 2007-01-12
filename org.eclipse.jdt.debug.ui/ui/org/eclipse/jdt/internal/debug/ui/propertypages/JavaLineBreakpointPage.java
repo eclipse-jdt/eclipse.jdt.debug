@@ -232,7 +232,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			label = PropertyPageMessages.JavaLineBreakpointPage_13; 
 		}
 		
-		Composite conditionComposite = SWTUtil.createGroup(parent, EMPTY_STRING, 1, 1, GridData.FILL_HORIZONTAL);
+		Composite conditionComposite = SWTUtil.createGroup(parent, EMPTY_STRING, 1, 1, GridData.FILL_BOTH);
 		fEnableConditionButton = createCheckButton(conditionComposite, label);
 		fEnableConditionButton.setSelection(breakpoint.isConditionEnabled());
 		fEnableConditionButton.addSelectionListener(new SelectionAdapter() {
