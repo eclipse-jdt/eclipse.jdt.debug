@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
+/**
+ * Specialization for a String variable classpath entry
+ */
 public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public static final String TYPE_ID = "org.eclipse.jdt.launching.classpathentry.variableClasspathEntry"; //$NON-NLS-1$
 	private String variableString;
 	
-	public VariableClasspathEntry() {
-	}
+	/**
+	 * Constructor
+	 */
+	public VariableClasspathEntry() {}
 	
+	/**
+	 * Constructor
+	 * @param variableString
+	 */
 	public VariableClasspathEntry(String variableString) {
 		this.variableString = variableString;
 	}
@@ -34,6 +43,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 */
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		memento.setAttribute("variableString", variableString); //$NON-NLS-1$
+		memento.setAttribute("path", Integer.toString(getClasspathProperty())); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -41,6 +51,14 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 */
 	public void initializeFrom(Element memento) throws CoreException {
 		variableString = memento.getAttribute("variableString"); //$NON-NLS-1$
+		String property = memento.getAttribute("path"); //$NON-NLS-1$
+		if(property != null && !"".equals(property)) { //$NON-NLS-1$
+			try {
+				setClasspathProperty(Integer.parseInt(property));
+			}
+			catch(NumberFormatException nfe) {/*do nothing, but don't throw an exception*/}
+		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -84,23 +102,12 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
-	 */
-//	public IPath getPath() {
-//		try {
-//			String path = StringVariableManager.getDefault().performStringSubstitution(variableString);
-//			return new Path(path);
-//		} catch (CoreException ce) {
-//			return null;
-//		}
-//	}
-	
-	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		if (variableString != null)
+		if (variableString != null) {
 			return variableString.hashCode();
+		}
 		return 0;
 	}
 
@@ -116,5 +123,4 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 		}
 		return false;
 	}
-
 }

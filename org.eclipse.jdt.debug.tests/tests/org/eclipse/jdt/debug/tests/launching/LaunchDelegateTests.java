@@ -62,7 +62,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchConfigurationType configurationType = manager.getLaunchConfigurationType("org.eclipse.jdt.debug.tests.testConfigType");
 		assertNotNull("Missing test launch config type", configurationType);
 		ISourcePathComputer sourcePathComputer = configurationType.getSourcePathComputer();
-		assertEquals("Wrond source path computer", "org.eclipse.jdt.debug.tests.testSourcePathComputer", sourcePathComputer.getId());
+		assertEquals("Wrong source path computer", "org.eclipse.jdt.debug.tests.testSourcePathComputer", sourcePathComputer.getId());
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	}	
 	
 	/**
-	 * Checks that the delegate definition is collecting annd parsing mode combination informmation properly from both the delegate
+	 * Checks that the delegate definition is collecting and parsing mode combination information properly from both the delegate
 	 * contribution and from modeCombination child elements
 	 * @throws CoreException
 	 */
@@ -156,7 +156,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Checks that all applicable delegates are found for given typpes and mode combinations
+	 * Checks that all applicable delegates are found for given types and mode combinations
 	 * @throws CoreException
 	 */
 	public void testSingleModeMultipleDelegates() throws CoreException {
