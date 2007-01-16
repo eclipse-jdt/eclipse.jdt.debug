@@ -1,4 +1,7 @@
-#Mon Aug 02 09:29:15 GMT-08:00 2004
-org.eclipse.jdt.core.compiler.problem.unusedImport=warning
-org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
+#Tue Jan 16 11:19:11 CST 2007
 eclipse.preferences.version=1
+org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
+org.eclipse.jdt.core.compiler.problem.unusedImport=warning
+org.eclipse.jdt.core.compiler.taskCaseSensitive=enabled
+org.eclipse.jdt.core.compiler.taskPriorities=NORMAL,HIGH,NORMAL,HIGH,HIGH
+org.eclipse.jdt.core.compiler.taskTags=TODO,FIXME,XXX,EXPERIMENTAL,CONTEXTLAUNCHING
