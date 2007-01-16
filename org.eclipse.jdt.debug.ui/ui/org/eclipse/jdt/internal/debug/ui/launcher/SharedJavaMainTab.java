@@ -55,7 +55,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	 * 
 	 * @param parent the parent composite
 	 */
-	protected void createMainTypeEditor(Composite parent, String text, Button[] buttons) {
+	protected void createMainTypeEditor(Composite parent, String text) {
 		Font font= parent.getFont();
 		Group mainGroup = SWTUtil.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
 		Composite comp = SWTUtil.createComposite(mainGroup, font, 2, 2, GridData.FILL_BOTH, 0, 0);
@@ -73,11 +73,19 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 				handleSearchButtonSelected();
 			}
 		});
-		if(buttons != null) {
-			for(int i = 0; i < buttons.length; i++) {
-				buttons[i].setParent(comp);
-			}
-		}
+		createMainTypeExtensions(comp);
+	}
+	
+	/**
+	 * This method allows the group for main type to be extended with custom controls.
+	 * All control added via this method come after the main type text editor and search button in
+	 * the order they are added to the parent composite
+	 * 
+	 * @param parent the parent to add to
+	 * @since 3.3
+	 */
+	protected void createMainTypeExtensions(Composite parent) {
+		//do nothing by default
 	}
 	
 	/**

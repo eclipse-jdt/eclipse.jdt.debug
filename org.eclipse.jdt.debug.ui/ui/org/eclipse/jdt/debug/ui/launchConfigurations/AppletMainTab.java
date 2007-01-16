@@ -90,7 +90,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		((GridLayout)projComp.getLayout()).verticalSpacing = 0;
 		createProjectEditor(projComp);
 		createVerticalSpacer(projComp, 1);
-		createMainTypeEditor(projComp, LauncherMessages.appletlauncher_maintab_mainclasslabel_name, null);
+		createMainTypeEditor(projComp, LauncherMessages.appletlauncher_maintab_mainclasslabel_name);
 		createVerticalSpacer(projComp, 1);
 		createAppletViewerControl(projComp);
 		setControl(projComp);
