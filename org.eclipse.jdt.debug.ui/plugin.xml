@@ -2803,7 +2803,7 @@ M4 = Platform-specific fourth key
           label="%preferenceKeywords.executionEnvironments"/>
     <keyword
           id="org.eclipse.jdt.debug.ui.heapWalking"
-          label="java heap walking jdk 6.0 1.6 SE all instances references">
+          label="%preferenceKeywords.heapWalking">
     </keyword>
  </extension>
  <extension
