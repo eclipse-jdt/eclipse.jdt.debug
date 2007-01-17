@@ -738,7 +738,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		 
 		 // get a working copy
 		 wc = handle.getWorkingCopy();
-		 ILaunchConfigurationWorkingCopy nested = wc.getNestedWorkingCopy();
+		 ILaunchConfigurationWorkingCopy nested = wc.getWorkingCopy();
 		 
 		 // verify nested is same as original
 		 assertEquals("String1 should be String1", nested.getAttribute("String1", "Missing"), "String1");
