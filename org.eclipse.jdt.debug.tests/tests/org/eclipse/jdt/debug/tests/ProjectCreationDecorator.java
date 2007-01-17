@@ -65,15 +65,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         super(name);
     }
 
-//    public void testTurnOffAutobuild() throws Exception {
-//        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//        IWorkspaceDescription description = workspace.getDescription();
-//        workspace.isAutoBuilding();
-//        description.setAutoBuilding(false);
-//        workspace.setDescription(description);
-//        assertFalse(workspace.isAutoBuilding());
-//    }
-
     /**
      * 
      */
@@ -84,7 +75,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
                 IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
                 IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
 				activePage.setPerspective(descriptor);
-				// hide variables and breakpoints view to reduce simaltaneous conflicting requests on debug targets
+				// hide variables and breakpoints view to reduce simultaneous conflicting requests on debug targets
                 IViewReference ref = activePage.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
                 activePage.hideView(ref);
                 ref = activePage.findViewReference(IDebugUIConstants.ID_BREAKPOINT_VIEW);
@@ -186,7 +177,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
     }
 
     /**
-     * Create a project with non-default, mulitple output locations.
+     * Create a project with non-default, multiple output locations.
      * 
      * @throws Exception
      */
@@ -303,16 +294,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
         waitForBuild();
     }
-
-//    public void testTurnOnAutoBuild() throws Exception {
-//        // turn on autobuild again.
-//        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//        IWorkspaceDescription description = workspace.getDescription();
-//        workspace.isAutoBuilding();
-//        description.setAutoBuilding(true);
-//        workspace.setDescription(description);
-//        assertTrue(workspace.isAutoBuilding());
-//    }
 
     /**
      * test if builds completed successfully and output directory contains class

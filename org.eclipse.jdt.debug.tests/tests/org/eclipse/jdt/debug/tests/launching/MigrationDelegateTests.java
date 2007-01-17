@@ -36,14 +36,14 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testStandardMigration() throws Exception {
-		createLaunchConfiguration("MigrationTest1");
-		ILaunchConfiguration config = getLaunchConfiguration("MigrationTest1");
+		createLaunchConfiguration("MigrationTests");
+		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");
 		try{ 
 			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate());
 			config.migrate();
 			IResource[] mappedResources = config.getMappedResources();
 			assertEquals("Wrong number of mapped resources", 1, mappedResources.length);
-			assertEquals("Wrong mapped resources", getJavaProject().getProject(), mappedResources[0]);
+			assertEquals("Wrong mapped resources", getJavaProject().findType("MigrationTests").getUnderlyingResource(), mappedResources[0]);
 		}
 		finally {
 			config = null;
@@ -55,8 +55,8 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testMigrationAlreadyPerformed() throws Exception {
-		createLaunchConfiguration("MigrationTest2");
-		ILaunchConfiguration config = getLaunchConfiguration("MigrationTest2");
+		createLaunchConfiguration("MigrationTests2");
+		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests2");
 		try{ 
 			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate());
 			config.migrate();

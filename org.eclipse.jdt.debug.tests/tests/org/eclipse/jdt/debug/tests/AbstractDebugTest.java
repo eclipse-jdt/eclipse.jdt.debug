@@ -130,7 +130,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static IJavaProject fJavaProject;
 	
 	/**
-	 * The last relevent event set - for example, that caused
+	 * The last relevant event set - for example, that caused
 	 * a thread to suspend
 	 */
 	protected DebugEvent[] fEventSet;
@@ -217,7 +217,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Returns the local java application launch shortcut
-	 * @return the local java applicaiton launch shortcut
+	 * @return the local java application launch shortcut
 	 * 
 	 * @since 3.3
 	 */
@@ -537,7 +537,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Returns the standard java launch tab group
-	 * @return the standard java launch tab grooup
+	 * @return the standard java launch tab group
 	 * @throws CoreException
 	 * 
 	 * @since 3.3
@@ -575,7 +575,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Returns the thread in which the suspend event occurs.
 	 * 
 	 * @param thread thread to resume
-	 * @param timeout timeout in ms
+	 * @param timeout timeout in milliseconds
 	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resume(IJavaThread thread, int timeout) throws Exception {
@@ -671,6 +671,29 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return config;
 	}
 	
+	/**
+	 * Returns the launch configuration in the specified folder in the given project, for the given main type
+	 * 
+	 * @param project the project to look in
+	 * @param containername the name of the container in the specified project to look for the config
+	 * @param mainTypeName program to launch
+	 * @see ProjectCreationDecorator
+	 */
+	protected ILaunchConfiguration getLaunchConfiguration(IJavaProject project, String containername, String mainTypeName) {
+		IFile file = project.getProject().getFolder(containername).getFile(mainTypeName + ".launch");
+		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
+		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists());
+		return config;
+	}
+	
+	/**
+	 * Returns the corresponding <code>IResource</code> from the <code>IJavaElement</code> with the
+	 * specified name
+	 * @param typeName the name of the <code>IJavaElement</code> to get the resource for
+	 * @return the corresponding <code>IResource</code> from the <code>IJavaElement</code> with the
+	 * specified name
+	 * @throws Exception
+	 */
 	protected IResource getBreakpointResource(String typeName) throws Exception {
 		IJavaElement element = getJavaProject().findElement(new Path(typeName + ".java"));
 		IResource resource = element.getCorrespondingResource();
@@ -914,7 +937,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param typeName $ qualified type name within compilation unit, example "Something" or
 	 *  "NonPublic" or "Something$Inner"
 	 * @param methodName method or <code>null</code> for all methods
-	 * @param methodSignature JLS method siganture or <code>null</code> for all methods with the given name
+	 * @param methodSignature JLS method signature or <code>null</code> for all methods with the given name
 	 * @param entry whether to break on entry
 	 * @param exit whether to break on exit
 	 * @return method breakpoint
@@ -972,7 +995,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * @param cu the Compilation where the target resides
-	 * @param target the fullname of the target, as per MemberParser syntax
+	 * @param target the full name of the target, as per MemberParser syntax
 	 * @return the requested Member
 	 */
 	protected IMember getMember(ICompilationUnit cu, String target)
@@ -1479,6 +1502,22 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         config.doSave();
     }
 
+    /**
+     * Creates a shared launch configuration for the type with the given name.
+     */
+    protected void createLaunchConfiguration(IJavaProject project, String containername, String mainTypeName) throws Exception {
+        ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+        ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(containername), mainTypeName);
+        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
+        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+        // use 'java' instead of 'javaw' to launch tests (javaw is problematic
+        // on JDK1.4.2)
+        Map map = new HashMap(1);
+        map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
+        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
+        config.doSave();
+    }
+    
 	/**
 	 * When a test throws the 'try again' exception, try it again.
 	 * @see junit.framework.TestCase#runBare()
