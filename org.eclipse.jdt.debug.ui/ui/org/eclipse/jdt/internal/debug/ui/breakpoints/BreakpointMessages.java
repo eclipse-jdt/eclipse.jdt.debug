@@ -18,9 +18,12 @@ public class BreakpointMessages extends NLS {
 	public static String AddExceptionAction_0;
 	public static String AddExceptionAction_1;
 
+	public static String AddExceptionDialog_13;
+
+	public static String AddExceptionDialog_14;
+
 	public static String AddExceptionDialog_15;
 	public static String AddExceptionDialog_16;
-	public static String AddExceptionDialogExtension_0;
 
 	public static String AddClassPrepareBreakpointAction_0;
 	public static String AddClassPrepareBreakpointAction_1;

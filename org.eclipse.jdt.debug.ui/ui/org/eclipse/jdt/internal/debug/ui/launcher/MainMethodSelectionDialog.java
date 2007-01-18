@@ -199,11 +199,19 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 		setTitle(title);
 		fTypes = elements;
 		setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12);
-		setInitialPattern("*"); //$NON-NLS-1$
+		setInitialPattern("**"); //$NON-NLS-1$
 		setListLabelProvider(new MainMethodLabelProvider());
 		setDetailsLabelProvider(new MainMethodDetailsLabelProvider());
 		setSelectionHistory(new MainMethodSelectionHistory());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(JDIDebugUIPlugin.getShell(), IJavaDebugHelpContextIds.SELECT_MAIN_METHOD_DIALOG);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createDialogArea(Composite parent) {
+		Control ctrl = super.createDialogArea(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IJavaDebugHelpContextIds.SELECT_MAIN_METHOD_DIALOG);
+		return ctrl;
 	}
 
 	/**
