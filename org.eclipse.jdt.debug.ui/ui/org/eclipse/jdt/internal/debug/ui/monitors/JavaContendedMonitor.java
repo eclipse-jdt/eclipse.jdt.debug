@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
@@ -111,6 +112,10 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	public Object getAdapter(Class adapter) {
 		if(adapter == IDebugTarget.class) {
 			return getDebugTarget();
+		}
+		//CONTEXTLAUNCHING
+		if(adapter.equals(ILaunchConfiguration.class)) {
+			return getLaunch().getLaunchConfiguration();
 		}
 		return super.getAdapter(adapter);
 	}

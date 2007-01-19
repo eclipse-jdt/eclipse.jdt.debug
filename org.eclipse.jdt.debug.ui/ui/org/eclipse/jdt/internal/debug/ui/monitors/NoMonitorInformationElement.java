@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 
@@ -53,6 +54,10 @@ public class NoMonitorInformationElement implements IDebugElement {
     	if(adapter == IDebugTarget.class) {
     		return getDebugTarget();
     	}
+    	//CONTEXTLAUNCHING
+    	if(adapter.equals(ILaunchConfiguration.class)) {
+			return getLaunch().getLaunchConfiguration();
+		}
         return null;
     }
 

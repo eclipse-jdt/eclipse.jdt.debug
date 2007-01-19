@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ITerminate;
@@ -104,6 +105,10 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	public Object getAdapter(Class adapter) {
 		if(adapter == IDebugTarget.class) {
 			return getDebugTarget();
+		}
+		//CONTEXTLAUNCHING
+		if(adapter.equals(ILaunchConfiguration.class)) {
+			return getLaunch().getLaunchConfiguration();
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
