@@ -342,6 +342,7 @@ public class SWTUtil {
 	 * @param fill the style for how this composite should fill into its parent
 	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
 	 * @param marginwidth the width of the margin to place around the composite (default is 5, specified by GridLayout)
+	 * @param marginheight the height of the margin to place around the composite (default is 5, specified by GridLayout)
 	 * @return the new group
 	 */
 	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill, int marginwidth, int marginheight) {
