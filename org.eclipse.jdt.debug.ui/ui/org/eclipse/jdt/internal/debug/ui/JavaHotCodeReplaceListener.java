@@ -68,6 +68,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		final IStatus status;
 		final String preference;
 		final String alertMessage;
+		final String launchName = target.getLaunch().getLaunchConfiguration().getName();
 		if (exception == null) {
 			status = new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1, null);
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
@@ -78,7 +79,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 			alertMessage= DebugUIMessages.JDIDebugUIPlugin_1; 
 		}
 		final String title = DebugUIMessages.JDIDebugUIPlugin_Hot_code_replace_failed_1; 
-		final String message = MessageFormat.format(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, new Object[] {vmName});
+		final String message = MessageFormat.format(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, new Object[] {vmName, launchName});
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (display.isDisposed()) {
