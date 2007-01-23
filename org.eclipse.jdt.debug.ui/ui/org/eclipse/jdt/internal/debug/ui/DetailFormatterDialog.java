@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -105,8 +103,14 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 */
 	private IType fType;
 	
+	/**
+	 * List of types that have detail formatters already defined.
+	 */
 	private List fDefinedTypes;
 
+    /**
+     * Activation handler for content assist, must be deactivated on disposal.
+     */
     private IHandlerActivation fHandlerActivation;
 	
 	/**
@@ -116,10 +120,29 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * @param editDialog flag which indicates if the dialog is used for
 	 * edit an existing formatter, or for enter the info of a new one.
 	 */
+    
+    
+	/**
+	 * DetailFormatterDialog constructor.  Creates a new dialog to create/edit a detail formatter.
+	 * 
+	 * @param parent parent shell
+	 * @param detailFormatter detail formatter to edit, not <code>null</code>
+	 * @param definedTypes list of types with detail formatters already defined, or <code>null</code>
+	 * @param editDialog whether the dialog is being used to edit a detail formatter
+	 */
 	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List definedTypes, boolean editDialog) {
 		this(parent, detailFormatter, definedTypes, true, editDialog);
 	}
 	
+	/**
+	 * DetailFormatterDialog constructor.  Creates a new dialog to create/edit a detail formatter.
+	 * 
+	 * @param parent parent shell
+	 * @param detailFormatter detail formatter to edit, not <code>null</code>
+	 * @param definedTypes list of types with detail formatters already defined, or <code>null</code>
+	 * @param editTypeName whether the user should be able to modify the type
+	 * @param editDialog whether the dialog is being used to edit a detail formatter
+	 */
 	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List definedTypes, boolean editTypeName, boolean editDialog) {
 		super(parent);
 		fDetailFormatter= detailFormatter;
@@ -140,48 +163,22 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		workbench.getHelpSystem().setHelp(
 			parent,
 			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);			
 		
 		Font font = parent.getFont();
-
-		IHandler handler = new AbstractHandler() {
-			public Object execute(ExecutionEvent event) throws ExecutionException {
-				findCorrespondingType();
-				fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
-				return null;
-			}
-		};
-		
-		IWorkbench workbench = PlatformUI.getWorkbench();
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
-        fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
-        
 		Composite container = (Composite)super.createDialogArea(parent);
 		
-		// type name label
-		Label label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2); 
-		GridData gd= new GridData(GridData.BEGINNING);
-		label.setLayoutData(gd);
-		label.setFont(font);
+		SWTUtil.createLabel(container, DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2, 1);
 
-		Composite innerContainer = new Composite(container, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 2;
-		innerContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		innerContainer.setLayoutData(gd);
-		// type name text
-		fTypeNameText= new Text(innerContainer, SWT.SINGLE | SWT.BORDER);
+		Composite innerContainer = SWTUtil.createComposite(container, font, 2, 1, GridData.FILL_HORIZONTAL);
+		
+		fTypeNameText = SWTUtil.createSingleText(innerContainer, 1);
 		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		fTypeNameText.setLayoutData(gd);
-		fTypeNameText.setFont(font);		
 		fTypeNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fTypeSearched= false;
@@ -189,15 +186,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			}
 		});
 		
-		// type search button
-		Button typeSearchButton = new Button(innerContainer, SWT.PUSH); 
-		typeSearchButton.setText(DebugUIMessages.DetailFormatterDialog_Select__type_4);  
-		setButtonLayoutData(typeSearchButton);
-		gd= (GridData)typeSearchButton.getLayoutData();
-		gd.horizontalAlignment = GridData.END;
-		typeSearchButton.setEnabled(fEditTypeName);
-		typeSearchButton.setLayoutData(gd);
-		typeSearchButton.setFont(font);		
+		Button typeSearchButton = SWTUtil.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
 		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -205,7 +194,6 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			}
 		});
 		
-		// snippet label
 		String labelText = null;
         IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
         String binding = bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
@@ -216,14 +204,36 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
             labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1;
         }
 		
-		label= new Label(container, SWT.NONE);
-		label.setText(labelText); 
-		gd= new GridData(GridData.BEGINNING);
-		label.setLayoutData(gd);
-		label.setFont(font);
+        SWTUtil.createLabel(container, labelText, 1);
 
-		// snippet viewer
-		fSnippetViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
+        createSnippetViewer(container);        
+		
+		fCheckBox = SWTUtil.createCheckButton(container, DebugUIMessages.DetailFormatterDialog__Enable_1, fDetailFormatter.isEnabled());
+       
+		// Set up content assist in the viewer
+        IHandler handler = new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				if (fSnippetViewer.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS) && fSnippetViewer.getControl().isFocusControl()){
+					findCorrespondingType();
+					fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+				}
+				return null;
+			}
+		};
+        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
+        
+		checkValues();
+		return container;
+	}
+
+	/**
+	 * Creates the JDISourceViewer that displays the code snippet to the user.
+	 * 
+	 * @param parent parent composite
+	 */
+	private void createSnippetViewer(Composite parent) {
+		fSnippetViewer= new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 		fSnippetViewer.setInput(this);
 	
 		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
@@ -238,7 +248,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		fSnippetViewer.setDocument(document);
 		
 		Control control= fSnippetViewer.getControl();
-		gd= new GridData(GridData.FILL_BOTH);
+		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
@@ -255,15 +265,6 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
         if (fDetailFormatter.getTypeName().length() > 0) {
             fSnippetViewer.getControl().setFocus();
         }
-		
-		// enable checkbox
-		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
-		fCheckBox.setText(DebugUIMessages.DetailFormatterDialog__Enable_1); 
-		fCheckBox.setSelection(fDetailFormatter.isEnabled());
-		fCheckBox.setFont(font);
-		
-		checkValues();
-		return container;
 	}
 	
 	/**
@@ -390,7 +391,6 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
         handlerService.deactivateHandler(fHandlerActivation);
-		
 		fSnippetViewer.dispose();
 		return super.close();
 	}

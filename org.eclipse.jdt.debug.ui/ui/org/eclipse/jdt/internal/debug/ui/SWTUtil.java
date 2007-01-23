@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class SWTUtil {
 	 * 
 	 * @param parent parent control
 	 * @param label button label or <code>null</code>
-	 * @param image image of <code>null</code>
+	 * @param image image or <code>null</code>
 	 * 
 	 * @return a new push button
 	 */
@@ -258,6 +258,7 @@ public class SWTUtil {
 	 * @param parent the parent composite to add this text widget to
 	 * @param style the style bits for the text widget
 	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param text the initial text, not <code>null</code>
 	 * @return the new text widget
 	 */
 	public static Text createText(Composite parent, int style, int hspan, String text) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -65,7 +64,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -81,11 +79,11 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import com.ibm.icu.text.MessageFormat;
 
 /**
+ * A dialog that allows users to create/edit logical structures.
  */
 public class EditLogicalStructureDialog extends StatusDialog implements Listener, ISelectionChangedListener, IDocumentListener, ITypeProvider {
 
 	public class AttributesContentProvider implements IStructuredContentProvider {
-		
 
 		private final List fVariables;
 
@@ -216,8 +214,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		
 		IHandler handler = new AbstractHandler() {
 			public Object execute(ExecutionEvent event) throws ExecutionException {
-				findCorrespondingType();
-				fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+				if(fSnippetViewer.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS) && fSnippetViewer.getControl().isFocusControl()){
+					findCorrespondingType();
+					fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+				}
 				return null;
 			}
 		};
@@ -226,74 +226,35 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
         
-		
-		// big container
-		Composite container= new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(1, false));
-		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        container.setFont(parent.getFont());
+		Composite container = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
 
-		// name and description container
-		Composite typeNameDescriptionContainer= new Composite(container, SWT.NONE);
-		GridLayout gridLayout= new GridLayout(2, false);
-		typeNameDescriptionContainer.setLayout(gridLayout);
-		typeNameDescriptionContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+		Composite typeNameDescriptionContainer = SWTUtil.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		
-		Label typeLabel= new Label(typeNameDescriptionContainer, SWT.NONE);
-		typeLabel.setText(DebugUIMessages.EditLogicalStructureDialog_0); 
-		typeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
+		SWTUtil.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_0, 2);
 		
-		// name text area
-		fQualifiedTypeNameText= new Text(typeNameDescriptionContainer, SWT.SINGLE | SWT.BORDER);
-		fQualifiedTypeNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fQualifiedTypeNameText = SWTUtil.createSingleText(typeNameDescriptionContainer, 1);
 		fQualifiedTypeNameText.addListener(SWT.Modify, this);
 		
-		// browse button
-		fBrowseTypeButton= new Button(typeNameDescriptionContainer, SWT.PUSH);
-		fBrowseTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_1); 
-		fBrowseTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_25); 
-		setButtonLayoutData(fBrowseTypeButton);
-		fBrowseTypeButton.addListener(SWT.Selection, this);
-
-		Label descriptionLabel= new Label(typeNameDescriptionContainer, SWT.NONE);
-		descriptionLabel.setText(DebugUIMessages.EditLogicalStructureDialog_2); 
-		descriptionLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
+		fBrowseTypeButton = SWTUtil.createPushButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_1, DebugUIMessages.EditLogicalStructureDialog_25, null);
 		
-		// description text area
-		fDescriptionText= new Text(typeNameDescriptionContainer, SWT.SINGLE | SWT.BORDER);
-		fDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		fBrowseTypeButton.addListener(SWT.Selection, this);
+		
+		SWTUtil.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_2, 2);
+		
+		fDescriptionText = SWTUtil.createSingleText(typeNameDescriptionContainer, 2);
 		fDescriptionText.addListener(SWT.Modify, this);
 		
-		// isSubtype button
-		fSubTypeButton= new Button(typeNameDescriptionContainer, SWT.CHECK);
-		fSubTypeButton.setText(DebugUIMessages.EditLogicalStructureDialog_3); 
+		fSubTypeButton = SWTUtil.createCheckButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_3, false);
 		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26); 
-		fSubTypeButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-		// value/variable container
-		Group radioContainer= new Group(container, SWT.NONE);
-		radioContainer.setText(DebugUIMessages.EditLogicalStructureDialog_33);
-		gridLayout= new GridLayout(1, true);
-		radioContainer.setLayout(gridLayout);
-		radioContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		Group radioContainer= SWTUtil.createGroup(container, DebugUIMessages.EditLogicalStructureDialog_33, 1, 1, GridData.FILL_HORIZONTAL);
 
-		// value button
-		fValueButton= new Button(radioContainer, SWT.RADIO);
-		fValueButton.setText(DebugUIMessages.EditLogicalStructureDialog_4); 
-		fValueButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
+		fValueButton = SWTUtil.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_4);
 		fValueButton.addListener(SWT.Selection, this);
 		
-		// variable button
-		fVariablesButton= new Button(radioContainer, SWT.RADIO);
-		fVariablesButton.setText(DebugUIMessages.EditLogicalStructureDialog_5); 
-		fVariablesButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		fVariablesButton = SWTUtil.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_5);
 
-		// attribute list container
-		fAttributesContainer= new Composite(container, SWT.NONE);
-		gridLayout= new GridLayout(2, false);
-		gridLayout.marginWidth = 0;
-		fAttributesContainer.setLayout(gridLayout);
-		fAttributesContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+		fAttributesContainer = SWTUtil.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		
 		boolean isValue = fLogicalStructure.getValue() != null;
 		if (!isValue) {
@@ -301,16 +262,11 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			createAttributeListWidgets();
 		}
 		
-		// code snippet editor group
-		fCodeGroup= new Group(container, SWT.NONE);
-		fCodeGroup.setLayout(new GridLayout(1, false));
-		fCodeGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		fCodeGroup = SWTUtil.createGroup(container, "", 1, 1, GridData.FILL_BOTH); //$NON-NLS-1$
 		createCodeGroupWidgets(isValue);
-
 
 		applyDialogFont(container);
 		
-		// initialize the data in the widgets
 		initializeData();
 		
 		return container;
@@ -320,35 +276,20 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * Create the widgets it the code snippet editor group
 	 */
 	private void createCodeGroupWidgets(boolean isValue) {
-        Font font= fCodeGroup.getFont();
 		if (isValue) {
 			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_9); 
 		} else {
 			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7); 
 		
-			// if it's a variable, create the attribute name text area
-			Composite attributeNameContainer= new Composite(fCodeGroup, SWT.NONE);
-			GridLayout gridLayout = new GridLayout(2, false);
-			gridLayout.marginWidth = 0;
-			attributeNameContainer.setLayout(gridLayout);
-			attributeNameContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+			Composite attributeNameContainer = SWTUtil.createComposite(fCodeGroup, fCodeGroup.getFont(), 2,  1, GridData.FILL_HORIZONTAL);
+			((GridLayout)attributeNameContainer.getLayout()).marginWidth = 0;
 			
-			Label attributeNameLabel= new Label(attributeNameContainer, SWT.NONE);
-			attributeNameLabel.setText(DebugUIMessages.EditLogicalStructureDialog_8); 
-			attributeNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-            attributeNameLabel.setFont(font);
+			SWTUtil.createLabel(attributeNameContainer, DebugUIMessages.EditLogicalStructureDialog_8, 1);
 			
-			fAttributeNameText= new Text(attributeNameContainer, SWT.SINGLE | SWT.BORDER);
-			fAttributeNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			fAttributeNameText = SWTUtil.createSingleText(attributeNameContainer, 1);
 			fAttributeNameText.addListener(SWT.Modify, this);
-            fAttributeNameText.setFont(font);
-		}
-
-		if (!isValue) {
-			Label attributeValueLabel= new Label(fCodeGroup, SWT.NONE);
-			attributeValueLabel.setText(DebugUIMessages.EditLogicalStructureDialog_9); 
-			attributeValueLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, true, false));
-	        attributeValueLabel.setFont(font);
+            
+			SWTUtil.createLabel(fCodeGroup, DebugUIMessages.EditLogicalStructureDialog_9, 1);
 		}
 		
 		// snippet viewer
@@ -383,15 +324,13 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * Create the widgets for the attribute list
 	 */
 	private void createAttributeListWidgets() {
-        Font font= fAttributesContainer.getFont();
-		// attribute list
-		fAttributeListViewer= new TableViewer(fAttributesContainer, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		fAttributeListViewer = new TableViewer(fAttributesContainer, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = (Table)fAttributeListViewer.getControl();
 		GridData gd= new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		gd.widthHint= convertWidthInCharsToPixels(10);
 		table.setLayoutData(gd);
-        table.setFont(font);
+        table.setFont(fAttributesContainer.getFont());
 		if (fAttributesContentProvider == null) {
 			fAttributesContentProvider= new AttributesContentProvider(fLogicalStructure.getVariables());
 		}
@@ -400,44 +339,19 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeListViewer.setInput(this);
 		fAttributeListViewer.addSelectionChangedListener(this);
 		
-		// button container
-		Composite attributesListButtonsContainer= new Composite(fAttributesContainer, SWT.NONE);
-		GridLayout gridLayout = new GridLayout();
-		attributesListButtonsContainer.setLayout(gridLayout);
-		attributesListButtonsContainer.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		Composite attributeListButtonsCotnainer = SWTUtil.createComposite(fAttributesContainer, fAttributesContainer.getFont(), 1, 1, SWT.NONE);
 		
-		// add attribute button
-		fAttributeAddButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeAddButton.setText(DebugUIMessages.EditLogicalStructureDialog_10); 
-		fAttributeAddButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_27); 
-        fAttributeAddButton.setFont(font);
-		setButtonLayoutData(fAttributeAddButton);
+		fAttributeAddButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_10, DebugUIMessages.EditLogicalStructureDialog_27, null);
 		fAttributeAddButton.addListener(SWT.Selection, this);
 		
-		// remove attribute button
-		fAttributeRemoveButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeRemoveButton.setText(DebugUIMessages.EditLogicalStructureDialog_11); 
-		fAttributeRemoveButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_28); 
-        fAttributeRemoveButton.setFont(font);
-		setButtonLayoutData(fAttributeRemoveButton);
+		fAttributeRemoveButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_11, DebugUIMessages.EditLogicalStructureDialog_28, null);
 		fAttributeRemoveButton.addListener(SWT.Selection, this);
 		
-		// attribute up button
-		fAttributeUpButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeUpButton.setText(DebugUIMessages.EditLogicalStructureDialog_12); 
-		fAttributeUpButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_29); 
-        fAttributeUpButton.setFont(font);
-		setButtonLayoutData(fAttributeUpButton);
+		fAttributeUpButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_12, DebugUIMessages.EditLogicalStructureDialog_29, null);
 		fAttributeUpButton.addListener(SWT.Selection, this);
 		
-		// attribute down button
-		fAttributeDownButton= new Button(attributesListButtonsContainer, SWT.PUSH);
-		fAttributeDownButton.setText(DebugUIMessages.EditLogicalStructureDialog_13); 
-		fAttributeDownButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_30); 
-        fAttributeDownButton.setFont(font);
-		setButtonLayoutData(fAttributeDownButton);
+		fAttributeDownButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_13, DebugUIMessages.EditLogicalStructureDialog_30, null);
 		fAttributeDownButton.addListener(SWT.Selection, this);
-		
 	}
 
 	private void initializeData() {
