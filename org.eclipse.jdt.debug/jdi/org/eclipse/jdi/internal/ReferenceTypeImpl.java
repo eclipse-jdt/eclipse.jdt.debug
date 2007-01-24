@@ -66,7 +66,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private static String[] fgClassStatusStrings = null;
 
 	/**
-	 * Represent the datat about one file info contained in one stratum in the Smap.
+	 * Represent the data about one file info contained in one stratum in the SMAP.
 	 */	
 	protected static class FileInfo {
 		
@@ -160,7 +160,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 	
 	/**
-	 * Represent the information contains in the Smap about one stratum.
+	 * Represent the information contained in the SMAP about one stratum.
 	 */
 	protected static class Stratum {
 
@@ -180,7 +180,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		private int fPrimaryFileId;
 		
 		/**
-		 * Map line number in the output source file -> list of line numbers in the intput source file.
+		 * Map line number in the output source file -> list of line numbers in the input source file.
 		 * (Integer -> List of Integer)
 		 */
 		private HashMap fOutputLineToInputLine;
@@ -490,7 +490,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 	
 	/** 
-	 * Add methods to a set of methods if they are not overriden, add new names+signature combinations to set of names+signature combinations.
+	 * Add methods to a set of methods if they are not overridden, add new names+signature combinations to set of names+signature combinations.
 	 */
 	private void addVisibleMethods(List inheritedMethods, Set nameAndSignatures, List resultMethods) {
 		Iterator iter = inheritedMethods.iterator();
@@ -504,7 +504,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 	
 	/**
-	 * @return Returns a list containing each unhidden and unambiguous Method in this type.
+	 * @return Returns a list containing each visible and unambiguous Method in this type.
 	 */
 	public List visibleMethods() {
 		if (fVisibleMethods != null)
@@ -515,7 +515,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		 * All methods of the interfaces it implements;
 		 * If it is a class, all methods of it's superclass.
 		 */
-		// The name+signature combinations of methods are maintained in a set, to avoid including methods that have been overriden.
+		// The name+signature combinations of methods are maintained in a set, to avoid including methods that have been overridden.
 		Set namesAndSignatures = new HashSet();
 		List visibleMethods= new ArrayList();
 		
@@ -546,7 +546,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	/**
-	 * @return Returns a list containing each Method declared in this type, and its superclasses, implemented interfaces, and/or superinterfaces.
+	 * @return Returns a list containing each Method declared in this type, and its super-classes, implemented interfaces, and/or super-interfaces.
 	 */
 	public List allMethods() {
 		if (fAllMethods != null)
@@ -622,7 +622,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 			
 	/** 
-	 * Add fields to a set of fields if they are not overriden, add new fieldnames to set of fieldnames.
+	 * Add fields to a set of fields if they are not overridden, add new field names to set of field names.
 	 */
 	private void addVisibleFields(List newFields, Set names, List resultFields) {
 		Iterator iter = newFields.iterator();
@@ -638,7 +638,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 	
 	/**
-	 * @return Returns a list containing each unhidden and unambiguous Field in this type.
+	 * @return Returns a list containing each visible and unambiguous Field in this type.
 	 */
 	public List visibleFields() {
 		if (fVisibleFields != null)
@@ -649,7 +649,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		 * All fields of the interfaces it implements;
 		 * If it is a class, all fields of it's superclass.
 		 */
-		// The names of fields are maintained in a set, to avoid including fields that have been overriden.
+		// The names of fields are maintained in a set, to avoid including fields that have been overridden.
 		HashSet fieldNames = new HashSet();
 		
 		// The fields of its own (own fields() command).
@@ -676,7 +676,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	/** 
-	 * @return Returns a list containing each Field declared in this type, and its superclasses, implemented interfaces, and/or superinterfaces.
+	 * @return Returns a list containing each Field declared in this type, and its super-classes, implemented interfaces, and/or super-interfaces.
 	 */
 	public List allFields() {
 		if (fAllFields != null)
@@ -713,7 +713,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 	
 	/** 
-	 * @return Returns the classloader object which loaded the class corresponding to this type.
+	 * @return Returns the class loader object which loaded the class corresponding to this type.
 	 */
 	public ClassLoaderReference classLoader() {
 		if (fClassLoader != null)
@@ -1113,7 +1113,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	/** 
-	 * @return Returns an identifing name for the source corresponding to the declaration of this type.
+	 * @return Returns an identifying name for the source corresponding to the declaration of this type.
 	 */
 	public String sourceName() throws AbsentInformationException {
 		// sourceNames list in never empty, an AbsentInformationException is thrown
@@ -1345,7 +1345,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		List list= new ArrayList();
 		Stratum stratum= getStratum(stratumId);
 		if (stratum != null) {
-			// return the source names defined for this stratum in the Smap.
+			// return the source names defined for this stratum in the SMAP.
 			List fileInfos= stratum.fFileInfos;
 			if (fileInfos.isEmpty()) {
 				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_30); 
@@ -1370,7 +1370,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		List list= new ArrayList();
 		Stratum stratum= getStratum(stratumId);
 		if (stratum != null) {
-			// return the source paths defined for this stratum in the Smap.
+			// return the source paths defined for this stratum in the SMAP.
 			for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
 				FileInfo fileInfo= (FileInfo) iter.next();
 				String path= fileInfo.fAbsoluteFileName;
@@ -1472,7 +1472,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public List availableStrata() {
 		List list= new ArrayList();
-		// The strata defined in the Smap.
+		// The strata defined in the SMAP.
 		if (isSourceDebugExtensionAvailable()) {
 			list.addAll(fStrata.keySet());
 		}
@@ -1586,7 +1586,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 
 	/**
 	 * Check in the source debug extension is available.
-	 * To call before doing operations which need data from the Smap.
+	 * To call before doing operations which need data from the SMAP.
 	 * Return <code>false</code> if the source debug extension is not available
 	 * for any reason. <code>true</code> indicates that the source debug extension
 	 * is available and the information has been parsed and stored in the 
