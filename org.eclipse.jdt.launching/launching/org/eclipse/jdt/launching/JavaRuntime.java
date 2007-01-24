@@ -90,11 +90,11 @@ import com.ibm.icu.text.MessageFormat;
  * the registered VM types contributed through the 
  * <code>"org.eclipse.jdt.launching.vmType"</code> extension point.
  * As well, this class provides VM install change notification,
- * and computes classpaths and source lookup paths for launch
+ * and computes class paths and source lookup paths for launch
  * configurations.
  * <p>
  * This class provides static methods only; it is not intended to be
- * instantiated or subclassed by clients.
+ * instantiated or sub-classed by clients.
  * </p>
  */
 public final class JavaRuntime {

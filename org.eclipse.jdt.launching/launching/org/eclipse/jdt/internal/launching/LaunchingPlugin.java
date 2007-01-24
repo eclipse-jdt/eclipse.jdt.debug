@@ -305,10 +305,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 								}
 								JREContainerInitializer initializer = new JREContainerInitializer();
 								if (newBinding == null){
-									// rebind old path
+									// re-bind old path
 									initializer.initialize(reference, project);
 								} else {
-									// replace old cp entry with a new one
+									// replace old class path entry with a new one
 									IClasspathEntry newEntry = JavaCore.newContainerEntry(newBinding, entry.isExported());
 									entries[j] = newEntry;
 									replace = true;
@@ -352,9 +352,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 	}
 	
+	/**
+	 * Constructor
+	 */
 	public LaunchingPlugin() {
 		super();
-		fgLaunchingPlugin= this;
+		fgLaunchingPlugin = this;
 	}
 	
 	/**
@@ -412,18 +415,37 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return ID_PLUGIN;
 	}
 
+	/**
+	 * Returns the singleton instance of <code>LaunchingPlugin</code>
+	 * @return the singleton instance of <code>LaunchingPlugin</code>
+	 */
 	public static LaunchingPlugin getDefault() {
+		if(fgLaunchingPlugin == null) {
+			fgLaunchingPlugin = new LaunchingPlugin();
+		}
 		return fgLaunchingPlugin;
 	}
 	
+	/**
+	 * Logs the specified status
+	 * @param status
+	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
 	
+	/**
+	 * Logs the specified message, by creating a new <code>Status</code>
+	 * @param message
+	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
 	}	
 		
+	/**
+	 * Logs the specified exception by creating a new <code>Status</code>
+	 * @param e
+	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
 	}	
@@ -451,7 +473,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 		
 	/**
-	 * @see Plugin#start(BundleContext)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -632,7 +654,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			// Generate the current
 			VMDefinitionsContainer newResults = getVMDefinitions(newPrefString);
 			
-			// Determine the deteled VMs
+			// Determine the deleted VMs
 			List deleted = oldResults.getVMList();
 			List current = newResults.getValidVMList();
 			deleted.removeAll(current);
@@ -738,7 +760,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 
 	/**
 	 * Clear the archive cache when a project is about to be deleted.
-	 * Warn when a buildpath changes and references an execution environment
+	 * Warn when a build path changes and references an execution environment
 	 * that does not have a perfect match.
 	 * 
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
@@ -775,10 +797,18 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 	}
 
+	/**
+	 * Allows vm property change events to be ignored
+	 * @param ignore
+	 */
 	public void setIgnoreVMDefPropertyChangeEvents(boolean ignore) {
 		fIgnoreVMDefPropertyChangeEvents = ignore;
 	}
 
+	/**
+	 * Returns if vm property changed event should be ignored or not
+	 * @return if vm property changed event should be ignored or not
+	 */
 	public boolean isIgnoreVMDefPropertyChangeEvents() {
 		return fIgnoreVMDefPropertyChangeEvents;
 	}
@@ -944,6 +974,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 	}
 	
+	/**
+	 * Returns paths stored in XML
+	 * @param lib
+	 * @param pathType
+	 * @return paths stored in XML
+	 */
 	private static String[] getPathsFromXML(Element lib, String pathType) {
 		List paths = new ArrayList();
 		NodeList list = lib.getChildNodes();
@@ -1072,6 +1108,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		throw new CoreException(status);
 	}	
 	
+	/**
+	 * Validates the environment
+	 * @param containerPath
+	 * @param project
+	 * @param vm
+	 */
 	private void validateEnvironment(IPath containerPath, final IJavaProject project, IVMInstall vm) {
 		try {
 			project.getProject().deleteMarkers(ID_JRE_CONTAINER_MARKER, false, IResource.DEPTH_ZERO);
@@ -1114,6 +1156,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 	}	
 	
+	/**
+	 * creates a problem marker for a jre container problem
+	 * @param javaProject
+	 * @param message
+	 * @param severity
+	 */
 	private void createJREContainerProblem(IJavaProject javaProject, String message, int severity) {
 		try {
 			IMarker marker = javaProject.getProject().createMarker(ID_JRE_CONTAINER_MARKER);
