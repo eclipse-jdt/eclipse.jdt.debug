@@ -89,6 +89,13 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		private IAstEvaluationEngine fEvaluationEngine;
 		private IEvaluationResult fResult;
 
+		/**
+		 * Constructor
+		 * @param value
+		 * @param type
+		 * @param thread
+		 * @param evaluationEngine
+		 */
 		public EvaluationBlock(IJavaObject value, IJavaReferenceType type, IJavaThread thread, IAstEvaluationEngine evaluationEngine) {
 			fEvaluationValue= value;
 			fEvaluationType= type;
@@ -106,6 +113,12 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			}
 		}
 
+		/**
+		 * Evaluates the specified snippet and returns the <code>IJavaValue</code> from the evaluation
+		 * @param snippet the snippet to evaluate
+		 * @return the <code>IJavaValue</code> from the evaluation
+		 * @throws DebugException
+		 */
 		public IJavaValue evaluate(String snippet) throws DebugException {
 			ICompiledExpression compiledExpression= fEvaluationEngine.getCompiledExpression(snippet, fEvaluationType);
 			if (compiledExpression.hasErrors()) {
@@ -278,6 +291,11 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		return value;
 	}
 	
+	/**
+	 * Returns the <code>IJavaReferenceType</code> from the specified <code>IJavaObject</code>
+	 * @param value
+	 * @return the <code>IJavaReferenceType</code> from the specified <code>IJavaObject</code>
+	 */
 	private IJavaReferenceType getType(IJavaObject value) {
 		try {
 			IJavaType type= value.getJavaType();
@@ -317,6 +335,9 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Return the current stack frame context, or a valid stack frame for the given value.
+	 * @param value
+	 * @return the current stack frame context, or a valid stack frame for the given value.
+	 * @throws CoreException
 	 */
 	private IJavaStackFrame getStackFrame(IValue value) throws CoreException {
 		IStatusHandler handler = getStackFrameProvider();
@@ -340,6 +361,10 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		return null;
 	}
 	
+	/**
+	 * Returns the singleton stackframe provider
+	 * @return the singleton stackframe provider
+	 */
 	private static IStatusHandler getStackFrameProvider() {
 		if (fgStackFrameProvider == null) {
 			fgStackFrameProvider = DebugPlugin.getDefault().getStatusHandler(JDIDebugPlugin.STATUS_GET_EVALUATION_FRAME);
@@ -349,6 +374,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	
 	/**
 	 * Returns if this logical structure should be used for subtypes too.
+	 * @return if this logical structure should be used for subtypes too.
 	 */
 	public boolean isSubtypes() {
 		return fSubtypes;
@@ -356,6 +382,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	
 	/**
 	 * Sets if this logical structure should be used for subtypes or not.
+	 * @param subtypes
 	 */
 	public void setSubtypes(boolean subtypes) {
 		fSubtypes = subtypes;
@@ -363,42 +390,49 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	
 	/**
 	 * Returns the name of the type this logical structure should be used for.
+	 * @return the name of the type this logical structure should be used for.
 	 */
 	public String getQualifiedTypeName() {
 		return fType;
 	}
 	/**
 	 * Sets the name of the type this logical structure should be used for.
+	 * @param type
 	 */
 	public void setType(String type) {
 		fType = type;
 	}
 	/**
 	 * Returns the code snippet to use to generate the logical structure.
+	 * @return the code snippet to use to generate the logical structure.
 	 */
 	public String getValue() {
 		return fValue;
 	}
 	/**
 	 * Sets the code snippet to use to generate the logical structure.
+	 * @param value
 	 */
 	public void setValue(String value) {
 		fValue = value;
 	}
 	/**
 	 * Returns the variables of this logical structure.
+	 * @return the variables of this logical structure.
 	 */
 	public String[][] getVariables() {
 		return fVariables;
 	}
 	/**
 	 * Sets the variables of this logical structure.
+	 * @param variables
 	 */
 	public void setVariables(String[][] variables) {
 		fVariables = variables;
 	}
 	/**
 	 * Set the description of this logical structure.
+	 * @param description
 	 */
 	public void setDescription(String description) {
 		fDescription = description;
@@ -421,6 +455,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
     /**
      * Indicates if this logical structure was contributed by a plug-in
      * or defined by a user.
+     * @return if this logical structure is contributed
      */
     public boolean isContributed() {
         return fContributingPluginId != null;
@@ -442,5 +477,4 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	public String getId() {
 		return JDIDebugPlugin.getUniqueIdentifier() + fType + fDescription;
 	}
-
 }
