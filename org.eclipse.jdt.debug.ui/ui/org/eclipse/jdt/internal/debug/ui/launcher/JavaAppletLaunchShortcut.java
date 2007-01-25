@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,8 @@ public class JavaAppletLaunchShortcut extends JavaLaunchShortcut {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, AppletParametersTab.DEFAULT_APPLET_WIDTH);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, AppletParametersTab.DEFAULT_APPLET_HEIGHT);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
-			wc.setMappedResources(new IResource[] {type.getJavaProject().getProject()});
+			//CONTEXTLAUNCHING
+			wc.setMappedResources(new IResource[] {type.getUnderlyingResource()});
 			config = wc.doSave();		
 		} catch (CoreException ce) {
 			reportErorr(ce);			

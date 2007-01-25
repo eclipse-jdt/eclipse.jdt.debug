@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
@@ -208,12 +209,19 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	 * @param config
 	 */
 	protected void mapResources(ILaunchConfigurationWorkingCopy config)  {
-		IJavaProject javaProject = getJavaProject();
-		IResource[] resources = null;
-		if (javaProject != null) {
-			resources = new IResource[]{javaProject.getProject()};
+		try {
+		//CONTEXTLAUNCHING
+			IJavaProject javaProject = getJavaProject();
+			IResource[] resources = null;
+			if (javaProject != null) {
+				IType type = javaProject.findType(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null));
+				if (type != null) {
+					resources = new IResource[] {type.getUnderlyingResource()};
+				}
+			}
+			config.setMappedResources(resources);
 		}
-		config.setMappedResources(resources);
+		catch(CoreException ce) {JDIDebugUIPlugin.log(ce);}
 	}	
 	
 }

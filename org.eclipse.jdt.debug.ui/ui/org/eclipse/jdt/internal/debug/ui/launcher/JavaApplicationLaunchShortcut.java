@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,8 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(type.getElementName()));
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
-			wc.setMappedResources(new IResource[] {type.getJavaProject().getProject()});
+			//CONTEXTLAUNCHING
+			wc.setMappedResources(new IResource[] {type.getUnderlyingResource()});
 			config = wc.doSave();
 		} catch (CoreException exception) {
 			reportErorr(exception);		

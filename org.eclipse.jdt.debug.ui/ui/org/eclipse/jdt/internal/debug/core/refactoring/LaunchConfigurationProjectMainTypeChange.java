@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,17 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		if (fNewProjectName != null) {
 			oldProjectName = fOldProjectName;
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
-			wc.setMappedResources(new IResource[] {ResourcesPlugin.getWorkspace().getRoot().getProject(fNewProjectName)});
+			//CONTEXTLAUNCHING
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fNewProjectName);
+			if(project != null) {
+				IResource res = project.findMember(wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null));
+				if(res != null) {
+					wc.setMappedResources(new IResource[] {res});
+				}
+			}
+			else {
+				wc.setMappedResources(new IResource[] {});
+			}
 		} 
 		else {
 			oldProjectName = null;
