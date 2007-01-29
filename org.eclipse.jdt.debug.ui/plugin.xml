@@ -1189,12 +1189,13 @@
                id="org.eclipse.jdt.debug.ui.actions.SuspendPolicy">
          </action>
          <action
-               label="%JavaBreakpointProperties.label"
-               helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
-               menubarPath="additions"
+               definitionId="org.eclipse.jdt.debug.ui.breakpoint.properties"
                enablesFor="1"
-               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointProperties">
+               helpContextId="breakpoint_properties_action_context"
+               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointProperties"
+               label="%JavaBreakpointProperties.label"
+               menubarPath="additions">
          </action>
       </objectContribution>
       <objectContribution
@@ -2172,6 +2173,12 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.allInstances.description"
             id="org.eclipse.jdt.debug.ui.commands.AllInstances"
             name="%ActionDefinition.allInstances.name">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.breakpointproperties.description"
+            id="org.eclipse.jdt.debug.ui.breakpoint.properties"
+            name="%CommandDefinition.breakpointproperties.name">
       </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
@@ -2232,6 +2239,12 @@ M4 = Platform-specific fourth key
          contextId="org.eclipse.debug.ui.debugging"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="M1+M2+N">
+   </key>
+   <key
+         commandId="org.eclipse.jdt.debug.ui.breakpoint.properties"
+         contextId="org.eclipse.debug.ui.BreakpointView"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M3+ENTER">
    </key>
    </extension>
    <extension
@@ -2524,6 +2537,12 @@ M4 = Platform-specific fourth key
             description="%Context.javaDebugging.description"
             id="org.eclipse.jdt.debug.ui.debugging"
             parentId="org.eclipse.debug.ui.debugging">
+      </context>
+      <context
+            description="%ActionContext.breakpointsview.description"
+            id="org.eclipse.debug.ui.BreakpointView"
+            name="%ActionContext.breakpointsview.name"
+            parentId="org.eclipse.ui.contexts.window">
       </context>
    </extension>
    <extension

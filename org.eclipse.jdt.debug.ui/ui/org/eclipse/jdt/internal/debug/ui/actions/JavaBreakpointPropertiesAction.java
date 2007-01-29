@@ -27,7 +27,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
  * Presents the standard properties dialog to configure
- * the attibutes of a Java Breakpoint.
+ * the attributes of a Java Breakpoint.
  */
 public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	
@@ -39,8 +39,8 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	 */
 	public void run(IAction action) {
 	    IShellProvider provider;
-	    if (getActivePart() != null) {
-	        provider = getActivePart().getSite();
+	    if (fPart != null) {
+	        provider = fPart.getSite();
 	    } else {
 	        provider = new IShellProvider() {
 	            public Shell getShell() {
@@ -53,7 +53,7 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 				public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				}
 				public ISelection getSelection() {
-					return new StructuredSelection(getBreakpoint());
+					return new StructuredSelection(fBreakpoint);
 				}
 				public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 				}
@@ -78,26 +78,19 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 			}
 		}
 	}
-	
-	protected IWorkbenchPart getActivePart() {
-		return fPart;
-	}
 
-	protected void setActivePart(IWorkbenchPart part) {
-		fPart = part;
-	}
-	
-	protected IJavaBreakpoint getBreakpoint() {
-		return fBreakpoint;
-	}
-
+	/**
+	 * Allows the underlying breakpoint for the properties page to be set
+	 * @param breakpoint
+	 */
 	public void setBreakpoint(IJavaBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
+	
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		setActivePart(targetPart);
+		fPart = targetPart;
 	}
 }
