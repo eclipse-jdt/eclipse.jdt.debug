@@ -61,12 +61,11 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	private InstalledJREsBlock fJREBlock;
 	private Link fCompliance;
 		
+	/**
+	 * Constructor
+	 */
 	public JREsPreferencePage() {
-		super();
-		
-		// only used when page is shown programatically
-		setTitle(JREMessages.JREsPreferencePage_1);	 
-		setDescription(JREMessages.JREsPreferencePage_2); 
+		super(JREMessages.JREsPreferencePage_1);
 	}
 
 	/* (non-Javadoc)
@@ -105,6 +104,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		ancestor.setLayout(layout);
+		
+		SWTUtil.createWrapLabel(ancestor, JREMessages.JREsPreferencePage_2, 1, 300);
+		SWTUtil.createVerticalSpacer(ancestor, 1);
 		
 		fJREBlock = new InstalledJREsBlock();
 		fJREBlock.createControl(ancestor);
