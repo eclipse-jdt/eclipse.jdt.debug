@@ -396,7 +396,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     
     /**
      * Returns the class load breakpoint for the specified type or null if none found
-     * @param type the type tos earch for a class load breakpoint for
+     * @param type the type to search for a class load breakpoint for
      * @return the existing class load breakpoint, or null if none
      * @throws CoreException
      * @since 3.3
@@ -1097,7 +1097,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	ISelection sel = translateToMembers(part, selection);
     	if(sel instanceof IStructuredSelection) {
     		IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
-    		if(member.getElementType() == IJavaElement.FIELD) {
+    		int mtype = member.getElementType();
+    		if(mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD) {
     			// remove line breakpoint if present first
     	    	if (selection instanceof ITextSelection) {
     				ITextSelection ts = (ITextSelection) selection;
@@ -1106,22 +1107,19 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     					breakpoint.delete();
     					return;
     				}
-    			} 
-    			toggleWatchpoints(part, sel);
-    		}
-    		else if(member.getElementType() == IJavaElement.METHOD) {
-    			if(selection instanceof ITextSelection) {
-    				ITextSelection tsel = (ITextSelection) selection;
     				CompilationUnit unit = parseCompilationUnit(getTextEditor(part));
-        			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, tsel.getStartLine()+1, true, true);
+        			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine()+1, true, true);
         			unit.accept(loc);
         			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
         				toggleMethodBreakpoints(part, sel);
         			}
-        			else {
-        				toggleLineBreakpoints(part, selection, true);
+        			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
+        				toggleWatchpoints(part, sel);
         			}
-    			}
+        			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
+        				toggleLineBreakpoints(part, ts);
+        			}
+    			} 
     		}
     		else if(member.getElementType() == IJavaElement.TYPE) {
     			toggleClassBreakpoints(part, sel);
