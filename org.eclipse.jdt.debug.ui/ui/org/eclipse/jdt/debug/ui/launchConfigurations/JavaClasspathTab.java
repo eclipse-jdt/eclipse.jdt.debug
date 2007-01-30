@@ -449,13 +449,21 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		}
 		
 		IRuntimeClasspathEntry [] entries = fModel.getAllEntries();
-		for (int i=0; i<entries.length; i++)
-		{
-			if (entries[i].getType() == IRuntimeClasspathEntry.ARCHIVE 
-					&& (!entries[i].getPath().isAbsolute()))
-			{
-				setErrorMessage(MessageFormat.format(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, new String[]{entries[i].getPath().toString()}));
-				return false;
+		int type = -1;
+		for (int i=0; i<entries.length; i++) {
+			type = entries[i].getType();
+			if (type == IRuntimeClasspathEntry.ARCHIVE) {
+				if(!entries[i].getPath().isAbsolute())	{
+					setErrorMessage(MessageFormat.format(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, new String[]{entries[i].getPath().toString()}));
+					return false;
+				}
+			}
+			if(type == IRuntimeClasspathEntry.PROJECT) {
+				IResource res = entries[i].getResource();
+				if(res != null && !res.isAccessible()) {
+					setErrorMessage(MessageFormat.format(LauncherMessages.JavaClasspathTab_1, new String[]{res.getName()}));
+					return false;
+				}
 			}
 		}
 		
