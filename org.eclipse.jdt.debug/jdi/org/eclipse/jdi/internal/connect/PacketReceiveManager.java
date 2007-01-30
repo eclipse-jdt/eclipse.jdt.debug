@@ -12,7 +12,6 @@ package org.eclipse.jdi.internal.connect;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -23,6 +22,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.connect.spi.Connection;
 
@@ -146,8 +146,11 @@ public class PacketReceiveManager extends PacketManager {
                 try {
                     waitForPacketAvailable(remainingTime, fReplyPackets);
                 }//end try 
-                // if the remote VM is interrupted, drop the connection and clean up
-                catch (InterruptedException e) {disconnectVM();}
+                // if the remote VM is interrupted DO NOT drop the connection - see bug 171075
+                // just stop waiting for the reply and treat it as a timeout
+                catch (InterruptedException e) {
+                	break;
+                }
                 long waitedTime = System.currentTimeMillis() - timeBeforeWait;
                 remainingTime = timeToWait - waitedTime;
             }//end while
