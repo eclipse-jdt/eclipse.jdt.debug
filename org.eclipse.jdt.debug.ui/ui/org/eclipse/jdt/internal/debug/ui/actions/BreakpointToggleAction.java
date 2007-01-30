@@ -30,6 +30,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 
+/**
+ * Provides a general toggle action for breakpoints to reuse
+ */
 public abstract class BreakpointToggleAction implements IObjectActionDelegate, IBreakpointsListener, IPartListener {
 	
 	private IStructuredSelection fSelection;
@@ -117,10 +120,18 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		return getBreakpointManager().getBreakpoint(marker);
 	}
 
+	/**
+	 * Returns the underlying <code>IAction</code> for this delegate
+	 * @return the underlying <code>IAction</code> for this delegate
+	 */
 	protected IAction getAction() {
 		return fAction;
 	}
 
+	/**
+	 * Allows the underlying <code>IAction</code> for this delegate to be set
+	 * @param action the new action to set for this delegate
+	 */
 	protected void setAction(IAction action) {
 		fAction = action;
 	}
@@ -156,10 +167,18 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 	
+	/**
+	 * Returns the <code>IWorkbenchPart</code> this delegate is associated with
+	 * @return the <code>IWorkbenchPart</code> this delegate is associated with
+	 */
 	protected IWorkbenchPart getPart() {
 		return fPart;
 	}
 
+	/**
+	 * Allows the <code>IWorkbenchPart</code> to be set for this delegate
+	 * @param part the new part to set
+	 */
 	protected void setPart(IWorkbenchPart part) {
 		fPart = part;
 	}

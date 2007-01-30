@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,17 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction {
 
 	/**
+	 * What the current policy of the action is
+	 * @since 3.3 
+	 */
+	private int fCurrentPolicy = IJavaBreakpoint.SUSPEND_THREAD;
+	
+	/**
 	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
 	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
-		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD) {
-			breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		} else {
-			breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+		if(breakpoint.getSuspendPolicy() != fCurrentPolicy) {
+			breakpoint.setSuspendPolicy(fCurrentPolicy);
 		}
 	}
 
@@ -77,8 +81,10 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 		try {
 			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD) {
 				action.setText(ActionMessages.BreakpointSuspendPolicy_Suspend__VM_1); 
+				fCurrentPolicy = IJavaBreakpoint.SUSPEND_VM;
 			} else {
 				action.setText(ActionMessages.BreakpointSuspendPolicy_Suspend__Thread_2); 
+				fCurrentPolicy = IJavaBreakpoint.SUSPEND_THREAD;
 			}
 		} catch (CoreException e) {
 			 JDIDebugUIPlugin.log(e);
