@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,10 +68,10 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		}
 		if (selection instanceof IStructuredSelection) {
 			setStructuredSelection((IStructuredSelection)selection);
-			boolean enabled= isEnabledFor(getStructuredSelection());
+			boolean enabled = isEnabledFor(getStructuredSelection());
 			action.setEnabled(enabled);
-			if (enabled) {
-				IBreakpoint breakpoint= (IBreakpoint)getStructuredSelection().getFirstElement();
+			if (enabled && isToggleAction()) {
+				IBreakpoint breakpoint = (IBreakpoint)getStructuredSelection().getFirstElement();
 				if (breakpoint instanceof IJavaBreakpoint) {
 					try {
 						action.setChecked(getToggleState((IJavaBreakpoint) breakpoint));
@@ -83,6 +83,16 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		}
 	}
 
+	/**
+	 * Returns if the action is a checkable action. i.e. if we should bother updating checked state
+	 * @return if the action is a checkable action
+	 * 
+	 * @since 3.3
+	 */
+	protected boolean isToggleAction() {
+		return true;
+	}
+	
 	/**
 	 * Toggle the state of this action
 	 */
@@ -100,10 +110,19 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		return fSelection;
 	}
 	
+	/**
+	 * Allows the current structured selection to be set
+	 * @param selection the new selection
+	 */
 	protected void setStructuredSelection(IStructuredSelection selection) {
 		fSelection= selection;
 	}
 	
+	/**
+	 * Returns if the underlying action should be enabled for the given selection
+	 * @param selection
+	 * @return if the underlying action should be enabled for the given selection
+	 */
 	public abstract boolean isEnabledFor(IStructuredSelection selection);
 
 	/**

@@ -75,6 +75,13 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	}
 	
 	/**
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.BreakpointToggleAction#isToggleAction()
+	 */
+	protected boolean isToggleAction() {
+		return false;
+	}
+
+	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void update(IAction action, IJavaBreakpoint breakpoint) {

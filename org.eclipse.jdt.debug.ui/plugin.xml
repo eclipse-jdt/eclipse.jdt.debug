@@ -1180,13 +1180,14 @@
                id="org.eclipse.jdt.debug.ui.actions.BreakpointHitCount">
          </action>
          <action
-               label="%suspendPolicy.label"
-               icon="$nl$/icons/full/elcl16/suspend_co.gif"
-               helpContextId="breakpoint_suspend_policy_toggle_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointSuspendPolicyToggleAction"
-               menubarPath="emptyBreakpointGroup"
                enablesFor="1"
-               id="org.eclipse.jdt.debug.ui.actions.SuspendPolicy">
+               helpContextId="breakpoint_suspend_policy_toggle_action_context"
+               icon="$nl$/icons/full/elcl16/suspend_co.gif"
+               id="org.eclipse.jdt.debug.ui.actions.SuspendPolicy"
+               label="%suspendPolicy.label"
+               menubarPath="emptyBreakpointGroup"
+               tooltip="%suspendPolicy.tooltip">
          </action>
          <action
                class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
