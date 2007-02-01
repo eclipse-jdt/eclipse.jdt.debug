@@ -284,7 +284,9 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 		 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 		 */
 		public void dispose() {
-			fImageMap.clear();
+			if (fImageMap != null) {
+				fImageMap.clear();
+			}
 			fImageMap = null;
 		}
 		public void addListener(ILabelProviderListener listener) {}

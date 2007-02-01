@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -55,7 +56,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 			Object[] results = dialog.getResult(); 
 			if(results != null && results.length > 0) {
 				try {
-					createBreakpoint(caught, uncaught, (IType)results[0]);
+					createBreakpoint(caught, uncaught, ((TypeNameMatch)results[0]).getType());
 				}
 				catch (CoreException e) {JDIDebugUIPlugin.statusDialog(e.getStatus());}
 			}
