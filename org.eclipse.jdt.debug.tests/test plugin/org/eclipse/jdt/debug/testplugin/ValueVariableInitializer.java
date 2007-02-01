@@ -22,6 +22,6 @@ public class ValueVariableInitializer implements IValueVariableInitializer {
 	 * @see org.eclipse.core.variables.IValueVariableInitializer#initialize(org.eclipse.core.variables.IValueVariable)
 	 */
 	public void initialize(IValueVariable variable) {
-		variable.setValue("initialized-value");
+		variable.setValue("initial-value");
 	}
 }

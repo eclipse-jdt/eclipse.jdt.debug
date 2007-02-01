@@ -76,14 +76,11 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	
 	/**
 	 * Tests value variable initializer
-	 * 
-	 * @throws Exception
 	 */
 	public void testValueInitializer() throws Exception {
 		IValueVariable variable = getValueVariable("VALUE_VAR_WITH_INITIALIZER");
-		assertNotNull("Missing VALUE_VAR_WITH_INITIALIZER", variable);
-		String value = variable.getValue();
-		assertEquals("value should be 'initialized-value'", "initialized-value", value);
+		checkValueVariableProperties(variable, "VALUE_VAR_WITH_INITIALIZER", "sample value variable", "initial-value", true, false);
+		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
 	}	
 	
 	/**
@@ -91,11 +88,106 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testValueSupplied() throws Exception {
 		IValueVariable variable = getValueVariable("VALUE_VAR_WITH_VALUE");
-		assertNotNull("Missing VALUE_VAR_WITH_VALUE", variable);
-		String value = variable.getValue();
-		assertEquals("initial-value", value);		
+		checkValueVariableProperties(variable, "VALUE_VAR_WITH_VALUE", "sample value variable", "initial-value", true, false);
+		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
 	}
 	
+	/**
+	 * Tests value variable initializer set to read only
+	 */
+	public void testValueInitializerReadOnly() throws Exception {
+		IValueVariable variable = getValueVariable("VALUE_VAR_WITH_INITIALIZER_READ_ONLY");
+		checkValueVariableProperties(variable, "VALUE_VAR_WITH_INITIALIZER_READ_ONLY", "sample value variable", "initial-value", true, true);
+		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
+	}	
+	
+	/**
+	 * Tests value variable with an initial value set to read only
+	 */
+	public void testValueSuppliedReadOnly() throws Exception {
+		IValueVariable variable = getValueVariable("VALUE_VAR_WITH_VALUE_READ_ONLY");
+		checkValueVariableProperties(variable, "VALUE_VAR_WITH_VALUE_READ_ONLY", "sample value variable", "initial-value", true, true);
+		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
+	}
+	
+	/**
+	 * Tests value variables created using string variable manager API
+	 */
+	public void testCreatedValueVariables() throws Exception {
+		IValueVariable variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable", "sample value variable");
+		checkValueVariableProperties(variable, "createdVariable", "sample value variable", null, false, false);
+		
+		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable", "sample value variable");
+		variable.setValue("initial-value");
+		checkValueVariableProperties(variable, "createdVariable", "sample value variable", "initial-value", false, false);
+				
+		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable2", "sample value variable",false,"initial-value");
+		checkValueVariableProperties(variable, "createdVariable2", "sample value variable", "initial-value", false, false);
+		
+		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable3", "sample value variable",true,"initial-value");
+		checkValueVariableProperties(variable, "createdVariable3", "sample value variable", "initial-value", false, true);
+	}
+	
+	protected IValueVariable copy(IValueVariable variable) {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		IValueVariable variable2 = manager.newValueVariable(variable.getName(), variable.getDescription(), variable.isReadOnly(), variable.getValue());
+		return variable2;
+	}
+		
+	/**
+	 * Tests the setValue and setDescription methods of value variables
+	 */
+	public void testValueVariableSetMethods() throws Exception{
+		IValueVariable variable, copy;
+		variable = getValueVariable("VALUE_VAR_WITH_INITIALIZER");
+		copy = copy(variable);
+		assertEquals(variable.getDescription(), copy.getDescription());
+		assertEquals(variable.getValue(), copy.getValue());
+		copy.setDescription("new description");
+		copy.setValue("new value");
+		assertEquals("new description", copy.getDescription());
+		assertEquals("new value", copy.getValue());
+		
+		variable = getValueVariable("VALUE_VAR_WITH_VALUE");
+		copy = copy(variable);
+		assertEquals(variable.getDescription(), copy.getDescription());
+		assertEquals(variable.getValue(), copy.getValue());
+		copy.setDescription("new description");
+		copy.setValue("new value");
+		assertEquals("new description", copy.getDescription());
+		assertEquals("new value", copy.getValue());
+		
+		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable", "A variable created in code");
+		copy = copy(variable);
+		assertEquals(variable.getDescription(), copy.getDescription());
+		assertEquals(variable.getValue(), copy.getValue());
+		copy.setDescription("new description");
+		copy.setValue("new value");
+		assertEquals("new description", copy.getDescription());
+		assertEquals("new value", copy.getValue());
+		
+		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable3", "A variable created in code",true,"initial-value");
+		copy = copy(variable);
+		assertEquals(variable.getDescription(), copy.getDescription());
+		assertEquals(variable.getValue(), copy.getValue());
+		copy.setDescription("new description");
+		copy.setValue("new value");  // Value shouldn't change because variable is read only.
+		assertEquals("new description", copy.getDescription());
+		assertEquals(variable.getValue(), copy.getValue());	
+	}
+		
+	/**
+	 * Tests that the properties of the passed variable match the expected values passed as parameters
+	 */
+	protected void checkValueVariableProperties(IValueVariable variable, String name, String description, String value, boolean isContributed, boolean isReadOnly){
+		assertNotNull("Variable was null",variable);
+		assertEquals("Name property was incorrect", name, variable.getName());
+		assertEquals("Description property was incorrect", description, variable.getDescription());
+		assertEquals("Value was incorrect", value, variable.getValue());
+		assertEquals("Contributed property was incorrect", isContributed, variable.isContributed());
+		assertEquals("Read only property was incorrect", isReadOnly, variable.isReadOnly());
+	}
+
 	/**
 	 * Tests a context variable with an argument
 	 */
@@ -131,7 +223,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testValueVarReference() throws CoreException {
 		String expression = "something ${VALUE_VAR_WITH_INITIALIZER} else";
 		String result = doSubs(expression);
-		assertEquals("something initialized-value else", result);
+		assertEquals("something initial-value else", result);
 	}
 	
 	/**
@@ -158,7 +250,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testMultipleReferences() throws CoreException {
 		String expression = "${SAMPLE_DYNAMIC_VAR:TWO} ${VALUE_VAR_WITH_INITIALIZER} ${VALUE_VAR_WITH_VALUE}";
 		String result = doSubs(expression);
-		assertEquals("the arg is TWO initialized-value initial-value", result);
+		assertEquals("the arg is TWO initial-value initial-value", result);
 	}	
 		
 	/**

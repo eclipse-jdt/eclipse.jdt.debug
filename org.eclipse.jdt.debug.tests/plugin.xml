@@ -139,12 +139,24 @@
       <variable
             initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
             name="VALUE_VAR_WITH_INITIALIZER"
-            description="sample variable with initializer">
+            description="sample value variable">
       </variable>
       <variable
             initialValue="initial-value"
             name="VALUE_VAR_WITH_VALUE"
-            description="sample variable with value">
+            description="sample value variable">
+      </variable>
+      <variable
+            description="sample value variable"
+            initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
+            name="VALUE_VAR_WITH_INITIALIZER_READ_ONLY"
+            readOnly="true">
+      </variable>
+      <variable
+            description="sample value variable"
+            initialValue="initial-value"
+            name="VALUE_VAR_WITH_VALUE_READ_ONLY"
+            readOnly="true">
       </variable>
    </extension>
    <extension
