@@ -204,7 +204,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	}
 	
 	/**
-	 * Maps the config to associated java project.
+	 * Maps the config to associated java resource
 	 * 
 	 * @param config
 	 */
@@ -214,9 +214,13 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 			IJavaProject javaProject = getJavaProject();
 			IResource[] resources = null;
 			if (javaProject != null) {
-				IType type = javaProject.findType(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null));
-				if (type != null) {
-					resources = new IResource[] {type.getUnderlyingResource()};
+				resources = new IResource[] {javaProject.getProject()};
+				String typename = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+				if(typename != null) {
+					IType type = javaProject.findType(typename);
+					if (type != null) {
+						resources = new IResource[] {type.getUnderlyingResource()};
+					}
 				}
 			}
 			config.setMappedResources(resources);
