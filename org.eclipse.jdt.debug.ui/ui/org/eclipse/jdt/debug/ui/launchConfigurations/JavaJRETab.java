@@ -212,7 +212,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	}
 	
 	/**
-	 * Checks to make sure the compiler compliance level and the selected VM are compatible
+	 * Checks to make sure the class file compliance level and the selected VM are compatible
 	 * i.e. such that the selected JRE can run the currently compiled code
 	 * @since 3.3
 	 */
@@ -222,9 +222,9 @@ public class JavaJRETab extends JavaLaunchTab {
 			return Status.OK_STATUS;
 		}
 		String source = LauncherMessages.JavaJRETab_3;
-		String	compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, false);
+		String	compliance = javaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, false);
 		if(compliance == null) {
-			compliance = javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+			compliance = javaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true);
 			source = LauncherMessages.JavaJRETab_4;
 		}
 		IPath vmPath = fJREBlock.getPath();
