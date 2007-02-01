@@ -1539,6 +1539,8 @@ public final class JavaRuntime {
                             }
                         }
                         standin.setLibraryLocations(locations);
+                        // in case the contributed JRE attributes changed, remove it first, then add
+                        vmDefs.removeVM(standin);
                         vmDefs.addVM(standin);
 					}
                     fgContributedVMs.add(id);
