@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yavor Boyadzhiev <yavor.vasilev.boyadzhiev@sap.com> - Bug 162399  
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
@@ -139,7 +140,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				for (Iterator iter = outputLines.iterator(); iter.hasNext();) {
 					int[] info = (int[])iter.next();
 					int outputLineNumber= info[0];
-					for (int i= 0, length= info[1]; i < length; i++) {
+					int length = info[1];
+					if (length == 0){
+						length = length + 1;
+					}
+					for (int i= 0; i < length; i++) {
 						list.add(new Integer(outputLineNumber++));
 					}
 				}
