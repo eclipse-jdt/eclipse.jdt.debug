@@ -79,15 +79,21 @@
          point="org.eclipse.jdt.core.classpathVariableInitializer">
       <classpathVariableInitializer
             variable="JRE_LIB"
-            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer">
+            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"
+            deprecated="%classpathVariableInitializer.deprecated"
+            readOnly="true">
       </classpathVariableInitializer>
       <classpathVariableInitializer
             variable="JRE_SRC"
-            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer">
+            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"
+            deprecated="%classpathVariableInitializer.deprecated"
+            readOnly="true">
       </classpathVariableInitializer>
       <classpathVariableInitializer
             variable="JRE_SRCROOT"
-            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer">
+            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"
+            deprecated="%classpathVariableInitializer.deprecated"
+            readOnly="true">
       </classpathVariableInitializer>
    </extension>
    <extension
