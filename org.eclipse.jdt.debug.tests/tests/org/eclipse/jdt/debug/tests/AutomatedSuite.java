@@ -91,6 +91,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.JavaProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
+import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 
 /**
@@ -240,6 +241,9 @@ public class AutomatedSuite extends DebugSuite {
 		
 	// Leak tests
 		addTest(new TestSuite(InstructionPointerTests.class));
+		
+	// Variables View Detail Pane tests
+		addTest(new TestSuite(DetailPaneManagerTests.class));
 	}
 }
 

@@ -422,5 +422,20 @@
         </configurationType>
      </shortcut>
   </extension>   
+  <extension
+        point="org.eclipse.debug.ui.detailPaneFactories">
+     <detailFactories
+           class="org.eclipse.jdt.debug.testplugin.TestDetailPaneFactory"
+           id="testDetailPaneFactory">
+        <enablement>
+           <with
+                 variable="selection">
+              <count
+                    value="2">
+              </count>
+           </with>
+        </enablement>
+     </detailFactories>
+  </extension>   
 
 </plugin>
