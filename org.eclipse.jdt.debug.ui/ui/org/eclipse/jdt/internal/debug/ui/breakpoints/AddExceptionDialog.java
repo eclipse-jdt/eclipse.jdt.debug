@@ -225,9 +225,7 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 		 * @see org.eclipse.jdt.core.search.TypeNameMatchRequestor#acceptTypeNameMatch(org.eclipse.jdt.core.search.TypeNameMatch)
 		 */
 		public void acceptTypeNameMatch(TypeNameMatch match) {
-			if(fFilter.matchItem(match)) {
-				fContentProvider.add(match, fFilter);
-			}
+			fContentProvider.add(match, fFilter);
 		}
 	}
 	
@@ -342,9 +340,9 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 				TypeNameMatch tname = (TypeNameMatch) item;
 				IType type = tname.getType();
 				if(type != null) {
-					if(type.getElementName().indexOf("Exception") < 0) { //$NON-NLS-1$
-						return false;
-					}
+//					if(type.getElementName().indexOf("Exception") < 0) { //$NON-NLS-1$
+//						return false;
+//					}
 					return matches(type.getElementName());
 				}
 			}
@@ -474,8 +472,8 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 		}
 		progressMonitor.setTaskName("Searching for Exception types"); //$NON-NLS-1$
 		SearchEngine engine = new SearchEngine((WorkingCopyOwner) null);
-		engine.searchAllTypeNames((char[])null, SearchPattern.R_PATTERN_MATCH, "*Exception*".toCharArray(),  //$NON-NLS-1$
-				SearchPattern.R_PATTERN_MATCH, IJavaSearchConstants.CLASS, SearchEngine.createWorkspaceScope(), 
+		engine.searchAllTypeNames((char[])null, SearchPattern.R_EXACT_MATCH, (char[])null,
+				SearchPattern.R_EXACT_MATCH, IJavaSearchConstants.CLASS, SearchEngine.createWorkspaceScope(), 
 				new ExceptionTypeNameRequestor(contentProvider, itemsFilter), IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, progressMonitor);
 	}
 
