@@ -14,14 +14,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 
 /**
+ * Specialization of breakpoint change for method breakpoints
  * @since 3.2
- *
  */
 public abstract class MethodBreakpointChange extends LineBreakpointChange {
 	
 	private String fMethodName, fSignature;
 	private boolean fEntry, fExit, fNativeOnly;
 
+	/**
+	 * Constructor
+	 * @param breakpoint
+	 * @throws CoreException
+	 */
 	public MethodBreakpointChange(IJavaMethodBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);
 		fMethodName = breakpoint.getMethodName();
@@ -31,26 +36,51 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 		fNativeOnly = breakpoint.isNativeOnly();
 	}
 	
+	/**
+	 * Returns the name of the method
+	 * @return the name of the method
+	 */
 	protected String getMethodName() {
 		return fMethodName;
 	}
 	
+	/**
+	 * Returns the signature of the method
+	 * @return the signature of the method
+	 */
 	protected String getSignature() {
 		return fSignature;
 	}
 	
+	/**
+	 * Returns if it is an entry breakpoint
+	 * @return if it is an entry breakpoint
+	 */
 	protected boolean isEntry() {
 		return fEntry;
 	}
 	
+	/**
+	 * Returns if it is an exit breakpoint
+	 * @return if it is an exit breakpoint
+	 */
 	protected boolean isExit() {
 		return fExit;
 	}
 	
+	/**
+	 * Returns if it is native only
+	 * @return if it is native only
+	 */
 	protected boolean isNativeOnly() {
 		return fNativeOnly;
 	}
 
+	/**
+	 * Applies the old settings to the new breakpoint
+	 * @param breakpoint
+	 * @throws CoreException
+	 */
 	protected void apply(IJavaMethodBreakpoint breakpoint) throws CoreException {
 		super.apply(breakpoint);
 		breakpoint.setEntry(fEntry);

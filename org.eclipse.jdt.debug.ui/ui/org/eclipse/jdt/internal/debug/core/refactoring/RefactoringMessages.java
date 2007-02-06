@@ -24,6 +24,10 @@ public class RefactoringMessages extends NLS {
 	public static String LaunchConfigurationProjectMainTypeChange_6;
 	public static String LaunchConfigurationProjectMainTypeChange_7;
 
+	public static String LineBreakpointTypeChange_1;
+
+	public static String MethodBreakpointTypeChange_1;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringMessages.class);
