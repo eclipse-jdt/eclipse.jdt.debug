@@ -185,7 +185,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	/**
 	 * Disables event request.
 	 */
-	public void disable() {
+	public synchronized void disable() {
 		if (!isEnabled())
 			return;
 		
@@ -215,7 +215,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	/**
 	 * Enables event request.
 	 */
-	public void enable() {
+	public synchronized void enable() {
 		if (isEnabled())
 			return;
 
@@ -256,7 +256,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	/**
 	 * @return Returns whether event request is enabled.
 	 */
-	public final boolean isEnabled() {
+	public synchronized final boolean isEnabled() {
 		return fRequestID != null;
 	}
 
