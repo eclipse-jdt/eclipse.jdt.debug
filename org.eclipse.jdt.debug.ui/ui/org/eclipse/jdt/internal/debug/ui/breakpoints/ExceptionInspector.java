@@ -39,10 +39,18 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
+/**
+ * This class is used to show the inspect popup when a thread is suspended due to an exception being thrown
+ */
 public class ExceptionInspector implements IDebugContextListener, IPropertyChangeListener {
 	
+	/**
+	 * Constructor
+	 */
 	public ExceptionInspector() {
 		Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
 		pluginPreferences.addPropertyChangeListener(this);
@@ -51,12 +59,17 @@ public class ExceptionInspector implements IDebugContextListener, IPropertyChang
 		}
 	}
 
+	/**
+	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
+	 */
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			IWorkbenchPart part = event.getDebugContextProvider().getPart();
 			if (part != null) {
-				if (IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {
-					if (part.getSite().getWorkbenchWindow().getActivePage().isPartVisible(part)) {
+				IWorkbenchPartSite site = part.getSite();
+				if (site != null && IDebugUIConstants.ID_DEBUG_VIEW.equals(site.getId())) {
+					IWorkbenchPage page = site.getWorkbenchWindow().getActivePage(); 
+					if (page != null && page.isPartVisible(part)) {
 						ISelection selection = event.getContext();
 						if (selection instanceof IStructuredSelection) {
 							IStructuredSelection ss = (IStructuredSelection) selection;
@@ -100,8 +113,7 @@ public class ExceptionInspector implements IDebugContextListener, IPropertyChang
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {
-	}
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
