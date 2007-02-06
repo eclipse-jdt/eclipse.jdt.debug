@@ -10,55 +10,23 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.DebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * Dummy element for display when a VM doesn't support monitor information
  */
-public class NoMonitorInformationElement implements IDebugElement {
-    
-    private IDebugTarget fTarget;
+public class NoMonitorInformationElement extends DebugElement {
 
     public NoMonitorInformationElement(IDebugTarget target) {
-        fTarget= target;
+    	super(target);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
      */
     public String getModelIdentifier() {
-        return fTarget.getModelIdentifier();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-     */
-    public IDebugTarget getDebugTarget() {
-        return fTarget;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-     */
-    public ILaunch getLaunch() {
-        return fTarget.getLaunch();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
-    public Object getAdapter(Class adapter) {
-    	if(adapter == IDebugTarget.class) {
-    		return getDebugTarget();
-    	}
-    	//CONTEXTLAUNCHING
-    	if(adapter.equals(ILaunchConfiguration.class)) {
-			return getLaunch().getLaunchConfiguration();
-		}
-        return null;
+        return getDebugTarget().getModelIdentifier();
     }
 
 }
