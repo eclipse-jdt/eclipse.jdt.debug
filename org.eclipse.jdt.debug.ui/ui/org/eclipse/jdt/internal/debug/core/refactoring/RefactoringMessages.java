@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public class RefactoringMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.core.refactoring.RefactoringMessages";//$NON-NLS-1$
 
+	public static String ClassPrepareBreakpointTypeChange_1;
+
 	public static String LaunchConfigurationProjectMainTypeChange_0;
 	public static String LaunchConfigurationProjectMainTypeChange_1;
 	public static String LaunchConfigurationProjectMainTypeChange_2;
@@ -26,7 +28,11 @@ public class RefactoringMessages extends NLS {
 
 	public static String LineBreakpointTypeChange_1;
 
+	public static String MethodBreakpointMethodChange_1;
+
 	public static String MethodBreakpointTypeChange_1;
+
+	public static String WatchpointFieldChange_1;
 
 	static {
 		// load message values from bundle file
@@ -45,4 +51,6 @@ public class RefactoringMessages extends NLS {
 	public static String DeleteBreakpointChange_0;
 
 	public static String LaunchConfigurationParticipant_0;
+
+	public static String WatchpointTypeChange_1;
 }

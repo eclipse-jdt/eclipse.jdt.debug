@@ -22,6 +22,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @since 3.2
  *
@@ -38,7 +40,13 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.MethodBreakpointMethodChange_0;
+		try {
+			IJavaMethodBreakpoint bp = (IJavaMethodBreakpoint) getOriginalBreakpoint();
+			return MessageFormat.format(RefactoringMessages.MethodBreakpointMethodChange_1, new String[] {bp.getTypeName(), bp.getMethodSignature()});
+		}
+		catch(CoreException ce) {
+			return RefactoringMessages.MethodBreakpointMethodChange_0;
+		}
 	}
 
 	/* (non-Javadoc)

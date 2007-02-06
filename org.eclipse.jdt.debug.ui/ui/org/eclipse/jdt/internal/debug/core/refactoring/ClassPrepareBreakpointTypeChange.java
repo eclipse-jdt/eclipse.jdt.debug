@@ -23,6 +23,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @since 3.2
  *
@@ -40,7 +42,13 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.ClassPrepareBreakpointTypeChange_0;
+		try {
+			IJavaClassPrepareBreakpoint bp = (IJavaClassPrepareBreakpoint) getOriginalBreakpoint();
+			return MessageFormat.format(RefactoringMessages.ClassPrepareBreakpointTypeChange_1, new String[] {bp.getTypeName()});
+		}
+		catch (CoreException ce) {
+			return RefactoringMessages.ClassPrepareBreakpointTypeChange_0;
+		}
 	}
 
 	/* (non-Javadoc)

@@ -23,6 +23,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @since 3.2
  *
@@ -41,7 +43,13 @@ public class WatchpointTypeChange extends WatchpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.WatchpointTypeChange_0;
+		try {
+			IJavaWatchpoint wp = (IJavaWatchpoint) getOriginalBreakpoint();
+			return MessageFormat.format(RefactoringMessages.WatchpointTypeChange_1, new String[] {wp.getTypeName(), wp.getFieldName()});
+		}
+		catch (CoreException ce) {
+			return RefactoringMessages.WatchpointTypeChange_0;
+		}
 	}
 
 	/* (non-Javadoc)
