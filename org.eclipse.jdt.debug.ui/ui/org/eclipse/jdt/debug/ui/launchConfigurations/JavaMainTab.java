@@ -154,8 +154,8 @@ public class JavaMainTab extends SharedJavaMainTab {
 			elements = new IJavaElement[]{};
 		}
 		int constraints = IJavaSearchScope.SOURCES;
-		constraints |= IJavaSearchScope.APPLICATION_LIBRARIES;
 		if (fSearchExternalJarsCheckButton.getSelection()) {
+			constraints |= IJavaSearchScope.APPLICATION_LIBRARIES;
 			constraints |= IJavaSearchScope.SYSTEM_LIBRARIES;
 		}
 		IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, constraints);

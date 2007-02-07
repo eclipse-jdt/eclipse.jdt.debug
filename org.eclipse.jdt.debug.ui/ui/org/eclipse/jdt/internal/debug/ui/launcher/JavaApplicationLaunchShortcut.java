@@ -92,9 +92,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		try {
 			IJavaElement[] javaElements = getJavaElements(elements);
 			MainMethodSearchEngine engine = new MainMethodSearchEngine();
-			int constraints = IJavaSearchScope.SOURCES;
-			constraints |= IJavaSearchScope.APPLICATION_LIBRARIES;
-			IJavaSearchScope scope = SearchEngine.createJavaSearchScope(javaElements, constraints);
+			IJavaSearchScope scope = SearchEngine.createJavaSearchScope(javaElements, false);
 			return engine.searchMainMethods(context, scope, true);
 		} catch (InvocationTargetException e) {
 			throw (CoreException)e.getTargetException(); 
