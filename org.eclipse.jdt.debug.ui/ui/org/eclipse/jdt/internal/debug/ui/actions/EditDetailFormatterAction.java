@@ -31,35 +31,34 @@ public class EditDetailFormatterAction extends ObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IStructuredSelection selection= getCurrentSelection();
-		if (selection.size() != 1) {
-			return;
-		}
-		Object element= selection.getFirstElement();
-		IJavaType type;
-		try {
-			IJavaValue value;
-			if (element instanceof IJavaVariable) {
-				value = ((IJavaValue)((IJavaVariable) element).getValue());
-			} else if (element instanceof JavaInspectExpression) {
-				value = ((IJavaValue)((JavaInspectExpression) element).getValue());
-			} else {
+		IStructuredSelection selection = getCurrentSelection();
+		if(selection != null && selection.size() == 1) {
+			Object element = selection.getFirstElement();
+			IJavaType type;
+			try {
+				IJavaValue value;
+				if (element instanceof IJavaVariable) {
+					value = ((IJavaValue)((IJavaVariable) element).getValue());
+				} else if (element instanceof JavaInspectExpression) {
+					value = ((IJavaValue)((JavaInspectExpression) element).getValue());
+				} else {
+					return;
+				}
+				type= value.getJavaType();
+			} catch (DebugException e) {
 				return;
 			}
-			type= value.getJavaType();
-		} catch (DebugException e) {
-			return;
-		}
-		JavaDetailFormattersManager fm = JavaDetailFormattersManager.getDefault();
-		DetailFormatter formatter = fm.getAssociatedDetailFormatter(type);
-		if(formatter == null & type instanceof IJavaClassType) {
-			formatter = fm.getDetailFormatterFromInterface((IJavaClassType) type);
-			if(formatter == null) {
-				formatter = fm.getDetailFormatterFromSuperclass((IJavaClassType) type);
+			JavaDetailFormattersManager fm = JavaDetailFormattersManager.getDefault();
+			DetailFormatter formatter = fm.getAssociatedDetailFormatter(type);
+			if(formatter == null & type instanceof IJavaClassType) {
+				formatter = fm.getDetailFormatterFromInterface((IJavaClassType) type);
+				if(formatter == null) {
+					formatter = fm.getDetailFormatterFromSuperclass((IJavaClassType) type);
+				}
 			}
-		}
-		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), formatter, null, false, true).open() == Window.OK) {
-			fm.setAssociatedDetailFormatter(formatter);
+			if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), formatter, null, false, true).open() == Window.OK) {
+				fm.setAssociatedDetailFormatter(formatter);
+			}
 		}
 	}
 

@@ -47,8 +47,12 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 	public void selectionChanged(IAction action, ISelection sel) {
 	}
 	
+	/**
+	 * Returns the currently selected item(s) form the current workbench page
+	 * @return the currently selected item(s)
+	 */
 	protected IStructuredSelection getCurrentSelection() {
-		IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
+		IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 		if (page != null) {
 			ISelection selection= page.getSelection();
 			if (selection instanceof IStructuredSelection) {
