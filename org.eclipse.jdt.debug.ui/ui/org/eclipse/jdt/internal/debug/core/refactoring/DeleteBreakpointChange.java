@@ -16,6 +16,8 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * A change to delete a breakpoint. Currently used for undo.
  * When undoing a refactoring, the "target/original" resource does
@@ -35,7 +37,8 @@ public class DeleteBreakpointChange extends BreakpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.DeleteBreakpointChange_0;
+		return MessageFormat.format(RefactoringMessages.DeleteBreakpointChange_0,
+				new String[] {getBreakpointLabel(getOriginalBreakpoint())});
 	}
 
 	/* (non-Javadoc)

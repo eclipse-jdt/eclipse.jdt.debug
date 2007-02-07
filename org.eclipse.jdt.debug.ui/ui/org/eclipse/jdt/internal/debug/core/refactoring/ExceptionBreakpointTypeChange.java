@@ -22,6 +22,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @since 3.2
  *
@@ -39,7 +41,8 @@ public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return RefactoringMessages.ExceptionBreakpointTypeChange_0;
+		return MessageFormat.format(RefactoringMessages.ExceptionBreakpointTypeChange_0,
+				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
 	}
 
 	/* (non-Javadoc)

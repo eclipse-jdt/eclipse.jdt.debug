@@ -41,13 +41,8 @@ public class LineBreakpointTypeChange extends LineBreakpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		try {
-			IJavaLineBreakpoint bp = (IJavaLineBreakpoint) getOriginalBreakpoint();
-			return MessageFormat.format(RefactoringMessages.LineBreakpointTypeChange_0, new String[] {bp.getTypeName(), Integer.toString(bp.getLineNumber())});
-		}
-		catch (CoreException ce) {
-			return RefactoringMessages.LineBreakpointTypeChange_1;
-		}
+		return MessageFormat.format(RefactoringMessages.LineBreakpointTypeChange_0,
+				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
 	}
 
 	/* (non-Javadoc)

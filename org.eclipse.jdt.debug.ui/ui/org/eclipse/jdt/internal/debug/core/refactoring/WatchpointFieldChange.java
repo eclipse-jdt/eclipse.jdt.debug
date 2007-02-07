@@ -41,13 +41,8 @@ public class WatchpointFieldChange extends WatchpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		try {
-			IJavaWatchpoint wp = (IJavaWatchpoint) getOriginalBreakpoint();
-			return MessageFormat.format(RefactoringMessages.WatchpointFieldChange_1, new String[] {wp.getFieldName()});
-		}
-		catch(CoreException ce) {
-			return RefactoringMessages.WatchpointFieldChange_0;
-		}
+		return MessageFormat.format(RefactoringMessages.WatchpointFieldChange_0,
+				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestField.getElementName()});
 	}
 
 	/* (non-Javadoc)

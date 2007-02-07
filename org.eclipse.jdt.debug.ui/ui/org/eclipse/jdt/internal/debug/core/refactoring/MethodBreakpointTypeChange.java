@@ -42,13 +42,8 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		try {
-			IJavaMethodBreakpoint bp = (IJavaMethodBreakpoint) getOriginalBreakpoint();
-			return MessageFormat.format(RefactoringMessages.MethodBreakpointTypeChange_0, new String[] {bp.getTypeName(), bp.getMethodName()});
-		}
-		catch (CoreException ce) {
-			return RefactoringMessages.MethodBreakpointTypeChange_1;
-		}
+		return MessageFormat.format(RefactoringMessages.MethodBreakpointTypeChange_0,
+				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
 	}
 
 	/* (non-Javadoc)

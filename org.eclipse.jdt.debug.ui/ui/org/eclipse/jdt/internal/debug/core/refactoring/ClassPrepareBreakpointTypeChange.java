@@ -42,13 +42,8 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		try {
-			IJavaClassPrepareBreakpoint bp = (IJavaClassPrepareBreakpoint) getOriginalBreakpoint();
-			return MessageFormat.format(RefactoringMessages.ClassPrepareBreakpointTypeChange_1, new String[] {bp.getTypeName()});
-		}
-		catch (CoreException ce) {
-			return RefactoringMessages.ClassPrepareBreakpointTypeChange_0;
-		}
+		return MessageFormat.format(RefactoringMessages.ClassPrepareBreakpointTypeChange_0,
+				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
 	}
 
 	/* (non-Javadoc)

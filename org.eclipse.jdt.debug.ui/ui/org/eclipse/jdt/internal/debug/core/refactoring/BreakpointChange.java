@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IImportContainer;
 import org.eclipse.jdt.core.IJavaElement;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -254,5 +256,15 @@ public abstract class BreakpointChange extends Change {
 			element = element.getParent();
 		}
 		return children;
+	}
+	
+	/**
+	 * Returns a label for the given breakpoint generated from the JDI model presentation.
+	 * 
+	 * @param breakpoint a breakpoint
+	 * @return standard label for the breakpoint
+	 */
+	protected String getBreakpointLabel(IBreakpoint breakpoint) {
+		return JDIDebugUIPlugin.getDefault().getModelPresentation().getText(breakpoint);
 	}
 }
