@@ -191,7 +191,7 @@ public class AppletLaunchConfigurationUtils {
 		if (element instanceof IResource) {
 			IJavaElement javaElement = JavaCore.create((IResource)element);
 			if (javaElement != null && !javaElement.exists()) {
-				// do not consider the resouce - corresponding java element does not exist
+				// do not consider the resource - corresponding java element does not exist
 				element = null;
 			} else {
 			    element= javaElement;
@@ -201,6 +201,14 @@ public class AppletLaunchConfigurationUtils {
 		return element;
 	}
 
+	/**
+	 * Searches for applets from within the given scope of elements
+	 * @param context
+	 * @param elements the search scope
+	 * @return and array of <code>IType</code>s of matches for java types that extend <code>Applet</code> (directly or indirectly)
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
+	 */
 	public static IType[] findApplets(IRunnableContext context, final Object[] elements) throws InvocationTargetException, InterruptedException {
 		final Set result= new HashSet();
 	

@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
@@ -46,12 +47,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * 
  * EXPERIMENTAL
  */
-public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
+public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	
 	/**
 	 * Main list label provider
 	 */
-	public class MainMethodLabelProvider implements ILabelProvider {
+	public class DebugTypeLabelProvider implements ILabelProvider {
 		HashMap fImageMap = new HashMap();
 
 		public Image getImage(Object element) {
@@ -102,7 +103,7 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 		
 		/**
-		 * Returns the norrowest enclosing <code>IJavaElement</code> which is either 
+		 * Returns the narrowest enclosing <code>IJavaElement</code> which is either 
 		 * an <code>IType</code> (enclosing) or an <code>IPackageFragment</code> (contained in)
 		 * @param type the type to find the enclosing <code>IJavaElement</code> for.
 		 * @return the enclosing element or <code>null</code> if none
@@ -127,7 +128,7 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * Provides a label and image for the details area of the dialog
 	 */
-	class MainMethodDetailsLabelProvider extends MainMethodLabelProvider {
+	class DebugTypeDetailsLabelProvider extends DebugTypeLabelProvider {
 		public String getText(Object element) {
 			if(element instanceof IType) {
 				IType type = (IType) element;
@@ -160,7 +161,7 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * Simple items filter
 	 */
-	class MainMethodItemsFilter extends ItemsFilter {
+	class DebugTypeItemsFilter extends ItemsFilter {
 		public boolean isConsistentItem(Object item) {
 			return item instanceof IType;
 		}
@@ -175,7 +176,7 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * The selection history for the dialog
 	 */
-	class MainMethodSelectionHistory extends SelectionHistory {
+	class DebugTypeSelectionHistory extends SelectionHistory {
 		protected Object restoreItemFromMemento(IMemento memento) {
 			IJavaElement element = JavaCore.create(memento.getTextData()); 
 			return (element instanceof IType ? element : null);
@@ -194,15 +195,15 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 	 * Constructor
 	 * @param elements the types to display in the dialog
 	 */
-	public MainMethodSelectionDialog(Object[] elements, String title) {
-		super(JDIDebugUIPlugin.getShell(), false);
+	public DebugTypeSelectionDialog(Shell shell, Object[] elements, String title) {
+		super(shell, false);
 		setTitle(title);
 		fTypes = elements;
 		setMessage(LauncherMessages.JavaMainTab_Choose_a_main__type_to_launch__12);
 		setInitialPattern("**"); //$NON-NLS-1$
-		setListLabelProvider(new MainMethodLabelProvider());
-		setDetailsLabelProvider(new MainMethodDetailsLabelProvider());
-		setSelectionHistory(new MainMethodSelectionHistory());
+		setListLabelProvider(new DebugTypeLabelProvider());
+		setDetailsLabelProvider(new DebugTypeDetailsLabelProvider());
+		setSelectionHistory(new DebugTypeSelectionHistory());
 	}
 
 	/* (non-Javadoc)
@@ -259,7 +260,7 @@ public class MainMethodSelectionDialog extends FilteredItemsSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
 	 */
 	protected ItemsFilter createFilter() {
-		return new MainMethodItemsFilter();
+		return new DebugTypeItemsFilter();
 	}
 
 	/**

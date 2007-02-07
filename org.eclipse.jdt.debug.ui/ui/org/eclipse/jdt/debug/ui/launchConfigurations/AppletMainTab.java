@@ -21,17 +21,16 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletLaunchConfigurationUtils;
+import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
@@ -46,13 +45,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This tab appears for Java applet launch configurations and allows the user to edit
  * attributes such as the applet class to launch and its owning project, if any.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed.
+ * This class may be instantiated. This class is not intended to be sub-classed.
  * </p>
  * @since 2.1
  */
@@ -151,27 +149,12 @@ public class AppletMainTab extends SharedJavaMainTab {
 			setErrorMessage(e.getTargetException().getMessage());
 			return;
 		}
-		SelectionDialog dialog = null;
-		try {
-			dialog = JavaUI.createTypeDialog(
-					getShell(),
-					getLaunchConfigurationDialog(),
-					SearchEngine.createJavaSearchScope(types),
-					IJavaElementSearchConstants.CONSIDER_CLASSES, 
-					false,
-					"**"); //$NON-NLS-1$
-		}
-		catch (JavaModelException e) {
-			setErrorMessage(e.getMessage());
-			return;
-		}
-		dialog.setTitle(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_title); 
- 		dialog.setMessage(LauncherMessages.appletlauncher_maintab_selection_applet_dialog_message); 
+		DebugTypeSelectionDialog dialog = new DebugTypeSelectionDialog(getShell(), types, LauncherMessages.appletlauncher_maintab_selection_applet_dialog_title); 
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-		Object[] results= dialog.getResult();	
-		IType type= (IType)results[0];
+		Object[] results = dialog.getResult();	
+		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
 			fProjText.setText(type.getJavaProject().getElementName());
@@ -267,13 +250,6 @@ public class AppletMainTab extends SharedJavaMainTab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText());
 		mapResources(config);
-		performApplyAppletViewerClassName(config);		
-	}
-	
-	/**
-	 * Set the current applet viewer class name on the specified working copy.
-	 */
-	private void performApplyAppletViewerClassName(ILaunchConfigurationWorkingCopy config) {
 		String appletViewerClassName= null;
 		if (!isDefaultAppletViewerClassName()) {
 			appletViewerClassName= fAppletViewerClassText.getText().trim();
@@ -283,7 +259,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, appletViewerClassName);
 	}
-	
+
 	/**
 	 * Set the appropriate enabled state for the applet viewer text widget.
 	 */
@@ -336,6 +312,6 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 * @since 3.3
 	 */
 	public String getId() {
-		return "org.eclipse.jdt.debug.ui.sourceLookupTab"; //$NON-NLS-1$
+		return "org.eclipse.jdt.debug.ui.appletMainTab"; //$NON-NLS-1$
 	}
 }

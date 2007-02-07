@@ -16,6 +16,10 @@ import org.eclipse.osgi.util.NLS;
 public class LauncherMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages";//$NON-NLS-1$
 
+	public static String AppletMainTab_0;
+
+	public static String AppletMainTab_4;
+
 	public static String JavaArgumentsTab_5;
 	public static String JavaArgumentsTab__Arguments_16;
 	public static String JavaArgumentsTab__Program_arguments__5;

@@ -79,9 +79,9 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	 * Finds and returns the launchable types in the given selection of elements.
 	 * 
 	 * @param elements scope to search for launchable types
-	 * @param context progess reporting context
+	 * @param context progress reporting context
 	 * @return launchable types, possibly empty
-	 * @exception InterruptedException if the search is cancelled
+	 * @exception InterruptedException if the search is canceled
 	 * @exception org.eclipse.core.runtime.CoreException if the search fails
 	 */
 	protected abstract IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException;
@@ -95,7 +95,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	 * @return the selected type or <code>null</code> if none.
 	 */
 	protected IType chooseType(IType[] types, String title) {
-		MainMethodSelectionDialog mmsd = new MainMethodSelectionDialog(types, title);
+		DebugTypeSelectionDialog mmsd = new DebugTypeSelectionDialog(JDIDebugUIPlugin.getShell(), types, title);
 		if (mmsd.open() == Window.OK) {
 			return (IType)mmsd.getResult()[0];
 		}
@@ -122,7 +122,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.
 	 * 
-	 * @return a re-useable config or <code>null</code> if none
+	 * @return a re-usable config or <code>null</code> if none
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(IType type, ILaunchConfigurationType configType) {
 		List candidateConfigs = Collections.EMPTY_LIST;
@@ -152,8 +152,8 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 			return (ILaunchConfiguration) candidateConfigs.get(0);
 		} else {
 			// Prompt the user to choose a config.  A null result means the user
-			// cancelled the dialog, in which case this method returns null,
-			// since cancelling the dialog should also cancel launching anything.
+			// canceled the dialog, in which case this method returns null,
+			// since canceling the dialog should also cancel launching anything.
 			ILaunchConfiguration config = chooseConfiguration(candidateConfigs);
 			if (config != null) {
 				return config;
@@ -166,7 +166,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Show a selection dialog that allows the user to choose one of the specified
 	 * launch configurations.  Return the chosen config, or <code>null</code> if the
-	 * user cancelled the dialog.
+	 * user canceled the dialog.
 	 */
 	protected ILaunchConfiguration chooseConfiguration(List configList) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();

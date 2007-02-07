@@ -32,9 +32,9 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
-import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.ISharedImages;
@@ -172,7 +172,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 			setErrorMessage(e.getMessage());
 			return;
 		}
-		MainMethodSelectionDialog mmsd = new MainMethodSelectionDialog(types, LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
+		DebugTypeSelectionDialog mmsd = new DebugTypeSelectionDialog(getShell(), types, LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
 		if (mmsd.open() == Window.CANCEL) {
 			return;
 		}
