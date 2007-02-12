@@ -172,7 +172,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	/**
 	 * Returns if the specified <code>IType</code> has a main method
 	 * @param type the type to inspect for a main type
-	 * @return true if the sepcified type has a main method, false otherwise
+	 * @return true if the specified type has a main method, false otherwise
 	 * @throws JavaModelException
 	 * @since 3.3
 	 */

@@ -23,9 +23,12 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -88,8 +91,17 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
 	}
 
+	/**
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
+	 */
 	protected IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException {
 		try {
+			if(elements.length == 1) {
+				IType type = isMainMethod(elements[0]);
+				if(type != null) {
+					return new IType[] {type};
+				}
+			}
 			IJavaElement[] javaElements = getJavaElements(elements);
 			MainMethodSearchEngine engine = new MainMethodSearchEngine();
 			int constraints = IJavaSearchScope.SOURCES;
@@ -100,7 +112,30 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			throw (CoreException)e.getTargetException(); 
 		}
 	}
-
+	
+	/**
+	 * Returns the smallest enclosing <code>IType</code> if the specified object is a main method, or <code>null</code>
+	 * @param o the object to inspect
+	 * @return the smallest enclosing <code>IType</code> of the specified object if it is a main method or <code>null</code> if it is not
+	 * @since 3.3
+	 */
+	protected IType isMainMethod(Object o) {
+		if(o instanceof IAdaptable) {
+			IAdaptable adapt = (IAdaptable) o;
+			IJavaElement element = (IJavaElement) adapt.getAdapter(IJavaElement.class);
+			if(element != null && element.getElementType() == IJavaElement.METHOD) {
+				try {
+					IMethod method = (IMethod) element;
+					if(method.isMainMethod()) {
+						return method.getDeclaringType();
+					}
+				}
+				catch (JavaModelException jme) {JDIDebugUIPlugin.log(jme);}
+			}
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#getTypeSelectionTitle()
 	 */
