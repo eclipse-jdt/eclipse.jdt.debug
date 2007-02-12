@@ -80,14 +80,22 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
                 if (element instanceof IJavaVariable) {
                     IJavaVariable var = (IJavaVariable) element;
                     if (isBoolean(var)) {
-                        switch (((Integer) value).intValue()) {
-                        case 0:
-                            super.modify(element, property, Boolean.toString(true));
-                            return;
-                        case 1:
-                            super.modify(element, property, Boolean.toString(false));
-                            return;
-                        }
+                    	if (value instanceof Integer) {
+	                        switch (((Integer) value).intValue()) {
+	                        case 0:
+	                            super.modify(element, property, Boolean.toString(true));
+	                            return;
+	                        case 1:
+	                            super.modify(element, property, Boolean.toString(false));
+	                            return;
+	                        default:
+	                        	// invalid value
+	                        	return;
+	                        }
+                    	} else {
+                    		// invalid value
+                    		return;
+                    	}
                     }
                 }
             }
