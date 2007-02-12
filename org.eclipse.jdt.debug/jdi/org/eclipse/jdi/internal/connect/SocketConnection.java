@@ -102,10 +102,10 @@ public class SocketConnection extends Connection {
 
         OutputStream stream = null;
         synchronized(this) {
+        	if (!isOpen()) {
+        		throw new ClosedConnectionException();
+        	}
             stream = fTransport.getOutputStream();
-            if (stream == null) {
-                throw new ClosedConnectionException();
-            }
         }
         
         synchronized (stream) {
