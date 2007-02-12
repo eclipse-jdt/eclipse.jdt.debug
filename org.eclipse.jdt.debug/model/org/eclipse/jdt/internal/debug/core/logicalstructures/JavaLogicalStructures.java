@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILogicalStructureProvider;
 import org.eclipse.debug.core.ILogicalStructureType;
@@ -69,6 +71,27 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	private static final String PREF_JAVA_LOGICAL_STRUCTURES= JDIDebugModel.getPluginIdentifier() + ".PREF_JAVA_LOGICAL_STRUCTURES"; //$NON-NLS-1$
 	
 	/**
+	 * Updates user defined logical structures if the preference changes
+	 */
+	static class PreferenceListener implements IPropertyChangeListener {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			if (PREF_JAVA_LOGICAL_STRUCTURES.equals(event.getProperty())) {
+				initUserDefinedJavaLogicalStructures();
+		        initJavaLogicalStructureMap();
+		        Iterator iter = fListeners.iterator();
+		        while (iter.hasNext()) {
+		            ((IJavaStructuresListener) iter.next()).logicalStructuresChanged();
+		        }
+			}
+		}
+		
+	}
+	
+	/**
 	 * Get the logical structure from the extension point and the preference store,
 	 * and initialize the map.
 	 */
@@ -76,6 +99,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		initPluginContributedJavaLogicalStructure();
 		initUserDefinedJavaLogicalStructures();
 		initJavaLogicalStructureMap();
+		JDIDebugPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(new PreferenceListener());
 	}
     
     private static void initJavaLogicalStructureMap() {
@@ -181,12 +205,6 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 			}
 		}
 		JDIDebugModel.getPreferences().setValue(PREF_JAVA_LOGICAL_STRUCTURES, logicalStructuresString.toString());
-
-        initJavaLogicalStructureMap();
-        Iterator iter = fListeners.iterator();
-        while (iter.hasNext()) {
-            ((IJavaStructuresListener) iter.next()).logicalStructuresChanged();
-        }
 	}
 
 	/**
