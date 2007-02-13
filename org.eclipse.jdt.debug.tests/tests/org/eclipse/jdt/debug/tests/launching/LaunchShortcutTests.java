@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.launching;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Tests the capabilities of launch shortcuts from the <code>LaunchShortcuts</code> extension point
@@ -95,34 +96,28 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	 * For this test there should be a minimum of two shortcuts found.
 	 */
 	public void testGetApplicableLaunchShortcuts() {
-		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
-		assertNotNull("launch configuration manager cannot be null", lcm);
-		assertTrue("there should be 2 or more shortcuts", lcm.getApplicableLaunchShortcuts("org.eclipse.jdt.launching.localJavaApplication").size() >= 2);
+		assertTrue("there should be 2 or more shortcuts", getApplicableLaunchShortcuts("org.eclipse.jdt.launching.localJavaApplication").size() >= 2);
 	}
 	
 	/**
-	 * test that a default launch shortcut can be set, persisted and retrieved
+	 * Returns a listing of all applicable <code>LaunchShortcutExtension</code>s for the given
+	 * launch configuration type id.
+	 * @param typeid the id of the launch configuration
+	 * @return a listing of <code>LaunchShortcutExtension</code>s that are associated with the specified launch configuration
+	 * type id or an empty list, never <code>null</code>
+	 * 
+	 * @since 3.3
 	 */
-	public void testSetDefaultLaunchShortcut() {
-		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
-		assertNotNull("the launch configuration manager should not be null", lcm);
-		LaunchShortcutExtension ext = getJavaApplicationLaunchShortcut();
-		assertNotNull("the java launch shortcut should not be null", ext);
-		IJavaProject jproject = getJavaProject();
-		assertNotNull("the java project should not be null", jproject);
-		IProject project = jproject.getProject();
-		assertNotNull("the project should not be null", project);
-		try {
-			assertNull("there should be no default launch shortcut for the test project", lcm.getDefaultLaunchShortcut(project));
-			lcm.setDefaultLaunchShortcut(project, ext);
-			ext = lcm.getDefaultLaunchShortcut(project);
-			assertNotNull("the default launch shortcut should be the java app shortcut", ext);
-			lcm.setDefaultLaunchShortcut(project, null);
-			ext = lcm.getDefaultLaunchShortcut(project);
-			assertNull("there should be no default launch shortcut for the test project", ext);
-		} 
-		catch (CoreException e) {
-			fail();
+	public List getApplicableLaunchShortcuts(String typeid) {
+		List list = new ArrayList();
+		LaunchShortcutExtension ext = null;
+		List shortcuts = getLaunchConfigurationManager().getLaunchShortcuts();
+		for(int i = 0; i < shortcuts.size(); i++) {
+			ext = (LaunchShortcutExtension) shortcuts.get(i);
+			if(ext.getAssociatedConfigurationTypes().contains(typeid) && !WorkbenchActivityHelper.filterItem(ext)) {
+				list.add(ext);
+			}
 		}
+		return list;
 	}
 }
