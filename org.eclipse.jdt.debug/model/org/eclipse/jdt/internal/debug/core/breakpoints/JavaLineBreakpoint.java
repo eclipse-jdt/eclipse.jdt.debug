@@ -106,12 +106,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	private Map fSuspendEvents= new HashMap();
 	/**
 	 * The map of cached compiled expressions (ICompiledExpression) for this breakpoint, keyed by thread.
-	 * This value must be cleared everytime the breakpoint is added to a target.
+	 * This value must be cleared every time the breakpoint is added to a target.
 	 */
 	private Map fCompiledExpressions= new HashMap();
 	
 	/**
-	 * Cache of projects for stack frames to avoid repetitive porject resolution on conditional 
+	 * Cache of projects for stack frames to avoid repetitive project resolution on conditional 
 	 * breakpoints.
 	 */
 	private Map fProjectsByFrame= new HashMap();
@@ -333,7 +333,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			// could be a nested type that is not yet loaded
 			return null;
 		} catch (RuntimeException e) {
-			// not able to retrieve line info
+			// not able to retrieve line information
 			target.internalError(e);
 			return null;
 		}
@@ -382,7 +382,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#handleBreakpointEvent(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, org.eclipse.jdt.internal.debug.core.model.JDIThread)
 	 * 
 	 * (From referenced JavaDoc:
-	 * 	Returns whethers the thread should be resumed
+	 * 	Returns whether the thread should be resumed
 	 */
 	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
 		if (hasCondition()) {
@@ -421,7 +421,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * Suspends the given thread for the given breakpoint event after
 	 * a conditional expression evaluation. This method tells the thread
-	 * to fire a suspend event immediately instead of queueing the event.
+	 * to fire a suspend event immediately instead of queue'ing the event.
 	 * This is required because of the asynchronous nature of expression
 	 * evaluation. The EventDispatcher has already fired queued events
 	 * by the time the evaluation completes.

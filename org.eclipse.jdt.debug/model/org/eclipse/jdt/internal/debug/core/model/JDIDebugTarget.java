@@ -1041,8 +1041,34 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 	match.  May be <code>null</code>.
 	 * @param enabled whether to enable the event request
 	 * @exception CoreException if unable to create the request
+	 * @since 3.3
 	 */
 	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern, boolean enabled) throws CoreException {
+		return createClassPrepareRequest(classPattern, classExclusionPattern, enabled, null);
+	}
+	
+	/**
+	 * Creates, enables and returns a class prepare request for the
+	 * specified class name in this target. Can specify a class exclusion filter
+	 * as well.
+	 * This is a utility method used by event requesters that need to
+	 * create class prepare requests.
+	 * 
+	 * @param classPattern regular expression specifying the pattern of
+	 * 	class names that will cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match. May be <code>null</code> if sourceName is specified
+	 *  @param classExclusionPattern regular expression specifying the pattern of
+	 * 	class names that will not cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match.  May be <code>null</code>.
+	 * @param enabled whether to enable the event request
+	 * @param sourceName source name pattern to match or <code>null</code> if classPattern
+	 *  is specified
+	 * @exception CoreException if unable to create the request
+	 * @since 3.3
+	 */
+	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern, boolean enabled, String sourceName) throws CoreException {
 		EventRequestManager manager= getEventRequestManager();
 		if (!isAvailable() || manager == null) {
 			requestFailed(JDIDebugModelMessages.JDIDebugTarget_Unable_to_create_class_prepare_request___VM_disconnected__2, null); 
@@ -1050,11 +1076,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		ClassPrepareRequest req= null;
 		try {
 			req= manager.createClassPrepareRequest();
-			req.addClassFilter(classPattern);
+			if (classPattern != null) {
+				req.addClassFilter(classPattern);
+			}
 			if (classExclusionPattern != null) {
 				req.addClassExclusionFilter(classExclusionPattern);
 			}
 			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+			if (sourceName != null) {
+				req.addSourceNameFilter(sourceName);
+			}
 			if (enabled) {
 				req.enable();
 			}

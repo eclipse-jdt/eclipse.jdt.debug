@@ -439,11 +439,13 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 }
 
 	 /**
-	  * Helper method which allows us to add source name filters to a list to be sent all at once 
-	  * @param pattern the pattern for filtering to add to the existing list
+	  * Adds a source name filter to the request. An exact match or pattern beginning
+	  * OR ending in '*'.
+	  *  
+	  * @param pattern source name pattern
 	  * @since 3.3
 	  */
-	 public void addNewSourceNameFilter(String pattern) {
+	 public void addSourceNameFilter(String pattern) {
 		 checkDisabled();
 		 if(fSourceNameFilters == null) {
 			 fSourceNameFilters = new ArrayList();
@@ -533,7 +535,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		if (fInstanceFilters != null)
 			count += fInstanceFilters.size();
 		if(fSourceNameFilters != null) {
-			count += fSourceNameFilters.size();
+			if (supportsSourceNameFilters()) {
+				count += fSourceNameFilters.size();
+			}
 		}
 		return count;
 	}
@@ -615,11 +619,22 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			}
 		}
 		if(fSourceNameFilters != null) {
-			for (int i = 0; i < fSourceNameFilters.size(); i++) {
-				writeByte(MODIF_KIND_SOURCE_NAME_FILTER, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
-				writeString((String)fSourceNameFilters.get(i), "modifier", outData); //$NON-NLS-1$
+			if (supportsSourceNameFilters()) {
+				for (int i = 0; i < fSourceNameFilters.size(); i++) {
+					writeByte(MODIF_KIND_SOURCE_NAME_FILTER, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
+					writeString((String)fSourceNameFilters.get(i), "modifier", outData); //$NON-NLS-1$
+				}
 			}
 		}
+	}
+
+	/**
+	 * Returns whether JDWP supports source name filters (a 1.6 feature).
+	 * 
+	 * @return whether JDWP supports source name filters
+	 */
+	private boolean supportsSourceNameFilters() {
+		return ((VirtualMachineImpl)virtualMachine()).isJdwpVersionGreaterOrEqual(1, 6);
 	}
 
 	/**

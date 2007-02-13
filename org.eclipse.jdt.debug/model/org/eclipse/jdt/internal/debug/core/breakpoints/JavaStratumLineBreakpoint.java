@@ -336,12 +336,13 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			return;
 		}
 		
+		String sourceName = getSourceName();
 		for (int i=0; i<patterns.length; i++)
 		{
 			String classPrepareTypeName= patterns[i];
 			// create request to listen to class loads
 			//name may only be partially resolved
-			registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);
+			registerRequest(target.createClassPrepareRequest(classPrepareTypeName, null, true, sourceName), target);
 		}
 		
 		// create breakpoint requests for each class currently loaded
