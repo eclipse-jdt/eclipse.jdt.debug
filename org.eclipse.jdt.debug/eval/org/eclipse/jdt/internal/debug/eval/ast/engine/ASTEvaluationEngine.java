@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventFilter;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -68,6 +70,29 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 */
 	private static Pattern fgThisPattern = Pattern.compile("(.*[^a-zA-Z0-9]+|^)(this)([^a-zA-Z0-9]+|$).*"); //$NON-NLS-1$
 	
+	/**
+	 * Filters variable change events during an evaluation to avoid refreshing the variables
+	 * view until done.
+	 */
+	class EventFilter implements IDebugEventFilter {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent[])
+		 */
+		public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
+			if (events.length == 1) {
+				DebugEvent event = events[0];
+				if (event.getSource() instanceof IJavaVariable && event.getKind() == DebugEvent.CHANGE) {
+					if (((IJavaVariable)event.getSource()).getDebugTarget().equals(getDebugTarget())) {
+						return null;
+					}
+				}
+			}
+			return events;
+		}
+		
+	}
+	
 	public ASTEvaluationEngine(IJavaProject project, IJavaDebugTarget debugTarget) {
 		setJavaProject(project);
 		setDebugTarget(debugTarget);
@@ -102,7 +127,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
      * Checks if the stack frame is declared in an interface an aborts
      * if so.
      * 
-     * @param frame stack frmae
+     * @param frame stack frame
      * @throws DebugException if declaring type is an interface
      */
     private void checkInterface(IJavaStackFrame frame) throws DebugException {
@@ -139,7 +164,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 */
 	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {		
 		if (expression instanceof InstructionSequence) {
-			// don't queue explicite evaluation if the thread is allready performing an evaluation.
+			// don't queue explicit evaluation if the thread is all ready performing an evaluation.
 			if (thread.isSuspended() && ((JDIThread)thread).isInvokingMethod() || thread.isPerformingEvaluation() && evaluationDetail == DebugEvent.EVALUATION) {
 				EvaluationResult result= new EvaluationResult(this, expression.getSnippet(), thread);
 				result.addError(EvaluationEngineMessages.ASTEvaluationEngine_Cannot_perform_nested_evaluations); 
@@ -338,7 +363,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/**
 	 * Creates a compiled expression for the given snippet using the given mapper and 
-	 * compiliation unit (AST).
+	 * compilation unit (AST).
 	 * @param snippet the code snippet to be compiled
 	 * @param mapper the object which will be used to create the expression
 	 * @param unit the compilation unit (AST) generated for the snippet
@@ -451,7 +476,9 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				CoreException fException;
 				
 				public void run(IJavaThread jt, IProgressMonitor pm) {
+					EventFilter filter = new EventFilter();
 					try {
+						DebugPlugin.getDefault().addDebugEventFilter(filter);
 						interpreter.execute();
 					} catch (CoreException exception) {
 						fException = exception;
@@ -466,6 +493,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 								// unable to print stack trace
 							}
 						}
+					} finally {
+						DebugPlugin.getDefault().removeDebugEventFilter(filter);
 					}
 				}
 				public void terminate() {
@@ -515,7 +544,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			evaluationFinished(result);
 		}
 		private void evaluationFinished(IEvaluationResult result) {
-			// only notify if plugin not yet shutdown - bug# 8693
+			// only notify if plug-in not yet shutdown - bug# 8693
 			if(JDIDebugPlugin.getDefault() != null) {
 				fListener.evaluationComplete(result);
 			}
