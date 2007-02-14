@@ -109,7 +109,7 @@ public class ReferencesPopupDialog extends DebugPopup {
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        // See if the object has at least one reference.  If so, create a create a tree, otherwise display a message to the user.
+        // See if the object has at least one reference.  If so, create a tree, otherwise display a message to the user.
         IJavaObject[] referenceTest = null;
         try{
         	referenceTest = fRoot.getReferringObjects(1);

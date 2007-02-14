@@ -50,7 +50,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
         	if (supportsInstanceRetrieval(parent)){
         		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaVariableContentProvider_0,(IJavaObject)value);
         	} else {
-        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaVariableContentProvider_1,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaVariableContentProvider_2));
+        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaVariableContentProvider_0,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaVariableContentProvider_2));
         	}
         	
         	return getElements(moreVariables, index, length);

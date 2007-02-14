@@ -43,7 +43,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
         	if (JavaVariableContentProvider.supportsInstanceRetrieval(parent)){
         		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaExpressionContentProvider_0,(IJavaObject)value);
         	} else {
-        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaExpressionContentProvider_1,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaExpressionContentProvider_2));
+        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaExpressionContentProvider_0,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaExpressionContentProvider_2));
         	}
         	
         	return getElements(moreVariables, index, length);

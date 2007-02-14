@@ -28,11 +28,9 @@ public class VariableMessages extends NLS {
 	}
 
 	public static String JavaExpressionContentProvider_0;
-	public static String JavaExpressionContentProvider_1;
 	public static String JavaExpressionContentProvider_2;
 	public static String JavaVariableColumnPresentation_0;
 	public static String JavaVariableContentProvider_0;
-	public static String JavaVariableContentProvider_1;
 	public static String JavaVariableContentProvider_2;
 
 }
