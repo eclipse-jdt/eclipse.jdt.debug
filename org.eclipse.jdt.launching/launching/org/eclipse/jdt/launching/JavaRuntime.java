@@ -1673,8 +1673,36 @@ public final class JavaRuntime {
 		return detectedVMStandin;
 	}
 	
+	/**
+	 * Returns whether the specified option is the same in both option maps.
+	 * 
+	 * @param optionName name of option to test
+	 * @param defaultOptions map of default options
+	 * @param options map of other options
+	 * @return whether the options are the same in both maps
+	 */
 	private static boolean equals(String optionName, Map defaultOptions, Map options) {
-		return defaultOptions.get(optionName).equals(options.get(optionName));
+		if (defaultOptions.containsKey(optionName)) {
+			return options.containsKey(optionName) &&
+				equals(defaultOptions.get(optionName), options.get(optionName));
+		} else {
+			return !options.containsKey(optionName);
+		}
+	}
+	
+	/**
+	 * Returns whether the objects are equal or both <code>null</code>
+	 * 
+	 * @param o1 an object
+	 * @param o2 an object
+	 * @return whether the objects are equal or both <code>null</code>
+	 */
+	private static boolean equals(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
+		} else {
+			return o1.equals(o2);
+		}
 	}
 	
 	/**
