@@ -606,7 +606,9 @@ public class StandardVMType extends AbstractVMInstallType {
 				String version = libInfo.getVersion();
 				if (version != null) {
 					try {
-						if (version.startsWith("1.5")) { //$NON-NLS-1$
+						if (version.startsWith("1.6")) { //$NON-NLS-1$
+							return new URL("http://java.sun.com/javase/6/docs/api/"); //$NON-NLS-1$
+						} else if (version.startsWith("1.5")) { //$NON-NLS-1$
 							return new URL("http://java.sun.com/j2se/1.5.0/docs/api/"); //$NON-NLS-1$
 						} else if (version.startsWith("1.4")) { //$NON-NLS-1$
 							return new URL("http://java.sun.com/j2se/1.4.2/docs/api/"); //$NON-NLS-1$
