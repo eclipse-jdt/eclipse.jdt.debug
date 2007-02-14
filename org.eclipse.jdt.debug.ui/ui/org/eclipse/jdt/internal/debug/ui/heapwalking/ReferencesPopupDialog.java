@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -108,6 +109,19 @@ public class ReferencesPopupDialog extends DebugPopup {
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+        // See if the object has at least one reference.  If so, create a create a tree, otherwise display a message to the user.
+        IJavaObject[] referenceTest = null;
+        try{
+        	referenceTest = fRoot.getReferringObjects(1);
+        } catch(DebugException e){
+        	JDIDebugUIPlugin.log(e);
+        	return SWTUtil.createLabel(composite, "An error occured while trying to display references, see log for exception.", 1);
+        }
+        
+        if (referenceTest == null || referenceTest.length == 0){
+        	return SWTUtil.createLabel(composite, "No references found.", 1);
+        }
+        
         fSashForm = new SashForm(composite, parent.getStyle());
         fSashForm.setOrientation(SWT.VERTICAL);
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));

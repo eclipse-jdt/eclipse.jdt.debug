@@ -438,6 +438,14 @@
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
+         <visibility>
+            <not>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isReferenceListVariable">
+               </objectState>
+            </not>
+         </visibility>
          <filter
                name="PrimitiveVariableActionFilter"
                value="isPrimitive">
@@ -480,6 +488,12 @@
                   <objectState
                         name="PrimitiveVariableActionFilter"
                         value="isArray">
+                  </objectState>
+               </not>
+               <not>
+                  <objectState
+                        name="JavaVariableFilter"
+                        value="isReferenceListVariable">
                   </objectState>
                </not>
             </and>
@@ -562,6 +576,12 @@
                         value="isDefined">
                   </objectState>
                </not>
+               <not>
+                  <objectState
+                        name="JavaVariableFilter"
+                        value="isReferenceListVariable">
+                  </objectState>
+               </not>
             </and>
          </visibility>
          <action
@@ -636,6 +656,14 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction">
          </action>
+         <visibility>
+            <not>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isReferenceListVariable">
+               </objectState>
+            </not>
+         </visibility>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
@@ -1094,6 +1122,12 @@
                      name="JavaVariableFilter"
                      value="isInstanceRetrievalAvailable">
                </objectState>
+               <not>
+                  <objectState
+                        name="JavaVariableFilter"
+                        value="isReferenceListVariable">
+                  </objectState>
+               </not>
             </and>
          </visibility>
       </objectContribution>
@@ -1125,6 +1159,12 @@
                   <objectState
                         name="JavaVariableFilter"
                         value="isNullValue">
+                  </objectState>
+               </not>
+               <not>
+                  <objectState
+                        name="JavaVariableFilter"
+                        value="isReferenceListVariable">
                   </objectState>
                </not>
             </and>
@@ -1449,7 +1489,17 @@
                tooltip="%variablePreferences.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.variables.VariableOptionsAction"
                menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>         
+               id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesInViewActionDelegate"
+               helpContextId="all_references_action_context"
+               icon="icons/full/elcl16/all_references.gif"
+               id="org.eclipse.jdt.debug.ui.variablesViewActions.AllReferencesInView"
+               label="%allReferencesInView.label"
+               menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
+               style="toggle"
+               tooltip="%allReferencesInView.tooltip">
+         </action>         
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
@@ -1505,7 +1555,16 @@
                tooltip="%variablePreferences.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.variables.VariableOptionsAction"
                menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>          
+               id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesInViewActionDelegate"
+               helpContextId="all_references_action_context"
+               icon="icons/full/elcl16/all_references.gif"
+               id="org.eclipse.jdt.debug.ui.expressionViewActions.AllReferencesInView"
+               label="%allReferencesInView.label"
+               menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
+               style="toggle"
+               tooltip="%allReferencesInView.label"/>               
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"

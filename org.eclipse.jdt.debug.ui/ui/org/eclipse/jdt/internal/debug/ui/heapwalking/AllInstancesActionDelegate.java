@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
@@ -37,7 +37,6 @@ import org.eclipse.ui.IEditorPart;
  * New feature of 1.6 Mustang VMs
  * 
  * @since 3.3
- *
  */
 public class AllInstancesActionDelegate extends ObjectActionDelegate implements IEditorActionDelegate {
 
@@ -53,7 +52,7 @@ public class AllInstancesActionDelegate extends ObjectActionDelegate implements 
 			IJavaType type = var.getJavaType();
 			if(type instanceof JDIReferenceType) {
 				JDIReferenceType rtype = (JDIReferenceType) type;
-				long count = JDIDebugUIPlugin.getDefault().getPreferenceStore().getLong(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT);
+				long count = HeapWalkingManager.getDefault().getAllInstancesMaxCount();
 				JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget) type.getDebugTarget(), rtype.getInstances(count));
 				InspectPopupDialog ipd = new InspectPopupDialog(getWorkbenchWindow().getShell(), 
 						getAnchor((IDebugView) getPart().getAdapter(IDebugView.class)), 

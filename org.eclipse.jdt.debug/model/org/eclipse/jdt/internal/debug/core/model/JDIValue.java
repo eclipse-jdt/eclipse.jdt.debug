@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
- 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,12 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.Field;
@@ -38,10 +36,11 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 /**
- * The value of a variable
+ * Represents the value of a java variable
+ * 
+ * @see IJavaValue
  */
-
-public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
+public class JDIValue extends JDIDebugElement implements IJavaValue {
 	
 	private Value fValue;
 	private List fVariables;
@@ -51,11 +50,19 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 */
 	private boolean fAllocated = true;
 	
+	/**
+	 * Constructor
+	 * @param target debug target that this value belongs to
+	 * @param value the underlying value this value represents
+	 */
 	public JDIValue(JDIDebugTarget target, Value value) {
 		super(target);
 		fValue = value;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIDebugElement#getAdapter(java.lang.Class)
+	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaValue.class) {
 			return this;
@@ -185,6 +192,12 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
 	
+	/**
+	 * Returns a list of variables that are children of this value.  The result is cached.
+	 * 
+	 * @return list of variable children
+	 * @throws DebugException 
+	 */
 	protected synchronized List getVariablesList() throws DebugException {
 		if (fVariables != null) {
 			return fVariables;
@@ -195,11 +208,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				if (isArray()) {
 					try {
 						int length= getArrayLength();
-						ArrayList list = new ArrayList(length);
 						for (int i = 0; i < length; i++) {
-							list.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i));
+							fVariables.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i));
 						}
-						fVariables= list;
 					} catch (DebugException e) {
 						if (e.getCause() instanceof ObjectCollectedException) {
 							return Collections.EMPTY_LIST;
@@ -369,7 +380,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	/**
-	 * Retuns this value's underlying type.
+	 * Returns this value's underlying type.
 	 * 
 	 * @return type
 	 * @exception DebugException if this method fails. Reasons include:<ul>

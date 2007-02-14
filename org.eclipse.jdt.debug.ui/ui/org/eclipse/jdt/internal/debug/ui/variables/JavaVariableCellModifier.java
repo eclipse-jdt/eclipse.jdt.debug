@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,16 +32,18 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
         if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
             if (element instanceof IJavaVariable) {
                 IJavaVariable var = (IJavaVariable) element;
-                try {
-                    String signature = var.getSignature();
-                    if (signature != null) {
-	                    if (signature.length() == 1) {
-	                        // primitive
-	                        return true;
+                if (var.supportsValueModification()){
+	                try {
+	                    String signature = var.getSignature();
+	                    if (signature != null) {
+		                    if (signature.length() == 1) {
+		                        // primitive
+		                        return true;
+		                    }
+		                    return signature.equals("Ljava/lang/String;"); //$NON-NLS-1$
 	                    }
-	                    return signature.equals("Ljava/lang/String;"); //$NON-NLS-1$
-                    }
-                } catch (DebugException e) {
+	                } catch (DebugException e) {
+	                }
                 }
             }
         }

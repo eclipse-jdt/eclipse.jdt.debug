@@ -48,9 +48,7 @@ import com.sun.jdi.VirtualMachineManager;
 /**
  * The plugin class for the JDI Debug Model plug-in.
  */
-
 public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChangeListener {
-	
 	
 	/**
 	 * integer preference controlling if we should, by default, suspend the VM instead of the thread
@@ -60,6 +58,32 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	public static final String PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY = JDIDebugPlugin.getUniqueIdentifier() + ".default_breakpoint_suspend_policy"; //$NON-NLS-1$
 	
+	/**
+	 * Boolean preference controlling if references should be displayed as variables in the variables and expressions view
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_SHOW_REFERENCES_IN_VAR_VIEW = JDIDebugPlugin.getUniqueIdentifier() + ".show_references_in_var_view"; //$NON-NLS-1$
+	
+	/**
+	 * Integer preference determining the maximum number of references that should be returned to the user when displaying reference information
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_ALL_REFERENCES_MAX_COUNT = JDIDebugPlugin.getUniqueIdentifier() + "._all_references_max_count"; //$NON-NLS-1$
+	
+	/**
+	 * Integer preference determining the maximum number of instances that should be returned to the user when displaying instance information
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_ALL_INSTANCES_MAX_COUNT = JDIDebugPlugin.getUniqueIdentifier() + ".all_instances_max_count"; //$NON-NLS-1$
+		
+	/**
+	 * Extension point for java logical structures.
+	 * 
+	 * @since 3.1
+	 */
 	public static final String EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES= "javaLogicalStructures"; //$NON-NLS-1$
 
 	/**
@@ -183,7 +207,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	}
 	
 	/**
-	 * Reutrns if the JDI version being used is greater than or equal to the
+	 * Returns if the JDI version being used is greater than or equal to the
 	 * given version (major, minor).
 	 * 
 	 * @param version
@@ -231,7 +255,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	}
 
 	/**
-	 * Shutdown the HCR mgr and the Java debug targets.
+	 * Shutdown the HCR manager and the Java debug targets.
 	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)@see org.eclipse.core.runtime.Plugin#shutdown()
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,52 +10,177 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IntegerFieldEditor;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Provides a page for changing the default settings for heap walking options
+ * Provides a page for changing the heap walking options. Interacts
+ * with the HeapWalkingManager to get/set options.
+ * 
+ * @see HeapWalkingManager
  * @since 3.3
  */
-public class HeapWalkingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	/**
-	 * Constructor
+	private Button fShowReferencesInVarView;
+	private Text fAllReferencesMaxCount;
+	private Text fAllInstancesMaxCount;
+	private Map fErrorMessages;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public HeapWalkingPreferencePage() {
-		super(GRID);
-		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.HeapWalkingPreferencePage_0); 
+	public void init(IWorkbench workbench) {
+		fErrorMessages = new HashMap();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		// TODO: Help must be updated
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_HEAPWALKING_PREFERENCE_PAGE);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
-	public void init(IWorkbench workbench) {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
-	protected void createFieldEditors() {
-		Group igroup = SWTUtil.createGroup(getFieldEditorParent(), DebugUIMessages.HeapWalkingPreferencePage_3, 1, 1, GridData.FILL_HORIZONTAL);
-		Composite comp = SWTUtil.createComposite(igroup, igroup.getFont(), 1, 2, GridData.FILL_HORIZONTAL);
-		SWTUtil.createLabel(comp, DebugUIMessages.HeapWalkingPreferencePage_4, 2);
-		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_1, comp));
-		addField(new IntegerFieldEditor(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT, DebugUIMessages.HeapWalkingPreferencePage_2, comp));
+	protected Control createContents(Composite parent) {
+		
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
+		
+		SWTUtil.createWrapLabel(comp, DebugUIMessages.HeapWalkingPreferencePage_0, 1, 300);
+		SWTUtil.createVerticalSpacer(comp, 2);
+		
+		fShowReferencesInVarView = SWTUtil.createCheckButton(comp, DebugUIMessages.HeapWalkingPreferencePage_5, HeapWalkingManager.getDefault().isShowReferenceInVarView());
+		SWTUtil.createVerticalSpacer(comp, 2);
+		
+		Group group = SWTUtil.createGroup(comp, DebugUIMessages.HeapWalkingPreferencePage_3, 2, 1, GridData.FILL_HORIZONTAL);
+		SWTUtil.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_4, 2);
+		
+		SWTUtil.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_1, 1);
+		fAllInstancesMaxCount = SWTUtil.createSingleText(group, 1);
+		fAllInstancesMaxCount.addModifyListener(new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				try{
+					int result = Integer.parseInt(fAllInstancesMaxCount.getText());
+					if (result < 0) throw new NumberFormatException();
+					clearErrorMessage(fAllInstancesMaxCount);
+				} catch (NumberFormatException exception){
+					setErrorMessage(fAllInstancesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
+				}
+			}
+		});
+		fAllInstancesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllInstancesMaxCount()); //$NON-NLS-1$
+		
+		SWTUtil.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_2, 1);
+		fAllReferencesMaxCount = SWTUtil.createSingleText(group, 1);
+		fAllReferencesMaxCount.addModifyListener(new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				try{
+					int result = Integer.parseInt(fAllReferencesMaxCount.getText());
+					if (result < 0) throw new NumberFormatException();
+					clearErrorMessage(fAllReferencesMaxCount);
+				} catch (NumberFormatException exception){
+					setErrorMessage(fAllReferencesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_8);
+				}
+			}
+		});
+		fAllReferencesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$
+		
+		return comp;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		boolean result = super.performOk();
+		if (result){
+			HeapWalkingManager.getDefault().setShowReferenceInVarView(fShowReferencesInVarView.getSelection());
+			try{
+				int maxReferences = Integer.parseInt(fAllReferencesMaxCount.getText());
+				HeapWalkingManager.getDefault().setAllReferencesMaxCount(maxReferences);
+			} catch (NumberFormatException exception){
+				setErrorMessage(fAllReferencesMaxCount,DebugUIMessages.HeapWalkingPreferencePage_10);
+				return false;
+			}
+			try{
+				int maxReferences = Integer.parseInt(fAllInstancesMaxCount.getText());
+				HeapWalkingManager.getDefault().setAllInstancesMaxCount(maxReferences);
+			} catch (NumberFormatException exception){
+				setErrorMessage(fAllInstancesMaxCount,DebugUIMessages.HeapWalkingPreferencePage_11);
+				result = false;
+			}
+			HeapWalkingManager.getDefault().setShowReferenceInVarView(fShowReferencesInVarView.getSelection());
+		}
+		return result;
+	}
+	
+	/**
+	 * Sets an error message associated with a specific field.  Allows several
+	 * fields to have their own error message.  The dialog's error message will
+	 * be set to the given message.
+	 * 
+	 * @param cause The field that the message is associated with
+	 * @param message The error message to display to the user
+	 */
+	private void setErrorMessage(Object cause, String message){
+		fErrorMessages.put(cause,message);
+		setErrorMessage(message);
+		setValid(false);
+	}
+	
+	/**
+	 * Clears the error message associated with the given field.  If there are other
+	 * error messages, one will be displayed to the user.  If there are no more error
+	 * messages, the page becomes valid.
+	 * 
+	 * @param cause The field associated with a current error message.
+	 */
+	private void clearErrorMessage(Object cause){
+		fErrorMessages.remove(cause);
+		Iterator iter = fErrorMessages.values().iterator();
+		if (iter.hasNext()){
+			setErrorMessage((String)iter.next());
+		} else {
+			setErrorMessage(null);
+			setValid(true);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		HeapWalkingManager.getDefault().resetToDefaultSettings();
+		fAllReferencesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$
+		fAllInstancesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$
+		fShowReferencesInVarView.setSelection(HeapWalkingManager.getDefault().isShowReferenceInVarView());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		fErrorMessages.clear();
+	}
+
 }

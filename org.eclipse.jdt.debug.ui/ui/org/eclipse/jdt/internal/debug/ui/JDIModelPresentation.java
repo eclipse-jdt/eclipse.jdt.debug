@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,6 +61,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
@@ -94,6 +95,7 @@ import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectCollectedException;
 
 /**
+ * Determines how to display java elements, including labels, images and editors.
  * @see IDebugModelPresentation
  */
 public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IColorProvider {
@@ -621,6 +623,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		initImageRegistries();
 		
 		try {
+			if (item instanceof JDIReferenceListVariable || item instanceof JDIReferenceListEntryVariable){
+				return getReferenceVariableImage(item);
+			}
 			if (item instanceof IJavaVariable) {
 				return getVariableImage((IAdaptable) item);
 			}
@@ -850,6 +855,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			computeBaseImageDescriptor(element), computeAdornmentFlags(element), BIG_SIZE);
 
 		return getJavaElementImageRegistry().get(descriptor);			
+	}
+	
+	/**
+	 * Returns the image associated with reference variables being used to display
+	 * references to a root object.
+	 * 
+	 * @param element
+	 * @return image associated with reference variables
+	 */
+	protected Image getReferenceVariableImage(Object element){
+		return JavaDebugImages.get(JavaDebugImages.IMG_ELCL_ALL_REFERENCES);
 	}
 	
 	/**

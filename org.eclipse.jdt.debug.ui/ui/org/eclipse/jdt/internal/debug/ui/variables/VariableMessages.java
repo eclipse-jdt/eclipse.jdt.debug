@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,12 @@ public class VariableMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, VariableMessages.class);
 	}
 
+	public static String JavaExpressionContentProvider_0;
+	public static String JavaExpressionContentProvider_1;
+	public static String JavaExpressionContentProvider_2;
 	public static String JavaVariableColumnPresentation_0;
+	public static String JavaVariableContentProvider_0;
+	public static String JavaVariableContentProvider_1;
+	public static String JavaVariableContentProvider_2;
 
 }

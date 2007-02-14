@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.HashSet;
@@ -24,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 import org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.ui.IActionFilter;
@@ -182,6 +182,9 @@ public class JavaVarActionFilter implements IActionFilter {
 					if(value.equals("isNullValue")) { //$NON-NLS-1$
 						return varValue instanceof JDINullValue;
 					}
+					if (value.equals("isReferenceListVariable")) { //$NON-NLS-1$
+						return var instanceof JDIReferenceListVariable;
+					}
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return isDeclaredSameAsConcrete(var);
@@ -243,6 +246,6 @@ public class JavaVarActionFilter implements IActionFilter {
 	 * @return whether this variable's VM supports instance/reference information
 	 */
 	protected boolean isInstanceRetrievalAvailable(IJavaVariable var) {
-		return ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceRetrieval();
+		return ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceRetrieval() && !(var instanceof JDIReferenceListVariable);
 	}	
 }

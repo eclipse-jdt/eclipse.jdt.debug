@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,16 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 
+/**
+ * Generates strings for the detail pane of views displaying java elements.
+ */
 public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
 	/**
 	 * The default detail formatters manager.
@@ -158,6 +162,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					listener.detailComputed(value, ((JDIAllInstancesValue)value).getReferenceTypeName());
 					return;
 				}
+				if(value instanceof JDIReferenceListValue) {
+					listener.detailComputed(value, ((JDIReferenceListValue)value).getDetailString());
+					return;
+				}
 				IJavaDebugTarget debugTarget= (IJavaDebugTarget) thread.getDebugTarget();
 				// get the compiled expression to use
 				Expression expression= getCompiledExpression(objectValue, debugTarget, thread);
@@ -235,7 +243,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	/**
 	 * Returns if the specified <code>IJavaType</code> has a detail formatter on one of its interfaces
 	 * @param type the type to inspect
-	 * @return true if there is an existing detail formater on one of the types' interfaces, false otherwise
+	 * @return true if there is an existing detail formatter on one of the types' interfaces, false otherwise
 	 * @since 3.2
 	 */
 	public boolean hasInterfaceDetailFormatter(IJavaType type) {
@@ -248,7 +256,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	/**
 	 * Searches the superclass hierarchy to see if any of the specified classes parents have a detail formatter
 	 * @param type the current type. Ideally this should be the first parent class.
-	 * @return the first detail formatter located wlking up the superclass hierarchy or <code>null</code> if none are found
+	 * @return the first detail formatter located walking up the superclass hierarchy or <code>null</code> if none are found
 	 * @since 3.2
 	 */
 	public DetailFormatter getDetailFormatterFromSuperclass(IJavaClassType type) {
@@ -545,7 +553,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	/**
 	 * Listener use to manage the result of the formatter.
-	 * Utilise the 'standard' pretty printer methods to return the result.
+	 * Utilizes the 'standard' pretty printer methods to return the result.
 	 */
 	static private class EvaluationListener implements IEvaluationListener {
 		
@@ -652,7 +660,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		
 		/*
-		 * Gets all values in array and appends the toString() if it is an array of Objects or the value if primative.
+		 * Gets all values in array and appends the toString() if it is an array of Objects or the value if primitive.
 		 * NB - this method is only called if there is no compiled expression for an array to perform an
 		 * Arrays.asList().toString() to minimize toString() calls on remote target (ie one call to
 		 * List.toString() instead of one call per item in the array). 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
-
 
 import java.net.URL;
 
@@ -96,7 +95,9 @@ public class JavaDebugImages {
 	public static final String IMG_OBJ_JAVA_INSPECT_EXPRESSION = "IMG_OBJ_JAVA_INSPECT_EXPRESSION"; //$NON-NLS-1$
     
     public static final String IMG_ELCL_AUTO_FORMAT = "IMG_ELCL_AUTO_FORMAT"; //$NON-NLS-1$
-	
+    
+    public static final String IMG_ELCL_ALL_REFERENCES = "IMG_ELCL_ALL_REFERENCES"; //$NON-NLS-1$
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -108,8 +109,6 @@ public class JavaDebugImages {
 	private static final String T_ELCL= ICONS_PATH + "etool16/"; 	//$NON-NLS-1$
     private static final String E_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
 
-
-	
 	/**
 	 * Returns the image managed under the given key in this registry.
 	 * 
@@ -206,12 +205,11 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OBJS_WATCHPOINT_TYPE, T_OBJ + "jwatch_obj.gif"); //$NON-NLS-1$
         
         declareRegistryImage(IMG_ELCL_AUTO_FORMAT, E_LCL + "autoform_menu.gif"); //$NON-NLS-1$
-		
+        
+        declareRegistryImage(IMG_ELCL_ALL_REFERENCES, E_LCL + "all_references.gif"); //$NON-NLS-1$
 	}
-	
-    
 
-    /**
+	/**
      * Declare an Image in the registry table.
      * @param key   The key to use when registering the image
      * @param path  The path where the image can be found. This path is relative to where

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
-
  
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,12 +39,18 @@ import com.sun.jdi.Value;
  */
 public class JDIObjectValue extends JDIValue implements IJavaObject {
 	
+	private IJavaObject[] fCachedReferences;
+	private int fSuspendCount;
+	private long fPreviousMax;
+	
 	/**
 	 * Constructs a new target object on the given target with
 	 * the specified object reference.
 	 */
 	public JDIObjectValue(JDIDebugTarget target, ObjectReference object) {
 		super(target, object);
+		fSuspendCount = -1;
+		fCachedReferences = null;
 	}
 
 	/**
@@ -370,18 +375,42 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
 	 */
 	public IJavaObject[] getReferringObjects(long max) throws DebugException {
-		try {
+		// The cached references should be reloaded if the suspend count has changed, or the maximum entries has changed
+		if (fCachedReferences == null || fSuspendCount < ((JDIDebugTarget)getDebugTarget()).getSuspendCount() || fPreviousMax != max){
+			reloadReferringObjects(max);
+			fPreviousMax = max;
+			fSuspendCount = ((JDIDebugTarget)getDebugTarget()).getSuspendCount();
+		}
+		return fCachedReferences;
+	}
+	
+	/**
+	 * Returns true if references to this object have been calculated and cached.  This
+	 * method will return true even if the cached references are stale.
+	 * @return true is references to this object have been calculated and cached, false otherwise
+	 */
+	public boolean isReferencesLoaded(){
+		return fCachedReferences != null;
+	}
+	
+	/**
+	 * Gets the list of objects that reference this object from the vm, overwriting the 
+	 * cached list (if one exists).
+	 * 
+	 * @param max The maximum number of entries to return
+	 * @throws DebugException if the vm cannot return a list of referring objects
+	 */
+	protected void reloadReferringObjects(long max) throws DebugException{
+		try{
 			List list = getUnderlyingObject().referringObjects(max);
 			IJavaObject[] references = new IJavaObject[list.size()];
 			for (int i = 0; i < references.length; i++) {
 				references[i] = (IJavaObject) JDIValue.createValue(getJavaDebugTarget(), (Value) list.get(i));
 			}
-			return references;
+			fCachedReferences = references;
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_12, e);
+			fCachedReferences = null;
 		}
-		return null;
 	}
-
 }
-

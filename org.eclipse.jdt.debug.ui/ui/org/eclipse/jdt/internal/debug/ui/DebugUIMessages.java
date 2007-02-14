@@ -21,11 +21,21 @@ public class DebugUIMessages extends NLS {
 
 	public static String HeapWalkingPreferencePage_1;
 
+	public static String HeapWalkingPreferencePage_10;
+
+	public static String HeapWalkingPreferencePage_11;
+
 	public static String HeapWalkingPreferencePage_2;
 
 	public static String HeapWalkingPreferencePage_3;
 
 	public static String HeapWalkingPreferencePage_4;
+
+	public static String HeapWalkingPreferencePage_5;
+
+	public static String HeapWalkingPreferencePage_6;
+
+	public static String HeapWalkingPreferencePage_8;
 
 	public static String ImageDescriptorRegistry_Allocating_image_for_wrong_display_1;
 

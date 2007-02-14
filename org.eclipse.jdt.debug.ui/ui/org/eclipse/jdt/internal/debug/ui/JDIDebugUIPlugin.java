@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 20076 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ import org.eclipse.jdt.internal.debug.ui.threadgroups.ObjectReferencesAdapterFac
 import org.eclipse.jdt.internal.debug.ui.threadgroups.TargetAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.ThreadGroupAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.ColumnPresentationAdapterFactory;
-import org.eclipse.jdt.internal.debug.ui.variables.JavaVariableAdapterFactory;
+import org.eclipse.jdt.internal.debug.ui.variables.JavaDebugElementAdapterFactory;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -383,9 +383,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         IAdapterFactory entryFactory = new ClasspathEntryAdapterFactory();
         manager.registerAdapters(entryFactory, DefaultProjectClasspathEntry.class);
         
-        IAdapterFactory variableFactory = new JavaVariableAdapterFactory();
+        IAdapterFactory variableFactory = new JavaDebugElementAdapterFactory();
         manager.registerAdapters(variableFactory, IJavaVariable.class);
-		
+        manager.registerAdapters(variableFactory, JavaInspectExpression.class);
+        
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
 		
