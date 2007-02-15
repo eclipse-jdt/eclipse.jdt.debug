@@ -16,8 +16,11 @@ import java.util.Set;
 import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneManager;
 import org.eclipse.debug.ui.IDetailPane;
-import org.eclipse.jdt.debug.testplugin.TestDetailPane;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.testplugin.detailpane.SimpleDetailPane;
+import org.eclipse.jdt.debug.testplugin.detailpane.TableDetailPane;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -120,15 +123,16 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		id = fManager.getPreferredPaneFromSelection(selection);
 		assertEquals("Incorrect pane ID", DefaultDetailPane.ID, id);
 
+		selection = new StructuredSelection(new IJavaVariable[]{new JDIPlaceholderVariable("test var",null)});
+		id = fManager.getPreferredPaneFromSelection(selection);
+		assertEquals("Incorrect pane ID", DefaultDetailPane.ID, id);
+		
+		// The factory sets the Table detail pane as the default if the first string is "test pane is default".
 		selection = new StructuredSelection(new String[]{"test pane is default","example selection"});
 		id = fManager.getPreferredPaneFromSelection(selection);
-		assertEquals("Incorrect pane ID", TestDetailPane.ID, id);
+		assertEquals("Incorrect pane ID", TableDetailPane.ID, id);
 		
-		selection = new StructuredSelection(new String[]{"String1","String2"});
-		id = fManager.getPreferredPaneFromSelection(selection);
-		assertEquals("Incorrect pane ID", TestDetailPane.ID, id);
-		
-		selection = new StructuredSelection(new String[]{"String1","String2"});
+		selection = new StructuredSelection(new String[]{"test pane is default","example selection"});
 		fManager.setPreferredDetailPane(fManager.getAvailablePaneIDs(selection), DefaultDetailPane.ID);
 		id = fManager.getPreferredPaneFromSelection(selection);
 		assertEquals("Incorrect pane ID", DefaultDetailPane.ID, id);
@@ -157,15 +161,16 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		
 		selection = new StructuredSelection(new String[]{"test pane is default","example selection"});
 		result = fManager.getAvailablePaneIDs(selection);
-		assertTrue("Set was incorrect",result.size()==2 && result.contains(DefaultDetailPane.ID) && result.contains(TestDetailPane.ID));
+		assertTrue("Set was incorrect",result.size()==2 && result.contains(DefaultDetailPane.ID) && result.contains(TableDetailPane.ID));
 		
-		selection = new StructuredSelection(new String[]{"String1","String2"});
+		selection = new StructuredSelection(new Object[]{new JDIPlaceholderVariable("test var",null)});
 		result = fManager.getAvailablePaneIDs(selection);
-		assertTrue("Set was incorrect",result.size()==2 && result.contains(DefaultDetailPane.ID) && result.contains(TestDetailPane.ID));
+		assertTrue("Set was incorrect",result.size()==2 && result.contains(DefaultDetailPane.ID) && result.contains(SimpleDetailPane.ID));
 		
-		selection = new StructuredSelection(new String[]{"String1","String2","String3"});
+		// Simple detail pane only available if selection has length of 1, containing a java variable
+		selection = new StructuredSelection(new Object[]{"String1",new JDIPlaceholderVariable("test var",null),"String3"});
 		result = fManager.getAvailablePaneIDs(selection);
-		assertTrue("Set was incorrect",result.size()==1 && result.contains(DefaultDetailPane.ID));
+		assertTrue("Set was incorrect",result.size()==2 && result.contains(DefaultDetailPane.ID) && result.contains(TableDetailPane.ID));
 	}
 	
 	/**
@@ -182,7 +187,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		pane = fManager.getDetailPaneFromID(DefaultDetailPane.ID);
 		assertNotNull("Incorrect pane returned",pane);
 		
-		pane = fManager.getDetailPaneFromID(TestDetailPane.ID);
+		pane = fManager.getDetailPaneFromID(SimpleDetailPane.ID);
 		assertNotNull("Incorrect pane returned",pane);
 	}
 
@@ -200,8 +205,9 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		name = fManager.getNameFromID(DefaultDetailPane.ID);
 		assertEquals("Incorrect name returned",DefaultDetailPane.NAME,name);
 		
-		name = fManager.getNameFromID(TestDetailPane.ID);
-		assertEquals("Incorrect name returned","Test Pane",name);
+		name = fManager.getNameFromID(SimpleDetailPane.ID);
+		assertEquals("Incorrect name returned","Example Pane: Colorful Detail Pane",name);
+		
 	}
 
 	/**
@@ -218,8 +224,8 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		description = fManager.getDescriptionFromID(DefaultDetailPane.ID);
 		assertEquals("Incorrect name returned",DefaultDetailPane.DESCRIPTION,description);
 		
-		description = fManager.getDescriptionFromID(TestDetailPane.ID);
-		assertEquals("Incorrect name returned","Test Pane Description",description);
+		description = fManager.getDescriptionFromID(SimpleDetailPane.ID);
+		assertEquals("Incorrect name returned","Example pane that displays a color for variables depending on their access level.",description);
 	}
 
 }

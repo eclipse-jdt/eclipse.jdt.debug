@@ -425,16 +425,32 @@
   <extension
         point="org.eclipse.debug.ui.detailPaneFactories">
      <detailFactories
-           class="org.eclipse.jdt.debug.testplugin.TestDetailPaneFactory"
+           class="org.eclipse.jdt.debug.testplugin.detailpane.TestDetailPaneFactory"
            id="testDetailPaneFactory">
         <enablement>
-           <with
-                 variable="selection">
-              <count
-                    value="2">
-              </count>
-           </with>
-        </enablement>
+            <or>
+           		<with variable="selection">
+         	    	<not>
+                  <or>
+                     <count
+                           value="0">
+                     </count>
+                     <count
+                           value="1">
+                     </count>
+                  </or>
+          	    	</not>
+            	</with>
+             <with
+                   variable="selection">
+                <iterate>
+                   <instanceof
+                         value="org.eclipse.jdt.debug.core.IJavaVariable">
+                   </instanceof>
+                </iterate>
+             </with>
+            </or>
+         </enablement>
      </detailFactories>
   </extension>   
 

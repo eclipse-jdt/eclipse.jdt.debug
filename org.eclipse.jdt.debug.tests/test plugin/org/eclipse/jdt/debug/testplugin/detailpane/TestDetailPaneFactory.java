@@ -1,14 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-package org.eclipse.jdt.debug.testplugin;
+package org.eclipse.jdt.debug.testplugin.detailpane;
 
 
 import java.util.HashSet;
@@ -16,14 +6,18 @@ import java.util.Set;
 
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPaneFactory;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * This is a detail pane factory that produces <code>TestDetailPane</code>'s.
- * Included in the test plugin by being contributed to the 
- * org.eclipse.debug.ui.detailPaneFactories extension point.
+ * Test detail pane factory, used by the test suite to test custom detail pane functionality.
  * 
- * @see org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests.java
+ * @since 3.3
+ * @see DetailPaneManagerTests
+ * @see SimpleDetailPane
+ * @see TableDetailPane
+ * @see IDetailPaneFactory
  */
 public class TestDetailPaneFactory implements IDetailPaneFactory {
 
@@ -31,16 +25,27 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
 	 */
 	public IDetailPane createDetailPane(String id) {
-		return new TestDetailPane();
+		if (id.equals(TableDetailPane.ID)){
+			return new TableDetailPane();
+		}
+		if (id.equals(SimpleDetailPane.ID)){
+			return new SimpleDetailPane();
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDetailsTypes(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public Set getDetailPaneTypes(IStructuredSelection selection) {
-		Set possibleIDs = new HashSet(1);
+		Set possibleIDs = new HashSet(2);
 		if (selection != null){
-			possibleIDs.add(TestDetailPane.ID);
+			if (selection.size() == 1 && selection.getFirstElement() instanceof IJavaVariable){
+				possibleIDs.add(SimpleDetailPane.ID);
+			}
+			if (selection.size() > 1){
+				possibleIDs.add(TableDetailPane.ID);
+			}
 		}
 		return possibleIDs;
 	}
@@ -49,9 +54,11 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public String getDefaultDetailPane(IStructuredSelection selection) {
-		if (selection.getFirstElement() instanceof String){
-			if (((String)selection.getFirstElement()).equals("test pane is default")){
-				return TestDetailPane.ID;
+		if (selection != null){
+			if (selection.size() > 1 && selection.getFirstElement() instanceof String){
+				if (((String)selection.getFirstElement()).equals("test pane is default")){
+					return TableDetailPane.ID;
+				}
 			}
 		}
 		return null;
@@ -61,12 +68,13 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)
 	 */
 	public String getDetailPaneName(String id) {
-		if (id.equals(TestDetailPane.ID)){
-			return "Test Pane";
+		if (id.equals(TableDetailPane.ID)){
+			return TableDetailPane.NAME;
 		}
-		else{
-			return null;
+		if (id.equals(SimpleDetailPane.ID)){
+			return SimpleDetailPane.NAME;
 		}
+		return null;
 	}
 	
 
@@ -74,15 +82,12 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
 	 */
 	public String getDetailPaneDescription(String id) {
-		if (id.equals(TestDetailPane.ID)){
-			return "Test Pane Description";
+		if (id.equals(TableDetailPane.ID)){
+			return TableDetailPane.DESCRIPTION;
 		}
-		else{
-			return null;
+		if (id.equals(SimpleDetailPane.ID)){
+			return SimpleDetailPane.DESCRIPTION;
 		}
-		
+		return null;		
 	}
-
-
-
 }

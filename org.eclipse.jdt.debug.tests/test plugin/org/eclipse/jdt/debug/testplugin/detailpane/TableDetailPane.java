@@ -1,14 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-package org.eclipse.jdt.debug.testplugin;
+package org.eclipse.jdt.debug.testplugin.detailpane;
 
 import java.util.Iterator;
 
@@ -39,16 +29,19 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * Creates a test detail pane that is instantiated by TestDetailPaneFactory
- * Contains multiple controls in a composite, making it useful for manually
- * testing the detail pane API.  This detail pane is also used by the test
- * suite.
+ * An example detail pane that creates a composite containing several controls, all of which
+ * will be displayed in the detail pane.
  * 
- * @see org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests.java
+ * @since 3.3
+ * @see TestDetailPaneFactory
+ * @see IDetailPane
  */
-public class TestDetailPane implements IDetailPane, IValueDetailListener {
+public class TableDetailPane implements IDetailPane, IValueDetailListener {
 
-	public static final String ID = "TestDetailPane";
+	public static final String ID = "org.eclipse.jdt.debug.testplugin.detailpane.TableDetailPane";
+	public static final String NAME = "Example Pane: Table Detail Pane";
+	public static final String DESCRIPTION = "Example detail pane that displays details as a composite containing several controls";
+	
 	IWorkbenchPartSite fWorkbenchPartSite;
 	private Table fTable;
 	private TextViewer fText;
@@ -57,7 +50,7 @@ public class TestDetailPane implements IDetailPane, IValueDetailListener {
 	private IDebugModelPresentation fModelPresentation;
 	
 	/**
-	 * Runs a seperate job to calculate the detailed information for a selected variable
+	 * Job to calculate detail string
 	 */
 	class DetailJob implements Runnable{
 		
@@ -130,9 +123,7 @@ public class TestDetailPane implements IDetailPane, IValueDetailListener {
 				fText.getTextWidget().setWordWrap(fWordWrapButton.getSelection());
 			}
 		});
-		
-		
-		
+
 		return fComposite;
 	}
 
@@ -192,6 +183,13 @@ public class TestDetailPane implements IDetailPane, IValueDetailListener {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
+	 */
+	public String getDescription() {
+		return DESCRIPTION;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getID()
 	 */
 	public String getID() {
@@ -202,16 +200,9 @@ public class TestDetailPane implements IDetailPane, IValueDetailListener {
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
 	public String getName() {
-		return "Test Pane";
+		return NAME;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
-	 */
-	public String getDescription() {
-		return "Test Pane Description";
-	}
-	
+
 	protected IValueDetailListener getValueDetailListener(){
 		return this;
 	}
