@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 
@@ -20,7 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
  * @since 3.2
  *
  */
-public class JavaModelProxyFactory implements IModelProxyFactoryAdapter {
+public class JavaModelProxyFactory implements IModelProxyFactory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)

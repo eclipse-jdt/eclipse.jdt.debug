@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.variables;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -23,7 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
  */
 public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 	
-	private static final IColumnPresentationFactoryAdapter fgColumnPresentation = new JavaVariableColumnPresentationFactory();
+	private static final IColumnPresentationFactory fgColumnPresentation = new JavaVariableColumnPresentationFactory();
 	private static final IElementEditor fgEEJavaVariable = new JavaVariableEditor();
 
 	/* (non-Javadoc)
@@ -36,7 +36,7 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 			}
 		}
 		if (adaptableObject instanceof IJavaStackFrame) {
-			if (IColumnPresentationFactoryAdapter.class.equals(adapterType)) {
+			if (IColumnPresentationFactory.class.equals(adapterType)) {
 				return fgColumnPresentation;
 			}
 		}
@@ -48,7 +48,7 @@ public class ColumnPresentationAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		return new Class[]{
-				IColumnPresentationFactoryAdapter.class,
+				IColumnPresentationFactory.class,
 				IElementEditor.class};
 	}
 

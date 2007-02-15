@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 
 /**
@@ -22,14 +22,14 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
  */
 public class TargetAdapterFactory implements IAdapterFactory{
 	
-	private static IModelProxyFactoryAdapter fgJavaModelProxyFactory = new JavaModelProxyFactory();
+	private static IModelProxyFactory fgJavaModelProxyFactory = new JavaModelProxyFactory();
 	private static IElementContentProvider fgCPTarget = new JavaDebugTargetContentProvider();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adapterType.equals(IModelProxyFactoryAdapter.class)) {
+		if (adapterType.equals(IModelProxyFactory.class)) {
 			if (adaptableObject instanceof IJavaDebugTarget) {
 				return fgJavaModelProxyFactory;
 			}
@@ -47,7 +47,7 @@ public class TargetAdapterFactory implements IAdapterFactory{
 	 */
 	public Class[] getAdapterList() {
 		return new Class[]{
-				IModelProxyFactoryAdapter.class,
+				IModelProxyFactory.class,
 				IElementContentProvider.class};
 	}
 
