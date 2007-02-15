@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.InspectPopupDialog;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
@@ -23,6 +27,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -32,9 +37,11 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Class to provide new function of viewing all live objects of the selected type in the current VM
- * New feature of 1.6 Mustang VMs
+ * Feature of 1.6 VMs
  * 
  * @since 3.3
  */
@@ -47,20 +54,43 @@ public class AllInstancesActionDelegate extends ObjectActionDelegate implements 
 	 */
 	public void run(IAction action) {
 		IStructuredSelection currentSelection = getCurrentSelection();
-		IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
+		Object object = currentSelection.getFirstElement();
+		IJavaType type = null;
+		Point anchor = null;
 		try {
-			IJavaType type = var.getJavaType();
+			if(object instanceof IType) {
+				IAdaptable adapt = DebugUITools.getDebugContext();
+				if(adapt != null) {
+					IJavaDebugTarget target = (IJavaDebugTarget) adapt.getAdapter(IJavaDebugTarget.class);
+					if(target != null) {
+						IType itype = (IType) object;
+						IJavaType[] types = target.getJavaTypes(itype.getFullyQualifiedName());
+						if(types != null) {
+							type = types[0];
+						} else {
+							MessageDialog.openInformation(JDIDebugUIPlugin.getShell(), Messages.AllInstancesActionDelegate_0, MessageFormat.format(Messages.AllInstancesActionDelegate_1, new String[] {itype.getFullyQualifiedName()}));
+						}
+					}
+				}
+			} else if (object instanceof IJavaVariable) {
+				IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
+				type = var.getJavaType();
+				anchor = getAnchor((IDebugView) getPart().getAdapter(IDebugView.class));
+			}
+			
 			if(type instanceof JDIReferenceType) {
 				JDIReferenceType rtype = (JDIReferenceType) type;
 				long count = HeapWalkingManager.getDefault().getAllInstancesMaxCount();
 				JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget) type.getDebugTarget(), rtype.getInstances(count));
 				InspectPopupDialog ipd = new InspectPopupDialog(getWorkbenchWindow().getShell(), 
-						getAnchor((IDebugView) getPart().getAdapter(IDebugView.class)), 
+						anchor, 
 						"org.eclipse.jdt.debug.ui.commands.Inspect",  //$NON-NLS-1$
-						new JavaInspectExpression(var.getName(), aiv));
+						new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{type.getName()}), aiv));
 				ipd.open();
 			}
-		} catch (DebugException e) {}
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
+		}
 	}
 
 	/* (non-Javadoc)

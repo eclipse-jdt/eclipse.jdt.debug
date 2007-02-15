@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
@@ -82,9 +83,10 @@ public class MemberActionFilter implements IActionFilter {
 				if(value.equals("isInstanceRetrievalAvailable")) { //$NON-NLS-1$
 					IAdaptable adapt = DebugUITools.getDebugContext();
 					if(adapt != null) {
-						IJavaDebugTarget adapter = (IJavaDebugTarget) adapt.getAdapter(IJavaDebugTarget.class);
-						if(adapter != null) {
-							return adapter.supportsInstanceRetrieval();
+						IDebugTarget adapter = (IDebugTarget) adapt.getAdapter(IDebugTarget.class);
+						if(adapter != null && adapter instanceof IJavaDebugTarget) {
+							IJavaDebugTarget dtarget = (IJavaDebugTarget) adapter;
+							return dtarget.supportsInstanceRetrieval();
 						}
 					}
 					return false;

@@ -1477,6 +1477,35 @@
                 menubarPath="additions"
                 id="org.eclipse.jdt.debug.ui.formatJavaStackTraceAction"/>
        </viewerContribution>
+       <objectContribution
+             id="org.eclipse.jdt.debug.ui.allInstances.ITypeContribution"
+             objectClass="org.eclipse.jdt.core.IType">
+          <visibility>
+            <and>
+               <not>
+                  <objectState
+                        name="MemberActionFilter"
+                        value="isInterface">
+                  </objectState>
+               </not>
+               <objectState
+                     name="MemberActionFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
+            </and>
+         </visibility>
+          <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
+               enablesFor="1"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.allInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
+         </action>
+       </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
