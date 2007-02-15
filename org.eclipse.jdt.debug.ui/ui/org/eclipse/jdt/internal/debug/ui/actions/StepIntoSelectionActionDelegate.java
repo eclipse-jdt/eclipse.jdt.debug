@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,23 +21,18 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICodeAssist;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -55,12 +50,12 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * The name of the type being "run to".
 	 * @see StepIntoSelectionActionDelegate#runToLineBeforeStepIn(ITextSelection, IJavaStackFrame, IMethod)
 	 */
-	private String runToLineType= null;
+	private String fRunToLineType= null;
 	/**
 	 * The line number being "run to."
 	 * @see StepIntoSelectionActionDelegate#runToLineBeforeStepIn(ITextSelection, IJavaStackFrame, IMethod)
 	 */
-	private int runToLineLine= -1;
+	private int fRunToLineLine= -1;
 	/**
 	 * The debug event list listener used to know when a run to line has finished.
 	 * @see StepIntoSelectionActionDelegate#runToLineBeforeStepIn(ITextSelection, IJavaStackFrame, IMethod)
@@ -76,13 +71,13 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			// no longer suspended - unexpected
 			return;
 		}
-		ITextSelection textSelection= getTextSelection();
-		IMethod method= getMethod();
-		IType callingType= getType();
-		if (method == null || callingType == null) {
-			return;
-		}
+		ITextSelection textSelection = getTextSelection();
 		try {
+			IMethod method = StepIntoSelectionUtils.getMethod(getTextSelection(),StepIntoSelectionUtils.getJavaElement(getActiveEditor().getEditorInput()));
+			IType callingType = getType();
+			if (method == null || callingType == null) {
+				return;
+			}
 			int lineNumber = frame.getLineNumber();
             String callingTypeName = stripInnerNames(callingType.getFullyQualifiedName());
             String frameName = stripInnerNames(frame.getDeclaringTypeName());
@@ -94,25 +89,16 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 				runToLineBeforeStepIn(textSelection, frame.getThread(), method);
 				return;
 			}
-		} catch (DebugException e) {
+		} 
+		catch (DebugException e) {
 			showErrorMessage(e.getStatus().getMessage());
 			return;
 		}
+		catch(JavaModelException jme) {
+			showErrorMessage(jme.getStatus().getMessage());
+			return;
+		}
 	}
-
-    /**
-     * Strips inner class names from the given type name.
-     * 
-     * @param fullyQualifiedName
-     */
-    private String stripInnerNames(String fullyQualifiedName) {
-        // ignore inner class qualification, as the compiler generated names and java model names can be different
-        int index = fullyQualifiedName.indexOf('$');
-        if (index > 0) {
-            return fullyQualifiedName.substring(0, index);
-        }
-        return fullyQualifiedName;
-    }
 	
 	/**
 	 * Steps into the given method in the given stack frame
@@ -140,12 +126,12 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * the desired location, then perform a "step into selection."
 	 */
 	private void runToLineBeforeStepIn(ITextSelection textSelection, final IThread thread, final IMethod method) {
-		runToLineType= getType().getFullyQualifiedName();
-		runToLineLine= textSelection.getStartLine() + 1;
-		if (runToLineType == null || runToLineLine == -1) {
+		fRunToLineType = getType().getFullyQualifiedName();
+		fRunToLineLine = textSelection.getStartLine() + 1;
+		if (fRunToLineType == null || fRunToLineLine == -1) {
 			return;
 		}
-		// see bug 65489 - get the run-to-line adapater from the editor
+		// see bug 65489 - get the run-to-line adapter from the editor
 		IRunToLineTarget runToLineAction = null;
 		IEditorPart ed = getActiveEditor();
 		if (ed != null) {
@@ -217,8 +203,8 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			 */
 			private boolean isExpectedFrame(IJavaStackFrame frame) throws DebugException {
 				return frame != null &&
-					runToLineLine == frame.getLineNumber() &&
-					frame.getReceivingTypeName().equals(runToLineType);
+					fRunToLineLine == frame.getLineNumber() &&
+					frame.getReceivingTypeName().equals(fRunToLineType);
 			}
 			/**
 			 * When the debug target we're listening for terminates, stop listening
@@ -242,6 +228,10 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 	}
 	
+	/**
+	 * Gets the current text selection from the currently active editor
+	 * @return the current text selection
+	 */
 	private ITextSelection getTextSelection() {
 		IEditorPart part = getActiveEditor();
 		if (part instanceof ITextEditor) { 
@@ -250,42 +240,6 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_Java_editor__4); 
 		return null;
-	}
-	
-	private IMethod getMethod() {
-		ITextSelection textSelection= getTextSelection();
-		IEditorInput input = getActiveEditor().getEditorInput();
-		ICodeAssist codeAssist = null;
-		Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
-		if (element == null) {
-			element = input.getAdapter(IClassFile.class);
-		}
-		if (element instanceof ICodeAssist) {
-			codeAssist = ((ICodeAssist)element);
-		} else {
-			// editor does not support code assist
-			showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_for_types_in_Java_projects__1); 
-			return null;
-		}
-		
-		IMethod method = null;
-		try {
-			IJavaElement[] resolve = codeAssist.codeSelect(textSelection.getOffset(), 0);
-			for (int i = 0; i < resolve.length; i++) {
-				IJavaElement javaElement = resolve[i];
-				if (javaElement instanceof IMethod) {
-					method = (IMethod)javaElement;
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
-		}
-		if (method == null) {
-			// no resolved method
-			showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_No_Method); 
-		}
-		return method;
 	}
 	
 	/**
@@ -303,8 +257,6 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		return type;
 	}	
 	
-
-
 	/**
 	 * Displays an error message in the status area
 	 * 
@@ -343,6 +295,20 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	}
 
 	/**
+     * Strips inner class names from the given type name.
+     * 
+     * @param fullyQualifiedName
+     */
+    private String stripInnerNames(String fullyQualifiedName) {
+        // ignore inner class qualification, as the compiler generated names and java model names can be different
+        int index = fullyQualifiedName.indexOf('$');
+        if (index > 0) {
+            return fullyQualifiedName.substring(0, index);
+        }
+        return fullyQualifiedName;
+    }
+	
+	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -360,8 +326,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
