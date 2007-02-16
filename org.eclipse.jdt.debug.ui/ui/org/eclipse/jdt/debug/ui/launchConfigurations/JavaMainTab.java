@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
@@ -86,7 +86,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
 		((GridLayout)comp.getLayout()).verticalSpacing = 0;
 		createProjectEditor(comp);
 		createVerticalSpacer(comp, 1);
@@ -99,13 +99,13 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab#createMainTypeExtensions(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createMainTypeExtensions(Composite parent) {
-		fSearchExternalJarsCheckButton = SWTUtil.createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6, false, 2);
+		fSearchExternalJarsCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6, null, false, 2);
 		fSearchExternalJarsCheckButton.addSelectionListener(getDefaultListener());
 		
-		fConsiderInheritedMainButton = SWTUtil.createCheckButton(parent, LauncherMessages.JavaMainTab_22, false, 2);
+		fConsiderInheritedMainButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_22, null, false, 2);
 		fConsiderInheritedMainButton.addSelectionListener(getDefaultListener());
 		
-		fStopInMainCheckButton = SWTUtil.createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1, false);
+		fStopInMainCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1, null, false, 1);
 		fStopInMainCheckButton.addSelectionListener(getDefaultListener());
 	}
 

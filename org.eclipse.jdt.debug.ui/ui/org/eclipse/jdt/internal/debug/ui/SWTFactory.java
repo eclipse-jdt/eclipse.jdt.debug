@@ -28,10 +28,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 /**
- * Utility class to simplify access to some SWT resources. 
+ * Factory class to create SWT resources.
  * @since 3.3
  */
-public class SWTUtil {
+public class SWTFactory {
 	
 	/**
 	 * Returns a width hint for a button control.
@@ -80,7 +80,7 @@ public class SWTUtil {
 		}
 		GridData gd = new GridData();
 		button.setLayoutData(gd);	
-		SWTUtil.setButtonDimensionHint(button);
+		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
 
@@ -118,7 +118,7 @@ public class SWTUtil {
 		}
 		GridData gd = new GridData();
 		button.setLayoutData(gd);	
-		SWTUtil.setButtonDimensionHint(button);
+		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
 	
@@ -128,7 +128,7 @@ public class SWTUtil {
 	 * 
 	 * @param parent parent control
 	 * @param label button label or <code>null</code>
-	 * @param hspan the number of columns to span ni the parent composite
+	 * @param hspan the number of columns to span in the parent composite
 	 * 
 	 * @return a new radio button
 	 */
@@ -141,48 +141,34 @@ public class SWTUtil {
 		GridData gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = hspan;
 		button.setLayoutData(gd);	
-		SWTUtil.setButtonDimensionHint(button);
+		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}
 	
 	/**
-	 * Creates a checked button
-	 * @param parent the parent composite to add this button to
+	 * Creates a check box button using the parents' font
+	 * @param parent the parent to add the button to
 	 * @param label the label for the button
-	 * @param checked the button's checked state
-	 * @return a new check button
-	 */
-	public static Button createCheckButton(Composite parent, String label, boolean checked) {
-		Button button = new Button(parent, SWT.CHECK);
-		button.setFont(parent.getFont());
-		if (label != null) {
-			button.setText(label);
-		}
-		GridData gd = new GridData();
-		button.setLayoutData(gd);	
-		button.setSelection(checked);
-		return button;	
-	}
-	
-	/**
-	 * Creates a checked button
-	 * @param parent the parent composite to add this button to
-	 * @param label the label for the button
-	 * @param checked the button's checked state
+	 * @param image the image for the button 
+	 * @param checked the initial checked state of the button
 	 * @param hspan the horizontal span to take up in the parent composite
-	 * @return a new check button
+	 * @return a new checked button set to the initial checked state
 	 */
-	public static Button createCheckButton(Composite parent, String label, boolean checked, int hspan) {
+	public static Button createCheckButton(Composite parent, String label, Image image, boolean checked, int hspan) {
 		Button button = new Button(parent, SWT.CHECK);
 		button.setFont(parent.getFont());
-		if (label != null) {
+		button.setSelection(checked);
+		if(image != null) {
+			button.setImage(image);
+		}
+		if(label != null) {
 			button.setText(label);
 		}
 		GridData gd = new GridData();
 		gd.horizontalSpan = hspan;
-		button.setLayoutData(gd);	
-		button.setSelection(checked);
-		return button;	
+		button.setLayoutData(gd);
+		setButtonDimensionHint(button);
+		return button;
 	}
 	
 	/**
@@ -223,7 +209,7 @@ public class SWTUtil {
 	 * Creates a wrapping label
 	 * @param parent the parent composite to add this label to
 	 * @param text the text to be displayed in the label
-	 * @param hspan the horozontal span that label should take up in the parent composite
+	 * @param hspan the horizontal span that label should take up in the parent composite
 	 * @param wrapwidth the width hint that the label should wrap at
 	 * @return a new label that wraps at a specified width
 	 */
@@ -305,7 +291,7 @@ public class SWTUtil {
 	 * set of page filter items.
 	 * 
 	 * This alternative to <code>showPreferencePage(String)</code> allows other related 
-	 * pref pages to be shown at the same time at the developers/context descretion.
+	 * pref pages to be shown at the same time at the developers/context discretion.
 	 * All pages can be shown if <code>null</code> is passed.  
 	 * 
 	 * @param page_id the id for the page to open
@@ -360,7 +346,7 @@ public class SWTUtil {
 	}
 	
 	/**
-	 * creates a vertical spacer for seperating components
+	 * creates a vertical spacer for separating components
 	 * @param comp
 	 * @param numlines
 	 */
@@ -372,7 +358,7 @@ public class SWTUtil {
 	}
 	
 	/**
-	 * creates a horizontal spacer for seperating components
+	 * creates a horizontal spacer for separating components
 	 * @param comp
 	 * @param numlines
 	 */

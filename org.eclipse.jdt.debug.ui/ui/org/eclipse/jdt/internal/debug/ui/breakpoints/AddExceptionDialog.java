@@ -37,7 +37,7 @@ import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -124,7 +124,7 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 			return MessageFormat.format(BreakpointMessages.AddExceptionDialog_12, new String[] {name});
 		}
 		/**
-		 * Returns the simple name of the underyling type from the typename match
+		 * Returns the simple name of the underlying type from the type name match
 		 * @param element
 		 * @return
 		 */
@@ -132,9 +132,9 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 			return element.getSimpleTypeName();
 		}
 		/**
-		 * Returns the qualified text for the specified typename match
+		 * Returns the qualified text for the specified type name match
 		 * @param type
-		 * @return the qualified text for the specified typename match
+		 * @return the qualified text for the specified type name match
 		 */
 		public String getQualifiedText(TypeNameMatch type) {
 			StringBuffer result= new StringBuffer();
@@ -149,9 +149,9 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 			return result.toString();
 		}
 		/**
-		 * Retirn the fully qualified text for the specified typename match
+		 * Returns the fully qualified text for the specified type name match
 		 * @param type
-		 * @return the fully qualified text for the specified typename match
+		 * @return the fully qualified text for the specified type name match
 		 */
 		public String getFullyQualifiedText(TypeNameMatch type) {
 			StringBuffer result= new StringBuffer();
@@ -181,9 +181,9 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 			return result.toString();
 		}
 		/**
-		 * Returns the package fragment root simple container name from the typename match 
+		 * Returns the package fragment root simple container name from the type name match 
 		 * @param type
-		 * @return the simple text name for the package fragment root for the typename match
+		 * @return the simple text name for the package fragment root for the type name match
 		 */
 		private String getContainerName(TypeNameMatch type) {
 			IPackageFragmentRoot root= type.getPackageFragmentRoot();
@@ -426,15 +426,15 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createExtendedContentArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createExtendedContentArea(Composite parent) {
-		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
-		fCaughtButton = SWTUtil.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_15, getDialogSettings().getBoolean(SETTING_CAUGHT_CHECKED));
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+		fCaughtButton = SWTFactory.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_15, null, getDialogSettings().getBoolean(SETTING_CAUGHT_CHECKED), 1);
 		fCaughtButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
 				fCaught = fCaughtButton.getSelection();
 			}
 		});
-		fUncaughtButton = SWTUtil.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_16, getDialogSettings().getBoolean(SETTING_UNCAUGHT_CHECKED));
+		fUncaughtButton = SWTFactory.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_16, null, getDialogSettings().getBoolean(SETTING_UNCAUGHT_CHECKED), 1);
 		fUncaughtButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {

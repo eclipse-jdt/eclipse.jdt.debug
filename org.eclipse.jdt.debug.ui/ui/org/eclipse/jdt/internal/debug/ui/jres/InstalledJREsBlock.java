@@ -22,8 +22,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -533,7 +533,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 	
 	protected Button createPushButton(Composite parent, String label) {
-		return SWTUtil.createPushButton(parent, label, null);
+		return SWTFactory.createPushButton(parent, label, null);
 	}	
 	
 	/**
@@ -692,7 +692,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		try {
             ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell()) {
                 /*
-                 * Overidden createCancelButton to replace Cancel label with Stop label
+                 * Overridden createCancelButton to replace Cancel label with Stop label
                  * More accurately reflects action taken when button pressed.
                  * Bug [162902]
                  */
@@ -710,7 +710,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {
-			// cancelled
+			// canceled
 			return;
 		}
 		

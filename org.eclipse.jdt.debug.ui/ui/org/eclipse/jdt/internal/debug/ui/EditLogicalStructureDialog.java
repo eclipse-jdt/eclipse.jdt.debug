@@ -226,35 +226,35 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
         
-		Composite container = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
+		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
 
-		Composite typeNameDescriptionContainer = SWTUtil.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
+		Composite typeNameDescriptionContainer = SWTFactory.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		
-		SWTUtil.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_0, 2);
+		SWTFactory.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_0, 2);
 		
-		fQualifiedTypeNameText = SWTUtil.createSingleText(typeNameDescriptionContainer, 1);
+		fQualifiedTypeNameText = SWTFactory.createSingleText(typeNameDescriptionContainer, 1);
 		fQualifiedTypeNameText.addListener(SWT.Modify, this);
 		
-		fBrowseTypeButton = SWTUtil.createPushButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_1, DebugUIMessages.EditLogicalStructureDialog_25, null);
+		fBrowseTypeButton = SWTFactory.createPushButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_1, DebugUIMessages.EditLogicalStructureDialog_25, null);
 		
 		fBrowseTypeButton.addListener(SWT.Selection, this);
 		
-		SWTUtil.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_2, 2);
+		SWTFactory.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_2, 2);
 		
-		fDescriptionText = SWTUtil.createSingleText(typeNameDescriptionContainer, 2);
+		fDescriptionText = SWTFactory.createSingleText(typeNameDescriptionContainer, 2);
 		fDescriptionText.addListener(SWT.Modify, this);
 		
-		fSubTypeButton = SWTUtil.createCheckButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_3, false);
+		fSubTypeButton = SWTFactory.createCheckButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_3, null, false, 1);
 		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26); 
 
-		Group radioContainer= SWTUtil.createGroup(container, DebugUIMessages.EditLogicalStructureDialog_33, 1, 1, GridData.FILL_HORIZONTAL);
+		Group radioContainer= SWTFactory.createGroup(container, DebugUIMessages.EditLogicalStructureDialog_33, 1, 1, GridData.FILL_HORIZONTAL);
 
-		fValueButton = SWTUtil.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_4);
+		fValueButton = SWTFactory.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_4);
 		fValueButton.addListener(SWT.Selection, this);
 		
-		fVariablesButton = SWTUtil.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_5);
+		fVariablesButton = SWTFactory.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_5);
 
-		fAttributesContainer = SWTUtil.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
+		fAttributesContainer = SWTFactory.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		
 		boolean isValue = fLogicalStructure.getValue() != null;
 		if (!isValue) {
@@ -262,7 +262,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			createAttributeListWidgets();
 		}
 		
-		fCodeGroup = SWTUtil.createGroup(container, "", 1, 1, GridData.FILL_BOTH); //$NON-NLS-1$
+		fCodeGroup = SWTFactory.createGroup(container, "", 1, 1, GridData.FILL_BOTH); //$NON-NLS-1$
 		createCodeGroupWidgets(isValue);
 
 		applyDialogFont(container);
@@ -281,15 +281,15 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		} else {
 			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7); 
 		
-			Composite attributeNameContainer = SWTUtil.createComposite(fCodeGroup, fCodeGroup.getFont(), 2,  1, GridData.FILL_HORIZONTAL);
+			Composite attributeNameContainer = SWTFactory.createComposite(fCodeGroup, fCodeGroup.getFont(), 2,  1, GridData.FILL_HORIZONTAL);
 			((GridLayout)attributeNameContainer.getLayout()).marginWidth = 0;
 			
-			SWTUtil.createLabel(attributeNameContainer, DebugUIMessages.EditLogicalStructureDialog_8, 1);
+			SWTFactory.createLabel(attributeNameContainer, DebugUIMessages.EditLogicalStructureDialog_8, 1);
 			
-			fAttributeNameText = SWTUtil.createSingleText(attributeNameContainer, 1);
+			fAttributeNameText = SWTFactory.createSingleText(attributeNameContainer, 1);
 			fAttributeNameText.addListener(SWT.Modify, this);
             
-			SWTUtil.createLabel(fCodeGroup, DebugUIMessages.EditLogicalStructureDialog_9, 1);
+			SWTFactory.createLabel(fCodeGroup, DebugUIMessages.EditLogicalStructureDialog_9, 1);
 		}
 		
 		// snippet viewer
@@ -339,18 +339,18 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeListViewer.setInput(this);
 		fAttributeListViewer.addSelectionChangedListener(this);
 		
-		Composite attributeListButtonsCotnainer = SWTUtil.createComposite(fAttributesContainer, fAttributesContainer.getFont(), 1, 1, SWT.NONE);
+		Composite attributeListButtonsCotnainer = SWTFactory.createComposite(fAttributesContainer, fAttributesContainer.getFont(), 1, 1, SWT.NONE);
 		
-		fAttributeAddButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_10, DebugUIMessages.EditLogicalStructureDialog_27, null);
+		fAttributeAddButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_10, DebugUIMessages.EditLogicalStructureDialog_27, null);
 		fAttributeAddButton.addListener(SWT.Selection, this);
 		
-		fAttributeRemoveButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_11, DebugUIMessages.EditLogicalStructureDialog_28, null);
+		fAttributeRemoveButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_11, DebugUIMessages.EditLogicalStructureDialog_28, null);
 		fAttributeRemoveButton.addListener(SWT.Selection, this);
 		
-		fAttributeUpButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_12, DebugUIMessages.EditLogicalStructureDialog_29, null);
+		fAttributeUpButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_12, DebugUIMessages.EditLogicalStructureDialog_29, null);
 		fAttributeUpButton.addListener(SWT.Selection, this);
 		
-		fAttributeDownButton = SWTUtil.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_13, DebugUIMessages.EditLogicalStructureDialog_30, null);
+		fAttributeDownButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_13, DebugUIMessages.EditLogicalStructureDialog_30, null);
 		fAttributeDownButton.addListener(SWT.Selection, this);
 	}
 

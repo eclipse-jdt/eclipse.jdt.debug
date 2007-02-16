@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -57,9 +57,9 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	 */
 	protected void createMainTypeEditor(Composite parent, String text) {
 		Font font= parent.getFont();
-		Group mainGroup = SWTUtil.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
-		Composite comp = SWTUtil.createComposite(mainGroup, font, 2, 2, GridData.FILL_BOTH, 0, 0);
-		fMainText = SWTUtil.createSingleText(comp, 1);
+		Group mainGroup = SWTFactory.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
+		Composite comp = SWTFactory.createComposite(mainGroup, font, 2, 2, GridData.FILL_BOTH, 0, 0);
+		fMainText = SWTFactory.createSingleText(comp, 1);
 		fMainText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();

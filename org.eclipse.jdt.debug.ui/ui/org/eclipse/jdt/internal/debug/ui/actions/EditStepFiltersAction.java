@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.actions.ActionDelegate;
 
@@ -24,7 +24,7 @@ public class EditStepFiltersAction extends ActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		SWTUtil.showPreferencePage(JavaStepFilterPreferencePage.PAGE_ID);
+		SWTFactory.showPreferencePage(JavaStepFilterPreferencePage.PAGE_ID);
 	}
 	
 }

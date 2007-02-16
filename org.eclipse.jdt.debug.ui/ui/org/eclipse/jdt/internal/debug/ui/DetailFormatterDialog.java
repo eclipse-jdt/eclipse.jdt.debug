@@ -172,11 +172,11 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		Font font = parent.getFont();
 		Composite container = (Composite)super.createDialogArea(parent);
 		
-		SWTUtil.createLabel(container, DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2, 1);
+		SWTFactory.createLabel(container, DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2, 1);
 
-		Composite innerContainer = SWTUtil.createComposite(container, font, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite innerContainer = SWTFactory.createComposite(container, font, 2, 1, GridData.FILL_HORIZONTAL);
 		
-		fTypeNameText = SWTUtil.createSingleText(innerContainer, 1);
+		fTypeNameText = SWTFactory.createSingleText(innerContainer, 1);
 		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
 		fTypeNameText.addModifyListener(new ModifyListener() {
@@ -186,7 +186,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			}
 		});
 		
-		Button typeSearchButton = SWTUtil.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
+		Button typeSearchButton = SWTFactory.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
 		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -204,11 +204,11 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
             labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1;
         }
 		
-        SWTUtil.createLabel(container, labelText, 1);
+        SWTFactory.createLabel(container, labelText, 1);
 
         createSnippetViewer(container);        
 		
-		fCheckBox = SWTUtil.createCheckButton(container, DebugUIMessages.DetailFormatterDialog__Enable_1, fDetailFormatter.isEnabled());
+		fCheckBox = SWTFactory.createCheckButton(container, DebugUIMessages.DetailFormatterDialog__Enable_1, null, fDetailFormatter.isEnabled(), 1);
        
 		// Set up content assist in the viewer
         IHandler handler = new AbstractHandler() {

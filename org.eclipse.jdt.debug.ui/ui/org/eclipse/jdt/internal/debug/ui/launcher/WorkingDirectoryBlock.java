@@ -28,7 +28,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.events.ModifyEvent;
@@ -108,23 +108,23 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();	
-		Group group = SWTUtil.createGroup(parent, LauncherMessages.WorkingDirectoryBlock_12, 2, 1, GridData.FILL_HORIZONTAL);
+		Group group = SWTFactory.createGroup(parent, LauncherMessages.WorkingDirectoryBlock_12, 2, 1, GridData.FILL_HORIZONTAL);
 		setControl(group);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(group, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
 	//default choice
-		Composite comp = SWTUtil.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
-		fUseDefaultDirButton = SWTUtil.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_18);
+		Composite comp = SWTFactory.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
+		fUseDefaultDirButton = SWTFactory.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_18);
 		fUseDefaultDirButton.addSelectionListener(fListener);
-		fWorkingDirText = SWTUtil.createSingleText(comp, 1); 
+		fWorkingDirText = SWTFactory.createSingleText(comp, 1); 
 		fWorkingDirText.addModifyListener(fListener);
 		fWorkingDirText.setEnabled(false);
 	//user enter choice
-		fUseOtherDirButton = SWTUtil.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_19);
+		fUseOtherDirButton = SWTFactory.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_19);
 		fUseOtherDirButton.addSelectionListener(fListener);
-		fOtherWorkingText = SWTUtil.createSingleText(comp, 1);
+		fOtherWorkingText = SWTFactory.createSingleText(comp, 1);
 		fOtherWorkingText.addModifyListener(fListener);
 	//buttons
-		Composite buttonComp = SWTUtil.createComposite(comp, font, 3, 2, GridData.HORIZONTAL_ALIGN_END); 
+		Composite buttonComp = SWTFactory.createComposite(comp, font, 3, 2, GridData.HORIZONTAL_ALIGN_END); 
 		GridLayout ld = (GridLayout)buttonComp.getLayout();
 		ld.marginHeight = 1;
 		ld.marginWidth = 0;

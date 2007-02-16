@@ -241,7 +241,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-        Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 2);
+        Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 2);
         createTable(comp);
 		createTableButtons(comp);
         createSourceViewer(comp);
@@ -255,7 +255,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
      * @param parent the parent to add the viewer to
      */
     public void createSourceViewer(Composite parent) {
-    	SWTUtil.createWrapLabel(parent, DebugUIMessages.JavaLogicalStructuresPreferencePage_12, 2, 300);
+    	SWTFactory.createWrapLabel(parent, DebugUIMessages.JavaLogicalStructuresPreferencePage_12, 2, 300);
         
         fCodeViewer = new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
@@ -279,15 +279,15 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
      */
     private void createTableButtons(Composite container) {
         // button container
-		Composite buttonContainer = SWTUtil.createComposite(container, container.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING, 1, 0);
+		Composite buttonContainer = SWTFactory.createComposite(container, container.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING, 1, 0);
        // add button
-		fAddLogicalStructureButton = SWTUtil.createPushButton(buttonContainer, DebugUIMessages.JavaLogicalStructuresPreferencePage_2, DebugUIMessages.JavaLogicalStructuresPreferencePage_3, null); 
+		fAddLogicalStructureButton = SWTFactory.createPushButton(buttonContainer, DebugUIMessages.JavaLogicalStructuresPreferencePage_2, DebugUIMessages.JavaLogicalStructuresPreferencePage_3, null); 
         fAddLogicalStructureButton.addListener(SWT.Selection, this);
        // edit button
-		fEditLogicalStructureButton = SWTUtil.createPushButton(buttonContainer, DebugUIMessages.JavaLogicalStructuresPreferencePage_4, DebugUIMessages.JavaLogicalStructuresPreferencePage_5, null); 
+		fEditLogicalStructureButton = SWTFactory.createPushButton(buttonContainer, DebugUIMessages.JavaLogicalStructuresPreferencePage_4, DebugUIMessages.JavaLogicalStructuresPreferencePage_5, null); 
         fEditLogicalStructureButton.addListener(SWT.Selection, this);
        // remove button
-		fRemoveLogicalStructureButton = SWTUtil.createPushButton(buttonContainer, DebugUIMessages.JavaLogicalStructuresPreferencePage_6, DebugUIMessages.JavaLogicalStructuresPreferencePage_7, null); 
+		fRemoveLogicalStructureButton = SWTFactory.createPushButton(buttonContainer, DebugUIMessages.JavaLogicalStructuresPreferencePage_6, DebugUIMessages.JavaLogicalStructuresPreferencePage_7, null); 
         fRemoveLogicalStructureButton.addListener(SWT.Selection, this);
         // initialize the buttons state
 		selectionChanged((IStructuredSelection)fLogicalStructuresViewer.getSelection());
@@ -297,7 +297,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
      * @param container
      */
     private void createTable(Composite parent) {
-    	SWTUtil.createWrapLabel(parent, DebugUIMessages.JavaLogicalStructuresPreferencePage_1, 2, 300);
+    	SWTFactory.createWrapLabel(parent, DebugUIMessages.JavaLogicalStructuresPreferencePage_1, 2, 300);
         
         // logical structures list
         fLogicalStructuresViewer = new TableViewer(parent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);

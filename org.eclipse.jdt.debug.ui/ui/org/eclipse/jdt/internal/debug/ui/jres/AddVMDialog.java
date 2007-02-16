@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.StatusInfo;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -126,20 +126,20 @@ public class AddVMDialog extends StatusDialog {
 		Composite parent = (Composite)super.createDialogArea(ancestor);
 		((GridLayout)parent.getLayout()).numColumns = 3;
 	//VM combo
-		SWTUtil.createLabel(parent, JREMessages.addVMDialog_jreType, 1);
-		fVMCombo = SWTUtil.createCombo(parent, SWT.READ_ONLY, 2, getVMTypeNames());
+		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreType, 1);
+		fVMCombo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 2, getVMTypeNames());
 	//VM name
-		SWTUtil.createLabel(parent, JREMessages.addVMDialog_jreName, 1);
-		fVMName = SWTUtil.createSingleText(parent, 2);
+		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreName, 1);
+		fVMName = SWTFactory.createSingleText(parent, 2);
 	//VM root
-		SWTUtil.createLabel(parent, JREMessages.addVMDialog_jreHome, 1);
-		fJRERoot = SWTUtil.createSingleText(parent, 1);
-		Button browse = SWTUtil.createPushButton(parent, JREMessages.addVMDialog_browse1, null);
+		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreHome, 1);
+		fJRERoot = SWTFactory.createSingleText(parent, 1);
+		Button browse = SWTFactory.createPushButton(parent, JREMessages.addVMDialog_browse1, null);
 	//VM args
-		SWTUtil.createLabel(parent, JREMessages.AddVMDialog_23, 1);
-		fVMArgs = SWTUtil.createSingleText(parent, 2);
+		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_23, 1);
+		fVMArgs = SWTFactory.createSingleText(parent, 2);
 	//VM libraries block 
-		SWTUtil.createLabel(parent, JREMessages.AddVMDialog_JRE_system_libraries__1, 3);
+		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_JRE_system_libraries__1, 3);
 		fLibraryBlock = new VMLibraryBlock(this);
 		Control block = fLibraryBlock.createControl(parent);
 		GridData gd = new GridData(GridData.FILL_BOTH);

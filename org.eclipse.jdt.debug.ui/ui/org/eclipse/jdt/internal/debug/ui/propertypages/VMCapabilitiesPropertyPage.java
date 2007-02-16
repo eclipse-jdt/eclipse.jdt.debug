@@ -20,7 +20,7 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -92,14 +92,14 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		}
 		else {
 			createExplanation(comp);
-			SWTUtil.createVerticalSpacer(comp, 1);
+			SWTFactory.createVerticalSpacer(comp, 1);
 			createHeadingLabel(comp, vm);
-			SWTUtil.createVerticalSpacer(comp, 1);
+			SWTFactory.createVerticalSpacer(comp, 1);
 			
 			// breakpoints
 			ExpandableComposite breakpoints = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_27, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(breakpoints);
-			Composite bp_inner = SWTUtil.createComposite(breakpoints, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			Composite bp_inner = SWTFactory.createComposite(breakpoints, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			breakpoints.setClient(bp_inner);
 			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_4, vm.canUseInstanceFilters());
 			createCapabilityEntry(bp_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_9, vm.canWatchFieldModification());
@@ -110,7 +110,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			// hot code replace
 			ExpandableComposite hcr = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_28, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(hcr);
-			Composite hcr_inner = SWTUtil.createComposite(hcr, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			Composite hcr_inner = SWTFactory.createComposite(hcr, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			hcr.setClient(hcr_inner);
 			createCapabilityEntry(hcr_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_15, vm.canRedefineClasses());
 			createCapabilityEntry(hcr_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_12, vm.canAddMethod());
@@ -119,7 +119,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			// stepping
 			ExpandableComposite stepping = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_29, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(stepping);
-			Composite stepping_inner = SWTUtil.createComposite(stepping, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			Composite stepping_inner = SWTFactory.createComposite(stepping, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			stepping.setClient(stepping_inner);
 			createCapabilityEntry(stepping_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_14, vm.canPopFrames());
 			createCapabilityEntry(stepping_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_3, vm.canGetSyntheticAttribute());
@@ -128,7 +128,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 			// others
 			ExpandableComposite general = createExpandibleComposite(comp, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT, PropertyPageMessages.VMCapabilitiesPropertyPage_30, 2, GridData.FILL_HORIZONTAL);
 			fExpandedComps.add(general);
-			Composite general_inner = SWTUtil.createComposite(general, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
+			Composite general_inner = SWTFactory.createComposite(general, comp.getFont(), 2, 2, GridData.FILL_HORIZONTAL);
 			general.setClient(general_inner);
 			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_6, vm.canGetCurrentContendedMonitor() && vm.canGetOwnedMonitorInfo());
 			createCapabilityEntry(general_inner, PropertyPageMessages.VMCapabilitiesPropertyPage_18, vm.canSetDefaultStratum());
@@ -141,7 +141,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	}
 	
 	private void createExplanation(Composite parent) {
-		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 2, GridData.FILL_HORIZONTAL);
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 2, GridData.FILL_HORIZONTAL);
 		Label label = new Label(comp, SWT.WRAP);
         label.setFont(parent.getFont());
         label.setText(PropertyPageMessages.VMCapabilitiesPropertyPage_31);
@@ -149,9 +149,9 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	}
 	
 	private void createHeadingLabel(Composite parent, VirtualMachineImpl vm) {
-		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);				
-		SWTUtil.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1);
-		Text text = SWTUtil.createText(comp, SWT.READ_ONLY, 1, vm.name()+" "+vm.version()); //$NON-NLS-1$
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL);				
+		SWTFactory.createLabel(comp, PropertyPageMessages.VMCapabilitiesPropertyPage_1, fHeadingFont, 1);
+		Text text = SWTFactory.createText(comp, SWT.READ_ONLY, 1, vm.name()+" "+vm.version()); //$NON-NLS-1$
 		text.setBackground(parent.getBackground());
 	}
 	
@@ -193,8 +193,8 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	 * @param enabled the checked state of the check button
 	 */
 	private void createCapabilityEntry(Composite parent, String label, boolean enabled) {
-		SWTUtil.createCheckButton(parent, null, enabled).setEnabled(false);
-		SWTUtil.createLabel(parent, label, parent.getFont(), 1);
+		SWTFactory.createCheckButton(parent, null, null, enabled, 1).setEnabled(false);
+		SWTFactory.createLabel(parent, label, parent.getFont(), 1);
 	}
 	
 	/**
@@ -207,7 +207,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	 * @return a new ExpandibleComposite widget
 	 */
 	private ExpandableComposite createExpandibleComposite(Composite parent, int style, String label, int hspan, int fill) {
-		ExpandableComposite ex = SWTUtil.createExpandibleComposite(parent, style, label, hspan, fill);
+		ExpandableComposite ex = SWTFactory.createExpandibleComposite(parent, style, label, hspan, fill);
 		ex.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				ScrollPain sp = getParentScrollPane((ExpandableComposite) e.getSource());

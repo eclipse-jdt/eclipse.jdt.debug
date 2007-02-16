@@ -34,7 +34,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -115,11 +115,11 @@ public class ReferencesPopupDialog extends DebugPopup {
         	referenceTest = fRoot.getReferringObjects(1);
         } catch(DebugException e){
         	JDIDebugUIPlugin.log(e);
-        	return SWTUtil.createLabel(composite, "An error occured while trying to display references, see log for exception.", 1);
+        	return SWTFactory.createLabel(composite, "An error occured while trying to display references, see log for exception.", 1);
         }
         
         if (referenceTest == null || referenceTest.length == 0){
-        	return SWTUtil.createLabel(composite, "No references found.", 1);
+        	return SWTFactory.createLabel(composite, "No references found.", 1);
         }
         
         fSashForm = new SashForm(composite, parent.getStyle());

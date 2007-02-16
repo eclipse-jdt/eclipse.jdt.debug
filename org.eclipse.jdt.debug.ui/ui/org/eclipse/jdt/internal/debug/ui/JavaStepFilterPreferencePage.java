@@ -143,10 +143,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 		container.setFont(font);
-		fUseStepFiltersButton = SWTUtil.createCheckButton(container, 
-				DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters, 
-				DebugUITools.isUseStepFilters(), 
-				2);
+		fUseStepFiltersButton = SWTFactory.createCheckButton(container,	DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters,	null, DebugUITools.isUseStepFilters(), 2);
 		fUseStepFiltersButton.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					setPageEnablement(fUseStepFiltersButton.getSelection());
@@ -230,15 +227,15 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * @param container the parent container
 	 */
 	private void createStepFilterCheckboxes(Composite container) {
-		fFilterSyntheticButton = SWTUtil.createCheckButton(container, 
+		fFilterSyntheticButton = SWTFactory.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_s_ynthetic_methods__requires_VM_support__17, 
-				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS), 2);
-		fFilterStaticButton = SWTUtil.createCheckButton(container, 
+				null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS), 2);
+		fFilterStaticButton = SWTFactory.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_static__initializers_18, 
-				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS), 2);
-		fFilterConstructorButton = SWTUtil.createCheckButton(container, 
+				null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS), 2);
+		fFilterConstructorButton = SWTFactory.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_co_nstructors_19, 
-				getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS), 2);
+				null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS), 2);
 	}
 	
 	/**
@@ -257,7 +254,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		buttonLayout.marginWidth = 0;
 		buttonContainer.setLayout(buttonLayout);
 	//Add filter button
-		fAddFilterButton = SWTUtil.createPushButton(buttonContainer, 
+		fAddFilterButton = SWTFactory.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Filter_9, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Key_in_the_name_of_a_new_step_filter_10, null);
 		fAddFilterButton.addListener(SWT.Selection, new Listener() {
@@ -266,7 +263,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 		});
 	//Add type button
-		fAddTypeButton = SWTUtil.createPushButton(buttonContainer, 
+		fAddTypeButton = SWTFactory.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Type____11, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_Java_type_and_add_it_to_step_filters_12, null);
 		fAddTypeButton.addListener(SWT.Selection, new Listener() {
@@ -275,7 +272,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 		});
 	//Add package button
-		fAddPackageButton = SWTUtil.createPushButton(buttonContainer, 
+		fAddPackageButton = SWTFactory.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Package____13, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_package_and_add_it_to_step_filters_14, null);
 		fAddPackageButton.addListener(SWT.Selection, new Listener() {
@@ -284,7 +281,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 		});
 	//Remove button
-		fRemoveFilterButton = SWTUtil.createPushButton(buttonContainer, 
+		fRemoveFilterButton = SWTFactory.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage__Remove_15, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Remove_all_selected_step_filters_16, 
 				null);
@@ -303,7 +300,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		gd.heightHint= 4;
 		separator.setLayoutData(gd);
 	//Select All button
-		fSelectAllButton = SWTUtil.createPushButton(buttonContainer, 
+		fSelectAllButton = SWTFactory.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage__Select_All_1, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Selects_all_step_filters_2, null);
 		fSelectAllButton.addListener(SWT.Selection, new Listener() {
@@ -312,7 +309,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 		});
 	//De-Select All button
-		fDeselectAllButton = SWTUtil.createPushButton(buttonContainer, 
+		fDeselectAllButton = SWTFactory.createPushButton(buttonContainer, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Deselect_All_3, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Deselects_all_step_filters_4, null);
 		fDeselectAllButton.addListener(SWT.Selection, new Listener() {

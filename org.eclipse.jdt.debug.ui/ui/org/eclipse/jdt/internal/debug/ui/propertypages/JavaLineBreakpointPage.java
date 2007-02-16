@@ -17,7 +17,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -115,7 +115,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		}
 		if (lineNumber.length() > 0) {
 			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_2); 
-			Text text = SWTUtil.createText(parent, SWT.READ_ONLY, 1, lineNumber.toString());
+			Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, lineNumber.toString());
 			text.setBackground(parent.getBackground());
 		}
 		// Member
@@ -131,7 +131,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 				label = PropertyPageMessages.JavaLineBreakpointPage_5; 
 			}
 			createLabel(parent, label);
-			Text text = SWTUtil.createText(parent, SWT.READ_ONLY, 1, fJavaLabelProvider.getText(member));
+			Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, fJavaLabelProvider.getText(member));
 			text.setBackground(parent.getBackground());
 		} 
 		catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
@@ -232,7 +232,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			label = PropertyPageMessages.JavaLineBreakpointPage_13; 
 		}
 		
-		Composite conditionComposite = SWTUtil.createGroup(parent, EMPTY_STRING, 1, 1, GridData.FILL_BOTH);
+		Composite conditionComposite = SWTFactory.createGroup(parent, EMPTY_STRING, 1, 1, GridData.FILL_BOTH);
 		fEnableConditionButton = createCheckButton(conditionComposite, label);
 		fEnableConditionButton.setSelection(breakpoint.isConditionEnabled());
 		fEnableConditionButton.addSelectionListener(new SelectionAdapter() {

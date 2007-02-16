@@ -28,7 +28,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsComboBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -99,7 +99,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		Composite topComp = SWTUtil.createComposite(parent, font, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		Composite topComp = SWTFactory.createComposite(parent, font, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(getDefaultJREDescriptor());
@@ -109,7 +109,7 @@ public class JavaJRETab extends JavaLaunchTab {
 		fJREBlock.addPropertyChangeListener(fCheckListener);
 		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		setDynamicTabHolder(SWTUtil.createComposite(topComp, font, 1, 1, GridData.FILL_BOTH, 0, 0));
+		setDynamicTabHolder(SWTFactory.createComposite(topComp, font, 1, 1, GridData.FILL_BOTH, 0, 0));
 		setControl(topComp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
 	}

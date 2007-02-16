@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -66,9 +66,9 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 */
 	private void createAppletViewerControl(Composite parent) {
 		Font font = parent.getFont();
-		Group group = SWTUtil.createGroup(parent, LauncherMessages.AppletMainTab_1, 2, 1, GridData.FILL_HORIZONTAL);
-		Composite comp = SWTUtil.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
-		fAppletViewerClassText= SWTUtil.createSingleText(comp, 2); 
+		Group group = SWTFactory.createGroup(parent, LauncherMessages.AppletMainTab_1, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite comp = SWTFactory.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
+		fAppletViewerClassText= SWTFactory.createSingleText(comp, 2); 
 		fAppletViewerClassText.addModifyListener(getDefaultListener());
 		createVerticalSpacer(comp, 1);
 		fAppletViewerClassDefaultButton= createCheckButton(comp, LauncherMessages.AppletMainTab_2);
@@ -84,7 +84,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite projComp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH); 
+		Composite projComp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH); 
 		((GridLayout)projComp.getLayout()).verticalSpacing = 0;
 		createProjectEditor(projComp);
 		createVerticalSpacer(projComp, 1);

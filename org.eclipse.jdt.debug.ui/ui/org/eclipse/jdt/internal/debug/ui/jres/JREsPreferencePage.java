@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -105,8 +105,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		layout.marginWidth = 0;
 		ancestor.setLayout(layout);
 		
-		SWTUtil.createWrapLabel(ancestor, JREMessages.JREsPreferencePage_2, 1, 300);
-		SWTUtil.createVerticalSpacer(ancestor, 1);
+		SWTFactory.createWrapLabel(ancestor, JREMessages.JREsPreferencePage_2, 1, 300);
+		SWTFactory.createVerticalSpacer(ancestor, 1);
 		
 		fJREBlock = new InstalledJREsBlock();
 		fJREBlock.createControl(ancestor);
@@ -180,7 +180,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		if (wpc != null) {
 			wpc.openPage(compliancepage, null);
 		} else {
-			SWTUtil.showPreferencePage(compliancepage);
+			SWTFactory.showPreferencePage(compliancepage);
 		}
 	}
 	

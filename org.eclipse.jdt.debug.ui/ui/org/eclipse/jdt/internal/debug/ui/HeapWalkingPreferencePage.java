@@ -63,19 +63,19 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	protected Control createContents(Composite parent) {
 		
-		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
 		
-		SWTUtil.createWrapLabel(comp, DebugUIMessages.HeapWalkingPreferencePage_0, 1, 300);
-		SWTUtil.createVerticalSpacer(comp, 2);
+		SWTFactory.createWrapLabel(comp, DebugUIMessages.HeapWalkingPreferencePage_0, 1, 300);
+		SWTFactory.createVerticalSpacer(comp, 2);
 		
-		fShowReferencesInVarView = SWTUtil.createCheckButton(comp, DebugUIMessages.HeapWalkingPreferencePage_5, HeapWalkingManager.getDefault().isShowReferenceInVarView());
-		SWTUtil.createVerticalSpacer(comp, 2);
+		fShowReferencesInVarView = SWTFactory.createCheckButton(comp, DebugUIMessages.HeapWalkingPreferencePage_5, null, HeapWalkingManager.getDefault().isShowReferenceInVarView(), 1);
+		SWTFactory.createVerticalSpacer(comp, 2);
 		
-		Group group = SWTUtil.createGroup(comp, DebugUIMessages.HeapWalkingPreferencePage_3, 2, 1, GridData.FILL_HORIZONTAL);
-		SWTUtil.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_4, 2);
+		Group group = SWTFactory.createGroup(comp, DebugUIMessages.HeapWalkingPreferencePage_3, 2, 1, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_4, 2);
 		
-		SWTUtil.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_1, 1);
-		fAllInstancesMaxCount = SWTUtil.createSingleText(group, 1);
+		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_1, 1);
+		fAllInstancesMaxCount = SWTFactory.createSingleText(group, 1);
 		fAllInstancesMaxCount.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
 				try{
@@ -89,8 +89,8 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		});
 		fAllInstancesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllInstancesMaxCount()); //$NON-NLS-1$
 		
-		SWTUtil.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_2, 1);
-		fAllReferencesMaxCount = SWTUtil.createSingleText(group, 1);
+		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_2, 1);
+		fAllReferencesMaxCount = SWTFactory.createSingleText(group, 1);
 		fAllReferencesMaxCount.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
 				try{
@@ -170,8 +170,8 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	protected void performDefaults() {
 		HeapWalkingManager.getDefault().resetToDefaultSettings();
-		fAllReferencesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$
-		fAllInstancesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$
+		fAllReferencesMaxCount.setText(Integer.toString(HeapWalkingManager.getDefault().getAllReferencesMaxCount()));
+		fAllInstancesMaxCount.setText(Integer.toString(HeapWalkingManager.getDefault().getAllReferencesMaxCount())); 
 		fShowReferencesInVarView.setSelection(HeapWalkingManager.getDefault().isShowReferenceInVarView());
 	}
 	

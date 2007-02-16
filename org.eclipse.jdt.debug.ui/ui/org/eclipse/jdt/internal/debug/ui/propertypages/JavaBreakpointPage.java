@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -250,7 +250,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			String typeName = ((IJavaBreakpoint) getElement()).getTypeName();
 			if (typeName != null) {
 				createLabel(labelComposite, PropertyPageMessages.JavaBreakpointPage_3); 
-				Text text = SWTUtil.createText(labelComposite, SWT.READ_ONLY, 1, typeName);
+				Text text = SWTFactory.createText(labelComposite, SWT.READ_ONLY, 1, typeName);
 				text.setBackground(parent.getBackground());
 			}
 			createTypeSpecificLabels(labelComposite);
@@ -374,7 +374,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @return the configured text editor
 	 */
 	protected Text createText(Composite parent, String initialValue) {
-		return SWTUtil.createText(parent, SWT.SINGLE | SWT.BORDER, 1, initialValue);
+		return SWTFactory.createText(parent, SWT.SINGLE | SWT.BORDER, 1, initialValue);
 	}
 	
 	/**
@@ -384,7 +384,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @return the configured composite
 	 */
 	protected Composite createComposite(Composite parent, int numColumns) {
-		return SWTUtil.createComposite(parent, parent.getFont(), numColumns, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		return SWTFactory.createComposite(parent, parent.getFont(), numColumns, 1, GridData.FILL_HORIZONTAL, 0, 0);
 	}
 
 	/**
@@ -394,7 +394,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @return a fully configured check button
 	 */
 	protected Button createCheckButton(Composite parent, String text) {
-		return SWTUtil.createCheckButton(parent, text, false);
+		return SWTFactory.createCheckButton(parent, text, null, false, 1);
 	}
 
 	/**
@@ -404,7 +404,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @return a fully configured label
 	 */
 	protected Label createLabel(Composite parent, String text) {
-		return SWTUtil.createLabel(parent, text, 1);
+		return SWTFactory.createLabel(parent, text, 1);
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @return a fully configured radio button
 	 */
 	protected Button createRadioButton(Composite parent, String text) {
-		return SWTUtil.createRadioButton(parent, text, 1);
+		return SWTFactory.createRadioButton(parent, text, 1);
 	}
 	
 	/**

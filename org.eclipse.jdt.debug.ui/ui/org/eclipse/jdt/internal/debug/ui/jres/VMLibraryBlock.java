@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -95,7 +95,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	public Control createControl(Composite parent) {
 		Font font = parent.getFont();
 		
-		Composite comp = SWTUtil.createComposite(parent, font, 2, 1, GridData.FILL_BOTH, 0, 0);
+		Composite comp = SWTFactory.createComposite(parent, font, 2, 1, GridData.FILL_BOTH, 0, 0);
 		
 		fLibraryViewer= new TreeViewer(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -107,12 +107,12 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		fLibraryViewer.setInput(this);
 		fLibraryViewer.addSelectionChangedListener(this);
 		
-		Composite pathButtonComp = SWTUtil.createComposite(comp, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0); 
-		fAddButton = SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7, JREMessages.VMLibraryBlock_16, null);
+		Composite pathButtonComp = SWTFactory.createComposite(comp, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0); 
+		fAddButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7, JREMessages.VMLibraryBlock_16, null);
 		fAddButton.addSelectionListener(this);
-		fJavadocButton = SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_3, JREMessages.VMLibraryBlock_17, null); 
+		fJavadocButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_3, JREMessages.VMLibraryBlock_17, null); 
 		fJavadocButton.addSelectionListener(this);
-		fSourceButton =  SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_11, JREMessages.VMLibraryBlock_18, null);	
+		fSourceButton =  SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_11, JREMessages.VMLibraryBlock_18, null);	
 		fSourceButton.addSelectionListener(this);
 		fLibraryViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -123,13 +123,13 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 				}
 			}
 		});
-		fRemoveButton = SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6, JREMessages.VMLibraryBlock_12, null);		
+		fRemoveButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6, JREMessages.VMLibraryBlock_12, null);		
 		fRemoveButton.addSelectionListener(this);
-		fUpButton = SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4, JREMessages.VMLibraryBlock_13, null);
+		fUpButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4, JREMessages.VMLibraryBlock_13, null);
 		fUpButton.addSelectionListener(this);
-		fDownButton = SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_5, JREMessages.VMLibraryBlock_14, null);
+		fDownButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_5, JREMessages.VMLibraryBlock_14, null);
 		fDownButton.addSelectionListener(this);
-		fDefaultButton = SWTUtil.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_9, JREMessages.VMLibraryBlock_15, null);
+		fDefaultButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_9, JREMessages.VMLibraryBlock_15, null);
 		fDefaultButton.addSelectionListener(this);
 		
 		return comp;

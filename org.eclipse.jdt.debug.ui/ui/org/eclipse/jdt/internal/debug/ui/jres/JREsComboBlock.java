@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -158,15 +158,15 @@ public class JREsComboBlock {
 	 */
 	public void createControl(Composite ancestor) {
 		Font font = ancestor.getFont();
-		fControl = SWTUtil.createComposite(ancestor, font, 1, 1, GridData.FILL_BOTH);		
+		fControl = SWTFactory.createComposite(ancestor, font, 1, 1, GridData.FILL_BOTH);		
 		if (fTitle == null) {
 			fTitle = JREMessages.JREsComboBlock_3; 
 		}
-		Group group = SWTUtil.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL); 
-		Composite comp = SWTUtil.createComposite(group, font, 3, 1, GridData.FILL_BOTH, 0, 0);
+		Group group = SWTFactory.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL); 
+		Composite comp = SWTFactory.createComposite(group, font, 3, 1, GridData.FILL_BOTH, 0, 0);
 	// display a 'use default JRE' check box
 		if (fDefaultDescriptor != null) {
-			fDefaultButton = SWTUtil.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
+			fDefaultButton = SWTFactory.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
 			fDefaultButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (fDefaultButton.getSelection()) {
@@ -183,7 +183,7 @@ public class JREsComboBlock {
 		if (fSpecificDescriptor != null) {
 			text = fSpecificDescriptor.getDescription();
 		}
-		fSpecificButton = SWTUtil.createRadioButton(comp, text, 1);
+		fSpecificButton = SWTFactory.createRadioButton(comp, text, 1);
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fSpecificButton.getSelection()) {
@@ -224,7 +224,7 @@ public class JREsComboBlock {
 		fillWithWorkspaceJREs();
 		
 	//execution environments
-		fEnvironmentsButton = SWTUtil.createRadioButton(comp, JREMessages.JREsComboBlock_4);
+		fEnvironmentsButton = SWTFactory.createRadioButton(comp, JREMessages.JREsComboBlock_4);
 		fEnvironmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fEnvironmentsButton.getSelection()) {
@@ -304,7 +304,7 @@ public class JREsComboBlock {
 	}
 	
 	protected Button createPushButton(Composite parent, String label) {
-		return SWTUtil.createPushButton(parent, label, null);
+		return SWTFactory.createPushButton(parent, label, null);
 	}
 	
 	/**

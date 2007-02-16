@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -83,7 +83,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		Composite comp = SWTUtil.createComposite(parent, font, 1, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, font, 1, 1, GridData.FILL_BOTH);
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
@@ -91,12 +91,12 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		createVerticalSpacer(comp, 1);
 		
 	//connection type
-		Group group = SWTUtil.createGroup(comp, LauncherMessages.JavaConnectTab_Connect_ion_Type__7, 1, 1, GridData.FILL_HORIZONTAL);
+		Group group = SWTFactory.createGroup(comp, LauncherMessages.JavaConnectTab_Connect_ion_Type__7, 1, 1, GridData.FILL_HORIZONTAL);
 		String[] names = new String[fConnectors.length];
 		for (int i = 0; i < fConnectors.length; i++) {
 			names[i] = fConnectors[i].getName();
 		}
-		fConnectorCombo = SWTUtil.createCombo(group, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, names); 
+		fConnectorCombo = SWTFactory.createCombo(group, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, names); 
 		fConnectorCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleConnectorComboModified();
@@ -105,8 +105,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		createVerticalSpacer(comp, 1);
 		
 	//connection properties
-		group = SWTUtil.createGroup(comp, LauncherMessages.JavaConnectTab_Connection_Properties_1, 2, 1, GridData.FILL_HORIZONTAL);
-		Composite cgroup = SWTUtil.createComposite(group, font, 2, 1, GridData.FILL_HORIZONTAL);
+		group = SWTFactory.createGroup(comp, LauncherMessages.JavaConnectTab_Connection_Properties_1, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite cgroup = SWTFactory.createComposite(group, font, 2, 1, GridData.FILL_HORIZONTAL);
 		fArgumentComposite = cgroup;
 		createVerticalSpacer(comp, 2);
 		fAllowTerminateButton = createCheckButton(comp, LauncherMessages.JavaConnectTab__Allow_termination_of_remote_VM_6); 

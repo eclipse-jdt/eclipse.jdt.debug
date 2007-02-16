@@ -13,7 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
@@ -37,7 +37,7 @@ public class VariableOptionsAction implements IViewActionDelegate, IPropertyChan
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-    	SWTUtil.showPreferencePage("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage",  //$NON-NLS-1$
+    	SWTFactory.showPreferencePage("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage",  //$NON-NLS-1$
     			new String[] {"org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", //$NON-NLS-1$
     							"org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage",  //$NON-NLS-1$
     							"org.eclipse.jdt.debug.ui.heapWalking",  //$NON-NLS-1$
