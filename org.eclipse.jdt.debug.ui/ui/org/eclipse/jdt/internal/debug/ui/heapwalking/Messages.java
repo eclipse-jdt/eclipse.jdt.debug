@@ -27,6 +27,10 @@ public class Messages extends NLS {
 	public static String ReferencesPopupDialog_0;
 
 	public static String ReferencesPopupDialog_1;
+
+	public static String ReferencesPopupDialog_2;
+
+	public static String ReferencesPopupDialog_3;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

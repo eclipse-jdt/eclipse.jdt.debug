@@ -115,11 +115,11 @@ public class ReferencesPopupDialog extends DebugPopup {
         	referenceTest = fRoot.getReferringObjects(1);
         } catch(DebugException e){
         	JDIDebugUIPlugin.log(e);
-        	return SWTFactory.createLabel(composite, "An error occured while trying to display references, see log for exception.", 1);
+        	return SWTFactory.createLabel(composite, Messages.ReferencesPopupDialog_2, 1);
         }
         
         if (referenceTest == null || referenceTest.length == 0){
-        	return SWTFactory.createLabel(composite, "No references found.", 1);
+        	return SWTFactory.createLabel(composite, Messages.ReferencesPopupDialog_3, 1);
         }
         
         fSashForm = new SashForm(composite, parent.getStyle());
