@@ -330,26 +330,34 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null, false, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
-            System.out.println();
-            System.out.println("Test case: " + this.getName());
-            System.out.println("Never received event: " + waiter.getEventKindName());
+			StringBuffer buf = new StringBuffer();
+            buf.append("Test case: ");
+            buf.append(getName());
+            buf.append("\n");
+            buf.append("Never received event: ");
+            buf.append(waiter.getEventKindName());
+            buf.append("\n");
             if (launch.isTerminated()) {
-                System.out.println("Process exit value: " + launch.getProcesses()[0].getExitValue());
+            	buf.append("Process exit value: ");
+            	buf.append(launch.getProcesses()[0].getExitValue());
+                buf.append("\n");
             }
             IConsole console = DebugUITools.getConsole(launch.getProcesses()[0]);
             if (console instanceof TextConsole) {
                 TextConsole textConsole = (TextConsole)console;
                 String string = textConsole.getDocument().get();
-                System.out.println("Console output follows:");
-                System.out.println(string);
+                buf.append("Console output follows:\n");
+                buf.append(string);
             }
-            System.out.println();
+            buf.append("\n");
+            DebugPlugin.log(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.ui.tests", buf.toString()));
 			try {
 				launch.terminate();
 			} catch (CoreException e) {
 				e.printStackTrace();
 				fail("Program did not suspend, and unable to terminate launch.");
 			}
+			throw new TestAgainException();
 		}
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend, launch terminated.", suspendee);
