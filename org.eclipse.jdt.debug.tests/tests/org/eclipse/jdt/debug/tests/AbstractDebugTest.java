@@ -1213,7 +1213,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Terminates the given debug target and removes its launch.
 	 * 
 	 * NOTE: all breakpoints are removed, all threads are resumed, and then
-	 * the target is terminated. This avoids defunct processes on linux.
+	 * the target is terminated. This avoids defunct processes on Linux.
 	 */
 	protected void terminateAndRemove(IJavaDebugTarget debugTarget) {
 	    ILaunch launch = debugTarget.getLaunch();

@@ -66,6 +66,7 @@ import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
+import org.eclipse.jdt.debug.tests.launching.LaunchHistoryTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchShortcutTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchTests;
@@ -125,6 +126,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TabGroupWrapperTests.class));
 		addTest(new TestSuite(MigrationDelegateTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
+		addTest(new TestSuite(LaunchHistoryTests.class));
 		
 	//Breakpoints tests
 		addTest(new TestSuite(DeferredBreakpointTests.class));
