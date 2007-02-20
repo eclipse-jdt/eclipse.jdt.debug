@@ -1215,7 +1215,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.TERMINATE) {
 				Object source = event.getSource();
-				if (source instanceof IAdaptable) {
+				if (source instanceof IAdaptable && source instanceof IDebugTarget) {
 					IJavaDebugTarget jt = (IJavaDebugTarget)((IAdaptable)source).getAdapter(IJavaDebugTarget.class);
 					if (jt != null) {
 						deregisterTarget((JDIDebugTarget)jt);
