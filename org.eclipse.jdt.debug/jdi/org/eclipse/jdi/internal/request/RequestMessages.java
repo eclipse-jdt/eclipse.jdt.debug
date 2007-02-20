@@ -24,8 +24,6 @@ public class RequestMessages extends NLS {
 	public static String EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1;
 	public static String EventRequestManagerImpl_Got_event_of_unknown_type_2;
 
-	public static String vm_dead;
-
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, RequestMessages.class);

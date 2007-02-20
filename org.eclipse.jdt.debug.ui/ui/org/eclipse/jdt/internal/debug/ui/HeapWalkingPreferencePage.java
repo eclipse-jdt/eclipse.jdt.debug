@@ -98,7 +98,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 					if (result < 0) throw new NumberFormatException();
 					clearErrorMessage(fAllReferencesMaxCount);
 				} catch (NumberFormatException exception){
-					setErrorMessage(fAllReferencesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_8);
+					setErrorMessage(fAllReferencesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
 				}
 			}
 		});
@@ -118,14 +118,14 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 				int maxReferences = Integer.parseInt(fAllReferencesMaxCount.getText());
 				HeapWalkingManager.getDefault().setAllReferencesMaxCount(maxReferences);
 			} catch (NumberFormatException exception){
-				setErrorMessage(fAllReferencesMaxCount,DebugUIMessages.HeapWalkingPreferencePage_10);
+				setErrorMessage(fAllReferencesMaxCount,DebugUIMessages.HeapWalkingPreferencePage_6);
 				return false;
 			}
 			try{
 				int maxReferences = Integer.parseInt(fAllInstancesMaxCount.getText());
 				HeapWalkingManager.getDefault().setAllInstancesMaxCount(maxReferences);
 			} catch (NumberFormatException exception){
-				setErrorMessage(fAllInstancesMaxCount,DebugUIMessages.HeapWalkingPreferencePage_11);
+				setErrorMessage(fAllInstancesMaxCount,DebugUIMessages.HeapWalkingPreferencePage_6);
 				result = false;
 			}
 			HeapWalkingManager.getDefault().setShowReferenceInVarView(fShowReferencesInVarView.getSelection());

@@ -101,10 +101,6 @@ public class ActionMessages extends NLS {
 	public static String RestoreDefaultEntriesAction_0;
 
 	public static String StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1;
-
-	public static String StepIntoSelectionActionDelegate_No_Method;
-
-	public static String StepIntoSelectionActionDelegate_Step_into_selection_only_available_for_types_in_Java_projects__1;
 	public static String StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_top_stack_frame__3;
 	public static String StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_Java_editor__4;
 	public static String StepIntoSelectionActionDelegate_4;
