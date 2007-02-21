@@ -213,7 +213,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		//CONTEXTLAUNCHING
 			IJavaProject javaProject = getJavaProject();
 			IResource[] resources = null;
-			if (javaProject != null) {
+			if (javaProject != null && javaProject.exists()) {
 				resources = new IResource[] {javaProject.getProject()};
 				String typename = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 				if(typename != null) {
@@ -222,8 +222,9 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 						resources = new IResource[] {type.getUnderlyingResource()};
 					}
 				}
+				config.setMappedResources(resources);
 			}
-			config.setMappedResources(resources);
+			
 		}
 		catch(CoreException ce) {JDIDebugUIPlugin.log(ce);}
 	}	
