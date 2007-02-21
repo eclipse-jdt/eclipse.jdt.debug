@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdi.TimeoutException;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -2372,5 +2375,24 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return vm.canGetInstanceInfo();
 		}
 		return false;
+	}
+	
+	/**
+	 * Sends a JDWP command to the back end and returns the JDWP reply packet as bytes.
+	 * This method creates an appropriate command header and packet id, before sending
+	 * to the back end.
+	 * 
+	 * @param commandSet command set identifier as defined by JDWP
+	 * @param commandId command identifier as defined by JDWP
+	 * @param data any bytes required for the command that follow the command header
+	 * 	or <code>null</code> for commands that have no data
+	 * @return raw reply packet as bytes defined by JDWP
+	 * @exception IOException if an error occurs sending the packet or receiving the reply
+	 * @since 3.3
+	 */
+	public byte[] sendJDWPCommand(byte commandSet, byte commandId, byte[] data) throws IOException {
+		int command = (256 * commandSet) + commandId;
+		JdwpReplyPacket reply = ((VirtualMachineImpl)getVM()).requestVM(command, data);
+		return reply.getPacketAsBytes();
 	}
 }

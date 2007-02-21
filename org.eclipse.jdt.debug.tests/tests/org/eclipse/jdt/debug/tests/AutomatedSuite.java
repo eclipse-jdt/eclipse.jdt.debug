@@ -50,6 +50,7 @@ import org.eclipse.jdt.debug.tests.core.HcrTests;
 import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.InstructionPointerTests;
+import org.eclipse.jdt.debug.tests.core.JDWPTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
@@ -234,6 +235,9 @@ public class AutomatedSuite extends DebugSuite {
 		//addTest(new TestSuite(ConvertPublicAnonymousTypeToNestedUnitTests.class));
 		//addTest(new TestSuite(ConvertInnerAnonymousTypeToNestedUnitTests.class));
 		//addTest(new TestSuite(ConvertNonPublicAnonymousTypeToNestedUnitTests.class));
+		
+	// JDWP tests
+		addTest(new TestSuite(JDWPTests.class));
 		
 	// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
