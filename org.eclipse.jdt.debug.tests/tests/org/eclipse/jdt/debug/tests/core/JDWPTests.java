@@ -30,10 +30,19 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
  */
 public class JDWPTests extends AbstractDebugTest {
 
+	/**
+	 * Constructor
+	 * @param name
+	 */
 	public JDWPTests(String name) {
 		super(name);
 	}
 
+	/**
+	 * Sends a request to the VirtualMachine Command Set (byte 1) to ask for
+	 * the VM Capabilities (byte 12) 
+	 * @throws Exception
+	 */
 	public void testCapabilities() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
@@ -61,6 +70,11 @@ public class JDWPTests extends AbstractDebugTest {
 		}				
 	}
 	
+	/**
+	 * Sends a request to the VirtualMachine Command Set (byte 1) to ask 
+	 * for ClassesBySignature (byte 2)
+	 * @throws Exception
+	 */
 	public void testClassesBySingature() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(52, typeName);

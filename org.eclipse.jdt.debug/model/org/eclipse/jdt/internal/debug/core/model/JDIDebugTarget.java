@@ -1847,7 +1847,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		
 		/**
-		 * Deregisters this event listener.
+		 * De-registers this event listener.
 		 */
 		protected void deleteRequest() {
 			if (getRequest() != null) {
@@ -2001,7 +2001,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return;
 		}
 		if (launch.equals(getLaunch())) {
-			// This target has been deregistered, but it hasn't successfully terminated.
+			// This target has been de-registered, but it hasn't successfully terminated.
 			// Update internal state to reflect that it is disconnected
 			disconnected();
 		}
