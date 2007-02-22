@@ -53,6 +53,14 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_FILTER_CONSTRUCTORS = IJavaDebugUIConstants.PLUGIN_ID + ".filter_constructors"; //$NON-NLS-1$
 	
 	/**
+	 * Boolean preference controlling whether a step landing in a filtered
+	 * location proceeds through to an un-filtered location, or returns.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_STEP_THRU_FILTERS = IJavaDebugUIConstants.PLUGIN_ID + ".step_thru_filters"; //$NON-NLS-1$
+	
+	/**
 	 * List of active step filters. A String containing a comma
 	 * separated list of fully qualified type names/patterns.
 	 */			

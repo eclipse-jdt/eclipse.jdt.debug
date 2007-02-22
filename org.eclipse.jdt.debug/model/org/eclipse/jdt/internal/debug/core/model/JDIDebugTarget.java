@@ -217,6 +217,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private static final int FILTER_CONSTRUCTORS = 0x008;
 	
 	/**
+	 * When a step lands in a filtered location, this indicates whether stepping
+	 * should proceed "through" to an un-filtered location or step return.
+	 * @since 3.3
+	 */
+	private static final int STEP_THRU_FILTERS = 0x010;
+	
+	/**
 	 * Mask used to flip individual bit masks via XOR
 	 */
 	private static final int XOR_MASK = 0xFFF;
@@ -2059,6 +2066,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public boolean isFilterSynthetics() {
 		return (fStepFilterMask & FILTER_SYNTHETICS) > 0;
 	}
+	
+	/**
+	 * Returns whether steps that land in filtered location should
+	 * proceed through to an un-filtered location or return.
+	 * 
+	 * @return whether steps that land in filtered location should
+	 * proceed through to an un-filtered location or return
+	 * @since 3.3
+	 * TODO: make API once API freeze is over
+	 */
+	public boolean isStepThruFilters() {
+		return (fStepFilterMask & STEP_THRU_FILTERS) > 0;
+	}	
 
 	/**
 	 * @see IJavaDebugTarget#isStepFiltersEnabled()
@@ -2099,6 +2119,22 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			fStepFilterMask = fStepFilterMask & (FILTER_SYNTHETICS ^ XOR_MASK);
 		}				
 	}
+	
+	/**
+	 * Sets whether a step that lands in a filtered location should continue through
+	 * to an un-filtered location, or return to where the step originated.
+	 * 
+	 * @param thru whether to step thru
+	 * @since 3.3
+	 * TODO: make API once API freeze is over
+	 */
+	public void setStepThruFilters(boolean thru) {
+		if (thru) {
+			fStepFilterMask = fStepFilterMask | STEP_THRU_FILTERS;
+		} else {
+			fStepFilterMask = fStepFilterMask & (STEP_THRU_FILTERS ^ XOR_MASK);
+		}				
+	}	
 
 	/**
 	 * @see IJavaDebugTarget#setStepFilters(String[])

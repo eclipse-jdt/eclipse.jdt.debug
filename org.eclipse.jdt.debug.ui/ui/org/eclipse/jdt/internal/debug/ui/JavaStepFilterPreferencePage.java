@@ -82,6 +82,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private Button fFilterSyntheticButton;
 	private Button fFilterStaticButton;
 	private Button fFilterConstructorButton;
+	private Button fStepThruButton;
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
 	private Label fTableLabel;
@@ -216,6 +217,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fDeselectAllButton.setEnabled(enabled);
 		fSelectAllButton.setEnabled(enabled);
 		fFilterConstructorButton.setEnabled(enabled);
+		fStepThruButton.setEnabled(enabled);
 		fFilterStaticButton.setEnabled(enabled);
 		fFilterSyntheticButton.setEnabled(enabled);
 		fTableViewer.getTable().setEnabled(enabled);
@@ -236,6 +238,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterConstructorButton = SWTFactory.createCheckButton(container, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Filter_co_nstructors_19, 
 				null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS), 2);
+		fStepThruButton = SWTFactory.createCheckButton(container, 
+				DebugUIMessages.JavaStepFilterPreferencePage_0, 
+				null, getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS), 2);
 	}
 	
 	/**
@@ -421,6 +426,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS, fFilterConstructorButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS, fFilterStaticButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS, fFilterSyntheticButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, fStepThruButton.getSelection());
 		return super.performOk();
 	}
 	
@@ -434,6 +440,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
 		fFilterStaticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		fFilterConstructorButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+		fStepThruButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS));
 		fTableViewer.getTable().removeAll();
 		initTableState(true);				
 		super.performDefaults();

@@ -1387,6 +1387,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
+	 * Determines if a user did a step into and stepped through filtered code.
+	 * In this case, do a step return if the user has requested not to 
+	 * step thru to an un-filtered location.
+	 */
+	protected boolean shouldDoStepReturn() throws DebugException {
+		if (getOriginalStepKind() == StepRequest.STEP_INTO) {
+			if ((getOriginalStepStackDepth() + 1) < getUnderlyingFrameCount()) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+	/**
 	 * @see ISuspendResume#suspend()
 	 */
 	public synchronized void suspend() throws DebugException {
@@ -1829,12 +1843,29 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected StepRequest createStepRequest() throws DebugException {
+			return createStepRequest(getStepKind());
+		}
+		
+		/**
+		 * Creates and returns a step request of the specified kind.
+		 * 
+		 * @param one of <code>StepRequest.STEP_INTO</code>,
+		 * 	<code>StepRequest.STEP_OVER</code>, <code>StepRequest.STEP_OUT</code>
+		 * @return step request
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected StepRequest createStepRequest(int kind) throws DebugException {
 			EventRequestManager manager = getEventRequestManager();
 			if (manager == null) {
 				requestFailed(JDIDebugModelMessages.JDIThread_Unable_to_create_step_request___VM_disconnected__1, null); 
 			}
 			try {
-				StepRequest request = manager.createStepRequest(fThread, StepRequest.STEP_LINE, getStepKind());
+				StepRequest request = manager.createStepRequest(fThread, StepRequest.STEP_LINE, kind);
 				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 				request.addCountFilter(1);
 				attachFiltersToStepRequest(request);
@@ -1961,6 +1992,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
 
+				
+				if (!getJavaDebugTarget().isStepThruFilters()) {
+					if (shouldDoStepReturn()) {
+						deleteStepRequest();
+						createSecondaryStepRequest(StepRequest.STEP_OUT);
+						return true;
+					}
+				}
 				// if the ending step location is filtered and we did not start from
 				// a filtered location, or if we're back where
 				// we started on a step into, do another step of the same kind
@@ -2062,7 +2101,29 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected void createSecondaryStepRequest() throws DebugException {
-			setStepRequest(createStepRequest());
+			createSecondaryStepRequest(getStepKind());			
+		}
+		
+		/**
+		 * Creates another step request in the underlying thread of the
+		 * specified kind (over, into, return). This thread will
+		 * be resumed by the event dispatcher as this event handler
+		 * will vote to resume suspended threads. When a step is
+		 * initiated it is registered with its thread as a pending
+		 * step. A pending step could be cancelled if a breakpoint
+		 * suspends execution during the step.
+		 * 
+		 * @param one of <code>StepRequest.STEP_INTO</code>,
+		 * 	<code>StepRequest.STEP_OVER</code>, <code>StepRequest.STEP_OUT</code>
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected void createSecondaryStepRequest(int kind) throws DebugException {
+			setStepRequest(createStepRequest(kind));
 			setPendingStepHandler(this);
 			addJDIEventListener(this, getStepRequest());			
 		}	

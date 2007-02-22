@@ -14,6 +14,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -63,6 +64,33 @@ public class StepFilterTests extends AbstractDebugTest {
 			resetStepFilters();
 		}				
 	}
+	
+	/**
+	 * Tests a simple step filter
+	 * @throws Exception
+	 */
+	public void testDontStepThruStepFilters() throws Exception {
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
+		String typeName = "StepFilterOne";
+		ILineBreakpoint bp = createLineBreakpoint(24, typeName);
+		bp.setEnabled(true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, true);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			thread = stepIntoWithFilters(stackFrame, false);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			String recTypeName = stackFrame.getReceivingTypeName();
+			assertEquals("Wrong receiving type", "StepFilterOne", recTypeName);
+			int lineNumber = stackFrame.getLineNumber();
+			assertEquals("Wrong line number", 25, lineNumber);			
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			resetStepFilters();
+		}				
+	}	
 	
 	/**
 	 * Tests a step filter that is not active

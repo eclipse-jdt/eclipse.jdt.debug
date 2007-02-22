@@ -42,7 +42,8 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		// JavaStepFilterPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,jrockit.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
-				
+		store.setDefault(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, true);
+		
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIALBES, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR, false);

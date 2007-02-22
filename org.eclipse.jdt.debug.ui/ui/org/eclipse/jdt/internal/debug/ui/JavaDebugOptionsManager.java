@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -57,6 +56,7 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -68,6 +68,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -240,6 +241,9 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		target.setFilterConstructors(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
 		target.setFilterStaticInitializers(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		target.setFilterSynthetics(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+		if (target instanceof JDIDebugTarget) {
+			((JDIDebugTarget)target).setStepThruFilters(store.getBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS));
+		}
 		target.setStepFilters(getActiveStepFilters());
 
 	}	
@@ -315,7 +319,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	private boolean isUseFilterProperty(String property) {
 		return property.equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS) ||
 			property.equals(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS) ||
-			property.equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS);
+			property.equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS) ||
+			property.equals(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS);
 	}
 	
 	/**

@@ -92,6 +92,7 @@ import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -1359,6 +1360,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepIntoWithFilters(IJavaStackFrame frame) throws Exception {
+		return stepIntoWithFilters(frame, true);
+	}
+	
+	/**
+	 * Performs a step into with filters in the given stack frame and returns when
+	 * complete.
+	 * 
+	 * @param whether to step thru or step return from a filtered location
+	 * @param frame stack frame to step in
+	 */
+	protected IJavaThread stepIntoWithFilters(IJavaStackFrame frame, boolean stepThru) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -1366,17 +1378,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
 			target.setStepFiltersEnabled(true);
+			((JDIDebugTarget)target).setStepThruFilters(stepThru);
 			frame.stepInto();
+			Object suspendee= waiter.waitForEvent();
+			setEventSet(waiter.getEventSet());
+			assertNotNull("Program did not suspend.", suspendee);
+			return (IJavaThread) suspendee;
 		} finally {
 			// turn filters off
 			target.setStepFiltersEnabled(false);
+			((JDIDebugTarget)target).setStepThruFilters(true);
 		}
-		
-		
-		Object suspendee= waiter.waitForEvent();
-		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
-		return (IJavaThread) suspendee;		
 	}	
 
 	/**
