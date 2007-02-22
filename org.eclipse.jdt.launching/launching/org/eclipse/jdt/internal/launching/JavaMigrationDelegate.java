@@ -91,14 +91,14 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	 * 
 	 * @throws CoreException
 	 */
-	protected IResource getResource(ILaunchConfiguration candidate) throws CoreException {
+	public static IResource getResource(ILaunchConfiguration candidate) throws CoreException {
 		IResource resource = null;
 		String pname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		if(!EMPTY_STRING.equals(pname)) {
 			String tname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 			if(!EMPTY_STRING.equals(tname)) {
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pname);
-				if(project != null && project.exists()) {
+				if(project != null && project.exists() && project.isOpen()) {
 					IJavaProject jproject = JavaCore.create(project);
 					if(jproject != null && jproject.exists()) {
 						tname = tname.replace('$', '.');
@@ -120,10 +120,24 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#migrate(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
-		IResource resource = getResource(candidate);
 		ILaunchConfigurationWorkingCopy wc = candidate.getWorkingCopy();
-		wc.setMappedResources(new IResource[]{resource});
+		updateResourceMapping(wc);
 		wc.doSave();
+	}
+	
+	/**
+	 * Updates the resource mapping for the given launch configuration.
+	 * 
+	 * @param wc working copy
+	 * @throws CoreException if an exception occurs updating resource mapping.
+	 */
+	public static void updateResourceMapping(ILaunchConfigurationWorkingCopy wc) throws CoreException {
+		IResource resource = getResource(wc);
+		IResource[] resources = null;
+		if (resource != null) {
+			resources = new IResource[]{resource};
+		}
+		wc.setMappedResources(resources);
 	}
 
 }

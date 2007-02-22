@@ -11,7 +11,6 @@
 
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -19,11 +18,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.JavaMigrationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -198,7 +197,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		}
 		catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
+			setErrorMessage(ce.getStatus().getMessage());
 		}
 		fProjText.setText(projectName);
 	}
@@ -212,21 +211,12 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		try {
 		//CONTEXTLAUNCHING
 			IJavaProject javaProject = getJavaProject();
-			IResource[] resources = null;
-			if (javaProject != null && javaProject.exists()) {
-				resources = new IResource[] {javaProject.getProject()};
-				String typename = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-				if(typename != null) {
-					IType type = javaProject.findType(typename);
-					if (type != null) {
-						resources = new IResource[] {type.getUnderlyingResource()};
-					}
-				}
-				config.setMappedResources(resources);
+			if (javaProject != null && javaProject.exists() && javaProject.isOpen()) {
+				JavaMigrationDelegate.updateResourceMapping(config);
 			}
-			
+		} catch(CoreException ce) {
+			setErrorMessage(ce.getStatus().getMessage());
 		}
-		catch(CoreException ce) {JDIDebugUIPlugin.log(ce);}
 	}	
 	
 }
