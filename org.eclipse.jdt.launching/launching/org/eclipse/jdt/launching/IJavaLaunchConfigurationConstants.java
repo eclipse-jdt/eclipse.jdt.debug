@@ -65,17 +65,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * of a main type to launch.
 	 */
 	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MAIN_TYPE";	 //$NON-NLS-1$
-	
-	/**
-	 * A flag used for the new context launching framework to help determine if a launch configuration
-	 * is in need of migration or not
-	 * 
-	 * CONTEXTLAUNCHING 
-	 * 
-	 * @since 3.3
-	 */
-	public static final String ATTR_CONTEXT_LAUNCHING_MIGRATED = LaunchingPlugin.getUniqueIdentifier() + ".CONTEXT_LAUNCHING_MIGRATED"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether execution should stop when main is entered. The default value
