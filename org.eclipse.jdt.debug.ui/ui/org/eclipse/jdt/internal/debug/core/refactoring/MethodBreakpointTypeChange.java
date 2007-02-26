@@ -50,7 +50,22 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		IMethod destMethod = fDestType.getMethod(getMethodName(), Signature.getParameterTypes(getSignature()));
+		String[] parameterTypes = Signature.getParameterTypes(getSignature());
+		for (int i = 0; i < parameterTypes.length; i++) {
+			parameterTypes[i] = parameterTypes[i].replace('/', '.');
+			
+		}
+		IMethod destMethod = fDestType.getMethod(getMethodName(), parameterTypes);
+		if (!destMethod.exists()) {
+			// find the similar method, as source methods have unqualified signatures
+			IMethod[] methods = fDestType.getMethods();
+			for (int i = 0; i < methods.length; i++) {
+				if (methods[i].isSimilar(destMethod)) {
+					destMethod = methods[i];
+					break;
+				}
+			}
+		}
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destMethod);
 		IResource resource = BreakpointUtils.getBreakpointResource(destMethod);
