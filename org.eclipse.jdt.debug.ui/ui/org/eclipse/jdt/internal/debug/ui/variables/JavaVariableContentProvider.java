@@ -22,9 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
-import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
 /**
@@ -50,7 +48,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
         	if (supportsInstanceRetrieval(parent)){
         		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaVariableContentProvider_0,(IJavaObject)value);
         	} else {
-        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaVariableContentProvider_0,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaVariableContentProvider_2));
+        		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaVariableContentProvider_0,VariableMessages.JavaVariableContentProvider_2,(JDIDebugTarget)value.getDebugTarget());
         	}
         	
         	return getElements(moreVariables, index, length);

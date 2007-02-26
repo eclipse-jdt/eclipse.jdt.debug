@@ -35,6 +35,18 @@ public class JDIReferenceListVariable extends JDIPlaceholderVariable{
 		super (name,new JDIReferenceListValue(root));
 	}
 	
+	/**
+	 * Creates a new variable that displays a message to the user.  Used when the
+	 * debug target does not support all reference capability.
+	 * 
+	 * @param name The name this variable should use
+	 * @param message The message that should be displayed as the value
+	 * @param target The debug target this variable belongs to
+	 */
+	public JDIReferenceListVariable(String name, String message, JDIDebugTarget target){
+		super(name, new JDIPlaceholderValue(target,message));
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable#equals(java.lang.Object)
 	 */
@@ -42,6 +54,10 @@ public class JDIReferenceListVariable extends JDIPlaceholderVariable{
 		// Two JDIReferenceListVariables are equal if their values are equal
 		if (obj instanceof JDIReferenceListVariable){
 			JDIReferenceListVariable var = (JDIReferenceListVariable)obj;
+			if (getValue() instanceof JDIPlaceholderValue || var.getValue() instanceof JDIPlaceholderValue){
+				// A placeholder value is only equal to the same instance
+				return this == obj;
+			}
 			return getValue().equals(var.getValue());
 		}
 		return false;
