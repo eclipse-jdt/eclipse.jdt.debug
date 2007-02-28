@@ -24,15 +24,12 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -96,79 +93,43 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
-		Font font = parent.getFont();
-		
 		//The main composite
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight=0;
-		layout.marginWidth=0;
-		composite.setLayout(layout);
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);		
-		composite.setFont(font);
-		
-		PreferenceLinkArea runLink = new PreferenceLinkArea(composite, SWT.NONE,
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, GridData.FILL);
+		new PreferenceLinkArea(composite, SWT.BORDER,
 				"org.eclipse.debug.ui.DebugPreferencePage", DebugUIMessages.JavaDebugPreferencePage_0, //$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
-
-		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		runLink.getControl().setLayoutData(data);	
-	
-		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1); 
-		fSuspendButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1); 
-		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1); 
-		fSuspendDuringEvaluations= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_14);
-		fOpenInspector = createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_20);
 		
-		Composite group = new Composite(comp, SWT.NONE);
-		GridLayout groupLayout = new GridLayout();
-		groupLayout.numColumns = 2;
-		groupLayout.marginHeight=0;
-		groupLayout.marginWidth=0;
-		group.setLayout(groupLayout);
-		data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		group.setLayoutData(data);
-		Label label = new Label(group, SWT.NONE);
-		label.setText(DebugUIMessages.JavaDebugPreferencePage_21);
+		Group group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1, 2, 1, GridData.FILL_HORIZONTAL); 
+		fSuspendButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1, null, false, 2); 
+		fSuspendOnCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1, null, false, 2); 
+		fSuspendDuringEvaluations = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_14, null, false, 2);
+		fOpenInspector = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_20, null, false, 2);
+		
+		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_21, 1);
 		fSuspendVMorThread = new Combo(group, SWT.BORDER|SWT.READ_ONLY);
 		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
-				
-		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2); 
-		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1); 
-		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1); 
-		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1); 
-		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1); 
+			
+		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);
+		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1); 
+		fAlertHCRNotSupportedButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1, null, false, 1); 
+		fAlertObsoleteButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1, null, false, 1); 
+		fPerformHCRWithCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1, null, false, 1); 
 
-		fPromptUnableToInstallBreakpoint= createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19); 
+		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_14, null, false, 1); 
 
-		comp = createGroupComposite(composite, 1, DebugUIMessages.JavaDebugPreferencePage_Communication_1); 
-		//Add in an intermediate composite to allow for spacing
-		Composite spacingComposite = new Composite(comp, SWT.NONE);
-		layout = new GridLayout();
-		spacingComposite.setLayout(layout);
-		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		spacingComposite.setLayoutData(data);
-		spacingComposite.setFont(font);
-		
+		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Communication_1, 1, 1, GridData.FILL_HORIZONTAL);
+		Composite space = SWTFactory.createComposite(group, group.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		int minValue;
         Preferences coreStore= JDIDebugModel.getPreferences();
         Preferences runtimeStore= JavaRuntime.getPreferences();
-		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, spacingComposite);
+		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, space);
 		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		minValue= coreStore.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
 		fTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fTimeoutText.load();
-		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, spacingComposite); 
+		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, space); 
 		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		minValue= runtimeStore.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
@@ -176,11 +137,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fConnectionTimeoutText.load();
 		
-
 		setValues();
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText.setPropertyChangeListener(this);
 		applyDialogFont(composite);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
 		return composite;		
 	}
 		
@@ -243,40 +204,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		super.performDefaults();	
 	}
 	
-	/**
-	 * Creates a button with the given label and sets the default 
-	 * configuration data.
-	 */
-	private Button createCheckButton(Composite parent, String label) {
-		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
-		button.setText(label);		
-		GridData data = new GridData();	
-		button.setLayoutData(data);
-		button.setFont(parent.getFont());
-		
-		return button;
-	}
-	
-	/**
-	 * Creates composite group and sets the default layout data.
-	 *
-	 * @param parent  the parent of the new composite
-	 * @param numColumns  the number of columns for the new composite
-	 * @param labelText  the text label of the new composite
-	 * @return the newly-created composite
-	 */
-	private Composite createGroupComposite(Composite parent, int numColumns, String labelText) {
-		Group comp = new Group(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(numColumns, true));
-		GridData gd = new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
-		comp.setLayoutData(gd);
-		comp.setText(labelText);
-		comp.setFont(parent.getFont());
-		return comp;
-	}
-		
 	/**
 	 * Set the values of the component widgets based on the
 	 * values in the preference store
