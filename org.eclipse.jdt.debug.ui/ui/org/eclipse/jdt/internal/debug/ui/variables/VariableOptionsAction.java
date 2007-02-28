@@ -41,7 +41,8 @@ public class VariableOptionsAction implements IViewActionDelegate, IPropertyChan
     			new String[] {"org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", //$NON-NLS-1$
     							"org.eclipse.jdt.debug.ui.JavaLogicalStructuresPreferencePage",  //$NON-NLS-1$
     							"org.eclipse.jdt.debug.ui.heapWalking",  //$NON-NLS-1$
-    							"org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage"}); //$NON-NLS-1$
+    							"org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage", //$NON-NLS-1$
+    							"org.eclipse.debug.ui.DebugPreferencePage"}); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
