@@ -148,9 +148,15 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 			//CONTEXTLAUNCHING
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fNewProjectName);
 			if(project != null) {
-				IResource res = project.findMember(wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null));
-				if(res != null) {
-					wc.setMappedResources(new IResource[] {res});
+				String name = wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+				if(name != null) {
+					IResource res = project.findMember(name);
+					if(res != null) {
+						wc.setMappedResources(new IResource[] {res});
+					}
+				}
+				else {
+					wc.setMappedResources(new IResource[] {project});
 				}
 			}
 			else {
