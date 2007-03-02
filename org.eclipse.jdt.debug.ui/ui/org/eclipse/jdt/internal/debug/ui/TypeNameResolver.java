@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * Variable resolver which returns the fully qualified name of the
@@ -54,11 +53,7 @@ public class TypeNameResolver extends ResourceResolver {
 		int elementType= element.getElementType();
 		switch (elementType) {
 			case IJavaElement.CLASS_FILE :
-				try {
-					type= ((IClassFile) element).getType();
-				} catch (JavaModelException e) {
-					// Ignore
-				}
+				type= ((IClassFile) element).getType();
 				break;
 			case IJavaElement.COMPILATION_UNIT :
 				type= ((ICompilationUnit) element).findPrimaryType();
