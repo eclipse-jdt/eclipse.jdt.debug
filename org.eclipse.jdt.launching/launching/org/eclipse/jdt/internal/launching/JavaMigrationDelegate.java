@@ -95,9 +95,9 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		IResource resource = null;
 		String pname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		if(!EMPTY_STRING.equals(pname)) {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pname);
 			String tname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 			if(!EMPTY_STRING.equals(tname)) {
-				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pname);
 				if(project != null && project.exists() && project.isOpen()) {
 					IJavaProject jproject = JavaCore.create(project);
 					if(jproject != null && jproject.exists()) {
@@ -111,6 +111,9 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 						}
 					}
 				}
+			}
+			else {
+				return project;
 			}
 		}
 		return resource;
