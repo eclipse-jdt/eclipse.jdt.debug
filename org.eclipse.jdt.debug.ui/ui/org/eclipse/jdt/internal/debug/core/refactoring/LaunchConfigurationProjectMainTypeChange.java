@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,9 +22,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.internal.launching.JavaMigrationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The change for the main type project change of a launch configuration
@@ -146,22 +146,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 			oldProjectName = fOldProjectName;
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
 			//CONTEXTLAUNCHING
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fNewProjectName);
-			if(project != null) {
-				String name = wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-				if(name != null) {
-					IResource res = project.findMember(name);
-					if(res != null) {
-						wc.setMappedResources(new IResource[] {res});
-					}
-				}
-				else {
-					wc.setMappedResources(new IResource[] {project});
-				}
-			}
-			else {
-				wc.setMappedResources(new IResource[] {});
-			}
+			JavaMigrationDelegate.updateResourceMapping(wc);
 		} 
 		else {
 			oldProjectName = null;
