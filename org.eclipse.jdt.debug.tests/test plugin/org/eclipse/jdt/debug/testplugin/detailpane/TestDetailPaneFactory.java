@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPaneFactory;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**

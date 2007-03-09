@@ -13,7 +13,6 @@ package org.eclipse.jdt.debug.testplugin.detailpane;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
