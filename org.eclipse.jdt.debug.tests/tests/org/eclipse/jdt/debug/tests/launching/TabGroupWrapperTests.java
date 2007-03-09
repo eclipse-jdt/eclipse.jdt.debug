@@ -45,7 +45,7 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Checkks to make sure that all of the controls of the tabs (including contributed ones) are dispoaed on a call to the tab group
+	 * Checks to make sure that all of the controls of the tabs (including contributed ones) are disposed on a call to the tab group
 	 * wrapper class
 	 * @throws CoreException
 	 */
