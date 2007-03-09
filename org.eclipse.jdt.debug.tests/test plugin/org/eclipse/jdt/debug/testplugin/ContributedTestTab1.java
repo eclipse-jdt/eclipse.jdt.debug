@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * An empty implementation of a contributed launch configuraiton tab
+ * An empty implementation of a contributed launch configuration tab
  * @since 3.3
  */
 public class ContributedTestTab1 extends AbstractLaunchConfigurationTab {
