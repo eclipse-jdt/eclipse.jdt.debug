@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	protected Control createContents(Composite parent) {
 		//The main composite
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, GridData.FILL);
-		new PreferenceLinkArea(composite, SWT.BORDER,
+		new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.debug.ui.DebugPreferencePage", DebugUIMessages.JavaDebugPreferencePage_0, //$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 		
@@ -228,7 +228,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
