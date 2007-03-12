@@ -12,7 +12,9 @@ package org.eclipse.jdt.internal.debug.ui;
 
  
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
@@ -116,6 +118,20 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * Local cache of active step filters.
 	 */
 	private String[] fActiveStepFilters = null;
+	
+	/**
+	 * Preferences that effect variable display options.
+	 * 
+	 * @since 3.3
+	 */
+	private static Set fgDisplayOptions;
+	
+	static {
+		fgDisplayOptions = new HashSet();
+		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_CHAR);
+		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_HEX);
+		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED);
+	}
 	
 	/**
 	 * Whether the manager has been activated
@@ -287,7 +303,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
+		String property = event.getProperty();
+		if (property.equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
 			IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
 			if (breakpoint != null) {
 				int kind = REMOVED;
@@ -296,7 +313,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 				}
 				notifyTargets(breakpoint, kind);
 			}
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
+		} else if (property.equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
 			IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
 			if (breakpoint != null) {
 				int kind = REMOVED;
@@ -305,9 +322,11 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 				}			
 				notifyTargets(breakpoint, kind);
 			}
-		} else if (isUseFilterProperty(event.getProperty())) {
+		} else if (fgDisplayOptions.contains(property)) {
+			variableViewSettingsChanged();
+		} else if (isUseFilterProperty(property)) {
 			notifyTargetsOfFilters();
-		} else if (isFilterListProperty(event.getProperty())) {
+		} else if (isFilterListProperty(property)) {
 			updateActiveFilters();
 		}
 	}
@@ -797,6 +816,14 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
      * @see org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener#logicalStructuresChanged()
      */
     public void logicalStructuresChanged() {
+    	variableViewSettingsChanged();
+    }
+    
+    /**
+	 * Refreshes the variables view by firing a change event on a stack frame (active
+	 * debug context).
+	 */
+    protected void variableViewSettingsChanged() {
         // If a Java stack frame is selected in the Debug view, fire a change event on
         // it so the variables view will update for any structure changes.
         IAdaptable selected = DebugUITools.getDebugContext();
@@ -808,6 +835,6 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
                 });
             }
         }
-    }
+    }    
 
 }
