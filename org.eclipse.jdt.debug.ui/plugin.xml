@@ -2929,6 +2929,23 @@ M4 = Platform-specific fourth key
        <description>%preference.transfer.jres.description
        </description>
     </transfer>
+    <transfer
+             icon="$nl$/icons/full/elcl16/var_cntnt_prvdr.gif"
+             id="org.eclipse.debug.ui.transfer.logicalStructures"
+             name="%preference.transfer.logicalStructures">
+          <mapping
+                scope="instance">
+             <entry
+                   node="org.eclipse.jdt.debug">
+                <key
+                      name="org.eclipse.jdt.debug.PREF_JAVA_LOGICAL_STRUCTURES">
+                </key>
+             </entry>
+          </mapping>
+          <description>
+             %preference.transfer.logicalStructures.description
+          </description>
+       </transfer>
  </extension>
  <extension
        point="org.eclipse.ui.ide.markerSupport">
