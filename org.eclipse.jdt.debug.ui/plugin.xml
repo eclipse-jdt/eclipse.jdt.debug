@@ -2112,12 +2112,13 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="%JavaApplicationShortcut.label"
-            icon="$nl$/icons/full/etool16/java_app.gif"
-            helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
-            modes="run, debug"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
-            id="org.eclipse.jdt.debug.ui.localJavaShortcut">
+            description="%JavaLaunchShortcut.description"
+            helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
+            icon="$nl$/icons/full/etool16/java_app.gif"
+            id="org.eclipse.jdt.debug.ui.localJavaShortcut"
+            label="%JavaApplicationShortcut.label"
+            modes="run, debug">
          <contextualLaunch>
            <enablement>
              <with variable="selection">
@@ -2149,14 +2150,23 @@
          <configurationType
                id="org.eclipse.jdt.launching.localJavaApplication">
          </configurationType>
+         <description
+               description="%RunJavaLaunchShortcut.description"
+               mode="run">
+         </description>
+         <description
+               description="%DebugJavaLaunchShortcut.description"
+               mode="debug">
+         </description>
       </shortcut>
       <shortcut
-            label="%AppletShortcut.label"
-            icon="$nl$/icons/full/etool16/java_applet.gif"
-            helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
-            modes="run, debug"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
-            id="org.eclipse.jdt.debug.ui.javaAppletShortcut">
+            description="%AppletLaunchShortcut.description"
+            helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
+            icon="$nl$/icons/full/etool16/java_applet.gif"
+            id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+            label="%AppletShortcut.label"
+            modes="run, debug">
          <contextualLaunch>
            <enablement>
              <with variable="selection">
@@ -2188,6 +2198,14 @@
          <configurationType
                id="org.eclipse.jdt.launching.javaApplet">
          </configurationType>
+         <description
+               description="%RunAppletLaunchShortcut.description"
+               mode="run">
+         </description>
+         <description
+               description="%DebugAppletLaunchShortcut.description"
+               mode="debug">
+         </description>
       </shortcut>
    </extension>
 <!-- commands and their bindings

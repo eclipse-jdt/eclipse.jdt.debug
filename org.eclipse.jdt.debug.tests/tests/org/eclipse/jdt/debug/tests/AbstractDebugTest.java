@@ -120,6 +120,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	public static final int DEFAULT_TIMEOUT = 30000;
 	
+	//constants
+	protected static final String JAVA = "java"; //$NON-NLS-1$
+	protected static final String JAVA_EXTENSION = ".java"; //$NON-NLS-1$
+	protected static final String LAUNCHCONFIGURATIONS = "launchConfigurations"; //$NON-NLS-1$
+	protected static final String LAUNCH_EXTENSION = ".launch"; //$NON-NLS-1$
+	protected static final String LOCAL_JAVA_APPLICATION_TYPE_ID = "org.eclipse.jdt.launching.localJavaApplication"; //$NON-NLS-1$
+	protected static final String JAVA_LAUNCH_SHORTCUT_ID = "org.eclipse.jdt.debug.ui.localJavaShortcut"; //$NON-NLS-1$
+	
 	/**
 	 * an evaluation result
 	 */
@@ -202,7 +210,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return the test project
 	 */
 	protected IJavaProject getJavaProject() {
-		return getJavaProject("DebugTests");
+		return getJavaProject("DebugTests"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -227,7 +235,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		LaunchShortcutExtension ext = null;
 		for (int i = 0; i < exts.size(); i++) {
 			ext = (LaunchShortcutExtension) exts.get(i);
-			if(ext.getId().equals("org.eclipse.jdt.debug.ui.localJavaShortcut")) {
+			if(ext.getId().equals(JAVA_LAUNCH_SHORTCUT_ID)) {
 				return ext;
 			}
 		}
@@ -249,7 +257,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ILaunchConfigurationType type = configuration.getType();
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
 		if(delegates.length > 1) {
-			type.setPreferredDelegate(modes, getDelegateById(type.getIdentifier(), "org.eclipse.jdt.launching.localJavaApplication"));
+			type.setPreferredDelegate(modes, getDelegateById(type.getIdentifier(), LOCAL_JAVA_APPLICATION_TYPE_ID));
 		}
 	}
 	
@@ -257,10 +265,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Returns the LaunchDelegate for the specified ID
 	 * @param delegateId the id of the delegate to search for
 	 * @return the <code>LaunchDelegate</code> associated with the specified id or <code>null</code> if not found
-	 * @throws CoreException
 	 * @since 3.3
 	 */
-	protected ILaunchDelegate getDelegateById(String typeId, String delegateId) throws CoreException {
+	protected ILaunchDelegate getDelegateById(String typeId, String delegateId) {
 		LaunchManager lm = (LaunchManager) getLaunchManager();
 		LaunchDelegate[] delegates = lm.getLaunchDelegates(typeId);
 		for(int i = 0; i < delegates.length; i++) {
@@ -283,6 +290,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return project.getPackageFragmentRoot(p.getFolder(name));
 	}
 	
+	/**
+	 * Returns the <code>IHyperLink</code> at the given offset in the specified document
+	 * or <code>null</code> if the offset does not point to an <code>IHyperLink</code>
+	 * @param offset
+	 * @param doc
+	 * @return the <code>IHyperLink</code> at the given offset or <code>null</code>
+	 */
 	protected IHyperlink getHyperlink(int offset, IDocument doc) {
 		if (offset >= 0 && doc != null) {
 			Position[] positions = null;
@@ -332,36 +346,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
 			StringBuffer buf = new StringBuffer();
-            buf.append("Test case: ");
+            buf.append("Test case: "); //$NON-NLS-1$
             buf.append(getName());
-            buf.append("\n");
-            buf.append("Never received event: ");
+            buf.append("\n"); //$NON-NLS-1$
+            buf.append("Never received event: "); //$NON-NLS-1$
             buf.append(waiter.getEventKindName());
-            buf.append("\n");
+            buf.append("\n"); //$NON-NLS-1$
             if (launch.isTerminated()) {
-            	buf.append("Process exit value: ");
+            	buf.append("Process exit value: "); //$NON-NLS-1$
             	buf.append(launch.getProcesses()[0].getExitValue());
-                buf.append("\n");
+                buf.append("\n"); //$NON-NLS-1$
             }
             IConsole console = DebugUITools.getConsole(launch.getProcesses()[0]);
             if (console instanceof TextConsole) {
                 TextConsole textConsole = (TextConsole)console;
                 String string = textConsole.getDocument().get();
-                buf.append("Console output follows:\n");
+                buf.append("Console output follows:\n"); //$NON-NLS-1$
                 buf.append(string);
             }
-            buf.append("\n");
-            DebugPlugin.log(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.ui.tests", buf.toString()));
+            buf.append("\n"); //$NON-NLS-1$
+            DebugPlugin.log(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.ui.tests", buf.toString())); //$NON-NLS-1$
 			try {
 				launch.terminate();
 			} catch (CoreException e) {
 				e.printStackTrace();
-				fail("Program did not suspend, and unable to terminate launch.");
+				fail("Program did not suspend, and unable to terminate launch."); //$NON-NLS-1$
 			}
 			throw new TestAgainException();
 		}
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend, launch terminated.", suspendee);
+		assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
 		return suspendee;		
 	}	
 	
@@ -375,7 +389,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaThread launchAndSuspend(String mainTypeName) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
-		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchAndSuspend(config);
 	}
 
@@ -417,7 +431,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName, boolean register) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
-		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchToBreakpoint(config, register);
 	}	
 
@@ -447,7 +461,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
 		Object suspendee= launchAndWait(config, waiter, register);
-		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
+		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread); //$NON-NLS-1$
 		return (IJavaThread)suspendee;		
 	}	
 	
@@ -462,7 +476,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaDebugTarget launchAndTerminate(String mainTypeName) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
-		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchAndTerminate(config, DEFAULT_TIMEOUT);
 	}
 
@@ -480,10 +494,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		waiter.setTimeout(timeout);
 
 		Object terminatee = launchAndWait(config, waiter);		
-		assertNotNull("Program did not terminate.", terminatee);
-		assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget);
+		assertNotNull("Program did not terminate.", terminatee); //$NON-NLS-1$
+		assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget); //$NON-NLS-1$
 		IJavaDebugTarget debugTarget = (IJavaDebugTarget) terminatee;
-		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected());
+		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected()); //$NON-NLS-1$
 		return debugTarget;		
 	}
 	
@@ -512,7 +526,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaThread launchToLineBreakpoint(String mainTypeName, ILineBreakpoint bp, boolean register) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
-		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchToLineBreakpoint(config, bp, register);
 	}
 	
@@ -530,16 +544,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
 		Object suspendee= launchAndWait(config, waiter, register);
-		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
+		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread); //$NON-NLS-1$
 		IJavaThread thread = (IJavaThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
-		assertNotNull("suspended, but not by breakpoint", hit);
-		assertTrue("hit un-registered breakpoint", bp.equals(hit));
-		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+		assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
+		assertTrue("hit un-registered breakpoint", bp.equals(hit)); //$NON-NLS-1$
+		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
-		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
 		
 		return thread;		
 	}
@@ -595,7 +609,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread)suspendee;
 	}	
 	
@@ -614,17 +628,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
-		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
+		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread); //$NON-NLS-1$
 		IJavaThread thread = (IJavaThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
-		assertNotNull("suspended, but not by breakpoint", hit);
-		assertTrue("hit un-registered breakpoint", bp.equals(hit));
-		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+		assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
+		assertTrue("hit un-registered breakpoint", bp.equals(hit)); //$NON-NLS-1$
+		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
-		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
 		
 		return (IJavaThread)suspendee;
 	}	
@@ -643,7 +657,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not terminate.", suspendee);
+		assertNotNull("Program did not terminate.", suspendee); //$NON-NLS-1$
 	}	
 		
 	/**
@@ -661,9 +675,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not terminate.", suspendee);
+		assertNotNull("Program did not terminate.", suspendee); //$NON-NLS-1$
 		IJavaDebugTarget target = (IJavaDebugTarget)suspendee;
-		assertTrue("program should have exited", target.isTerminated() || target.isDisconnected());
+		assertTrue("program should have exited", target.isTerminated() || target.isDisconnected()); //$NON-NLS-1$
 		return target;
 	}	
 		
@@ -674,9 +688,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @see ProjectCreationDecorator
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration(String mainTypeName) {
-		IFile file = getJavaProject().getProject().getFolder("launchConfigurations").getFile(mainTypeName + ".launch");
+		IFile file = getJavaProject().getProject().getFolder(LAUNCHCONFIGURATIONS).getFile(mainTypeName + LAUNCH_EXTENSION);
 		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
-		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists());
+		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
 	}
 	
@@ -689,9 +703,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @see ProjectCreationDecorator
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration(IJavaProject project, String containername, String mainTypeName) {
-		IFile file = project.getProject().getFolder(containername).getFile(mainTypeName + ".launch");
+		IFile file = project.getProject().getFolder(containername).getFile(mainTypeName + LAUNCH_EXTENSION);
 		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
-		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists());
+		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
 	}
 	
@@ -704,7 +718,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IResource getBreakpointResource(String typeName) throws Exception {
-		IJavaElement element = getJavaProject().findElement(new Path(typeName + ".java"));
+		IJavaElement element = getJavaProject().findElement(new Path(typeName + JAVA_EXTENSION));
 		IResource resource = element.getCorrespondingResource();
 		if (resource == null) {
 			resource = getJavaProject().getProject();
@@ -712,6 +726,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return resource;
 	}
 	
+	/**
+	 * Returns the resource from the specified type or the project from the testing java project in the 
+	 * event there is no resource from the specified type
+	 * @param type
+	 * @return
+	 * @throws Exception
+	 */
 	protected IResource getBreakpointResource(IType type) throws Exception {
 		if (type == null) {
 			return getJavaProject().getProject();
@@ -748,10 +769,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			String fullTargetName) throws Exception{
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
-		assertNotNull("did not find requested Compilation Unit", cunit);
+		assertNotNull("did not find requested Compilation Unit", cunit); //$NON-NLS-1$
 		IType targetType = (IType)(new MemberParser()).getDeepest(cunit,fullTargetName);
-		assertNotNull("did not find requested type", targetType);
-		assertTrue("did not find type to install breakpoint in", targetType.exists());
+		assertNotNull("did not find requested type", targetType); //$NON-NLS-1$
+		assertTrue("did not find type to install breakpoint in", targetType.exists()); //$NON-NLS-1$
 		
 		return createLineBreakpoint(targetType, lineNumber);
 	}
@@ -825,7 +846,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			IPackageFragment fragment = packageFragments[i];
 			if (fragment.getElementName().equals(packageName)) {
 				ICompilationUnit compilationUnit = fragment.getCompilationUnit(cuName);
-				String[] names = typeName.split("\\$");
+				String[] names = typeName.split("\\$"); //$NON-NLS-1$
 				IType type = compilationUnit.getType(names[0]);
 				for (int j = 1; j < names.length; j++) {
 					type = type.getType(names[j]);
@@ -954,7 +975,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String packageName, String cuName, String typeName, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
-		assertNotNull("did not find type to install breakpoint in", type);
+		assertNotNull("did not find type to install breakpoint in", type); //$NON-NLS-1$
 		IMethod method= null;
 		if (methodSignature != null && methodName != null) {
 			if (type != null ) {
@@ -991,12 +1012,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		IJavaProject javaProject = getJavaProject();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
-		assertNotNull("did not find requested Compilation Unit", cunit);
+		assertNotNull("did not find requested Compilation Unit", cunit); //$NON-NLS-1$
 		IMethod targetMethod = (IMethod)(new MemberParser()).getDeepest(cunit,fullTargetName);
-		assertNotNull("did not find requested method", targetMethod);
-		assertTrue("Given method does not exist", targetMethod.exists());
+		assertNotNull("did not find requested method", targetMethod); //$NON-NLS-1$
+		assertTrue("Given method does not exist", targetMethod.exists()); //$NON-NLS-1$
 		IType methodParent = (IType)targetMethod.getParent();//safe - method's only parent = Type
-		assertNotNull("did not find type to install breakpoint in", methodParent);
+		assertNotNull("did not find type to install breakpoint in", methodParent); //$NON-NLS-1$
 				
 		Map map = getExtraBreakpointAttributes(targetMethod);
 		return JDIDebugModel.createMethodBreakpoint(getBreakpointResource(methodParent), methodParent.getFullyQualifiedName(),targetMethod.getElementName(), targetMethod.getSignature(), entry, exit,false, -1, -1, -1, 0, true, map);
@@ -1034,7 +1055,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			String packageName, String cuName, String fullTargetName) throws Exception {
 		ICompilationUnit cunit = getCompilationUnit(getJavaProject(), root, packageName, cuName);
 		IType type = (IType)getMember(cunit,fullTargetName);
-		assertTrue("Target type not found", type.exists());
+		assertTrue("Target type not found", type.exists()); //$NON-NLS-1$
 		return createClassPrepareBreakpoint(type);
 	}	
 	
@@ -1058,7 +1079,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(IType type) throws Exception {
-		assertNotNull("type not specified for class prepare breakpoint", type);
+		assertNotNull("type not specified for class prepare breakpoint", type); //$NON-NLS-1$
 		int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
 		if (type.isInterface()) {
 			kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
@@ -1158,8 +1179,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		ICompilationUnit cunit = getCompilationUnit(getJavaProject(), root, packageName, cuName);
 		IField field = (IField)getMember(cunit,fullTargetName);
-		assertNotNull("Path to field is not valid", field);
-		assertTrue("Field is not valid", field.exists());
+		assertNotNull("Path to field is not valid", field); //$NON-NLS-1$
+		assertTrue("Field is not valid", field.exists()); //$NON-NLS-1$
 		IType type = (IType)field.getParent();
 		return createWatchpoint(type, field.getElementName(), access, modification);
 	}
@@ -1192,7 +1213,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IJavaWatchpoint createWatchpoint(IType type, String fieldName, boolean access, boolean modification) throws Exception, CoreException {
-		assertNotNull("type not specified for watchpoint", type);
+		assertNotNull("type not specified for watchpoint", type); //$NON-NLS-1$
 		IField field = type.getField(fieldName);
 		Map map = getExtraBreakpointAttributes(field);
 		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(type), type.getFullyQualifiedName(), fieldName, -1, -1, -1, 0, true, map);
@@ -1290,7 +1311,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		engine.dispose();
 		return fEvaluationResult;
 	}		
@@ -1315,7 +1336,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;
 	}
 
@@ -1332,7 +1353,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;		
 	}
 	
@@ -1349,7 +1370,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;
 	}	
 	
@@ -1382,7 +1403,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			frame.stepInto();
 			Object suspendee= waiter.waitForEvent();
 			setEventSet(waiter.getEventSet());
-			assertNotNull("Program did not suspend.", suspendee);
+			assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 			return (IJavaThread) suspendee;
 		} finally {
 			// turn filters off
@@ -1414,7 +1435,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;		
 	}	
 	
@@ -1441,7 +1462,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;		
 	}
 
@@ -1479,29 +1500,42 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
     }	
     
     
+    /**
+     * Finds the specified variable within the context of the specified stackframe. Returns null if a variable with
+     * the given name does not exist
+     * @param frame
+     * @param name
+     * @return the <code>IJavaVariable</code> with the given name or <code>null</code> if it
+     * does not exist
+     * @throws DebugException
+     */
     protected IJavaVariable findVariable(IJavaStackFrame frame, String name) throws DebugException {
         IJavaVariable variable = frame.findVariable(name);
         if (variable == null) {
             // dump visible variables
             IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
-            System.out.println("Could not find variable '" + name + "' in frame: " + presentation.getText(frame));
-            System.out.println("Visible variables are:");
+            System.out.println("Could not find variable '" + name + "' in frame: " + presentation.getText(frame)); //$NON-NLS-1$ //$NON-NLS-2$
+            System.out.println("Visible variables are:"); //$NON-NLS-1$
             IVariable[] variables = frame.getVariables();
             for (int i = 0; i < variables.length; i++) {
                 IVariable variable2 = variables[i];
-                System.out.println("\t" + presentation.getText(variable2));
+                System.out.println("\t" + presentation.getText(variable2)); //$NON-NLS-1$
             }
             if (!frame.isStatic()) {
                 variables = frame.getThis().getVariables();
                 for (int i = 0; i < variables.length; i++) {
                     IVariable variable2 = variables[i];
-                    System.out.println("\t" + presentation.getText(variable2));
+                    System.out.println("\t" + presentation.getText(variable2)); //$NON-NLS-1$
                 }
             }
         }
         return variable;
     }
 	
+	/**
+	 * Returns if the local filesystem is case-sensitive or not
+	 * @return true if the local filesystem is case-sensitive, false otherwsie
+	 */
 	protected boolean isFileSystemCaseSensitive() {
 		return Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -1511,13 +1545,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
      */
     protected void createLaunchConfiguration(String mainTypeName) throws Exception {
         ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-        ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), mainTypeName);
+        ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
         Map map = new HashMap(1);
-        map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
+        map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         config.doSave();
     }
@@ -1533,7 +1567,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
         Map map = new HashMap(1);
-        map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
+        map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         config.doSave();
     }
@@ -1551,7 +1585,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				super.runBare();
 				tryAgain = false;
 			} catch (TestAgainException e) {
-				Status status = new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", "Test failed attempt " + attempts + ". Re-testing: " + this.getName(), e);
+				Status status = new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", "Test failed attempt " + attempts + ". Re-testing: " + this.getName(), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				DebugPlugin.log(status);
 				if (attempts > 9) {
 					tryAgain = false;

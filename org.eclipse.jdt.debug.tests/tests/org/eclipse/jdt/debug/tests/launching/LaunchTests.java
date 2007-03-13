@@ -43,7 +43,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	 * @throws CoreException
 	 */
 	public void testLaunchNotification() throws CoreException {
-		String typeName = "Breakpoints";		
+		String typeName = "Breakpoints";		 //$NON-NLS-1$
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		getLaunchManager().addLaunchListener(this);
 		HashSet set = new HashSet();
@@ -58,7 +58,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 				}
 			}
 		}
-		assertTrue("Launch should have been added", added);
+		assertTrue("Launch should have been added", added); //$NON-NLS-1$
 
 		synchronized (this) {
 			for (int i= 0; i < 300; i++) {
@@ -72,7 +72,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 				}
 			}
 		}
-		assertTrue("Launch should have been terminated", terminated);
+		assertTrue("Launch should have been terminated", terminated); //$NON-NLS-1$
 		
 		getLaunchManager().removeLaunch(launch);
 		
@@ -84,7 +84,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 				}
 			}
 		}
-		assertTrue("Launch should have been removed", removed);		
+		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$
 	}
 	
 	/**
@@ -93,14 +93,14 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	 * @throws Exception
 	 */
 	public void testUnregisteredLaunch() throws Exception {
-	   String typeName = "Breakpoints";
+	   String typeName = "Breakpoints"; //$NON-NLS-1$
 	   createLineBreakpoint(52, typeName);
 	   IJavaThread thread = null;
        try {
            thread = launchToBreakpoint(typeName, false);
-           assertNotNull("Breakpoint not hit within timeout period", thread);
+           assertNotNull("Breakpoint not hit within timeout period", thread); //$NON-NLS-1$
            ILaunch launch = thread.getLaunch();
-           assertFalse("Launch should not be registered", DebugPlugin.getDefault().getLaunchManager().isRegistered(launch));
+           assertFalse("Launch should not be registered", DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)); //$NON-NLS-1$
        } finally {
            terminateAndRemove(thread);
            removeAllBreakpoints();

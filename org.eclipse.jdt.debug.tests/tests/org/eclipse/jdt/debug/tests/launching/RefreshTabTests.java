@@ -45,10 +45,10 @@ public class RefreshTabTests extends AbstractDebugTest {
 				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
 				IViewPart part;
 				try {
-					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
+					part = page.showView("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
 					part.getSite().getSelectionProvider().setSelection(new StructuredSelection(resource));
 				} catch (PartInitException e) {
-					assertNotNull("Failed to open navigator view", null);
+					assertNotNull("Failed to open navigator view", null); //$NON-NLS-1$
 				}
 				
 			}
@@ -61,8 +61,8 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testSelectedResource() throws CoreException {
-		String scope = "${resource}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		String scope = "${resource}"; //$NON-NLS-1$
+		IResource resource = getJavaProject().getProject().getFolder("src"); //$NON-NLS-1$
 		setSelection(resource);
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
@@ -75,8 +75,8 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testSelectionsFolder() throws CoreException {
-		String scope = "${container}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		String scope = "${container}"; //$NON-NLS-1$
+		IResource resource = getJavaProject().getProject().getFolder("src"); //$NON-NLS-1$
 		setSelection(resource);
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
@@ -89,8 +89,8 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testSelectionsProject() throws CoreException {
-		String scope = "${project}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		String scope = "${project}"; //$NON-NLS-1$
+		IResource resource = getJavaProject().getProject().getFolder("src"); //$NON-NLS-1$
 		setSelection(resource);
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
@@ -103,7 +103,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testWorkspaceScope() throws CoreException {
-		String scope = "${workspace}";
+		String scope = "${workspace}"; //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
@@ -115,8 +115,8 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testSpecificResource() throws CoreException {
-		String scope = "${resource:/DebugTests/.classpath}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		String scope = "${resource:/DebugTests/.classpath}"; //$NON-NLS-1$
+		IResource resource = getJavaProject().getProject().getFile(".classpath"); //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
@@ -128,8 +128,8 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testWorkingSet() throws CoreException {
-		String scope= "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/DebugTests/.classpath\" type=\"1\"/>\n</launchConfigurationWorkingSet>}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		String scope= "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/DebugTests/.classpath\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
+		IResource resource = getJavaProject().getProject().getFile(".classpath"); //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);

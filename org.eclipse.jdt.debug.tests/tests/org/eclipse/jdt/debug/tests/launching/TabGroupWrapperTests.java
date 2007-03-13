@@ -39,9 +39,9 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 	 */
 	public void testAllTabsCreated() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("java tab group cannot be null", javagroup);
+		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_RUN_LAUNCH_GROUP), ILaunchManager.RUN_MODE);
-		assertTrue("There must be 11 tabs, 7 defaults and 4 contributed", javagroup.getTabs().length == 11);
+		assertTrue("There must be 11 tabs, 7 defaults and 4 contributed", javagroup.getTabs().length == 11); //$NON-NLS-1$
 	}
 	
 	/**
@@ -51,10 +51,10 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 	 */
 	public void testDisposeAllTabs() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("java tab group cannot be null", javagroup);
+		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_RUN_LAUNCH_GROUP), ILaunchManager.RUN_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		assertTrue("there must be more than 0 tabs", tabs.length > 0);
+		assertTrue("there must be more than 0 tabs", tabs.length > 0); //$NON-NLS-1$
 		//dispose all returned tabs
 		for(int i = 0; i < tabs.length; i++) {
 			tabs[i].dispose();
@@ -65,6 +65,6 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 		for(int i = 0; i < tabs.length; i++) {
 			alldisposed &= tabs[i].getControl() == null;
 		}
-		assertTrue("All of the controls must be disposed", alldisposed);
+		assertTrue("All of the controls must be disposed", alldisposed); //$NON-NLS-1$
 	}
 }

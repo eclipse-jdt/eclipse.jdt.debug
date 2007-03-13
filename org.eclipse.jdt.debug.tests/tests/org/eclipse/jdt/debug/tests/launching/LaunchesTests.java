@@ -39,7 +39,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	 * @throws CoreException
 	 */
 	public void testDeferredBreakpoints() throws CoreException {
-		String typeName = "Breakpoints";		
+		String typeName = "Breakpoints";		 //$NON-NLS-1$
 
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		getLaunchManager().addLaunchListener(this);
@@ -52,7 +52,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 				}
 			}
 		}
-		assertTrue("Launch should have been added", added);
+		assertTrue("Launch should have been added", added); //$NON-NLS-1$
 
 		synchronized (this) {
 			if (!terminated) {
@@ -62,7 +62,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 				}
 			}
 		}
-		assertTrue("Launch should have been terminated", terminated);
+		assertTrue("Launch should have been terminated", terminated); //$NON-NLS-1$
 		
 		getLaunchManager().removeLaunch(launch);
 		
@@ -74,7 +74,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 				}
 			}
 		}
-		assertTrue("Launch should have been removed", removed);		
+		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$
 	}
 
 	/**

@@ -409,6 +409,7 @@
      <shortcut
            category="testing"
            class="org.eclipse.jdt.debug.testplugin.TestLaunchShortcut"
+           description="General Description"
            helpContextId="testing.help.id"
            id="org.eclipse.jdt.debug.tests.testShortCut"
            label="Test Shortcut"
@@ -420,6 +421,10 @@
         <configurationType
               id="org.eclipse.jdt.launching.localJavaApplication">
         </configurationType>
+        <description
+              description="Run Description"
+              mode="run">
+        </description>
      </shortcut>
   </extension>   
   <extension

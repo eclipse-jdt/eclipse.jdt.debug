@@ -36,14 +36,14 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testStandardMigration() throws Exception {
-		createLaunchConfiguration("MigrationTests");
-		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests");
+		createLaunchConfiguration("MigrationTests"); //$NON-NLS-1$
+		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests"); //$NON-NLS-1$
 		try{ 
-			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate());
+			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate()); //$NON-NLS-1$ //$NON-NLS-2$
 			config.migrate();
 			IResource[] mappedResources = config.getMappedResources();
-			assertEquals("Wrong number of mapped resources", 1, mappedResources.length);
-			assertEquals("Wrong mapped resources", getJavaProject().findType("MigrationTests").getUnderlyingResource(), mappedResources[0]);
+			assertEquals("Wrong number of mapped resources", 1, mappedResources.length); //$NON-NLS-1$
+			assertEquals("Wrong mapped resources", getJavaProject().findType("MigrationTests").getUnderlyingResource(), mappedResources[0]); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		finally {
 			config = null;
@@ -55,12 +55,12 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testMigrationAlreadyPerformed() throws Exception {
-		createLaunchConfiguration("MigrationTests2");
-		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests2");
+		createLaunchConfiguration("MigrationTests2"); //$NON-NLS-1$
+		ILaunchConfiguration config = getLaunchConfiguration("MigrationTests2"); //$NON-NLS-1$
 		try{ 
-			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate());
+			assertTrue("LC: "+config.getName()+" should be a candidate for migration", config.isMigrationCandidate()); //$NON-NLS-1$ //$NON-NLS-2$
 			config.migrate();
-			assertTrue("LC: "+config.getName()+" should not be a candidate for migration", !config.isMigrationCandidate());
+			assertTrue("LC: "+config.getName()+" should not be a candidate for migration", !config.isMigrationCandidate()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		finally {
 			config = null;

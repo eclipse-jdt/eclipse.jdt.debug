@@ -46,10 +46,10 @@ public class ContributedTabTests extends AbstractDebugTest {
 	 */
 	public void testContributedTab() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("Java tab group cannot be null", javagroup);
+		assertNotNull("Java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		assertEquals("Wrong number of tabs", 11, tabs.length);
+		assertEquals("Wrong number of tabs", 11, tabs.length); //$NON-NLS-1$
 		Set tabset = new HashSet();
 		for(int i = 0; i < tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
@@ -57,7 +57,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		Set contribs = new HashSet();
 		contribs.add(ContributedTestTab1.class);
 		contribs.add(JavaAlernateModeTab.class);
-		assertTrue("java tab group should contain all contributed tabs", tabset.containsAll(contribs));
+		assertTrue("java tab group should contain all contributed tabs", tabset.containsAll(contribs)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -66,10 +66,10 @@ public class ContributedTabTests extends AbstractDebugTest {
 	 */
 	public void testContributedTabRelativePlacement() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("java tab group cannot be null", javagroup);
+		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		assertTrue("The second tab must be TestTab1", tabs[1].getClass().equals(ContributedTestTab1.class));
+		assertTrue("The second tab must be TestTab1", tabs[1].getClass().equals(ContributedTestTab1.class)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -79,10 +79,10 @@ public class ContributedTabTests extends AbstractDebugTest {
 	 */
 	public void testContributedTabPlacementTabNotFound() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("java tab group cannot be null", javagroup);
+		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		assertTrue("Alternate tab should be the last tab in the group", tabs[tabs.length-1].getClass().equals(JavaAlernateModeTab.class));
+		assertTrue("Alternate tab should be the last tab in the group", tabs[tabs.length-1].getClass().equals(JavaAlernateModeTab.class)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 	 */
 	public void testContributedTabsPlacement() throws CoreException {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
-		assertNotNull("java tab group cannot be null", javagroup);
+		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
 		HashSet tabset = new HashSet();
@@ -101,6 +101,6 @@ public class ContributedTabTests extends AbstractDebugTest {
 		HashSet contribs = new HashSet();
 		contribs.add(ContributedTestTab2.class);
 		contribs.add(ContributedTestTab3.class);
-		assertTrue("the tab set must only contain test tab 2 and test tab 3", tabset.containsAll(contribs));
+		assertTrue("the tab set must only contain test tab 2 and test tab 3", tabset.containsAll(contribs)); //$NON-NLS-1$
 	}
 }
