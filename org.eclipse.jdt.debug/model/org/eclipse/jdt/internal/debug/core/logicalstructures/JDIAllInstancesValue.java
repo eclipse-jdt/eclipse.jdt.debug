@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
 import org.eclipse.debug.core.DebugException;
@@ -9,8 +19,15 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
-import com.sun.jdi.Value;
+import com.ibm.icu.text.MessageFormat;
 
+/**
+ * Java value containing an array of java objects.  This value is used to hold a list of 
+ * all instances of a specific java type.
+ * 
+ * @since 3.3
+ * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate
+ */
 public class JDIAllInstancesValue extends JDIArrayValue {
 
 	private IJavaObject[] fElements = null;
@@ -85,6 +102,9 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getVariables(int, int)
 	 */
 	public IVariable[] getVariables(int offset, int length) throws DebugException {
+		if (length == 0){
+			return new IVariable[0];
+		}
 		if(fElements != null) {
 			if(offset > fElements.length-1 || offset < 0) {
 				internalError(LogicalStructuresMessages.JDIAllInstancesValue_1);
@@ -159,21 +179,6 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
-		StringBuffer buf = new StringBuffer();
-		buf.append("["); //$NON-NLS-1$
-		for (int i = 0; i < fElements.length; i++) {
-			buf.append(fElements[i].getValueString());
-			if (i < (fElements.length - 1)) {
-				buf.append(", "); //$NON-NLS-1$
-			}
-		}
-		buf.append("]"); //$NON-NLS-1$
-		return buf.toString();
-	}
-
-	protected Value getUnderlyingValue() {
-		// TODO Auto-generated method stub
-		return super.getUnderlyingValue();
-	}
-	
+		return MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_3,new Object[]{Integer.toString(fElements.length)});
+	}	
 }

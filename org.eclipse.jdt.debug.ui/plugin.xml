@@ -835,6 +835,16 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Watch">
          </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.cuPopup.AllInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#CompilationUnitEditorContext"
@@ -923,6 +933,16 @@
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Watch">
+         </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.cfPopup.AllInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
          </action>
       </viewerContribution>
       <viewerContribution
