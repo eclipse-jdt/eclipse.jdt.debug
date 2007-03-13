@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
@@ -172,6 +173,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StepFilterTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
 		addTest(new TestSuite(InstanceFilterTests.class));
+		addTest(new TestSuite(ForceReturnTests.class));
 		
 	//Classpath tests
 		addTest(new TestSuite(JavaLibraryPathTests.class));

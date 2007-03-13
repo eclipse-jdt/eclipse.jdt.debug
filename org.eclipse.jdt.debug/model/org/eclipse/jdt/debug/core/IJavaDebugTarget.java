@@ -387,4 +387,14 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * @since 3.3
 	 */
 	public boolean supportsInstanceRetrieval();
+	
+	/**
+	 * Returns whether this VM supports the ability to force an early return
+	 * from methods.
+	 * 
+	 * @return whether this VM can force an early return from methods
+	 * @since 3.3
+	 * @see IJavaThread
+	 */
+	public boolean supportsForceReturn();
 }

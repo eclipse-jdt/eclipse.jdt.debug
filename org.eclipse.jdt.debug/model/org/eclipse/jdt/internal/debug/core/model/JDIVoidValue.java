@@ -23,7 +23,7 @@ public class JDIVoidValue extends JDIValue {
 	
 	
 	public JDIVoidValue(JDIDebugTarget target) {
-		super(target, null);
+		super(target, target.getVM().mirrorOfVoid());
 	}
 
 	protected List getVariablesList() {

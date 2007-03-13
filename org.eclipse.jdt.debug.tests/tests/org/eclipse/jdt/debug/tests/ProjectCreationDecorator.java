@@ -174,6 +174,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         createLaunchConfiguration("VariableDetails");
         createLaunchConfiguration("org.eclipse.debug.tests.targets.ArrayDetailTests");
         createLaunchConfiguration("ArrayDetailTestsDef");
+        createLaunchConfiguration("ForceReturnTests");
         
         //launch history tests
         createLaunchConfiguration("LaunchHistoryTest");

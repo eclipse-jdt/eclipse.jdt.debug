@@ -2431,4 +2431,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		JdwpReplyPacket reply = ((VirtualMachineImpl)getVM()).requestVM(command, data);
 		return reply.getPacketAsBytes();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsForceReturn()
+	 */
+	public boolean supportsForceReturn() {
+		return getVM().canForceEarlyReturn();
+	}
 }

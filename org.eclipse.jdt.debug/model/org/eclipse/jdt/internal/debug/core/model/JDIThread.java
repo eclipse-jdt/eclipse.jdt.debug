@@ -38,6 +38,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
@@ -2645,6 +2646,54 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public int getFrameCount() throws DebugException {
 		return getUnderlyingFrameCount();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#canForceReturn()
+	 */
+	public boolean canForceReturn() {
+		if (getJavaDebugTarget().supportsForceReturn() && isSuspended()) {
+			try {
+				return !((IJavaStackFrame)getTopStackFrame()).isNative();
+			} catch (DebugException e) {
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#forceReturn(org.eclipse.jdt.debug.core.IJavaValue)
+	 */
+	public void forceReturn(IJavaValue value) throws DebugException {
+		if (!isSuspended()) {
+			return;
+		}
+		try {
+			setRunning(true);
+			setSuspendedQuiet(false);
+			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			preserveStackFrames();
+			fThread.forceEarlyReturn(((JDIValue)value).getUnderlyingValue());
+			fThread.resume();
+		} catch (VMDisconnectedException e) {
+			disconnected();
+		} catch (InvalidTypeException e) {
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+		} catch (ClassNotLoadedException e) {
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+		} catch (IncompatibleThreadStateException e) {
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+		} catch (RuntimeException e) {
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+		}
 	}
 	
 }

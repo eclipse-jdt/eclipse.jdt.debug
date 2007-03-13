@@ -267,4 +267,37 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @since 3.3
 	 */
 	public int getFrameCount() throws DebugException;
+	
+	/**
+	 * Returns whether this thread currently supports a force return
+	 * operation. That is, can the currently executing method force a return
+	 * before it reaches a return statement. Not all VMs support this feature
+	 * and VMs that do support this feature generally cannot force returns
+	 * from native methods.
+	 * <p>
+	 * Force return is only available when a thread is suspended.
+	 * </p>
+	 * @return whether force return can be performed currently
+	 * @since 3.3
+	 */
+	public boolean canForceReturn();
+	
+	/**
+	 * Resumes execution of this thread by returning the given value from the
+	 * currently executing method before it reaches a return statement. No further
+	 * instructions in the method are executed but locks acquired by entering synchronized
+	 * blocks are released. The following conditions must be satisfied:
+	 * <ul>
+	 * <li>This thread must be suspended in a non-native method.</li>
+	 * <li>The return value must be assignment compatible with the current method's
+	 * return type. Use a void value when a method return type is void
+	 * (see <code>IJavaDebugTarget.voidValue()</code>).</li>
+	 * </ul>
+	 * 
+	 * @param value return value that must be assignment compatible with this threads
+	 *  currently executing method's return value
+	 * @throws DebugException if the operation fails
+	 * @since 3.3
+	 */
+	public void forceReturn(IJavaValue value) throws DebugException;
 }
