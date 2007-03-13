@@ -2678,22 +2678,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (VMDisconnectedException e) {
 			disconnected();
 		} catch (InvalidTypeException e) {
-			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+			returnFailed(e);
 		} catch (ClassNotLoadedException e) {
-			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+			returnFailed(e);
 		} catch (IncompatibleThreadStateException e) {
-			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+			returnFailed(e);
 		} catch (RuntimeException e) {
-			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+			returnFailed(e);
 		}
+	}
+
+	/**
+	 * Called when force return fails. Re-sets running state and throws
+	 * debug exception.
+	 * 
+	 * @param e underlying cause of failure for force return
+	 * @throws DebugException wrapping the given exception
+	 */
+	private void returnFailed(Exception e) throws DebugException {
+		setRunning(false);
+		fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+		targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
 	}
 	
 }
