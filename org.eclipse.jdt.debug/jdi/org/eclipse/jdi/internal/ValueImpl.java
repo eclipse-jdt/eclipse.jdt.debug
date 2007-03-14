@@ -169,7 +169,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 * compatible with the given type.
 	 * @see checkPrimitiveValue(PrimitiveValueImpl, PrimitiveTypeImpl, PrimitiveTypeImpl)
 	 */
-	protected static ValueImpl checkValue(Value value, Type type, VirtualMachineImpl vm) throws InvalidTypeException {
+	public static ValueImpl checkValue(Value value, Type type, VirtualMachineImpl vm) throws InvalidTypeException {
 		if (value == null) {
 			if (!(type instanceof PrimitiveType)) {
 			    return null;

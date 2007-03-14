@@ -160,6 +160,29 @@
             </enablement>
          </action>
          <action
+               id="org.eclipse.jdt.debug.ui.actions.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+               menubarPath="org.eclipse.ui.run/jdtGroup">
+            <enablement>
+               <and>
+                  <systemProperty
+                      name="org.eclipse.jdt.debug.ui.debuggerActive"
+                      value="true">
+                  </systemProperty>
+                  <systemProperty
+                      name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                      value="true">
+                  </systemProperty>                  
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>         
+         <action
                id="org.eclipse.jdt.debug.ui.actions.Execute"
                hoverIcon="$nl$/icons/full/etool16/run_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -799,6 +822,14 @@
                menubarPath="additions">
          </action>
          <action
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cuPopup.ForceReturn">
+         </action>         
+         <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
@@ -896,7 +927,15 @@
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
                label="%runToLineAction.label"
                menubarPath="additions">
-         </action>         
+         </action>
+         <action
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cfPopup.ForceReturn">
+         </action>                  
          <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.gif"
@@ -1356,6 +1395,18 @@
             </systemProperty>
          </visibility>
          <action
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+			   definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               menubarPath="variableGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.variablesViewDetail.ForceReturn">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>         
+         <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
@@ -1404,6 +1455,29 @@
                   value="true">
             </systemProperty>
          </visibility>
+         <action
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               menubarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.displayView.Execute">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>         
          <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.gif"
@@ -2252,6 +2326,12 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.Inspect">
       </command>
+      <command
+            name="%ActionDefinition.forceReturn.name"
+            description="%ActionDefinition.forceReturn.description"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.commands.ForceReturn">
+      </command>      
  <!-- views -->
       <command
             name="%ViewCommand.displayView.name"
@@ -2314,6 +2394,11 @@ M4 = Platform-specific fourth key
             contextId="org.eclipse.debug.ui.debugging"
             commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M3+M2+F"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
 	  <key
             sequence="M1+U"
             contextId="org.eclipse.ui.globalScope"

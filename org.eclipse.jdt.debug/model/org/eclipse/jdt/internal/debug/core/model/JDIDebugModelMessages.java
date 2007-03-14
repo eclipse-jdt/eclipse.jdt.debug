@@ -100,6 +100,8 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIStackFrame__unknown_declaring_type__1;
 	public static String JDIStackFrame__unknown_method__1;
 	public static String JDIStackFrame__unknown_receiving_type__2;
+
+	public static String JDIStackFrame_26;
 	public static String JDIStackFrame_Drop_to_frame_not_supported;
 	public static String JDIStackFrame_exception_retreiving_declaring_type;
 	public static String JDIStackFrame_exception_retrieving_argument_type_names;

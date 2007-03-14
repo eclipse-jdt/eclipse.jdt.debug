@@ -274,7 +274,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (shell != null) {
 			switch (status.getSeverity()) {
 			case IStatus.ERROR:
-				ErrorDialog.openError(shell, title, status.getMessage(), status);
+				ErrorDialog.openError(shell, title, null, status);
 				break;
 			case IStatus.WARNING:
 				MessageDialog.openWarning(shell, title, status.getMessage());

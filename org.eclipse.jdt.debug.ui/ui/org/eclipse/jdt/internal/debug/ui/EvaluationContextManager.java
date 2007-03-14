@@ -48,9 +48,14 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	private static final String DEBUGGER_ACTIVE = JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"; //$NON-NLS-1$
 	/**
 	 * System property indicating an element is selected in the debug view that is
-	 * an instanceof <code>IJavaStackFrame</code> or <code>IJavaThread</code>.
+	 * an instance of <code>IJavaStackFrame</code> or <code>IJavaThread</code>.
 	 */
 	private static final String INSTANCE_OF_IJAVA_STACK_FRAME = JDIDebugUIPlugin.getUniqueIdentifier() + ".instanceof.IJavaStackFrame"; //$NON-NLS-1$
+	/**
+	 * System property indicating the frame in the debug view supports 'force return'
+	 */
+	private static final String SUPPORTS_FORCE_RETURN = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsForceReturn"; //$NON-NLS-1$	
+	
 	
 	private Map fContextsByPage = null;
 	
@@ -116,6 +121,11 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		}
 		fContextsByPage.put(page, frame);
 		System.setProperty(DEBUGGER_ACTIVE, "true"); //$NON-NLS-1$
+		if (frame.canForceReturn()) {
+			System.setProperty(SUPPORTS_FORCE_RETURN, "true"); //$NON-NLS-1$
+		} else {
+			System.setProperty(SUPPORTS_FORCE_RETURN, "false"); //$NON-NLS-1$
+		}
 		if (instOf) {
 			System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "true"); //$NON-NLS-1$
 		} else {
@@ -135,6 +145,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 			if (fContextsByPage.isEmpty()) {
 				System.setProperty(DEBUGGER_ACTIVE, "false"); //$NON-NLS-1$
 				System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "false"); //$NON-NLS-1$
+				System.setProperty(SUPPORTS_FORCE_RETURN, "false"); //$NON-NLS-1$
 			}
 		}
 	}

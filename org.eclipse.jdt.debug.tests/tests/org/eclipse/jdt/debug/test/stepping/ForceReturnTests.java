@@ -40,13 +40,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests forcing the return of an integer
+	 * Tests forcing the return of an integer from top stack frame
 	 * 
 	 * @throws Exception
 	 */
-	public void testForceIntReturn() throws Exception {
+	public void testForceIntReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		createLineBreakpoint(22, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(22, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
 		
 		IJavaThread thread = null;
@@ -55,12 +55,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
 			if (target.supportsForceReturn()) {
-				assertTrue("Force return should be enabled", thread.canForceReturn());
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
 				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
-				thread.forceReturn(target.newValue(42));
+				stackFrame.forceReturn(target.newValue(42));
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
+				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 				IJavaVariable var = stackFrame.findVariable("x");
 				assertNotNull("Missing variable 'x'", var);
@@ -73,13 +74,49 @@ public class ForceReturnTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests forcing the return of a string
+	 * Tests forcing the return of an integer from non-top stack frame
 	 * 
 	 * @throws Exception
 	 */
-	public void testForceStringReturn() throws Exception {
+	public void testForceIntReturn() throws Exception {
+		String typeName = "ForceReturnTestsTwo";
+		ILineBreakpoint bp2 = createLineBreakpoint(23, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(37, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			if (target.supportsForceReturn()) {
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
+				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
+				IJavaValue retValue = target.newValue(1);
+				stackFrame = (IJavaStackFrame) thread.getStackFrames()[1];
+				stackFrame.forceReturn(retValue);
+				Object source = waiter.waitForEvent();
+				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
+				thread = (IJavaThread) source;
+				thread = resumeToLineBreakpoint(thread, bp2);
+				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				IJavaVariable var = stackFrame.findVariable("x");
+				assertNotNull("Missing variable 'x'", var);
+				assertEquals("Return value incorrect", retValue, var.getValue());
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	/**
+	 * Tests forcing the return of a string from top frame
+	 * 
+	 * @throws Exception
+	 */
+	public void testForceStringReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		createLineBreakpoint(24, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(24, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(36, typeName);
 		
 		IJavaThread thread = null;
@@ -88,13 +125,14 @@ public class ForceReturnTests extends AbstractDebugTest {
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
 			if (target.supportsForceReturn()) {
-				assertTrue("Force return should be enabled", thread.canForceReturn());
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
 				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 				IJavaValue stringValue = target.newValue("forty two");
-				thread.forceReturn(stringValue);
+				stackFrame.forceReturn(stringValue);
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
+				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 				IJavaVariable var = stackFrame.findVariable("s");
 				assertNotNull("Missing variable 's'", var);
@@ -105,15 +143,51 @@ public class ForceReturnTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}	
-
+	
 	/**
-	 * Tests forcing the return of an object
+	 * Tests forcing the return of a string from a non top frame
 	 * 
 	 * @throws Exception
 	 */
-	public void testForceObjectReturn() throws Exception {
+	public void testForceStringReturn() throws Exception {
+		String typeName = "ForceReturnTestsTwo";
+		ILineBreakpoint bp2 = createLineBreakpoint(25, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			if (target.supportsForceReturn()) {
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
+				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
+				IJavaValue stringValue = target.newValue("forty two");
+				stackFrame = (IJavaStackFrame) thread.getStackFrames()[1];
+				stackFrame.forceReturn(stringValue);
+				Object source = waiter.waitForEvent();
+				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
+				thread = (IJavaThread) source;
+				thread = resumeToLineBreakpoint(thread, bp2);
+				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				IJavaVariable var = stackFrame.findVariable("s");
+				assertNotNull("Missing variable 's'", var);
+				assertEquals("Return value incorrect", stringValue, var.getValue());
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}		
+
+	/**
+	 * Tests forcing the return of an object from top frame.
+	 * 
+	 * @throws Exception
+	 */
+	public void testForceObjectReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		createLineBreakpoint(26, typeName);
+		ILineBreakpoint bp2 = createLineBreakpoint(26, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
 		
 		IJavaThread thread = null;
@@ -122,13 +196,14 @@ public class ForceReturnTests extends AbstractDebugTest {
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
 			if (target.supportsForceReturn()) {
-				assertTrue("Force return should be enabled", thread.canForceReturn());
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
 				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 				IJavaValue objectValue = target.newValue("a string");
-				thread.forceReturn(objectValue);
+				stackFrame.forceReturn(objectValue);
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
+				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 				IJavaVariable var = stackFrame.findVariable("v");
 				assertNotNull("Missing variable 'v'", var);
@@ -141,13 +216,48 @@ public class ForceReturnTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests that an incompatible type causes an exception
+	 * Tests forcing the return of an object from non-top frame.
 	 * 
 	 * @throws Exception
 	 */
-	public void testIncompatibleReturnType() throws Exception {
+	public void testForceObjectReturn() throws Exception {
+		String typeName = "ForceReturnTestsTwo";
+		ILineBreakpoint bp2 = createLineBreakpoint(27, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(56, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			if (target.supportsForceReturn()) {
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
+				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
+				IJavaValue objectValue = target.newValue("a string");
+				stackFrame = (IJavaStackFrame) thread.getStackFrames()[1];
+				stackFrame.forceReturn(objectValue);
+				Object source = waiter.waitForEvent();
+				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
+				thread = (IJavaThread) source;
+				thread = resumeToLineBreakpoint(thread, bp2);
+				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				IJavaVariable var = stackFrame.findVariable("v");
+				assertNotNull("Missing variable 'v'", var);
+				assertEquals("Return value incorrect", objectValue, var.getValue());
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	/**
+	 * Tests that an incompatible type causes an exception in top frame
+	 * 
+	 * @throws Exception
+	 */
+	public void testIncompatibleReturnTypeTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
-		createLineBreakpoint(26, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
 		
 		IJavaThread thread = null;
@@ -156,10 +266,10 @@ public class ForceReturnTests extends AbstractDebugTest {
 			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
 			if (target.supportsForceReturn()) {
-				assertTrue("Force return should be enabled", thread.canForceReturn());
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
 				IJavaValue objectValue = target.newValue(42);
 				try {
-					thread.forceReturn(objectValue);
+					stackFrame.forceReturn(objectValue);
 				} catch (DebugException e) {
 					assertTrue("Should be invalid type exception", e.getStatus().getException() instanceof InvalidTypeException);
 					return;
@@ -171,4 +281,36 @@ public class ForceReturnTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}	
+	
+	/**
+	 * Tests that an incompatible type causes an exception in non top frame
+	 * 
+	 * @throws Exception
+	 */
+	public void testIncompatibleReturnType() throws Exception {
+		String typeName = "ForceReturnTestsTwo";
+		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			IJavaDebugTarget target = (IJavaDebugTarget) stackFrame.getDebugTarget();
+			if (target.supportsForceReturn()) {
+				assertTrue("Force return should be enabled", stackFrame.canForceReturn());
+				IJavaValue objectValue = target.newValue(42);
+				stackFrame = (IJavaStackFrame) thread.getStackFrames()[1];
+				try {
+					stackFrame.forceReturn(objectValue);
+				} catch (DebugException e) {
+					assertTrue("Should be invalid type exception", e.getStatus().getException() instanceof InvalidTypeException);
+					return;
+				}
+				assertTrue("Should have caused incompatible return type exception", false);
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}		
 }

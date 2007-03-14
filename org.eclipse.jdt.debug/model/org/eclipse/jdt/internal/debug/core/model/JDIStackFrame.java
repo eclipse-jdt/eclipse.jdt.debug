@@ -25,6 +25,8 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdi.internal.ValueImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
@@ -32,14 +34,17 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -1254,6 +1259,56 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean isVarArgs() throws DebugException {
 		return getUnderlyingMethod().isVarArgs();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#canForceReturn()
+	 */
+	public boolean canForceReturn() {
+		if (getJavaDebugTarget().supportsForceReturn() && isSuspended()) {
+			try {
+				if (!isNative()) {
+					if (isTopStackFrame()) {
+						return true;
+					} else {
+						List frames= fThread.computeStackFrames();
+						int index = frames.indexOf(this);
+						if (index > 0) {
+							JDIStackFrame prev = (JDIStackFrame) frames.get(index - 1);
+							return prev.canDropToFrame();
+						}
+					}
+				}
+			} catch (DebugException e) {
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#forceReturn(org.eclipse.jdt.debug.core.IJavaValue)
+	 */
+	public void forceReturn(IJavaValue value) throws DebugException {
+		if (isTopStackFrame()) {
+			fThread.forceReturn(value);
+		} else {
+			// first check assignment compatible
+			Method method = getUnderlyingMethod();
+			try {
+				ValueImpl.checkValue(((JDIValue)value).getUnderlyingValue(), method.returnType(), (VirtualMachineImpl) method.virtualMachine());
+			} catch (InvalidTypeException e) {
+				targetRequestFailed(JDIDebugModelMessages.JDIStackFrame_26, e);
+			} catch (ClassNotLoadedException e) {
+				targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+			}
+			List frames= fThread.computeStackFrames();
+			int index = frames.indexOf(this);
+			if (index > 0) {
+				JDIStackFrame prev = (JDIStackFrame) frames.get(index - 1);
+				fThread.popFrame(prev);
+				fThread.forceReturn(value);
+			}
+		}
 	}
 
 }

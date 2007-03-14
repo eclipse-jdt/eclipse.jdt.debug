@@ -2648,57 +2648,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return getUnderlyingFrameCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaThread#canForceReturn()
-	 */
-	public boolean canForceReturn() {
-		if (getJavaDebugTarget().supportsForceReturn() && isSuspended()) {
-			try {
-				return !((IJavaStackFrame)getTopStackFrame()).isNative();
-			} catch (DebugException e) {
-			}
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaThread#forceReturn(org.eclipse.jdt.debug.core.IJavaValue)
-	 */
-	public void forceReturn(IJavaValue value) throws DebugException {
+	protected void forceReturn(IJavaValue value) throws DebugException {
 		if (!isSuspended()) {
 			return;
 		}
 		try {
-			setRunning(true);
-			setSuspendedQuiet(false);
-			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
-			preserveStackFrames();
 			fThread.forceEarlyReturn(((JDIValue)value).getUnderlyingValue());
-			fThread.resume();
+			stepReturn();
 		} catch (VMDisconnectedException e) {
 			disconnected();
 		} catch (InvalidTypeException e) {
-			returnFailed(e);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
 		} catch (ClassNotLoadedException e) {
-			returnFailed(e);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
 		} catch (IncompatibleThreadStateException e) {
-			returnFailed(e);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
+		} catch (UnsupportedOperationException e) {
+			requestFailed(JDIDebugModelMessages.JDIThread_48, e);
 		} catch (RuntimeException e) {
-			returnFailed(e);
+			targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
 		}
-	}
-
-	/**
-	 * Called when force return fails. Re-sets running state and throws
-	 * debug exception.
-	 * 
-	 * @param e underlying cause of failure for force return
-	 * @throws DebugException wrapping the given exception
-	 */
-	private void returnFailed(Exception e) throws DebugException {
-		setRunning(false);
-		fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-		targetRequestFailed(JDIDebugModelMessages.JDIThread_48, e);
 	}
 	
 }
