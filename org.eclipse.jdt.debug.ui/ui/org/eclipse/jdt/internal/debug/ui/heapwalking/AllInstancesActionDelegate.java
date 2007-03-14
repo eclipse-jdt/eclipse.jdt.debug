@@ -53,6 +53,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -219,33 +221,40 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 			}
 		}
 		
-		// If working in the editor, get the location of the selected text
+		//resolve the current control
     	Control widget = (Control)fActivePart.getAdapter(Control.class);
-    	if (widget != null){
-    		if (widget instanceof StyledText){
-    			StyledText textWidget = (StyledText)widget;
-    			Point docRange = textWidget.getSelectionRange();
-		        int midOffset = docRange.x + (docRange.y / 2);
-		        Point point = textWidget.getLocationAtOffset(midOffset);
-		        point = textWidget.toDisplay(point);
-		
-		        GC gc = new GC(textWidget);
-		        gc.setFont(textWidget.getFont());
-		        int height = gc.getFontMetrics().getHeight();
-		        gc.dispose();
-		        point.y += height;
-		        return point;
-    		}
-    		if (widget instanceof Tree) {
-				Tree tree = (Tree) widget;
-				TreeItem[] selection = tree.getSelection();
-				if (selection.length > 0) {
-					Rectangle bounds = selection[0].getBounds();
-					return tree.toDisplay(new Point(bounds.x, bounds.y + bounds.height));
-				}
-			}
+    	if (widget == null){
+    		if(fActivePart instanceof PageBookView) {
+	    		//could be the outline view
+	    		PageBookView view = (PageBookView) fActivePart;
+	    		IPage page = view.getCurrentPage();
+	    		if(page != null) {
+	    			widget = page.getControl();
+	    		}
+	    	}
     	}
-		
+    	if (widget instanceof StyledText){
+			StyledText textWidget = (StyledText)widget;
+			Point docRange = textWidget.getSelectionRange();
+	        int midOffset = docRange.x + (docRange.y / 2);
+	        Point point = textWidget.getLocationAtOffset(midOffset);
+	        point = textWidget.toDisplay(point);
+	
+	        GC gc = new GC(textWidget);
+	        gc.setFont(textWidget.getFont());
+	        int height = gc.getFontMetrics().getHeight();
+	        gc.dispose();
+	        point.y += height;
+	        return point;
+		}
+		if (widget instanceof Tree) {
+			Tree tree = (Tree) widget;
+			TreeItem[] selection = tree.getSelection();
+			if (selection.length > 0) {
+				Rectangle bounds = selection[0].getBounds();
+				return tree.toDisplay(new Point(bounds.x, bounds.y + bounds.height));
+			}
+		}
 		return null;    	
     }
     	
