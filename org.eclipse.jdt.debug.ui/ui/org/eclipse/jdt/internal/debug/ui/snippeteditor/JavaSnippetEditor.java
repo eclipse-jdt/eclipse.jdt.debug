@@ -837,7 +837,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private void showExpression(final JavaInspectExpression expression) {
 	    Runnable r = new Runnable() {
 	        public void run() {
-	            new InspectPopupDialog(getShell(), EvaluateAction.getPopupAnchor(getSourceViewer()), PopupInspectAction.ACTION_DEFININIITION_ID, expression).open();
+	            new InspectPopupDialog(getShell(), EvaluateAction.getPopupAnchor(getSourceViewer().getTextWidget()), PopupInspectAction.ACTION_DEFININIITION_ID, expression).open();
 	        }
 	    };
 	    async(r);

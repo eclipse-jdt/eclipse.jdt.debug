@@ -20,9 +20,6 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -67,17 +64,7 @@ public class ForceReturnAction extends EvaluateAction {
 							return;
 						}
 						IWorkbenchPart part = getTargetPart();
-						ITextViewer viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
-				        if (viewer == null) {
-				            if (part instanceof JavaEditor) {
-				                viewer = ((JavaEditor) part).getViewer();
-				            }
-				        }
-				        Point anchor = null;
-				        if (viewer != null) {
-				        	anchor = getPopupAnchor(viewer);
-				        }
-						InspectPopupDialog dialog = new InspectPopupDialog(getShell(), anchor, null, new JavaInspectExpression(result));
+						InspectPopupDialog dialog = new InspectPopupDialog(getShell(), getPopupAnchor(getStyledText(part)), null, new JavaInspectExpression(result));
 						dialog.open();
 					}
 				});

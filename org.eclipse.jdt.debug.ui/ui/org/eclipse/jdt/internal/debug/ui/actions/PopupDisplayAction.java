@@ -14,8 +14,6 @@ import org.eclipse.debug.ui.DebugPopup;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayView;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
@@ -29,8 +27,6 @@ public class PopupDisplayAction extends DisplayAction {
 
     public static final String ACTION_DEFINITION_ID = "org.eclipse.jdt.debug.ui.commands.Display"; //$NON-NLS-1$
 
-    private ITextViewer viewer;
-
     private String snippet;
 
     private String resultString;
@@ -39,14 +35,14 @@ public class PopupDisplayAction extends DisplayAction {
         super();
     }
 
-    private void showPopup() {
-        DebugPopup displayPopup = new DisplayPopup(getShell(), viewer);
+    private void showPopup(StyledText textWidget) {
+        DebugPopup displayPopup = new DisplayPopup(getShell(), textWidget);
         displayPopup.open();
     }
 
     private class DisplayPopup extends DebugPopup {
-        public DisplayPopup(Shell shell, ITextViewer viewer) {
-            super(shell, getPopupAnchor(viewer), ACTION_DEFINITION_ID);
+        public DisplayPopup(Shell shell, StyledText textWidget) {
+            super(shell, getPopupAnchor(textWidget), ACTION_DEFINITION_ID);
         }
 
         protected String getActionText() {
@@ -89,20 +85,15 @@ public class PopupDisplayAction extends DisplayAction {
             return;
         }
         
-        viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
-        if (viewer == null) {
-            if (part instanceof JavaEditor) {
-                viewer = ((JavaEditor)part).getViewer();
-            }
-        }
-        if (viewer == null) {
+        final StyledText textWidget = EvaluateAction.getStyledText(part);
+        if (textWidget == null) {
             super.displayStringResult(currentSnippet, currentResultString);
         } else {
             snippet = currentSnippet;
             resultString = currentResultString;
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    showPopup();
+                    showPopup(textWidget);
                 }
             });
             evaluationCleanup();

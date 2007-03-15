@@ -67,6 +67,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -789,23 +790,47 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	/**
-	 * Computes an anchor point for a popup dialog on top of a text viewer.
+	 * Returns the styled text widget associated with the given part
+	 * or <code>null</code> if none.
 	 * 
-	 * @param viewer
-	 * @return desired anchor point
+	 * @param part workbench part
+	 * @return associated style text widget or <code>null</code>
 	 */
-	public static Point getPopupAnchor(ITextViewer viewer) {
-		StyledText textWidget = viewer.getTextWidget();
-        Point docRange = textWidget.getSelectionRange();
-        int midOffset = docRange.x + (docRange.y / 2);
-        Point point = textWidget.getLocationAtOffset(midOffset);
-        point = textWidget.toDisplay(point);
-
-        GC gc = new GC(textWidget);
-        gc.setFont(textWidget.getFont());
-        int height = gc.getFontMetrics().getHeight();
-        gc.dispose();
-        point.y += height;
-        return point;
+	public static StyledText getStyledText(IWorkbenchPart part) {
+		ITextViewer viewer = (ITextViewer)part.getAdapter(ITextViewer.class);
+		StyledText textWidget = null;
+		if (viewer == null) {
+			Control control = (Control) part.getAdapter(Control.class);
+			if (control instanceof StyledText) {
+				textWidget = (StyledText) control;
+			}
+		} else {
+			textWidget = viewer.getTextWidget();
+		}
+		return textWidget;
+	}
+	
+	/**
+	 * Returns an anchor point for a popup dialog on top of a styled text
+	 * or <code>null</code> if none.
+	 * 
+	 * @param part or <code>null</code>
+	 * @return anchor point or <code>null</code>
+	 */
+	public static Point getPopupAnchor(StyledText textWidget) {
+		if (textWidget != null) {
+	        Point docRange = textWidget.getSelectionRange();
+	        int midOffset = docRange.x + (docRange.y / 2);
+	        Point point = textWidget.getLocationAtOffset(midOffset);
+	        point = textWidget.toDisplay(point);
+	
+	        GC gc = new GC(textWidget);
+	        gc.setFont(textWidget.getFont());
+	        int height = gc.getFontMetrics().getHeight();
+	        gc.dispose();
+	        point.y += height;
+	        return point;
+		}
+		return null;
 	}
 }
