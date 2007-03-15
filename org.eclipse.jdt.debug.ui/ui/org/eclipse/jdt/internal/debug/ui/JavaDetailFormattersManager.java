@@ -55,6 +55,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -723,10 +724,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		
 		
 		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
+			if(objectValue instanceof JDINullValue) {
+				appendJDIValueString(result, objectValue);
+				return;
+			}
 			// optimize if the result is a string - no need to send toString to a string
 			if (STRING_SIGNATURE.equals(objectValue.getSignature())) {
 				appendJDIValueString(result, objectValue);
 			} else {
+				
 				IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
 				if (toStringValue == null) {
 					result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_); 
