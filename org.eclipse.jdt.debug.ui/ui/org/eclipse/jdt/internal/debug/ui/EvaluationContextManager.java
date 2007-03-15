@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
@@ -48,14 +49,17 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	private static final String DEBUGGER_ACTIVE = JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"; //$NON-NLS-1$
 	/**
 	 * System property indicating an element is selected in the debug view that is
-	 * an instance of <code>IJavaStackFrame</code> or <code>IJavaThread</code>.
+	 * an instanceof <code>IJavaStackFrame</code> or <code>IJavaThread</code>.
 	 */
 	private static final String INSTANCE_OF_IJAVA_STACK_FRAME = JDIDebugUIPlugin.getUniqueIdentifier() + ".instanceof.IJavaStackFrame"; //$NON-NLS-1$
 	/**
 	 * System property indicating the frame in the debug view supports 'force return'
 	 */
 	private static final String SUPPORTS_FORCE_RETURN = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsForceReturn"; //$NON-NLS-1$	
-	
+	/**
+	 * System property indicating whether the frame in the debug view supports instance and reference retrieval (1.5 VMs and later).
+	 */
+	private static final String SUPPORTS_INSTANCE_RETRIEVAL = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsInstanceRetrieval"; //$NON-NLS-1$
 	
 	private Map fContextsByPage = null;
 	
@@ -126,6 +130,11 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		} else {
 			System.setProperty(SUPPORTS_FORCE_RETURN, "false"); //$NON-NLS-1$
 		}
+		if (((IJavaDebugTarget)frame.getDebugTarget()).supportsInstanceRetrieval()){
+			System.setProperty(SUPPORTS_INSTANCE_RETRIEVAL, "true"); //$NON-NLS-1$
+		} else {
+			System.setProperty(SUPPORTS_INSTANCE_RETRIEVAL, "false"); //$NON-NLS-1$
+		}
 		if (instOf) {
 			System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "true"); //$NON-NLS-1$
 		} else {
@@ -146,6 +155,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 				System.setProperty(DEBUGGER_ACTIVE, "false"); //$NON-NLS-1$
 				System.setProperty(INSTANCE_OF_IJAVA_STACK_FRAME, "false"); //$NON-NLS-1$
 				System.setProperty(SUPPORTS_FORCE_RETURN, "false"); //$NON-NLS-1$
+				System.setProperty(SUPPORTS_INSTANCE_RETRIEVAL, "false"); //$NON-NLS-1$
 			}
 		}
 	}
