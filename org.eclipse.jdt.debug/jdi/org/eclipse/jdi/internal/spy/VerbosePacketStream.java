@@ -152,7 +152,7 @@ public class VerbosePacketStream extends PrintStream {
 			println();
 		} catch (UnableToParseDataException e) {
 			println("\n" + e.getMessage() + ':'); //$NON-NLS-1$
-			printDescription(TcpIpSpyMessages.VerbosePacketStream_Remaining_data__1); 
+			printDescription("Remaining data:");  //$NON-NLS-1$
 			byte[] data= e.getRemainingData();
 			if (data == null) {
 				printHex(packet.data());
@@ -165,26 +165,26 @@ public class VerbosePacketStream extends PrintStream {
 	
 	protected void printHeader(JdwpPacket packet, boolean fromVM) throws UnableToParseDataException {
 		if (fromVM) {
-			println(TcpIpSpyMessages.VerbosePacketStream_From_VM_1); 
+			println("From VM");  //$NON-NLS-1$
 		} else {
-			println(TcpIpSpyMessages.VerbosePacketStream_From_Debugger_2); 
+			println("From Debugger");  //$NON-NLS-1$
 		}
 		
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Packet_ID__3); 
+		printDescription("Packet ID:");  //$NON-NLS-1$
 		printHex(packet.getId());
 		println();
 				
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Length__4); 
+		printDescription("Length:");  //$NON-NLS-1$
 		print(packet.getLength());
 		println();
 		
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Flags__5); 
+		printDescription("Flags:");  //$NON-NLS-1$
 		byte flags= packet.getFlags();
 		printHex(flags);
 		if ((flags & JdwpPacket.FLAG_REPLY_PACKET) != 0) {
-			print(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream___REPLY_to__0___6, new String[] {(String) JdwpCommandPacket.commandMap().get(new Integer(TcpipSpy.getCommand(packet)))})); 
+			print(MessageFormat.format(" (REPLY to {0})", new String[] {(String) JdwpCommandPacket.commandMap().get(new Integer(TcpipSpy.getCommand(packet)))}));  //$NON-NLS-1$
 		} else {
-			print(TcpIpSpyMessages.VerbosePacketStream___COMMAND__7); 
+			print(" (COMMAND)");  //$NON-NLS-1$
 		}
 		println();
 		
@@ -200,14 +200,14 @@ public class VerbosePacketStream extends PrintStream {
 	}
 
 	protected void printCommand(JdwpCommandPacket commandPacket) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Command_set__8); 
+		printDescription("Command set:");  //$NON-NLS-1$
 		int commandAndSet= commandPacket.getCommand();
 		byte set= (byte)(commandAndSet >> 8);
 		byte command= (byte)commandAndSet;
 		printHex(set);
 		printParanthetical(set);
 		println();
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Command__9); 
+		printDescription("Command:");  //$NON-NLS-1$
 		printHex(command);
 		printParanthetical(command);
 		print(" ("); //$NON-NLS-1$
@@ -218,7 +218,7 @@ public class VerbosePacketStream extends PrintStream {
 	protected void printError(JdwpReplyPacket reply) {
 		int error= reply.errorCode();
 		
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Error__10); 
+		printDescription("Error:");  //$NON-NLS-1$
 		printHex(error);
 		if (error != 0) {
 			print(" ("); //$NON-NLS-1$
@@ -529,12 +529,12 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.HCR_DO_RETURN:
 			case JdwpCommandPacket.HCR_REENTER_ON_EXIT:
 			case JdwpCommandPacket.HCR_CAPABILITIES:
-				throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_NOT_MANAGED_COMMAND_11, remainderData(in)); 
+				throw new UnableToParseDataException("NOT MANAGED COMMAND", remainderData(in));  //$NON-NLS-1$
 				
 			default:
 				int cset= commandId >> 8;
 				int cmd= commandId & 0xFF;
-				println(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream_Unknown_command____0___1__12, new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ 
+				println(MessageFormat.format("Unknown command : {0} {1}", new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 				break;
 		}
 	}
@@ -833,18 +833,18 @@ public class VerbosePacketStream extends PrintStream {
 			case JdwpCommandPacket.HCR_DO_RETURN:
 			case JdwpCommandPacket.HCR_REENTER_ON_EXIT:
 			case JdwpCommandPacket.HCR_CAPABILITIES:
-				throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_NOT_MANAGED_COMMAND_11, remainderData(in)); 
+				throw new UnableToParseDataException("NOT MANAGED COMMAND", remainderData(in));  //$NON-NLS-1$
 			
 			default:
 				int cset= commandId >> 8;
 				int cmd= commandId & 0xFF;
-				println(MessageFormat.format(TcpIpSpyMessages.VerbosePacketStream_Unknown_command____0___1__12, new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ 
+				println(MessageFormat.format("Unknown command : {0} {1}", new String[] {"" + cset, "" + cmd})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 				break;
 		}
 	}
 	
 	private void printRefTypeTag(byte refTypeTag) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Type_tag__19); 
+		printDescription("Type tag:");  //$NON-NLS-1$
 		printRefTypeTagValue(refTypeTag);
 		println();
 	}
@@ -863,13 +863,13 @@ public class VerbosePacketStream extends PrintStream {
 				print("ARRAY"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+				print("unknown");  //$NON-NLS-1$
 		}
 		print(')');
 	}
 	
 	private void printClassStatus(int status) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Status__21); 
+		printDescription("Status:");  //$NON-NLS-1$
 		printHex(status);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -897,13 +897,13 @@ public class VerbosePacketStream extends PrintStream {
 			if (spaceNeeded) {
 				print(' ');
 			}
-			print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+			print("unknown");  //$NON-NLS-1$
 		}
 		println(')');
 	}
 	
 	private void printClassModifiers(int modifiers) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); 
+		printDescription("Modifiers:");  //$NON-NLS-1$
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -979,7 +979,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 
 	private void printMethodModifiers(int modifiers) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); 
+		printDescription("Modifiers:");  //$NON-NLS-1$
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -1079,7 +1079,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printFieldModifiers(int modifiers) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifiers__23); 
+		printDescription("Modifiers:");  //$NON-NLS-1$
 		printHex(modifiers);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -1155,7 +1155,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printInvocationOptions(int invocationOptions) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Invocation_Options__24); 
+		printDescription("Invocation Options:");  //$NON-NLS-1$
 		printHex(invocationOptions);
 		print(" ("); //$NON-NLS-1$
 		boolean spaceNeeded= false;
@@ -1173,7 +1173,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printThreadStatus(int threadStatus) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Thread_status__25); 
+		printDescription("Thread status:");  //$NON-NLS-1$
 		printHex(threadStatus);
 		print(" ("); //$NON-NLS-1$
 		switch (threadStatus) {
@@ -1193,14 +1193,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("WAIT"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+				print("unknown");  //$NON-NLS-1$
 				break;
 		}
 		println(')');
 	}
 	
 	private void printSuspendStatus(int suspendStatus) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Suspend_status__27); 
+		printDescription("Suspend status:");  //$NON-NLS-1$
 		printHex(suspendStatus);
 		print(" ("); //$NON-NLS-1$
 		if ((suspendStatus & SUSPEND_STATUS_SUSPENDED) != 0) {
@@ -1210,7 +1210,7 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	private void printEventKind(byte eventKind) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Event_kind__28); 
+		printDescription("Event kind:");  //$NON-NLS-1$
 		printHex(eventKind);
 		print(" ("); //$NON-NLS-1$
 		switch (eventKind) {
@@ -1269,14 +1269,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("VM_DISCONNECTED"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+				print("unknown");  //$NON-NLS-1$
 				break;
 		}
 		println(')');
 	}
 
 	private void printSuspendPolicy(byte suspendPolicy) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Suspend_policy__30); 
+		printDescription("Suspend policy:");  //$NON-NLS-1$
 		printHex(suspendPolicy);
 		print(" ("); //$NON-NLS-1$
 		switch (suspendPolicy) {
@@ -1290,14 +1290,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("ALL"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+				print("unknown");  //$NON-NLS-1$
 				break;
 		}
 		println(')');
 	}
 	
 	private void printStepDepth(int setDepth) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Step_depth__32); 
+		printDescription("Step depth:");  //$NON-NLS-1$
 		printHex(setDepth);
 		print(" ("); //$NON-NLS-1$
 		switch (setDepth) {
@@ -1311,14 +1311,14 @@ public class VerbosePacketStream extends PrintStream {
 				print("OUT"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+				print("unknown");  //$NON-NLS-1$
 				break;
 		}
 		println(')');
 	}
 	
 	private void printStepSize(int setSize) {
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Step_size__34); 
+		printDescription("Step size:");  //$NON-NLS-1$
 		printHex(setSize);
 		print(" ("); //$NON-NLS-1$
 		switch (setSize) {
@@ -1329,7 +1329,7 @@ public class VerbosePacketStream extends PrintStream {
 				print("LINE"); //$NON-NLS-1$
 				break;
 			default:
-				print(TcpIpSpyMessages.VerbosePacketStream_unknow_20); 
+				print("unknown");  //$NON-NLS-1$
 				break;
 		}
 		println(')');
@@ -1342,61 +1342,61 @@ public class VerbosePacketStream extends PrintStream {
 		String vmVersion= readString(in);
 		String vmName= readString(in);
 		
-		println(TcpIpSpyMessages.VerbosePacketStream_VM_Description__36, description); 
-		println(TcpIpSpyMessages.VerbosePacketStream_JDWP_Major_Version__37, jdwpMajor); 
-		println(TcpIpSpyMessages.VerbosePacketStream_JDWP_Minor_Version__38, jdwpMinor); 
-		println(TcpIpSpyMessages.VerbosePacketStream_VM_Version__39, vmVersion); 
-		println(TcpIpSpyMessages.VerbosePacketStream_VM_Name__40, vmName); 
+		println("VM Description:", description);  //$NON-NLS-1$
+		println("JDWP Major Version:", jdwpMajor);  //$NON-NLS-1$
+		println("JDWP Minor Version:", jdwpMinor);  //$NON-NLS-1$
+		println("VM Version:", vmVersion);  //$NON-NLS-1$
+		println("VM Name:", vmName);  //$NON-NLS-1$
 	}
 	
 	private void printVmClassesBySignatureCommand(DataInputStream in) throws IOException {
 		String signature= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature); 
+		println("Class signature:", signature);  //$NON-NLS-1$
 	}
 
 	private void printVmClassesBySignatureReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int classesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount); 
+		println("Classes count:", classesCount);  //$NON-NLS-1$
 		for(int i= 0; i < classesCount; i++) {
 			byte refTypeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			int status= in.readInt();
 			printRefTypeTag(refTypeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); 
+			printlnReferenceTypeId("Type id:", typeId);  //$NON-NLS-1$
 			printClassStatus(status);
 		}		
 	}
 
 	private void printVmAllClassesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int classesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount); 
+		println("Classes count:", classesCount);  //$NON-NLS-1$
 		for(int i= 0; i < classesCount; i++) {
 			byte refTypeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			String signature= readString(in);
 			int status= in.readInt();
 			printRefTypeTag(refTypeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); 
-			println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature); 
+			printlnReferenceTypeId("Type id:", typeId);  //$NON-NLS-1$
+			println("Class signature:", signature);  //$NON-NLS-1$
 			printClassStatus(status);
 		}
 	}
 	
 	private void printVmAllThreadsReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int threadsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Threads_count__47, threadsCount); 
+		println("Threads count:", threadsCount);  //$NON-NLS-1$
 		for(int i= 0; i < threadsCount; i++) {
 			long threadId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId); 
+			printlnObjectId("Thread id:", threadId);  //$NON-NLS-1$
 		}
 	}
 	
 	private void printVmTopLevelThreadGroupReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int groupsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Threads_count__47, groupsCount); 
+		println("Threads count:", groupsCount);  //$NON-NLS-1$
 		for(int i= 0; i < groupsCount; i++) {
 			long threadGroupId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadGroupId); 
+			printlnObjectId("Thread id:", threadGroupId);  //$NON-NLS-1$
 		}
 	}
 	
@@ -1406,11 +1406,11 @@ public class VerbosePacketStream extends PrintStream {
 		int objectIDSize= in.readInt();
 		int referenceTypeIDSize= in.readInt();
 		int frameIDSize= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Field_ID_size__51, fieldIDSize); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Method_ID_size__52, methodIDSize); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Object_ID_size__53, objectIDSize); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reference_type_ID_size__54, referenceTypeIDSize); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Frame_ID_size__55, frameIDSize); 
+		println("Field ID size:", fieldIDSize);  //$NON-NLS-1$
+		println("Method ID size:", methodIDSize);  //$NON-NLS-1$
+		println("Object ID size:", objectIDSize);  //$NON-NLS-1$
+		println("Reference type ID size:", referenceTypeIDSize);  //$NON-NLS-1$
+		println("Frame ID size:", frameIDSize);  //$NON-NLS-1$
 		TcpipSpy.setFieldIDSize(fieldIDSize);
 		TcpipSpy.setMethodIDSize(methodIDSize);
 		TcpipSpy.setObjectIDSize(objectIDSize);
@@ -1421,17 +1421,17 @@ public class VerbosePacketStream extends PrintStream {
 
 	private void printVmExitCommand(DataInputStream in) throws IOException {
 		int exitCode= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Exit_code__56, exitCode); 
+		println("Exit code:", exitCode);  //$NON-NLS-1$
 	}
 	
 	private void printVmCreateStringCommand(DataInputStream in) throws IOException {
 		String string= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_String__57, string); 
+		println("String:", string);  //$NON-NLS-1$
 	}
 	
 	private void printVmCreateStringReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long stringId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_String_id__58, stringId); 
+		printlnObjectId("String id:", stringId);  //$NON-NLS-1$
 	}
 	
 	private void printVmCapabilitiesReply(DataInputStream in) throws IOException {
@@ -1442,40 +1442,40 @@ public class VerbosePacketStream extends PrintStream {
 		boolean canGetOwnedMonitorInfo= in.readBoolean();
 		boolean canGetCurrentContendedMonitor= in.readBoolean();
 		boolean canGetMonitorInfo= in.readBoolean();
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_watch_field_modification__59, canWatchFieldModification); 
-		println(TcpIpSpyMessages.VerbosePacketStream_can_watch_field_access__60, canWatchFieldAccess); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_bytecodes__61, canGetBytecodes); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_synthetic_attribute__62, canGetSyntheticAttribute); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_owned_monitor_info__63, canGetOwnedMonitorInfo); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_cur__contended_monitor__64, canGetCurrentContendedMonitor); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_monitor_info__65, canGetMonitorInfo); 
+		println("Can watch field modification:", canWatchFieldModification);  //$NON-NLS-1$
+		println("can watch field access:", canWatchFieldAccess);  //$NON-NLS-1$
+		println("Can get bytecodes:", canGetBytecodes);  //$NON-NLS-1$
+		println("Can get synthetic attribute:", canGetSyntheticAttribute);  //$NON-NLS-1$
+		println("Can get owned monitor info:", canGetOwnedMonitorInfo);  //$NON-NLS-1$
+		println("Can get currently contended monitor:", canGetCurrentContendedMonitor);  //$NON-NLS-1$
+		println("Can get monitor info:", canGetMonitorInfo);  //$NON-NLS-1$
 	}
 	
 	private void printVmClassPathsReply(DataInputStream in) throws IOException {
 		String baseDir= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Base_directory__66, baseDir); 
+		println("Base directory:", baseDir);  //$NON-NLS-1$
 		int classpathCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classpaths_count__67, classpathCount); 
+		println("Classpaths count:", classpathCount);  //$NON-NLS-1$
 		for (int i= 0; i < classpathCount; i++) {
 			String path= readString(in);
-			println(TcpIpSpyMessages.VerbosePacketStream_Classpath__68, path); 
+			println("Classpath:", path);  //$NON-NLS-1$
 		}
 		int bootclasspathCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Bootclasspaths_count__69, bootclasspathCount); 
+		println("Bootclasspaths count:", bootclasspathCount);  //$NON-NLS-1$
 		for (int i= 0; i < bootclasspathCount; i++) {
 			String path= readString(in);
-			println(TcpIpSpyMessages.VerbosePacketStream_Bootclasspath__70, path); 
+			println("Bootclasspath:", path);  //$NON-NLS-1$
 		}
 	}
 	
 	private void printVmDisposeObjectsCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		int requestsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Requests_Count__71, requestsCount); 
+		println("Requests Count:", requestsCount);  //$NON-NLS-1$
 		for (int i=0; i < requestsCount; i++) {
 			long objectId= readObjectID(in);
 			int refsCounts= in.readInt();
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId); 
-			println(TcpIpSpyMessages.VerbosePacketStream_References_count__73, refsCounts); 
+			printlnObjectId("Object id:", objectId);  //$NON-NLS-1$
+			println("References count:", refsCounts);  //$NON-NLS-1$
 		}
 	}
 	
@@ -1506,56 +1506,56 @@ public class VerbosePacketStream extends PrintStream {
 		boolean reserved30= in.readBoolean();
 		boolean reserved31= in.readBoolean();
 		boolean reserved32= in.readBoolean();
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_redefine_classes__74, canRedefineClasses); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_add_method__75, canAddMethod); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_unrestrictedly_rd__classes__76, canUnrestrictedlyRedefineClasses); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_pop_frames__77, canPopFrames); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_use_instance_filters__78, canUseInstanceFilters); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_get_source_debug_extension__79, canGetSourceDebugExtension); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_request_VMDeath_event__80, canRequestVMDeathEvent); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Can_set_default_stratum__81, canSetDefaultStratum); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved16); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved17); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved18); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved19); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved20); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved21); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved22); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved23); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved24); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved25); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved26); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved27); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved28); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved29); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved30); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved31); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Reserved__82, reserved32); 
+		println("Can redefine classes:", canRedefineClasses);  //$NON-NLS-1$
+		println("Can add method:", canAddMethod);  //$NON-NLS-1$
+		println("Can unrestrictedly rd. classes:", canUnrestrictedlyRedefineClasses);  //$NON-NLS-1$
+		println("Can pop frames:", canPopFrames);  //$NON-NLS-1$
+		println("Can use instance filters:", canUseInstanceFilters);  //$NON-NLS-1$
+		println("Can get source debug extension:", canGetSourceDebugExtension);  //$NON-NLS-1$
+		println("Can request VMDeath event:", canRequestVMDeathEvent);  //$NON-NLS-1$
+		println("Can set default stratum:", canSetDefaultStratum);  //$NON-NLS-1$
+		println("Reserved:", reserved16);  //$NON-NLS-1$
+		println("Reserved:", reserved17);  //$NON-NLS-1$
+		println("Reserved:", reserved18);  //$NON-NLS-1$
+		println("Reserved:", reserved19);  //$NON-NLS-1$
+		println("Reserved:", reserved20);  //$NON-NLS-1$
+		println("Reserved:", reserved21);  //$NON-NLS-1$
+		println("Reserved:", reserved22);  //$NON-NLS-1$
+		println("Reserved:", reserved23);  //$NON-NLS-1$
+		println("Reserved:", reserved24);  //$NON-NLS-1$
+		println("Reserved:", reserved25);  //$NON-NLS-1$
+		println("Reserved:", reserved26);  //$NON-NLS-1$
+		println("Reserved:", reserved27);  //$NON-NLS-1$
+		println("Reserved:", reserved28);  //$NON-NLS-1$
+		println("Reserved:", reserved29);  //$NON-NLS-1$
+		println("Reserved:", reserved30);  //$NON-NLS-1$
+		println("Reserved:", reserved31);  //$NON-NLS-1$
+		println("Reserved:", reserved32);  //$NON-NLS-1$
 	}
 	
 	private void printVmRedefineClassCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		int typesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Types_count__99, typesCount); 
+		println("Types count:", typesCount);  //$NON-NLS-1$
 		for (int i= 0; i < typesCount; i++) {
 			long typeId= readReferenceTypeID(in);
 			int classfileLength= in.readInt();
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId); 
-			println(TcpIpSpyMessages.VerbosePacketStream_Classfile_length__101, classfileLength);
+			printlnReferenceTypeId("Type id:", typeId);  //$NON-NLS-1$
+			println("Classfile length:", classfileLength); //$NON-NLS-1$
 			while((classfileLength -= in.skipBytes(classfileLength)) != 0) {
 			}
-			printDescription(TcpIpSpyMessages.VerbosePacketStream_Class_bytes__102);
-			println(TcpIpSpyMessages.VerbosePacketStream_skipped_103);
+			printDescription("Class bytes:"); //$NON-NLS-1$
+			println("skipped"); //$NON-NLS-1$
 		}
 	}
 	
 	private void printVmSetDefaultStratumCommand(DataInputStream in) throws IOException {
 		String stratumId= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Stratum_id__104, stratumId);
+		println("Stratum id:", stratumId); //$NON-NLS-1$
 	}
 	
 	private void printVmAllClassesWithGenericReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int classesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount);
+		println("Classes count:", classesCount); //$NON-NLS-1$
 		for(int i= 0; i < classesCount; i++) {
 			byte refTypeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
@@ -1563,26 +1563,26 @@ public class VerbosePacketStream extends PrintStream {
 			String genericSignature= readString(in);
 			int status= in.readInt();
 			printRefTypeTag(refTypeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
-			println(TcpIpSpyMessages.VerbosePacketStream_Class_signature__41, signature);
-			println(TcpIpSpyMessages.VerbosePacketStream_Generic_class_signature__405, genericSignature);
+			printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
+			println("Class signature:", signature); //$NON-NLS-1$
+			println("Generic class signature:", genericSignature); //$NON-NLS-1$
 			printClassStatus(status);
 		}
 	}
 	
 	private void printRtDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long typeId= readReferenceTypeID(in);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
+		printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
 	}
 	
 	private void printRtSignatureReply(DataInputStream in) throws IOException {
 		String signature= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature);
+		println("Signature:", signature); //$NON-NLS-1$
 	}
 	
 	private void printRtClassLoaderReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classLoaderId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_ClassLoader_id__107, classLoaderId);
+		printlnObjectId("ClassLoader id:", classLoaderId); //$NON-NLS-1$
 	}
 
 	private void printRtModifiersReply(DataInputStream in) throws IOException {
@@ -1592,30 +1592,30 @@ public class VerbosePacketStream extends PrintStream {
 
 	private void printRtFieldsReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int fieldsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Fields_count__108, fieldsCount);
+		println("Fields count:", fieldsCount); //$NON-NLS-1$
 		for (int i= 0; i < fieldsCount; i++) {
 			long fieldId= readFieldID(in);
 			String name= readString(in);
 			String signature= readString(in);
 			int modifiers= in.readInt();
-			printlnFieldId(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
-			println(TcpIpSpyMessages.VerbosePacketStream_Name__110, name);
-			println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature);
+			printlnFieldId("Field id:", fieldId); //$NON-NLS-1$
+			println("Name:", name); //$NON-NLS-1$
+			println("Signature:", signature); //$NON-NLS-1$
 			printFieldModifiers(modifiers);
 		}
 	}
 	
 	private void printRtMethodsReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int methodsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Methods_count__112, methodsCount);
+		println("Methods count:", methodsCount); //$NON-NLS-1$
 		for (int i= 0; i < methodsCount; i++) {
 			long methodId= readMethodID(in);
 			String name= readString(in);
 			String signature= readString(in);
 			int modifiers= in.readInt();
-			printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId);
-			println(TcpIpSpyMessages.VerbosePacketStream_Name__110, name);
-			println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature);
+			printlnMethodId("Method id:", methodId); //$NON-NLS-1$
+			println("Name:", name); //$NON-NLS-1$
+			println("Signature:", signature); //$NON-NLS-1$
 			printMethodModifiers(modifiers);
 		}
 	}
@@ -1623,35 +1623,35 @@ public class VerbosePacketStream extends PrintStream {
 	private void printRtGetValuesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long typeId= readReferenceTypeID(in);
 		int fieldsCount= in.readInt();
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Fields_count__108, fieldsCount);
+		printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
+		println("Fields count:", fieldsCount); //$NON-NLS-1$
 		for (int i= 0; i < fieldsCount; i++) {
 			long fieldId= readFieldID(in);
-			printlnFieldId(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
+			printlnFieldId("Field id:", fieldId); //$NON-NLS-1$
 		}
 	}
 
 	private void printRtGetValuesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int valuesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Values_count__119, valuesCount);
+		println("Values count:", valuesCount); //$NON-NLS-1$
 		for (int i= 0; i < valuesCount; i++) {
-			readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Value__120, in);
+			readAndPrintlnTaggedValue("Value:", in); //$NON-NLS-1$
 		}
 	}
 	
 	private void printRtSourceFileReply(DataInputStream in) throws IOException {
 		String sourceFile= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Source_file__121, sourceFile);
+		println("Source file:", sourceFile); //$NON-NLS-1$
 	}
 	
 	private void printRtNestedTypesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int typesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Types_count__99, typesCount);
+		println("Types count:", typesCount); //$NON-NLS-1$
 		for (int i= 0; i < typesCount; i++) {
 			byte typeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			printRefTypeTag(typeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
+			printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
 		}
 	}
 	
@@ -1662,79 +1662,79 @@ public class VerbosePacketStream extends PrintStream {
 	
 	private void printRtInterfacesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int interfacesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Interfaces_count__124, interfacesCount);
+		println("Interfaces count:", interfacesCount); //$NON-NLS-1$
 		for (int i= 0; i < interfacesCount; i ++) {
 			long interfaceId= readReferenceTypeID(in);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Interface_type_id__125, interfaceId);
+			printlnReferenceTypeId("Interface type id:", interfaceId); //$NON-NLS-1$
 		}
 	}
 	
 	private void printRtClassObjectReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classObjectId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Class_object_id__126, classObjectId);
+		printlnObjectId("Class object id:", classObjectId); //$NON-NLS-1$
 	}
 	
 	private void printRtSourceDebugExtensionReply(DataInputStream in) throws IOException {
 		String extension= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Extension__127, extension);
+		println("Extension:", extension); //$NON-NLS-1$
 	}
 	
 	private void printRtSignatureWithGenericReply(DataInputStream in) throws IOException {
 		String signature= readString(in);
 		String genericSignature= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature); 
-		println(TcpIpSpyMessages.VerbosePacketStream_Generic_signature__422, genericSignature);
+		println("Signature:", signature);  //$NON-NLS-1$
+		println("Generic signature:", genericSignature); //$NON-NLS-1$
 	}
 	
 	private void printRtFieldsWithGenericReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int fieldsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Fields_count__108, fieldsCount);
+		println("Fields count:", fieldsCount); //$NON-NLS-1$
 		for (int i= 0; i < fieldsCount; i++) {
 			long fieldId= readFieldID(in);
 			String name= readString(in);
 			String signature= readString(in);
 			String genericSignature= readString(in);
 			int modifiers= in.readInt();
-			printlnFieldId(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
-			println(TcpIpSpyMessages.VerbosePacketStream_Name__110, name);
-			println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature);
-			println(TcpIpSpyMessages.VerbosePacketStream_Generic_signature__422, genericSignature);
+			printlnFieldId("Field id:", fieldId); //$NON-NLS-1$
+			println("Name:", name); //$NON-NLS-1$
+			println("Signature:", signature); //$NON-NLS-1$
+			println("Generic signature:", genericSignature); //$NON-NLS-1$
 			printFieldModifiers(modifiers);
 		}
 	}
 	
 	private void printRtMethodsWithGenericReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int methodsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Methods_count__112, methodsCount);
+		println("Methods count:", methodsCount); //$NON-NLS-1$
 		for (int i= 0; i < methodsCount; i++) {
 			long methodId= readMethodID(in);
 			String name= readString(in);
 			String genericSignature= readString(in);
 			int modifiers= in.readInt();
-			printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId);
-			println(TcpIpSpyMessages.VerbosePacketStream_Name__110, name);
+			printlnMethodId("Method id:", methodId); //$NON-NLS-1$
+			println("Name:", name); //$NON-NLS-1$
 //			println(TcpIpSpyMessages.VerbosePacketStream_Signature__106, signature);
-			println(TcpIpSpyMessages.VerbosePacketStream_Generic_signature__422, genericSignature); 
+			println("Generic signature:", genericSignature);  //$NON-NLS-1$
 			printMethodModifiers(modifiers);
 		}
 	}
 	
 	private void printCtSuperclassCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classTypeId= readReferenceTypeID(in);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Class_type_id__128, classTypeId);
+		printlnReferenceTypeId("Class type id:", classTypeId); //$NON-NLS-1$
 	}
 	
 	private void printCtSuperclassReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long superclassTypeId= readReferenceTypeID(in);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Superclass_type_id__129, superclassTypeId);
+		printlnReferenceTypeId("Superclass type id:", superclassTypeId); //$NON-NLS-1$
 	}
 
 	private void printCtSetValuesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classTypeId= readReferenceTypeID(in);
 		int fieldsCount= in.readInt();
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Class_type_id__128, classTypeId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Fields_count__108, fieldsCount);
-		throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_List_of_values__NOT_MANAGED_132, remainderData(in));
+		printlnReferenceTypeId("Class type id:", classTypeId); //$NON-NLS-1$
+		println("Fields count:", fieldsCount); //$NON-NLS-1$
+		throw new UnableToParseDataException("List of values: NOT MANAGED", remainderData(in)); //$NON-NLS-1$
 	}
 	
 	private void printCtInvokeMethodCommand(DataInputStream in) throws IOException, UnableToParseDataException {
@@ -1742,22 +1742,22 @@ public class VerbosePacketStream extends PrintStream {
 		long threadId= readObjectID(in);
 		long methodId= readMethodID(in);
 		int argumentsCount= in.readInt();
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Class_type_id__128, classTypeId);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
-		printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Arguments_count__136, argumentsCount);
+		printlnReferenceTypeId("Class type id:", classTypeId); //$NON-NLS-1$
+		printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
+		printlnMethodId("Method id:", methodId); //$NON-NLS-1$
+		println("Arguments count:", argumentsCount); //$NON-NLS-1$
 		for (int i= 0; i < argumentsCount; i++) {
-			readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Argument__137, in);
+			readAndPrintlnTaggedValue("Argument:", in); //$NON-NLS-1$
 		}
 		int invocationOptions= in.readInt();
 		printInvocationOptions(invocationOptions);
 	}
 	
 	private void printCtInvokeMethodReply(DataInputStream in) throws IOException, UnableToParseDataException {
-		readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Return_value__138, in);
+		readAndPrintlnTaggedValue("Return value:", in); //$NON-NLS-1$
 		byte signatureByte= in.readByte();
 		long exception= readObjectID(in);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Exception_object_id__139, exception, signatureByte);
+		printlnTaggedObjectId("Exception object id:", exception, signatureByte); //$NON-NLS-1$
 	}
 
 	private void printCtNewInstanceCommand(DataInputStream in) throws IOException, UnableToParseDataException {
@@ -1769,83 +1769,83 @@ public class VerbosePacketStream extends PrintStream {
 		long newObjectId= readObjectID(in);
 		byte exceptionSignatureByte= in.readByte();
 		long exception= readObjectID(in);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_New_object_id__140, newObjectId, objectSignatureByte);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Exception_object_id__139, exception, exceptionSignatureByte);
+		printlnTaggedObjectId("New object id:", newObjectId, objectSignatureByte); //$NON-NLS-1$
+		printlnTaggedObjectId("Exception object id:", exception, exceptionSignatureByte); //$NON-NLS-1$
 	}
 	
 	private void printAtNewInstanceCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long arrayTypeId= readReferenceTypeID(in);
 		int length= in.readInt();
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Array_type_id__142, arrayTypeId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Length__143, length);
+		printlnReferenceTypeId("Array type id:", arrayTypeId); //$NON-NLS-1$
+		println("Length:", length); //$NON-NLS-1$
 	}
 	
 	private void printAtNewInstanceReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte signatureByte= in.readByte();
 		long newArrayId= readObjectID(in);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_New_array_id__144, newArrayId, signatureByte);
+		printlnTaggedObjectId("New array id:", newArrayId, signatureByte); //$NON-NLS-1$
 	}
 	
 	private void printMDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classTypeId= readReferenceTypeID(in);
 		long methodId= readMethodID(in);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Class_type_id__128, classTypeId);
-		printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId);
+		printlnReferenceTypeId("Class type id:", classTypeId); //$NON-NLS-1$
+		printlnMethodId("Method id:", methodId); //$NON-NLS-1$
 	}
 	
 	private void printMLineTableReply(DataInputStream in) throws IOException {
 		long start= in.readLong();
 		long end= in.readLong();
 		int lines= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Lowest_valid_code_index__147, start);
-		println(TcpIpSpyMessages.VerbosePacketStream_Highest_valid_code_index__148, end);
-		println(TcpIpSpyMessages.VerbosePacketStream_Number_of_lines__149, lines);
+		println("Lowest valid code index:", start); //$NON-NLS-1$
+		println("Highest valid code index:", end); //$NON-NLS-1$
+		println("Number of lines:", lines); //$NON-NLS-1$
 		for (int i= 0; i < lines; i++) {
 			long lineCodeIndex= in.readLong();
 			int lineNumber= in.readInt();
-			println(TcpIpSpyMessages.VerbosePacketStream_Line_code_Index__150, lineCodeIndex);
-			println(TcpIpSpyMessages.VerbosePacketStream_Line_number__151, lineNumber);
+			println("Line code Index:", lineCodeIndex); //$NON-NLS-1$
+			println("Line number:", lineNumber); //$NON-NLS-1$
 		}
 	}
 	
 	private void printMVariableTableReply(DataInputStream in) throws IOException {
 		int slotsUsedByArgs= in.readInt();
 		int variablesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Nb_of_slots_used_by_all_args__152, slotsUsedByArgs);
-		println(TcpIpSpyMessages.VerbosePacketStream_Nb_of_variables__153, variablesCount);
+		println("Nb of slots used by all args:", slotsUsedByArgs); //$NON-NLS-1$
+		println("Nb of variables:", variablesCount); //$NON-NLS-1$
 		for (int i= 0; i < variablesCount; i++) {
 			long codeIndex= in.readLong();
 			String name= readString(in);
 			String signature= readString(in);
 			int length= in.readInt();
 			int slotId= in.readInt();
-			println(TcpIpSpyMessages.VerbosePacketStream_First_code_index__154, codeIndex);
-			println(TcpIpSpyMessages.VerbosePacketStream_Variable_name__155, name);
-			println(TcpIpSpyMessages.VerbosePacketStream_Variable_type_signature__156, signature);
-			println(TcpIpSpyMessages.VerbosePacketStream_Code_index_length__157, length);
-			println(TcpIpSpyMessages.VerbosePacketStream_Slot_id__158, slotId);
+			println("First code index:", codeIndex); //$NON-NLS-1$
+			println("Variable name:", name); //$NON-NLS-1$
+			println("Variable type signature:", signature); //$NON-NLS-1$
+			println("Code index length:", length); //$NON-NLS-1$
+			println("Slot id:", slotId); //$NON-NLS-1$
 		}
 	}
 	
 	private void printMBytecodesReply(DataInputStream in) throws IOException {
 		int bytes= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Nb_of_bytes__159, bytes);
+		println("Nb of bytes:", bytes); //$NON-NLS-1$
 		while((bytes -= in.skipBytes(bytes)) != 0) {
 		}
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Method_bytes__160);
-		println(TcpIpSpyMessages.VerbosePacketStream_skipped_103);
+		printDescription("Method bytes:"); //$NON-NLS-1$
+		println("skipped"); //$NON-NLS-1$
 	}
 	
 	private void printMIsObsoleteReply(DataInputStream in) throws IOException {
 		boolean isObsolete= in.readBoolean();
-		println(TcpIpSpyMessages.VerbosePacketStream_Is_obsolete__162, isObsolete);
+		println("Is obsolete:", isObsolete); //$NON-NLS-1$
 	}
 	
 	private void printMVariableTableWithGenericReply(DataInputStream in) throws IOException {
 		int slotsUsedByArgs= in.readInt();
 		int variablesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Nb_of_slots_used_by_all_args__152, slotsUsedByArgs);
-		println(TcpIpSpyMessages.VerbosePacketStream_Nb_of_variables__153, variablesCount);
+		println("Nb of slots used by all args:", slotsUsedByArgs); //$NON-NLS-1$
+		println("Nb of variables:", variablesCount); //$NON-NLS-1$
 		for (int i= 0; i < variablesCount; i++) {
 			long codeIndex= in.readLong();
 			String name= readString(in);
@@ -1853,65 +1853,65 @@ public class VerbosePacketStream extends PrintStream {
 			String genericSignature= readString(in);
 			int length= in.readInt();
 			int slotId= in.readInt();
-			println(TcpIpSpyMessages.VerbosePacketStream_First_code_index__154, codeIndex);
-			println(TcpIpSpyMessages.VerbosePacketStream_Variable_name__155, name);
-			println(TcpIpSpyMessages.VerbosePacketStream_Variable_type_signature__156, signature);
-			println(TcpIpSpyMessages.VerbosePacketStream_Variable_type_generic_signature__425, genericSignature);
-			println(TcpIpSpyMessages.VerbosePacketStream_Code_index_length__157, length);
-			println(TcpIpSpyMessages.VerbosePacketStream_Slot_id__158, slotId);
+			println("First code index:", codeIndex); //$NON-NLS-1$
+			println("Variable name:", name); //$NON-NLS-1$
+			println("Variable type signature:", signature); //$NON-NLS-1$
+			println("Var. type generic signature:", genericSignature); //$NON-NLS-1$
+			println("Code index length:", length); //$NON-NLS-1$
+			println("Slot id:", slotId); //$NON-NLS-1$
 		}
 	}
 	
 	private void printOrDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long objectId= readObjectID(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId);
+		println("Object id:", objectId); //$NON-NLS-1$
 	}
 	
 	private void printOrReferenceTypeReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte refTypeTag= in.readByte();
 		long typeId= readReferenceTypeID(in);
 		printRefTypeTag(refTypeTag);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
+		printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
 	}
 	
 	private void printOrGetValuesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long objectId= readObjectID(in);
 		int fieldsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Fields_count__108, fieldsCount);
+		println("Object id:", objectId); //$NON-NLS-1$
+		println("Fields count:", fieldsCount); //$NON-NLS-1$
 		for (int i= 0; i < fieldsCount; i++) {
 			long fieldId= readFieldID(in);
-			println(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
+			println("Field id:", fieldId); //$NON-NLS-1$
 		}
 	}
 	
 	private void printOrGetValuesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int valuesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Values_count__119, valuesCount);
+		println("Values count:", valuesCount); //$NON-NLS-1$
 		for (int i= 0; i < valuesCount; i++) {
-			readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Value__120, in);
+			readAndPrintlnTaggedValue("Value:", in); //$NON-NLS-1$
 		}
 	}
 	
 	private void printOrSetValuesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long objectId= readObjectID(in);
 		int fieldsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Fields_count__108, fieldsCount);
-		throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_List_of_values__NOT_MANAGED_132, remainderData(in));
+		println("Object id:", objectId); //$NON-NLS-1$
+		println("Fields count:", fieldsCount); //$NON-NLS-1$
+		throw new UnableToParseDataException("List of values: NOT MANAGED", remainderData(in)); //$NON-NLS-1$
 	}
 	
 	private void printOrMonitorInfoReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long ownerThreadId= readObjectID(in);
 		int entryCount= in.readInt();
 		int waiters= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Owner_thread_id__173, ownerThreadId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Entry_count__174, entryCount);
-		println(TcpIpSpyMessages.VerbosePacketStream_Nb_of_waiters__175, waiters);
+		printlnObjectId("Owner thread id:", ownerThreadId); //$NON-NLS-1$
+		println("Entry count:", entryCount); //$NON-NLS-1$
+		println("Nb of waiters:", waiters); //$NON-NLS-1$
 		long waiterThreadId;
 		for (int i= 0; i < waiters; i++) {
 			waiterThreadId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Waiting_thread_id__176, waiterThreadId);
+			printlnObjectId("Waiting thread id:", waiterThreadId); //$NON-NLS-1$
 		}
 	}
 	
@@ -1921,48 +1921,48 @@ public class VerbosePacketStream extends PrintStream {
 		long classTypeId= readReferenceTypeID(in);
 		long methodId= readMethodID(in);
 		int argsCount= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Class_type_id__128, classTypeId);
-		printlnMethodId(TcpIpSpyMessages.VerbosePacketStream_Method_id__113, methodId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Arguments_count__136, argsCount);
+		printlnObjectId("Object id:", objectId); //$NON-NLS-1$
+		printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
+		printlnReferenceTypeId("Class type id:", classTypeId); //$NON-NLS-1$
+		printlnMethodId("Method id:", methodId); //$NON-NLS-1$
+		println("Arguments count:", argsCount); //$NON-NLS-1$
 		for (int i= 0; i < argsCount; i++) {
-			readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Argument__137, in);
+			readAndPrintlnTaggedValue("Argument:", in); //$NON-NLS-1$
 		}
 		int invocationOption= in.readInt();
 		printInvocationOptions(invocationOption);
 	}
 	
 	private void printOrInvokeMethodReply(DataInputStream in) throws IOException, UnableToParseDataException {
-		readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Return_value__138, in);
+		readAndPrintlnTaggedValue("Return value:", in); //$NON-NLS-1$
 		byte signatureByte= in.readByte();
 		long exception= readObjectID(in);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Exception_object_id__139, exception, signatureByte);
+		printlnTaggedObjectId("Exception object id:", exception, signatureByte); //$NON-NLS-1$
 	}
 	
 	private void printOrIsCollectedReply(DataInputStream in) throws IOException {
 		boolean isCollected= in.readBoolean();
-		println(TcpIpSpyMessages.VerbosePacketStream_Is_collected__185, isCollected);
+		println("Is collected:", isCollected); //$NON-NLS-1$
 	}
 	
 	private void printSrValueCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long stringObjectId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_String_object_id__186, stringObjectId);
+		printlnObjectId("String object id:", stringObjectId); //$NON-NLS-1$
 	}
 		
 	private void printSrValueReply(DataInputStream in) throws IOException {
 		String value= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Value__120, value);
+		println("Value:", value); //$NON-NLS-1$
 	}
 	
 	private void printTrDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
+		printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
 	}
 	
 	private void printTrNameReply(DataInputStream in) throws IOException {
 		String threadName= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Name__110, threadName);
+		println("Name:", threadName); //$NON-NLS-1$
 	}
 	
 	private void printTrStatusReply(DataInputStream in) throws IOException {
@@ -1974,108 +1974,108 @@ public class VerbosePacketStream extends PrintStream {
 	
 	private void printTrThreadGroupReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadGroupId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_group_id__190, threadGroupId);
+		printlnObjectId("Thread group id:", threadGroupId); //$NON-NLS-1$
 	}
 	
 	private void printTrFramesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadId= readObjectID(in);
 		int startFrame= in.readInt();
 		int length= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
-		println(TcpIpSpyMessages.VerbosePacketStream_First_frame__192, startFrame);
-		println(TcpIpSpyMessages.VerbosePacketStream_Number_of_frame__193, length);
+		printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
+		println("First frame:", startFrame); //$NON-NLS-1$
+		println("Number of frame:", length); //$NON-NLS-1$
 	}
 	
 	private void printTrFramesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int framesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Frames_count__194, framesCount);
+		println("Frames count:", framesCount); //$NON-NLS-1$
 		for (int i= 0; i < framesCount; i++) {
 			long frameId= readFrameID(in);
-			printlnFrameId(TcpIpSpyMessages.VerbosePacketStream_Frame_id__195, frameId);
+			printlnFrameId("Frame id:", frameId); //$NON-NLS-1$
 			readAndPrintLocation(in);
 		}
 	}
 	
 	private void printTrFrameCountReply(DataInputStream in) throws IOException {
 		int framesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Frames_count__194, framesCount);
+		println("Frames count:", framesCount); //$NON-NLS-1$
 	}
 	
 	private void printTrOwnedMonitorsReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int monitorsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Monitors_count__197, monitorsCount);
+		println("Monitors count:", monitorsCount); //$NON-NLS-1$
 		for (int i= 0; i < monitorsCount; i++) {
 			byte signatureByte= in.readByte();
 			long monitorObjectId= readObjectID(in);
-			printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Monitor_object_id__198, monitorObjectId, signatureByte);
+			printlnTaggedObjectId("Monitor object id:", monitorObjectId, signatureByte); //$NON-NLS-1$
 		}
 	}
 	
 	private void printTrCurrentContendedMonitorReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte signatureByte= in.readByte();
 		long monitorObjectId= readObjectID(in);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Monitor_object_id__198, monitorObjectId, signatureByte);
+		printlnTaggedObjectId("Monitor object id:", monitorObjectId, signatureByte); //$NON-NLS-1$
 	}
 	
 	private void printTrStopCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadId= readObjectID(in);
 		long exceptionObjectId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Exception_object_id__139, exceptionObjectId);
+		printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
+		printlnObjectId("Exception object id:", exceptionObjectId); //$NON-NLS-1$
 	}
 	
 	private void printTrSuspendCountReply(DataInputStream in) throws IOException {
 		int suspendCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Suspend_count__202, suspendCount);
+		println("Suspend count:", suspendCount); //$NON-NLS-1$
 	}
 	
 	private void printTgrDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadGroupId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_group_id__190, threadGroupId);
+		printlnObjectId("Thread group id:", threadGroupId); //$NON-NLS-1$
 	}
 	
 	private void printTgrNameReply(DataInputStream in) throws IOException {
 		String name= readString(in);
-		println(TcpIpSpyMessages.VerbosePacketStream_Name__110, name);
+		println("Name:", name); //$NON-NLS-1$
 	}
 	
 	private void printTgrParentReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		long parentThreadGroupId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Parent_thread_group_id__205, parentThreadGroupId);
+		printlnObjectId("Parent thread group id:", parentThreadGroupId); //$NON-NLS-1$
 	}
 	
 	private void printTgrChildrenReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int childThreadsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Child_threads_count__206, childThreadsCount);
+		println("Child threads count:", childThreadsCount); //$NON-NLS-1$
 		for (int i= 0; i < childThreadsCount; i++) {
 			long childThreadId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Child_thread_id__207, childThreadId);
+			printlnObjectId("Child thread id:", childThreadId); //$NON-NLS-1$
 		}
 		int childGroupThreadsCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Child_group_threads_count__208, childGroupThreadsCount);
+		println("Child group threads count:", childGroupThreadsCount); //$NON-NLS-1$
 		for (int i= 0; i < childGroupThreadsCount; i++) {
 			long childGroupThreadId= readObjectID(in);
-			printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Child_group_thread_id__209, childGroupThreadId);
+			printlnObjectId("Child group thread id:", childGroupThreadId); //$NON-NLS-1$
 		}
 	}
 	
 	private void printArLengthCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long arrayObjectId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Array_object_id__210, arrayObjectId);
+		printlnObjectId("Array object id:", arrayObjectId); //$NON-NLS-1$
 	}
 	
 	private void printArLengthReply(DataInputStream in) throws IOException {
 		int length= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Length__143, length);
+		println("Length:", length); //$NON-NLS-1$
 	}
 	
 	private void printArGetValuesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long arrayObjectId= readObjectID(in);
 		int firstIndex= in.readInt();
 		int length= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Array_object_id__210, arrayObjectId);
-		println(TcpIpSpyMessages.VerbosePacketStream_First_index__213, firstIndex);
-		println(TcpIpSpyMessages.VerbosePacketStream_Length__214, length);
+		printlnObjectId("Array object id:", arrayObjectId); //$NON-NLS-1$
+		println("First index:", firstIndex); //$NON-NLS-1$
+		println("Length:", length); //$NON-NLS-1$
 	}
 	
 	private void printArGetValuesReply(DataInputStream in) throws IOException, UnableToParseDataException {
@@ -2086,25 +2086,25 @@ public class VerbosePacketStream extends PrintStream {
 		long arrayObjectId= readObjectID(in);
 		int firstIndex= in.readInt();
 		int length= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Array_object_id__210, arrayObjectId);
-		println(TcpIpSpyMessages.VerbosePacketStream_First_index__213, firstIndex);
-		println(TcpIpSpyMessages.VerbosePacketStream_Length__214, length);
-		throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_List_of_values__NOT_MANAGED_132, remainderData(in));
+		printlnObjectId("Array object id:", arrayObjectId); //$NON-NLS-1$
+		println("First index:", firstIndex); //$NON-NLS-1$
+		println("Length:", length); //$NON-NLS-1$
+		throw new UnableToParseDataException("List of values: NOT MANAGED", remainderData(in)); //$NON-NLS-1$
 	}
 	
 	private void printClrVisibleClassesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classLoaderObjectId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Class_loader_object_id__219, classLoaderObjectId);
+		printlnObjectId("Class loader object id:", classLoaderObjectId); //$NON-NLS-1$
 	}
 
 	private void printClrVisibleClassesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int classesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Classes_count__42, classesCount);
+		println("Classes count:", classesCount); //$NON-NLS-1$
 		for (int i= 0; i < classesCount; i++) {
 			byte refTypeTag= in.readByte();
 			long typeId= readReferenceTypeID(in);
 			printRefTypeTag(refTypeTag);
-			printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
+			printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
 		}
 	}
 	
@@ -2114,75 +2114,75 @@ public class VerbosePacketStream extends PrintStream {
 		int modifiersCount= in.readInt();
 		printEventKind(eventKind);
 		printSuspendPolicy(suspendPolicy);
-		println(TcpIpSpyMessages.VerbosePacketStream_Modifiers_count__222, modifiersCount);
+		println("Modifiers count:", modifiersCount); //$NON-NLS-1$
 		for (int i= 0; i < modifiersCount; i++) {
 			byte modKind= in.readByte();
-			printDescription(TcpIpSpyMessages.VerbosePacketStream_Modifier_kind__223);
+			printDescription("Modifier kind:"); //$NON-NLS-1$
 			printHex(modKind);
 			switch (modKind) {
 				case 1: // count
-					println(TcpIpSpyMessages.VerbosePacketStream___Count__224);
+					println(" (Count)"); //$NON-NLS-1$
 					int count= in.readInt();
-					println(TcpIpSpyMessages.VerbosePacketStream_Count__225, count);
+					println("Count:", count); //$NON-NLS-1$
 					break;
 				case 2: // conditional
-					println(TcpIpSpyMessages.VerbosePacketStream___Conditional__226);
+					println(" (Conditional)"); //$NON-NLS-1$
 					int exprId= in.readInt();
-					println(TcpIpSpyMessages.VerbosePacketStream_Expression_id__227, exprId);
+					println("Expression id:", exprId); //$NON-NLS-1$
 					break;
 				case 3: // thread only
-					println(TcpIpSpyMessages.VerbosePacketStream___ThreadOnly__228);
+					println(" (ThreadOnly)"); //$NON-NLS-1$
 					long threadId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
+					printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
 					break;
 				case 4: // class only
-					println(TcpIpSpyMessages.VerbosePacketStream___ClassOnly__230);
+					println(" (ClassOnly)"); //$NON-NLS-1$
 					long classId= readReferenceTypeID(in);
-					printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Class_type_id__128, classId);
+					printlnReferenceTypeId("Class type id:", classId); //$NON-NLS-1$
 					break;
 				case 5: // class match
-					println(TcpIpSpyMessages.VerbosePacketStream___ClassMatch__232);
+					println(" (ClassMatch)"); //$NON-NLS-1$
 					String classPatern= readString(in);
-					println(TcpIpSpyMessages.VerbosePacketStream_Class_patern__233, classPatern);
+					println("Class pattern:", classPatern); //$NON-NLS-1$
 					break;
 				case 6: // class exclude
-					println(TcpIpSpyMessages.VerbosePacketStream___ClassExclude__234);
+					println(" (ClassExclude)"); //$NON-NLS-1$
 					classPatern= readString(in);
-					println(TcpIpSpyMessages.VerbosePacketStream_Class_patern__235, classPatern);
+					println("Class pattern:", classPatern); //$NON-NLS-1$
 					break;
 				case 7:	// location only
-					println(TcpIpSpyMessages.VerbosePacketStream___LocationOnly__236);
+					println(" (LocationOnly)"); //$NON-NLS-1$
 					readAndPrintLocation(in);
 					break;
 				case 8:	// exception only
-					println(TcpIpSpyMessages.VerbosePacketStream___ExceptionOnly__237);
+					println(" (ExceptionOnly)"); //$NON-NLS-1$
 					long typeId= readReferenceTypeID(in);
 					boolean caught= in.readBoolean();
 					boolean uncaught= in.readBoolean();
-					printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Exception_type_id__238, typeId);
-					println(TcpIpSpyMessages.VerbosePacketStream_Caught__239, caught);
-					println(TcpIpSpyMessages.VerbosePacketStream_Uncaught__240, uncaught);
+					printlnReferenceTypeId("Exception type id:", typeId); //$NON-NLS-1$
+					println("Caught:", caught); //$NON-NLS-1$
+					println("Uncaught:", uncaught); //$NON-NLS-1$
 					break;
 				case 9: // field only
-					println(TcpIpSpyMessages.VerbosePacketStream___FieldOnly__241);
+					println(" (FieldOnly)"); //$NON-NLS-1$
 					long declaringTypeId= readReferenceTypeID(in);
 					long fieldId= readFieldID(in);
-					printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Declaring_type_id__242, declaringTypeId);
-					printlnFieldId(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
+					printlnReferenceTypeId("Declaring type id:", declaringTypeId); //$NON-NLS-1$
+					printlnFieldId("Field id:", fieldId); //$NON-NLS-1$
 					break;
 				case 10: // step
-					println(TcpIpSpyMessages.VerbosePacketStream___Step__244);
+					println(" (Step)"); //$NON-NLS-1$
 					threadId= readObjectID(in);
 					int stepSize= in.readInt();
 					int stepDepth= in.readInt();
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_id__48, threadId);
+					printlnObjectId("Thread id:", threadId); //$NON-NLS-1$
 					printStepSize(stepSize);
 					printStepDepth(stepDepth);
 					break;
 				case 11: // instance only
-					println(TcpIpSpyMessages.VerbosePacketStream___InstanceOnly__246);
+					println(" (InstanceOnly)"); //$NON-NLS-1$
 					long objectId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId);
+					printlnObjectId("Object id:", objectId); //$NON-NLS-1$
 					break;
 			}
 		}
@@ -2190,35 +2190,35 @@ public class VerbosePacketStream extends PrintStream {
 	
 	private void printErSetReply(DataInputStream in) throws IOException {
 		int requestId= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Request_id__248, requestId);
+		println("Request id:", requestId); //$NON-NLS-1$
 	}
 	
 	private void printErClearCommand(DataInputStream in) throws IOException {
 		byte eventKind= in.readByte();
 		int requestId= in.readInt();
 		printEventKind(eventKind);
-		println(TcpIpSpyMessages.VerbosePacketStream_Request_id__248, requestId);
+		println("Request id:", requestId); //$NON-NLS-1$
 	}
 	
 	private void printSfDefaultCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadId= readObjectID(in);
 		long frameId= readFrameID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
-		printlnFrameId(TcpIpSpyMessages.VerbosePacketStream_Frame_id__195, frameId);
+		printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
+		printlnFrameId("Frame id:", frameId); //$NON-NLS-1$
 	}
 	
 	private void printSfGetValuesCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long threadId= readObjectID(in);
 		long frameId= readFrameID(in);
 		int slotsCount= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
-		printlnFrameId(TcpIpSpyMessages.VerbosePacketStream_Frame_id__195, frameId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Slots_count__254, slotsCount);
+		printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
+		printlnFrameId("Frame id:", frameId); //$NON-NLS-1$
+		println("Slots count:", slotsCount); //$NON-NLS-1$
 		for (int i= 0; i < slotsCount; i++) {
 			int slotIndex= in.readInt();
 			byte signatureTag= in.readByte();
-			println(TcpIpSpyMessages.VerbosePacketStream_Slot_index__255, slotIndex);
-			printDescription(TcpIpSpyMessages.VerbosePacketStream_Signature_tag__256);
+			println("Slot index:", slotIndex); //$NON-NLS-1$
+			printDescription("Signature tag:"); //$NON-NLS-1$
 			printSignatureByte(signatureTag, true);
 			println();
 		}
@@ -2226,9 +2226,9 @@ public class VerbosePacketStream extends PrintStream {
 	
 	private void printSfGetValuesReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		int valuesCount= in.readInt();
-		println(TcpIpSpyMessages.VerbosePacketStream_Values_count__119, valuesCount); 
+		println("Values count:", valuesCount);  //$NON-NLS-1$
 		for (int i= 0; i < valuesCount; i++) {
-			readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Value__120, in);
+			readAndPrintlnTaggedValue("Value:", in); //$NON-NLS-1$
 		}
 	}
 	
@@ -2236,55 +2236,55 @@ public class VerbosePacketStream extends PrintStream {
 		long threadId= readObjectID(in);
 		long frameId= readFrameID(in);
 		int slotsCount= in.readInt();
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
-		printlnFrameId(TcpIpSpyMessages.VerbosePacketStream_Frame_id__195, frameId);
-		println(TcpIpSpyMessages.VerbosePacketStream_Slots_count__254, slotsCount);
+		printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
+		printlnFrameId("Frame id:", frameId); //$NON-NLS-1$
+		println("Slots count:", slotsCount); //$NON-NLS-1$
 		for (int i= 0; i < slotsCount; i++) {
 			int slotIndex= in.readInt();
-			println(TcpIpSpyMessages.VerbosePacketStream_Slot_index__255, slotIndex);
-			readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Values__263, in);
+			println("Slot index:", slotIndex); //$NON-NLS-1$
+			readAndPrintlnTaggedValue("Values:", in); //$NON-NLS-1$
 		}
 	}
 	
 	private void printSfThisObjectReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte signatureByte= in.readByte();
 		long objectId= readObjectID(in);
-		printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream___this___object_id__264, objectId, signatureByte);
+		printlnTaggedObjectId("'this' object id:", objectId, signatureByte); //$NON-NLS-1$
 	}
 	
 	private void printCorReflectedTypeCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		long classObjectId= readObjectID(in);
-		printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Class_object_id__126, classObjectId);
+		printlnObjectId("Class object id:", classObjectId); //$NON-NLS-1$
 	}
 	
 	private void printCorReflectedTypeReply(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte refTypeTag= in.readByte();
 		long typeId= readReferenceTypeID(in);
 		printRefTypeTag(refTypeTag);
-		printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
+		printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
 	}
 
 	private void printECompositeCommand(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte suspendPolicy= in.readByte();
 		int eventsCount= in.readInt();
 		printSuspendPolicy(suspendPolicy);
-		println(TcpIpSpyMessages.VerbosePacketStream_Events_count__267, eventsCount);
+		println("Events count:", eventsCount); //$NON-NLS-1$
 		for (int i= 0; i < eventsCount; i++) {
 			byte eventKind= in.readByte();
 			int requestId= in.readInt();
 			printEventKind(eventKind);
-			println(TcpIpSpyMessages.VerbosePacketStream_Request_id__248, requestId);
+			println("Request id:", requestId); //$NON-NLS-1$
 			switch (eventKind) {
 				case EVENTKIND_VM_START:
 					long threadId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Initial_thread_object_id__269, threadId);
+					printlnObjectId("Initial thread object id:", threadId); //$NON-NLS-1$
 					break;
 				case EVENTKIND_SINGLE_STEP:
 				case EVENTKIND_BREAKPOINT:
 				case EVENTKIND_METHOD_ENTRY:
 				case EVENTKIND_METHOD_EXIT:
 					threadId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId); 
+					printlnObjectId("Thread object id:", threadId);  //$NON-NLS-1$
 					readAndPrintLocation(in);
 					break;
 				case EVENTKIND_EXCEPTION:
@@ -2292,13 +2292,13 @@ public class VerbosePacketStream extends PrintStream {
 					readAndPrintLocation(in);
 					byte signatureByte= in.readByte();
 					long objectId= readObjectID(in);
-					printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Exception_object_id__139, objectId, signatureByte);
+					printlnTaggedObjectId("Exception object id:", objectId, signatureByte); //$NON-NLS-1$
 					readAndPrintLocation(in);
 					break;
 				case EVENTKIND_THREAD_START:
 				case EVENTKIND_THREAD_DEATH:
 					threadId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
+					printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
 					break;
 				case EVENTKIND_CLASS_PREPARE:
 					threadId= readObjectID(in);
@@ -2306,19 +2306,19 @@ public class VerbosePacketStream extends PrintStream {
 					long typeId= readReferenceTypeID(in);
 					String typeSignature= readString(in);
 					int status= in.readInt();
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
+					printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
 					printRefTypeTag(refTypeTag);
-					printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
-					println(TcpIpSpyMessages.VerbosePacketStream_Type_signature__275, typeSignature);
-					println(TcpIpSpyMessages.VerbosePacketStream_Status__276, status);
+					printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
+					println("Type signature:", typeSignature); //$NON-NLS-1$
+					println("Status:", status); //$NON-NLS-1$
 					break;
 				case EVENTKIND_CLASS_UNLOAD:
 					typeSignature= readString(in);
-					println(TcpIpSpyMessages.VerbosePacketStream_Type_signature__275, typeSignature);
+					println("Type signature:", typeSignature); //$NON-NLS-1$
 					break;
 				case EVENTKIND_FIELD_ACCESS:
 					threadId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
+					printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
 					readAndPrintLocation(in);
 					refTypeTag= in.readByte();
 					typeId= readReferenceTypeID(in);
@@ -2326,13 +2326,13 @@ public class VerbosePacketStream extends PrintStream {
 					signatureByte= in.readByte();
 					objectId= readObjectID(in);
 					printRefTypeTag(refTypeTag);
-					printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
-					printlnFieldId(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
-					printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId, signatureByte);
+					printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
+					printlnFieldId("Field id:", fieldId); //$NON-NLS-1$
+					printlnTaggedObjectId("Object id:", objectId, signatureByte); //$NON-NLS-1$
 					break;
 				case EVENTKIND_FIELD_MODIFICATION:
 					threadId= readObjectID(in);
-					printlnObjectId(TcpIpSpyMessages.VerbosePacketStream_Thread_object_id__250, threadId);
+					printlnObjectId("Thread object id:", threadId); //$NON-NLS-1$
 					readAndPrintLocation(in);
 					refTypeTag= in.readByte();
 					typeId= readReferenceTypeID(in);
@@ -2340,10 +2340,10 @@ public class VerbosePacketStream extends PrintStream {
 					signatureByte= in.readByte();
 					objectId= readObjectID(in);
 					printRefTypeTag(refTypeTag);
-					printlnReferenceTypeId(TcpIpSpyMessages.VerbosePacketStream_Type_id__43, typeId);
-					printlnFieldId(TcpIpSpyMessages.VerbosePacketStream_Field_id__109, fieldId);
-					printlnTaggedObjectId(TcpIpSpyMessages.VerbosePacketStream_Object_id__72, objectId, signatureByte);
-					readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Value__120, in);
+					printlnReferenceTypeId("Type id:", typeId); //$NON-NLS-1$
+					printlnFieldId("Field id:", fieldId); //$NON-NLS-1$
+					printlnTaggedObjectId("Object id:", objectId, signatureByte); //$NON-NLS-1$
+					readAndPrintlnTaggedValue("Value:", in); //$NON-NLS-1$
 					break;
 				case EVENTKIND_VM_DEATH:
 					break;
@@ -2371,7 +2371,7 @@ public class VerbosePacketStream extends PrintStream {
 				int b = utfBytes[i + 1] & 0xFF;
 				if ((a >> 4) < 14) {
 					if ((b & 0xBF) == 0) {
-						throw new UTFDataFormatException(TcpIpSpyMessages.VerbosePacketStream_Second_byte_input_does_not_match_UTF_Specification_287);
+						throw new UTFDataFormatException("Second byte input does not match UTF Specification"); //$NON-NLS-1$
 					}
 					strBuffer.append((char) (((a & 0x1F) << 6) | (b & 0x3F)));
 					i += 2;
@@ -2379,12 +2379,12 @@ public class VerbosePacketStream extends PrintStream {
 					int c = utfBytes[i + 2] & 0xFF;
 					if ((a & 0xEF) > 0) {
 						if (((b & 0xBF) == 0) || ((c & 0xBF) == 0)) {
-							throw new UTFDataFormatException(TcpIpSpyMessages.VerbosePacketStream_Second_or_third_byte_input_does_not_mach_UTF_Specification__288);
+							throw new UTFDataFormatException("Second or third byte input does not mach UTF Specification_"); //$NON-NLS-1$
 						}
 						strBuffer.append((char) (((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
 						i += 3;
 					} else {
-						throw new UTFDataFormatException(TcpIpSpyMessages.VerbosePacketStream_Input_does_not_match_UTF_Specification_289);
+						throw new UTFDataFormatException("Input does not match UTF Specification"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -2408,35 +2408,35 @@ public class VerbosePacketStream extends PrintStream {
 	
 	private long readObjectID(DataInputStream in) throws IOException, UnableToParseDataException {
 		if (!TcpipSpy.hasSizes()) {
-			throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_Unable_to_parse_remaining_data_290, remainderData(in));
+			throw new UnableToParseDataException("Unable to parse remaining data", remainderData(in)); //$NON-NLS-1$
 		}
 		return readID(in, TcpipSpy.getObjectIDSize());
 	}
 
 	private long readReferenceTypeID(DataInputStream in) throws IOException, UnableToParseDataException {
 		if (!TcpipSpy.hasSizes()) {
-			throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_Unable_to_parse_remaining_data_290, remainderData(in));
+			throw new UnableToParseDataException("Unable to parse remaining data", remainderData(in)); //$NON-NLS-1$
 		}
 		return readID(in, TcpipSpy.getReferenceTypeIDSize());
 	}
 
 	private long readFieldID(DataInputStream in) throws IOException, UnableToParseDataException {
 		if (!TcpipSpy.hasSizes()) {
-			throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_Unable_to_parse_remaining_data_290, remainderData(in));
+			throw new UnableToParseDataException("Unable to parse remaining data", remainderData(in)); //$NON-NLS-1$
 		}
 		return readID(in, TcpipSpy.getFieldIDSize());
 	}
 
 	private long readMethodID(DataInputStream in) throws IOException, UnableToParseDataException {
 		if (!TcpipSpy.hasSizes()) {
-			throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_Unable_to_parse_remaining_data_290, remainderData(in));
+			throw new UnableToParseDataException("Unable to parse remaining data", remainderData(in)); //$NON-NLS-1$
 		}
 		return readID(in, TcpipSpy.getMethodIDSize());
 	}
 
 	private long readFrameID(DataInputStream in) throws IOException, UnableToParseDataException {
 		if (!TcpipSpy.hasSizes()) {
-			throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_Unable_to_parse_remaining_data_290, remainderData(in));
+			throw new UnableToParseDataException("Unable to parse remaining data", remainderData(in)); //$NON-NLS-1$
 		}
 		return readID(in, TcpipSpy.getFrameIDSize());
 	}
@@ -2498,7 +2498,7 @@ public class VerbosePacketStream extends PrintStream {
 			case CLASS_LOADER_TAG:
 			case CLASS_OBJECT_TAG:
 				if (!TcpipSpy.hasSizes()) {
-					throw new UnableToParseDataException(TcpIpSpyMessages.VerbosePacketStream_Unable_to_parse_remaining_data_290, remainderData(in));
+					throw new UnableToParseDataException("Unable to parse remaining data", remainderData(in)); //$NON-NLS-1$
 				}
 				size= TcpipSpy.getObjectIDSize();
 				isId= true;
@@ -2600,7 +2600,7 @@ public class VerbosePacketStream extends PrintStream {
 				type= "class object id"; //$NON-NLS-1$
 				break;
 			default:
-				type= TcpIpSpyMessages.VerbosePacketStream_unknow_20;
+				type= "unknown"; //$NON-NLS-1$
 				break;
 		}
 		if (printValue) {
@@ -2619,18 +2619,18 @@ public class VerbosePacketStream extends PrintStream {
 		long classId= readReferenceTypeID(in);
 		long methodId= readMethodID(in);
 		long index= in.readLong();
-		printlnReferenceTypeIdWithTypeTag(TcpIpSpyMessages.VerbosePacketStream_Location__class_id__297, classId, typeTag);
-		printlnMethodId(TcpIpSpyMessages.VerbosePacketStream___________method_id__298, methodId);
-		println(TcpIpSpyMessages.VerbosePacketStream___________index__299, index);
+		printlnReferenceTypeIdWithTypeTag("Location: class id:", classId, typeTag); //$NON-NLS-1$
+		printlnMethodId("          method id:", methodId); //$NON-NLS-1$
+		println("          index:", index); //$NON-NLS-1$
 	}
 	
 	private void readAndPrintArrayRegion(DataInputStream in) throws IOException, UnableToParseDataException {
 		byte signatureByte= in.readByte();
 		int valuesCount= in.readInt();
-		printDescription(TcpIpSpyMessages.VerbosePacketStream_Signature_byte__300);
+		printDescription("Signature byte:"); //$NON-NLS-1$
 		printSignatureByte(signatureByte, true);
 		println();
-		println(TcpIpSpyMessages.VerbosePacketStream_Values_count__119, valuesCount);
+		println("Values count:", valuesCount); //$NON-NLS-1$
 		switch (signatureByte) {
 			case ARRAY_TAG:
 			case OBJECT_TAG:
@@ -2640,12 +2640,12 @@ public class VerbosePacketStream extends PrintStream {
 			case CLASS_LOADER_TAG:
 			case CLASS_OBJECT_TAG:
 				for (int i= 0; i < valuesCount; i ++) {
-					readAndPrintlnTaggedValue(TcpIpSpyMessages.VerbosePacketStream_Value_302, in);
+					readAndPrintlnTaggedValue("Value", in); //$NON-NLS-1$
 				}
 				break;
 			default:
 				for (int i= 0; i < valuesCount; i ++) {
-					readAndPrintlnUntaggedValue(TcpIpSpyMessages.VerbosePacketStream_Value_302, in, signatureByte, false);
+					readAndPrintlnUntaggedValue("Value", in, signatureByte, false); //$NON-NLS-1$
 				}
 				break;
 		}

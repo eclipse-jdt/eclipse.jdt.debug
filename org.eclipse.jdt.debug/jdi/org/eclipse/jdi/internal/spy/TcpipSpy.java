@@ -81,17 +81,17 @@ public class TcpipSpy extends Thread {
 				outputFile= args[3];
 			}
 		} catch (Exception e) {
-			out.println(TcpIpSpyMessages.TcpipSpy_usage__TcpipSpy__client_port___server_host___server_port____output_file___1); 
+			out.println("usage: TcpipSpy <client port> <server host> <server port> [<output file>]");  //$NON-NLS-1$
 			System.exit(-1);
 		}
 
 		if (outputFile != null) {
 			File file= new File(outputFile);
-			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Writing_output_to__0__2, new String[] {file.getAbsolutePath()})); 
+			out.println(MessageFormat.format("Writing output to {0}", new String[] {file.getAbsolutePath()}));  //$NON-NLS-1$
 			try {
 				out= new VerbosePacketStream(new BufferedOutputStream(new FileOutputStream(file)));
 			} catch (FileNotFoundException e) {
-				out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Could_not_open__0____Using_stdout_instead_3, new String[] {file.getAbsolutePath()})); 
+				out.println(MessageFormat.format("Could not open {0}.  Using stdout instead", new String[] {file.getAbsolutePath()}));  //$NON-NLS-1$
 			}
 		}
 		out.println();
@@ -134,7 +134,7 @@ public class TcpipSpy extends Thread {
 		} catch (EOFException e) {
 		} catch (SocketException e) {
 		} catch (IOException e) {
-			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Caught_exception___0__5, new String[] {e.toString()})); 
+			out.println(MessageFormat.format("Caught exception: {0}", new String[] {e.toString()}));  //$NON-NLS-1$
 			e.printStackTrace(out);
 		} finally {
 			try {
@@ -175,7 +175,7 @@ public class TcpipSpy extends Thread {
 		} else {
 			command= getCommand(packet.getId());
 			if (command == null) {
-				throw new UnableToParseDataException(TcpIpSpyMessages.TcpIpSpy_This_packet_is_marked_as_reply__but_there_is_no_command_with_the_same_id__1, null); 
+				throw new UnableToParseDataException("This packet is marked as reply, but there is no command with the same id.", null);  //$NON-NLS-1$
 			}
 		}
 		return command.getCommand();
