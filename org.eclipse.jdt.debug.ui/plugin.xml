@@ -875,6 +875,11 @@
                label="%allinstances.label"
                menubarPath="additions"
                tooltip="%allinstances.tooltip">
+            <enablement>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                     value="true">
+               </systemProperty></enablement>
          </action>
       </viewerContribution>
       <viewerContribution
@@ -982,6 +987,12 @@
                label="%allinstances.label"
                menubarPath="additions"
                tooltip="%allinstances.tooltip">
+            <enablement>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                     value="true">
+               </systemProperty>
+            </enablement>
          </action>
       </viewerContribution>
       <viewerContribution
