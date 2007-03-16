@@ -828,6 +828,12 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.ForceReturn">
+            <enablement>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                     value="true">
+               </systemProperty>
+            </enablement>
          </action>         
          <action
                label="%Execute.label"
@@ -940,6 +946,12 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cfPopup.ForceReturn">
+            <enablement>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                     value="true">
+               </systemProperty>
+            </enablement>
          </action>                  
          <action
                label="%Execute.label"
@@ -1416,6 +1428,12 @@
             <selection
                   class="org.eclipse.jface.text.ITextSelection">
             </selection>
+            <enablement>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                     value="true">
+               </systemProperty>
+            </enablement>
          </action>         
          <action
                label="%Execute.label"
