@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -386,6 +387,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         IAdapterFactory variableFactory = new JavaDebugElementAdapterFactory();
         manager.registerAdapters(variableFactory, IJavaVariable.class);
         manager.registerAdapters(variableFactory, JavaInspectExpression.class);
+        manager.registerAdapters(variableFactory, IndexedVariablePartition.class);
         
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
