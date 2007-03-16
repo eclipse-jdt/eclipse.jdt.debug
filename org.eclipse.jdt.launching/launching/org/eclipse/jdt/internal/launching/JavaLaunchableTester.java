@@ -446,8 +446,11 @@ public class JavaLaunchableTester extends PropertyTester {
     private boolean hasProjectNature(IJavaElement element, String ntype) {
     	try {
 	    	if(element != null) {
-	    		IProject proj = element.getJavaProject().getProject();
-	    		return proj.isAccessible() && proj.hasNature(ntype);
+	    		IJavaProject jproj = element.getJavaProject();
+	    		if(jproj != null) {
+	    			IProject proj = jproj.getProject();
+	    			return proj.isAccessible() && proj.hasNature(ntype);
+	    		}
     		}
 	    	return false;
         }
