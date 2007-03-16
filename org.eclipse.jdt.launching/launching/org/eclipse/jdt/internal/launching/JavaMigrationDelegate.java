@@ -55,7 +55,7 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		IResource[] mapped = candidate.getMappedResources();
 		IResource target = getResource(candidate);
 		if (target == null) {
-			return mapped == null;
+			return mapped != null;
 		} else {
 			if (mapped == null) {
 				return true;
@@ -111,9 +111,11 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				return project;
+			}
+			if (resource == null) {
+				resource = project;
 			}
 		}
 		return resource;
