@@ -27,10 +27,10 @@ import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
+import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
-import org.eclipse.jdt.internal.ui.javaeditor.WorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
@@ -270,8 +270,7 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
     		return je;
     	}
     	//try to get from the working copy manager
-    	//TODO this one depends on bug 151260
-    	return ((WorkingCopyManager)JavaUI.getWorkingCopyManager()).getWorkingCopy(input, false);
+    	return DebugWorkingCopyManager.getWorkingCopy(input, false);
     }
 	
 	

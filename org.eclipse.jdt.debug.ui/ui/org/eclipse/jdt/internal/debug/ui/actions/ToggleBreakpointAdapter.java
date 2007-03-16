@@ -57,8 +57,8 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.WorkingCopyManager;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.BadLocationException;
@@ -458,8 +458,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     		return je;
     	}
     	//try to get from the working copy manager
-    	//TODO this one depends on bug 151260
-    	return ((WorkingCopyManager)JavaUI.getWorkingCopyManager()).getWorkingCopy(input, false);
+    	return DebugWorkingCopyManager.getWorkingCopy(input, false);
     }
     
     /*
@@ -1044,7 +1043,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     }
                 }
                 else {
-                	unit = ((WorkingCopyManager)JavaUI.getWorkingCopyManager()).getWorkingCopy(editorInput, false);
+                	unit = DebugWorkingCopyManager.getWorkingCopy(editorInput, false);
                 	if(unit != null) {
 	                	synchronized (unit) {
 	                		unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
