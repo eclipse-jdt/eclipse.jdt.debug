@@ -2230,8 +2230,12 @@
                 <or>
                	  <test property="org.eclipse.jdt.launching.hasMain"/>
                	  <and>
-               	     <test property="org.eclipse.jdt.launching.isContainer"/>
-               	     <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  	 <or>
+               	     	<test property="org.eclipse.jdt.launching.isContainer"/>
+               	     	<test property="org.eclipse.jdt.launching.isPackageFragment"/>
+               	     	<test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
+               	     </or>
                	  </and>
                	</or>
                </iterate>
@@ -2278,8 +2282,12 @@
                	<or>
                	  <test property="org.eclipse.jdt.launching.extendsClass" args="java.applet.Applet"/>
                	  <and>
-               	     <test property="org.eclipse.jdt.launching.isContainer"/>
-               	     <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  	 <or>
+               	     	<test property="org.eclipse.jdt.launching.isContainer"/>
+               	     	<test property="org.eclipse.jdt.launching.isPackageFragment"/>
+               	     	<test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
+               	     </or>
                	  </and>
                	 </or>
                </iterate>

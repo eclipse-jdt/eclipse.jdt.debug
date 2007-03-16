@@ -37,6 +37,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IOpenable;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -48,7 +50,7 @@ import org.eclipse.jdt.core.compiler.ITerminalSymbols;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 /**
- * Generalized property tester class to determine enablement of context launching menu artifacts
+ * Property tester for context launching menu.
  * 
  * @since 3.2
  */
@@ -83,6 +85,18 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * "is container" property
 	 */
 	private static final String PROPERTY_IS_CONTAINER = "isContainer"; //$NON-NLS-1$
+	
+	/**
+	 * "is package fragment" property
+	 * @since 3.3
+	 */
+	private static final String PROPERTY_IS_PACKAGE_FRAGMENT = "isPackageFragment"; //$NON-NLS-1$
+	
+	/**
+	 * "is package fragment root" property
+	 * @since 3.3
+	 */
+	private static final String PROPERTY_IS_PACKAGE_FRAGMENT_ROOT = "isPackageFragmentRoot"; //$NON-NLS-1$	
 	
 	/**
 	 * name for the PROPERTY_PROJECT_NATURE property
@@ -125,7 +139,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * @return the type
 	 * @throws JavaModelException
 	 */
-	private IType getType(IJavaElement element) throws JavaModelException {
+	private IType getType(IJavaElement element) {
         IType type = null;
         if (element instanceof ICompilationUnit) {
             type= ((ICompilationUnit) element).findPrimaryType();
@@ -190,7 +204,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * This method asks the specified <code>IType</code> if it has a main method, if not it recurses through all of its children
 	 * When recursing we only care about child <code>IType</code>s that are static. 
 	 * @param type the <code>IType</code> to inspect for a main method
-	 * @return true if a main method was found in specified <code>IType</code>, false otherwsie
+	 * @return true if a main method was found in specified <code>IType</code>, false otherwise
 	 * @throws CoreException
 	 * @since 3.3
 	 */
@@ -222,7 +236,7 @@ public class JavaLaunchableTester extends PropertyTester {
      *  <code>toString</code>.</li>
      * <li>signature - JLS style method signature, required. For example,
      *  <code>(QString;)V</code>.</li>
-     * <li>modifiers - optional space seperated list of modifiers, for
+     * <li>modifiers - optional space separated list of modifiers, for
      *  example, <code>public static</code>.</li>
      * </ol>
 	 * @param element the element to check for the method 
@@ -319,7 +333,7 @@ public class JavaLaunchableTester extends PropertyTester {
      * The syntax for the property tester is of the form: qualified or unqualified annotation name, modifiers
      * <li>qualified or unqualified annotation name, required. For example,
      *  <code>org.junit.JUnit</code>.</li>
-     * <li>modifiers - optional space seperated list of modifiers, for
+     * <li>modifiers - optional space separated list of modifiers, for
      *  example, <code>public static</code>.</li>
      * </ol>
 	 * @param element the element to check for the method 
@@ -432,11 +446,8 @@ public class JavaLaunchableTester extends PropertyTester {
     private boolean hasProjectNature(IJavaElement element, String ntype) {
     	try {
 	    	if(element != null) {
-	    		IResource resource = element.getResource();
-	    		if(resource != null) {
-		            IProject proj = resource.getProject();
-		            return proj.isAccessible() && proj.hasNature(ntype);
-	    		}
+	    		IProject proj = element.getJavaProject().getProject();
+	    		return proj.isAccessible() && proj.hasNature(ntype);
     		}
 	    	return false;
         }
@@ -466,7 +477,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	}
 	
 	/**
-	 * Determines if an item or list of items are found on the buildpath. 
+	 * Determines if an item or list of items are found on the build path. 
 	 * Once any one single items matches though, the method returns true, this method is intended 
 	 * to be used in OR like situations, where we do not care if all of the items are on the build path, only that one
 	 * of them is.
@@ -546,12 +557,12 @@ public class JavaLaunchableTester extends PropertyTester {
 	
 	/**
 	 * Method runs the tests defined from extension points for Run As... and Debug As... menu items.
-	 * Currently this test optimisitically considers everything not a source file. In this context we 
+	 * Currently this test optimistically considers everything not a source file. In this context we 
 	 * consider an optimistic approach to mean that the test will always return true.
 	 * 
 	 * There are many reasons for the optimistic choice some of them are outlined below.
 	 * <ul>
-	 * <li>Performance (in terms of time neede to display menu) cannot be preserved. To know what to allow
+	 * <li>Performance (in terms of time needed to display menu) cannot be preserved. To know what to allow
 	 * in any one of the menus we would have to search all of the children of the container to determine what it contains
 	 * and what can be launched by what.</li>
 	 * <li>If inspection of children of containers were done, a user might want to choose a different launch type, even though our tests
@@ -592,7 +603,6 @@ public class JavaLaunchableTester extends PropertyTester {
 		if (PROPERTY_HAS_TYPE_WITH_ANNOTATION.equals(property)) {
 			return hasTypeWithAnnotation(element, (String)args[0]);
 		}
-		
 		if(PROPERTY_BUILDPATH_REFERENCE.equals(property)) {
 			return hasItemOnBuildPath(element, args);
 		}
@@ -604,6 +614,12 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		if(PROPERTY_EXTENDS_INTERFACE.equals(property)) {
 			return implementsInterface(element, (String)args[0]);
+		}
+		if (PROPERTY_IS_PACKAGE_FRAGMENT.equals(property)) {
+			return element instanceof IPackageFragment;
+		}
+		if (PROPERTY_IS_PACKAGE_FRAGMENT_ROOT.equals(property)) {
+			return element instanceof IPackageFragmentRoot;
 		}
 		return false;
 	}
