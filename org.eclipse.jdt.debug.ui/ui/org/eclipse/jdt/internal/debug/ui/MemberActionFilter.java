@@ -18,6 +18,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -69,6 +70,18 @@ public class MemberActionFilter implements IActionFilter {
 						return type != null && type.isInterface();
 					} 
 					catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}  
+				}
+				if(value.equals("isConstructor")) { //$NON-NLS-1$
+					IMethod method = null;
+					if(member.getElementType() == IJavaElement.METHOD) {
+						method = (IMethod) member;
+						try{
+							return method.isConstructor();
+						} catch (JavaModelException e) {
+							JDIDebugUIPlugin.log(e);
+							return false;
+						}  
+					}
 				}
 				if(value.equals("isValidField")) { //$NON-NLS-1$
 					try {

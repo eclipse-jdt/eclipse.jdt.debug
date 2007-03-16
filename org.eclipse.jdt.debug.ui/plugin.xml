@@ -1629,6 +1629,33 @@
                tooltip="%allinstances.tooltip">
          </action>
        </objectContribution>
+       <objectContribution
+             id="org.eclipse.jdt.debug.ui.allInstances.IMethodContribution"
+             objectClass="org.eclipse.jdt.core.IMethod">
+          <visibility>
+             <and>
+             	<objectState
+                   name="MemberActionFilter"
+                   value="isConstructor">
+             	</objectState>
+             	<objectState
+                     name="MemberActionFilter"
+                     value="isInstanceRetrievalAvailable">
+               </objectState>
+             </and>
+	      </visibility>
+          <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
+               enablesFor="1"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.allInstances"
+               label="%allinstances.label"
+               menubarPath="additions"
+               tooltip="%allinstances.tooltip">
+         </action>
+       </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -2409,12 +2436,14 @@ M4 = Platform-specific fourth key
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.allReferences.description"
+            helpContextId="all_references_action_context"
             id="org.eclipse.jdt.debug.ui.commands.AllReferences"
             name="%ActionDefinition.allReferences.name">
       </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.allInstances.description"
+            helpContextId="all_instances_action_context"
             id="org.eclipse.jdt.debug.ui.commands.AllInstances"
             name="%ActionDefinition.allInstances.name">
       </command>

@@ -17,6 +17,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -65,8 +66,6 @@ import com.ibm.icu.text.MessageFormat;
  * Class to provide new function of viewing all live objects of the selected type in the current VM
  * Feature of 1.6 VMs
  * 
- * TODO: Help is not complete for the All Instances action
- * 
  * @since 3.3
  */
 public class AllInstancesActionDelegate implements IObjectActionDelegate, IEditorActionDelegate, IActionDelegate2 {
@@ -94,14 +93,15 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 					    	if (element instanceof ICodeAssist){
 					    		try{
 						    		IJavaElement[] selectedTypes = ((ICodeAssist)element).codeSelect(selectedWord.getOffset(), selectedWord.getLength());
+						    		// findWord() will only return one element, so only check the first element
 						    		if (selectedTypes.length > 0){
-						    			runAllInstancesForType(selectedTypes[0]);  // findWord() will only return one element, so only check the first element
+						    			runAllInstancesForType(selectedTypes[0]);  
 						    			return;
 						    		}
-					    		} catch (JavaModelException e) {
-									JDIDebugUIPlugin.log(e);
+								} catch (JavaModelException e){
+									JDIDebugUIPlugin.log(e.getStatus());
 									report(Messages.AllInstancesActionDelegate_0,fActivePart);
-								}
+					    		}
 					    	}
 					    }
 					}
@@ -117,17 +117,23 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 	}
 	
 	/**
-	 * Checks if the passed element is a java type that all instances can be retrieved for.
-	 * If so, retrieves the instances and displays them in a popup dialog.
+	 * Checks if the passed element is a java type or constructor that all instances can 
+	 * be retrieved for. If so, retrieves the instances and displays them in a popup dialog.
 	 * 
 	 * @param selectedElement The element to obtain all instances for
-	 * @since 3.3
 	 */
 	protected void runAllInstancesForType(Object selectedElement){
 		if (selectedElement != null){
 						
 			IJavaType type = null;
 			try {
+				// If the element is a constructor, get instances of its declaring type
+				if (selectedElement instanceof IMethod){
+					if (((IMethod)selectedElement).isConstructor()){
+						selectedElement = ((IMethod)selectedElement).getDeclaringType();
+					}
+				}
+				// If the element is an IType, get the corresponding java variable from the VM
 				if(selectedElement instanceof IType) {
 					IAdaptable adapt = DebugUITools.getDebugContext();
 					if(adapt != null) {
@@ -148,11 +154,15 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 							}
 						}
 					}
-				} else if (selectedElement instanceof IJavaVariable) {
+				}
+				// If the selected element is a java variable, just get the type
+				if (selectedElement instanceof IJavaVariable) {
 					IJavaVariable var = (IJavaVariable) selectedElement;
 					type = var.getJavaType();
 				}
 				
+			} catch (JavaModelException e){
+				JDIDebugUIPlugin.log(e.getStatus());
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e.getStatus());
 			}
@@ -181,7 +191,6 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
      * Convenience method for printing messages to the status line
      * @param message the message to be displayed
      * @param part the currently active workbench part
-     * @since 3.3
      */
     protected void report(final String message, final IWorkbenchPart part) {
         JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
@@ -262,7 +271,6 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
      * Gets the <code>IJavaElement</code> from the editor input
      * @param input the current editor input
      * @return the corresponding <code>IJavaElement</code>
-     * @since 3.3
      */
     private IJavaElement getJavaElement(IEditorInput input) {
     	IJavaElement je = JavaUI.getEditorInputJavaElement(input);
@@ -281,7 +289,6 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
      * 
      * @param part workbench part
      * @return text editor part or <code>null</code>
-     * @since 3.3
      */
     private ITextEditor getTextEditor(IWorkbenchPart part) {
     	if (part instanceof ITextEditor) {
