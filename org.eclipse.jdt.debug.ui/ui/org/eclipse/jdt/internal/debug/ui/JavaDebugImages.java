@@ -67,6 +67,8 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_CONTENDED_MONITOR = "IMG_OBJS_CONTENDED_MONITOR";  //$NON-NLS-1$
 	public static final String IMG_OBJS_OWNED_MONITOR = "IMG_OBJS_OWNED_MONITOR";  //$NON-NLS-1$
 	
+	public static final String IMG_OBJS_REFERENCE = "IMG_OBJS_REFERENCE";  //$NON-NLS-1$
+	
 	public static final String IMG_OVR_OWNED = "IMG_OVR_OWNED";			//$NON-NLS-1$
 	public static final String IMG_OVR_OWNS_MONITOR = "IMG_OVR_OWNS_MONITOR";		//$NON-NLS-1$
 	public static final String IMG_OVR_IN_CONTENTION = "IMG_OVR_IN_CONTENTION";			//$NON-NLS-1$
@@ -147,6 +149,7 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OBJS_EXCEPTION_DISABLED, T_OBJ + "jexceptiond_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED, T_OVR + "installed_ovr.gif"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OVR_BREAKPOINT_INSTALLED_DISABLED, T_OVR + "installed_ovr_disabled.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_REFERENCE, T_OBJ + "reference_obj.gif"); //$NON-NLS-1$
 			
 		declareRegistryImage(IMG_OBJS_LOCAL_VARIABLE, T_OBJ + "localvariable_obj.gif"); //$NON-NLS-1$
 		
