@@ -53,7 +53,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
                 }
             }
         }
-    };
+    }
 
     /**
      * Constructor
