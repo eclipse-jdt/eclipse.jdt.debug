@@ -13,9 +13,9 @@ package org.eclipse.jdt.internal.debug.ui.heapwalking;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIArrayEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
@@ -23,8 +23,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
  * Uses the <code>IWatchExpressionFactoryAdapterExtension</code> to filter when the watch expression
  * action is available based on the variable selected.
  * 
- * Currently removes the action from <code>JDIPlaceholderVariable</code>s, <code>JDIReferenceListVariable</code>s and
- * <code>IndexedVariablePartition</code>s.
+ * Currently removes the action from <code>JDIPlaceholderVariable</code>s and <code>JDIReferenceListVariable</code>s.
  * 
  * @since 3.3
  */
@@ -34,10 +33,8 @@ public class JavaWatchExpressionFilter implements IWatchExpressionFactoryAdapter
 	 * @see org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension#canCreateWatchExpression(org.eclipse.debug.core.model.IVariable)
 	 */
 	public boolean canCreateWatchExpression(IVariable variable) {
-		if (variable instanceof JDIReferenceListVariable || variable instanceof JDIReferenceListEntryVariable){
-			return false;
-		}
-		if(variable instanceof IndexedVariablePartition) {
+		if (variable instanceof JDIReferenceListVariable || variable instanceof JDIReferenceListEntryVariable ||
+				variable instanceof JDIArrayEntryVariable){
 			return false;
 		}
 		try{

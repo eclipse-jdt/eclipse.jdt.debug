@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
-import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
@@ -50,9 +49,6 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 			if (adaptableObject instanceof JavaInspectExpression) {
 				return fgLPExpression;
 			}
-			if(adaptableObject instanceof IndexedVariablePartition) {
-				return fgLPVariable;
-			}
 		}
 		if (IElementContentProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaVariable) {
@@ -61,9 +57,6 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 			if (adaptableObject instanceof JavaInspectExpression) {
 				return fgCPExpression;
 			}
-			if(adaptableObject instanceof IndexedVariablePartition) {
-				return fgCPVariable;
-			}
 		}
 		if (IWatchExpressionFactoryAdapter.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaVariable) {
@@ -71,9 +64,6 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 			}
 			if (adaptableObject instanceof JavaInspectExpression) {
 				return fgCPExpression;
-			}
-			if(adaptableObject instanceof IndexedVariablePartition) {
-				return fgWEVariable;
 			}
 		}
 		return null;
