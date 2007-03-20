@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
@@ -37,16 +38,18 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		Object[] variables = getAllChildren(parent, context);
         if (JavaVariableContentProvider.displayReferencesAsChild(parent)){
-        	Object[] moreVariables = new Object[variables.length+1];
-        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
         	IValue value = ((IExpression)parent).getValue();
-        	if (JavaVariableContentProvider.supportsInstanceRetrieval(parent)){
-        		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaExpressionContentProvider_0,(IJavaObject)value);
-        	} else {
-        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaExpressionContentProvider_0,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaExpressionContentProvider_2));
+        	if (!(value instanceof JDIAllInstancesValue)) {
+	        	Object[] moreVariables = new Object[variables.length+1];
+	        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
+	        	
+	        	if (JavaVariableContentProvider.supportsInstanceRetrieval(parent)){
+	        		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaExpressionContentProvider_0,(IJavaObject)value);
+	        	} else {
+	        		moreVariables[0] = new JDIPlaceholderVariable(VariableMessages.JavaExpressionContentProvider_0,new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaExpressionContentProvider_2));
+	        	}
+	        	return getElements(moreVariables, index, length);
         	}
-        	
-        	return getElements(moreVariables, index, length);
         }
         return getElements(variables, index, length);
 	}
@@ -57,7 +60,10 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		int count = super.getChildCount(element, context, monitor);
 		if (JavaVariableContentProvider.displayReferencesAsChild(element)){
-			count++;
+			IValue value = ((IExpression)element).getValue();
+			if (!(value instanceof JDIAllInstancesValue)) {
+				count++;
+			}
 		}
 		return count;
 	}
