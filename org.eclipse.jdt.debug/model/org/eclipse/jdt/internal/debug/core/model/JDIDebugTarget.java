@@ -2436,6 +2436,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsForceReturn()
 	 */
 	public boolean supportsForceReturn() {
-		return getVM().canForceEarlyReturn();
+		VirtualMachine machine = getVM();
+		if(machine == null) {
+			return false;
+		}
+		return machine.canForceEarlyReturn();
 	}
 }
