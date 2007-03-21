@@ -2617,7 +2617,7 @@ public final class JavaRuntime {
 	                // only update the compliance settings if they are default settings, otherwise the
 	                // settings have already been modified by a tool or user
 	                if (isDefault) {
-	                	JavaCore.setCompilanceOptions(compliance, options);
+	                	JavaCore.setComplianceOptions(compliance, options);
 	                    JavaCore.setOptions(options);
 	                }
             	}
