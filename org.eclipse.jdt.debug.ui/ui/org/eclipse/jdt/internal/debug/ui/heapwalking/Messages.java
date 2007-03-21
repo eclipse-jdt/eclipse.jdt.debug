@@ -19,19 +19,15 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.heapwalking.Messages"; //$NON-NLS-1$
 
 	public static String AllInstancesActionDelegate_0;
-
 	public static String AllInstancesActionDelegate_1;
-
 	public static String AllInstancesActionDelegate_2;
-
 	public static String AllInstancesActionDelegate_3;
+	
+	public static String AllReferencesActionDelegate_0;
 
 	public static String ReferencesPopupDialog_0;
-
 	public static String ReferencesPopupDialog_1;
-
 	public static String ReferencesPopupDialog_2;
-
 	public static String ReferencesPopupDialog_3;
 	static {
 		// initialize resource bundle

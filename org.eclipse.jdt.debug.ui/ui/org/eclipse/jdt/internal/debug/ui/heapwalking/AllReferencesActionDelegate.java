@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -32,13 +34,17 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate {
 	 */
 	public void run(IAction action) {
 		IStructuredSelection currentSelection = getCurrentSelection();
-		IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
-		ReferencesPopupDialog popup;
-		try {
-			popup = new ReferencesPopupDialog(getWorkbenchWindow().getShell(), (IDebugView) getPart().getAdapter(IDebugView.class), (IJavaObject) var.getValue());
-			popup.open();
-		} catch (DebugException e) {
-			JDIDebugUIPlugin.statusDialog(e.getStatus());
+		if (currentSelection != null && (currentSelection.getFirstElement() instanceof IJavaVariable)){
+			IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
+			ReferencesPopupDialog popup;
+			try {
+				popup = new ReferencesPopupDialog(getWorkbenchWindow().getShell(), (IDebugView) getPart().getAdapter(IDebugView.class), (IJavaObject) var.getValue());
+				popup.open();
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.statusDialog(e.getStatus());
+			}
+		} else {
+			JDIDebugUIPlugin.statusDialog(new Status(IStatus.WARNING,JDIDebugUIPlugin.getUniqueIdentifier(),Messages.AllReferencesActionDelegate_0));
 		}
 	}
 }
