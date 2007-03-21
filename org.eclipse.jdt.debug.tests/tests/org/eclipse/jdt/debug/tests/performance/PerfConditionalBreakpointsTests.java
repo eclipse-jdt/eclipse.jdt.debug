@@ -68,7 +68,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
      * @throws Exception
      */
     public void testConditionalBreakpoints() throws Exception {
-        tagAsGlobalSummary("Conditional Breakpoint Test", Dimension.ELAPSED_PROCESS);
+        tagAsSummary("Conditional Breakpoint Test", Dimension.ELAPSED_PROCESS);
         // just in case
         removeAllBreakpoints();
 
