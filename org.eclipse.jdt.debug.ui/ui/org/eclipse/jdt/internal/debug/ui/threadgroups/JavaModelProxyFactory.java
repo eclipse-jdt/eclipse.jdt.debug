@@ -14,6 +14,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 
 /**
@@ -26,8 +27,10 @@ public class JavaModelProxyFactory implements IModelProxyFactory {
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
-		if (element instanceof IJavaDebugTarget) {
-			return new JavaDebugTargetProxy((IDebugTarget) element);
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
+			if (element instanceof IJavaDebugTarget) {
+				return new JavaDebugTargetProxy((IDebugTarget) element);
+			}
 		}
 		return null;
 	}
