@@ -495,8 +495,8 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */
 	public String getElementName(Object item) {
-		if(item instanceof IType) {
-			return ((IType)item).getElementName();
+		if(item instanceof TypeNameMatch) {
+			return ((TypeNameMatch)item).getSimpleTypeName();
 		}
 		return null;
 	}

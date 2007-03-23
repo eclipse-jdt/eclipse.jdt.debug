@@ -189,13 +189,13 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	}
 	
 	private static final String SETTINGS_ID = JDIDebugUIPlugin.getUniqueIdentifier() + ".MAIN_METHOD_SELECTION_DIALOG"; //$NON-NLS-1$
-	private Object[] fTypes = null;
+	private IType[] fTypes = null;
 
 	/**
 	 * Constructor
 	 * @param elements the types to display in the dialog
 	 */
-	public DebugTypeSelectionDialog(Shell shell, Object[] elements, String title) {
+	public DebugTypeSelectionDialog(Shell shell, IType[] elements, String title) {
 		super(shell, false);
 		setTitle(title);
 		fTypes = elements;
@@ -280,6 +280,9 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */
 	public String getElementName(Object item) {
+		if(item instanceof IType) {
+			return ((IType)item).getElementName();
+		}
 		return null;
 	}
 }
