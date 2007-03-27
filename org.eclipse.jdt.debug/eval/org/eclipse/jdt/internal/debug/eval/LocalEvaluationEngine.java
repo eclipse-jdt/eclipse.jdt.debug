@@ -429,8 +429,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 									LocalEvaluationEngine.this, null);
 						} catch (JavaModelException e) {
 							LocalEvaluationEngine.this.getResult().setException(new DebugException(e.getStatus()));
+						} finally {
+							LocalEvaluationEngine.this.evaluationComplete();
 						}
-						LocalEvaluationEngine.this.evaluationComplete();
 					}
 				};
 				
@@ -503,8 +504,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 								null);
 						} catch (JavaModelException e) {
 							LocalEvaluationEngine.this.getResult().setException(new DebugException(e.getStatus()));
+						} finally {
+							LocalEvaluationEngine.this.evaluationComplete();
 						}
-						LocalEvaluationEngine.this.evaluationComplete();
 					}
 				};
 				
@@ -584,8 +586,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 								null);
 						} catch (JavaModelException e) {
 							LocalEvaluationEngine.this.getResult().setException(new DebugException(e.getStatus()));
+						} finally {
+							LocalEvaluationEngine.this.evaluationComplete();
 						}
-						LocalEvaluationEngine.this.evaluationComplete();
 					}
 				};
 				
