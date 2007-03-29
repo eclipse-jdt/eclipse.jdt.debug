@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -141,10 +142,17 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		if (libs.length != defaultLibs.length) {
 			return false;
 		}
+		IPath dpath = null, lpath = null;
 		for (int i = 0; i < defaultLibs.length; i++) {
-			LibraryLocation def = defaultLibs[i];
-			LibraryLocation lib = libs[i];
-			if (!def.getSystemLibraryPath().equals(lib.getSystemLibraryPath())) {
+			dpath = defaultLibs[i].getSystemLibraryPath();
+			lpath = libs[i].getSystemLibraryPath();
+			if(Platform.getOS().equals(Platform.OS_WIN32)) {
+				//the .equals method of IPath ignores trailing seperators so we must as well
+				if (!dpath.removeTrailingSeparator().toOSString().equalsIgnoreCase(lpath.removeTrailingSeparator().toOSString())) {
+					return false;
+				}
+			}
+			if (!dpath.equals(lpath)) {
 				return false;
 			}
 		}
