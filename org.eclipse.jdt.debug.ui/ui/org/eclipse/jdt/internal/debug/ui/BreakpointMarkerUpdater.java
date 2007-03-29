@@ -12,9 +12,14 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.actions.ValidBreakpointLocationLocator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -67,6 +72,11 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) {
 		if(position.isDeleted()) {
 			return false;
+		}
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint breakpoint = manager.getBreakpoint(marker);
+		if (breakpoint instanceof IJavaStratumLineBreakpoint || breakpoint instanceof IJavaPatternBreakpoint) {
+			return true;
 		}
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(document.get().toCharArray());
