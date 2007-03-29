@@ -1146,12 +1146,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} catch (DebugException e1) {
 		}
 		boolean showTypes= isShowVariableTypeNames();
-		int spaceIndex= varLabel.lastIndexOf(' ');
 		StringBuffer buff= new StringBuffer();
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2; 
 		try {
 			typeName= var.getReferenceTypeName();
-			if (showTypes && spaceIndex == -1) {
+			if (showTypes) {
 				typeName= getQualifiedName(typeName);
 			}
 		} catch (DebugException exception) {
@@ -1159,9 +1158,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (showTypes) {
 			buff.append(typeName);
 			buff.append(' ');
-		}
-		if (spaceIndex != -1 && !showTypes) {
-			varLabel= varLabel.substring(spaceIndex + 1);
 		}
 		buff.append(varLabel);
 
