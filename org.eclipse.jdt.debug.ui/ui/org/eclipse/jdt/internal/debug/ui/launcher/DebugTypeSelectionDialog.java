@@ -45,7 +45,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * 
  * @since 3.3
  * 
- * EXPERIMENTAL
  */
 public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	
