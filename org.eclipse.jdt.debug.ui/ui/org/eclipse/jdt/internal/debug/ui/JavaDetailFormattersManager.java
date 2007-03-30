@@ -414,16 +414,19 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (((IJavaArrayType)value.getJavaType()).getComponentType() instanceof IJavaReferenceType) {
 			int length = value.getLength();
 			// guestimate at max entries to print based on char/space/comma per entry
-			int maxEntries = (getMaxDetailLength() / 3) + 1;
-			if (length > maxEntries) {
-				StringBuffer snippet = new StringBuffer();
-				snippet.append("Object[] shorter = new Object["); //$NON-NLS-1$
-				snippet.append(maxEntries);
-				snippet.append("]; System.arraycopy(this, 0, shorter, 0, "); //$NON-NLS-1$
-				snippet.append(maxEntries);
-				snippet.append("); "); //$NON-NLS-1$
-				snippet.append("return java.util.Arrays.asList(shorter).toString();"); //$NON-NLS-1$
-				return snippet.toString();
+			int maxLength = getMaxDetailLength();
+			if (maxLength > 0){
+				int maxEntries = (maxLength / 3) + 1;
+				if (length > maxEntries) {
+					StringBuffer snippet = new StringBuffer();
+					snippet.append("Object[] shorter = new Object["); //$NON-NLS-1$
+					snippet.append(maxEntries);
+					snippet.append("]; System.arraycopy(this, 0, shorter, 0, "); //$NON-NLS-1$
+					snippet.append(maxEntries);
+					snippet.append("); "); //$NON-NLS-1$
+					snippet.append("return java.util.Arrays.asList(shorter).toString();"); //$NON-NLS-1$
+					return snippet.toString();
+				}
 			}
 			return "java.util.Arrays.asList(this).toString()"; //$NON-NLS-1$
 		}
@@ -675,7 +678,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			int length = -1;
 			try {
 				length = arrayValue.getLength();
-				if (length > maxEntries) {
+				if (maxLength > 0 && length > maxEntries) {
 					partial = true;
 					IVariable[] variables = arrayValue.getVariables(0, maxEntries);
 					arrayValues = new IJavaValue[variables.length];
@@ -757,9 +760,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 	
 	/**
-	 * Returns the maximum number of chars to display in the details area.
+	 * Returns the maximum number of chars to display in the details area or 0 if
+	 * there is no maximum.
 	 * 
-	 * @return
+	 * @return maximum number of chars to display or 0 for no max
 	 */
 	private static int getMaxDetailLength() {
 		return DebugUITools.getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
