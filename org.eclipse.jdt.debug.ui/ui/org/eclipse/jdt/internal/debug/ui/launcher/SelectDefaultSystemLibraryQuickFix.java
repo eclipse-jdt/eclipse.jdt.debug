@@ -68,7 +68,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 					IJavaDebugUIConstants.INTERNAL_ERROR,
 					LauncherMessages.SelectDefaultSystemLibraryQuickFix_An_exception_occurred_while_updating_the_default_system_library__3, e.getTargetException())); 
 			} catch (InterruptedException e) {
-				// cancelled
+				// canceled
 			}			
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.statusDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus()); 
