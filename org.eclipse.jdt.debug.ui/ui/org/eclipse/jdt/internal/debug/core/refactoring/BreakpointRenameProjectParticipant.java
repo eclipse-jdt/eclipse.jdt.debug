@@ -19,7 +19,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -61,12 +60,21 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 					if (root.getCorrespondingResource().equals(getOriginalElement().getCorrespondingResource())) {
 						rootResource = project;
 					} else {
-						rootResource = project.getFolder(root.getElementName());
+						if (root.isArchive()) {
+							rootResource = project.getFile(root.getElementName());
+						} else {
+							rootResource = project.getFolder(root.getElementName());
+						}
 					}
 					IPackageFragmentRoot destRoot = destProject.getPackageFragmentRoot(rootResource);
 					IPackageFragment destPackage = destRoot.getPackageFragment(breakpointType.getPackageFragment().getElementName());
-					ICompilationUnit destCU = destPackage.getCompilationUnit(breakpointType.getCompilationUnit().getElementName());
-					IJavaElement element = BreakpointChange.findElement(destCU, breakpointType);
+					IJavaElement parentElement = null;
+					if (breakpointType.isBinary()) {
+						parentElement = destPackage.getClassFile(breakpointType.getClassFile().getElementName());
+					} else {
+						parentElement = destPackage.getCompilationUnit(breakpointType.getCompilationUnit().getElementName());
+					}
+					IJavaElement element = BreakpointChange.findElement(parentElement, breakpointType);
 					if (element != null) {
 						if (element instanceof IType) {
 							IType destType = (IType) element;

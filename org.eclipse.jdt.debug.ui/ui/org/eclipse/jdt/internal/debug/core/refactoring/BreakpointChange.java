@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IImportContainer;
 import org.eclipse.jdt.core.IJavaElement;
@@ -216,6 +217,9 @@ public abstract class BreakpointChange extends Change {
 					switch (currentElement.getElementType()) {
 						case IJavaElement.COMPILATION_UNIT:
 							currentElement = ((ICompilationUnit)currentElement).getType(child.getElementName());
+							break;
+						case IJavaElement.CLASS_FILE:
+							currentElement = ((IClassFile)currentElement).getType();
 							break;
 						case IJavaElement.TYPE:
 							currentElement = ((IType)currentElement).getType(child.getElementName());
