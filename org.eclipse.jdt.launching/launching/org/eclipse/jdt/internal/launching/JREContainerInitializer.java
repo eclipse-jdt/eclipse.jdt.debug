@@ -236,6 +236,36 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 		return false;
 	}
+	
+	private static final IStatus READ_ONLY= new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, ClasspathContainerInitializer.ATTRIBUTE_READ_ONLY, new String(), null);
+	private static final IStatus NOT_SUPPORTED= new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, ClasspathContainerInitializer.ATTRIBUTE_NOT_SUPPORTED, new String(), null);
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getAccessRulesStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
+	 */
+	public IStatus getAccessRulesStatus(IPath containerPath, IJavaProject project) {
+		return READ_ONLY;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getSourceAttachmentStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
+	 */
+	public IStatus getSourceAttachmentStatus(IPath containerPath, IJavaProject project) {
+		return Status.OK_STATUS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getAttributeStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject, java.lang.String)
+	 */
+	public IStatus getAttributeStatus(IPath containerPath, IJavaProject project, String attributeKey) {
+		if (attributeKey.equals(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME)) {
+			return Status.OK_STATUS;
+		}
+		if (attributeKey.equals(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY)) {
+			return Status.OK_STATUS;
+		}
+		return NOT_SUPPORTED;
+	}
 
 	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#requestClasspathContainerUpdate(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject, org.eclipse.jdt.core.IClasspathContainer)
