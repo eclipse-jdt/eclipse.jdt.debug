@@ -21,16 +21,16 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
+import org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate;
+import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
@@ -45,15 +45,15 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -68,22 +68,22 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.3
  */
-public class AllInstancesActionDelegate implements IObjectActionDelegate, IEditorActionDelegate, IActionDelegate2 {
+public class AllInstancesActionDelegate  extends ObjectActionDelegate implements IEditorActionDelegate, IWorkbenchWindowActionDelegate {
 
-	private IWorkbenchPart fActivePart;
+	private IWorkbenchWindow fWindow;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (fActivePart != null){
-			ISelectionProvider provider = fActivePart.getSite().getSelectionProvider();
+		if (getPart() != null){
+			ISelectionProvider provider = getPart().getSite().getSelectionProvider();
 			if (provider != null){
 				ISelection selection = provider.getSelection();
 
 				// If in an editor, get the text selection and check if a type is selected
-				if (fActivePart instanceof IEditorPart && selection instanceof ITextSelection){
-					ITextEditor editor = getTextEditor(fActivePart);
+				if (getPart() instanceof IEditorPart && selection instanceof ITextSelection){
+					ITextEditor editor = getTextEditor(getPart());
 					IDocumentProvider documentProvider = editor.getDocumentProvider();
 					if (documentProvider != null) {
 					    IDocument document = documentProvider.getDocument(editor.getEditorInput());
@@ -100,7 +100,7 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 						    		}
 								} catch (JavaModelException e){
 									JDIDebugUIPlugin.log(e.getStatus());
-									report(Messages.AllInstancesActionDelegate_0,fActivePart);
+									report(Messages.AllInstancesActionDelegate_0,getPart());
 					    		}
 					    	}
 					    }
@@ -113,7 +113,7 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 				}
 			}
 		}
-		report(Messages.AllInstancesActionDelegate_3,fActivePart);
+		report(Messages.AllInstancesActionDelegate_3,getPart());
 	}
 	
 	/**
@@ -141,13 +141,14 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 						if(target != null) {
 							IType itype = (IType) selectedElement;
 							IJavaType[] types = target.getJavaTypes(itype.getFullyQualifiedName());
-							if(types != null) {
+							if(types != null && types.length > 0) {
 								type = types[0];
 							} else {
-								JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)target, new IJavaObject[0]);
-								InspectPopupDialog ipd = new InspectPopupDialog(fActivePart.getSite().getShell(), 
+								// If the type is not known the the VM, open a popup dialog with 0 instances
+								JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)target, null);
+								InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
 										getAnchor(), 
-										"org.eclipse.jdt.debug.ui.commands.Inspect",  //$NON-NLS-1$
+										PopupInspectAction.ACTION_DEFININITION_ID,
 										new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{itype.getElementName()}), aiv));
 								ipd.open();
 								return;
@@ -169,22 +170,21 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 					
 			if(type instanceof JDIReferenceType) {
 				JDIReferenceType rtype = (JDIReferenceType) type;
-				long count = HeapWalkingManager.getDefault().getAllInstancesMaxCount();
 				try{
-					JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget) type.getDebugTarget(), rtype.getInstances(count));
-					InspectPopupDialog ipd = new InspectPopupDialog(fActivePart.getSite().getShell(), 
+					JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)rtype.getDebugTarget(), rtype);
+					InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
 							getAnchor(), 
-							"org.eclipse.jdt.debug.ui.commands.Inspect",  //$NON-NLS-1$
+							PopupInspectAction.ACTION_DEFININITION_ID,
 							new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{type.getName()}), aiv));
 					ipd.open();
 					return;
 				} catch (DebugException e) {
 					JDIDebugUIPlugin.log(e);
-					report(Messages.AllInstancesActionDelegate_0,fActivePart);
+					report(Messages.AllInstancesActionDelegate_0,getPart());
 				}
 			}
 		}
-		report(Messages.AllInstancesActionDelegate_3,fActivePart);
+		report(Messages.AllInstancesActionDelegate_3,getPart());
 	}
 	
 	 /**
@@ -216,8 +216,9 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 	 * @return anchor point or <code>null</code> if one could not be obtained
 	 */
     protected Point getAnchor() {
+    	
     	// If it's a debug view (variables or expressions), get the location of the selected item
-    	IDebugView debugView = (IDebugView)fActivePart.getAdapter(IDebugView.class);
+    	IDebugView debugView = (IDebugView)getPart().getAdapter(IDebugView.class);
 		if (debugView != null){
 			Control control = debugView.getViewer().getControl();
 			if (control instanceof Tree) {
@@ -231,11 +232,11 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 		}
 		
 		//resolve the current control
-    	Control widget = (Control)fActivePart.getAdapter(Control.class);
+    	Control widget = (Control)getPart().getAdapter(Control.class);
     	if (widget == null){
-    		if(fActivePart instanceof PageBookView) {
+    		if(getPart() instanceof PageBookView) {
 	    		//could be the outline view
-	    		PageBookView view = (PageBookView) fActivePart;
+	    		PageBookView view = (PageBookView) getPart();
 	    		IPage page = view.getCurrentPage();
 	    		if(page != null) {
 	    			widget = page.getControl();
@@ -301,35 +302,40 @@ public class AllInstancesActionDelegate implements IObjectActionDelegate, IEdito
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		fActivePart = targetEditor;	
+		setActivePart(action, targetEditor);	
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		fActivePart = targetPart;
+	public void init(IWorkbenchWindow window) {
+		fWindow = window;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	
+	/**
+	 * @return the shell to use for new popups or <code>null</code>
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
-	public void dispose() {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
-	public void init(IAction action) {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
-	public void runWithEvent(IAction action, Event event) {
-		run(action);
+	private Shell getShell(){
+		if (fWindow != null){
+			return fWindow.getShell();
+		}
+		if (getWorkbenchWindow() != null){
+			return getWorkbenchWindow().getShell();
+		}
+		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
+	 */
+	protected IWorkbenchPart getPart() {
+		IWorkbenchPart part = super.getPart();
+		if (part != null){
+			return part;
+		} else if (fWindow != null){
+			return fWindow.getActivePage().getActivePart();
+		}
+		return null;
+	}
+	
 }

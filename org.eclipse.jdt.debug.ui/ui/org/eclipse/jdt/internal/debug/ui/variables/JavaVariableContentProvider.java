@@ -25,6 +25,8 @@ import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Determines the child content of an IJavaVariable.
  * 
@@ -46,9 +48,9 @@ public class JavaVariableContentProvider extends VariableContentProvider {
         	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
         	IValue value = ((IVariable)parent).getValue();
         	if (supportsInstanceRetrieval(parent)){
-        		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaVariableContentProvider_0,(IJavaObject)value);
+        		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaVariableContentProvider_0, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
         	} else {
-        		moreVariables[0] = new JDIReferenceListVariable(VariableMessages.JavaVariableContentProvider_0,VariableMessages.JavaVariableContentProvider_2,(JDIDebugTarget)value.getDebugTarget());
+        		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaVariableContentProvider_0, new String[]{((IVariable)parent).getName()}),VariableMessages.JavaVariableContentProvider_2,(JDIDebugTarget)value.getDebugTarget());
         	}
         	
         	return getElements(moreVariables, index, length);

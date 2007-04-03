@@ -38,6 +38,7 @@ import com.sun.jdi.ObjectReference;
 public class JDIReferenceListValue extends JDIObjectValue implements IIndexedValue {
 
 	private IJavaObject fRoot;
+	private boolean fIsMoreThanPreference;
 	
 	/**
 	 * Constructor, initializes this value with its debug target and root object
@@ -55,7 +56,18 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	protected synchronized IJavaObject[] getReferences(){
 		try{
 			int max = HeapWalkingManager.getDefault().getAllReferencesMaxCount();
-			return fRoot.getReferringObjects(max);
+			IJavaObject[] referringObjects = null;
+			fIsMoreThanPreference = false;
+			if (max == 0){
+				referringObjects = fRoot.getReferringObjects(max);
+			} else {
+				referringObjects = fRoot.getReferringObjects(max+1);
+				if (referringObjects.length > max){
+					fIsMoreThanPreference = true;
+					referringObjects[max] = new JDIPlaceholderValue((JDIDebugTarget)fRoot.getDebugTarget(),MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_9,new String[]{Integer.toString(max)}));
+				}
+			}
+			return referringObjects;
 		} catch (DebugException e) {
 			JDIDebugPlugin.log(e);
 			return new IJavaObject[0];
@@ -78,8 +90,14 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	public IVariable[] getVariables() throws DebugException {
 		IJavaObject[] elements = getReferences();
 		IVariable[] vars = new JDIPlaceholderVariable[elements.length];
-		for (int i = 0; i < elements.length; i++) {
-			vars[i] = new JDIReferenceListEntryVariable(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_0, new String[]{Integer.toString(i + 1)}),elements[i]);
+		int length = elements.length;
+		if(fIsMoreThanPreference){
+			length--;
+			vars[length] = new JDIPlaceholderVariable(JDIDebugModelMessages.JDIReferenceListValue_11, elements[length]);
+		}
+		
+		for (int i = 0; i < length; i++) {
+			vars[i] = new JDIReferenceListEntryVariable(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_0, new String[]{Integer.toString(i)}),elements[i]);
 		}
 		return vars;
 	}
@@ -137,7 +155,18 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
-		return ""; //$NON-NLS-1$
+		if (referencesLoaded()){
+			int length = getReferences().length;
+			if (fIsMoreThanPreference){
+				return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_12,new String[]{Integer.toString(length-1)});
+			} else if (length == 1) {
+				return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_13,new String[]{Integer.toString(length)});
+			} else {
+				return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_14,new String[]{Integer.toString(length)});
+			}
+		} else {
+			return ""; //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -153,11 +182,16 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 			buf.append(JDIDebugModelMessages.JDIReferenceListValue_2);
 		}
 		else{
-			buf.append(elements.length);
-			if (elements.length == 1){
-				buf.append(JDIDebugModelMessages.JDIReferenceListValue_3);
+			String length = null;
+			if (fIsMoreThanPreference){
+				length = MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_15,new String[]{Integer.toString(elements.length-1)});
 			} else {
-				buf.append(JDIDebugModelMessages.JDIReferenceListValue_4);
+				length = Integer.toString(elements.length);
+			}
+			if (elements.length == 1){
+				buf.append(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_3,new String[]{length}));
+			} else {
+				buf.append(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_4,new String[]{length}));
 			}
 			for (int i = 0; i < elements.length; i++) {
 				buf.append(elements[i] + "\n"); //$NON-NLS-1$
@@ -170,7 +204,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#toString()
 	 */
 	public String toString() {
-		return JDIDebugModelMessages.JDIReferenceListValue_6 + getUnderlyingValue().toString();
+		return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_6,new String[]{getUnderlyingValue().toString()});
 	}
 
 	/* (non-Javadoc)

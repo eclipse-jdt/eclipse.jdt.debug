@@ -16,8 +16,12 @@ import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -30,18 +34,21 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class JDIAllInstancesValue extends JDIArrayValue {
 
-	private IJavaObject[] fElements = null;
-	private IJavaArrayType fType = null;
+	private IJavaObject[] fInstances;
+	private JDIReferenceType fRoot;
+	private IJavaArrayType fType;
+	private boolean fIsMoreThanPreference;
 	
 	/**
-	 * Constructor
+	 * Constructor, specifies whether there are more instances available than should be
+	 * displayed according to the user's preference settings.
+	 * 
 	 * @param target the target VM
-	 * @param value the underlying ArrayReference
-	 * @param values the values to set in the array
+	 * @param root the root object to get instances for
 	 */
-	public JDIAllInstancesValue(JDIDebugTarget target, IJavaObject[] values) {
+	public JDIAllInstancesValue(JDIDebugTarget target, JDIReferenceType root) {
 		super(target, null);
-		fElements = values;
+		fRoot = root;
 		try {
 			IJavaType[] javaTypes = target.getJavaTypes("java.lang.Object[]"); //$NON-NLS-1$
 			if (javaTypes.length > 0) {
@@ -49,53 +56,80 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 			}
 		} catch (DebugException e) {}
 	}
+	
+	/**
+	 * @return an array of java objects that are instances of the root type
+	 */
+	protected IJavaObject[] getInstances(){
+		if (fInstances != null){
+			return fInstances;
+		} else {
+			IJavaObject[] instances = new IJavaObject[0];
+			fIsMoreThanPreference = false;
+			if (fRoot != null){
+				int max = HeapWalkingManager.getDefault().getAllInstancesMaxCount();
+				try{
+					if (max == 0){
+						instances = fRoot.getInstances(max);
+					} else {
+						instances = fRoot.getInstances(max+1);
+						if (instances.length > max){
+							instances[max] = new JDIPlaceholderValue((JDIDebugTarget)fRoot.getDebugTarget(),MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_2,new String[]{Integer.toString(max)}));
+							fIsMoreThanPreference = true;
+						}
+					}
+				} catch (DebugException e) {
+					JDIDebugPlugin.log(e);
+				}
+			}
+			fInstances = instances;
+			return instances;
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getLength()
 	 */
 	public synchronized int getLength() throws DebugException {
-		return (fElements != null ? fElements.length : 0);
+		return getInstances().length;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getSize()
 	 */
 	public int getSize() throws DebugException {
-		return (fElements != null ? fElements.length : 0);
+		return getInstances().length;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getValue(int)
 	 */
 	public IJavaValue getValue(int index) throws DebugException {
-		if(fElements != null) {
-			if(index > fElements.length-1 || index < 0) {
-				internalError(LogicalStructuresMessages.JDIAllInstancesValue_0);
-			}
-			return fElements[index];
+		if(index > getInstances().length-1 || index < 0) {
+			internalError(LogicalStructuresMessages.JDIAllInstancesValue_0);
 		}
-		return null;
+		return getInstances()[index];
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getValues()
 	 */
 	public IJavaValue[] getValues() throws DebugException {
-		return fElements;
+		return getInstances();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getVariable(int)
 	 */
 	public IVariable getVariable(int offset) throws DebugException {
-		if(fElements != null) {
-			if(offset > fElements.length-1 || offset < 0) {
-				internalError(LogicalStructuresMessages.JDIAllInstancesValue_1);
-			}
-			return new JDIPlaceholderVariable("[" + offset + "]", fElements[offset]); //$NON-NLS-1$ //$NON-NLS-2$
+		if(offset > getInstances().length-1 || offset < 0) {
+			internalError(LogicalStructuresMessages.JDIAllInstancesValue_1);
 		}
-		internalError(LogicalStructuresMessages.JDIAllInstancesValue_2);
-		return null;
+		if(isMoreThanPreference() && offset == getInstances().length-1){
+			return new JDIPlaceholderVariable(LogicalStructuresMessages.JDIAllInstancesValue_4, getInstances()[offset]);
+		} else {
+			return new JDIPlaceholderVariable(MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_5,new String[]{Integer.toString(offset)}), getInstances()[offset]);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -105,25 +139,21 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 		if (length == 0){
 			return new IVariable[0];
 		}
-		if(fElements != null) {
-			if(offset > fElements.length-1 || offset < 0) {
-				internalError(LogicalStructuresMessages.JDIAllInstancesValue_1);
-			}
-			IVariable[] vars = new JDIPlaceholderVariable[length];
-			for (int i = 0; i < length; i++) {
-				vars[i] = getVariable(i + offset);
-			}
-			return vars;
+		if(offset > getInstances().length-1 || offset < 0) {
+			internalError(LogicalStructuresMessages.JDIAllInstancesValue_1);
 		}
-		internalError(LogicalStructuresMessages.JDIAllInstancesValue_2);
-		return null;
+		IVariable[] vars = new JDIPlaceholderVariable[length];
+		for (int i = 0; i < length; i++) {
+			vars[i] = getVariable(i + offset);
+		}
+		return vars;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		return getVariables(0, fElements.length);
+		return getVariables(0, getInstances().length);
 	}
 
 	/* (non-Javadoc)
@@ -151,7 +181,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#hasVariables()
 	 */
 	public boolean hasVariables() throws DebugException {
-		return (fElements != null ? fElements.length > 0 : false);
+		return getInstances().length > 0;
 	}	
 	
 	/* (non-Javadoc)
@@ -179,6 +209,52 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
-		return MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_3,new Object[]{Integer.toString(fElements.length)});
-	}	
+		if (isMoreThanPreference()){
+			return MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_7,new String[]{Integer.toString(getInstances().length-1)});
+		} else if (getInstances().length == 1) {
+			return MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_8,new String[]{Integer.toString(getInstances().length)});
+		} else {
+			return MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_9,new String[]{Integer.toString(getInstances().length)});
+		}
+	}
+	
+	/**
+	 * Returns a string representation of this value intended to be displayed
+	 * in the detail pane of views.  Lists the references on separate lines.
+	 * 
+	 * @return a string representation of this value to display in the detail pane
+	 */
+	public String getDetailString(){
+		StringBuffer buf = new StringBuffer();
+		Object[] elements = getInstances();
+		if (elements.length == 0){
+			buf.append(LogicalStructuresMessages.JDIAllInstancesValue_10);
+		}
+		else{
+			String length = null;
+			if (isMoreThanPreference()){
+				length = MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_11,new String[]{Integer.toString(elements.length-1)});
+			} else {
+				length = Integer.toString(elements.length);
+			}
+			if (elements.length == 1){
+				buf.append(MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_12,new String[]{length}));
+			} else {
+				buf.append(MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_13,new String[]{length}));
+			}
+			for (int i = 0; i < elements.length; i++) {
+				buf.append(elements[i] + "\n");  //$NON-NLS-1$
+			}	
+		}
+		return buf.toString();
+	}
+	
+	/**
+	 * @return whether there are more instances available than should be displayed 
+	 */
+	protected boolean isMoreThanPreference() {
+		getInstances(); //The instances must be requested to know if there are more than the preference
+		return fIsMoreThanPreference;
+	}
+
 }

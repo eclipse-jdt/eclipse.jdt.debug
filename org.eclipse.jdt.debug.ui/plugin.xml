@@ -300,6 +300,67 @@
                </and>
             </enablement>
          </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
+               helpContextId="all_instances_action_context"
+               icon="icons/full/elcl16/all_instances.gif"
+               id="org.eclipse.jdt.debug.ui.actions.AllInstances"
+               label="%allInstances.label"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
+               tooltip="%allInstances.tooltip">
+                           <enablement>
+                              <and>
+                                 <systemProperty
+                                       name="org.eclipse.jdt.debug.ui.debuggerActive"
+                                       value="true">
+                                 </systemProperty>
+                                 <systemProperty
+                                       name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                                       value="true">
+                                 </systemProperty>
+                                 <or>
+                                    <objectClass
+                                          name="org.eclipse.jface.text.ITextSelection">
+                                    </objectClass>
+                                    <objectClass
+                                          name="org.eclipse.jdt.debug.core.IJavaVariable">
+                                    </objectClass>
+                                    <objectClass
+                                          name="org.eclipse.jdt.core.IMethod">
+                                    </objectClass>
+                                    <objectClass
+                                          name="org.eclipse.jdt.core.IType">
+                                    </objectClass>
+                                 </or>
+                              </and>
+            </enablement>
+         </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AllReferences"
+               helpContextId="all_references_action_context"
+               icon="icons/full/elcl16/all_references.gif"
+               id="org.eclipse.jdt.debug.ui.actions.AllReferences"
+               label="%allReferences.label"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
+               tooltip="%allreferences.tooltip">
+                           <enablement>
+                              <and>
+                                 <systemProperty
+                                       name="org.eclipse.jdt.debug.ui.debuggerActive"
+                                       value="true">
+                                 </systemProperty>
+                                 <systemProperty
+                                       name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                                       value="true">
+                                 </systemProperty>
+                                 <objectClass
+                                       name="org.eclipse.jdt.debug.core.IJavaVariable">
+                                 </objectClass>
+                              </and>
+            </enablement>
+         </action>
       </actionSet>
    </extension>
    <extension
@@ -878,9 +939,9 @@
                helpContextId="all_instances_action_context"
                icon="icons/full/elcl16/all_instances.gif"
                id="org.eclipse.jdt.debug.ui.cuPopup.AllInstances"
-               label="%allinstances.label"
+               label="%allInstances.label"
                menubarPath="additions"
-               tooltip="%allinstances.tooltip">
+               tooltip="%allInstances.tooltip">
             <enablement>
                <systemProperty
                      name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
@@ -996,9 +1057,9 @@
                helpContextId="all_instances_action_context"
                icon="icons/full/elcl16/all_instances.gif"
                id="org.eclipse.jdt.debug.ui.cfPopup.AllInstances"
-               label="%allinstances.label"
+               label="%allInstances.label"
                menubarPath="additions"
-               tooltip="%allinstances.tooltip">
+               tooltip="%allInstances.tooltip">
             <enablement>
                <systemProperty
                      name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
@@ -1190,9 +1251,9 @@
                helpContextId="all_instances_action_context"
                icon="icons/full/elcl16/all_instances.gif"
                id="org.eclipse.jdt.debug.ui.allInstances"
-               label="%allinstances.label"
+               label="%allInstances.label"
                menubarPath="emptyNavigationGroup"
-               tooltip="%allinstances.tooltip">
+               tooltip="%allInstances.tooltip">
          </action>
          <visibility>
             <and>
@@ -1624,9 +1685,9 @@
                helpContextId="all_instances_action_context"
                icon="icons/full/elcl16/all_instances.gif"
                id="org.eclipse.jdt.debug.ui.allInstances"
-               label="%allinstances.label"
+               label="%allInstances.label"
                menubarPath="additions"
-               tooltip="%allinstances.tooltip">
+               tooltip="%allInstances.tooltip">
          </action>
        </objectContribution>
        <objectContribution
@@ -1651,9 +1712,9 @@
                helpContextId="all_instances_action_context"
                icon="icons/full/elcl16/all_instances.gif"
                id="org.eclipse.jdt.debug.ui.allInstances"
-               label="%allinstances.label"
+               label="%allInstances.label"
                menubarPath="additions"
-               tooltip="%allinstances.tooltip">
+               tooltip="%allInstances.tooltip">
          </action>
        </objectContribution>
    </extension>
@@ -2507,14 +2568,8 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    <key
-         commandId="org.eclipse.jdt.debug.ui.commands.AllReferences"
-         contextId="org.eclipse.debug.ui.debugging"
-         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="M1+M2+N">
-   </key>
-   <key
          commandId="org.eclipse.jdt.debug.ui.commands.AllInstances"
-         contextId="org.eclipse.debug.ui.debugging"
+         contextId="org.eclipse.ui.globalScope"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="M1+M2+N">
    </key>

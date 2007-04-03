@@ -93,7 +93,7 @@ public class ExceptionInspector implements IDebugContextListener, IPropertyChang
 															Rectangle bounds = selection2[0].getBounds();
 															Point point = tree.toDisplay(bounds.x, bounds.y + bounds.height);
 															InspectPopupDialog dialog = new InspectPopupDialog(part.getSite().getShell(),
-																	point, PopupInspectAction.ACTION_DEFININIITION_ID, exp);
+																	point, PopupInspectAction.ACTION_DEFININITION_ID, exp);
 															dialog.open();
 														}
 													}

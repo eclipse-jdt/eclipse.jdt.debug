@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class PopupInspectAction extends InspectAction {
 
-    public static final String ACTION_DEFININIITION_ID = "org.eclipse.jdt.debug.ui.commands.Inspect"; //$NON-NLS-1$
+    public static final String ACTION_DEFININITION_ID = "org.eclipse.jdt.debug.ui.commands.Inspect"; //$NON-NLS-1$
 
     JavaInspectExpression expression;
 
@@ -45,7 +45,7 @@ public class PopupInspectAction extends InspectAction {
     }
 
     protected void showPopup(StyledText textWidget) {
-        DebugPopup displayPopup = new InspectPopupDialog(getShell(), getPopupAnchor(textWidget), ACTION_DEFININIITION_ID, expression);
+        DebugPopup displayPopup = new InspectPopupDialog(getShell(), getPopupAnchor(textWidget), ACTION_DEFININITION_ID, expression);
         displayPopup.open();
     }
 

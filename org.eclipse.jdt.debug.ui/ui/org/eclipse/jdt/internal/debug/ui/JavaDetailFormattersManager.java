@@ -160,7 +160,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			IJavaObject objectValue= (IJavaObject) value;
 			try {
 				if(value instanceof JDIAllInstancesValue) {
-					listener.detailComputed(value, ((JDIAllInstancesValue)value).getReferenceTypeName());
+					listener.detailComputed(value, ((JDIAllInstancesValue)value).getDetailString());
 					return;
 				}
 				if(value instanceof JDIReferenceListValue) {
