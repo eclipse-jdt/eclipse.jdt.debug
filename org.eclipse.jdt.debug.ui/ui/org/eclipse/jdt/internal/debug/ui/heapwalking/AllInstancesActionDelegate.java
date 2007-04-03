@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.InspectPopupDialog;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -159,7 +161,13 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 				// If the selected element is a java variable, just get the type
 				if (selectedElement instanceof IJavaVariable) {
 					IJavaVariable var = (IJavaVariable) selectedElement;
-					type = var.getJavaType();
+					IValue val = var.getValue();
+					if (val instanceof IJavaValue){
+						type = ((IJavaValue)val).getJavaType();
+					}
+					if (type == null){
+						type = var.getJavaType();
+					}
 				}
 				
 			} catch (JavaModelException e){
