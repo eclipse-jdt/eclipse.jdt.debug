@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -341,7 +342,10 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		if (part != null){
 			return part;
 		} else if (fWindow != null){
-			return fWindow.getActivePage().getActivePart();
+			IWorkbenchPage page = fWindow.getActivePage();
+			if(page != null) {
+				return page.getActivePart();
+			}
 		}
 		return null;
 	}
