@@ -113,9 +113,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1); 
 		fAlertHCRNotSupportedButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1, null, false, 1); 
 		fAlertObsoleteButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1, null, false, 1); 
-		fPerformHCRWithCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1, null, false, 1); 
-
-		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19, null, false, 1); 
+		fPerformHCRWithCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1, null, false, 1);  
 
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Communication_1, 1, 1, GridData.FILL_HORIZONTAL);
 		Composite space = SWTFactory.createComposite(group, group.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
@@ -136,6 +134,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
 		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
 		fConnectionTimeoutText.load();
+		
+		SWTFactory.createVerticalSpacer(composite, 1);
+		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19, null, false, 1);
 		
 		setValues();
 		fTimeoutText.setPropertyChangeListener(this);
