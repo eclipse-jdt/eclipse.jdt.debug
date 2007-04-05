@@ -15,11 +15,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
@@ -36,6 +36,8 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.osgi.service.environment.Constants;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -282,18 +284,12 @@ public class StandardVMType extends AbstractVMInstallType {
 		} else {
 			libInfo = getLibraryInfo(installLocation, javaExecutable);
 		}
-				
-		String[] bootpath = libInfo.getBootpath();
-		
-		List endorsed = gatherAllLibraries(libInfo.getEndorsedDirs());
-		List extensions = gatherAllLibraries(libInfo.getExtensionDirs());
-		List allLibs = new ArrayList(endorsed.size() + bootpath.length + extensions.size());
 		
 		// Add all endorsed libraries - they are first, as they replace
-		// classes in the standard libraries/bootpath
-		appendLibraries(endorsed, allLibs);		
+		List allLibs = new ArrayList(gatherAllLibraries(libInfo.getEndorsedDirs()));
 		
 		// next is the bootpath libraries
+		String[] bootpath = libInfo.getBootpath();
 		List boot = new ArrayList(bootpath.length);
 		URL url = getDefaultJavadocLocation(installLocation);
 		for (int i = 0; i < bootpath.length; i++) {
@@ -307,50 +303,22 @@ public class StandardVMType extends AbstractVMInstallType {
 				boot.add(libraryLocation);
 			}
 		}
-		appendLibraries(boot, allLibs);
+		allLibs.addAll(boot);
 				
 		// Add all extension libraries
-		appendLibraries(extensions, allLibs);
-				
+		allLibs.addAll(gatherAllLibraries(libInfo.getExtensionDirs()));
+		
+		//remove dupes
+		HashSet set = new HashSet();
+		LibraryLocation lib = null;
+		for(ListIterator liter = allLibs.listIterator(); liter.hasNext();) {
+			lib = (LibraryLocation) liter.next();
+			if(!set.add(lib.getSystemLibraryPath().toOSString())) {
+				//did not add it, dupe
+				allLibs.remove(lib);
+			}
+		}
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
-	}
-
-	/**
-	 * Appends the non-duplicate libraries in libraryLocations to the list
-	 * of allLibs.
-	 * 
-	 * @param libraryLocations libraries to append
-	 * @param allLibs list to append to, omitting duplicates
-	 */
-	private void appendLibraries(List libraryLocations, List allLibs) {
-		Iterator iter = libraryLocations.iterator();
-		while (iter.hasNext()) {
-			LibraryLocation lib = (LibraryLocation)iter.next();
-			// check for dups, in case bootpath contains an ext dir entry (see bug 50201)
-			if (!isDuplicateLibrary(allLibs, lib)) {
-				allLibs.add(lib);
-			}
-		}
-	}
-	
-	/**
-	 * Returns whether the given library is already contained in the given list.
-	 * Rather than checking the library for equality (which considers source attachments),
-	 * we check the actual OS path to the library for equality.
-	 * 
-	 * @param libs list of library locations
-	 * @param dup possible dup
-	 * @return whether dup is contained in list of libraries
-	 */
-	private boolean isDuplicateLibrary(List libs, LibraryLocation dup) {
-		String osPath = dup.getSystemLibraryPath().toOSString();
-		for (int i = 0; i < libs.size(); i++) {
-			LibraryLocation location = (LibraryLocation) libs.get(i);
-			if (location.getSystemLibraryPath().toOSString().equalsIgnoreCase(osPath)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
