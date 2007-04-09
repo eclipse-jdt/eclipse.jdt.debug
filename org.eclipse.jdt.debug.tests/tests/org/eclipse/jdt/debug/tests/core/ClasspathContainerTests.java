@@ -13,11 +13,13 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
+import org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -80,7 +82,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testCanUpdate() throws CoreException {
-		// Create a new VM install that mirros the current install
+		// Create a new VM install that mirrors the current install
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		String vmId = def.getId() + System.currentTimeMillis();
 		VMStandin standin = new VMStandin(def.getVMInstallType(), vmId);
@@ -109,7 +111,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		// ensure we can update
 		assertTrue("Initializer will not accept update", initializer.canUpdateClasspathContainer(containerPath, getJavaProject()));
 		
-		// update to an empty set of libs
+		// update to an empty set of libraries
 		FakeContainer fakeContainer = new FakeContainer();
 		initializer.requestClasspathContainerUpdate(containerPath, getJavaProject(), fakeContainer);
 		
@@ -117,19 +119,47 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		LibraryLocation[] newLibs = JavaRuntime.getLibraryLocations(newVM);
 		assertEquals("Libraries should be empty", 0, newLibs.length);
 		
-		// re-set to original libs
+		// re-set to original libraries
 		fakeContainer.setEntries(originalEntries);
 		initializer.requestClasspathContainerUpdate(containerPath, getJavaProject(), fakeContainer);
 		
-		// ensure libs are restored
+		// ensure libraries are restored
 		newLibs = JavaRuntime.getLibraryLocations(newVM);
 		assertEquals("Libraries should be restored", originalLibs.length, newLibs.length);
 		for (int i = 0; i < newLibs.length; i++) {
 			LibraryLocation location = newLibs[i];
 			LibraryLocation origi = originalLibs[i];
-			assertEquals("Library should be the eqaual", origi.getSystemLibraryPath().toFile(), location.getSystemLibraryPath().toFile());
+			assertEquals("Library should be the equal", origi.getSystemLibraryPath().toFile(), location.getSystemLibraryPath().toFile());
 		} 
 	}
 	
+	
+	/**
+	 * Tests library comparison case sensitivity.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testLibraryCaseSensitivity() {
+		IVMInstall def = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(def);
+		boolean caseSensitive = !Platform.getOS().equals(Platform.WS_WIN32);
+		LibraryLocation[] set1 = new LibraryLocation[libs.length];
+		LibraryLocation[] set2 = new LibraryLocation[libs.length];
+		for (int i = 0; i < libs.length; i++) {
+			LibraryLocation lib = libs[i];
+			String s1 = lib.getSystemLibraryPath().toOSString();
+			IPath p1 = new Path(s1);
+			String s2 = s1.toUpperCase();
+			IPath p2 = new Path(s2);
+			set1[i] = new LibraryLocation(p1, null, null);
+			set2[i] = new LibraryLocation(p2, null, null);
+		}
+		boolean equal = JRERuntimeClasspathEntryResolver.isSameArchives(set1, set2); 
+		if (caseSensitive) {
+			assertFalse("Libraries should *not* be equal on case sensitive platform", equal);
+		} else {
+			assertTrue("Libraries *should* be equal on case sensitive platform", equal);
+		}
+	}	
 	
 }

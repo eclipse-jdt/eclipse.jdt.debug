@@ -151,8 +151,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 				if (!dpath.removeTrailingSeparator().toOSString().equalsIgnoreCase(lpath.removeTrailingSeparator().toOSString())) {
 					return false;
 				}
-			}
-			if (!dpath.equals(lpath)) {
+			} else if (!dpath.equals(lpath)) {
 				return false;
 			}
 		}
