@@ -344,7 +344,7 @@
                id="org.eclipse.jdt.debug.ui.actions.AllReferences"
                label="%allReferences.label"
                menubarPath="org.eclipse.ui.run/jdtGroup"
-               tooltip="%allreferences.tooltip">
+               tooltip="%allReferences.tooltip">
                            <enablement>
                               <and>
                                  <systemProperty
