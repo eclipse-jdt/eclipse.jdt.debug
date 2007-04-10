@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.performance;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.actions.ContextualLaunchAction;
@@ -91,10 +90,7 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
         }
         
         void showMenu(Menu menu) {
-        	try {
-        		fillMenu(menu);
-        	}
-        	catch(CoreException ce)  {}
+        	fillMenu(menu);
         }
     }
 }
