@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 					String prevName = JREContainerInitializer.getVMName(unboundPath);
 					try {
 						IPath newBinding = unboundPath;
-						if (!(prevId.equals(vmTypeId) && prevName.equals(vmName))) {
+						if (!(vmTypeId.equals(prevId) && vmName.equals(prevName))) {
 							// update classpath
 							IPath newPath = new Path(JavaRuntime.JRE_CONTAINER);
 							if (vmTypeId != null) {
@@ -88,6 +88,11 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 								switch (classpath[i].getEntryKind()) {
 									case IClasspathEntry.CPE_CONTAINER:
 										if (classpath[i].getPath().equals(unboundPath)) {
+											classpath[i] = JavaCore.newContainerEntry(newPath, classpath[i].isExported());
+										}
+										break;
+									case IClasspathEntry.CPE_VARIABLE:
+										if(classpath[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
 											classpath[i] = JavaCore.newContainerEntry(newPath, classpath[i].isExported());
 										}
 										break;

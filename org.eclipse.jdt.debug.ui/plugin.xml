@@ -2613,6 +2613,32 @@ M4 = Platform-specific fourth key
       <markerResolutionGenerator
             markerType="org.eclipse.jdt.core.buildpath_problem"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator">
+         <attribute
+               name="id"
+               value="963">
+         </attribute>
+      </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.eclipse.jdt.core.buildpath_problem"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator">
+         <attribute
+               name="id"
+               value="965">
+         </attribute>
+      </markerResolutionGenerator>
+   </extension>
+         <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.eclipse.jdt.core.buildpath_problem"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator">
+         <attribute
+               name="id"
+               value="1010">
+         </attribute>
       </markerResolutionGenerator>
    </extension>
 <!-- Adds the launch and java debug actions whenever a java relevant part is open -->
@@ -3217,5 +3243,4 @@ M4 = Platform-specific fourth key
           targetId="org.eclipse.jdt.ui.javaCode">
     </hyperlinkDetector>
  </extension>
-    
 </plugin>

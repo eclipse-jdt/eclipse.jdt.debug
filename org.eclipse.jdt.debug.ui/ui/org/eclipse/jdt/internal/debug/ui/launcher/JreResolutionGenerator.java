@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator {
 				}
 				break;
 
-			// unbound classpath variabe
+			// unbound classpath variable
 			case IJavaModelStatusConstants.CP_VARIABLE_PATH_UNBOUND :
 				arguments = CorrectionEngine.getProblemArguments(marker);
 				path = new Path(arguments[0]);
@@ -64,12 +64,27 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator {
 					return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
 				}
 				break;
+			// deprecated JRE library variables
+			case IJavaModelStatusConstants.DEPRECATED_VARIABLE : 
+				arguments = CorrectionEngine.getProblemArguments(marker);
+				path = new Path(arguments[0]);
+				if (path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE) ||
+						path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+					IJavaProject project = getJavaProject(marker);
+					return new IMarkerResolution[] {new SelectSystemLibraryQuickFix(path, project)};
+				}
+				break;
 		}
 		return NO_RESOLUTION;
 	}
 
+	/**
+	 * Returns the java project from the specified marker, or <code>null</code> if the marker 
+	 * does not have an associated java project
+	 * @param marker
+	 * @return the associated java project or <code>null</code>
+	 */
 	protected IJavaProject getJavaProject(IMarker marker) {
 		return JavaCore.create(marker.getResource().getProject());
 	}
-
 }
