@@ -37,14 +37,22 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.2
  *
  */
-public class JavaThreadEventHandler extends ThreadEventHandler implements IPropertyChangeListener {
+public class JavaThreadEventHandler extends ThreadEventHandler implements IPropertyChangeListener, TreeListener {
 	
 	private boolean fDisplayMonitors;
+	private Tree fTree;
 
 	/**
 	 * Constructs and event handler for a Java thread.
@@ -58,10 +66,25 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		fDisplayMonitors= preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
 	}
 	
+	protected void init(Viewer viewer) {
+		Control control = viewer.getControl();
+		if (control instanceof Tree) {
+			fTree = (Tree) control;
+			fTree.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					fTree.addTreeListener(JavaThreadEventHandler.this);
+				}
+			});
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#dispose()
 	 */
 	public synchronized void dispose() {
+		if (fTree != null) {
+			fTree.removeTreeListener(this);
+		}
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.removePropertyChangeListener(this);
 		super.dispose();
@@ -213,6 +236,36 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 			return false;
 		}
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.events.TreeListener#treeCollapsed(org.eclipse.swt.events.TreeEvent)
+	 */
+	public void treeCollapsed(TreeEvent e) {
+		// when the user collapses a thread, remove it from the 'next thread to select queue'
+		Widget widget = e.item;
+		if (widget instanceof TreeItem) {
+			TreeItem item = (TreeItem) widget;
+			Object data = item.getData();
+			if (data instanceof IJavaThread) {
+				removeQueuedThread((IJavaThread)data);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.events.TreeListener#treeExpanded(org.eclipse.swt.events.TreeEvent)
+	 */
+	public void treeExpanded(TreeEvent e) {
+		// when the expands a thread, add it back to the 'next thread to select queue'
+		Widget widget = e.item;
+		if (widget instanceof TreeItem) {
+			TreeItem item = (TreeItem) widget;
+			Object data = item.getData();
+			if (data instanceof IJavaThread) {
+				queueSuspendedThread((IJavaThread)data);
+			}
+		}
 	}	
 
 }

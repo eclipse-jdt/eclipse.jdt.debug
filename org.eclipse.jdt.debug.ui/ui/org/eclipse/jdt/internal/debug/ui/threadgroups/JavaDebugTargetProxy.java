@@ -15,6 +15,7 @@ import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy;
 import org.eclipse.debug.internal.ui.viewers.update.StackFrameEventHandler;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
@@ -22,6 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.update.StackFrameEventHandler;
  */
 public class JavaDebugTargetProxy extends DebugTargetProxy {
 
+	private JavaThreadEventHandler fThreadEventHandler;
 	/**
 	 * @param target
 	 */
@@ -33,9 +35,17 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#createEventHandlers()
 	 */
 	protected DebugEventHandler[] createEventHandlers() {
-		JavaThreadEventHandler javaThreadEventHandler = new JavaThreadEventHandler(this);
-		return new DebugEventHandler[] { new DebugTargetEventHandler(this), javaThreadEventHandler,
-				new StackFrameEventHandler(this, javaThreadEventHandler)};
+		fThreadEventHandler = new JavaThreadEventHandler(this);
+		return new DebugEventHandler[] { new DebugTargetEventHandler(this), fThreadEventHandler,
+				new StackFrameEventHandler(this, fThreadEventHandler)};
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#installed(org.eclipse.jface.viewers.Viewer)
+	 */
+	public void installed(Viewer viewer) {
+		super.installed(viewer);
+		fThreadEventHandler.init(viewer);
 	}
 
 }
