@@ -25,7 +25,7 @@ public class AddPackageStepFilterAction extends AbstractAddStepFilterAction {
 	protected String generateStepFilterPattern(IJavaStackFrame frame) {
 		String typeName;
 		try {
-			typeName = frame.getReceivingTypeName();
+			typeName = frame.getDeclaringTypeName();
 		} catch (DebugException de) {
 			return null;
 		}
