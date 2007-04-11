@@ -295,6 +295,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getThreadText(IJavaThread thread, boolean qualified) throws CoreException {
 		StringBuffer key = new StringBuffer("thread_"); //$NON-NLS-1$
 		String[] args = null;
+		IBreakpoint[] breakpoints= thread.getBreakpoints();
 		if (thread.isDaemon()) {
 			key.append("daemon_"); //$NON-NLS-1$
 		}
@@ -307,14 +308,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else if (thread.isStepping()) {
 			key.append("stepping"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
-		} else if (thread.isPerformingEvaluation()) {
+		} else if (thread.isPerformingEvaluation() && breakpoints.length == 0) {
 			key.append("evaluating"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
 		} else if (!thread.isSuspended() || (thread instanceof JDIThread && ((JDIThread)thread).isSuspendedQuiet())) {
 			key.append("running"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
 		} else {
-			IBreakpoint[] breakpoints= thread.getBreakpoints();
 			key.append("suspended"); //$NON-NLS-1$
 			if (breakpoints.length > 0) {
 				IJavaBreakpoint breakpoint= (IJavaBreakpoint)breakpoints[0];
