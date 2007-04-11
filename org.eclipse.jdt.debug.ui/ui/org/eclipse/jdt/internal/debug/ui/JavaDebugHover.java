@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,35 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextViewer;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
@@ -26,6 +49,7 @@ import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -33,25 +57,12 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
+
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.PreferenceConstants;
-import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHoverExtension;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 
 
 public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension {
@@ -352,15 +363,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
-		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) { 
-			return new IInformationControlCreator() {
-				public IInformationControl createInformationControl(Shell parent) {
-	  				return new DefaultInformationControl(parent, SWT.NONE, 
-	  					new HTMLTextPresenter(true),
-				   		DebugUIMessages.JavaDebugHover_16); 
-			 	}
-  			};
-		}
-		return null;
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, SWT.NONE, 
+						new HTMLTextPresenter(true),
+						EditorsUI.getTooltipAffordanceString()); 
+			}
+		};
 	}
 }

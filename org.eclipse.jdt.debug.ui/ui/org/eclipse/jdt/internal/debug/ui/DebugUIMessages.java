@@ -277,7 +277,6 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugOptionsManager_1;
 	public static String JavaDebugOptionsManager_Line_breakpoint___4;
 	public static String JavaBreakpointWorkbenchAdapterFactory_1;
-	public static String JavaDebugHover_16;
 
 	public static String HotCodeReplaceErrorDialog_0;
 	public static String HotCodeReplaceErrorDialog_1;
