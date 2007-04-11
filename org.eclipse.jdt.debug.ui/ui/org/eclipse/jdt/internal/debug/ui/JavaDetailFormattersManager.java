@@ -369,32 +369,33 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * The code snippet is compiled in the context of the given object.
 	 */
 	private Expression getCompiledExpression(IJavaObject javaObject, IJavaDebugTarget debugTarget, IJavaThread thread) throws CoreException {
-		IJavaType type= javaObject.getJavaType();
+		IJavaType type = javaObject.getJavaType();
 		if (type == null) {
 			return null;
 		}
-		String typeName= type.getName();
-		Key key= new Key(typeName, debugTarget);
+		String typeName = type.getName();
+		Key key = new Key(typeName, debugTarget);
 		if (fCacheMap.containsKey(key)) {
 			return (Expression) fCacheMap.get(key);
 		}
-		IJavaProject project= getJavaProject(javaObject, thread);
-		if (project != null) {
-			String snippet = null;
-			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
-			ICompiledExpression res = null;
-			if (type instanceof IJavaClassType) {
-				snippet= getDetailFormatter((IJavaClassType) type);
-			} else if (type instanceof IJavaArrayType) {
-				snippet= getArraySnippet((IJavaArray)javaObject);
-			}
-			if (snippet != null) {
-				res= evaluationEngine.getCompiledExpression(snippet, javaObject);
-			}
-			if (res != null) {
-				Expression exp = new Expression(res, evaluationEngine);
-				fCacheMap.put(key, exp);
-				return exp;
+		String snippet = null;
+		if (type instanceof IJavaClassType) {
+			snippet = getDetailFormatter((IJavaClassType) type);
+		} else if (type instanceof IJavaArrayType) {
+			snippet = getArraySnippet((IJavaArray) javaObject);
+		}
+		if (snippet != null) {
+			IJavaProject project = getJavaProject(javaObject, thread);
+			if (project != null) {
+				IAstEvaluationEngine evaluationEngine = JDIDebugPlugin
+						.getDefault().getEvaluationEngine(project, debugTarget);
+				ICompiledExpression res = evaluationEngine
+						.getCompiledExpression(snippet, javaObject);
+				if (res != null) {
+					Expression exp = new Expression(res, evaluationEngine);
+					fCacheMap.put(key, exp);
+					return exp;
+				}
 			}
 		}
 		return null;
