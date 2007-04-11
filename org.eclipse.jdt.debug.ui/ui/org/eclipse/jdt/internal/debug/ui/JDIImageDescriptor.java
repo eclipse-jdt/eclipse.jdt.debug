@@ -250,6 +250,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
 			}
 			x -= data.width;
+			x = x - 2;
 			drawImage(data, x, y);
 		}
 		if ((flags & EXIT)  != 0){
@@ -261,6 +262,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
 			}
 			x -= data.width;
+			x = x - 2;
 			y -= data.height;
 			drawImage(data, x, y);
 		}
