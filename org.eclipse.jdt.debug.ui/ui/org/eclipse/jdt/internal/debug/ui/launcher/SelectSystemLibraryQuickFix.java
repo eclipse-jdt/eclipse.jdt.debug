@@ -18,18 +18,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.launching.JREContainer;
-import org.eclipse.jdt.internal.launching.JREContainerInitializer;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 
@@ -40,11 +36,11 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class SelectSystemLibraryQuickFix extends JREResolution {
 	
-	private IPath fUnboundPath;
+	private IPath fOldPath;
 	private IJavaProject fProject;
 	
-	public SelectSystemLibraryQuickFix(IPath unboundPath, IJavaProject project) {
-		fUnboundPath = unboundPath;
+	public SelectSystemLibraryQuickFix(IPath oldPath, IJavaProject project) {
+		fOldPath = oldPath;
 		fProject = project;	
 	}
 
@@ -53,60 +49,43 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 	 */
 	public void run(IMarker marker) {
 		try {
-			handleContainerResolutionError(fUnboundPath, fProject);
+			handleContainerResolutionError(fOldPath, fProject);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.statusDialog(LauncherMessages.JREContainerResolution_Unable_to_update_classpath_1, e.getStatus());  
 		}
 	}
 	
-	protected void handleContainerResolutionError(final IPath unboundPath, final IJavaProject project) throws CoreException {			
+	protected void handleContainerResolutionError(final IPath oldPath, final IJavaProject project) throws CoreException {			
 		
-		String title = LauncherMessages.JREResolution_Select_System_Library_1; 
-		String message = MessageFormat.format(LauncherMessages.JREResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{project.getElementName()}); 
-		
-		final IVMInstall vm = chooseVMInstall(title, message);
-		if (vm == null) {
+		String lib = oldPath.segment(0);
+		IPath initialPath = null;
+		if (JavaRuntime.JRELIB_VARIABLE.equals(lib)) {
+			initialPath = JavaRuntime.newDefaultJREContainerPath();
+		} else if (JavaRuntime.JRE_CONTAINER.equals(lib)) {
+			initialPath = oldPath;
+		}
+		IClasspathEntry initialEntry = JavaCore.newContainerEntry(initialPath);
+		final IClasspathEntry containerEntry = BuildPathDialogAccess.configureContainerEntry(JDIDebugUIPlugin.getActiveWorkbenchShell(), initialEntry, project, new IClasspathEntry[]{});
+		if (containerEntry == null || containerEntry.getPath().equals(oldPath)) {
 			return;
 		}
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					String vmTypeId = vm.getVMInstallType().getId();
-					String vmName = vm.getName();
-					String prevId = JREContainerInitializer.getVMTypeId(unboundPath);
-					String prevName = JREContainerInitializer.getVMName(unboundPath);
-					try {
-						IPath newBinding = unboundPath;
-						if (!(vmTypeId.equals(prevId) && vmName.equals(prevName))) {
-							// update classpath
-							IPath newPath = new Path(JavaRuntime.JRE_CONTAINER);
-							if (vmTypeId != null) {
-								newPath = newPath.append(vmTypeId).append(vmName);
-							}
-							IClasspathEntry[] classpath = project.getRawClasspath();
-							for (int i = 0; i < classpath.length; i++) {
-								switch (classpath[i].getEntryKind()) {
-									case IClasspathEntry.CPE_CONTAINER:
-										if (classpath[i].getPath().equals(unboundPath)) {
-											classpath[i] = JavaCore.newContainerEntry(newPath, classpath[i].isExported());
-										}
-										break;
-									case IClasspathEntry.CPE_VARIABLE:
-										if(classpath[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
-											classpath[i] = JavaCore.newContainerEntry(newPath, classpath[i].isExported());
-										}
-										break;
-									default:
-										break;
-								}
-							}
-							project.setRawClasspath(classpath, monitor);
-							newBinding = newPath;
+				try {
+					IPath newPath = containerEntry.getPath();
+					IClasspathEntry[] classpath = project.getRawClasspath();
+					for (int i = 0; i < classpath.length; i++) {
+						if (classpath[i].getPath().equals(oldPath)) {
+							classpath[i] = JavaCore.newContainerEntry(newPath, classpath[i].isExported());
+							break;
 						}
-					JavaCore.setClasspathContainer(unboundPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, newBinding, project)}, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
 					}
+					project.setRawClasspath(classpath, monitor);
+				//JavaCore.setClasspathContainer(oldPath, new IJavaProject[] {project}, new IClasspathContainer[] {new JREContainer(vm, newBinding, project)}, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
 		};
 		
