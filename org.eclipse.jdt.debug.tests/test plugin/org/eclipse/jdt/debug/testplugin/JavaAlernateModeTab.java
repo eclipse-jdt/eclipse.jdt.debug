@@ -118,7 +118,26 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+	public void launchConfigurationChanged(final ILaunchConfiguration configuration) {
+		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			setWidget(configuration);
+		}
+		else {
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					setWidget(configuration);
+				}
+			});
+		}
+	}
+	
+	/**
+	 * handles setting the checked state of the widget
+	 * must check if we are in the UI thread before calling this method, as the launch ocnfiguration 
+	 * notification can come from the non-UI tread.
+	 * @param configuration
+	 */
+	private void setWidget(ILaunchConfiguration configuration) {
 		try {
 			Set modes = configuration.getModes();
 			modes.add(getLaunchConfigurationDialog().getMode());
