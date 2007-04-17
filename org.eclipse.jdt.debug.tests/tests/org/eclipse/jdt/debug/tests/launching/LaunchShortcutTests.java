@@ -40,7 +40,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	 * application launch configuration type
 	 */
 	public void testAssociatedConfigurationTypeSupported() {
-		LaunchShortcutExtension ext = getJavaApplicationLaunchShortcut();
+		LaunchShortcutExtension ext = getLaunchShortcutExtension(JAVA_LAUNCH_SHORTCUT_ID);
 		assertNotNull("java app shortcut not found", ext); //$NON-NLS-1$
 		String typeid = "org.eclipse.jdt.launching.localJavaApplication"; //$NON-NLS-1$
 		assertTrue("local java app shortcut should support java app types", ext.getAssociatedConfigurationTypes().contains(typeid)); //$NON-NLS-1$
@@ -50,7 +50,7 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	 * Tests that the local java app shortcut does not support some fake type id 'foo'
 	 */
 	public void testAssociatedConfigurationTypeNotSupported() {
-		LaunchShortcutExtension ext = getJavaApplicationLaunchShortcut();
+		LaunchShortcutExtension ext = getLaunchShortcutExtension(JAVA_LAUNCH_SHORTCUT_ID);
 		assertNotNull("java app shortcut not found", ext); //$NON-NLS-1$
 		String typeid = "org.eclipse.jdt.launching.foo"; //$NON-NLS-1$
 		assertTrue("local java app shortcut should not support foo", !ext.getAssociatedConfigurationTypes().contains(typeid)); //$NON-NLS-1$
@@ -60,18 +60,17 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	 * Tests that the java app shortcut supports debug and java perspectives
 	 */
 	public void testAssociatedPespectiveSupported() {
-		LaunchShortcutExtension ext = getJavaApplicationLaunchShortcut();
+		LaunchShortcutExtension ext = getLaunchShortcutExtension(TEST_LAUNCH_SHORTCUT);
 		assertNotNull("java app shortcut not found", ext); //$NON-NLS-1$
 		assertTrue("java app shortcut should support debug perspective", ext.getPerspectives().contains("org.eclipse.debug.ui.DebugPerspective")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("java app shortcut should support java perspective", ext.getPerspectives().contains("org.eclipse.jdt.ui.JavaPerspective")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
 	 * Tests that the local java app shortcut does not support some fake perspective foo
 	 */
 	public void testAssociatedPerspectiveNotSupported() {
-		LaunchShortcutExtension ext = getJavaApplicationLaunchShortcut();
-		assertNotNull("java app shortcut not found", ext); //$NON-NLS-1$
+		LaunchShortcutExtension ext = getLaunchShortcutExtension(TEST_LAUNCH_SHORTCUT);
+		assertNotNull("test shortcut not found", ext); //$NON-NLS-1$
 		assertTrue("java app shortcut should not support foo perspective", !ext.getPerspectives().contains("org.eclipse.debug.ui.FooPerspective")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	

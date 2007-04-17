@@ -127,6 +127,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected static final String LAUNCH_EXTENSION = ".launch"; //$NON-NLS-1$
 	protected static final String LOCAL_JAVA_APPLICATION_TYPE_ID = "org.eclipse.jdt.launching.localJavaApplication"; //$NON-NLS-1$
 	protected static final String JAVA_LAUNCH_SHORTCUT_ID = "org.eclipse.jdt.debug.ui.localJavaShortcut"; //$NON-NLS-1$
+	protected static final String TEST_LAUNCH_SHORTCUT = "org.eclipse.jdt.debug.tests.testShortCut";
 	
 	/**
 	 * an evaluation result
@@ -225,17 +226,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
-	 * Returns the local java application launch shortcut
-	 * @return the local java application launch shortcut
+	 * Returns the launch shortcut with the given id
+	 * @param id
+	 * @return the <code>LaunchShortcutExtension</code> with the given id, 
+	 * or <code>null</code> if none
 	 * 
 	 * @since 3.3
 	 */
-	protected LaunchShortcutExtension getJavaApplicationLaunchShortcut() {
+	protected LaunchShortcutExtension getLaunchShortcutExtension(String id) {
 		List exts = getLaunchConfigurationManager().getLaunchShortcuts();
 		LaunchShortcutExtension ext = null;
 		for (int i = 0; i < exts.size(); i++) {
 			ext = (LaunchShortcutExtension) exts.get(i);
-			if(ext.getId().equals(JAVA_LAUNCH_SHORTCUT_ID)) {
+			if(ext.getId().equals(id)) {
 				return ext;
 			}
 		}

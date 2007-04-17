@@ -2330,18 +2330,6 @@
                </with>
            </enablement>
   		 </contextualLaunch>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
          <configurationType
                id="org.eclipse.jdt.launching.localJavaApplication">
          </configurationType>
@@ -2382,18 +2370,6 @@
            	</with>
            </enablement>
   		 </contextualLaunch>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
          <configurationType
                id="org.eclipse.jdt.launching.javaApplet">
          </configurationType>
