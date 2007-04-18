@@ -127,6 +127,13 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			fQualifiedNameSettings.clear();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#requiresUIJob(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+	 */
+	protected boolean requiresUIJob(ILabelUpdate[] updates) {
+		return !JDIModelPresentation.isInitialized();
+	}
 	
 	
 

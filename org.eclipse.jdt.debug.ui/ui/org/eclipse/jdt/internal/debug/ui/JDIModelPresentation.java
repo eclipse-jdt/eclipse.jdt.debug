@@ -114,8 +114,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	static final Point BIG_SIZE= new Point(16, 16);
 	
-	private ImageDescriptorRegistry fJavaElementImageRegistry;
-	private org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry;
+	private static ImageDescriptorRegistry fgJavaElementImageRegistry;
+	private static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fgDebugImageRegistry;
 	
 	/**
 	 * Flag to indicate if image registry's referenced by this model presentation is initialized
@@ -138,8 +138,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (fJavaLabelProvider != null) {
 			fJavaLabelProvider.dispose();
 		}
-		fJavaElementImageRegistry = null;
-		fDebugImageRegistry = null;
 		fAttributes.clear();
 	}
 
@@ -521,6 +519,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns whether the image registry's have been retrieved.
+	 * 
+	 * @return whether image registry's have been retrieved.
+	 */
+	public static boolean isInitialized() {
+		return fgJavaElementImageRegistry != null && fgDebugImageRegistry != null;
 	}
 	
 	/**
@@ -1891,18 +1898,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 	
-	protected ImageDescriptorRegistry getJavaElementImageRegistry() {
-		if (fJavaElementImageRegistry == null) {
-			fJavaElementImageRegistry = JavaPlugin.getImageDescriptorRegistry();		
+	protected static ImageDescriptorRegistry getJavaElementImageRegistry() {
+		if (fgJavaElementImageRegistry == null) {
+			fgJavaElementImageRegistry = JavaPlugin.getImageDescriptorRegistry();		
 		}
-		return fJavaElementImageRegistry;
+		return fgJavaElementImageRegistry;
 	}
 
-	protected org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
-		if (fDebugImageRegistry == null) {
-			fDebugImageRegistry = JDIDebugUIPlugin.getImageDescriptorRegistry();		
+	protected static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
+		if (fgDebugImageRegistry == null) {
+			fgDebugImageRegistry = JDIDebugUIPlugin.getImageDescriptorRegistry();		
 		}
-		return fDebugImageRegistry;
+		return fgDebugImageRegistry;
 	}
 
 	protected JavaElementLabelProvider getJavaLabelProvider() {
