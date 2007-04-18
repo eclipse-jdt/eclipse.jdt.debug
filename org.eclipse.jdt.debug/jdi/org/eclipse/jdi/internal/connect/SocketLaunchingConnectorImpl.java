@@ -14,15 +14,14 @@ package org.eclipse.jdi.internal.connect;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
-import com.ibm.icu.text.MessageFormat;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
@@ -150,23 +149,26 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		((Connector.IntegerArgument)args.get("timeout")).setValue(ACCEPT_TIMEOUT); //$NON-NLS-1$
 		listenConnector.startListening(args);
 		
-		ArrayList commandlist = new ArrayList();
-	// String for Executable.
+		// String for Executable.
 		String slash = System.getProperty("file.separator"); //$NON-NLS-1$
-		commandlist.add(fHome + slash + "bin" + slash + fLauncher); //$NON-NLS-1$
-	// Add Debug options.
-		commandlist.add(" -Xdebug -Xnoagent -Djava.compiler=NONE"); //$NON-NLS-1$
-		commandlist.add(" -Xrunjdwp:transport=dt_socket,address=localhost:" + listenConnector.listeningPort() + ",server=n,suspend=" + (fSuspend ? "y" : "n"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
-	// Add User specified options.
-		if (fOptions != null) {
-			commandlist.add(" " + fOptions); //$NON-NLS-1$
-		}
-	// Add Main class.
-		commandlist.add(" " + fMain); //$NON-NLS-1$
-	// Start VM.
-		Process proc = Runtime.getRuntime().exec((String[]) commandlist.toArray(new String[commandlist.size()]), null);
+		String execString = fHome + slash + "bin" + slash + fLauncher; //$NON-NLS-1$
+		
+		// Add Debug options.
+		execString += " -Xdebug -Xnoagent -Djava.compiler=NONE"; //$NON-NLS-1$
+		execString += " -Xrunjdwp:transport=dt_socket,address=localhost:" + listenConnector.listeningPort() + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-	// The accept times out if the VM does not connect.
+		// Add User specified options.
+		if (fOptions != null)
+			execString += " " + fOptions; //$NON-NLS-1$
+		
+		// Add Main class.
+		execString += " " + fMain; //$NON-NLS-1$
+		
+		// Start VM.
+		String[] cmdLine = DebugPlugin.parseArguments(execString);
+		Process proc = Runtime.getRuntime().exec(cmdLine);
+
+		// The accept times out if the VM does not connect.
 		VirtualMachineImpl virtualMachine;
 		try {
 			virtualMachine = (VirtualMachineImpl)listenConnector.accept(args);
@@ -175,6 +177,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 			String message= MessageFormat.format(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1, new String[]{((Connector.IntegerArgument)args.get("timeout")).value()}); //$NON-NLS-1$ 
 			throw new VMStartException(message, proc);
 		}
+		
 		virtualMachine.setLaunchedProcess(proc);
 		return virtualMachine;
 	}
