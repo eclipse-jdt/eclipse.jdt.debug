@@ -1709,7 +1709,12 @@ public final class JavaRuntime {
 	 * Make the name of a detected VM stand out.
 	 */
 	private static String generateDetectedVMName(IVMInstall vm) {
-		return vm.getInstallLocation().getName();
+		String name = vm.getInstallLocation().getName();
+		name = name.trim();
+		if (name.length() == 0) {
+			name = LaunchingMessages.JavaRuntime_25;
+		}
+		return name;
 	}
 	
 	/**

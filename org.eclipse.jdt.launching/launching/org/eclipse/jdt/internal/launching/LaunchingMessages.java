@@ -49,6 +49,8 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1;
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
 
+	public static String JavaRuntime_25;
+
 	public static String JavaRuntime_badFormat;
 	public static String JavaRuntime_exceptionsOccurred;
 	public static String JavaRuntime_Specified_VM_install_type_does_not_exist___0__2;
