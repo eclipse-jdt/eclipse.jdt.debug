@@ -537,10 +537,10 @@ public class AddVMDialog extends StatusDialog {
 				}
 			}
 			catch (NumberFormatException nfe) {
-				return new Point(500, 500);
+				return new Point(500, 570);
 			}
 		}
-		return new Point(500, 500);
+		return new Point(500, 570);
 	}
 
 	protected void setButtonLayoutData(Button button) {
