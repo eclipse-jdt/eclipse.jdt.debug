@@ -96,6 +96,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
+import org.eclipse.jdt.debug.tests.viewers.FilterTransformTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -209,6 +210,9 @@ public class AutomatedSuite extends DebugSuite {
 
 	//Memory view tests
 		addTest(new TestSuite(MemoryRenderingTests.class));
+		
+	// Viewer tests
+		addTest(new TestSuite(FilterTransformTests.class));
 
 	// Refactoring tests
 		//TODO: project rename
