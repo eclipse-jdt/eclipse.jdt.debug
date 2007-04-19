@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
@@ -37,6 +40,12 @@ public class AllReferencesInViewActionDelegate implements IPropertyChangeListene
 	 */
 	public void run(IAction action) {
 		HeapWalkingManager.getDefault().setShowReferenceInVarView(action.isChecked());
+		// If the current target doesn't support instance retrieval, warn the user that turning the option on will not do anything.
+		if (action.isChecked() && fView.getViewer() != null){
+			if (!HeapWalkingManager.supportsHeapWalking(fView.getViewer().getInput())){
+				JDIDebugUIPlugin.statusDialog(Messages.AllReferencesInViewActionDelegate_0,new Status(IStatus.WARNING,JDIDebugUIPlugin.getUniqueIdentifier(),Messages.AllReferencesInViewActionDelegate_1));
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

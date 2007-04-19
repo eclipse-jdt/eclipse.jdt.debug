@@ -18,9 +18,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
-import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
@@ -45,12 +42,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
         	if (!(value instanceof JDIAllInstancesValue) && !(value instanceof JDIReferenceListValue)) {
 	        	Object[] moreVariables = new Object[variables.length+1];
 	        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
-	        	
-	        	if (JavaVariableContentProvider.supportsInstanceRetrieval(parent)){
-	        		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaExpressionContentProvider_0, new String[]{value.getValueString()}),(IJavaObject)value);
-	        	} else {
-	        		moreVariables[0] = new JDIPlaceholderVariable(MessageFormat.format(VariableMessages.JavaExpressionContentProvider_0, new String[]{value.getValueString()}),new JDIPlaceholderValue((JDIDebugTarget)value.getDebugTarget(),VariableMessages.JavaExpressionContentProvider_2));
-	        	}
+        		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaExpressionContentProvider_0, new String[]{value.getValueString()}),(IJavaObject)value);
 	        	return getElements(moreVariables, index, length);
         	}
         }

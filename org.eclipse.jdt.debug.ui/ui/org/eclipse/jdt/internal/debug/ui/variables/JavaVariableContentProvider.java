@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -22,7 +21,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
 import com.ibm.icu.text.MessageFormat;
@@ -47,12 +45,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
         	Object[] moreVariables = new Object[variables.length+1];
         	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
         	IValue value = ((IVariable)parent).getValue();
-        	if (supportsInstanceRetrieval(parent)){
-        		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaVariableContentProvider_0, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
-        	} else {
-        		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaVariableContentProvider_0, new String[]{((IVariable)parent).getName()}),VariableMessages.JavaVariableContentProvider_2,(JDIDebugTarget)value.getDebugTarget());
-        	}
-        	
+       		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaVariableContentProvider_0, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
         	return getElements(moreVariables, index, length);
         }
         return getElements(variables, index, length);
@@ -87,35 +80,29 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	 * @throws DebugException
 	 */
 	public static boolean displayReferencesAsChild(Object parent) throws DebugException{
-		// Lists of references don't have references
-		if (!(parent instanceof JDIReferenceListVariable)){
-			IValue value = null;
-			if (parent instanceof IVariable){
-				value = ((IVariable)parent).getValue();
-			} else if (parent instanceof IExpression){
-				value = ((IExpression)parent).getValue();
-			} else{
-				return false;
-			}
-			// Only java objects have references
-			if (value instanceof IJavaObject){
-				// Null objects don't have references
-				if (!((IJavaDebugTarget)value.getDebugTarget()).nullValue().equals(value)){
-					return HeapWalkingManager.getDefault().isShowReferenceInVarView();
+		// Note, this method is used by the JavaExpressionContentProvider as well as the JavaVariableContentProvider
+		// Only display references if the target can support it
+		if (HeapWalkingManager.supportsHeapWalking(parent)){
+			// Lists of references don't have references
+			if (!(parent instanceof JDIReferenceListVariable)){
+				IValue value = null;
+				if (parent instanceof IVariable){
+					value = ((IVariable)parent).getValue();
+				} else if (parent instanceof IExpression){
+					value = ((IExpression)parent).getValue();
+				} else{
+					return false;
+				}
+				// Only java objects have references
+				if (value instanceof IJavaObject){
+					// Null objects don't have references
+					if (!((IJavaDebugTarget)value.getDebugTarget()).nullValue().equals(value)){
+						return HeapWalkingManager.getDefault().isShowReferenceInVarView();
+					}
 				}
 			}
 		}
 		return false;
 	}
 	
-	/**
-	 * Returns whether the given parent object is an <ode>IVariable</code> that has a debug
-	 * target capable of getting all instance or all reference information.
-	 * 
-	 * @param parent the object to test
-	 * @return whether the given object's debug target supports instance retrieval
-	 */
-	public static boolean supportsInstanceRetrieval(Object parent){
-		return ((IJavaDebugTarget)((IDebugElement)parent).getDebugTarget()).supportsInstanceRetrieval();
-	}
 }

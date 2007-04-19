@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+
 /**
  * Controls preferences related to heap walking so that they are available in java 
  * debug model code, but can be updated through the UI.
@@ -24,6 +28,23 @@ public class HeapWalkingManager{
 	 * Constructor. Intended to be called by getDefault()
 	 */
 	protected HeapWalkingManager() {}
+	
+	/**
+	 * Returns whether the given parent object is a debug element with a debug target
+	 * that supports retrieval of instance and reference information from the VM.
+	 * 
+	 * @param object the object to test, can be <code>null</code>
+	 * @return whether the given object has a debug target that supports heap walking
+	 */
+	public static boolean supportsHeapWalking(Object object){
+		if (object instanceof IDebugElement){
+			IDebugTarget target = ((IDebugElement)object).getDebugTarget();
+			if (target instanceof IJavaDebugTarget){
+				return ((IJavaDebugTarget)target).supportsInstanceRetrieval();
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * @return the default singleton instance of the manager

@@ -35,18 +35,6 @@ public class JDIReferenceListVariable extends JDIPlaceholderVariable{
 		super (name,new JDIReferenceListValue(root));
 	}
 	
-	/**
-	 * Creates a new variable that displays a message to the user.  Used when the
-	 * debug target does not support all reference capability.
-	 * 
-	 * @param name The name this variable should use
-	 * @param message The message that should be displayed as the value
-	 * @param target The debug target this variable belongs to
-	 */
-	public JDIReferenceListVariable(String name, String message, JDIDebugTarget target){
-		super(name, new JDIPlaceholderValue(target,message));
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable#equals(java.lang.Object)
 	 */

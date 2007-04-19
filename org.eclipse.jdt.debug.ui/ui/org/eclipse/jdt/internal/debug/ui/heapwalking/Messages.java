@@ -24,8 +24,10 @@ public class Messages extends NLS {
 	public static String AllInstancesActionDelegate_3;
 	
 	public static String AllReferencesActionDelegate_0;
-
 	public static String AllReferencesActionDelegate_1;
+
+	public static String AllReferencesInViewActionDelegate_0;
+	public static String AllReferencesInViewActionDelegate_1;
 
 	public static String ReferencesPopupDialog_0;
 	public static String ReferencesPopupDialog_1;
