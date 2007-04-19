@@ -124,7 +124,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 						// did not find source
 						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));
 					} else {
-						JDIDebugUIPlugin.statusDialog(status);
+						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
 					}			
 				} else {
 					processSearchResult(source, typeName, lineNumber);
