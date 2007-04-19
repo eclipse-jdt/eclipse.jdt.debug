@@ -13,6 +13,8 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.net.URL;
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -176,8 +178,12 @@ public final class LibraryStandin {
 		IPath path = getSystemLibrarySourcePath();
 		if (!path.isEmpty()) {
 			if (!path.toFile().exists()) {
-				return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, 
-						MessageFormat.format(JREMessages.LibraryStandin_1, new String[]{path.toOSString()}), null);
+				// check for workspace file
+				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+				if (!file.exists()) {
+					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, 
+							MessageFormat.format(JREMessages.LibraryStandin_1, new String[]{path.toOSString()}), null);
+				}
 			}
 		}
 		return Status.OK_STATUS;
