@@ -61,7 +61,9 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
@@ -433,12 +435,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		StringBuffer buffer= new StringBuffer();
 		// Always show type name for objects & arrays (but not Strings)
 		if (isObject && !isString && (refTypeName.length() > 0)) {
-			String qualTypeName= getQualifiedName(refTypeName);
-			if (isArray) {
-				qualTypeName= adjustTypeNameForArrayIndex(qualTypeName, ((IJavaArray)value).getLength());
+			// Don't show type name for instances and references
+			if (!(value instanceof JDIReferenceListValue || value instanceof JDIAllInstancesValue)){
+				String qualTypeName= getQualifiedName(refTypeName);
+				if (isArray) {
+					qualTypeName= adjustTypeNameForArrayIndex(qualTypeName, ((IJavaArray)value).getLength());
+				}
+				buffer.append(qualTypeName);
+				buffer.append(' ');
 			}
-			buffer.append(qualTypeName);
-			buffer.append(' ');
 		}
 		
 		// Put double quotes around Strings

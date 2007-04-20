@@ -44,7 +44,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
-import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
@@ -62,7 +61,6 @@ import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
 import org.eclipse.jdt.internal.debug.ui.monitors.MonitorsAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.internal.debug.ui.sourcelookup.JavaDebugShowInAdapterFactory;
-import org.eclipse.jdt.internal.debug.ui.threadgroups.ObjectReferencesAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.TargetAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.ThreadGroupAdapterFactory;
 import org.eclipse.jdt.internal.debug.ui.variables.ColumnPresentationAdapterFactory;
@@ -366,10 +364,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         
         IAdapterFactory targetFactory = new TargetAdapterFactory();
         manager.registerAdapters(targetFactory, IJavaDebugTarget.class);
-        
-        IAdapterFactory objectFactory = new ObjectReferencesAdapterFactory();
-        manager.registerAdapters(objectFactory, IJavaObject.class);
-        
+             
         IAdapterFactory groupFactory = new ThreadGroupAdapterFactory();
         manager.registerAdapters(groupFactory, IJavaThreadGroup.class);
         

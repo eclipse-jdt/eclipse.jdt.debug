@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
 import com.ibm.icu.text.MessageFormat;
@@ -45,7 +46,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
         	Object[] moreVariables = new Object[variables.length+1];
         	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
         	IValue value = ((IVariable)parent).getValue();
-       		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(VariableMessages.JavaVariableContentProvider_0, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
+       		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
         	return getElements(moreVariables, index, length);
         }
         return getElements(variables, index, length);
