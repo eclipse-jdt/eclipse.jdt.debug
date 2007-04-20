@@ -117,7 +117,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * Caches access rules returned by each participant for a given VM.
 	 * @since 3.3
 	 */
-	private static Map fParticipantMap = new HashMap();
+	private Map fParticipantMap = new HashMap();
 	
 	/**
 	 * Cache of VM -> IAccessRule[][] based on the current state of the participant
@@ -125,7 +125,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * for a specific VM. 
 	 * @since 3.3
 	 */
-	private static Map fRuleCache = new HashMap();
+	private Map fRuleCache = new HashMap();
 	
 	/**
 	 * Wild card pattern matching all files
