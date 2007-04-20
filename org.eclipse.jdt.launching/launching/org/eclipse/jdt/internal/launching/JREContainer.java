@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.launching;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,30 +60,181 @@ public class JREContainer implements IClasspathContainer {
 	 */
 	private static Map fgClasspathEntries = new HashMap(10);
 	
+	/**
+	 * Variable to return an empty array of <code>IAccessRule</code>s
+	 */
 	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
 	
 	// debug flags
 	public static boolean DEBUG_JRE_CONTAINER = false;
 	
 	/**
+	 * Map of {IVMInstall -> Map of {{IExeuctionEnvironment, IAccessRule[][]} -> {IClasspathEntry[]}} 
+	 */
+	private static Map fgClasspathEntriesWithRules = new HashMap(10);
+	
+	/**
+	 * A single key entry for the cache of access rules and classpath entries
+	 * A rule key is made up of an <code>IVMInstall</code> and an execution environment id
+	 * @since 3.3
+	 */
+	static class RuleKey {
+		private String fEnvironmentId = null;
+		private IVMInstall fInstall = null;
+		
+		/**
+		 * Constructor
+		 * @param install
+		 * @param environmentId
+		 */
+		public RuleKey(IVMInstall install, String environmentId) {
+			fInstall = install;
+			fEnvironmentId = environmentId;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (obj instanceof RuleKey) {
+				RuleKey key = (RuleKey) obj;
+				return fEnvironmentId.equals(key.fEnvironmentId) && fInstall.equals(key.fInstall);
+			}
+			return false;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return fEnvironmentId.hashCode() + fInstall.hashCode();
+		}
+	}
+	
+	/**
+	 * Holds an entry for the cache of access rules/classpath entries.
+	 * An entry is made up of an array of classpath entries and the collection of access rules. 
+	 * @since 3.3
+	 */
+	static class RuleEntry {
+		private IAccessRule[][] fRules = null;
+		private IClasspathEntry[] fEntries = null;
+		
+		/**
+		 * Constructor
+		 * @param rules
+		 * @param entries
+		 */
+		public RuleEntry(IAccessRule[][] rules, IClasspathEntry[] entries) {
+			fRules = rules;
+			fEntries = entries;
+		}
+		
+		/**
+		 * Returns the collection oof classpath entries for this RuleEntry
+		 * @return the cached aray of classpath entries
+		 */
+		public IClasspathEntry[] getClasspathEntries() {
+			return fEntries;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			IAccessRule[][] rules = null;
+			if(obj instanceof RuleEntry) {
+				rules = ((RuleEntry)obj).fRules;
+			}
+			if(obj instanceof IAccessRule[][]) {
+				rules = (IAccessRule[][]) obj;
+			}
+			if(rules != null) {
+				if (fRules == rules) {
+					return true;
+				}
+				if (fRules.length == rules.length) {
+					boolean equal = true;
+					IAccessRule[] originalrule, comparerule = null; 
+					for (int i = 0; i < fRules.length; i++) {
+						originalrule = fRules[i];
+						comparerule = rules[i];
+						equal &= (originalrule == comparerule);
+						if(!equal) {
+							if (originalrule.length == comparerule.length) {
+								for (int j = 0; j < originalrule.length; j++) {
+									if (!originalrule[j].equals(comparerule[j])) {
+										return false;
+									}
+								}
+								return true;
+							} 
+							else {
+								return false;
+							}
+						}
+					}
+					return equal;
+				}
+			}
+			return false;
+		}
+	}
+	
+	/**
 	 * Add a vm changed listener to clear cached values when a VM changes or is removed
 	 */
 	static {
 		IVMInstallChangedListener listener = new IVMInstallChangedListener() {
-			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
-			}
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
+			 */
+			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
+			 */
+			public void vmAdded(IVMInstall newVm) {}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
+			 */
 			public void vmChanged(PropertyChangeEvent event) {
 				if (event.getSource() != null) {
 					fgClasspathEntries.remove(event.getSource());
+					removeRuleEntry(event.getSource());
 				}
 			}
 
-			public void vmAdded(IVMInstall newVm) {
-			}
-
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
+			 */
 			public void vmRemoved(IVMInstall removedVm) {
 				fgClasspathEntries.remove(removedVm);
+				removeRuleEntry(removedVm);
+			}
+			
+			/**
+			 * Removes all occurances of the given vm found as part key members in the current
+			 * cache for classpath entries
+			 * @param obj an object which should be castable to IVMInstall
+			 */
+			private void removeRuleEntry(Object obj) {
+				if(obj instanceof IVMInstall) {
+					IVMInstall install = (IVMInstall) obj;
+					RuleKey key = null;
+					ArrayList list = new ArrayList();
+					for(Iterator iter = fgClasspathEntriesWithRules.keySet().iterator(); iter.hasNext();) {
+						key  = (RuleKey) iter.next();
+						if(key.fInstall.equals(install)) {
+							list.add(key);
+						}
+					}
+					for(int i = 0; i < list.size(); i++) {
+						fgClasspathEntriesWithRules.remove(list.get(i));
+					}
+				}
 			}
 		};
 		JavaRuntime.addVMInstallChangedListener(listener);
@@ -149,6 +301,14 @@ public class JREContainer implements IClasspathContainer {
 				rules = environment.getAccessRules(vm, libs, project);
 			}
 		}
+		RuleKey key = null;
+		if (vm != null && rules != null && environmentId != null) {
+			key = new RuleKey(vm, environmentId);
+			RuleEntry entry = (RuleEntry) fgClasspathEntriesWithRules.get(key);
+			if(entry != null && entry.equals(rules)) {
+				return entry.getClasspathEntries();
+			}
+		}
 		List entries = new ArrayList(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			if (!libs[i].getSystemLibraryPath().isEmpty()) {
@@ -179,9 +339,13 @@ public class JREContainer implements IClasspathContainer {
 				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), sourcePath, rootPath, libRules, attributes, false));
 			}
 		}
-		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);		
+		IClasspathEntry[] cpEntries = (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
+		if (key != null && rules != null) {
+			fgClasspathEntriesWithRules.put(key, new RuleEntry(rules, cpEntries));
+		}
+		return cpEntries;		
 	}
-	
+
 	/**
 	 * Constructs a JRE classpath container on the given VM install
 	 * 
@@ -207,9 +371,6 @@ public class JREContainer implements IClasspathContainer {
 		IClasspathEntry[] entries = getClasspathEntries(fVMInstall, getPath(), fProject);
 		if (DEBUG_JRE_CONTAINER) {
 			System.out.println("\tResolved " + entries.length + " entries:");  //$NON-NLS-1$//$NON-NLS-2$
-//			for (int i = 0; i < entries.length; i++) {
-//				System.out.println("\t\t" + entries[i].getPath().toString() + " +[" + entries[i].getAccessRules().length + " access rules]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//			}
 		}
 		return entries;
 	}
