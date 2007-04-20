@@ -50,39 +50,37 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Add a vm changed listener to clear cached values when a VM changes or is removed
 	 */
-	static {
-		IVMInstallChangedListener listener = new IVMInstallChangedListener() {
+	private IVMInstallChangedListener fListener = new IVMInstallChangedListener() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
-			 */
-			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
-			 */
-			public void vmAdded(IVMInstall newVm) {}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void vmAdded(IVMInstall newVm) {}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
-			 */
-			public void vmChanged(PropertyChangeEvent event) {
-				if (event.getSource() != null) {
-					fParticipantMap.remove(event.getSource());
-					fRuleCache.remove(event.getSource());
-				}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
+		 */
+		public void vmChanged(PropertyChangeEvent event) {
+			if (event.getSource() != null) {
+				fParticipantMap.remove(event.getSource());
+				fRuleCache.remove(event.getSource());
 			}
+		}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
-			 */
-			public void vmRemoved(IVMInstall removedVm) {
-				fParticipantMap.remove(removedVm);
-				fRuleCache.remove(removedVm);
-			}
-		};
-		JavaRuntime.addVMInstallChangedListener(listener);
-	}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void vmRemoved(IVMInstall removedVm) {
+			fParticipantMap.remove(removedVm);
+			fRuleCache.remove(removedVm);
+		}
+	};
+		
 	
 	/**
 	 * The backing <code>IConfigurationElement</code>
@@ -144,6 +142,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		if (attribute != null) {
 			fRuleParticipant = new AccessRuleParticipant(fElement);
 		}
+		JavaRuntime.addVMInstallChangedListener(fListener);
 	}
 	
 	/**
