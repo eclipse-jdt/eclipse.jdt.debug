@@ -96,6 +96,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
+import org.eclipse.jdt.debug.tests.viewers.ChildrenUpdateTests;
 import org.eclipse.jdt.debug.tests.viewers.FilterTransformTests;
 
 /**
@@ -213,6 +214,7 @@ public class AutomatedSuite extends DebugSuite {
 		
 	// Viewer tests
 		addTest(new TestSuite(FilterTransformTests.class));
+		addTest(new TestSuite(ChildrenUpdateTests.class));
 
 	// Refactoring tests
 		//TODO: project rename
