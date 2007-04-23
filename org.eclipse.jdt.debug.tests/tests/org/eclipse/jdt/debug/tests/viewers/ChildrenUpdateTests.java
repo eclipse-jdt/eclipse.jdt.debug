@@ -34,23 +34,23 @@ public class ChildrenUpdateTests extends AbstractDebugTest {
 	 */
 	public void testCoalesce () {
 		Object element = new Object();
-		ChildrenUpdate update1 = new ChildrenUpdate(null, TreePath.EMPTY, element, 1, null);
-		ChildrenUpdate update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 2, null);
+		ChildrenUpdate update1 = new ChildrenUpdate(null, TreePath.EMPTY, element, 1, null, null);
+		ChildrenUpdate update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 2, null, null);
 		assertTrue("Should coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 2, update1.getLength());
 		
-		update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 3, null);
+		update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 3, null, null);
 		assertTrue("Should coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 3, update1.getLength());
 		
-		update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 2, null);
+		update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 2, null, null);
 		assertTrue("Should coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 3, update1.getLength());		
 		
-		update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 5, null);
+		update2 = new ChildrenUpdate(null, TreePath.EMPTY, element, 5, null, null);
 		assertFalse("Should not coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 3, update1.getLength());
