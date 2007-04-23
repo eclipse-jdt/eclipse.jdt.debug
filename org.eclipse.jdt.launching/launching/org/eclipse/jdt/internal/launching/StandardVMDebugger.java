@@ -318,14 +318,15 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * 
 	 * No work is done if not on a windows platform.
 	 * 
-	 * @param env the current array of environemt variables to run with
+	 * @param env the current array of environment variables to run with
 	 * @param jdkpath the path to the executable (javaw).
 	 * @since 3.3
 	 */
 	private String[] prependJREPath(String[] env, IPath jdkpath) {
 		if(Platform.getOS().equals(Platform.OS_WIN32)) {
-			IPath jrepath = jdkpath.removeLastSegments(2).append("jre").append("bin").addTrailingSeparator(); //$NON-NLS-1$ //$NON-NLS-2$
+			IPath jrepath = jdkpath.removeLastSegments(2).append("jre").append("bin"); //$NON-NLS-1$ //$NON-NLS-2$
 			if(jrepath.toFile().exists()) {
+				String jrestr = jrepath.toOSString();
 				if(env == null){
 					Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
 					env = new String[map.size()];
@@ -333,21 +334,30 @@ public class StandardVMDebugger extends StandardVMRunner {
 					int index = 0;
 					for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
 						var = (String) iter.next();
-						env[index] = var+"="+map.get(var); //$NON-NLS-1$
+						String value = (String) map.get(var);
+						if (value == null) {
+							value = ""; //$NON-NLS-1$
+						}
+						if (var.equalsIgnoreCase("path")) { //$NON-NLS-1$
+							if(value.indexOf(jrestr) == -1) {
+								value = jrestr+';'+value;
+							}
+						}
+						env[index] = var+"="+value; //$NON-NLS-1$
 						index++;
 					}
-				}
-				String var = null;
-				int esign = -1;
-				String jrestr = jrepath.toOSString();
-				for(int i = 0; i < env.length; i++) {
-					esign = env[i].indexOf('=');
-					if(esign > -1) {
-						var = env[i].substring(0, esign);
-						if(var != null && var.equalsIgnoreCase("path")) { //$NON-NLS-1$
-							if(env[i].indexOf(jrestr) == -1) {
-								env[i] = var + "="+jrestr+';'+(esign == env.length ? "" : env[i].substring(esign+1)); //$NON-NLS-1$ //$NON-NLS-2$
-								break;
+				} else {
+					String var = null;
+					int esign = -1;
+					for(int i = 0; i < env.length; i++) {
+						esign = env[i].indexOf('=');
+						if(esign > -1) {
+							var = env[i].substring(0, esign);
+							if(var != null && var.equalsIgnoreCase("path")) { //$NON-NLS-1$
+								if(env[i].indexOf(jrestr) == -1) {
+									env[i] = var + "="+jrestr+';'+(esign == env.length ? "" : env[i].substring(esign+1)); //$NON-NLS-1$ //$NON-NLS-2$
+									break;
+								}
 							}
 						}
 					}
