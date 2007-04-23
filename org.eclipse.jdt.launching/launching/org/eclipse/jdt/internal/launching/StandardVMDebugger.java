@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -175,7 +179,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		
-		String[] envp= config.getEnvironment();
+		//With the newer VMs and no backwards compatibiltiy we have to always prepend the current env path (only the runtime one)
+		//with a 'corrected' path that points to the location to load the debug dlls from, this location is of the standard JDK installation 
+		//format: <jdk path>/jre/bin
+		String[] envp = prependJREPath(config.getEnvironment(), new Path(program));
 		
 		// check for cancellation
 		if (monitor.isCanceled()) {
@@ -303,6 +310,53 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 	}
 
+	/**
+	 * Prepends the location of the JRE bin directory for the given JDK path to the PATH variable in Windows.
+	 * This method assumes that the JRE is located within the JDK install directory
+	 * in: <code><JDK install dir>/jre/bin/</code> where the JDK itself would be located 
+	 * in: <code><JDK install dir>/bin/</code> 
+	 * 
+	 * No work is done if not on a windows platform.
+	 * 
+	 * @param env the current array of environemt variables to run with
+	 * @param jdkpath the path to the executable (javaw).
+	 * @since 3.3
+	 */
+	private String[] prependJREPath(String[] env, IPath jdkpath) {
+		if(Platform.getOS().equals(Platform.OS_WIN32)) {
+			IPath jrepath = jdkpath.removeLastSegments(2).append("jre").append("bin").addTrailingSeparator(); //$NON-NLS-1$ //$NON-NLS-2$
+			if(jrepath.toFile().exists()) {
+				if(env == null){
+					Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
+					env = new String[map.size()];
+					String var = null;
+					int index = 0;
+					for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
+						var = (String) iter.next();
+						env[index] = var+"="+map.get(var); //$NON-NLS-1$
+						index++;
+					}
+				}
+				String var = null;
+				int esign = -1;
+				String jrestr = jrepath.toOSString();
+				for(int i = 0; i < env.length; i++) {
+					esign = env[i].indexOf('=');
+					if(esign > -1) {
+						var = env[i].substring(0, esign);
+						if(var != null && var.equalsIgnoreCase("path")) { //$NON-NLS-1$
+							if(env[i].indexOf(jrestr) == -1) {
+								env[i] = var + "="+jrestr+';'+(esign == env.length ? "" : env[i].substring(esign+1)); //$NON-NLS-1$ //$NON-NLS-2$
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return env;
+	}
+	
 	/**
 	 * Creates a new debug target for the given virtual machine and system process
 	 * that is connected on the specified port for the given launch.
