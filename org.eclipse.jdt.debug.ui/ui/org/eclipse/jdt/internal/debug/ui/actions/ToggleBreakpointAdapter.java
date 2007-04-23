@@ -426,12 +426,17 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	String tname = type.getFullyQualifiedName();
     	try {
 	    	if(!type.getJavaProject().exists()) {
-				IPackageDeclaration[] pd = type.getCompilationUnit().getPackageDeclarations();
-				if(pd.length > 0) {
-					String pack = pd[0].getElementName();
-					if(!pack.equals(EMPTY_STRING)) {
-						tname =  pack+"."+tname; //$NON-NLS-1$
+	    		String packName = null;
+	    		if (type.isBinary()) {
+	    			packName = type.getPackageFragment().getElementName();
+	    		} else {
+	    			IPackageDeclaration[] pd = type.getCompilationUnit().getPackageDeclarations();
+					if(pd.length > 0) {
+						packName = pd[0].getElementName();
 					}
+	    		}
+				if(packName != null && !packName.equals(EMPTY_STRING)) {
+					tname =  packName+"."+tname; //$NON-NLS-1$
 				}
 			}
 	    	if(type.isAnonymous()) {
