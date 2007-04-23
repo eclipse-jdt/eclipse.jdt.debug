@@ -90,9 +90,6 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIReferenceListValue_8;
 	public static String JDIReferenceListValue_9;
 	public static String JDIReferenceListValue_11;
-	public static String JDIReferenceListValue_12;
-	public static String JDIReferenceListValue_13;
-	public static String JDIReferenceListValue_14;
 	public static String JDIReferenceListValue_15;
 
 	public static String JDIReferenceType_5;

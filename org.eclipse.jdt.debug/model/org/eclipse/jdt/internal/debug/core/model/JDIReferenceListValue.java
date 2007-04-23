@@ -155,18 +155,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
-		if (referencesLoaded()){
-			int length = getReferences().length;
-			if (fIsMoreThanPreference){
-				return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_12,new String[]{Integer.toString(length-1)});
-			} else if (length == 1) {
-				return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_13,new String[]{Integer.toString(length)});
-			} else {
-				return MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_14,new String[]{Integer.toString(length)});
-			}
-		} else {
-			return ""; //$NON-NLS-1$
-		}
+		return ""; //$NON-NLS-1$
 	}
 	
 	/**
