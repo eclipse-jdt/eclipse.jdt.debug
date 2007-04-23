@@ -2344,14 +2344,26 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
         return this;
     }
     
+    /**
+     * Adds the given thread group to the list of known thread groups.  Also adds any parent thread groups
+     * that have already been added to the list.
+     * 
+     * @param group thread group to add
+     */
     void addThreadGroup(ThreadGroupReference group) {
-    	synchronized (fGroups) {
-    		if (findThreadGroup(group) == null) {
-    			JDIThreadGroup modelGroup = new JDIThreadGroup(this, group);
-        		fGroups.add(modelGroup);
-        		// TODO: create event?
-    		}
-		}
+    	ThreadGroupReference currentGroup = group;
+    	while(currentGroup != null){
+	    	synchronized (fGroups) {
+	    		if (findThreadGroup(currentGroup) == null) {
+	    			JDIThreadGroup modelGroup = new JDIThreadGroup(this, currentGroup);
+	        		fGroups.add(modelGroup);
+	        		currentGroup = currentGroup.parent();
+	        		// TODO: create event?
+	    		} else {
+	    			currentGroup = null;
+	    		}
+			}
+    	}
     }
     
     JDIThreadGroup findThreadGroup(ThreadGroupReference group) {
