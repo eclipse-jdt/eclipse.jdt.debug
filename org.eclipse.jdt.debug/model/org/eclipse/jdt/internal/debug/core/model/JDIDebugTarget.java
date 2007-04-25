@@ -2346,7 +2346,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
     
     /**
      * Adds the given thread group to the list of known thread groups.  Also adds any parent thread groups
-     * that have already been added to the list.
+     * that have not already been added to the list.
      * 
      * @param group thread group to add
      */
