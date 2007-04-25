@@ -379,7 +379,7 @@ public class VMDefinitionsContainer {
 	 * </p>
 	 * <p>
 	 * If the <code>getAsXML</code> method is called on the returned container object,
-	 * the resulting XML will be sematically equivalent (though not necessarily syntactically equivalent) as
+	 * the resulting XML will be semantically equivalent (though not necessarily syntactically equivalent) as
 	 * the XML contained in <code>inputStream</code>.
 	 * </p>
 	 * @param inputStream the <code>InputStream</code> containing XML that declares a set of VMs and a default VM
@@ -445,18 +445,10 @@ public class VMDefinitionsContainer {
 		String id = vmTypeElement.getAttribute("id");         //$NON-NLS-1$
 		IVMInstallType vmType= JavaRuntime.getVMInstallType(id);
 		if (vmType != null) {
-			
 			// For each VM child node, populate the container with a subordinate node
-			NodeList vmNodeList = vmTypeElement.getChildNodes();
+			NodeList vmNodeList = vmTypeElement.getElementsByTagName("vm"); //$NON-NLS-1$
 			for (int i = 0; i < vmNodeList.getLength(); ++i) {
-				Node vmNode = vmNodeList.item(i);
-				short type = vmNode.getNodeType();
-				if (type == Node.ELEMENT_NODE) {
-					Element vmElement = (Element) vmNode;
-					if (vmElement.getNodeName().equalsIgnoreCase("vm")) { //$NON-NLS-1$
-						populateVMForType(vmType, vmElement, container);
-					}
-				}
+				populateVMForType(vmType, (Element) vmNodeList.item(i), container);
 			}
 		} else {
 			LaunchingPlugin.log("VM type element with unknown id.");  //$NON-NLS-1$
