@@ -42,7 +42,7 @@ public class FilterTransformTests extends AbstractDebugTest {
 	/**
 	 * Builds a filter transform. Model has 8 elements,
 	 * and elements 0, 2, 3, 6, 7 are filtered. Elements
-	 * 1, 4, 5 are visibile.
+	 * 1, 4, 5 are visible.
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
