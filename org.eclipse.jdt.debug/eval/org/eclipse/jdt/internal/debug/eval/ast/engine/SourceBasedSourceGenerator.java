@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -235,6 +236,18 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		if (fCreateInAStaticMethod) {
 			buffer.append("static "); //$NON-NLS-1$
 		}
+		
+		// add type parameters as required
+		if (isSourceLevelGreaterOrEqual(1, 5)) {
+			for (int i = 0; i < fLocalVariableTypeNames.length; i++) {
+				int index = fLocalVariableTypeNames[i].indexOf(Signature.C_GENERIC_START);
+				if (index > 0) {
+					String sig = fLocalVariableTypeNames[i].substring(index);
+					buffer.append(sig);
+					buffer.append(' ');
+				}
+			}
+		}
 
 		buffer.append("void "); //$NON-NLS-1$
 		buffer.append(getUniqueMethodName(RUN_METHOD_NAME, bodyDeclarations));
@@ -440,8 +453,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		source.append(Flags.toString(modifiers));
 		source.append(' ');
 		
-		boolean isConstructor= methodDeclaration.isConstructor();
+		appendTypeParameters(source, methodDeclaration.typeParameters());
 		
+		boolean isConstructor= methodDeclaration.isConstructor();
 		if (!isConstructor) {
 			source.append(getDotName(getTypeName(methodDeclaration.getReturnType2())));
 			source.append(' ');
@@ -1772,4 +1786,46 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return (fSourceMajorLevel > major) ||
 			(fSourceMajorLevel == major && fSourceMinorLevel >= minor);
 	}
+	
+	/**
+	 * Appends type parameters to source.
+	 * 
+	 * @param source
+	 * @param typeParameters
+	 */
+	private void appendTypeParameters(StringBuffer source, List typeParameters) {
+		if (!typeParameters.isEmpty() && isSourceLevelGreaterOrEqual(1, 5)) {
+			source.append('<');
+			Iterator iter= typeParameters.iterator();
+			TypeParameter typeParameter= (TypeParameter) iter.next();
+			source.append(typeParameter.getName().getIdentifier());
+			List typeBounds= typeParameter.typeBounds();
+			if (!typeBounds.isEmpty()) {
+				source.append(" extends "); //$NON-NLS-1$
+				Iterator iter2= typeBounds.iterator();
+				source.append(getTypeName((Type) iter2.next()));
+				while (iter2.hasNext()) {
+					source.append('&');
+					source.append(getTypeName((Type) iter2.next()));
+				}
+			}
+			while (iter.hasNext()) {
+				source.append(',');
+				typeParameter= (TypeParameter) iter.next();
+				source.append(typeParameter.getName().getIdentifier());
+				typeBounds= typeParameter.typeBounds();
+				if (!typeBounds.isEmpty()) {
+					source.append(" extends "); //$NON-NLS-1$
+					Iterator iter2= typeBounds.iterator();
+					source.append(getTypeName((Type) iter2.next()));
+					while (iter2.hasNext()) {
+						source.append('&');
+						source.append(getTypeName((Type) iter2.next()));
+					}
+				}
+			}
+			source.append('>');
+			source.append(' ');
+		}		
+	}		
 }
