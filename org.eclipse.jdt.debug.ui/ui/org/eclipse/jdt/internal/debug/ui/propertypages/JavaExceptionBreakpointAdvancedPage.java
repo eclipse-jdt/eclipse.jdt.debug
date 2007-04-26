@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 public class JavaExceptionBreakpointAdvancedPage extends JavaBreakpointAdvancedPage {
 
@@ -27,10 +29,21 @@ public class JavaExceptionBreakpointAdvancedPage extends JavaBreakpointAdvancedP
 		fFilterEditor.doStore();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointAdvancedPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
+	 */
 	protected void createTypeSpecificEditors(Composite parent) {
 		fFilterEditor= new ExceptionFilterEditor(parent, this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_EXCEPTION_BREAKPOINT_FILTERING_PAGE);
+	}
+
 	protected Button createButton(Composite parent, String text) {
 		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
 		button.setText(text);
