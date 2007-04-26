@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 
 /**
+ * Base implementation of a label provider for Java variables
  * @since 3.2
- *
  */
 public class JavaVariableLabelProvider extends VariableLabelProvider implements IPropertyChangeListener {
 	
@@ -84,6 +84,11 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		return typeName;		
 	}
 
+	/**
+	 * Returns if the the specified presentation context is showing qualified names or not
+	 * @param context
+	 * @return true if the presentation context is showing qualified names, false otherwise
+	 */
 	private Boolean isShowQualfiiedNames(IPresentationContext context) {
 		Boolean qualified = (Boolean) fQualifiedNameSettings.get(context.getId());
 		if (qualified == null) {
@@ -121,7 +126,9 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		super.retrieveLabel(update);
 	}
 
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
 			fQualifiedNameSettings.clear();
