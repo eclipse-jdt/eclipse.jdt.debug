@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
+ *     			from Eclipse
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -177,7 +179,7 @@ public abstract class ConnectorImpl implements Connector {
 	 	}
 	 	
 		public String value() {
-			return fValue.toString();
+			return (fValue == null) ? null : fValue.toString();
 		}
 		
 		public void setValue(String value) {
@@ -232,7 +234,7 @@ public abstract class ConnectorImpl implements Connector {
 	 	}
 	 	
 		public String value() {
-			return fValue.toString();
+			return (fValue == null) ? null : fValue.toString();
 		}
 		
 		public void setValue(String value) {

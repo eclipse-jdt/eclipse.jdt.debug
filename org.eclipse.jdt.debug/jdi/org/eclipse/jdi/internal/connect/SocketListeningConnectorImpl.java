@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
+ *     			from Eclipse
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -18,7 +20,6 @@ import java.util.Map;
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
 
 import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.ListeningConnector;
 
@@ -78,12 +79,18 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	private void getConnectionArguments(Map connectionArgs) throws IllegalConnectorArgumentsException {
 		String attribute = "port"; //$NON-NLS-1$
 		try {
-		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
+			// If listening port is not specified, use port 0 
+			IntegerArgument argument = (IntegerArgument) connectionArgs.get(attribute);
+			if (argument != null && argument.value() != null) {
+				fPort = argument.intValue();
+			} else {
+				fPort = 0;
+			}
 		 	// Note that timeout is not used in SUN's ListeningConnector, but is used by our
 		 	// LaunchingConnector.
 		 	attribute = "timeout"; //$NON-NLS-1$
-             IntegerArgument argument = (IntegerArgument) connectionArgs.get(attribute);
-             if (argument != null) {
+             argument = (IntegerArgument) connectionArgs.get(attribute);
+             if (argument != null && argument.value() != null) {
                  fTimeout = argument.intValue();
              } else {
                  fTimeout = 0;
@@ -103,9 +110,9 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 */
 	public String startListening(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
-		String result = Integer.toString(fPort); 
+		String result = null;
 		try {
-			((SocketTransportImpl)fTransport).startListening(fPort);
+			result = ((SocketTransportImpl)fTransport).startListening(fPort);
 		} catch (IllegalArgumentException e) {
 			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketListeningConnectorImpl_ListeningConnector_Socket_Port, "port"); //$NON-NLS-1$
 		}

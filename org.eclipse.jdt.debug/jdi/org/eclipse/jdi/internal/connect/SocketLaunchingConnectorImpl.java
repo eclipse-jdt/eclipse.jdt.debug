@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
+ *     			from Eclipse
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -144,10 +146,8 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		// Note that port number zero means that a free port is chosen.
 		SocketListeningConnectorImpl listenConnector = new SocketListeningConnectorImpl(virtualMachineManager());
 		Map args = listenConnector.defaultArguments();
-		int port = findFreePort();
-		((Connector.IntegerArgument)args.get("port")).setValue(port); //$NON-NLS-1$
 		((Connector.IntegerArgument)args.get("timeout")).setValue(ACCEPT_TIMEOUT); //$NON-NLS-1$
-		listenConnector.startListening(args);
+		String address = listenConnector.startListening(args);
 		
 		// String for Executable.
 		String slash = System.getProperty("file.separator"); //$NON-NLS-1$
@@ -155,7 +155,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		
 		// Add Debug options.
 		execString += " -Xdebug -Xnoagent -Djava.compiler=NONE"; //$NON-NLS-1$
-		execString += " -Xrunjdwp:transport=dt_socket,address=localhost:" + listenConnector.listeningPort() + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		execString += " -Xrunjdwp:transport=dt_socket,address=" + address + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		// Add User specified options.
 		if (fOptions != null)

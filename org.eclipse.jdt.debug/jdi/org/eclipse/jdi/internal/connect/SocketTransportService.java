@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
+ *     			from Eclipse
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -256,7 +258,7 @@ public class SocketTransportService extends TransportService {
      */
     public ListenKey startListening(String address) throws IOException {
         String host = null;
-        int port = 8888; // jdt debugger will always specify an address in
+        int port = 0;       // jdt debugger will always specify an address in
                             // the form localhost:port
         if (address != null) {
             String[] strings = address.split(":"); //$NON-NLS-1$
@@ -273,6 +275,7 @@ public class SocketTransportService extends TransportService {
         }
 
         fServerSocket = new ServerSocket(port);
+        port = fServerSocket.getLocalPort();
         ListenKey listenKey = new SocketListenKey(host + ":" + port); //$NON-NLS-1$
         return listenKey;
     }
