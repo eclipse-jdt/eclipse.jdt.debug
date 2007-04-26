@@ -2209,8 +2209,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(ForStatement)
-	 * return <code>false</code>, don't use the standart accept order.
-	 * order used for visite children :
+	 * return <code>false</code>, don't use the standard accept order.
+	 * order used for visiting children :
 	 * initializers, condition, body, updaters
 	 */
 	public boolean visit(ForStatement node) {
