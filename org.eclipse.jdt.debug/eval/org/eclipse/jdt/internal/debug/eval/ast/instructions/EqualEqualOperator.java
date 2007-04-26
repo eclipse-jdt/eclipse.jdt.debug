@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
@@ -38,7 +39,12 @@ public class EqualEqualOperator extends BinaryOperator {
 				equals= ((IJavaPrimitiveValue) leftOperand).getLongValue() == ((IJavaPrimitiveValue) rightOperand).getLongValue();
 				break;
 			case T_int :
-				equals= ((IJavaPrimitiveValue) leftOperand).getIntValue() == ((IJavaPrimitiveValue) rightOperand).getIntValue();
+				if (leftOperand instanceof IJavaObject) {
+					// enumerations in switch statement
+					equals = leftOperand.equals(rightOperand);
+				} else {
+					equals= ((IJavaPrimitiveValue) leftOperand).getIntValue() == ((IJavaPrimitiveValue) rightOperand).getIntValue();
+				}
 				break;
 			case T_boolean :
 				equals= ((IJavaPrimitiveValue) leftOperand).getBooleanValue() == ((IJavaPrimitiveValue) rightOperand).getBooleanValue();
