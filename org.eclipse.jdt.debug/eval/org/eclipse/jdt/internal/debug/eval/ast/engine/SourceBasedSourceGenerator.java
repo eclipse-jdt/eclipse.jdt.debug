@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -105,6 +107,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
 
+
 public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
@@ -140,11 +143,20 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private int fRunMethodLength;
 	
 	/**
+	 * Level of source code to generate (major, minor). For example 1 and 4 
+	 * indicates 1.4.
+	 */
+	private int fSourceMajorLevel;
+	private int fSourceMinorLevel;
+	
+	private Set fTypeParameters = new HashSet();
+	
+	/**
 	 * if the <code>createInAnInstanceMethod</code> flag is set, the method created
 	 * which contains the code snippet is an no-static method, even if <code>position</code>
 	 * is in a static method.
 	 */
-	public SourceBasedSourceGenerator(CompilationUnit unit, String typeName, int position, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public SourceBasedSourceGenerator(CompilationUnit unit, String typeName, int position, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet, String sourceLevel) {
 		fRightTypeFound= false;
 		fUnit= unit;
 		fTypeName= typeName;
@@ -153,6 +165,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
 		fCreateInAStaticMethod= createInAStaticMethod;
+		int index = sourceLevel.indexOf('.');
+		String num = sourceLevel.substring(0, index);
+		fSourceMajorLevel = Integer.valueOf(num).intValue();
+		num = sourceLevel.substring(index + 1);
+		fSourceMinorLevel = Integer.valueOf(num).intValue();
 	}
 	
 	/**
@@ -528,7 +545,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		source.append(typeDeclaration.getName().getIdentifier());
 
 		List typeParameters= typeDeclaration.typeParameters();
-		if (!typeParameters.isEmpty()) {
+		if (!typeParameters.isEmpty() && isSourceLevelGreaterOrEqual(1, 5)) {
 			source.append('<');
 			Iterator iter= typeParameters.iterator();
 			TypeParameter typeParameter= (TypeParameter) iter.next();
@@ -701,7 +718,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	public String getTypeName(Type type) {
 		if (type.isSimpleType()) {
-			return getQualifiedIdentifier(((SimpleType) type).getName());
+			String name = getQualifiedIdentifier(((SimpleType) type).getName());
+			if (!isSourceLevelGreaterOrEqual(1, 5) && fTypeParameters.contains(name)) {
+				return "Object"; //$NON-NLS-1$
+			}
+			return name;
 		} else if (type.isArrayType()) {
 			return getTypeName(((ArrayType) type).getComponentType()) + "[]"; //$NON-NLS-1$
 		} else if (type.isPrimitiveType()) {
@@ -713,7 +734,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			ParameterizedType parameterizedType= (ParameterizedType)type;
 			StringBuffer buff= new StringBuffer(getTypeName(parameterizedType.getType()));
 			Iterator iter= parameterizedType.typeArguments().iterator();
-			if (iter.hasNext()) {
+			if (iter.hasNext() && isSourceLevelGreaterOrEqual(1, 5)) {
 				buff.append('<');
 				buff.append(getTypeName((Type)iter.next()));
 				while (iter.hasNext()) {
@@ -1650,6 +1671,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#visit(TypeDeclaration)
 	 */
 	public boolean visit(TypeDeclaration node) {
+		List typeParameters = node.typeParameters();
+		if (!typeParameters.isEmpty()) {
+			Iterator iterator = typeParameters.iterator();
+			while (iterator.hasNext()) {
+				TypeParameter typeParameter= (TypeParameter) iterator.next();
+				fTypeParameters.add(typeParameter.getName().getIdentifier());
+			}
+		}
 		if (rightTypeFound()) {
 			fEvaluateNextEndTypeDeclaration = false;
 			return false;
@@ -1731,4 +1760,16 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return false;
 	}
 
+	/**
+	 * Returns whether the source to be generated is greater than or equal to the
+	 * given source level.
+	 * 
+	 * @param major major level - e.g. 1 from 1.4
+	 * @param minor minor level - e.g. 4 from 1.4
+	 * @return
+	 */
+	public boolean isSourceLevelGreaterOrEqual(int major, int minor) {
+		return (fSourceMajorLevel > major) ||
+			(fSourceMajorLevel == major && fSourceMinorLevel >= minor);
+	}
 }

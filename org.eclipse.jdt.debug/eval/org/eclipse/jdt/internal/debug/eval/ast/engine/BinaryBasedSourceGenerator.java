@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,22 @@ public class BinaryBasedSourceGenerator {
 	
 	private String fCompilationUnitName;
 	
-	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) {
+	/**
+	 * Level of source code to generate (major, minor). For example 1 and 4 
+	 * indicates 1.4.
+	 */
+	private int fSourceMajorLevel;
+	private int fSourceMinorLevel;
+	
+	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod, String sourceLevel) {
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fIsInStaticMethod= isInStaticMethod;
+		int index = sourceLevel.indexOf('.');
+		String num = sourceLevel.substring(0, index);
+		fSourceMajorLevel = Integer.valueOf(num).intValue();
+		num = sourceLevel.substring(index + 1);
+		fSourceMinorLevel = Integer.valueOf(num).intValue();
 	}
 	
 	/**
@@ -205,7 +217,7 @@ public class BinaryBasedSourceGenerator {
 				source.append(getSimpleName(typeName)).append(' ');
 
 				String genericSignature= referenceType.genericSignature();
-				if (genericSignature != null) {
+				if (genericSignature != null && isSourceLevelGreaterOrEqual(1, 5)) {
 					String[] typeParameters= Signature.getTypeParameters(genericSignature);
 					if (typeParameters.length > 0) {
 						source.append('<');
@@ -371,7 +383,7 @@ public class BinaryBasedSourceGenerator {
 		}
 		
 		String genericSignature= method.genericSignature();
-		if (genericSignature != null) {
+		if (genericSignature != null && isSourceLevelGreaterOrEqual(1, 5)) {
 			String[] typeParameters= Signature.getTypeParameters(genericSignature);
 			if (typeParameters.length > 0) {
 				source.append('<');
@@ -530,4 +542,16 @@ public class BinaryBasedSourceGenerator {
 		return fRunMethodLength;
 	}
 
+	/**
+	 * Returns whether the source to be generated is greater than or equal to the
+	 * given source level.
+	 * 
+	 * @param major major level - e.g. 1 from 1.4
+	 * @param minor minor level - e.g. 4 from 1.4
+	 * @return
+	 */
+	public boolean isSourceLevelGreaterOrEqual(int major, int minor) {
+		return (fSourceMajorLevel > major) ||
+			(fSourceMajorLevel == major && fSourceMinorLevel >= minor);
+	}		
 }

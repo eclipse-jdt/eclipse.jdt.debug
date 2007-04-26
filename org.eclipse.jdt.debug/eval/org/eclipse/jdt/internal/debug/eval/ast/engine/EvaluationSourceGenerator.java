@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,10 +145,11 @@ public class EvaluationSourceGenerator {
 		parser.setSource(source.toCharArray());
 		Map options=JavaCore.getDefaultOptions();
 		options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
-		options.put(JavaCore.COMPILER_SOURCE, project.getOption(JavaCore.COMPILER_SOURCE, true));
+		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);
+		options.put(JavaCore.COMPILER_SOURCE, sourceLevel);
 		parser.setCompilerOptions(options);
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, typeName, position, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, typeName, position, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet, sourceLevel);
 		unit.accept(visitor);
 		
 		if (visitor.hasError()) {
@@ -175,8 +176,9 @@ public class EvaluationSourceGenerator {
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
-	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIReferenceType referenceType, boolean isInStaticMethod) {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
+	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIReferenceType referenceType, boolean isInStaticMethod, IJavaProject project) {
+		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod, sourceLevel);
 		objectToEvaluationSourceMapper.buildSource(referenceType);
 		return objectToEvaluationSourceMapper;
 	}
@@ -189,7 +191,7 @@ public class EvaluationSourceGenerator {
 				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, isStatic, javaProject);
 			}
 			if (fSource == null) {
-				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, isStatic);
+				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, isStatic, javaProject);
 				createEvaluationSourceFromJDIObject(mapper);
 			}
 		}
