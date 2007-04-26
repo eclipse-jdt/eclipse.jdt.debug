@@ -743,7 +743,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        breakpoint = getWatchpoint(typeName, fieldName);
 	                        if (breakpoint == null) {
 	                        	if(!allowed) {
-	                        		report(ActionMessages.ToggleBreakpointAdapter_8, part);
+	                        		toggleLineBreakpoints(part, finalSelection);
 	                        		return Status.OK_STATUS;
 	                        	}
 	                        	int start = -1;
@@ -1118,7 +1118,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         				toggleMethodBreakpoints(part, sel);
         			}
         			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
-        				toggleWatchpoints(part, sel);
+        				toggleWatchpoints(part, ts);
         			}
         			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
         				toggleLineBreakpoints(part, ts);

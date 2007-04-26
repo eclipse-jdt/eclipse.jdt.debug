@@ -122,22 +122,13 @@ public class ActionMessages extends NLS {
 	public static String RunToLineAdapter_4;
 
 	public static String ToggleBreakpointAdapter_0;
-
 	public static String ToggleBreakpointAdapter_1;
-
 	public static String ToggleBreakpointAdapter_2;
-
 	public static String ToggleBreakpointAdapter_3;
-
 	public static String ToggleBreakpointAdapter_4;
-
 	public static String ToggleBreakpointAdapter_5;
-
 	public static String ToggleBreakpointAdapter_6;
-
 	public static String ToggleBreakpointAdapter_7;
-
-	public static String ToggleBreakpointAdapter_8;
 	public static String ToggleBreakpointAdapter_9;
 	public static String ToggleBreakpointAdapter_10;
 	public static String StepIntoSelectionHandler_1;
