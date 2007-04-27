@@ -240,9 +240,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		// add type parameters as required
 		if (isSourceLevelGreaterOrEqual(1, 5)) {
 			for (int i = 0; i < fLocalVariableTypeNames.length; i++) {
-				int index = fLocalVariableTypeNames[i].indexOf(Signature.C_GENERIC_START);
+				String typeName = fLocalVariableTypeNames[i];
+				if (fTypeParameters.contains(typeName)) {
+					buffer.append(Signature.C_GENERIC_START);
+					buffer.append(typeName);
+					buffer.append(Signature.C_GENERIC_END);
+				}
+				int index = typeName.indexOf(Signature.C_GENERIC_START);
 				if (index > 0) {
-					String sig = fLocalVariableTypeNames[i].substring(index);
+					String sig = typeName.substring(index);
 					buffer.append(sig);
 					buffer.append(' ');
 				}
@@ -909,7 +915,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			StringBuffer source = buildEnumDeclaration(fSource, node);
 			
 			if (node.isLocalTypeDeclaration()) {
-				// enclose in a method if nessecary
+				// enclose in a method if necessary
 				
 				ASTNode parent = node.getParent();
 				while (!(parent instanceof MethodDeclaration)) {
@@ -1380,6 +1386,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#visit(MethodDeclaration)
 	 */
 	public boolean visit(MethodDeclaration node) {
+		List typeParameters = node.typeParameters();
+		if (!typeParameters.isEmpty()) {
+			Iterator iterator = typeParameters.iterator();
+			while (iterator.hasNext()) {
+				TypeParameter typeParameter= (TypeParameter) iterator.next();
+				fTypeParameters.add(typeParameter.getName().getIdentifier());
+			}
+		}
 		if (rightTypeFound()) {
 			return false;
 		}
