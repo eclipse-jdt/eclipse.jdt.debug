@@ -1059,7 +1059,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return suspend;
 		} catch (CoreException e) {
 			logError(e);
-			return true;
+			setRunning(true);
+			return false;
 		}
 	}
 	
