@@ -14,6 +14,8 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -75,7 +77,7 @@ public class AddVMDialog extends StatusDialog {
 		
 	/**
 	 * Constructor
-	 * @param requestor dialog validation requestor
+	 * @param requestor dialog validation requester
 	 * @param shell the parent shell 
 	 * @param vmInstallTypes the types of VM installs
 	 * @param editedVM the editedVM
@@ -89,12 +91,50 @@ public class AddVMDialog extends StatusDialog {
 			fStatus[i] = new StatusInfo();
 		}
 		fVMTypes = vmInstallTypes;
+		sortVMTypes();
 		fSelectedVMType = editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[0];
 		fEditedVM = editedVM;
 	//only detect the javadoc location if not already set
 		fAutoDetectJavadocLocation = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
 	}
 
+	/**
+	 * This method is used to sort the array of VM install types, placing 
+	 * the 'Standard VM' type first, if it exists
+	 * 
+	 * @since 3.3.0
+	 */
+	private void sortVMTypes() {
+		Comparator compare = new Comparator() {
+			public int compare(Object o1, Object o2) {
+				if(o1 instanceof IVMInstallType && o2 instanceof IVMInstallType) {
+					return ((IVMInstallType) o1).getName().compareTo(((IVMInstallType) o2).getName());
+				}
+				return 0;
+			}
+		};
+		//first find the 'Standard VM' and set it at position 0
+		for(int i = 0; i < fVMTypes.length; i++) {
+			if(fVMTypes[i].getId().equals("org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType")) { //$NON-NLS-1$
+				if(i > 0) {
+					IVMInstallType tmp = fVMTypes[0];
+					fVMTypes[0] = fVMTypes[i];
+					fVMTypes[i] = tmp;
+					break;
+				}
+				else {
+					break;
+				}
+			}
+		}
+		if(fVMTypes[0].getId().equals("org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType")) { //$NON-NLS-1$
+			Arrays.sort(fVMTypes, 1, fVMTypes.length, compare);
+		}
+		else {
+			Arrays.sort(fVMTypes, compare);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.StatusDialog#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
