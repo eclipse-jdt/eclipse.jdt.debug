@@ -160,6 +160,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         createLaunchConfiguration("DefPkgReturnType");
         createLaunchConfiguration("InstanceFilterObject");
         createLaunchConfiguration("org.eclipse.debug.tests.targets.CallStack");
+        createLaunchConfiguration("org.eclipse.debug.tests.targets.ThreadStack");
         createLaunchConfiguration("org.eclipse.debug.tests.targets.HcrClass");
         createLaunchConfiguration("org.eclipse.debug.tests.targets.StepIntoSelectionClass");
         createLaunchConfiguration("WatchItemTests");
