@@ -18,10 +18,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -470,7 +473,21 @@ public class StandardVMType extends AbstractVMInstallType {
 			String[] cmdLine = new String[] {javaExecutablePath, "-classpath", file.getAbsolutePath(), "org.eclipse.jdt.internal.launching.support.LibraryDetector"};  //$NON-NLS-1$ //$NON-NLS-2$
 			Process p = null;
 			try {
-				p = Runtime.getRuntime().exec(cmdLine);
+				String envp[] = null;
+				if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+					Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+					if (map.remove(StandardVMDebugger.JAVA_JVM_VERSION) != null) {
+						envp = new String[map.size()];
+						Iterator iterator = map.entrySet().iterator();
+						int i = 0;
+						while (iterator.hasNext()) {
+							Entry entry = (Entry) iterator.next();
+							envp[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
+							i++;
+						}
+					}
+				}
+				p = DebugPlugin.exec(cmdLine, null, envp);
 				IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "Library Detection"); //$NON-NLS-1$
 				for (int i= 0; i < 200; i++) {
 					// Wait no more than 10 seconds (200 * 50 mils)
@@ -483,7 +500,7 @@ public class StandardVMType extends AbstractVMInstallType {
 					}
 				}
 				info = parseLibraryInfo(process);
-			} catch (IOException ioe) {
+			} catch (CoreException ioe) {
 				LaunchingPlugin.log(ioe);
 			} finally {
 				if (p != null) {
