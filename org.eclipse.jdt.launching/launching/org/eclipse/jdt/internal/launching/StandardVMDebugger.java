@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -38,6 +39,7 @@ import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
@@ -54,6 +56,11 @@ import com.sun.jdi.connect.ListeningConnector;
 public class StandardVMDebugger extends StandardVMRunner {
 	
 	
+	/**
+	 * @since 3.3 OSX environment variable specifying JRE to use
+	 */
+	protected static final String JAVA_JVM_VERSION = "JAVA_JVM_VERSION"; //$NON-NLS-1$
+
 	/**
 	 * Used to attach to a VM in a separate thread, to allow for cancellation
 	 * and detect that the associated System process died before the connect
@@ -323,7 +330,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @since 3.3
 	 */
 	private String[] prependJREPath(String[] env, IPath jdkpath) {
-		if(Platform.getOS().equals(Platform.OS_WIN32)) {
+		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			IPath jrepath = jdkpath.removeLastSegments(2).append("jre").append("bin"); //$NON-NLS-1$ //$NON-NLS-2$
 			if(jrepath.toFile().exists()) {
 				String jrestr = jrepath.toOSString();
@@ -359,6 +366,37 @@ public class StandardVMDebugger extends StandardVMRunner {
 									break;
 								}
 							}
+						}
+					}
+				}
+			}
+		} else if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			if (fVMInstance instanceof IVMInstall2) {
+				IVMInstall2 vm = (IVMInstall2) fVMInstance;
+				String javaVersion = vm.getJavaVersion();
+				if (javaVersion != null) {
+					if (env == null) {
+						Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+						String[] env2 = new String[map.size()];
+						Iterator iterator = map.entrySet().iterator();
+						int i = 0;
+						while (iterator.hasNext()) {
+							Entry entry = (Entry) iterator.next();
+							String key = (String) entry.getKey();
+							if (StandardVMDebugger.JAVA_JVM_VERSION.equals(key)) {
+								env2[i] = key + "=" + javaVersion; //$NON-NLS-1$
+							} else {
+								env2[i] = key + "=" + (String)entry.getValue(); //$NON-NLS-1$
+							}
+							i++;
+						}
+					} else {
+						for (int i = 0; i < env.length; i++) {
+							String string = env[i];
+							if (string.startsWith(JAVA_JVM_VERSION)) {
+								env[i]=JAVA_JVM_VERSION+"="+javaVersion; //$NON-NLS-1$
+							}
+							break;
 						}
 					}
 				}
