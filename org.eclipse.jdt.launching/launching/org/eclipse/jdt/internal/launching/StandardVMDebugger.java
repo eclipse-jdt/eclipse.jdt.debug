@@ -377,26 +377,29 @@ public class StandardVMDebugger extends StandardVMRunner {
 				if (javaVersion != null) {
 					if (env == null) {
 						Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
-						String[] env2 = new String[map.size()];
-						Iterator iterator = map.entrySet().iterator();
-						int i = 0;
-						while (iterator.hasNext()) {
-							Entry entry = (Entry) iterator.next();
-							String key = (String) entry.getKey();
-							if (StandardVMDebugger.JAVA_JVM_VERSION.equals(key)) {
-								env2[i] = key + "=" + javaVersion; //$NON-NLS-1$
-							} else {
-								env2[i] = key + "=" + (String)entry.getValue(); //$NON-NLS-1$
+						if (map.containsKey(StandardVMDebugger.JAVA_JVM_VERSION)) {
+							String[] env2 = new String[map.size()];
+							Iterator iterator = map.entrySet().iterator();
+							int i = 0;
+							while (iterator.hasNext()) {
+								Entry entry = (Entry) iterator.next();
+								String key = (String) entry.getKey();
+								if (StandardVMDebugger.JAVA_JVM_VERSION.equals(key)) {
+									env2[i] = key + "=" + javaVersion; //$NON-NLS-1$
+								} else {
+									env2[i] = key + "=" + (String)entry.getValue(); //$NON-NLS-1$
+								}
+								i++;
 							}
-							i++;
+							env = env2;
 						}
 					} else {
 						for (int i = 0; i < env.length; i++) {
 							String string = env[i];
 							if (string.startsWith(JAVA_JVM_VERSION)) {
 								env[i]=JAVA_JVM_VERSION+"="+javaVersion; //$NON-NLS-1$
+								break;
 							}
-							break;
 						}
 					}
 				}
