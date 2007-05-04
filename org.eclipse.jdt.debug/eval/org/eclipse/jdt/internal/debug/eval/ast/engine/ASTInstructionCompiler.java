@@ -3684,32 +3684,39 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		// get the type of the variable
-		ITypeBinding typeBinding;
+		ITypeBinding varTypeBinding;
 		ASTNode parent= node.getParent();
 		switch (parent.getNodeType()) {
 			case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-				typeBinding= ((VariableDeclarationExpression)parent).getType().resolveBinding();
+				varTypeBinding= ((VariableDeclarationExpression)parent).getType().resolveBinding();
 				break;
 			case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-				typeBinding= ((VariableDeclarationStatement)parent).getType().resolveBinding();
+				varTypeBinding= ((VariableDeclarationStatement)parent).getType().resolveBinding();
 				break;
 			default:
 				setHasError(true);
 				addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Error_in_type_declaration_statement); 
 				return false;
 		}
-		int typeDimension= typeBinding.getDimensions();
+		int typeDimension= varTypeBinding.getDimensions();
+		ITypeBinding elementBinding = varTypeBinding;
 		if (typeDimension != 0) {
-			typeBinding= typeBinding.getElementType();
+			elementBinding= elementBinding.getElementType();
 		}
 
 		Expression initializer= node.getInitializer();
 		boolean hasInitializer= initializer != null;
 
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), hasInitializer, fCounter));
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(elementBinding), typeDimension, elementBinding.isPrimitive(), hasInitializer, fCounter));
 
 		if (hasInitializer) {
 			initializer.accept(this);
+			ITypeBinding expBindnig = initializer.resolveTypeBinding();
+			if (expBindnig != null) {
+				if (checkAutoBoxing(expBindnig, varTypeBinding)) {
+					storeInstruction();
+				}
+			}
 		}
 
 		return false;
