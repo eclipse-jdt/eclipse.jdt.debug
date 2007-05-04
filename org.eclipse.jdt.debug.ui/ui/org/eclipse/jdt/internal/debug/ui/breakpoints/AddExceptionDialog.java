@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.breakpoints;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -283,6 +284,11 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 		 */
 		public void dispose() {
 			if (fImageMap != null) {
+				Iterator iterator = fImageMap.values().iterator();
+				while (iterator.hasNext()) {
+					Image image = (Image) iterator.next();
+					image.dispose();
+				}
 				fImageMap.clear();
 			}
 			fImageMap = null;
