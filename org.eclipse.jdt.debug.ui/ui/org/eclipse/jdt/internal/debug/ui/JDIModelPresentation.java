@@ -1118,19 +1118,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (value == null) {
 			return;
 		}
-		fAttributes.put(id, value);
+		synchronized (fAttributes) {
+			fAttributes.put(id, value);
+		}
 	}
 
 	protected boolean isShowQualifiedNames() {
-		Boolean showQualified= (Boolean) fAttributes.get(DISPLAY_QUALIFIED_NAMES);
-		showQualified= showQualified == null ? Boolean.FALSE : showQualified;
-		return showQualified.booleanValue();
+		synchronized (fAttributes) {
+			Boolean showQualified= (Boolean) fAttributes.get(DISPLAY_QUALIFIED_NAMES);
+			showQualified= showQualified == null ? Boolean.FALSE : showQualified;
+			return showQualified.booleanValue();
+		}
 	}
 
 	protected boolean isShowVariableTypeNames() {
-		Boolean show= (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
-		show= show == null ? Boolean.FALSE : show;
-		return show.booleanValue();
+		synchronized (fAttributes) {
+			Boolean show= (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
+			show= show == null ? Boolean.FALSE : show;
+			return show.booleanValue();
+		}
 	}
 
 	protected boolean isShowHexValues() {
