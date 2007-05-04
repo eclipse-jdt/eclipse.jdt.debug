@@ -237,19 +237,17 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			buffer.append("static "); //$NON-NLS-1$
 			// add type parameters as required
 			if (isSourceLevelGreaterOrEqual(1, 5)) {
-				for (int i = 0; i < fLocalVariableTypeNames.length; i++) {
-					String typeName = fLocalVariableTypeNames[i];
-					if (fTypeParameters.contains(typeName)) {
-						buffer.append(Signature.C_GENERIC_START);
-						buffer.append(typeName);
-						buffer.append(Signature.C_GENERIC_END);
+				if (!fTypeParameters.isEmpty()) {
+					Iterator iterator = fTypeParameters.iterator();
+					buffer.append(Signature.C_GENERIC_START);
+					while (iterator.hasNext()) {
+						String name = (String) iterator.next();
+						buffer.append(name);
+						if (iterator.hasNext()) {
+							buffer.append(", "); //$NON-NLS-1$
+						}
 					}
-					int index = typeName.indexOf(Signature.C_GENERIC_START);
-					if (index > 0) {
-						String sig = typeName.substring(index);
-						buffer.append(sig);
-						buffer.append(' ');
-					}
+					buffer.append(Signature.C_GENERIC_END);
 				}
 			}			
 		}
@@ -1390,7 +1388,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			Iterator iterator = typeParameters.iterator();
 			while (iterator.hasNext()) {
 				TypeParameter typeParameter= (TypeParameter) iterator.next();
-				fTypeParameters.add(typeParameter.getName().getIdentifier());
+				fTypeParameters.add(typeParameter.toString());
 			}
 		}
 		if (rightTypeFound()) {
