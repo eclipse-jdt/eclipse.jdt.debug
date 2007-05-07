@@ -476,7 +476,7 @@ public class AddExceptionDialog extends FilteredItemsSelectionDialog {
 		if(progressMonitor == null) {
 			progressMonitor = new NullProgressMonitor();
 		}
-		progressMonitor.setTaskName("Searching for Exception types"); //$NON-NLS-1$
+		progressMonitor.setTaskName(BreakpointMessages.AddExceptionDialog_10); 
 		SearchEngine engine = new SearchEngine((WorkingCopyOwner) null);
 		engine.searchAllTypeNames((char[])null, SearchPattern.R_EXACT_MATCH, (char[])null,
 				SearchPattern.R_EXACT_MATCH, IJavaSearchConstants.CLASS, SearchEngine.createWorkspaceScope(), 
