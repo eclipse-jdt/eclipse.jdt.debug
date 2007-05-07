@@ -338,9 +338,13 @@ public class JavaJRETab extends JavaLaunchTab {
 		} else {
 			if (wc == null) {
 				try {
-					if (getLaunchConfiguration().isWorkingCopy()) {
-						// get a fresh copy to work on
-						wc = ((ILaunchConfigurationWorkingCopy)getLaunchConfiguration()).getOriginal().getWorkingCopy();
+					ILaunchConfiguration config = getLaunchConfiguration();
+					if (config.isWorkingCopy()) {
+						// get a fresh copy to work on, only if there is an original to do so
+						wc = (ILaunchConfigurationWorkingCopy) config;
+						if(wc.getOriginal() != null) {
+							wc.getOriginal().getWorkingCopy();
+						}
 					} else {
 							wc = getLaunchConfiguration().getWorkingCopy();
 					}
