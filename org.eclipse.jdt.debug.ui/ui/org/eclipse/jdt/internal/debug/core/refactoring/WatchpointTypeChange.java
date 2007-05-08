@@ -43,8 +43,12 @@ public class WatchpointTypeChange extends WatchpointChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.WatchpointTypeChange_0,
+		String msg = MessageFormat.format(RefactoringMessages.WatchpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
+		if(!"".equals(fDestType.getElementName())) { //$NON-NLS-1$
+			msg = MessageFormat.format(RefactoringMessages.WatchpointTypeChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
+		}
+		return msg;
 	}
 
 	/* (non-Javadoc)
