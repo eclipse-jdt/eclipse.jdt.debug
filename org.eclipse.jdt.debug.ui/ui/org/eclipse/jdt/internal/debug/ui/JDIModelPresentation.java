@@ -1092,6 +1092,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof ZipEntryStorage) {
 				return new ZipEntryStorageEditorInput((ZipEntryStorage)item);
 			}
+			// for types that correspond to external files, return null so we do not
+			// attempt to open a non-existing workspace file on the breakpoint (bug 184934)
+			if (item instanceof IType) {
+				IType type = (IType) item;
+				if (!type.exists()) {
+					return null;
+				}
+			}
 			return EditorUtility.getEditorInput(item);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
