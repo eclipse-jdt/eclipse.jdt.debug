@@ -1106,7 +1106,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     			// remove line breakpoint if present first
     	    	if (selection instanceof ITextSelection) {
     				ITextSelection ts = (ITextSelection) selection;
-    				IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(createQualifiedTypeName(member.getDeclaringType()), ts.getStartLine() + 1);
+    				IType declaringType = member.getDeclaringType();
+    				IResource resource = BreakpointUtils.getBreakpointResource(declaringType);
+					IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(resource, createQualifiedTypeName(declaringType), ts.getStartLine() + 1);
     				if (breakpoint != null) {
     					breakpoint.delete();
     					return;
