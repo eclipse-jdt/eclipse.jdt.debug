@@ -2306,19 +2306,19 @@
            <enablement>
              <with variable="selection">
                <count value="1"/>
-               <iterate>
-                <or>
-               	  <test property="org.eclipse.jdt.launching.hasMain"/>
-               	  <and>
-               	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
-               	  	 <or>
-               	     	<test property="org.eclipse.jdt.launching.isContainer"/>
-               	     	<test property="org.eclipse.jdt.launching.isPackageFragment"/>
-               	     	<test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
-               	     </or>
-               	  </and>
-               	</or>
-               </iterate>
+                <iterate>
+                 <and>
+                  <adapt type="org.eclipse.jdt.core.IJavaElement">
+                  	<test property="org.eclipse.jdt.core.isInJavaProject"/>
+                  </adapt>
+               	  <or>
+               	    <test property="org.eclipse.jdt.launching.hasMain"/>
+               	    <test property="org.eclipse.jdt.launching.isContainer"/>
+               	    <test property="org.eclipse.jdt.launching.isPackageFragment"/>
+               	    <test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
+               	  </or>
+                 </and>
+                </iterate>
                </with>
            </enablement>
   		 </contextualLaunch>
@@ -2347,17 +2347,17 @@
              <with variable="selection">
              <count value="1"/>
                <iterate>
+               <and>
+                <adapt type="org.eclipse.jdt.core.IJavaElement">
+                  	<test property="org.eclipse.jdt.core.isInJavaProject"/>
+                </adapt>
                	<or>
                	  <test property="org.eclipse.jdt.launching.extendsClass" args="java.applet.Applet"/>
-               	  <and>
-               	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
-               	  	 <or>
-               	     	<test property="org.eclipse.jdt.launching.isContainer"/>
-               	     	<test property="org.eclipse.jdt.launching.isPackageFragment"/>
-               	     	<test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
-               	     </or>
-               	  </and>
+               	  <test property="org.eclipse.jdt.launching.isContainer"/>
+               	  <test property="org.eclipse.jdt.launching.isPackageFragment"/>
+               	  <test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
                	 </or>
+               	</and>
                </iterate>
            	</with>
            </enablement>
