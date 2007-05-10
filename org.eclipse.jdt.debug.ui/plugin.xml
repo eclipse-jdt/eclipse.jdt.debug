@@ -523,12 +523,20 @@
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
          <visibility>
+            <and>
             <not>
                <objectState
                      name="JavaVariableFilter"
                      value="isReferenceListVariable">
                </objectState>
             </not>
+            <not>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isPlaceholderValue">
+               </objectState>
+            </not>
+            </and>
          </visibility>
          <filter
                name="PrimitiveVariableActionFilter"
@@ -740,6 +748,14 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction">
          </action>
+         <visibility>
+            <not>
+               <objectState
+                     name="JavaVariableFilter"
+                     value="isPlaceholderValue">
+               </objectState>
+            </not>
+         </visibility>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"

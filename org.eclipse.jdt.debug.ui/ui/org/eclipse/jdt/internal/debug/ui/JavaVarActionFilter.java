@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 import org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
@@ -184,6 +185,9 @@ public class JavaVarActionFilter implements IActionFilter {
 					}
 					if (value.equals("isReferenceListVariable")) { //$NON-NLS-1$
 						return var instanceof JDIReferenceListVariable;
+					}
+					if (value.equals("isPlaceholderValue")) { //$NON-NLS-1$
+						return varValue instanceof JDIPlaceholderValue;
 					}
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$

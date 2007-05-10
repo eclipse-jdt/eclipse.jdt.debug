@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
-import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayEntryVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
 
@@ -38,7 +38,7 @@ public class JavaWatchExpressionFilter implements IWatchExpressionFactoryAdapter
 			return false;
 		}
 		try{
-			if (variable.getValue() instanceof JDIPlaceholderVariable){
+			if (variable.getValue() instanceof JDIPlaceholderValue){
 				return false;
 			}
 		} catch (DebugException e) {}
