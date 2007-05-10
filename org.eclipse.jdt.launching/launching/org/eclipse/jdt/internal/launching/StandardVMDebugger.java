@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -39,7 +38,6 @@ import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
@@ -50,7 +48,7 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.ListeningConnector;
 
 /**
- * A launcher for running Java main classes. Uses JDI to launch a vm in debug 
+ * A launcher for debugging Java main classes. Uses JDI to launch a vm in debug 
  * mode.
  */
 public class StandardVMDebugger extends StandardVMRunner {
@@ -186,7 +184,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		
-		//With the newer VMs and no backwards compatibiltiy we have to always prepend the current env path (only the runtime one)
+		//With the newer VMs and no backwards compatibility we have to always prepend the current env path (only the runtime one)
 		//with a 'corrected' path that points to the location to load the debug dlls from, this location is of the standard JDK installation 
 		//format: <jdk path>/jre/bin
 		String[] envp = prependJREPath(config.getEnvironment(), new Path(program));
@@ -318,18 +316,27 @@ public class StandardVMDebugger extends StandardVMRunner {
 	}
 
 	/**
+	 * This method performs platform specific operations to modify the runtime path for JREs prior to launching.
+	 * Nothing is written back to the original system path.
+	 * 
+	 * <p>
+	 * For Windows:
 	 * Prepends the location of the JRE bin directory for the given JDK path to the PATH variable in Windows.
 	 * This method assumes that the JRE is located within the JDK install directory
 	 * in: <code><JDK install dir>/jre/bin/</code> where the JDK itself would be located 
 	 * in: <code><JDK install dir>/bin/</code> 
-	 * 
-	 * No work is done if not on a windows platform.
+	 * </p>
+	 * <p>
+	 * For Mac OS:
+	 * Searches for and sets the correct state of the JAVA_VM_VERSION environment variable to ensure it matches
+	 * the currently chosen VM of the launch config
+	 * </p>
 	 * 
 	 * @param env the current array of environment variables to run with
 	 * @param jdkpath the path to the executable (javaw).
 	 * @since 3.3
 	 */
-	private String[] prependJREPath(String[] env, IPath jdkpath) {
+	protected String[] prependJREPath(String[] env, IPath jdkpath) {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			IPath jrepath = jdkpath.removeLastSegments(2).append("jre").append("bin"); //$NON-NLS-1$ //$NON-NLS-2$
 			if(jrepath.toFile().exists()) {
@@ -370,42 +377,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 					}
 				}
 			}
-		} else if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			if (fVMInstance instanceof IVMInstall2) {
-				IVMInstall2 vm = (IVMInstall2) fVMInstance;
-				String javaVersion = vm.getJavaVersion();
-				if (javaVersion != null) {
-					if (env == null) {
-						Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
-						if (map.containsKey(StandardVMDebugger.JAVA_JVM_VERSION)) {
-							String[] env2 = new String[map.size()];
-							Iterator iterator = map.entrySet().iterator();
-							int i = 0;
-							while (iterator.hasNext()) {
-								Entry entry = (Entry) iterator.next();
-								String key = (String) entry.getKey();
-								if (StandardVMDebugger.JAVA_JVM_VERSION.equals(key)) {
-									env2[i] = key + "=" + javaVersion; //$NON-NLS-1$
-								} else {
-									env2[i] = key + "=" + (String)entry.getValue(); //$NON-NLS-1$
-								}
-								i++;
-							}
-							env = env2;
-						}
-					} else {
-						for (int i = 0; i < env.length; i++) {
-							String string = env[i];
-							if (string.startsWith(JAVA_JVM_VERSION)) {
-								env[i]=JAVA_JVM_VERSION+"="+javaVersion; //$NON-NLS-1$
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		return env;
+		} 
+		return super.prependJREPath(env, jdkpath);
 	}
 	
 	/**
@@ -422,6 +395,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 		return JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false, config.isResumeOnStartup());
 	}
 	
+	/**
+	 * Returns the version of the current VM in use
+	 * @return the VM version
+	 */
 	private double getJavaVersion() {
 		LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
 		if (libInfo == null) {
@@ -441,6 +418,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 	}
 
+	/**
+	 * Checks and forwards an error from the specified process
+	 * @param process
+	 * @throws CoreException
+	 */
 	protected void checkErrorMessage(IProcess process) throws CoreException {
 		IStreamsProxy streamsProxy = process.getStreamsProxy();
 		if (streamsProxy != null) {
@@ -454,6 +436,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}										
 	}
 		
+	/**
+	 * Allows arguments to be specified
+	 * @param map
+	 * @param portNumber
+	 */
 	protected void specifyArguments(Map map, int portNumber) {
 		// XXX: Revisit - allows us to put a quote (") around the classpath
 		Connector.IntegerArgument port= (Connector.IntegerArgument) map.get("port"); //$NON-NLS-1$
@@ -466,6 +453,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 	}
 
+	/**
+	 * Returns the default 'com.sun.jdi.SocketListen' connector
+	 * @return
+	 */
 	protected ListeningConnector getConnector() {
 		List connectors= Bootstrap.virtualMachineManager().listeningConnectors();
 		for (int i= 0; i < connectors.size(); i++) {

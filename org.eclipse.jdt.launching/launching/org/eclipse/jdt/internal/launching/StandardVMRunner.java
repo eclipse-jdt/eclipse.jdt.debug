@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,42 +12,77 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
+
+/**
+ * A launcher for running Java main classes.
+ */
 public class StandardVMRunner extends AbstractVMRunner {
+	
+	/**
+	 * The VM install instance
+	 */
 	protected IVMInstall fVMInstance;
 
+	/**
+	 * Constructor
+	 * @param vmInstance
+	 */
 	public StandardVMRunner(IVMInstall vmInstance) {
 		fVMInstance= vmInstance;
 	}
 	
+	/**
+	 * Returns the 'rendered' name for the current target
+	 * @param classToRun
+	 * @param host
+	 * @return the name for the current target
+	 */
 	protected String renderDebugTarget(String classToRun, int host) {
 		String format= LaunchingMessages.StandardVMRunner__0__at_localhost__1__1; 
 		return MessageFormat.format(format, new String[] { classToRun, String.valueOf(host) });
 	}
 
+	/**
+	 * Returns the 'rendered' name for the specified command line
+	 * @param commandLine
+	 * @return the name for the process
+	 */
 	public static String renderProcessLabel(String[] commandLine) {
 		String format= LaunchingMessages.StandardVMRunner__0____1___2; 
 		String timestamp= DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { commandLine[0], timestamp });
 	}
 	
+	/**
+	 * Prepares the command line from the specified array of strings
+	 * @param commandLine
+	 * @return
+	 */
 	protected static String renderCommandLine(String[] commandLine) {
 		if (commandLine.length < 1)
 			return ""; //$NON-NLS-1$
@@ -77,6 +112,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return buf.toString();
 	}	
 	
+	/**
+	 * Adds the values of args to the given list v
+	 * @param args
+	 * @param v
+	 */
 	protected void addArguments(String[] args, List v) {
 		if (args == null) {
 			return;
@@ -120,7 +160,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * explicit executable, that is used.
 	 * 
 	 * @return full path to java executable
-	 * @exception CoreException if unable to locate an executeable
+	 * @exception CoreException if unable to locate an executable
 	 */
 	protected String constructProgramString(VMRunnerConfiguration config) throws CoreException {
 
@@ -167,6 +207,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return null;		
 	}	
 	
+	/**
+	 * Convenience method to determine if the specified file exists or not
+	 * @param file
+	 * @return true if the file indeed exists, false otherwise
+	 */
 	protected boolean fileExists(File file) {
 		return file.exists() && file.isFile();
 	}
@@ -226,7 +271,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		
-		String[] envp= config.getEnvironment();
+		String[] envp = prependJREPath(config.getEnvironment(), new Path(program));
 		
 		subMonitor.worked(1);
 
@@ -254,7 +299,58 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.worked(1);
 		subMonitor.done();
 	}
+	
+	/**
+	 * Prepends the correct java version variable state to the environment path for Mac VMs
+	 * 
+	 * @param env the current array of environment variables to run with
+	 * @param jdkpath the path of the current jdk
+	 * @since 3.3
+	 */
+	protected String[] prependJREPath(String[] env, IPath jdkpath) {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			if (fVMInstance instanceof IVMInstall2) {
+				IVMInstall2 vm = (IVMInstall2) fVMInstance;
+				String javaVersion = vm.getJavaVersion();
+				if (javaVersion != null) {
+					if (env == null) {
+						Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+						if (map.containsKey(StandardVMDebugger.JAVA_JVM_VERSION)) {
+							String[] env2 = new String[map.size()];
+							Iterator iterator = map.entrySet().iterator();
+							int i = 0;
+							while (iterator.hasNext()) {
+								Entry entry = (Entry) iterator.next();
+								String key = (String) entry.getKey();
+								if (StandardVMDebugger.JAVA_JVM_VERSION.equals(key)) {
+									env2[i] = key + "=" + javaVersion; //$NON-NLS-1$
+								} else {
+									env2[i] = key + "=" + (String)entry.getValue(); //$NON-NLS-1$
+								}
+								i++;
+							}
+							env = env2;
+						}
+					} else {
+						for (int i = 0; i < env.length; i++) {
+							String string = env[i];
+							if (string.startsWith(StandardVMDebugger.JAVA_JVM_VERSION)) {
+								env[i]=StandardVMDebugger.JAVA_JVM_VERSION+"="+javaVersion; //$NON-NLS-1$
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return env;
+	}
 
+	/**
+	 * Adds arguments to the bootpath
+	 * @param arguments
+	 * @param config
+	 */
 	protected void addBootClassPathArguments(List arguments, VMRunnerConfiguration config) {
 		String[] prependBootCP= null;
 		String[] bootCP= null;
