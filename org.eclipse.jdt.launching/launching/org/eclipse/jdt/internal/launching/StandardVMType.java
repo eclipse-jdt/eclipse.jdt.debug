@@ -44,13 +44,14 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * A VM install type for VMs the conform to the standard
- * JDK installion layout.
+ * JDK installation layout.
  */
 public class StandardVMType extends AbstractVMInstallType {
 	
 	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
+	
 	/**
-	 * The root path for the attached src
+	 * The root path for the attached source
 	 */
 	private String fDefaultRootPath;
 	
@@ -58,7 +59,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * Map of the install path for which we were unable to generate
 	 * the library info during this session.
 	 */
-	private static Map fgFailedInstallPath= new HashMap();
+	private static Map fgFailedInstallPath = new HashMap();
 		
 	/**
 	 * Convenience handle to the system-specific file separator character
@@ -98,7 +99,9 @@ public class StandardVMType extends AbstractVMInstallType {
 		return LaunchingMessages.StandardVMType_Standard_VM_3; 
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
+	 */
 	protected IVMInstall doCreateVMInstall(String id) {
 		return new StandardVM(this, id);
 	}
@@ -318,7 +321,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			lib = (LibraryLocation) liter.next();
 			if(!set.add(lib.getSystemLibraryPath().toOSString())) {
 				//did not add it, dupe
-				allLibs.remove(lib);
+				liter.remove();
 			}
 		}
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
