@@ -891,27 +891,12 @@
                menubarPath="additions">
          </action>
          <action
-               label="%ForceReturn.label"
-               helpContextId="force_return_action_context"
-               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
-               menubarPath="additions"
-               id="org.eclipse.jdt.debug.ui.cuPopup.ForceReturn">
-            <enablement>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
-                     value="true">
-               </systemProperty>
-            </enablement>
-         </action>         
-         <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.gif"
                helpContextId="execute_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Execute">
          </action>
          <action
@@ -938,9 +923,36 @@
                helpContextId="watch_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Watch">
          </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CompilationUnitEditorContext"
+            id="org.eclipse.jdt.debug.ui.CUPopupActions">
+         <visibility>
+            <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                     value="true">
+               </systemProperty>
+         </visibility>
+         <action
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cuPopup.ForceReturn">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CompilationUnitEditorContext"
+            id="org.eclipse.jdt.debug.ui.CUPopupActions">
+         <visibility>
+            <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                     value="true">
+            </systemProperty>
+         </visibility>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
@@ -950,13 +962,8 @@
                label="%allInstances.label"
                menubarPath="additions"
                tooltip="%allInstances.tooltip">
-            <enablement>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
-                     value="true">
-               </systemProperty></enablement>
          </action>
-      </viewerContribution>
+      </viewerContribution>      
       <viewerContribution
             targetID="#CompilationUnitEditorContext"
             id="org.eclipse.jdt.debug.ui.CUPopupActions">
@@ -1007,21 +1014,7 @@
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
                label="%runToLineAction.label"
                menubarPath="additions">
-         </action>
-         <action
-               label="%ForceReturn.label"
-               helpContextId="force_return_action_context"
-               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
-               menubarPath="additions"
-               id="org.eclipse.jdt.debug.ui.cfPopup.ForceReturn">
-            <enablement>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
-                     value="true">
-               </systemProperty>
-            </enablement>
-         </action>                  
+         </action>            
          <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.gif"
@@ -1029,7 +1022,6 @@
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Execute">
          </action>
          <action
@@ -1056,26 +1048,47 @@
                helpContextId="watch_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Watch">
          </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#ClassFileEditorContext"
+            id="org.eclipse.jdt.debug.ui.CFPopupActions">
+         <visibility>
+            <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsForceReturn"
+                     value="true">
+               </systemProperty>
+         </visibility>
+         <action
+               label="%ForceReturn.label"
+               helpContextId="force_return_action_context"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cuPopup.ForceReturn">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#ClassFileEditorContext"
+            id="org.eclipse.jdt.debug.ui.CFPopupActions">
+         <visibility>
+            <systemProperty
+                     name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                     value="true">
+            </systemProperty>
+         </visibility>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
                helpContextId="all_instances_action_context"
                icon="icons/full/elcl16/all_instances.gif"
-               id="org.eclipse.jdt.debug.ui.cfPopup.AllInstances"
+               id="org.eclipse.jdt.debug.ui.cuPopup.AllInstances"
                label="%allInstances.label"
                menubarPath="additions"
                tooltip="%allInstances.tooltip">
-            <enablement>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
-                     value="true">
-               </systemProperty>
-            </enablement>
          </action>
-      </viewerContribution>
+      </viewerContribution>      
       <viewerContribution
             targetID="#ClassFileEditorContext"
             id="org.eclipse.jdt.debug.ui.CFPopupActions">
