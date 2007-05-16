@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
+import org.eclipse.jdt.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
@@ -131,6 +132,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MigrationDelegateTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
 		addTest(new TestSuite(LaunchHistoryTests.class));
+		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
 		
 	//Breakpoints tests
 		addTest(new TestSuite(DeferredBreakpointTests.class));
