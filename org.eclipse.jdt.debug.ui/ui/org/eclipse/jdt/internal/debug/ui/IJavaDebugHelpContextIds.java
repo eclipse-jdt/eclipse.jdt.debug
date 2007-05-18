@@ -78,6 +78,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String CLEAR_DISPLAY_VIEW_ACTION = PREFIX + "clear_display_view_action_context"; //$NON-NLS-1$
 	public static final String TERMINATE_SCRAPBOOK_VM_ACTION = PREFIX + "terminate_scrapbook_vm_action_context"; //$NON-NLS-1$
 	public static final String SCRAPBOOK_IMPORTS_ACTION = PREFIX + "scrapbook_imports_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_AUTOFORMAT_STACKTRACES_ACTION = PREFIX + "console_autoformat_stacktraces_action"; //$NON-NLS-1$
 	
 	public static final String NEW_SNIPPET_WIZARD_PAGE= PREFIX + "new_snippet_wizard_page_context"; //$NON-NLS-1$
 }
