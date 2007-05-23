@@ -36,7 +36,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -52,6 +51,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
+/**
+ * The preference page for Java step filtering, located at the node Java > Debug > Step Filtering
+ * 
+ * @since 3.0
+ */
 public class JavaStepFilterPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	public static final String PAGE_ID = "org.eclipse.jdt.debug.ui.JavaStepFilterPreferencePage"; //$NON-NLS-1$
@@ -85,7 +89,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private Button fStepThruButton;
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
-	private Label fTableLabel;
 	
 	/**
 	 * Constructor
@@ -103,14 +106,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
 	//The main composite
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 		createStepFilterPreferences(composite);
 		return composite;	
 	}
@@ -134,16 +130,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * Create a group to contain the step filter related widgetry
 	 */
 	private void createStepFilterPreferences(Composite parent) {
-		Font font = parent.getFont();
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		container.setLayoutData(gd);
-		container.setFont(font);
+		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
 		fUseStepFiltersButton = SWTFactory.createCheckButton(container,	DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters,	null, DebugUITools.isUseStepFilters(), 2);
 		fUseStepFiltersButton.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
@@ -152,13 +139,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				public void widgetDefaultSelected(SelectionEvent e) {}
 			}
 		);
-		fTableLabel = new Label(container, SWT.NONE);
-		fTableLabel.setText(DebugUIMessages.JavaStepFilterPreferencePage_Defined_step_fi_lters__8); 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fTableLabel.setLayoutData(gd);
-		fTableLabel.setFont(font);
+		SWTFactory.createLabel(container, DebugUIMessages.JavaStepFilterPreferencePage_Defined_step_fi_lters__8, 2);
 		fTableViewer = CheckboxTableViewer.newCheckList(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		fTableViewer.getTable().setFont(container.getFont());
 		fTableViewer.setLabelProvider(new FilterLabelProvider());
 		fTableViewer.setComparator(new FilterViewerComparator());
 		fTableViewer.setContentProvider(new StepFilterContentProvider());
