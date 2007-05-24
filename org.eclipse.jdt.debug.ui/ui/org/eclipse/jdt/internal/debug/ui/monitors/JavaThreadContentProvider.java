@@ -11,14 +11,19 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 /**
  * Java thread presentation adapter.
@@ -107,7 +112,45 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 		return ((IJavaThread)element).hasStackFrames() ||
 			(isDisplayMonitors() && ((IJavaThread)element).hasOwnedMonitors());
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
+	 */
+	protected ISchedulingRule getRule(IChildrenCountUpdate[] updates) {
+		return getThreadRule(updates);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
+	 */
+	protected ISchedulingRule getRule(IChildrenUpdate[] updates) {
+		return getThreadRule(updates);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
+	 */
+	protected ISchedulingRule getRule(IHasChildrenUpdate[] updates) {
+		return getThreadRule(updates);
+	}
 	
+	/**
+	 * Returns a scheduling rule to ensure we aren't trying to get thread content
+	 * while executing an implicit evaluation (like toString() for the details
+	 * pane).
+	 * 
+	 * @param updates viewer updates
+	 * @return scheduling rule or <code>null</code>
+	 */
+	private ISchedulingRule getThreadRule(IViewerUpdate[] updates) {
+		if (updates.length > 0) {
+			Object element = updates[0].getElement();
+			if (element instanceof JDIThread) {
+				return ((JDIThread)element).getThreadRule();
+			}
+		}
+		return null;
+	}
 	
 
 }

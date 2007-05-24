@@ -135,20 +135,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
 		Runnable postEventDispatch = new Runnable() {
 			public void run() {
-				Runnable postEventProcess = new Runnable() {
-					public void run() {
-						if (!thread.isSuspended() && !thread.isPerformingEvaluation()) {
-							listener.detailComputed(objectValue, DebugUIMessages.JavaDetailFormattersManager_9); 
-						} else {
-							thread.queueRunnable(new Runnable() {
-								public void run() {
-									resolveFormatter(objectValue, thread, listener);
-								}
-							});
+				if (!thread.isSuspended() && !thread.isPerformingEvaluation()) {
+					listener.detailComputed(objectValue, DebugUIMessages.JavaDetailFormattersManager_9); 
+				} else {
+					thread.queueRunnable(new Runnable() {
+						public void run() {
+							resolveFormatter(objectValue, thread, listener);
 						}
-					}
-				};
-				JDIDebugUIPlugin.getStandardDisplay().asyncExec(postEventProcess);
+					});
+				}
 			}
 		};
 		DebugPlugin.getDefault().asyncExec(postEventDispatch);

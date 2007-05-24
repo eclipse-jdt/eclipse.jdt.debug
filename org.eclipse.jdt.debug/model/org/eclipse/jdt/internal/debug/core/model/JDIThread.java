@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -633,11 +634,23 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fireResumeEvent(evaluationDetail);
 		//save and restore current breakpoint information - bug 30837
 		IBreakpoint[] breakpoints = getBreakpoints();
+		ISchedulingRule rule = null;
+		if (evaluationDetail == DebugEvent.EVALUATION_IMPLICIT) {
+			rule = getThreadRule();
+		}
 		try {
-			evaluation.run(this, monitor);			
+			if (rule != null) {
+				Job.getJobManager().beginRule(rule, monitor);
+			}
+			if (monitor == null || !monitor.isCanceled()) {
+				evaluation.run(this, monitor);
+			}
 		} catch (DebugException e) {
 			throw e;
 		} finally {
+			if (rule != null) {
+				Job.getJobManager().endRule(rule);
+			}
 			fIsPerformingEvaluation = false;
 			fEvaluationRunnable= null;
 			fHonorBreakpoints= true;
@@ -2671,4 +2684,48 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 	
+   
+	/**
+	 * Implementation of a scheduling rule for this thread, which defines how it should behave 
+	 * when a request for content job tries to run while the thread is evaluating
+	 *  
+	 *  @since 3.3.0
+	 */
+	class SerialPerObjectRule implements ISchedulingRule {
+    	
+    	private Object fObject = null;
+    	
+    	public SerialPerObjectRule(Object lock) {
+    		fObject = lock;
+    	}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			if (rule instanceof SerialPerObjectRule) {
+				SerialPerObjectRule vup = (SerialPerObjectRule) rule;
+				return fObject == vup.fObject;
+			}
+			return false;
+		}
+    	
+    }	
+  
+	/**
+	 * returns the scheduling rule for getting content while evaluations are running
+	 * @return the <code>ISchedulingRule</code> for this thread 
+	 * 
+	 * @since 3.3.0
+	 */
+	public ISchedulingRule getThreadRule() {
+		   return new SerialPerObjectRule(this);
+   }
 }
