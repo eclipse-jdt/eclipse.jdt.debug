@@ -40,6 +40,9 @@ public interface IJavaDebugHelpContextIds {
 	public static final String ADD_EXCEPTION_DIALOG= PREFIX + "add_exception_dialog_context"; //$NON-NLS-1$
 	public static final String DETAIL_DISPLAY_OPTIONS_DIALOG= PREFIX + "detail_options_dialog_context"; //$NON-NLS-1$
 	public static final String SELECT_MAIN_METHOD_DIALOG = PREFIX + "select_main_method_dialog"; //$NON-NLS-1$
+	public static final String EXPRESSION_INPUT_DIALOG = PREFIX + "expression_input_dialog"; //$NON-NLS-1$
+	public static final String STRING_VALUE_INPUT_DIALOG = PREFIX + "string_value_input_dialog"; //$NON-NLS-1$
+	public static final String DEFAULT_INPUT_DIALOG = PREFIX + "default_input_dialog"; //$NON-NLS-1$
 
 	// Preference/Property pages
 	public static final String JRE_PREFERENCE_PAGE= PREFIX + "jre_preference_page_context"; //$NON-NLS-1$

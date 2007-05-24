@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -25,8 +26,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A dialog which prompts the user to enter a new value for a
@@ -52,6 +56,17 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      */
     protected StringValueInputDialog(Shell parentShell, IJavaVariable variable) {
         super(parentShell, variable);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
+    protected Control createDialogArea(Composite parent) {
+    	IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getHelpSystem().setHelp(
+				parent,
+				IJavaDebugHelpContextIds.STRING_VALUE_INPUT_DIALOG);
+    	return super.createDialogArea(parent);
     }
     
     /**

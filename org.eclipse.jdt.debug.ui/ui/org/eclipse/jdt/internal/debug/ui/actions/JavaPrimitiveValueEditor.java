@@ -14,10 +14,15 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -49,7 +54,15 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
             String message= MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name}); 
             String initialValue= variable.getValue().getValueString();
             PrimitiveValidator validator= new PrimitiveValidator();
-            InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator);
+            InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator){
+            	protected Control createDialogArea(Composite parent) {
+            		IWorkbench workbench = PlatformUI.getWorkbench();
+            		workbench.getHelpSystem().setHelp(
+            				parent,
+            				IJavaDebugHelpContextIds.DEFAULT_INPUT_DIALOG);
+            		return super.createDialogArea(parent);
+            	}
+            };
             if (dialog.open() == Window.OK) {
                 String stringValue = dialog.getValue();
                 if (stringValue.length() > 1 && stringValue.charAt(0) == '\\') {

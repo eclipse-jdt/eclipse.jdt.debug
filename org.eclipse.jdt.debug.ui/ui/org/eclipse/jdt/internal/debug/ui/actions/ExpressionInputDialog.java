@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
@@ -90,6 +91,11 @@ public class ExpressionInputDialog extends TrayDialog {
      * Creates and populates the dialog area
      */
     protected Control createDialogArea(Composite parent) {
+    	IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getHelpSystem().setHelp(
+				parent,
+				IJavaDebugHelpContextIds.EXPRESSION_INPUT_DIALOG);
+		
         Composite composite= (Composite) super.createDialogArea(parent);
         
         // Create the composite which will hold the input widgetry
