@@ -448,7 +448,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 */
 	protected void addLogicalStructure() {
 		JavaLogicalStructure logicalStructure= new JavaLogicalStructure("", true, "", "", new String[0][]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (new EditLogicalStructureDialog(fLogicalStructuresViewer.getControl().getShell(), logicalStructure).open() == Window.OK) {
+		if (new EditLogicalStructureDialog(getShell(), logicalStructure).open() == Window.OK) {
 			fLogicalStructuresContentProvider.add(logicalStructure);
 			fLogicalStructuresViewer.refresh();
 			fLogicalStructuresViewer.setSelection(new StructuredSelection(logicalStructure));
@@ -462,7 +462,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		IStructuredSelection structuredSelection= (IStructuredSelection) fLogicalStructuresViewer.getSelection();
 		if (structuredSelection.size() == 1) {
 			JavaLogicalStructure logicalStructure= (JavaLogicalStructure)structuredSelection.getFirstElement();
-			new EditLogicalStructureDialog(fLogicalStructuresViewer.getControl().getShell(), logicalStructure).open();
+			new EditLogicalStructureDialog(getShell(), logicalStructure).open();
 			fLogicalStructuresContentProvider.refresh(logicalStructure);
 			fLogicalStructuresViewer.refresh();
 			refreshCodeViewer(logicalStructure);

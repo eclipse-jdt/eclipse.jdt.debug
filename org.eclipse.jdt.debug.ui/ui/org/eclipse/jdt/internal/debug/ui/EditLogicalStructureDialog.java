@@ -197,7 +197,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	public EditLogicalStructureDialog(Shell parentShell, JavaLogicalStructure logicalStructure) {
 		super(parentShell);
-		setShellStyle(SWT.DIALOG_TRIM | SWT.MAX | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		if (logicalStructure.getQualifiedTypeName().length() == 0) {
 			setTitle(DebugUIMessages.EditLogicalStructureDialog_32);
 		} else {
