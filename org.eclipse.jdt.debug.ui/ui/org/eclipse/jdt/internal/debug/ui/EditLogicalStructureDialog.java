@@ -210,6 +210,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getHelpSystem().setHelp(
+				parent,
+				IJavaDebugHelpContextIds.EDIT_LOGICAL_STRUCTURE_DIALOG);
 		fParentComposite= parent;
 		
 		IHandler handler = new AbstractHandler() {
@@ -222,7 +226,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			}
 		};
 		
-		IWorkbench workbench = PlatformUI.getWorkbench();
 		IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
         
