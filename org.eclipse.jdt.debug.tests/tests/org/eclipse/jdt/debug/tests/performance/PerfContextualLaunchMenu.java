@@ -19,7 +19,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Dimension;
 
 /**
  * Tests the performance of the contextual launch menu population 
@@ -39,7 +38,6 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
      * @throws Exception
      */
     public void testContextualLaunchMenu() throws Exception {
-        tagAsGlobalSummary("Fill Contextual Launch Menu", Dimension.ELAPSED_PROCESS);
         final PerfTestContextualLaunchAction action = new PerfTestContextualLaunchAction();
         
         ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");        
