@@ -1675,12 +1675,13 @@
              targetID="javaStackTraceConsole.#ContextMenu"
              id="org.eclipse.jdt.debug.ui.javaStackTraceConsoleContextMenu">
           <action
-                label="%FormatStackTraceActionDelegate.name"
-                tooltip="%FormatStackTraceActionDelegate.tooltip"
-                definitionId="org.eclipse.jdt.ui.edit.text.java.format"
                 class="org.eclipse.jdt.internal.debug.ui.console.FormatStackTraceActionDelegate"
+                definitionId="org.eclipse.jdt.ui.edit.text.java.format"
+                helpContextId="format_java_stack_trace_console_action_context"
+                id="org.eclipse.jdt.debug.ui.formatJavaStackTraceAction"
+                label="%FormatStackTraceActionDelegate.name"
                 menubarPath="additions"
-                id="org.eclipse.jdt.debug.ui.formatJavaStackTraceAction"/>
+                tooltip="%FormatStackTraceActionDelegate.tooltip"/>
        </viewerContribution>
        <objectContribution
              id="org.eclipse.jdt.debug.ui.allInstances.ITypeContribution"
@@ -1753,7 +1754,7 @@
                id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesInViewActionDelegate"
-               helpContextId="all_references_action_context"
+               helpContextId="show_references_action_context"
                icon="icons/full/elcl16/all_references.gif"
                id="org.eclipse.jdt.debug.ui.variablesViewActions.AllReferencesInView"
                label="%allReferencesInView.label"
@@ -1819,7 +1820,7 @@
                id="org.eclipse.jdt.debug.ui.variableViewActions.Preferences"/>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllReferencesInViewActionDelegate"
-               helpContextId="all_references_action_context"
+               helpContextId="show_references_action_context"
                icon="icons/full/elcl16/all_references.gif"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.AllReferencesInView"
                label="%allReferencesInView.label"
@@ -1925,13 +1926,13 @@
                id="org.eclipse.jdt.debug.ui.launchViewActions.ShowSystemThreads"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowSystemThreadsAction"
                icon="$nl$/icons/full/obj16/thread_obj.gif"
-               helpContextId="show_system_threads_context"
+               helpContextId="show_system_threads_action_context"
                label="%showSystemThreads.label"
                menubarPath="javaActions"
                tooltip="%showSystemThreads.tooltip">
          </action>
   <action
-        helpContextId="show_monitor_thread_info_context"
+        helpContextId="show_monitors_action_context"
         label="%showMonitorThreadInfo.label"
         icon="$nl$/icons/full/obj16/thread_and_monitor_obj.gif"
         tooltip="%showMonitorThreadInfo.tooltip"

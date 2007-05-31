@@ -41,7 +41,7 @@ public class JavaExceptionBreakpointAdvancedPage extends JavaBreakpointAdvancedP
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_EXCEPTION_BREAKPOINT_FILTERING_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_EXCEPTION_BREAKPOINT_FILTERING_PROPERTY_PAGE);
 	}
 
 	protected Button createButton(Composite parent, String text) {

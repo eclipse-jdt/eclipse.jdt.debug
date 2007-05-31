@@ -56,7 +56,11 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JAVA_LOGICAL_STRUCTURES_PAGE = PREFIX + "java_logical_structures_page"; //$NON-NLS-1$
 	public static final String VMCAPABILITIES_PROPERTY_PAGE = PREFIX + "vm_capabilities_property_page"; //$NON-NLS-1$
 	public static final String JAVA_HEAPWALKING_PREFERENCE_PAGE = PREFIX + "java_heapwalking_preference_page"; //$NON-NLS-1$
-	public static final String JAVA_EXCEPTION_BREAKPOINT_FILTERING_PAGE = PREFIX + "java_exception_breakpoint_filtering_page"; //$NON-NLS-1$
+	public static final String JAVA_BREAKPOINT_PROPERTY_PAGE = PREFIX + "java_breakpoint_property_page"; //$NON-NLS-1$
+	public static final String JAVA_BREAKPOINT_ADVANCED_PROPERTY_PAGE = PREFIX + "java_breakpoint_advanced_property_page"; //$NON-NLS-1$
+	public static final String JAVA_EXCEPTION_BREAKPOINT_PROPERTY_PAGE = PREFIX + "java_exception_breakpoint_property_page"; //$NON-NLS-1$
+	public static final String JAVA_EXCEPTION_BREAKPOINT_FILTERING_PROPERTY_PAGE = PREFIX + "java_exception_breakpoint_filtering_property_page"; //$NON-NLS-1$
+	public static final String JAVA_LINE_BREAKPOINT_PROPERTY_PAGE = PREFIX + "java_line_breakpoint_property_page"; //$NON-NLS-1$
 	
 	// reused ui-blocks
 	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$
