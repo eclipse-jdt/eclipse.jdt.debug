@@ -1,0 +1,438 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Java Debug Release Notes</title>
+</head>
+<body>
+<h1>Eclipse 3.3 Java Debug Build Notes&nbsp;</h1>
+
+<h2>Summary of API changes in 3.3</h2>
+<ul>
+  <li>added <code>IJavaThread.isDaemon()</code></li>
+  <li>added <code>IJavaThread.getFrameCount()</code></li>
+  <li>added <code>IJavaDebugTarget.supportsInstanceRetreival()</code></li>
+  <li>added <code>IJavaReferenceType.getInstances(int max)</code></li>
+  <li>added <code>IJavaObject.getReferringObjects(int max)</code></li>
+  <li>added <code>IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT</code> and 
+    <code>IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT</code></li>
+  <li>added support for access rules to be defined for libraries in an execution 
+    environment 
+    <ul>
+      <li>An execution environment can define an access rule participant to contribute 
+        rules specific to an environment (see the new attribute <code>ruleParticipant</code> 
+        on the <code>environment</code> element of the <code>executionEnvironments</code> 
+        extension point).</li>
+      <li>Additionally an access rule participant can be contributed in isolation 
+        to participate in access rule creation for any execution environment (see 
+        the <code>ruleParticipant </code>element of the <code>executionEnvironments</code> 
+        extension point). The rule participant can create rules selectively based 
+        on project, JRE, and system libraries.</li>
+      <li>See the new interface <code>IAccessRuleParticipant</code> and the new 
+        method <code>IExecutionEnvironment.getAccessRules(...)</code>.</li>
+    </ul>
+  </li>
+  <li>added support to force early return from a method
+    <ul>
+      <li>added <code>IJavaStackFrame.canForceReturn()</code>, <code>IJavaStackFrame.forceReturn(IJavaValue)</code>, 
+        <code>IJavaDebugTarget.supportsForceReturn()</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2>3.3 RC3 - June 1, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=189845">189845</a>: NPE after 'New Detail Formatter'<br>
+
+<h2>3.3 RC2 - May 18, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=188300">188300</a>: Step Filtering pref page does not apply dialog font<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=188174">188174</a>: Breakpoints markers are lost when a JavaScript, Html, or XML  file is saved.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=188946">188946</a>: EditLogicalStructureDialog is not modal<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=188506">188506</a>: Edit Logical Structure Dialog has no F1 help<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=187000">187000</a>: Debugger looses selection/focus a lot on the thread stack where you debug.<br>
+
+<h2>3.3 RC1 - May 11, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184857">184857</a>: Four images leaked each time exception breakpoint dialog is opened<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182320">182320</a>: Buttons of 'Errors in Project' window aren't visible when there is a lot of projects<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184862">184862</a>: [evaluation] evaluation in static method with generics does not work<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153124">153124</a>: CCE while performing evaluation near autobox<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=185755">185755</a>: AddExceptionDialog has non-nls'd UI message<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184863">184863</a>: NPE in JRE launch configuration tab<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=185018">185018</a>: Details values is incorrect for watch expressions with errors<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=185808">185808</a>: [help] No help topic found for the add source dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=185666">185666</a>: Typo in type resolution error<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178246">178246</a>: inspect/all instances popup should expand first element<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173101">173101</a>: Inspector and Variables view incorrectly escapes single quotes in strings<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184911">184911</a>: Actions not disabled in Variables View for dummy variables when showing references<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184917">184917</a>: [jres] Mac always launches system default VM no matter what config says<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=186443">186443</a>: Remove dead code<br>
+
+<h2>3.3 Milestone 7 - May 4, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126729">126729</a>: [jres] unable to retrieve system properties<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=175708">175708</a>: [breakpoints] Debugger stops without feedback<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184211">184211</a>: JDI connectors throw NullPointerException if used separately from Eclipse<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179685">179685</a>: JREContainerInitializer average initialization time<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178729">178729</a>: [breakpoints] inconsistent behavior of breakpoint setting using double-click<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184387">184387</a>: Add JRE wizard: JRE type default changed to Standard 1.1x VM<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=183532">183532</a>: Bug with debugging of generic methods<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176275">176275</a>: [breakpoints] Method breakpoint filters do not work<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161364">161364</a>: Evaluating Code that contains Generics does not work while debugging<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153122">153122</a>: CCE performing eval of switch statement<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151319">151319</a>: Detailed formater does not seem to recognize methods of the current class<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151569">151569</a>: [console] Java stack trace console: after paste, link to exception too long<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=184883">184883</a>: Inspecting code results in flashing text in popup<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=186302">186302</a>: java.util.ConcurrentModificationException while trying to add jdk<br>
+
+<h2>April 24, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182237">182237</a>: Invalid thread access exceptions in Java Variables view.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182807">182807</a>: [breakpoints] NPE attempting to set breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169542">169542</a>: A ThreadGroup (and all its Threads) is not displayed in the Debug view when its parent didn't contain any threads<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=140330">140330</a>: [jres] Inconsistent JRE configuration with -vm option.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182992">182992</a>: Add/Edit JRE Dialog initial size too small on Linux<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182890">182890</a>: Variables view: 'References' tends to clutter the view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182008">182008</a>: blank threads in debug view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148872">148872</a>: [source lookup] missing jar causes sourcepath computation to fail<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=183365">183365</a>: NLS33: Translation question<br>
+
+<h2>April 17, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178902">178902</a>: Setting Stop in main does not stop when launched<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173479">173479</a>: Provide a quick fix for deprecated JRE variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148965">148965</a>: Performance problem in detail pane when there is a lot of plugins.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182084">182084</a>: AIOOBE while stopped at BP<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178279">178279</a>: Filter package action filters receiving type rather than declaring type<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178979">178979</a>: Exception label not displayed in the debug view when using scrapbook<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=181548">181548</a>: Please rmdir org.eclipse.jdt.debug/jdi-bin from CVS and cvsignore it<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170377">170377</a>: Stack traces frenetically appear and disappear when a breakpoint is hit<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=180667">180667</a>: Resume in loop selects another thread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177579">177579</a>: Hover's sticky affordance should use actual key binding<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=181914">181914</a>: NPE in BreakpointConditionEditor<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182065">182065</a>: ClassCastException expanding inspect expression<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=182111">182111</a>: focus lost in the debug view while stopped at BP<br>
+
+<h2>April 10, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=168841">168841</a>: JRERuntimeClasspathEntryResolver#isSameArchives() should be case insensitive on windows<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178641">178641</a>: [performance] conditional breakpoint performance test failure<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179122">179122</a>: [performance] breakpoint performance tests<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=181146">181146</a>: Preference page has two checkboxes &quot;Suspend for breakpoints during evaluations&quot;<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173465">173465</a>: Show &quot;(already running)&quot; in tooltip for run/debug if it is<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179840">179840</a>: Max length setting of 0 ignored<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=181152">181152</a>: 'Toggle Step Filters' action has bad name<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179442">179442</a>: DBCS3.3: editing duplicated launch configuration won't be displayed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178282">178282</a>: [java 1.6] Force early return causing NPEs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=180496">180496</a>: Use the new ClasspathContainerInitializer API for the JRE<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179111">179111</a>: Numerous fixes for All Instances / All References features<br>
+
+<h2>April 3, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176004">176004</a>: 'All Instances' should work on actual type<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178264">178264</a>: sash settings not persisted in eval popups<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178860">178860</a>: Scrapbook page is not responding if an exception occurs during evaluation<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179611">179611</a>: Breakpoints lost when JSP file saved<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=179121">179121</a>: JDIModelPresentation does not allow spaces in variable names<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157055">157055</a>: [variables view] Right click on variable produces ClassNotLoadedErrors<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=175248">175248</a>: Variables view escapes Strings twice (too many \)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=180460">180460</a>: NPE in BreakpointRenameProjectParticipant when renaming project<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132795">132795</a>: [string variables] SelectedResourceManager leaks fSelectedText field when active editor is closed<br>
+
+<h2>Milestone 6 - Mar 23, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178795">178795</a>: NPE from add exception breakpoint dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178752">178752</a>: Run/Debug settings is not on project preferences page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178718">178718</a>: model proxy created for Java debug target in var view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178634">178634</a>: Deadlock while launching tests just after having started my workspace<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152381">152381</a>: Error creating multiple watch expressions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177541">177541</a>: NLS33:translation questions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177570">177570</a>: All instances does not work when constructor is selected<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176608">176608</a>: Debug view contains empty items at end<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177348">177348</a>: Coalesce access to discouraged access of WorkingCopyManager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152641">152641</a>: [java 1.6] Provide all instances feature in JDT debugger<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172402">172402</a>: Allow export of logical structure preferences<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177383">177383</a>: NLS33:translation - typos<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177138">177138</a>: Use different modifier for debug hyperlink detector<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177423">177423</a>: All Instances action enabled in JavaEditor for pre-1.6 VMs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177424">177424</a>: Force return action is enabled for non-1.6 VMs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177382">177382</a>: [launching] Support for launching .class files lost<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177542">177542</a>: NLS33:translation questions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177611">177611</a>: Remove illegal references to JavaEditor<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177499">177499</a>: NPE while displaying content of an array<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=150652">150652</a>: [evaluation] Force early return<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=177753">177753</a>: Java shortcuts do not appear for .jar files<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153887">153887</a>: [java 1.6] Provide an easy way to browse all references<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=154115">154115</a>: [java 1.6] Support for Java SE 6 debug features<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=178427">178427</a>: NPE in AllReferencesActionDelegate<br>
+
+<h2>Mar 13, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176814">176814</a>: Compiler warning in N20070309-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176866">176866</a>: Strange border in Java &gt; Debug preference page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176853">176853</a>: Launch configurations go missing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176597">176597</a>: Variables view: Toggling primitive display options does not refresh view<br>
+
+<h2>Mar 6, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162987">162987</a>: [breakpoints] Renaming a class with breakpoints causes JavaModelException<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176154">176154</a>: [refactoring] NPE in LaunchConfigurationProjectMainTypeChange while renaming project<br>
+
+<h2>Feb 27th, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=175208">175208</a>: remove API constant introduced in 3.3<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=175202">175202</a>: Java launch config migration delegate<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=174216">174216</a>: Polish for &quot;references not supported&quot; element<br>
+
+<h2>Feb 20th, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161416">161416</a>: Allow for step through vs. step return using filters<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172569">172569</a>: Ability to send custom  JDWP commands<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=174779">174779</a>: [hot code replace] hot code place not triggered<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=174465">174465</a>: [preferences] [heapwalking] No accelerator for references option<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152653">152653</a>: [java 1.6] All references<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173687">173687</a>: NPE updating compiler compliance<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170914">170914</a>: [variables] Logical structures cause infinite refresh in variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173620">173620</a>: Default Javadoc location for JDK 6 missing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112630">112630</a>: hyperlink debugging<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173339">173339</a>: [launching] default main method search scope constraints are too lax<br>
+
+<h2>Feb 13th, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=154233">154233</a>: [java 1.6] Make use of improved class prepare filtering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172539">172539</a>: Logical structures are not imported from preferences<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153060">153060</a>: Internal Error when changing boolean variable by hand in debugger<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173714">173714</a>: NPEs under JavaStackTracePageParticipant while debugging<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173188">173188</a>: [launching] User must choose between main types even if selection is a main method<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173909">173909</a>: 'Skip All Breakpoints' command does nothing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173304">173304</a>: NPE in EditDetailFormatterAction when called from context menu of Variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173860">173860</a>: NPE in packet send manage running test suite<br>
+
+<h2>Milestone 5, Feb 9th, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173182">173182</a>: NPE from  ExceptionInspector when shutting down workbench<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172205">172205</a>: [breakpoints] Suspend... menuitem has no icon in Linux<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172181">172181</a>: Bad &quot;Suspend VM&quot; and &quot;Suspend Thread&quot; behaviour in Breakpoints view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172093">172093</a>: Debugger attempts to set wrong type of bp in final instance variable of type Runnable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172989">172989</a>: NPE when disabling breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173187">173187</a>: Line Breakpoint changes unclear during refactoring<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172668">172668</a>: Cannot add Exception breakpoint for type name that does not inclue 'Exception'<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169139">169139</a>: Launch configuration should check .class compability, not compiler compliance level<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=171075">171075</a>: Java Editor Disconnecting Debug Session<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172348">172348</a>: Dialog to add exception breakpoint extremely slow<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162399">162399</a>: Problem in the implementation of the support of  JSR-045<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165969">165969</a>: API to allow a contributed JRE and variables to be re-initialized<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170603">170603</a>: Bad usability of Java Exception selection dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172516">172516</a>: use the new 'deprecated' and 'read-only' classpath variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173152">173152</a>: missing element in tree when 'no monitor information'<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=173193">173193</a>: [applets] Search for applets returns results that are not applets<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=172530">172530</a>: NPE in AbstractJavaMainTab<br>
+
+<h2>Jan 30, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=171984">171984</a>: Open the Breakpoint Properties dialog on a key stroke<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=171915">171915</a>: Installed JREs pref page opens very wide<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=171787">171787</a>: javadoc warning in N20070126-0010<br>
+
+<h2>Jan 23, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=171286">171286</a>: HCR failed dialog should present launch label as well as the target label<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170966">170966</a>: Logical Structures preference page doesn't update when structure edited<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=171567">171567</a>: [launching] NPE from Launching plugin if constructor does not get called<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170494">170494</a>: [variables view] add new logical structure dialog content assist available when it shouldn't be<br>
+
+<h2>Jan 16, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170322">170322</a>: Breakpoint properties page: condition field should resize vertically<br>
+
+<h2>Jan 9, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169768">169768</a>: Cannot add external library if JRE dialog has selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170706">170706</a>: keywords not externalized<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169565">169565</a>: NPE in JDIDebugTarget when querying supportsInstanceRetrieval<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=78960">78960</a>: watch expression testStepping fails<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169683">169683</a>: javadoc warning in N20070105-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169066">169066</a>: Removing a watch from the Expressions fails<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169104">169104</a>: Debug setting &quot;SuspendOnUncaughtExceptions&quot; saved with wrong key<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=167638">167638</a>: [launching] main method search for launching returns types without main methods<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=168090">168090</a>: Anonymous Inner Class Breakpoint Canceled by Other<br>
+
+<h2>3.3 M4 - Dec 15, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=167740">167740</a>: [variables] [views] New/Edit details formatter menu should not be available on array types<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=167651">167651</a>: [vms] ArrayIndexOutOfBoundsException editing a source location<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=168455">168455</a>: provider name not provided in jdt.launching plugin<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=163376">163376</a>: JRE container is not initialized<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152962">152962</a>: CCE in JREsPreferencePage.getCurrentCompilerCompliance(..)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153796">153796</a>: [breakpoints] can set more than one breakpoint on line<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=167531">167531</a>: Javadoc warnings in I20061211-1607<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165988">165988</a>: TcpipSpy borked<br>
+
+<h2>Dec 11, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=167244">167244</a>: &quot;Exception occurred: Evaluation failed - thread not suspended..&quot; in Variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=167182">167182</a>: JDIDebugTarget.handleDebugEvents not using getAdapter when identifying the event source<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166976">166976</a>: [jres] JRE container classpath entries not computed properly per project<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166290">166290</a>: [views] contended locks and monitors should support ITerminate and ISuspendResume<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152962">152962</a>: CCE in JREsPreferencePage.getCurrentCompilerCompliance(..)<br>
+
+<h2>Dec 6, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=163444">163444</a>: Associate access restrictions with execution environments<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166689">166689</a>: [plugins] the jdt.debug plugins should be save participants<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165845">165845</a>: com.sun.jdi.event.MethodExitEvent.returnValue() not working properly<br>
+
+<h2>Nov 28, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165223">165223</a>: Starting SDK with a 1.6 VM doesn't set the compiler preferences to 6.0<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164703">164703</a>: testEclusiveScopedException and testMultiExclusiveScopedExceptionMissed fail on IBM Java2 1.5.0<br>
+
+<h2>Nov 21, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=163463">163463</a>: Template method call needed in JDIDebugTarget.createThread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148424">148424</a>: VM Capabilities only available from Target<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164476">164476</a>: division by zero error selecting columns<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=16929">16929</a>: [evaluation] Eval: should have got runtime NPE<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164471">164471</a>: NPE when sending a message to &quot;null&quot; in expression eval<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=158280">158280</a>: CCE in JDIObjectValue.getEnclosingObject<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162589">162589</a>: &quot;Run As&quot; not enabling &quot;Java Application&quot; for Inner class &quot;main&quot; method unless outer class also has main<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162752">162752</a>: [details] support details for multi-dimensional string arrays<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164650">164650</a>: thread groups should implement ITerminate<br>
+
+<h2>Nov 14, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164548">164548</a>: vm name background is always white<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=163836">163836</a>: StackOverflowError in JavaLaunchableTester.hasMainInChildren(..)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164376">164376</a>: NPE in JavaDetailFormatterManager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164359">164359</a>: NPE retrieving instance id for null value<br>
+
+<h2>Nov 6, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=163463">163463</a>: Template method call needed in JDIDebugTarget.createThread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162902">162902</a>: [jres] &quot;cancel&quot; button should probably be &quot;stop&quot; for JRE search<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162899">162899</a>: [jres] Initial size of &quot;add jre dialog&quot; is too narrow<br>
+
+<h2>3.3 Milestone 3 - Nov 3, 2006</h2>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153913">153913</a>: step over action becomes disabled<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161243">161243</a>: details for multi-dimensional arrays<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162366">162366</a>: org.eclipse.jdt.debug.tests.testSimpleStepFilter/testInactiveStepFilter depend on VM behavior<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162675">162675</a>: Javadoc warnings in N20061028-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162665">162665</a>: Warnings in N20061028-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=162368">162368</a>: Include JRockit-internal classes in the default step filters<br>
+
+<h2>Oct 24, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161895">161895</a>: Compile errors in N20061022-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161537">161537</a>: JDT/UI test failures in N20061018-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152539">152539</a>: Usability: Hot code replace failed dialog is a little panic-inducing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157907">157907</a>: [variables view] Preferences action should use PreferencesUtil to open pref pages<br>
+
+<h2>Oct 10, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=160129">160129</a>: Chkpii error in latest build<br>
+
+<h2>Oct 3, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=159815">159815</a>: isRemote(...) test performed 5 times for each variable selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=160006">160006</a>: Chkpii error in latest build<br>
+
+<h2>Sept 22, 2006 - Milestone 2</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157042">157042</a>: [java 1.6] Need way to input counts for all instances / references<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157489">157489</a>: Package &quot;org.eclipse.jdt.internal.debug.ui.variables&quot; not exported<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=39222">39222</a>: [java launching] Renaming my installed JREs broke all my launch configs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157467">157467</a>: Not able to add breakpoints to a static initializer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=155123">155123</a>: Error message in the log from implementing an extension<br>
+
+<h2>Sept 11, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156320">156320</a>: Unchecked conversion from IJavaDebugTarget to JDIDebugTarget<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153793">153793</a>: JavaJRETab.checkCompliance() logs message when project is closed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153472">153472</a>: [all references] CCE selecting variable with null value<br>
+
+<h2>Aug 14, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152572">152572</a>: PDE Tools &gt; Update Classpath... creates wrong warning when no perfect match<br>
+
+<h2>Aug 10, 2006 - Milestone 1</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=74854">74854</a>: [breakpoints] Ctrl+B should set a method breakpoint if invoked from the method signature<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152446">152446</a>: Problem with multiples JREs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151517">151517</a>: [breakpoints] Can't set Class Load Breakpoint like other breakpoints<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149999">149999</a>: Use ComboFieldEditor from JFace<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124147">124147</a>: [jres] Changing installed JRE doesn't warn when compiler compliance is not compatible<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152962">152962</a>: CCE in JREsPreferencePage.getCurrentCompilerCompliance(..)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=152964">152964</a>: Wrong error about incompatible JRE in launch configuration dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153256">153256</a>: 'Add JRE' dialog layout problems<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139195">139195</a>: [breakpoints] Error on Toggle method breakpoint in external .java file<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153336">153336</a>: [breakpoints] translateToMembers is called too many times<br>
+
+<h2>July 31, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151996">151996</a>: OpenTypeAction source lookup performance<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151709">151709</a>: JRE tab should show what JRE is bound to an EE<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151474">151474</a>: Minor tweaks to the VM Capabilities property page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151586">151586</a>: thread label problem for suspend on compilation error<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151570">151570</a>: Java stack trace console: NPE in FormatStackTraceActionDelegate<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149874">149874</a>: JUnit Launcher duplicates classpath entries<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=141570">141570</a>: [variables] CCE when array partition part of multi-selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138877">138877</a>: Unable to locate source when clicking in console<br>
+
+<h2>July 18, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=150563">150563</a>: Unused NLS message warning<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=147743">147743</a>: [console] New icon for stack trace &quot;auto format&quot; toggle<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148985">148985</a>: use new API JavaUI.openInEditor<br>
+
+<h2>July 11, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149909">149356</a>: Remove JavaElementPropertyTester<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149356">149356</a>: [help] the new VM capabilities property page has no help topic<br>
+
+<h2>July 4, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133725">133725</a>: [java launching] Add External Jars dialog does not check if the jar file actually exists<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148918">148918</a>: [jre] remove discouraged access warnings in AddVMDialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149491">149491</a>: cannot create watchpoints on final or static final members<br>
+
+<h2>June 27, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=141329">141329</a>: vm disconnect when terminating target with thread groups showing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=147777">147777</a>: mirrorOfVoid() to appear on VirtualMachine<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148362">148362</a>: DisplayView registers Ctrl+Space globally<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=145592">145592</a>: Debugger gets confused with watchpoints on fields with the same name.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=145350">145350</a>: JDI Enhancements for Java 6.0<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=145362">145362</a>: JDI test suite needs to be updated for 1.6 tests<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=147773">147773</a>: [debugger] determineIfDaemon throws exception<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=24484">24484</a>: [jres] VM Properties<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148247">148247</a>: [launching] Creating launching configurations doesn't use the selected class anymore<br>
+
+<h2>June 20, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=42399">42399</a>: [java debug] JDI Java thread has no daemon property<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=140126">140126</a>: [evaluation] CompletionContext shouldn't be instantiated by clients of JDT/Core API<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139152">139152</a>: [preferences] Java-&gt;Debug preference page validates uninitialized fields<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132671">132671</a>: [variables] Error dialog after clicking into value field<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143286">143286</a>: [display view] wrong name for viewaction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=147116">147116</a>: [Context Help] missing F1 help for console actions<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=140109">140109</a>: [help] Dynamic help is not displayed in the Working Directory of  Launch configuration Arguments tab<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=140107">140107</a>: [applet]  [help] The context help of Java applet configuration could not be found<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=147484">147484</a>: broken Find/Replace context menu label in Display view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=90768">90768</a>: [console] Java Stack Trace Console: Option to format per default<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=146825">146825</a>: [console] NPE in process console participant<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=146648">146648</a>: Code Clean up.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138864">138864</a>: [variables] IllegalArgumentException while updating variables view<br>
+
+<h2>June 13, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=146899">146899</a>: test failure on JavaSE6 - ExecutionEnvironmentTests.testAnalyze<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119860">119860</a>: [evaluation] NPE from watch expression<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139089">139089</a>: [breakpoints] NPE in JavaBreakpoint.fireRemoved () shutting down eclipse with Java Debug session running<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=142842">142842</a>: [breakpoints] ToggleLineBreakpoint: Invalid thread access<br>
+
+</body>
+</html>
