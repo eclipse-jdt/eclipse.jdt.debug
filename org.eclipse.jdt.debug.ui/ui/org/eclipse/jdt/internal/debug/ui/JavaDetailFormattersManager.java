@@ -178,7 +178,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		try {
 			evaluationListener.valueToString(value);
 		} catch (DebugException e) {
-			listener.detailComputed(value, e.getStatus().getMessage());
+			String detail = e.getStatus().getMessage();
+			if (e.getStatus().getException() instanceof UnsupportedOperationException) {
+				detail = DebugUIMessages.JavaDetailFormattersManager_7;
+			}
+			listener.detailComputed(value, detail);
 		}
 	}
 	
@@ -595,7 +599,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					Throwable throwable= exception.getStatus().getException();
 					error.append("\n\t\t"); //$NON-NLS-1$
 					if (throwable instanceof InvocationException) {
-						error.append(MessageFormat.format(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()})); 
+						error.append(MessageFormat.format(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()}));
+					} else if (throwable instanceof UnsupportedOperationException) {
+						error = new StringBuffer();
+						error.append(DebugUIMessages.JavaDetailFormattersManager_7);
 					} else {
 						error.append(exception.getStatus().getMessage());
 					}

@@ -14,6 +14,8 @@ import org.eclipse.osgi.util.NLS;
 public class LogicalStructuresMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.core.logicalstructures.LogicalStructuresMessages";//$NON-NLS-1$
 
+	public static String JavaLogicalStructure_0;
+
 	public static String JDIAllInstancesValue_0;
 	public static String JDIAllInstancesValue_1;
 	public static String JDIAllInstancesValue_2;

@@ -143,7 +143,11 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				DebugException exception = fResult.getException();
 				String message;
 				if (exception != null) {
-					message= MessageFormat.format(LogicalStructuresMessages.JavaLogicalStructure_2, new String[] { exception.getMessage() }); 
+					if (exception.getStatus().getException() instanceof UnsupportedOperationException) {
+						message = LogicalStructuresMessages.JavaLogicalStructure_0;
+					} else {
+						message= MessageFormat.format(LogicalStructuresMessages.JavaLogicalStructure_2, new String[] { exception.getMessage() });
+					}
 				} else {
 					message= LogicalStructuresMessages.JavaLogicalStructure_3; 
 				}
