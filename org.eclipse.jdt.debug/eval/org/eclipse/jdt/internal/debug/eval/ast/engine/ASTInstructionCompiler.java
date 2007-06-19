@@ -165,6 +165,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushInt;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLocalVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLong;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushNull;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushPrimitiveType;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushStaticFieldVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushString;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushThis;
@@ -1202,6 +1203,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(PrimitiveType)
 	 */
 	public void endVisit(PrimitiveType node) {
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();		
 	}
 
 	/**
@@ -3123,8 +3127,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-
-		return true;
+		ITypeBinding typeBinding  = node.resolveBinding();
+		push(new PushPrimitiveType(getTypeName(typeBinding)));
+		return false;
 	}
 
 	/**

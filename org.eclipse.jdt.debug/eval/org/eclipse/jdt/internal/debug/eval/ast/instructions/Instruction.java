@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -20,6 +18,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -28,6 +27,8 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Common behavior for instructions.
@@ -207,6 +208,42 @@ public abstract class Instruction {
         }
         return classReference.getInstanceType();
     }
+    
+    /**
+     * Returns the primitive type with the given name.
+     * 
+     * @param name type name, for example - "int"
+     * @return primitive type
+     * @throws CoreException
+     */
+    protected IJavaType getPrimitiveType(String name) throws CoreException {
+    	IJavaReferenceType type = null;
+    	if ("boolean".equals(name)) { //$NON-NLS-1$
+    		type = (IJavaReferenceType) getType("java.lang.Boolean"); //$NON-NLS-1$
+    	} else if ("byte".equals(name)) { //$NON-NLS-1$
+    		type = (IJavaReferenceType) getType("java.lang.Byte"); //$NON-NLS-1$
+    	} else if ("char".equals(name)) { //$NON-NLS-1$
+    		type = (IJavaReferenceType) getType("java.lang.Character"); //$NON-NLS-1$
+    	} else if ("double".equals(name)) { //$NON-NLS-1$
+    		type = (IJavaReferenceType) getType("java.lang.Double"); //$NON-NLS-1$
+    	} else if ("float".equals(name)) { //$NON-NLS-1$
+    		type = (IJavaReferenceType) getType("java.lang.Float"); //$NON-NLS-1$
+    	} else if ("int".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Integer"); //$NON-NLS-1$
+		} else if ("long".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Long"); //$NON-NLS-1$
+		} else if ("short".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Short"); //$NON-NLS-1$
+    	} else if ("void".equals(name)) { //$NON-NLS-1$
+    		type = (IJavaReferenceType) getType("java.lang.Void"); //$NON-NLS-1$
+    	}
+    	if (type != null) {
+			IJavaFieldVariable field = type.getField("TYPE");  //$NON-NLS-1$
+			IJavaClassObject clazz = (IJavaClassObject) field.getValue();
+			return clazz.getInstanceType();
+    	}
+        throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{name}), null)); 
+    }    
 
 	protected IJavaArrayType getArrayType(String typeSignature, int dimension) throws CoreException {
 		String qualifiedName = RuntimeSignature.toString(typeSignature);
