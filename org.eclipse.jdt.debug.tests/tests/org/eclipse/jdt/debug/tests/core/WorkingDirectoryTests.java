@@ -66,7 +66,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 	}
 
 
-	public void removedTestWorkspaceRelativeWorkingDirectory() throws Exception {
+	public void testWorkspaceRelativeWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
 		createLineBreakpoint(16, typeName);
 		IPath wd = getJavaProject().getProject().getFolder("src").getFullPath().makeRelative();

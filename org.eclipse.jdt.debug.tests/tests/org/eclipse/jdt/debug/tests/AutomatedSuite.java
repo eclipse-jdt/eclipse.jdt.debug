@@ -64,6 +64,7 @@ import org.eclipse.jdt.debug.tests.core.StringSubstitutionTests;
 import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
+import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
@@ -207,9 +208,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TypeTests.class));
 		addTest(new TestSuite(WatchExpressionTests.class));
 		addTest(new TestSuite(StratumTests.class));
-		
-	// removed for M5 - see bug 46991
-		//addTest(new TestSuite(WorkingDirectoryTests.class));
+		addTest(new TestSuite(WorkingDirectoryTests.class));
 
 	//Memory view tests
 		addTest(new TestSuite(MemoryRenderingTests.class));
